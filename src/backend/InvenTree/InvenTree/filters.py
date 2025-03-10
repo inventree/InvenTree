@@ -92,7 +92,7 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
 
     Then, specify a ordering_field_aliases attribute:
 
-    ordering_field_alises = {
+    ordering_field_aliases = {
         'name': 'part__part__name',
         'SKU': 'part__SKU',
     }
@@ -118,10 +118,7 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
                     field = field[1:]
 
                 # Are aliases defined for this field?
-                if field in aliases:
-                    alias = aliases[field]
-                else:
-                    alias = field
+                alias = aliases.get(field, field)
 
                 """
                 Potentially, a single field could be "aliased" to multiple field,
@@ -166,3 +163,5 @@ SEARCH_ORDER_FILTER_ALIAS = [
 ]
 
 ORDER_FILTER = [rest_filters.DjangoFilterBackend, filters.OrderingFilter]
+
+ORDER_FILTER_ALIAS = [rest_filters.DjangoFilterBackend, InvenTreeOrderingFilter]

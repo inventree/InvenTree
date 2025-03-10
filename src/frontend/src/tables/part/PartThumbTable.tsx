@@ -4,6 +4,7 @@ import {
   Button,
   Divider,
   Group,
+  Pagination,
   Paper,
   SimpleGrid,
   Skeleton,
@@ -11,11 +12,13 @@ import {
   Text,
   TextInput
 } from '@mantine/core';
-import { useHover } from '@mantine/hooks';
+import { useDebouncedValue, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
-import React, { Suspense, useEffect, useState } from 'react';
+import type React from 'react';
+import { Suspense, useState } from 'react';
 
+import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -26,9 +29,6 @@ import { apiUrl } from '../../states/ApiState';
  */
 export type ThumbTableProps = {
   pk: string;
-  limit?: number;
-  offset?: number;
-  search?: string;
   setImage: (image: string) => void;
 };
 
@@ -78,15 +78,15 @@ function PartThumbComponent({
     <Paper
       withBorder
       style={{ backgroundColor: color }}
-      p="sm"
+      p='sm'
       ref={ref}
       onClick={() => selectImage(element.image)}
     >
-      <Stack justify="space-between">
+      <Stack justify='space-between'>
         <AspectRatio ratio={1}>
-          <Thumbnail size={120} src={src} align="center"></Thumbnail>
+          <Thumbnail size={120} src={src} align='center' />
         </AspectRatio>
-        <Text size="xs">
+        <Text size='xs'>
           {element.image.split('/')[1]} ({element.count})
         </Text>
       </Stack>
@@ -121,37 +121,42 @@ async function setNewImage(
 /**
  * Renders a "table" of thumbnails
  */
-export function PartThumbTable({
-  limit = 24,
-  offset = 0,
-  search = '',
-  pk,
-  setImage
-}: ThumbTableProps) {
-  const [img, selectImage] = useState<string | null>(null);
+export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
+  const limit = 24;
+
+  const [thumbImage, setThumbImage] = useState<string | null>(null);
   const [filterInput, setFilterInput] = useState<string>('');
-  const [filterQuery, setFilter] = useState<string>(search);
+
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   // Keep search filters from updating while user is typing
-  useEffect(() => {
-    const timeoutId = setTimeout(() => setFilter(filterInput), 500);
-    return () => clearTimeout(timeoutId);
-  }, [filterInput]);
+  const [searchText] = useDebouncedValue(filterInput, 500);
 
   // Fetch thumbnails from API
   const thumbQuery = useQuery({
-    queryKey: [
-      ApiEndpoints.part_thumbs_list,
-      { limit: limit, offset: offset, search: filterQuery }
-    ],
+    queryKey: [ApiEndpoints.part_thumbs_list, page, searchText],
     queryFn: async () => {
-      return api.get(apiUrl(ApiEndpoints.part_thumbs_list), {
-        params: {
-          offset: offset,
-          limit: limit,
-          search: filterQuery
-        }
-      });
+      const offset = Math.max(0, page - 1) * limit;
+
+      return api
+        .get(apiUrl(ApiEndpoints.part_thumbs_list), {
+          params: {
+            offset: offset,
+            limit: limit,
+            search: searchText
+          }
+        })
+        .then((response) => {
+          const records = response?.data?.count ?? 1;
+          setTotalPages(Math.ceil(records / limit));
+          return response.data?.results ?? response.data;
+        })
+        .catch((error) => {
+          setTotalPages(1);
+          setPage(1);
+          return [];
+        });
     }
   });
 
@@ -159,46 +164,61 @@ export function PartThumbTable({
     <>
       <Suspense>
         <Divider />
-        <Paper p="sm">
-          <>
-            <SimpleGrid cols={8}>
-              {!thumbQuery.isFetching
-                ? thumbQuery.data?.data.map(
-                    (data: ImageElement, index: number) => (
-                      <PartThumbComponent
-                        element={data}
-                        key={index}
-                        selected={img}
-                        selectImage={selectImage}
-                      />
-                    )
-                  )
-                : [...Array(limit)].map((elem, idx) => (
-                    <Skeleton
-                      height={150}
-                      width={150}
-                      radius="sm"
-                      key={idx}
-                      style={{ padding: '5px' }}
-                    />
-                  ))}
-            </SimpleGrid>
-          </>
+        <Paper p='sm'>
+          <SimpleGrid
+            cols={{ base: 2, '450px': 3, '600px': 4, '900px': 6 }}
+            type='container'
+            spacing='xs'
+          >
+            {!thumbQuery.isFetching
+              ? thumbQuery?.data.map((data: ImageElement, index: number) => (
+                  <PartThumbComponent
+                    element={data}
+                    key={index}
+                    selected={thumbImage}
+                    selectImage={setThumbImage}
+                  />
+                ))
+              : [...Array(limit)].map((elem, idx) => (
+                  <Skeleton
+                    height={150}
+                    width={150}
+                    radius='sm'
+                    key={idx}
+                    style={{ padding: '5px' }}
+                  />
+                ))}
+          </SimpleGrid>
         </Paper>
       </Suspense>
 
       <Divider />
-      <Paper p="sm">
-        <Group justify="space-between">
-          <TextInput
-            placeholder={t`Search...`}
-            onChange={(event) => {
-              setFilterInput(event.currentTarget.value);
-            }}
-          />
+      <Paper p='sm'>
+        <Group justify='space-between' gap='xs'>
+          <Group justify='left' gap='xs'>
+            <TextInput
+              placeholder={t`Search...`}
+              value={filterInput}
+              onChange={(event) => {
+                setFilterInput(event.currentTarget.value);
+              }}
+              rightSection={
+                <IconX
+                  size='1rem'
+                  color='red'
+                  onClick={() => setFilterInput('')}
+                />
+              }
+            />
+            <Pagination
+              total={totalPages}
+              value={page}
+              onChange={(value) => setPage(value)}
+            />
+          </Group>
           <Button
-            disabled={!img}
-            onClick={() => setNewImage(img, pk, setImage)}
+            disabled={!thumbImage}
+            onClick={() => setNewImage(thumbImage, pk, setImage)}
           >
             <Trans>Select</Trans>
           </Button>

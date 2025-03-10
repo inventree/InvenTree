@@ -2,15 +2,14 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { PartHoverCard } from '../../components/images/Thumbnail';
 import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
-import { ReferenceColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableColumn } from '../Column';
+import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -19,10 +18,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function UsedInTable({
   partId,
   params = {}
-}: {
+}: Readonly<{
   partId: number;
   params?: any;
-}) {
+}>) {
   const table = useTable('usedin');
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -31,28 +30,41 @@ export function UsedInTable({
         accessor: 'part',
         switchable: false,
         sortable: true,
-        render: (record: any) => <PartHoverCard part={record.part_detail} />
+        title: t`Assembly`,
+        render: (record: any) => PartColumn({ part: record.part_detail })
+      },
+      {
+        accessor: 'part_detail.IPN',
+        sortable: false,
+        title: t`IPN`
+      },
+      {
+        accessor: 'part_detail.description',
+        sortable: false,
+        title: t`Description`
       },
       {
         accessor: 'sub_part',
         sortable: true,
-        render: (record: any) => <PartHoverCard part={record.sub_part_detail} />
+        title: t`Component`,
+        render: (record: any) => PartColumn({ part: record.sub_part_detail })
       },
       {
         accessor: 'quantity',
+        switchable: false,
         render: (record: any) => {
-          let quantity = formatDecimal(record.quantity);
-          let units = record.sub_part_detail?.units;
+          const quantity = formatDecimal(record.quantity);
+          const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify="space-between" grow>
+            <Group justify='space-between' grow wrap='nowrap'>
               <Text>{quantity}</Text>
-              {units && <Text size="xs">{units}</Text>}
+              {units && <Text size='xs'>{units}</Text>}
             </Group>
           );
         }
       },
-      ReferenceColumn()
+      ReferenceColumn({})
     ];
   }, [partId]);
 

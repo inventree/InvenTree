@@ -13,10 +13,10 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, ResponsibleColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of project codes
@@ -33,7 +33,7 @@ export default function ProjectCodeTable() {
         sortable: true
       },
       DescriptionColumn({}),
-      ResponsibleColumn()
+      ResponsibleColumn({})
     ];
   }, []);
 
@@ -41,7 +41,7 @@ export default function ProjectCodeTable() {
     url: ApiEndpoints.project_code_list,
     title: t`Add Project Code`,
     fields: projectCodeFields(),
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedProjectCode, setSelectedProjectCode] = useState<
@@ -53,14 +53,14 @@ export default function ProjectCodeTable() {
     pk: selectedProjectCode,
     title: t`Edit Project Code`,
     fields: projectCodeFields(),
-    onFormSuccess: (record: any) => table.updateRecord(record)
+    table: table
   });
 
   const deleteProjectCode = useDeleteApiFormModal({
     url: ApiEndpoints.project_code_list,
     pk: selectedProjectCode,
     title: t`Delete Project Code`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(
@@ -86,16 +86,13 @@ export default function ProjectCodeTable() {
   );
 
   const tableActions = useMemo(() => {
-    let actions = [];
-
-    actions.push(
+    return [
       <AddItemButton
+        key='add'
         onClick={() => newProjectCode.open()}
         tooltip={t`Add project code`}
       />
-    );
-
-    return actions;
+    ];
   }, []);
 
   return (
@@ -109,7 +106,8 @@ export default function ProjectCodeTable() {
         columns={columns}
         props={{
           rowActions: rowActions,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

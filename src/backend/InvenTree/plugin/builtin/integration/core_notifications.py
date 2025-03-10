@@ -7,11 +7,11 @@ import requests
 from allauth.account.models import EmailAddress
 
 import common.models
-import InvenTree.email
 import InvenTree.helpers
+import InvenTree.helpers_email
 import InvenTree.tasks
 from plugin import InvenTreePlugin, registry
-from plugin.mixins import BulkNotificationMethod, SettingsContentMixin, SettingsMixin
+from plugin.mixins import BulkNotificationMethod, SettingsMixin
 
 
 class PlgMixin:
@@ -25,9 +25,7 @@ class PlgMixin:
         return InvenTreeCoreNotificationsPlugin
 
 
-class InvenTreeCoreNotificationsPlugin(
-    SettingsContentMixin, SettingsMixin, InvenTreePlugin
-):
+class InvenTreeCoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
     """Core notification methods for InvenTree."""
 
     NAME = 'InvenTreeCoreNotificationsPlugin'
@@ -70,7 +68,7 @@ class InvenTreeCoreNotificationsPlugin(
         """
 
     class EmailNotification(PlgMixin, BulkNotificationMethod):
-        """Notificationmethod for delivery via Email."""
+        """Notification method for delivery via Email."""
 
         METHOD_NAME = 'mail'
         METHOD_ICON = 'fa-envelope'
@@ -116,12 +114,14 @@ class InvenTreeCoreNotificationsPlugin(
             if instance_title:
                 subject = f'[{instance_title}] {subject}'
 
-            InvenTree.email.send_email(subject, '', targets, html_message=html_message)
+            InvenTree.helpers_email.send_email(
+                subject, '', targets, html_message=html_message
+            )
 
             return True
 
     class SlackNotification(PlgMixin, BulkNotificationMethod):
-        """Notificationmethod for delivery via Slack channel messages."""
+        """Notification method for delivery via Slack channel messages."""
 
         METHOD_NAME = 'slack'
         METHOD_ICON = 'fa-envelope'

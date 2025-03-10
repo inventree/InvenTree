@@ -1,13 +1,14 @@
 import { t } from '@lingui/macro';
+import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
-import { getDetailUrl } from '../../functions/urls';
+import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -15,20 +16,26 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
+import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * Stock location table
  */
-export function StockLocationTable({ parentId }: { parentId?: any }) {
+export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('stocklocation');
   const user = useUserState();
 
-  const navigate = useNavigate();
+  const locationTypeFilters = useFilters({
+    url: apiUrl(ApiEndpoints.stock_location_type_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: item.name
+    })
+  });
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -39,27 +46,38 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       },
       {
         name: 'structural',
-        label: t`structural`,
+        label: t`Structural`,
         description: t`Show structural locations`
       },
       {
         name: 'external',
-        label: t`external`,
+        label: t`External`,
         description: t`Show external locations`
       },
       {
         name: 'has_location_type',
         label: t`Has location type`
+      },
+      {
+        name: 'location_type',
+        label: t`Location Type`,
+        description: t`Filter by location type`,
+        choices: locationTypeFilters.choices
       }
-      // TODO: location_type
     ];
-  }, []);
+  }, [locationTypeFilters.choices]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'name',
-        switchable: false
+        switchable: false,
+        render: (record: any) => (
+          <Group gap='xs'>
+            {record.icon && <ApiIcon name={record.icon} />}
+            {record.name}
+          </Group>
+        )
       },
       DescriptionColumn({}),
       {
@@ -87,17 +105,14 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   const newLocation = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_list,
     title: t`Add Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
+    focus: 'name',
     initialData: {
       parent: parentId
     },
-    onFormSuccess(data: any) {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.stocklocation, data.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.stocklocation,
+    table: table
   });
 
   const [selectedLocation, setSelectedLocation] = useState<number>(-1);
@@ -106,15 +121,16 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
-    let can_add = user.hasAddRole(UserRoles.stock_location);
+    const can_add = user.hasAddRole(UserRoles.stock_location);
 
     return [
       <AddItemButton
+        key='add-stock-location'
         tooltip={t`Add Stock Location`}
         onClick={() => newLocation.open()}
         hidden={!can_add}
@@ -123,8 +139,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
-      let can_edit = user.hasChangeRole(UserRoles.stock_location);
+    (record: any): RowAction[] => {
+      const can_edit = user.hasChangeRole(UserRoles.stock_location);
 
       return [
         RowEditAction({
@@ -148,9 +164,13 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         tableState={table}
         columns={tableColumns}
         props={{
+          enableSelection: true,
           enableDownload: true,
+          enableLabels: true,
+          enableReports: true,
           params: {
-            parent: parentId
+            parent: parentId,
+            top_level: parentId === undefined ? true : undefined
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

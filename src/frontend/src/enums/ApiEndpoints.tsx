@@ -12,24 +12,35 @@ export enum ApiEndpoints {
   // User API endpoints
   user_list = 'user/',
   user_me = 'user/me/',
+  user_profile = 'user/profile/',
   user_roles = 'user/roles/',
   user_token = 'user/token/',
+  user_tokens = 'user/tokens/',
   user_simple_login = 'email/generate/',
-  user_reset = 'auth/password/reset/',
-  user_reset_set = 'auth/password/reset/confirm/',
-  user_sso = 'auth/social/',
-  user_sso_remove = 'auth/social/:id/disconnect/',
-  user_emails = 'auth/emails/',
-  user_email_remove = 'auth/emails/:id/remove/',
-  user_email_verify = 'auth/emails/:id/verify/',
-  user_email_primary = 'auth/emails/:id/primary/',
-  user_login = 'auth/login/',
-  user_logout = 'auth/logout/',
-  user_register = 'auth/registration/',
+
+  // User auth endpoints
+  user_reset = 'auth/v1/auth/password/request',
+  user_reset_set = 'auth/v1/auth/password/reset',
+  auth_pwd_change = 'auth/v1/account/password/change',
+  auth_login = 'auth/v1/auth/login',
+  auth_login_2fa = 'auth/v1/auth/2fa/authenticate',
+  auth_session = 'auth/v1/auth/session',
+  auth_signup = 'auth/v1/auth/signup',
+  auth_authenticators = 'auth/v1/account/authenticators',
+  auth_recovery = 'auth/v1/account/authenticators/recovery-codes',
+  auth_mfa_reauthenticate = 'auth/v1/auth/2fa/reauthenticate',
+  auth_totp = 'auth/v1/account/authenticators/totp',
+  auth_reauthenticate = 'auth/v1/auth/reauthenticate',
+  auth_email = 'auth/v1/account/email',
+  auth_email_verify = 'auth/v1/auth/email/verify',
+  auth_providers = 'auth/v1/account/providers',
+  auth_provider_redirect = 'auth/v1/auth/provider/redirect',
+  auth_config = 'auth/v1/config',
 
   // Generic API endpoints
   currency_list = 'currency/exchange/',
   currency_refresh = 'currency/refresh/',
+  all_units = 'units/all/',
   task_overview = 'background-task/',
   task_pending_list = 'background-task/pending/',
   task_scheduled_list = 'background-task/scheduled/',
@@ -37,14 +48,31 @@ export enum ApiEndpoints {
   api_search = 'search/',
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
-  barcode = 'barcode/',
   news = 'news/',
   global_status = 'generic/status/',
+  custom_state_list = 'generic/status/custom/',
   version = 'version/',
   license = 'license/',
-  sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  content_type_list = 'contenttype/',
+  icons = 'icons/',
+  selectionlist_list = 'selection/',
+  selectionlist_detail = 'selection/:id/',
+
+  // Barcode API endpoints
+  barcode = 'barcode/',
+  barcode_history = 'barcode/history/',
+  barcode_link = 'barcode/link/',
+  barcode_unlink = 'barcode/unlink/',
+  barcode_generate = 'barcode/generate/',
+
+  // Data import endpoints
+  import_session_list = 'importer/session/',
+  import_session_accept_fields = 'importer/session/:id/accept_fields/',
+  import_session_accept_rows = 'importer/session/:id/accept_rows/',
+  import_session_column_mapping_list = 'importer/column-mapping/',
+  import_session_row_list = 'importer/row/',
 
   // Notification endpoints
   notifications_list = 'notifications/',
@@ -52,50 +80,61 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_issue = 'build/:id/issue/',
   build_order_cancel = 'build/:id/cancel/',
-  build_output_create = 'build/:id/create-output/',
+  build_order_hold = 'build/:id/hold/',
+  build_order_complete = 'build/:id/finish/',
   build_output_complete = 'build/:id/complete/',
+  build_output_create = 'build/:id/create-output/',
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
-  build_order_attachment_list = 'build/attachment/',
+  build_order_auto_allocate = 'build/:id/auto-allocate/',
+  build_order_allocate = 'build/:id/allocate/',
+  build_order_deallocate = 'build/:id/unallocate/',
+
   build_line_list = 'build/line/',
+  build_item_list = 'build/item/',
 
   bom_list = 'bom/',
+  bom_item_validate = 'bom/:id/validate/',
+  bom_validate = 'part/:id/bom-validate/',
 
   // Part API endpoints
   part_list = 'part/',
   part_parameter_list = 'part/parameter/',
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
-  part_pricing_get = 'part/:id/pricing/',
+  part_pricing = 'part/:id/pricing/',
   part_serial_numbers = 'part/:id/serial-numbers/',
+  part_scheduling = 'part/:id/scheduling/',
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
+  part_stocktake_report_list = 'part/stocktake/report/',
+  part_stocktake_report_generate = 'part/stocktake/report/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
   related_part_list = 'part/related/',
-  part_attachment_list = 'part/attachment/',
   part_test_template_list = 'part/test-template/',
 
   // Company API endpoints
   company_list = 'company/',
   contact_list = 'company/contact/',
   address_list = 'company/address/',
-  company_attachment_list = 'company/attachment/',
   supplier_part_list = 'company/part/',
   supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
-  manufacturer_part_attachment_list = 'company/part/manufacturer/attachment/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
-  // Stock API endpoints
+  // Stock location endpoints
+  stock_location_list = 'stock/location/',
+  stock_location_type_list = 'stock/location-type/',
+  stock_location_tree = 'stock/location/tree/',
+
+  // Stock item API endpoints
   stock_item_list = 'stock/',
   stock_tracking_list = 'stock/track/',
-  stock_location_list = 'stock/location/',
-  stock_location_tree = 'stock/location/tree/',
-  stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
@@ -105,25 +144,59 @@ export enum ApiEndpoints {
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
-  stock_install = 'stock/:id/install',
+  stock_install = 'stock/:id/install/',
+  stock_uninstall = 'stock/:id/uninstall/',
+  stock_serialize = 'stock/:id/serialize/',
+  stock_return = 'stock/:id/return/',
+
+  // Generator API endpoints
+  generate_batch_code = 'generate/batch-code/',
+  generate_serial_number = 'generate/serial-number/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
+  purchase_order_issue = 'order/po/:id/issue/',
+  purchase_order_hold = 'order/po/:id/hold/',
+  purchase_order_cancel = 'order/po/:id/cancel/',
+  purchase_order_complete = 'order/po/:id/complete/',
   purchase_order_line_list = 'order/po-line/',
-  purchase_order_attachment_list = 'order/po/attachment/',
+  purchase_order_extra_line_list = 'order/po-extra-line/',
   purchase_order_receive = 'order/po/:id/receive/',
 
   sales_order_list = 'order/so/',
+  sales_order_issue = 'order/so/:id/issue/',
+  sales_order_hold = 'order/so/:id/hold/',
+  sales_order_cancel = 'order/so/:id/cancel/',
+  sales_order_ship = 'order/so/:id/ship/',
+  sales_order_complete = 'order/so/:id/complete/',
+  sales_order_allocate = 'order/so/:id/allocate/',
+  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+
   sales_order_line_list = 'order/so-line/',
-  sales_order_attachment_list = 'order/so/attachment/',
+  sales_order_extra_line_list = 'order/so-extra-line/',
+  sales_order_allocation_list = 'order/so-allocation/',
+
   sales_order_shipment_list = 'order/so/shipment/',
+  sales_order_shipment_complete = 'order/so/shipment/:id/ship/',
 
   return_order_list = 'order/ro/',
-  return_order_attachment_list = 'order/ro/attachment/',
+  return_order_issue = 'order/ro/:id/issue/',
+  return_order_hold = 'order/ro/:id/hold/',
+  return_order_cancel = 'order/ro/:id/cancel/',
+  return_order_complete = 'order/ro/:id/complete/',
+  return_order_receive = 'order/ro/:id/receive/',
+  return_order_line_list = 'order/ro-line/',
+  return_order_extra_line_list = 'order/ro-extra-line/',
 
   // Template API endpoints
-  label_list = 'label/:variant/',
-  report_list = 'report/:variant/',
+  label_list = 'label/template/',
+  label_print = 'label/print/',
+  label_output = 'label/output/',
+  report_list = 'report/template/',
+  report_print = 'report/print/',
+  report_output = 'report/output/',
+  report_snippet = 'report/snippet/',
+  report_asset = 'report/asset/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',
@@ -131,8 +204,15 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
-  plugin_activate = 'plugins/:id/activate/',
-  plugin_uninstall = 'plugins/:id/uninstall/',
+  plugin_activate = 'plugins/:key/activate/',
+  plugin_uninstall = 'plugins/:key/uninstall/',
+  plugin_admin = 'plugins/:key/admin/',
+
+  // User interface plugin endpoints
+  plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
+
+  // Special plugin endpoints
+  plugin_locate_item = 'locate/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',
@@ -144,8 +224,9 @@ export enum ApiEndpoints {
   machine_setting_detail = 'machine/:machine/settings/:config_type/',
 
   // Miscellaneous API endpoints
+  attachment_list = 'attachment/',
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  ui_preference = 'web/ui_preference/'
+  notes_image_upload = 'notes-image-upload/'
 }

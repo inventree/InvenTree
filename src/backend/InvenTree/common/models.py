@@ -4,29 +4,27 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import decimal
 import hashlib
 import hmac
 import json
-import logging
-import math
 import os
-import re
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
+from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Callable, TypedDict, Union
+from typing import Any, Union
 
 from django.apps import apps
-from django.conf import settings
-from django.contrib.auth.models import Group, User
+from django.conf import settings as django_settings
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import AppRegistryNotReady, ValidationError
-from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
+from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -35,24 +33,29 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
-from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
+from taggit.managers import TaggableManager
 
-import build.validators
+import common.currency
+import common.validators
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
-import order.validators
-import report.helpers
 import users.models
-from plugin import registry
+from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
+from generic.states import ColorEnum
+from generic.states.custom import state_color_mappings
+from InvenTree.cache import get_session_cache, set_session_cache
+from InvenTree.sanitizer import sanitize_svg
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MetaMixin(models.Model):
@@ -75,44 +78,13 @@ class MetaMixin(models.Model):
     )
 
 
-class BaseURLValidator(URLValidator):
-    """Validator for the InvenTree base URL.
-
-    Rules:
-    - Allow empty value
-    - Allow value without specified TLD (top level domain)
-    """
-
-    def __init__(self, schemes=None, **kwargs):
-        """Custom init routine."""
-        super().__init__(schemes, **kwargs)
-
-        # Override default host_re value - allow optional tld regex
-        self.host_re = (
-            '('
-            + self.hostname_re
-            + self.domain_re
-            + f'({self.tld_re})?'
-            + '|localhost)'
-        )
-
-    def __call__(self, value):
-        """Make sure empty values pass."""
-        value = str(value).strip()
-
-        # If a configuration level value has been specified, prevent change
-        if settings.SITE_URL and value != settings.SITE_URL:
-            raise ValidationError(_('Site URL is locked by configuration'))
-
-        if len(value) == 0:
-            pass
-
-        else:
-            super().__call__(value)
-
-
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
+
+    class Meta:
+        """Class options for the ProjectCode model."""
+
+        verbose_name = _('Project Code')
 
     @staticmethod
     def get_api_url():
@@ -146,38 +118,6 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('User or group responsible for this project'),
         related_name='project_codes',
     )
-
-
-class SettingsKeyType(TypedDict, total=False):
-    """Type definitions for a SettingsKeyType.
-
-    Attributes:
-        name: Translatable string name of the setting (required)
-        description: Translatable string description of the setting (required)
-        units: Units of the particular setting (optional)
-        validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
-        default: Default value or function that returns default value (optional)
-        choices: Function that returns or value of list[tuple[str: key, str: display value]] (optional)
-        hidden: Hide this setting from settings page (optional)
-        before_save: Function that gets called after save with *args, **kwargs (optional)
-        after_save: Function that gets called after save with *args, **kwargs (optional)
-        protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
-        required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
-        model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
-    """
-
-    name: str
-    description: str
-    units: str
-    validator: Union[Callable, list[Callable], tuple[Callable]]
-    default: Union[Callable, Any]
-    choices: Union[list[tuple[str, str]], Callable[[], list[tuple[str, str]]]]
-    hidden: bool
-    before_save: Callable[..., None]
-    after_save: Callable[..., None]
-    protected: bool
-    required: bool
-    model: str
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -217,6 +157,9 @@ class BaseInvenTreeSetting(models.Model):
         if do_cache:
             self.save_to_cache()
 
+        # Remove the setting from the request cache
+        set_session_cache(self.cache_key, None)
+
         # Execute after_save action
         self._call_settings_function('after_save', args, kwargs)
 
@@ -226,15 +169,6 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
-        cache_key = f'BUILD_DEFAULT_VALUES:{str(cls.__name__)}'
-
-        try:
-            if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
-                # Already built default values
-                return
-        except Exception:
-            pass
-
         try:
             existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
             settings_keys = cls.SETTINGS.keys()
@@ -254,11 +188,6 @@ class BaseInvenTreeSetting(models.Model):
             logger.exception(
                 'Failed to build default values for %s (%s)', str(cls), str(type(exc))
             )
-
-        try:
-            cache.set(cache_key, True, timeout=3600)
-        except Exception:
-            pass
 
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
@@ -309,7 +238,7 @@ class BaseInvenTreeSetting(models.Model):
         - The unique KEY string
         - Any key:value kwargs associated with the particular setting type (e.g. user-id)
         """
-        key = f'{str(cls.__name__)}:{setting_key}'
+        key = f'{cls.__name__!s}:{setting_key}'
 
         for k, v in kwargs.items():
             key += f'_{k}:{v}'
@@ -546,46 +475,59 @@ class BaseInvenTreeSetting(models.Model):
         - Key is case-insensitive
         - Returns None if no match is made
 
-        First checks the cache to see if this object has recently been accessed,
-        and returns the cached version if so.
+        As settings are accessed frequently, this function will attempt to access the cache first:
+
+        1. Check the ephemeral request cache
+        2. Check the global cache
+        3. Query the database
         """
         key = str(key).strip().upper()
+
+        # Unless otherwise specified, attempt to create the setting
+        create = kwargs.pop('create', True)
+
+        # Specify if global cache lookup should be performed
+        # If not specified, determine based on whether global cache is enabled
+        access_global_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
+
+        # Prevent saving to the database during certain operations
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
+            create = False
+            access_global_cache = False
+
+        cache_key = cls.create_cache_key(key, **kwargs)
+
+        # Fist, attempt to pull the setting from the request cache
+        if setting := get_session_cache(cache_key):
+            return setting
+
+        if access_global_cache:
+            try:
+                # First attempt to find the setting object in the cache
+                cached_setting = cache.get(cache_key)
+
+                if cached_setting is not None:
+                    # Store the cached setting into the session cache
+
+                    set_session_cache(cache_key, cached_setting)
+                    return cached_setting
+
+            except Exception:
+                # Cache is not ready yet
+                access_global_cache = False
+
+        # At this point, we need to query the database
 
         filters = {
             'key__iexact': key,
             # Optionally filter by other keys
             **cls.get_filters(**kwargs),
         }
-
-        # Unless otherwise specified, attempt to create the setting
-        create = kwargs.pop('create', True)
-
-        # Specify if cache lookup should be performed
-        do_cache = kwargs.pop('cache', False)
-
-        # Prevent saving to the database during data import
-        if InvenTree.ready.isImportingData():
-            create = False
-            do_cache = False
-
-        # Prevent saving to the database during migrations
-        if InvenTree.ready.isRunningMigrations():
-            create = False
-            do_cache = False
-
-        cache_key = cls.create_cache_key(key, **kwargs)
-
-        if do_cache:
-            try:
-                # First attempt to find the setting object in the cache
-                cached_setting = cache.get(cache_key)
-
-                if cached_setting is not None:
-                    return cached_setting
-
-            except Exception:
-                # Cache is not ready yet
-                do_cache = False
 
         try:
             settings = cls.objects.all()
@@ -596,37 +538,29 @@ class BaseInvenTreeSetting(models.Model):
             setting = None
 
         # Setting does not exist! (Try to create it)
-        if not setting:
-            # Prevent creation of new settings objects when importing data
-            if (
-                InvenTree.ready.isImportingData()
-                or not InvenTree.ready.canAppAccessDatabase(
-                    allow_test=True, allow_shell=True
-                )
-            ):
-                create = False
+        if not setting and create:
+            # Attempt to create a new settings object
+            default_value = cls.get_setting_default(key, **kwargs)
+            setting = cls(key=key, value=default_value, **kwargs)
 
-            if create:
-                # Attempt to create a new settings object
+            try:
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save(**kwargs)
+            except (IntegrityError, OperationalError, ProgrammingError):
+                # It might be the case that the database isn't created yet
+                pass
+            except ValidationError:
+                # The setting failed validation - might be due to duplicate keys
+                pass
 
-                default_value = cls.get_setting_default(key, **kwargs)
+        if setting:
+            # Cache this setting object to the request cache
+            set_session_cache(cache_key, setting)
 
-                setting = cls(key=key, value=default_value, **kwargs)
-
-                try:
-                    # Wrap this statement in "atomic", so it can be rolled back if it fails
-                    with transaction.atomic():
-                        setting.save(**kwargs)
-                except (IntegrityError, OperationalError, ProgrammingError):
-                    # It might be the case that the database isn't created yet
-                    pass
-                except ValidationError:
-                    # The setting failed validation - might be due to duplicate keys
-                    pass
-
-        if setting and do_cache:
-            # Cache this setting object
-            setting.save_to_cache()
+            if access_global_cache:
+                # Cache this setting object to the global cache
+                setting.save_to_cache()
 
         return setting
 
@@ -696,6 +630,15 @@ class BaseInvenTreeSetting(models.Model):
         if change_user is not None and not change_user.is_staff:
             return
 
+        # Do not write to the database under certain conditions
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
+            return
+
         attempts = int(kwargs.get('attempts', 3))
 
         filters = {
@@ -749,6 +692,7 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
@@ -759,10 +703,7 @@ class BaseInvenTreeSetting(models.Model):
             )
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive)'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     value = models.CharField(
@@ -808,6 +749,9 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
+        elif self.is_float():
+            self.value = self.as_float()
+
         validator = self.__class__.get_setting_validator(
             self.key, **self.get_filters_for_instance()
         )
@@ -844,6 +788,14 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError, TypeError):
                 raise ValidationError({'value': _('Value must be an integer value')})
 
+        # Floating point validator
+        if validator is float:
+            try:
+                # Coerce into a floating point value
+                value = float(value)
+            except (ValueError, TypeError):
+                raise ValidationError({'value': _('Value must be a valid number')})
+
         # If a list of validators is supplied, iterate through each one
         if type(validator) in [list, tuple]:
             for v in validator:
@@ -855,10 +807,20 @@ class BaseInvenTreeSetting(models.Model):
             if self.is_bool():
                 value = self.as_bool()
 
-            if self.is_int():
+            elif self.is_int():
                 value = self.as_int()
 
-            validator(value)
+            elif self.is_float():
+                value = self.as_float()
+
+            try:
+                validator(value)
+            except ValidationError as e:
+                raise e
+            except Exception:
+                raise ValidationError({
+                    'value': _('Value does not pass validation checks')
+                })
 
     def validate_unique(self, exclude=None):
         """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
@@ -931,13 +893,26 @@ class BaseInvenTreeSetting(models.Model):
         """Check if this setting references a model instance in the database."""
         return self.model_name() is not None
 
-    def model_name(self):
+    def model_name(self) -> str:
         """Return the model name associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()
         )
 
         return setting.get('model', None)
+
+    def model_filters(self) -> dict:
+        """Return the model filters associated with this setting."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        filters = setting.get('model_filters', None)
+
+        if filters is not None and type(filters) is not dict:
+            filters = None
+
+        return filters
 
     def model_class(self):
         """Return the model class associated with this setting.
@@ -951,6 +926,9 @@ class BaseInvenTreeSetting(models.Model):
 
         if not model_name:
             return None
+
+        # Enforce lower-case model name
+        model_name = str(model_name).strip().lower()
 
         try:
             (app, mdl) = model_name.strip().split('.')
@@ -1051,6 +1029,39 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
+    def is_float(self):
+        """Check if the setting is required to be a float value."""
+        validator = self.__class__.get_setting_validator(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return self.__class__.validator_is_float(validator)
+
+    @classmethod
+    def validator_is_float(cls, validator):
+        """Return if validator is for float."""
+        if validator == float:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == float:
+                    return True
+
+        return False
+
+    def as_float(self):
+        """Return the value of this setting converted to a float value.
+
+        If an error occurs, return the default value
+        """
+        try:
+            value = float(self.value)
+        except (ValueError, TypeError):
+            value = self.default_value
+
+        return value
+
     def is_int(self):
         """Check if the setting is required to be an integer value."""
         validator = self.__class__.get_setting_validator(
@@ -1109,108 +1120,6 @@ class BaseInvenTreeSetting(models.Model):
         return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
-def settings_group_options():
-    """Build up group tuple for settings based on your choices."""
-    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
-
-
-def update_instance_url(setting):
-    """Update the first site objects domain to url."""
-    if not settings.SITE_MULTI:
-        return
-
-    try:
-        from django.contrib.sites.models import Site
-    except (ImportError, RuntimeError):
-        # Multi-site support not enabled
-        return
-
-    site_obj = Site.objects.all().order_by('id').first()
-    site_obj.domain = setting.value
-    site_obj.save()
-
-
-def update_instance_name(setting):
-    """Update the first site objects name to instance name."""
-    if not settings.SITE_MULTI:
-        return
-
-    try:
-        from django.contrib.sites.models import Site
-    except (ImportError, RuntimeError):
-        # Multi-site support not enabled
-        return
-
-    site_obj = Site.objects.all().order_by('id').first()
-    site_obj.name = setting.value
-    site_obj.save()
-
-
-def validate_email_domains(setting):
-    """Validate the email domains setting."""
-    if not setting.value:
-        return
-
-    domains = setting.value.split(',')
-    for domain in domains:
-        if not domain:
-            raise ValidationError(_('An empty domain is not allowed.'))
-        if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
-            raise ValidationError(_(f'Invalid domain name: {domain}'))
-
-
-def currency_exchange_plugins():
-    """Return a set of plugin choices which can be used for currency exchange."""
-    try:
-        from plugin import registry
-
-        plugs = registry.with_mixin('currencyexchange', active=True)
-    except Exception:
-        plugs = []
-
-    return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
-
-
-def after_change_currency(setting):
-    """Callback function when base currency is changed.
-
-    - Update exchange rates
-    - Recalculate prices for all parts
-    """
-    if InvenTree.ready.isImportingData():
-        return
-
-    if not InvenTree.ready.canAppAccessDatabase():
-        return
-
-    from part import tasks as part_tasks
-
-    # Immediately update exchange rates
-    InvenTree.tasks.update_exchange_rates(force=True)
-
-    # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(part_tasks.check_missing_pricing, force_async=True)
-
-
-def reload_plugin_registry(setting):
-    """When a core plugin setting is changed, reload the plugin registry."""
-    from plugin import registry
-
-    logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
-
-    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
-
-
-class InvenTreeSettingsKeyType(SettingsKeyType):
-    """InvenTreeSettingsKeyType has additional properties only global settings support.
-
-    Attributes:
-        requires_restart: If True, a server restart is required after changing the setting
-    """
-
-    requires_restart: bool
-
-
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -1253,827 +1162,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     The keys must be upper-case
     """
+    from common.setting.system import SYSTEM_SETTINGS
 
-    SETTINGS = {
-        'SERVER_RESTART_REQUIRED': {
-            'name': _('Restart required'),
-            'description': _(
-                'A setting has been changed which requires a server restart'
-            ),
-            'default': False,
-            'validator': bool,
-            'hidden': True,
-        },
-        '_PENDING_MIGRATIONS': {
-            'name': _('Pending migrations'),
-            'description': _('Number of pending database migrations'),
-            'default': 0,
-            'validator': int,
-        },
-        'INVENTREE_INSTANCE': {
-            'name': _('Server Instance Name'),
-            'default': 'InvenTree',
-            'description': _('String descriptor for the server instance'),
-            'after_save': update_instance_name,
-        },
-        'INVENTREE_INSTANCE_TITLE': {
-            'name': _('Use instance name'),
-            'description': _('Use the instance name in the title-bar'),
-            'validator': bool,
-            'default': False,
-        },
-        'INVENTREE_RESTRICT_ABOUT': {
-            'name': _('Restrict showing `about`'),
-            'description': _('Show the `about` modal only to superusers'),
-            'validator': bool,
-            'default': False,
-        },
-        'INVENTREE_COMPANY_NAME': {
-            'name': _('Company name'),
-            'description': _('Internal company name'),
-            'default': 'My company name',
-        },
-        'INVENTREE_BASE_URL': {
-            'name': _('Base URL'),
-            'description': _('Base URL for server instance'),
-            'validator': BaseURLValidator(),
-            'default': '',
-            'after_save': update_instance_url,
-        },
-        'INVENTREE_DEFAULT_CURRENCY': {
-            'name': _('Default Currency'),
-            'description': _('Select base currency for pricing calculations'),
-            'default': 'USD',
-            'choices': CURRENCY_CHOICES,
-            'after_save': after_change_currency,
-        },
-        'CURRENCY_UPDATE_INTERVAL': {
-            'name': _('Currency Update Interval'),
-            'description': _(
-                'How often to update exchange rates (set to zero to disable)'
-            ),
-            'default': 1,
-            'units': _('days'),
-            'validator': [int, MinValueValidator(0)],
-        },
-        'CURRENCY_UPDATE_PLUGIN': {
-            'name': _('Currency Update Plugin'),
-            'description': _('Currency update plugin to use'),
-            'choices': currency_exchange_plugins,
-            'default': 'inventreecurrencyexchange',
-        },
-        'INVENTREE_DOWNLOAD_FROM_URL': {
-            'name': _('Download from URL'),
-            'description': _(
-                'Allow download of remote images and files from external URL'
-            ),
-            'validator': bool,
-            'default': False,
-        },
-        'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
-            'name': _('Download Size Limit'),
-            'description': _('Maximum allowable download size for remote image'),
-            'units': 'MB',
-            'default': 1,
-            'validator': [int, MinValueValidator(1), MaxValueValidator(25)],
-        },
-        'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
-            'name': _('User-agent used to download from URL'),
-            'description': _(
-                'Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'
-            ),
-            'default': '',
-        },
-        'INVENTREE_STRICT_URLS': {
-            'name': _('Strict URL Validation'),
-            'description': _('Require schema specification when validating URLs'),
-            'validator': bool,
-            'default': True,
-        },
-        'INVENTREE_REQUIRE_CONFIRM': {
-            'name': _('Require confirm'),
-            'description': _('Require explicit user confirmation for certain action.'),
-            'validator': bool,
-            'default': True,
-        },
-        'INVENTREE_TREE_DEPTH': {
-            'name': _('Tree Depth'),
-            'description': _(
-                'Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed.'
-            ),
-            'default': 1,
-            'validator': [int, MinValueValidator(0)],
-        },
-        'INVENTREE_UPDATE_CHECK_INTERVAL': {
-            'name': _('Update Check Interval'),
-            'description': _('How often to check for updates (set to zero to disable)'),
-            'validator': [int, MinValueValidator(0)],
-            'default': 7,
-            'units': _('days'),
-        },
-        'INVENTREE_BACKUP_ENABLE': {
-            'name': _('Automatic Backup'),
-            'description': _('Enable automatic backup of database and media files'),
-            'validator': bool,
-            'default': False,
-        },
-        'INVENTREE_BACKUP_DAYS': {
-            'name': _('Auto Backup Interval'),
-            'description': _('Specify number of days between automated backup events'),
-            'validator': [int, MinValueValidator(1)],
-            'default': 1,
-            'units': _('days'),
-        },
-        'INVENTREE_DELETE_TASKS_DAYS': {
-            'name': _('Task Deletion Interval'),
-            'description': _(
-                'Background task results will be deleted after specified number of days'
-            ),
-            'default': 30,
-            'units': _('days'),
-            'validator': [int, MinValueValidator(7)],
-        },
-        'INVENTREE_DELETE_ERRORS_DAYS': {
-            'name': _('Error Log Deletion Interval'),
-            'description': _(
-                'Error logs will be deleted after specified number of days'
-            ),
-            'default': 30,
-            'units': _('days'),
-            'validator': [int, MinValueValidator(7)],
-        },
-        'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Notification Deletion Interval'),
-            'description': _(
-                'User notifications will be deleted after specified number of days'
-            ),
-            'default': 30,
-            'units': _('days'),
-            'validator': [int, MinValueValidator(7)],
-        },
-        'BARCODE_ENABLE': {
-            'name': _('Barcode Support'),
-            'description': _('Enable barcode scanner support in the web interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'BARCODE_INPUT_DELAY': {
-            'name': _('Barcode Input Delay'),
-            'description': _('Barcode input processing delay time'),
-            'default': 50,
-            'validator': [int, MinValueValidator(1)],
-            'units': 'ms',
-        },
-        'BARCODE_WEBCAM_SUPPORT': {
-            'name': _('Barcode Webcam Support'),
-            'description': _('Allow barcode scanning via webcam in browser'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_ENABLE_REVISION': {
-            'name': _('Part Revisions'),
-            'description': _('Enable revision field for Part'),
-            'validator': bool,
-            'default': True,
-        },
-        'PART_IPN_REGEX': {
-            'name': _('IPN Regex'),
-            'description': _('Regular expression pattern for matching Part IPN'),
-        },
-        'PART_ALLOW_DUPLICATE_IPN': {
-            'name': _('Allow Duplicate IPN'),
-            'description': _('Allow multiple parts to share the same IPN'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_ALLOW_EDIT_IPN': {
-            'name': _('Allow Editing IPN'),
-            'description': _('Allow changing the IPN value while editing a part'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_COPY_BOM': {
-            'name': _('Copy Part BOM Data'),
-            'description': _('Copy BOM data by default when duplicating a part'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_COPY_PARAMETERS': {
-            'name': _('Copy Part Parameter Data'),
-            'description': _('Copy parameter data by default when duplicating a part'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_COPY_TESTS': {
-            'name': _('Copy Part Test Data'),
-            'description': _('Copy test data by default when duplicating a part'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_CATEGORY_PARAMETERS': {
-            'name': _('Copy Category Parameter Templates'),
-            'description': _('Copy category parameter templates when creating a part'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_TEMPLATE': {
-            'name': _('Template'),
-            'description': _('Parts are templates by default'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_ASSEMBLY': {
-            'name': _('Assembly'),
-            'description': _('Parts can be assembled from other components by default'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_COMPONENT': {
-            'name': _('Component'),
-            'description': _('Parts can be used as sub-components by default'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_PURCHASEABLE': {
-            'name': _('Purchaseable'),
-            'description': _('Parts are purchaseable by default'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_SALABLE': {
-            'name': _('Salable'),
-            'description': _('Parts are salable by default'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_TRACKABLE': {
-            'name': _('Trackable'),
-            'description': _('Parts are trackable by default'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_VIRTUAL': {
-            'name': _('Virtual'),
-            'description': _('Parts are virtual by default'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_SHOW_IMPORT': {
-            'name': _('Show Import in Views'),
-            'description': _('Display the import wizard in some part views'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_SHOW_RELATED': {
-            'name': _('Show related parts'),
-            'description': _('Display related parts for a part'),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_CREATE_INITIAL': {
-            'name': _('Initial Stock Data'),
-            'description': _('Allow creation of initial stock when adding a new part'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_CREATE_SUPPLIER': {
-            'name': _('Initial Supplier Data'),
-            'description': _(
-                'Allow creation of initial supplier data when adding a new part'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'PART_NAME_FORMAT': {
-            'name': _('Part Name Display Format'),
-            'description': _('Format to display the part name'),
-            'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
-            '{{ part.revision if part.revision }}',
-            'validator': InvenTree.validators.validate_part_name_format,
-        },
-        'PART_CATEGORY_DEFAULT_ICON': {
-            'name': _('Part Category Default Icon'),
-            'description': _('Part category default icon (empty means no icon)'),
-            'default': '',
-        },
-        'PART_PARAMETER_ENFORCE_UNITS': {
-            'name': _('Enforce Parameter Units'),
-            'description': _(
-                'If units are provided, parameter values must match the specified units'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'PRICING_DECIMAL_PLACES_MIN': {
-            'name': _('Minimum Pricing Decimal Places'),
-            'description': _(
-                'Minimum number of decimal places to display when rendering pricing data'
-            ),
-            'default': 0,
-            'validator': [int, MinValueValidator(0), MaxValueValidator(4)],
-        },
-        'PRICING_DECIMAL_PLACES': {
-            'name': _('Maximum Pricing Decimal Places'),
-            'description': _(
-                'Maximum number of decimal places to display when rendering pricing data'
-            ),
-            'default': 6,
-            'validator': [int, MinValueValidator(2), MaxValueValidator(6)],
-        },
-        'PRICING_USE_SUPPLIER_PRICING': {
-            'name': _('Use Supplier Pricing'),
-            'description': _(
-                'Include supplier price breaks in overall pricing calculations'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER': {
-            'name': _('Purchase History Override'),
-            'description': _(
-                'Historical purchase order pricing overrides supplier price breaks'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'PRICING_USE_STOCK_PRICING': {
-            'name': _('Use Stock Item Pricing'),
-            'description': _(
-                'Use pricing from manually entered stock data for pricing calculations'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'PRICING_STOCK_ITEM_AGE_DAYS': {
-            'name': _('Stock Item Pricing Age'),
-            'description': _(
-                'Exclude stock items older than this number of days from pricing calculations'
-            ),
-            'default': 0,
-            'units': _('days'),
-            'validator': [int, MinValueValidator(0)],
-        },
-        'PRICING_USE_VARIANT_PRICING': {
-            'name': _('Use Variant Pricing'),
-            'description': _('Include variant pricing in overall pricing calculations'),
-            'default': True,
-            'validator': bool,
-        },
-        'PRICING_ACTIVE_VARIANTS': {
-            'name': _('Active Variants Only'),
-            'description': _(
-                'Only use active variant parts for calculating variant pricing'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'PRICING_UPDATE_DAYS': {
-            'name': _('Pricing Rebuild Interval'),
-            'description': _(
-                'Number of days before part pricing is automatically updated'
-            ),
-            'units': _('days'),
-            'default': 30,
-            'validator': [int, MinValueValidator(10)],
-        },
-        'PART_INTERNAL_PRICE': {
-            'name': _('Internal Prices'),
-            'description': _('Enable internal prices for parts'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_BOM_USE_INTERNAL_PRICE': {
-            'name': _('Internal Price Override'),
-            'description': _(
-                'If available, internal prices override price range calculations'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'LABEL_ENABLE': {
-            'name': _('Enable label printing'),
-            'description': _('Enable label printing from the web interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'LABEL_DPI': {
-            'name': _('Label Image DPI'),
-            'description': _(
-                'DPI resolution when generating image files to supply to label printing plugins'
-            ),
-            'default': 300,
-            'validator': [int, MinValueValidator(100)],
-        },
-        'REPORT_ENABLE': {
-            'name': _('Enable Reports'),
-            'description': _('Enable generation of reports'),
-            'default': False,
-            'validator': bool,
-        },
-        'REPORT_DEBUG_MODE': {
-            'name': _('Debug Mode'),
-            'description': _('Generate reports in debug mode (HTML output)'),
-            'default': False,
-            'validator': bool,
-        },
-        'REPORT_LOG_ERRORS': {
-            'name': _('Log Report Errors'),
-            'description': _('Log errors which occur when generating reports'),
-            'default': False,
-            'validator': bool,
-        },
-        'REPORT_DEFAULT_PAGE_SIZE': {
-            'name': _('Page Size'),
-            'description': _('Default page size for PDF reports'),
-            'default': 'A4',
-            'choices': report.helpers.report_page_size_options,
-        },
-        'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Enable Test Reports'),
-            'description': _('Enable generation of test reports'),
-            'default': True,
-            'validator': bool,
-        },
-        'REPORT_ATTACH_TEST_REPORT': {
-            'name': _('Attach Test Reports'),
-            'description': _(
-                'When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
-            'name': _('Globally Unique Serials'),
-            'description': _('Serial numbers for stock items must be globally unique'),
-            'default': False,
-            'validator': bool,
-        },
-        'SERIAL_NUMBER_AUTOFILL': {
-            'name': _('Autofill Serial Numbers'),
-            'description': _('Autofill serial numbers in forms'),
-            'default': False,
-            'validator': bool,
-        },
-        'STOCK_DELETE_DEPLETED_DEFAULT': {
-            'name': _('Delete Depleted Stock'),
-            'description': _(
-                'Determines default behavior when a stock item is depleted'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'STOCK_BATCH_CODE_TEMPLATE': {
-            'name': _('Batch Code Template'),
-            'description': _(
-                'Template for generating default batch codes for stock items'
-            ),
-            'default': '',
-        },
-        'STOCK_ENABLE_EXPIRY': {
-            'name': _('Stock Expiry'),
-            'description': _('Enable stock expiry functionality'),
-            'default': False,
-            'validator': bool,
-        },
-        'STOCK_ALLOW_EXPIRED_SALE': {
-            'name': _('Sell Expired Stock'),
-            'description': _('Allow sale of expired stock'),
-            'default': False,
-            'validator': bool,
-        },
-        'STOCK_STALE_DAYS': {
-            'name': _('Stock Stale Time'),
-            'description': _(
-                'Number of days stock items are considered stale before expiring'
-            ),
-            'default': 0,
-            'units': _('days'),
-            'validator': [int],
-        },
-        'STOCK_ALLOW_EXPIRED_BUILD': {
-            'name': _('Build Expired Stock'),
-            'description': _('Allow building with expired stock'),
-            'default': False,
-            'validator': bool,
-        },
-        'STOCK_OWNERSHIP_CONTROL': {
-            'name': _('Stock Ownership Control'),
-            'description': _('Enable ownership control over stock locations and items'),
-            'default': False,
-            'validator': bool,
-        },
-        'STOCK_LOCATION_DEFAULT_ICON': {
-            'name': _('Stock Location Default Icon'),
-            'description': _('Stock location default icon (empty means no icon)'),
-            'default': '',
-        },
-        'STOCK_SHOW_INSTALLED_ITEMS': {
-            'name': _('Show Installed Stock Items'),
-            'description': _('Display installed stock items in stock tables'),
-            'default': False,
-            'validator': bool,
-        },
-        'STOCK_ENFORCE_BOM_INSTALLATION': {
-            'name': _('Check BOM when installing items'),
-            'description': _(
-                'Installed stock items must exist in the BOM for the parent part'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'BUILDORDER_REFERENCE_PATTERN': {
-            'name': _('Build Order Reference Pattern'),
-            'description': _(
-                'Required pattern for generating Build Order reference field'
-            ),
-            'default': 'BO-{ref:04d}',
-            'validator': build.validators.validate_build_order_reference_pattern,
-        },
-        'BUILDORDER_REQUIRE_RESPONSIBLE': {
-            'name': _('Require Responsible Owner'),
-            'description': _('A responsible owner must be assigned to each order'),
-            'default': False,
-            'validator': bool,
-        },
-        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
-            'name': _('Block Until Tests Pass'),
-            'description': _(
-                'Prevent build outputs from being completed until all required tests pass'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'RETURNORDER_ENABLED': {
-            'name': _('Enable Return Orders'),
-            'description': _('Enable return order functionality in the user interface'),
-            'validator': bool,
-            'default': False,
-        },
-        'RETURNORDER_REFERENCE_PATTERN': {
-            'name': _('Return Order Reference Pattern'),
-            'description': _(
-                'Required pattern for generating Return Order reference field'
-            ),
-            'default': 'RMA-{ref:04d}',
-            'validator': order.validators.validate_return_order_reference_pattern,
-        },
-        'RETURNORDER_REQUIRE_RESPONSIBLE': {
-            'name': _('Require Responsible Owner'),
-            'description': _('A responsible owner must be assigned to each order'),
-            'default': False,
-            'validator': bool,
-        },
-        'RETURNORDER_EDIT_COMPLETED_ORDERS': {
-            'name': _('Edit Completed Return Orders'),
-            'description': _(
-                'Allow editing of return orders after they have been completed'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'SALESORDER_REFERENCE_PATTERN': {
-            'name': _('Sales Order Reference Pattern'),
-            'description': _(
-                'Required pattern for generating Sales Order reference field'
-            ),
-            'default': 'SO-{ref:04d}',
-            'validator': order.validators.validate_sales_order_reference_pattern,
-        },
-        'SALESORDER_REQUIRE_RESPONSIBLE': {
-            'name': _('Require Responsible Owner'),
-            'description': _('A responsible owner must be assigned to each order'),
-            'default': False,
-            'validator': bool,
-        },
-        'SALESORDER_DEFAULT_SHIPMENT': {
-            'name': _('Sales Order Default Shipment'),
-            'description': _('Enable creation of default shipment with sales orders'),
-            'default': False,
-            'validator': bool,
-        },
-        'SALESORDER_EDIT_COMPLETED_ORDERS': {
-            'name': _('Edit Completed Sales Orders'),
-            'description': _(
-                'Allow editing of sales orders after they have been shipped or completed'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'PURCHASEORDER_REFERENCE_PATTERN': {
-            'name': _('Purchase Order Reference Pattern'),
-            'description': _(
-                'Required pattern for generating Purchase Order reference field'
-            ),
-            'default': 'PO-{ref:04d}',
-            'validator': order.validators.validate_purchase_order_reference_pattern,
-        },
-        'PURCHASEORDER_REQUIRE_RESPONSIBLE': {
-            'name': _('Require Responsible Owner'),
-            'description': _('A responsible owner must be assigned to each order'),
-            'default': False,
-            'validator': bool,
-        },
-        'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
-            'name': _('Edit Completed Purchase Orders'),
-            'description': _(
-                'Allow editing of purchase orders after they have been shipped or completed'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'PURCHASEORDER_AUTO_COMPLETE': {
-            'name': _('Auto Complete Purchase Orders'),
-            'description': _(
-                'Automatically mark purchase orders as complete when all line items are received'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        # login / SSO
-        'LOGIN_ENABLE_PWD_FORGOT': {
-            'name': _('Enable password forgot'),
-            'description': _('Enable password forgot function on the login pages'),
-            'default': True,
-            'validator': bool,
-        },
-        'LOGIN_ENABLE_REG': {
-            'name': _('Enable registration'),
-            'description': _('Enable self-registration for users on the login pages'),
-            'default': False,
-            'validator': bool,
-        },
-        'LOGIN_ENABLE_SSO': {
-            'name': _('Enable SSO'),
-            'description': _('Enable SSO on the login pages'),
-            'default': False,
-            'validator': bool,
-        },
-        'LOGIN_ENABLE_SSO_REG': {
-            'name': _('Enable SSO registration'),
-            'description': _(
-                'Enable self-registration via SSO for users on the login pages'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'LOGIN_MAIL_REQUIRED': {
-            'name': _('Email required'),
-            'description': _('Require user to supply mail on signup'),
-            'default': False,
-            'validator': bool,
-        },
-        'LOGIN_SIGNUP_SSO_AUTO': {
-            'name': _('Auto-fill SSO users'),
-            'description': _(
-                'Automatically fill out user-details from SSO account-data'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'LOGIN_SIGNUP_MAIL_TWICE': {
-            'name': _('Mail twice'),
-            'description': _('On signup ask users twice for their mail'),
-            'default': False,
-            'validator': bool,
-        },
-        'LOGIN_SIGNUP_PWD_TWICE': {
-            'name': _('Password twice'),
-            'description': _('On signup ask users twice for their password'),
-            'default': True,
-            'validator': bool,
-        },
-        'LOGIN_SIGNUP_MAIL_RESTRICTION': {
-            'name': _('Allowed domains'),
-            'description': _(
-                'Restrict signup to certain domains (comma-separated, starting with @)'
-            ),
-            'default': '',
-            'before_save': validate_email_domains,
-        },
-        'SIGNUP_GROUP': {
-            'name': _('Group on signup'),
-            'description': _('Group to which new users are assigned on registration'),
-            'default': '',
-            'choices': settings_group_options,
-        },
-        'LOGIN_ENFORCE_MFA': {
-            'name': _('Enforce MFA'),
-            'description': _('Users must use multifactor security.'),
-            'default': False,
-            'validator': bool,
-        },
-        'PLUGIN_ON_STARTUP': {
-            'name': _('Check plugins on startup'),
-            'description': _(
-                'Check that all plugins are installed on startup - enable in container environments'
-            ),
-            'default': str(os.getenv('INVENTREE_DOCKER', False)).lower()
-            in ['1', 'true'],
-            'validator': bool,
-            'requires_restart': True,
-        },
-        'PLUGIN_UPDATE_CHECK': {
-            'name': _('Check for plugin updates'),
-            'description': _('Enable periodic checks for updates to installed plugins'),
-            'default': True,
-            'validator': bool,
-        },
-        # Settings for plugin mixin features
-        'ENABLE_PLUGINS_URL': {
-            'name': _('Enable URL integration'),
-            'description': _('Enable plugins to add URL routes'),
-            'default': False,
-            'validator': bool,
-            'after_save': reload_plugin_registry,
-        },
-        'ENABLE_PLUGINS_NAVIGATION': {
-            'name': _('Enable navigation integration'),
-            'description': _('Enable plugins to integrate into navigation'),
-            'default': False,
-            'validator': bool,
-            'after_save': reload_plugin_registry,
-        },
-        'ENABLE_PLUGINS_APP': {
-            'name': _('Enable app integration'),
-            'description': _('Enable plugins to add apps'),
-            'default': False,
-            'validator': bool,
-            'after_save': reload_plugin_registry,
-        },
-        'ENABLE_PLUGINS_SCHEDULE': {
-            'name': _('Enable schedule integration'),
-            'description': _('Enable plugins to run scheduled tasks'),
-            'default': False,
-            'validator': bool,
-            'after_save': reload_plugin_registry,
-        },
-        'ENABLE_PLUGINS_EVENTS': {
-            'name': _('Enable event integration'),
-            'description': _('Enable plugins to respond to internal events'),
-            'default': False,
-            'validator': bool,
-            'after_save': reload_plugin_registry,
-        },
-        'PROJECT_CODES_ENABLED': {
-            'name': _('Enable project codes'),
-            'description': _('Enable project codes for tracking projects'),
-            'default': False,
-            'validator': bool,
-        },
-        'STOCKTAKE_ENABLE': {
-            'name': _('Stocktake Functionality'),
-            'description': _(
-                'Enable stocktake functionality for recording stock levels and calculating stock value'
-            ),
-            'validator': bool,
-            'default': False,
-        },
-        'STOCKTAKE_EXCLUDE_EXTERNAL': {
-            'name': _('Exclude External Locations'),
-            'description': _(
-                'Exclude stock items in external locations from stocktake calculations'
-            ),
-            'validator': bool,
-            'default': False,
-        },
-        'STOCKTAKE_AUTO_DAYS': {
-            'name': _('Automatic Stocktake Period'),
-            'description': _(
-                'Number of days between automatic stocktake recording (set to zero to disable)'
-            ),
-            'validator': [int, MinValueValidator(0)],
-            'default': 0,
-        },
-        'STOCKTAKE_DELETE_REPORT_DAYS': {
-            'name': _('Report Deletion Interval'),
-            'description': _(
-                'Stocktake reports will be deleted after specified number of days'
-            ),
-            'default': 30,
-            'units': _('days'),
-            'validator': [int, MinValueValidator(7)],
-        },
-        'DISPLAY_FULL_NAMES': {
-            'name': _('Display Users full names'),
-            'description': _('Display Users full names instead of usernames'),
-            'default': False,
-            'validator': bool,
-        },
-        'TEST_STATION_DATA': {
-            'name': _('Enable Test Station Data'),
-            'description': _('Enable test station data collection for test results'),
-            'default': False,
-            'validator': bool,
-        },
-    }
+    SETTINGS = SYSTEM_SETTINGS
 
     typ = 'inventree'
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=True,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=True, help_text=_('Settings key')
     )
 
     def to_native_value(self):
@@ -2089,19 +1185,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         return False
 
 
-def label_printer_options():
-    """Build a list of available label printer options."""
-    printers = []
-    label_printer_plugins = registry.with_mixin('labels')
-    if label_printer_plugins:
-        printers.extend([
-            (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
-        ])
-    return printers
-
-
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object with a user context."""
+
+    import common.setting.user
 
     CHECK_SETTING_KEY = True
 
@@ -2114,376 +1201,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
 
-    SETTINGS = {
-        'HOMEPAGE_HIDE_INACTIVE': {
-            'name': _('Hide inactive parts'),
-            'description': _(
-                'Hide inactive parts in results displayed on the homepage'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_PART_STARRED': {
-            'name': _('Show subscribed parts'),
-            'description': _('Show subscribed parts on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_CATEGORY_STARRED': {
-            'name': _('Show subscribed categories'),
-            'description': _('Show subscribed part categories on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_PART_LATEST': {
-            'name': _('Show latest parts'),
-            'description': _('Show latest parts on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
-            'name': _('Show invalid BOMs'),
-            'description': _('Show BOMs that await validation on the homepage'),
-            'default': False,
-            'validator': bool,
-        },
-        'HOMEPAGE_STOCK_RECENT': {
-            'name': _('Show recent stock changes'),
-            'description': _('Show recently changed stock items on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_STOCK_LOW': {
-            'name': _('Show low stock'),
-            'description': _('Show low stock items on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_SHOW_STOCK_DEPLETED': {
-            'name': _('Show depleted stock'),
-            'description': _('Show depleted stock items on the homepage'),
-            'default': False,
-            'validator': bool,
-        },
-        'HOMEPAGE_BUILD_STOCK_NEEDED': {
-            'name': _('Show needed stock'),
-            'description': _('Show stock items needed for builds on the homepage'),
-            'default': False,
-            'validator': bool,
-        },
-        'HOMEPAGE_STOCK_EXPIRED': {
-            'name': _('Show expired stock'),
-            'description': _('Show expired stock items on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_STOCK_STALE': {
-            'name': _('Show stale stock'),
-            'description': _('Show stale stock items on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_BUILD_PENDING': {
-            'name': _('Show pending builds'),
-            'description': _('Show pending builds on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_BUILD_OVERDUE': {
-            'name': _('Show overdue builds'),
-            'description': _('Show overdue builds on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_PO_OUTSTANDING': {
-            'name': _('Show outstanding POs'),
-            'description': _('Show outstanding POs on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_PO_OVERDUE': {
-            'name': _('Show overdue POs'),
-            'description': _('Show overdue POs on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_SO_OUTSTANDING': {
-            'name': _('Show outstanding SOs'),
-            'description': _('Show outstanding SOs on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_SO_OVERDUE': {
-            'name': _('Show overdue SOs'),
-            'description': _('Show overdue SOs on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_SO_SHIPMENTS_PENDING': {
-            'name': _('Show pending SO shipments'),
-            'description': _('Show pending SO shipments on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'HOMEPAGE_NEWS': {
-            'name': _('Show News'),
-            'description': _('Show news on the homepage'),
-            'default': False,
-            'validator': bool,
-        },
-        'LABEL_INLINE': {
-            'name': _('Inline label display'),
-            'description': _(
-                'Display PDF labels in the browser, instead of downloading as a file'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'LABEL_DEFAULT_PRINTER': {
-            'name': _('Default label printer'),
-            'description': _(
-                'Configure which label printer should be selected by default'
-            ),
-            'default': '',
-            'choices': label_printer_options,
-        },
-        'REPORT_INLINE': {
-            'name': _('Inline report display'),
-            'description': _(
-                'Display PDF reports in the browser, instead of downloading as a file'
-            ),
-            'default': False,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_PARTS': {
-            'name': _('Search Parts'),
-            'description': _('Display parts in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
-            'name': _('Search Supplier Parts'),
-            'description': _('Display supplier parts in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS': {
-            'name': _('Search Manufacturer Parts'),
-            'description': _('Display manufacturer parts in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_HIDE_INACTIVE_PARTS': {
-            'name': _('Hide Inactive Parts'),
-            'description': _('Excluded inactive parts from search preview window'),
-            'default': False,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_CATEGORIES': {
-            'name': _('Search Categories'),
-            'description': _('Display part categories in search preview window'),
-            'default': False,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_STOCK': {
-            'name': _('Search Stock'),
-            'description': _('Display stock items in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK': {
-            'name': _('Hide Unavailable Stock Items'),
-            'description': _(
-                'Exclude stock items which are not available from the search preview window'
-            ),
-            'validator': bool,
-            'default': False,
-        },
-        'SEARCH_PREVIEW_SHOW_LOCATIONS': {
-            'name': _('Search Locations'),
-            'description': _('Display stock locations in search preview window'),
-            'default': False,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_COMPANIES': {
-            'name': _('Search Companies'),
-            'description': _('Display companies in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_BUILD_ORDERS': {
-            'name': _('Search Build Orders'),
-            'description': _('Display build orders in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS': {
-            'name': _('Search Purchase Orders'),
-            'description': _('Display purchase orders in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS': {
-            'name': _('Exclude Inactive Purchase Orders'),
-            'description': _(
-                'Exclude inactive purchase orders from search preview window'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
-            'name': _('Search Sales Orders'),
-            'description': _('Display sales orders in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
-            'name': _('Exclude Inactive Sales Orders'),
-            'description': _(
-                'Exclude inactive sales orders from search preview window'
-            ),
-            'validator': bool,
-            'default': True,
-        },
-        'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
-            'name': _('Search Return Orders'),
-            'description': _('Display return orders in search preview window'),
-            'default': True,
-            'validator': bool,
-        },
-        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS': {
-            'name': _('Exclude Inactive Return Orders'),
-            'description': _(
-                'Exclude inactive return orders from search preview window'
-            ),
-            'validator': bool,
-            'default': True,
-        },
-        'SEARCH_PREVIEW_RESULTS': {
-            'name': _('Search Preview Results'),
-            'description': _(
-                'Number of results to show in each section of the search preview window'
-            ),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)],
-        },
-        'SEARCH_REGEX': {
-            'name': _('Regex Search'),
-            'description': _('Enable regular expressions in search queries'),
-            'default': False,
-            'validator': bool,
-        },
-        'SEARCH_WHOLE': {
-            'name': _('Whole Word Search'),
-            'description': _('Search queries return results for whole word matches'),
-            'default': False,
-            'validator': bool,
-        },
-        'PART_SHOW_QUANTITY_IN_FORMS': {
-            'name': _('Show Quantity in Forms'),
-            'description': _('Display available part quantity in some forms'),
-            'default': True,
-            'validator': bool,
-        },
-        'FORMS_CLOSE_USING_ESCAPE': {
-            'name': _('Escape Key Closes Forms'),
-            'description': _('Use the escape key to close modal forms'),
-            'default': False,
-            'validator': bool,
-        },
-        'STICKY_HEADER': {
-            'name': _('Fixed Navbar'),
-            'description': _('The navbar position is fixed to the top of the screen'),
-            'default': False,
-            'validator': bool,
-        },
-        'DATE_DISPLAY_FORMAT': {
-            'name': _('Date Format'),
-            'description': _('Preferred format for displaying dates'),
-            'default': 'YYYY-MM-DD',
-            'choices': [
-                ('YYYY-MM-DD', '2022-02-22'),
-                ('YYYY/MM/DD', '2022/22/22'),
-                ('DD-MM-YYYY', '22-02-2022'),
-                ('DD/MM/YYYY', '22/02/2022'),
-                ('MM-DD-YYYY', '02-22-2022'),
-                ('MM/DD/YYYY', '02/22/2022'),
-                ('MMM DD YYYY', 'Feb 22 2022'),
-            ],
-        },
-        'DISPLAY_SCHEDULE_TAB': {
-            'name': _('Part Scheduling'),
-            'description': _('Display part scheduling information'),
-            'default': True,
-            'validator': bool,
-        },
-        'DISPLAY_STOCKTAKE_TAB': {
-            'name': _('Part Stocktake'),
-            'description': _(
-                'Display part stocktake information (if stocktake functionality is enabled)'
-            ),
-            'default': True,
-            'validator': bool,
-        },
-        'TABLE_STRING_MAX_LENGTH': {
-            'name': _('Table String Length'),
-            'description': _(
-                'Maximum length limit for strings displayed in table views'
-            ),
-            'validator': [int, MinValueValidator(0)],
-            'default': 100,
-        },
-        'DEFAULT_PART_LABEL_TEMPLATE': {
-            'name': _('Default part label template'),
-            'description': _('The part label template to be automatically selected'),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_ITEM_LABEL_TEMPLATE': {
-            'name': _('Default stock item template'),
-            'description': _(
-                'The stock item label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
-            'name': _('Default stock location label template'),
-            'description': _(
-                'The stock location label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LINE_LABEL_TEMPLATE': {
-            'name': _('Default build line label template'),
-            'description': _(
-                'The build line label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'NOTIFICATION_ERROR_REPORT': {
-            'name': _('Receive error reports'),
-            'description': _('Receive notifications for system errors'),
-            'default': True,
-            'validator': bool,
-        },
-        'LAST_USED_PRINTING_MACHINES': {
-            'name': _('Last used printing machines'),
-            'description': _('Save the last used printing machines for a user'),
-            'default': '',
-        },
-    }
+    SETTINGS = common.setting.user.USER_SETTINGS
 
     typ = 'user'
     extra_unique_fields = ['user']
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     user = models.ForeignKey(
@@ -2542,126 +1266,6 @@ class PriceBreak(MetaMixin):
             return self.price.amount
 
         return converted.amount
-
-
-def get_price(
-    instance,
-    quantity,
-    moq=True,
-    multiples=True,
-    currency=None,
-    break_name: str = 'price_breaks',
-):
-    """Calculate the price based on quantity price breaks.
-
-    - Don't forget to add in flat-fee cost (base_cost field)
-    - If MOQ (minimum order quantity) is required, bump quantity
-    - If order multiples are to be observed, then we need to calculate based on that, too
-    """
-    from common.settings import currency_code_default
-
-    if hasattr(instance, break_name):
-        price_breaks = getattr(instance, break_name).all()
-    else:
-        price_breaks = []
-
-    # No price break information available?
-    if len(price_breaks) == 0:
-        return None
-
-    # Check if quantity is fraction and disable multiples
-    multiples = quantity % 1 == 0
-
-    # Order multiples
-    if multiples:
-        quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
-
-    pb_found = False
-    pb_quantity = -1
-    pb_cost = 0.0
-
-    if currency is None:
-        # Default currency selection
-        currency = currency_code_default()
-
-    pb_min = None
-    for pb in price_breaks:
-        # Store smallest price break
-        if not pb_min:
-            pb_min = pb
-
-        # Ignore this pricebreak (quantity is too high)
-        if pb.quantity > quantity:
-            continue
-
-        pb_found = True
-
-        # If this price-break quantity is the largest so far, use it!
-        if pb.quantity > pb_quantity:
-            pb_quantity = pb.quantity
-
-            # Convert everything to the selected currency
-            pb_cost = pb.convert_to(currency)
-
-    # Use smallest price break
-    if not pb_found and pb_min:
-        # Update price break information
-        pb_quantity = pb_min.quantity
-        pb_cost = pb_min.convert_to(currency)
-        # Trigger cost calculation using smallest price break
-        pb_found = True
-
-    # Convert quantity to decimal.Decimal format
-    quantity = decimal.Decimal(f'{quantity}')
-
-    if pb_found:
-        cost = pb_cost * quantity
-        return InvenTree.helpers.normalize(cost + instance.base_cost)
-    return None
-
-
-class ColorTheme(models.Model):
-    """Color Theme Setting."""
-
-    name = models.CharField(max_length=20, default='', blank=True)
-
-    user = models.CharField(max_length=150, unique=True)
-
-    @classmethod
-    def get_color_themes_choices(cls):
-        """Get all color themes from static folder."""
-        if not settings.STATIC_COLOR_THEMES_DIR.exists():
-            logger.error('Theme directory does not exist')
-            return []
-
-        # Get files list from css/color-themes/ folder
-        files_list = []
-
-        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
-            files_list.append([file.stem, file.suffix])
-
-        # Get color themes choices (CSS sheets)
-        choices = [
-            (file_name.lower(), _(file_name.replace('-', ' ').title()))
-            for file_name, file_ext in files_list
-            if file_ext == '.css'
-        ]
-
-        return choices
-
-    @classmethod
-    def is_valid_choice(cls, user_color_theme):
-        """Check if color theme is valid choice."""
-        try:
-            user_color_theme_name = user_color_theme.name
-        except AttributeError:
-            return False
-
-        for color_theme in cls.get_color_themes_choices():
-            if user_color_theme_name == color_theme[0]:
-                return True
-
-        return False
 
 
 class VerificationMethod(Enum):
@@ -2988,7 +1592,7 @@ class NotificationMessage(models.Model):
         # Add timezone information if TZ is enabled (in production mode mostly)
         delta = now() - (
             self.creation.replace(tzinfo=timezone.utc)
-            if settings.USE_TZ
+            if django_settings.USE_TZ
             else self.creation
         )
         return delta.seconds
@@ -3037,7 +1641,7 @@ def rename_notes_image(instance, filename):
 class NotesImage(models.Model):
     """Model for storing uploading images for the 'notes' fields of various models.
 
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
     """
 
     image = models.ImageField(
@@ -3047,6 +1651,21 @@ class NotesImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
+
+    model_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        validators=[common.validators.validate_notes_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.IntegerField(
+        help_text=_('Target model ID for this image'),
+        blank=True,
+        null=True,
+        default=None,
+    )
 
 
 class CustomUnit(models.Model):
@@ -3061,6 +1680,11 @@ class CustomUnit(models.Model):
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
 
+    class Meta:
+        """Class meta options."""
+
+        verbose_name = _('Custom Unit')
+
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""
         fmt = f'{self.name} = {self.definition}'
@@ -3069,6 +1693,15 @@ class CustomUnit(models.Model):
             fmt += f' = {self.symbol}'
 
         return fmt
+
+    def validate_unique(self, exclude=None) -> None:
+        """Ensure that the custom unit is unique."""
+        super().validate_unique(exclude)
+
+        if self.symbol and (
+            CustomUnit.objects.filter(symbol=self.symbol).exclude(pk=self.pk).exists()
+        ):
+            raise ValidationError({'symbol': _('Unit symbol must be unique')})
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid."""
@@ -3111,7 +1744,6 @@ class CustomUnit(models.Model):
         max_length=10,
         verbose_name=_('Symbol'),
         help_text=_('Optional unit symbol'),
-        unique=True,
         blank=True,
     )
 
@@ -3131,3 +1763,552 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
+
+
+def rename_attachment(instance, filename):
+    """Callback function to rename an uploaded attachment file.
+
+    Arguments:
+        - instance: The Attachment instance
+        - filename: The original filename of the uploaded file
+
+    Returns:
+        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
+    """
+    # Remove any illegal characters from the filename
+    illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
+
+    for c in illegal_chars:
+        filename = filename.replace(c, '')
+
+    filename = os.path.basename(filename)
+
+    # Generate a new filename for the attachment
+    return os.path.join(
+        'attachments', str(instance.model_type), str(instance.model_id), filename
+    )
+
+
+class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class which represents an uploaded file attachment.
+
+    An attachment can be either an uploaded file, or an external URL.
+
+    Attributes:
+        attachment: The uploaded file
+        url: An external URL
+        comment: A comment or description for the attachment
+        user: The user who uploaded the attachment
+        upload_date: The date the attachment was uploaded
+        file_size: The size of the uploaded file
+        metadata: Arbitrary metadata for the attachment (inherit from MetadataMixin)
+        tags: Tags for the attachment
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        verbose_name = _('Attachment')
+
+    def save(self, *args, **kwargs):
+        """Custom 'save' method for the Attachment model.
+
+        - Record the file size of the uploaded attachment (if applicable)
+        - Ensure that the 'content_type' and 'object_id' fields are set
+        - Run extra validations
+        """
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        if self.attachment:
+            if self.attachment.name.lower().endswith('.svg'):
+                self.attachment.file.file = self.clean_svg(self.attachment)
+        else:
+            self.file_size = 0
+
+        super().save(*args, **kwargs)
+
+        # Update file size
+        if self.file_size == 0 and self.attachment:
+            # Get file size
+            if default_storage.exists(self.attachment.name):
+                try:
+                    self.file_size = default_storage.size(self.attachment.name)
+                except Exception:
+                    pass
+
+            if self.file_size != 0:
+                super().save()
+
+    def clean_svg(self, field):
+        """Sanitize SVG file before saving."""
+        cleaned = sanitize_svg(field.file.read())
+        return BytesIO(bytes(cleaned, 'utf8'))
+
+    def __str__(self):
+        """Human name for attachment."""
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        return str(self.link)
+
+    model_type = models.CharField(
+        max_length=100,
+        validators=[common.validators.validate_attachment_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.PositiveIntegerField()
+
+    attachment = models.FileField(
+        upload_to=rename_attachment,
+        verbose_name=_('Attachment'),
+        help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
+    )
+
+    link = InvenTree.fields.InvenTreeURLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL'),
+        max_length=2000,
+    )
+
+    comment = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Comment'),
+        help_text=_('Attachment comment'),
+    )
+
+    upload_user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    upload_date = models.DateField(
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name=_('Upload date'),
+        help_text=_('Date the file was uploaded'),
+    )
+
+    file_size = models.PositiveIntegerField(
+        default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
+    )
+
+    tags = TaggableManager(blank=True)
+
+    @property
+    def basename(self):
+        """Base name/path for attachment."""
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        return None
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            import InvenTree.helpers_model
+
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this attachment."""
+        from InvenTree.models import InvenTreeAttachmentMixin
+
+        model_class = common.validators.attachment_model_class_from_label(
+            self.model_type
+        )
+
+        if not issubclass(model_class, InvenTreeAttachmentMixin):
+            raise ValidationError(_('Invalid model type specified for attachment'))
+
+        return model_class.check_attachment_permission(permission, user)
+
+
+class InvenTreeCustomUserStateModel(models.Model):
+    """Custom model to extends any registered state with extra custom, user defined states.
+
+    Fields:
+        reference_status: Status set that is extended with this custom state
+        logical_key: State logical key that is equal to this custom state in business logic
+        key: Numerical value that will be saved in the models database
+        name: Name of the state (must be uppercase and a valid variable identifier)
+        label: Label that will be displayed in the frontend (human readable)
+        color: Color that will be displayed in the frontend
+
+    """
+
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        verbose_name = _('Custom State')
+        verbose_name_plural = _('Custom States')
+        unique_together = [('reference_status', 'key'), ('reference_status', 'name')]
+
+    reference_status = models.CharField(
+        max_length=250,
+        verbose_name=_('Reference Status Set'),
+        help_text=_('Status set that is extended with this custom state'),
+    )
+
+    logical_key = models.IntegerField(
+        verbose_name=_('Logical Key'),
+        help_text=_(
+            'State logical key that is equal to this custom state in business logic'
+        ),
+    )
+
+    key = models.IntegerField(
+        verbose_name=_('Value'),
+        help_text=_('Numerical value that will be saved in the models database'),
+    )
+
+    name = models.CharField(
+        max_length=250,
+        verbose_name=_('Name'),
+        help_text=_('Name of the state'),
+        validators=[
+            common.validators.validate_uppercase,
+            common.validators.validate_variable_string,
+        ],
+    )
+
+    label = models.CharField(
+        max_length=250,
+        verbose_name=_('Label'),
+        help_text=_('Label that will be displayed in the frontend'),
+    )
+
+    color = models.CharField(
+        max_length=10,
+        choices=state_color_mappings(),
+        default=ColorEnum.secondary.value,
+        verbose_name=_('Color'),
+        help_text=_('Color that will be displayed in the frontend'),
+    )
+
+    model = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('Model'),
+        help_text=_('Model this state is associated with'),
+    )
+
+    def __str__(self) -> str:
+        """Return string representation of the custom state."""
+        return f'{self.model.name} ({self.reference_status}): {self.name} | {self.key} ({self.logical_key})'
+
+    def save(self, *args, **kwargs) -> None:
+        """Ensure that the custom state is valid before saving."""
+        self.clean()
+        return super().save(*args, **kwargs)
+
+    def clean(self) -> None:
+        """Validate custom state data."""
+        if self.model is None:
+            raise ValidationError({'model': _('Model must be selected')})
+
+        if self.key is None:
+            raise ValidationError({'key': _('Key must be selected')})
+
+        if self.logical_key is None:
+            raise ValidationError({'logical_key': _('Logical key must be selected')})
+
+        # Ensure that the key is not the same as the logical key
+        if self.key == self.logical_key:
+            raise ValidationError({'key': _('Key must be different from logical key')})
+
+        # Check against the reference status class
+        status_class = self.get_status_class()
+
+        if not status_class:
+            raise ValidationError({
+                'reference_status': _('Valid reference status class must be provided')
+            })
+
+        if self.key in status_class.values():
+            raise ValidationError({
+                'key': _(
+                    'Key must be different from the logical keys of the reference status'
+                )
+            })
+
+        if self.logical_key not in status_class.values():
+            raise ValidationError({
+                'logical_key': _(
+                    'Logical key must be in the logical keys of the reference status'
+                )
+            })
+
+        if self.name in status_class.names():
+            raise ValidationError({
+                'name': _(
+                    'Name must be different from the names of the reference status'
+                )
+            })
+
+        return super().clean()
+
+    def get_status_class(self):
+        """Return the appropriate status class for this custom state."""
+        from generic.states import StatusCode
+        from InvenTree.helpers import inheritors
+
+        if not self.reference_status:
+            return None
+
+        # Return the first class that matches the reference status
+        for cls in inheritors(StatusCode):
+            if cls.__name__ == self.reference_status:
+                return cls
+
+
+class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class which represents a list of selectable items for parameters.
+
+    A lists selection options can be either manually defined, or sourced from a plugin.
+
+    Attributes:
+        name: The name of the selection list
+        description: A description of the selection list
+        locked: Is this selection list locked (i.e. cannot be modified)?
+        active: Is this selection list active?
+        source_plugin: The plugin which provides the selection list
+        source_string: The string representation of the selection list
+        default: The default value for the selection list
+        created: The date/time that the selection list was created
+        last_updated: The date/time that the selection list was last updated
+    """
+
+    class Meta:
+        """Meta options for SelectionList."""
+
+        verbose_name = _('Selection List')
+        verbose_name_plural = _('Selection Lists')
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Name of the selection list'),
+        unique=True,
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description of the selection list'),
+        blank=True,
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Is this selection list locked?'),
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Can this selection list be used?'),
+    )
+
+    source_plugin = models.ForeignKey(
+        'plugin.PluginConfig',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Source Plugin'),
+        help_text=_('Plugin which provides the selection list'),
+    )
+
+    source_string = models.CharField(
+        max_length=1000,
+        verbose_name=_('Source String'),
+        help_text=_('Optional string identifying the source used for this list'),
+        blank=True,
+    )
+
+    default = models.ForeignKey(
+        'SelectionListEntry',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Default Entry'),
+        help_text=_('Default entry for this selection list'),
+    )
+
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the selection list was created'),
+    )
+
+    last_updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Last Updated'),
+        help_text=_('Date and time that the selection list was last updated'),
+    )
+
+    def __str__(self):
+        """Return string representation of the selection list."""
+        if not self.active:
+            return f'{self.name} (Inactive)'
+        return self.name
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the SelectionList model."""
+        return reverse('api-selectionlist-list')
+
+    def get_choices(self):
+        """Return the choices for the selection list."""
+        choices = self.entries.filter(active=True)
+        return [c.value for c in choices]
+
+
+class SelectionListEntry(models.Model):
+    """Class which represents a single entry in a SelectionList.
+
+    Attributes:
+        list: The SelectionList to which this entry belongs
+        value: The value of the selection list entry
+        label: The label for the selection list entry
+        description: A description of the selection list entry
+        active: Is this selection list entry active?
+    """
+
+    class Meta:
+        """Meta options for SelectionListEntry."""
+
+        verbose_name = _('Selection List Entry')
+        verbose_name_plural = _('Selection List Entries')
+        unique_together = [['list', 'value']]
+
+    list = models.ForeignKey(
+        SelectionList,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='entries',
+        verbose_name=_('Selection List'),
+        help_text=_('Selection list to which this entry belongs'),
+    )
+
+    value = models.CharField(
+        max_length=255,
+        verbose_name=_('Value'),
+        help_text=_('Value of the selection list entry'),
+    )
+
+    label = models.CharField(
+        max_length=255,
+        verbose_name=_('Label'),
+        help_text=_('Label for the selection list entry'),
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description of the selection list entry'),
+        blank=True,
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this selection list entry active?'),
+    )
+
+    def __str__(self):
+        """Return string representation of the selection list entry."""
+        if not self.active:
+            return f'{self.label} (Inactive)'
+        return self.label
+
+
+class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+    """Model for storing barcode scans results."""
+
+    BARCODE_SCAN_MAX_LEN = 250
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Barcode Scan')
+
+    data = models.CharField(
+        max_length=BARCODE_SCAN_MAX_LEN,
+        verbose_name=_('Data'),
+        help_text=_('Barcode data'),
+        blank=False,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User who scanned the barcode'),
+    )
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Timestamp'),
+        help_text=_('Date and time of the barcode scan'),
+    )
+
+    endpoint = models.CharField(
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('URL endpoint which processed the barcode'),
+        blank=True,
+        null=True,
+    )
+
+    context = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Context'),
+        help_text=_('Context data for the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    response = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Response'),
+        help_text=_('Response data from the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    result = models.BooleanField(
+        verbose_name=_('Result'),
+        help_text=_('Was the barcode scan successful?'),
+        default=False,
+    )

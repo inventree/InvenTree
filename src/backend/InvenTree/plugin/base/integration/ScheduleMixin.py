@@ -1,13 +1,14 @@
 """Plugin mixin class for ScheduleMixin."""
 
-import logging
-
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 
+import structlog
+
+from common.settings import get_global_setting
 from plugin.helpers import MixinImplementationError
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class ScheduleMixin:
@@ -60,14 +61,10 @@ class ScheduleMixin:
         """Activate schedules from plugins with the ScheduleMixin."""
         logger.debug('Activating plugin tasks')
 
-        from common.models import InvenTreeSetting
-
         # List of tasks we have activated
         task_keys = []
 
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
-            'ENABLE_PLUGINS_SCHEDULE'
-        ):
+        if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_SCHEDULE'):
             for _key, plugin in plugins:
                 if plugin.mixin_enabled('schedule') and plugin.is_active():
                     # Only active tasks for plugins which are enabled
@@ -151,7 +148,7 @@ class ScheduleMixin:
     def get_task_names(self):
         """All defined task names."""
         # Returns a list of all task names associated with this plugin instance
-        return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
+        return [self.get_task_name(key) for key in self.scheduled_tasks]
 
     def register_tasks(self):
         """Register the tasks with the database."""
@@ -203,7 +200,7 @@ class ScheduleMixin:
         try:
             from django_q.models import Schedule
 
-            for key, _ in self.scheduled_tasks.items():
+            for key in self.scheduled_tasks:
                 task_name = self.get_task_name(key)
 
                 try:

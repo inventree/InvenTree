@@ -1,23 +1,34 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
-import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-
-import { api } from '../../App';
-import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
-  addAttachment,
-  deleteAttachment,
-  editAttachment
-} from '../../forms/AttachmentForms';
+  IconExternalLink,
+  IconFileUpload,
+  IconUpload,
+  IconX
+} from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+
+import { ActionButton } from '../../components/buttons/ActionButton';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { useApi } from '../../contexts/ApiContext';
+import { formatFileSize } from '../../defaults/formatters';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import type { ModelType } from '../../enums/ModelType';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import { useUserState } from '../../states/UserState';
+import type { TableColumn } from '../Column';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Define set of columns to display for the attachment table
@@ -29,7 +40,7 @@ function attachmentTableColumns(): TableColumn[] {
       sortable: false,
       switchable: false,
       noWrap: true,
-      render: function (record: any) {
+      render: (record: any) => {
         if (record.attachment) {
           return <AttachmentLink attachment={record.attachment} />;
         } else if (record.link) {
@@ -37,13 +48,14 @@ function attachmentTableColumns(): TableColumn[] {
         } else {
           return '-';
         }
-      }
+      },
+      noContext: true
     },
     {
       accessor: 'comment',
       sortable: false,
 
-      render: function (record: any) {
+      render: (record: any) => {
         return record.comment;
       }
     },
@@ -51,15 +63,27 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'upload_date',
       sortable: true,
 
-      render: function (record: any) {
+      render: (record: any) => {
         return (
-          <Group justify="space-between">
+          <Group justify='space-between'>
             <Text>{record.upload_date}</Text>
             {record.user_detail && (
-              <Badge size="xs">{record.user_detail.username}</Badge>
+              <Badge size='xs'>{record.user_detail.username}</Badge>
             )}
           </Group>
         );
+      }
+    },
+    {
+      accessor: 'file_size',
+      sortable: true,
+      switchable: true,
+      render: (record: any) => {
+        if (!record.attachment) {
+          return '-';
+        } else {
+          return formatFileSize(record.file_size);
+        }
       }
     }
   ];
@@ -69,93 +93,47 @@ function attachmentTableColumns(): TableColumn[] {
  * Construct a table for displaying uploaded attachments
  */
 export function AttachmentTable({
-  endpoint,
-  model,
-  pk
-}: {
-  endpoint: ApiEndpoints;
-  pk: number;
-  model: string;
-}): ReactNode {
-  const table = useTable(`${model}-attachments`);
+  model_type,
+  model_id
+}: Readonly<{
+  model_type: ModelType;
+  model_id: number;
+}>): ReactNode {
+  const api = useApi();
+  const user = useUserState();
+  const table = useTable(`${model_type}-attachments`);
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
-  const [allowEdit, setAllowEdit] = useState<boolean>(false);
-  const [allowDelete, setAllowDelete] = useState<boolean>(false);
+  const url = apiUrl(ApiEndpoints.attachment_list);
 
-  const url = useMemo(() => apiUrl(endpoint), [endpoint]);
+  const validPk = useMemo(() => model_id > 0, [model_id]);
 
-  const validPk = useMemo(() => pk > 0, [pk]);
-
-  // Determine which permissions are available for this URL
-  useEffect(() => {
-    api
-      .options(url)
-      .then((response) => {
-        let actions: any = response.data?.actions ?? {};
-
-        setAllowEdit('POST' in actions);
-        setAllowDelete('DELETE' in actions);
-
-        return response;
-      })
-      .catch((error) => {
-        return error;
-      });
-  }, []);
-
-  // Construct row actions for the attachment table
-  const rowActions = useCallback(
-    (record: any) => {
-      let actions: RowAction[] = [];
-
-      if (allowEdit) {
-        actions.push(
-          RowEditAction({
-            onClick: () => {
-              editAttachment({
-                endpoint: endpoint,
-                model: model,
-                pk: record.pk,
-                attachmentType: record.attachment ? 'file' : 'link',
-                callback: (record: any) => {
-                  table.updateRecord(record);
-                }
-              });
-            }
-          })
-        );
-      }
-
-      if (allowDelete) {
-        actions.push(
-          RowDeleteAction({
-            onClick: () => {
-              deleteAttachment({
-                endpoint: endpoint,
-                pk: record.pk,
-                callback: table.refreshTable
-              });
-            }
-          })
-        );
-      }
-
-      return actions;
-    },
-    [allowEdit, allowDelete]
+  const canDelete = useMemo(
+    () => user.hasDeletePermission(model_type),
+    [user, model_type]
   );
+
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  const allowDragAndDrop: boolean = useMemo(() => {
+    return user.hasAddPermission(model_type);
+  }, [user, model_type]);
 
   // Callback to upload file attachment(s)
   function uploadFiles(files: File[]) {
     files.forEach((file) => {
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('attachment', file);
-      formData.append(model, pk.toString());
+      formData.append('model_type', model_type);
+      formData.append('model_id', model_id.toString());
+
+      setIsUploading(true);
 
       api
-        .post(url, formData)
+        .post(url, formData, {
+          timeout: 30 * 1000
+        })
         .then((response) => {
           notifications.show({
             title: t`File uploaded`,
@@ -175,87 +153,203 @@ export function AttachmentTable({
             color: 'red'
           });
           return error;
+        })
+        .finally(() => {
+          setIsUploading(false);
         });
     });
   }
 
-  const tableActions: ReactNode[] = useMemo(() => {
-    let actions = [];
+  const [attachmentType, setAttachmentType] = useState<'attachment' | 'link'>(
+    'attachment'
+  );
 
-    if (allowEdit) {
-      actions.push(
-        <Tooltip label={t`Add attachment`} key="attachment-add">
-          <ActionIcon
-            radius="sm"
-            onClick={() => {
-              addAttachment({
-                endpoint: endpoint,
-                model: model,
-                pk: pk,
-                attachmentType: 'file',
-                callback: table.refreshTable
-              });
-            }}
-            variant="transparent"
-          >
-            <IconFileUpload />
-          </ActionIcon>
-        </Tooltip>
-      );
+  const [selectedAttachment, setSelectedAttachment] = useState<
+    number | undefined
+  >(undefined);
 
-      actions.push(
-        <Tooltip label={t`Add external link`} key="link-add">
-          <ActionIcon
-            radius="sm"
-            onClick={() => {
-              addAttachment({
-                endpoint: endpoint,
-                model: model,
-                pk: pk,
-                attachmentType: 'link',
-                callback: table.refreshTable
-              });
-            }}
-            variant="transparent"
-          >
-            <IconExternalLink />
-          </ActionIcon>
-        </Tooltip>
-      );
+  const uploadFields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      model_type: {
+        value: model_type,
+        hidden: true
+      },
+      model_id: {
+        value: model_id,
+        hidden: true
+      },
+      attachment: {},
+      link: {},
+      comment: {}
+    };
+
+    if (attachmentType != 'link') {
+      delete fields['link'];
     }
 
-    return actions;
-  }, [allowEdit]);
+    // Remove the 'attachment' field if we are editing an existing attachment, or uploading a link
+    if (attachmentType != 'attachment' || !!selectedAttachment) {
+      delete fields['attachment'];
+    }
+
+    return fields;
+  }, [model_type, model_id, attachmentType, selectedAttachment]);
+
+  const uploadAttachment = useCreateApiFormModal({
+    url: url,
+    title: t`Upload Attachment`,
+    fields: uploadFields,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const editAttachment = useEditApiFormModal({
+    url: url,
+    pk: selectedAttachment,
+    title: t`Edit Attachment`,
+    fields: uploadFields,
+    onFormSuccess: (record: any) => {
+      if (record.pk) {
+        table.updateRecord(record);
+      } else {
+        table.refreshTable();
+      }
+    }
+  });
+
+  const deleteAttachment = useDeleteApiFormModal({
+    url: url,
+    pk: selectedAttachment,
+    title: t`Delete Attachment`,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'is_link',
+        label: t`Is Link`,
+        description: t`Show link attachments`
+      },
+      {
+        name: 'is_file',
+        label: t`Is File`,
+        description: t`Show file attachments`
+      }
+    ];
+  }, []);
+
+  const tableActions: ReactNode[] = useMemo(() => {
+    return [
+      <ActionButton
+        key='add-attachment'
+        tooltip={t`Add attachment`}
+        hidden={!user.hasAddPermission(model_type)}
+        icon={<IconFileUpload />}
+        onClick={() => {
+          setAttachmentType('attachment');
+          setSelectedAttachment(undefined);
+          uploadAttachment.open();
+        }}
+      />,
+      <ActionButton
+        key='add-external-link'
+        tooltip={t`Add external link`}
+        hidden={!user.hasAddPermission(model_type)}
+        icon={<IconExternalLink />}
+        onClick={() => {
+          setAttachmentType('link');
+          setSelectedAttachment(undefined);
+          uploadAttachment.open();
+        }}
+      />
+    ];
+  }, [user, model_type]);
+
+  // Construct row actions for the attachment table
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowEditAction({
+          hidden: !user.hasChangePermission(model_type),
+          onClick: () => {
+            setSelectedAttachment(record.pk);
+            editAttachment.open();
+          }
+        }),
+        RowDeleteAction({
+          hidden: !canDelete,
+          onClick: () => {
+            setSelectedAttachment(record.pk);
+            deleteAttachment.open();
+          }
+        })
+      ];
+    },
+    [user, model_type]
+  );
 
   return (
-    <Stack gap="xs">
-      {pk && pk > 0 && (
-        <InvenTreeTable
-          key="attachment-table"
-          url={url}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            noRecordsText: t`No attachments found`,
-            enableSelection: true,
-            tableActions: tableActions,
-            rowActions: allowEdit && allowDelete ? rowActions : undefined,
-            params: {
-              [model]: pk
-            }
-          }}
-        />
-      )}
-      {allowEdit && validPk && (
-        <Dropzone onDrop={uploadFiles} key="attachment-dropzone">
-          <Dropzone.Idle>
-            <Group justify="center">
-              <IconFileUpload size={24} />
-              <Text size="sm">{t`Upload attachment`}</Text>
-            </Group>
-          </Dropzone.Idle>
-        </Dropzone>
-      )}
-    </Stack>
+    <>
+      {uploadAttachment.modal}
+      {editAttachment.modal}
+      {deleteAttachment.modal}
+      <Stack gap='xs'>
+        {validPk && (
+          <InvenTreeTable
+            key='attachment-table'
+            url={url}
+            tableState={table}
+            columns={tableColumns}
+            props={{
+              noRecordsText: t`No attachments found`,
+              enableSelection: canDelete,
+              enableBulkDelete: canDelete,
+              tableActions: tableActions,
+              tableFilters: tableFilters,
+              rowActions: rowActions,
+              params: {
+                model_type: model_type,
+                model_id: model_id
+              }
+            }}
+          />
+        )}
+        {allowDragAndDrop && validPk && (
+          <Paper p='md' shadow='xs' radius='md'>
+            <Dropzone
+              onDrop={uploadFiles}
+              loading={isUploading}
+              key='attachment-dropzone'
+            >
+              <Group justify='center' gap='lg' mih={100}>
+                <Dropzone.Accept>
+                  <IconUpload
+                    style={{ color: 'var(--mantine-color-blue-6)' }}
+                    stroke={1.5}
+                  />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX
+                    style={{ color: 'var(--mantine-color-red-6)' }}
+                    stroke={1.5}
+                  />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconUpload
+                    style={{ color: 'var(--mantine-color-dimmed)' }}
+                    stroke={1.5}
+                  />
+                </Dropzone.Idle>
+                <Text size='sm'>{t`Drag attachment file here to upload`}</Text>
+              </Group>
+            </Dropzone>
+          </Paper>
+        )}
+      </Stack>
+    </>
   );
 }

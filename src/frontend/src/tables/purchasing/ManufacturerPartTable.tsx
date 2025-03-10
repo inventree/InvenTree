@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -7,20 +7,25 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /*
  * Construct a table listing manufacturer parts
  */
-export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
+export function ManufacturerPartTable({
+  params
+}: Readonly<{ params: any }>): ReactNode {
   const table = useTable('manufacturerparts');
 
   const user = useUserState();
@@ -32,13 +37,13 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         accessor: 'part',
         switchable: 'part' in params,
         sortable: true,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'manufacturer',
         sortable: true,
         render: (record: any) => {
-          let manufacturer = record?.manufacturer_detail ?? {};
+          const manufacturer = record?.manufacturer_detail ?? {};
 
           return (
             <Thumbnail
@@ -58,23 +63,46 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [params]);
 
+  const manufacturerPartFields = useManufacturerPartFields();
+
+  const [selectedPart, setSelectedPart] = useState<number | undefined>(
+    undefined
+  );
+
   const createManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`Add Manufacturer Part`,
-    fields: useManufacturerPartFields(),
-    onFormSuccess: table.refreshTable,
+    fields: manufacturerPartFields,
+    table: table,
     initialData: {
-      manufacturer: params?.manufacturer
+      manufacturer: params?.manufacturer,
+      part: params?.part
     }
   });
 
+  const editManufacturerPart = useEditApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    pk: selectedPart,
+    title: t`Edit Manufacturer Part`,
+    fields: manufacturerPartFields,
+    table: table
+  });
+
+  const deleteManufacturerPart = useDeleteApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    pk: selectedPart,
+    title: t`Delete Manufacturer Part`,
+    table: table
+  });
+
   const tableActions = useMemo(() => {
-    let can_add =
+    const can_add =
       user.hasAddRole(UserRoles.purchase_order) &&
       user.hasAddRole(UserRoles.part);
 
     return [
       <AddItemButton
+        key='add-manufacturer-part'
         tooltip={t`Add Manufacturer Part`}
         onClick={() => createManufacturerPart.open()}
         hidden={!can_add}
@@ -82,37 +110,21 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [user]);
 
-  const editManufacturerPartFields = useManufacturerPartFields();
-
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            record.pk &&
-              openEditApiForm({
-                url: ApiEndpoints.manufacturer_part_list,
-                pk: record.pk,
-                title: t`Edit Manufacturer Part`,
-                fields: editManufacturerPartFields,
-                onFormSuccess: table.refreshTable,
-                successMessage: t`Manufacturer part updated`
-              });
+            setSelectedPart(record.pk);
+            editManufacturerPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            record.pk &&
-              openDeleteApiForm({
-                url: ApiEndpoints.manufacturer_part_list,
-                pk: record.pk,
-                title: t`Delete Manufacturer Part`,
-                successMessage: t`Manufacturer part deleted`,
-                onFormSuccess: table.refreshTable,
-                preFormWarning: t`Are you sure you want to remove this manufacturer part?`
-              });
+            setSelectedPart(record.pk);
+            deleteManufacturerPart.open();
           }
         })
       ];
@@ -123,6 +135,8 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   return (
     <>
       {createManufacturerPart.modal}
+      {editManufacturerPart.modal}
+      {deleteManufacturerPart.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.manufacturer_part_list)}
         tableState={table}
@@ -133,6 +147,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
             part_detail: true,
             manufacturer_detail: true
           },
+          enableDownload: true,
           rowActions: rowActions,
           tableActions: tableActions,
           modelType: ModelType.manufacturerpart

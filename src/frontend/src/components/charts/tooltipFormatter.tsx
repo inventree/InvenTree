@@ -1,9 +1,12 @@
 import { formatCurrency } from '../../defaults/formatters';
 
-export function tooltipFormatter(label: any, currency: string) {
+/*
+ * Render a chart label for a currency graph
+ */
+export function tooltipFormatter(value: any, currency?: string) {
   return (
-    formatCurrency(label, {
+    formatCurrency(value, {
       currency: currency
-    })?.toString() ?? ''
+    })?.toString() ?? value.toString()
   );
 }

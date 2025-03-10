@@ -10,9 +10,6 @@ import string
 import warnings
 from pathlib import Path
 
-from django.core.files.base import ContentFile
-from django.core.files.storage import Storage
-
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
@@ -77,6 +74,9 @@ def ensure_dir(path: Path, storage=None) -> None:
 
     If it does not exist, create it.
     """
+    from django.core.files.base import ContentFile
+    from django.core.files.storage import Storage
+
     if storage and isinstance(storage, Storage):
         if not storage.exists(str(path)):
             storage.save(str(path / '.empty'), ContentFile(''))
@@ -131,7 +131,7 @@ def load_config_data(set_cache: bool = False) -> map:
 
     cfg_file = get_config_file()
 
-    with open(cfg_file, 'r') as cfg:
+    with open(cfg_file, encoding='utf-8') as cfg:
         data = yaml.safe_load(cfg)
 
     # Set the cache if requested
@@ -150,7 +150,7 @@ def do_typecast(value, type, var_name=None):
         var_name: Name that should be logged e.g. 'INVENTREE_STATIC_ROOT'. Set if logging is required.
 
     Returns:
-        Typecasted value or original value if typecasting failed.
+        Typecast value or original value if typecasting failed.
     """
     # Force 'list' of strings
     if type is list:
@@ -238,12 +238,15 @@ def get_boolean_setting(env_var=None, config_key=None, default_value=False):
     return is_true(get_setting(env_var, config_key, default_value))
 
 
-def get_media_dir(create=True):
+def get_media_dir(create=True, error=True):
     """Return the absolute path for the 'media' directory (where uploaded files are stored)."""
     md = get_setting('INVENTREE_MEDIA_ROOT', 'media_root')
 
     if not md:
-        raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
+        else:
+            return None
 
     md = Path(md).resolve()
 
@@ -253,12 +256,15 @@ def get_media_dir(create=True):
     return md
 
 
-def get_static_dir(create=True):
+def get_static_dir(create=True, error=True):
     """Return the absolute path for the 'static' directory (where static files are stored)."""
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
     if not sd:
-        raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
+        else:
+            return None
 
     sd = Path(sd).resolve()
 
@@ -268,12 +274,15 @@ def get_static_dir(create=True):
     return sd
 
 
-def get_backup_dir(create=True):
+def get_backup_dir(create=True, error=True):
     """Return the absolute path for the backup directory."""
     bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
-        raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+        else:
+            return None
 
     bd = Path(bd).resolve()
 
@@ -419,20 +428,9 @@ def get_frontend_settings(debug=True):
 
     # Set the base URL
     if 'base_url' not in settings:
-        base_url = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', '')
-
-        if base_url:
-            warnings.warn(
-                "The 'INVENTREE_PUI_URL_BASE' key is deprecated. Please use 'INVENTREE_FRONTEND_URL_BASE' instead",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-        else:
-            base_url = get_setting(
-                'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
-            )
-
-        settings['base_url'] = base_url
+        settings['base_url'] = get_setting(
+            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
+        )
 
     # Set the server list
     settings['server_list'] = settings.get('server_list', [])

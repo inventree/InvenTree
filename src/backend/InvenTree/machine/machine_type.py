@@ -3,7 +3,11 @@
 from typing import TYPE_CHECKING, Any, Literal, Union
 
 from generic.states import StatusCode
-from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
+from InvenTree.helpers_mixin import (
+    ClassProviderMixin,
+    ClassValidationMixin,
+    get_shared_class_instance_state_mixin,
+)
 
 # Import only for typechecking, otherwise this throws cyclic import errors
 if TYPE_CHECKING:
@@ -44,7 +48,11 @@ class MachineStatus(StatusCode):
     """
 
 
-class BaseDriver(ClassValidationMixin, ClassProviderMixin):
+class BaseDriver(
+    ClassValidationMixin,
+    ClassProviderMixin,
+    get_shared_class_instance_state_mixin(lambda x: f'machine:driver:{x.SLUG}'),
+):
     """Base class for all machine drivers.
 
     Attributes:
@@ -68,8 +76,6 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     def __init__(self) -> None:
         """Base driver __init__ method."""
         super().__init__()
-
-        self.errors: list[Union[str, Exception]] = []
 
     def init_driver(self):
         """This method gets called after all machines are created and can be used to initialize the driver.
@@ -133,10 +139,20 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         Arguments:
             error: Exception or string
         """
-        self.errors.append(error)
+        self.set_shared_state('errors', [*self.errors, error])
+
+    # --- state getters/setters
+    @property
+    def errors(self) -> list[Union[str, Exception]]:
+        """List of driver errors."""
+        return self.get_shared_state('errors', [])
 
 
-class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
+class BaseMachineType(
+    ClassValidationMixin,
+    ClassProviderMixin,
+    get_shared_class_instance_state_mixin(lambda x: f'machine:machine:{x.pk}'),
+):
     """Base class for machine types.
 
     Attributes:
@@ -178,12 +194,6 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         from machine import registry
         from machine.models import MachineSetting
 
-        self.errors: list[Union[str, Exception]] = []
-        self.initialized = False
-
-        self.status = self.default_machine_status
-        self.status_text: str = ''
-
         self.pk = machine_config.pk
         self.driver = registry.get_driver_instance(machine_config.driver)
 
@@ -208,8 +218,6 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             (self.driver_settings, MachineSetting.ConfigType.DRIVER),
         ]
 
-        self.restart_required = False
-
     def __str__(self):
         """String representation of a machine."""
         return f'{self.name}'
@@ -225,17 +233,21 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         # always fetch the machine_config if needed to ensure we get the newest reference
         from .models import MachineConfig
 
-        return MachineConfig.objects.get(pk=self.pk)
+        return MachineConfig.objects.filter(pk=self.pk).first()
 
     @property
     def name(self):
         """The machines name."""
-        return self.machine_config.name
+        if config := self.machine_config:
+            return config.name
 
     @property
     def active(self):
         """The machines active status."""
-        return self.machine_config.active
+        if config := self.machine_config:
+            return config.active
+
+        return False
 
     # --- hook functions
     def initialize(self):
@@ -252,7 +264,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
                     error_parts.append(
                         f'{config_type.name} settings: ' + ', '.join(missing)
                     )
-            self.handle_error(f"Missing {' and '.join(error_parts)}")
+            self.handle_error(f'Missing {" and ".join(error_parts)}')
             return
 
         try:
@@ -272,16 +284,32 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         try:
             self.driver.update_machine(old_state, self)
+
+            # check if the active state has changed and initialize the machine if necessary
+            if old_state['active'] != self.active:
+                if self.initialized is False and self.active is True:
+                    self.initialize()
+                elif self.initialized is True and self.active is False:
+                    self.initialized = False
         except Exception as e:
             self.handle_error(e)
 
     def restart(self):
-        """Machine restart function, can be used to manually restart the machine from the admin ui."""
+        """Machine restart function, can be used to manually restart the machine from the admin ui.
+
+        This will first reset the machines state (errors, status, status_text) and then call the drivers restart function.
+        """
         if self.driver is None:
             return
 
         try:
+            # reset the machine state
             self.restart_required = False
+            self.reset_errors()
+            self.set_status(self.default_machine_status)
+            self.set_status_text('')
+
+            # call the driver restart function
             self.driver.restart_machine(self)
         except Exception as e:
             self.handle_error(e)
@@ -293,7 +321,11 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         Arguments:
             error: Exception or string
         """
-        self.errors.append(error)
+        self.set_shared_state('errors', [*self.errors, error])
+
+    def reset_errors(self):
+        """Helper function for resetting the error list for a machine."""
+        self.set_shared_state('errors', [])
 
     def get_setting(
         self, key: str, config_type_str: Literal['M', 'D'], cache: bool = False
@@ -364,7 +396,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         Arguments:
             status: The new MachineStatus code to set
         """
-        self.status = status
+        self.set_shared_state('status', status.value)
 
     def set_status_text(self, status_text: str):
         """Set the machine status text. It can be any arbitrary text.
@@ -372,4 +404,39 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         Arguments:
             status_text: The new status text to set
         """
-        self.status_text = status_text
+        self.set_shared_state('status_text', status_text)
+
+    # --- state getters/setters
+    @property
+    def initialized(self) -> bool:
+        """Initialized state of the machine."""
+        return self.get_shared_state('initialized', False)
+
+    @initialized.setter
+    def initialized(self, value: bool):
+        self.set_shared_state('initialized', value)
+
+    @property
+    def restart_required(self) -> bool:
+        """Restart required state of the machine."""
+        return self.get_shared_state('restart_required', False)
+
+    @restart_required.setter
+    def restart_required(self, value: bool):
+        self.set_shared_state('restart_required', value)
+
+    @property
+    def errors(self) -> list[Union[str, Exception]]:
+        """List of machine errors."""
+        return self.get_shared_state('errors', [])
+
+    @property
+    def status(self) -> MachineStatus:
+        """Machine status code."""
+        status_code = self.get_shared_state('status', self.default_machine_status.value)
+        return self.MACHINE_STATUS(status_code)
+
+    @property
+    def status_text(self) -> str:
+        """Machine status text."""
+        return self.get_shared_state('status_text', '')

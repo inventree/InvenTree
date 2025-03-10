@@ -6,18 +6,13 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from allauth.account.models import EmailAddress
 
 import part.settings
-from common.models import (
-    InvenTreeSetting,
-    InvenTreeUserSetting,
-    NotificationEntry,
-    NotificationMessage,
-)
+from common.models import NotificationEntry, NotificationMessage
 from common.notifications import UIMessageNotification, storage
+from common.settings import get_global_setting, set_global_setting
 from InvenTree import version
 from InvenTree.templatetags import inventree_extras
 from InvenTree.unit_test import InvenTreeTestCase
@@ -52,34 +47,26 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test that the 'add."""
         self.assertEqual(int(inventree_extras.add(3, 5)), 8)
 
-    def test_plugins_enabled(self):
-        """Test the plugins_enabled tag."""
-        self.assertEqual(inventree_extras.plugins_enabled(), True)
-
-    def test_plugins_install_disabled(self):
-        """Test the plugins_install_disabled tag."""
-        self.assertEqual(inventree_extras.plugins_install_disabled(), False)
-
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
-    @override_settings(SITE_URL=None)
-    def test_inventree_base_url(self):
-        """Test that the base URL tag returns correctly."""
-        self.assertEqual(inventree_extras.inventree_base_url(), '')
+    def test_inventree_title(self):
+        """Test the 'inventree_title' setting."""
+        self.assertEqual(inventree_extras.inventree_title(), 'InvenTree')
 
-    def test_inventree_is_release(self):
-        """Test that the release version check functions as expected."""
+    def test_inventree_customize(self):
+        """Test the 'inventree_customize' template tag."""
+        self.assertEqual(inventree_extras.inventree_customize('abc'), '')
+
+    def test_inventree_version(self):
+        """Test the 'version' setting."""
         self.assertEqual(
-            inventree_extras.inventree_is_release(),
-            not version.isInvenTreeDevelopmentVersion(),
+            inventree_extras.inventree_version(), version.inventreeVersion()
         )
-
-    def test_inventree_docs_version(self):
-        """Test that the documentation version template tag returns correctly."""
-        self.assertEqual(
-            inventree_extras.inventree_docs_version(), version.inventreeDocsVersion()
+        self.assertNotEqual(
+            inventree_extras.inventree_version(shortstring=True),
+            version.inventreeVersion(),
         )
 
     def test_hash(self):
@@ -102,48 +89,63 @@ class TemplateTagTest(InvenTreeTestCase):
         else:
             self.assertEqual(len(d.split('-')), 3)
 
-    def test_github(self):
-        """Test that the github URL template tag returns correctly."""
-        self.assertIn('github.com', inventree_extras.inventree_github_url())
-
-    def test_docs(self):
-        """Test that the documentation URL template tag returns correctly."""
-        self.assertIn('docs.inventree.org', inventree_extras.inventree_docs_url())
-
     def test_keyvalue(self):
         """Test keyvalue template tag."""
         self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
 
-    def test_mail_configured(self):
-        """Test that mail configuration returns False."""
-        self.assertEqual(inventree_extras.mail_configured(), False)
+    def test_to_list(self):
+        """Test the 'to_list' template tag."""
+        self.assertEqual(inventree_extras.to_list(1, 2, 3), (1, 2, 3))
 
-    def test_user_settings(self):
-        """Test user settings."""
-        result = inventree_extras.user_settings(self.user)
-        self.assertEqual(len(result), len(InvenTreeUserSetting.SETTINGS))
+    def test_render_date(self):
+        """Test the 'render_date' template tag."""
+        self.assertEqual(inventree_extras.render_date('2021-01-01'), '2021-01-01')
 
-    def test_global_settings(self):
-        """Test global settings."""
-        result = inventree_extras.global_settings()
-        self.assertEqual(len(result), len(InvenTreeSetting.SETTINGS))
+        self.assertEqual(inventree_extras.render_date(None), None)
+        self.assertEqual(inventree_extras.render_date('  '), None)
+        self.assertEqual(inventree_extras.render_date('aaaa'), None)
+        self.assertEqual(inventree_extras.render_date(1234), 1234)
 
-    def test_visible_global_settings(self):
-        """Test that hidden global settings are actually hidden."""
-        result = inventree_extras.visible_global_settings()
+    def test_setting_object(self):
+        """Test the 'setting_object' template tag."""
+        # Normal
+        self.assertEqual(
+            inventree_extras.setting_object('PART_ALLOW_DUPLICATE_IPN').value, True
+        )
 
-        n = len(result)
+        # User
+        self.assertEqual(
+            inventree_extras.setting_object(
+                'PART_ALLOW_DUPLICATE_IPN', user=self.user
+            ).value,
+            '',
+        )
 
-        n_hidden = 0
-        n_visible = 0
+        # Method
+        self.assertEqual(
+            inventree_extras.setting_object(
+                'PART_ALLOW_DUPLICATE_IPN', method='abc', user=self.user
+            ).value,
+            '',
+        )
 
-        for val in InvenTreeSetting.SETTINGS.values():
-            if val.get('hidden', False):
-                n_hidden += 1
-            else:
-                n_visible += 1
+    def test_settings_value(self):
+        """Test the 'settings_value' template tag."""
+        # Normal
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN'), True
+        )
 
-        self.assertEqual(n, n_visible)
+        # User
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN', user=self.user),
+            '',
+        )
+        self.logout()
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN', user=self.user),
+            '',
+        )
 
 
 class PartTest(TestCase):
@@ -168,7 +170,7 @@ class PartTest(TestCase):
         self.assertEqual(Part.barcode_model_type(), 'part')
 
         p = Part.objects.get(pk=1)
-        barcode = p.format_barcode(brief=True)
+        barcode = p.format_barcode()
         self.assertEqual(barcode, '{"part": 1}')
 
     def test_tree(self):
@@ -243,8 +245,7 @@ class PartTest(TestCase):
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
+        self.assertEqual(self.r1.get_absolute_url(), '/platform/part/3')
 
     def test_category(self):
         """Test PartCategory path."""
@@ -269,9 +270,8 @@ class PartTest(TestCase):
 
     def test_barcode(self):
         """Test barcode format functionality."""
-        barcode = self.r1.format_barcode(brief=False)
-        self.assertIn('InvenTree', barcode)
-        self.assertIn('"part": {"id": 3}', barcode)
+        barcode = self.r1.format_barcode()
+        self.assertEqual('{"part": 3}', barcode)
 
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded."""
@@ -336,6 +336,8 @@ class PartTest(TestCase):
         self.assertIn(self.r1, r2_relations)
 
         # Delete a part, ensure the relationship also gets deleted
+        self.r1.active = False
+        self.r1.save()
         self.r1.delete()
 
         self.assertEqual(PartRelated.objects.count(), countbefore)
@@ -351,6 +353,8 @@ class PartTest(TestCase):
         self.assertEqual(len(self.r2.get_related_parts()), n)
 
         # Deleting r2 should remove *all* newly created relationships
+        self.r2.active = False
+        self.r2.save()
         self.r2.delete()
         self.assertEqual(PartRelated.objects.count(), countbefore)
 
@@ -365,6 +369,101 @@ class PartTest(TestCase):
 
         self.assertIsNotNone(p.last_stocktake)
         self.assertEqual(p.last_stocktake, ps.date)
+
+    def test_delete(self):
+        """Test delete operation for a Part instance."""
+        part = Part.objects.first()
+
+        for active, locked in [(True, True), (True, False), (False, True)]:
+            # Cannot delete part if it is active or locked
+            part.active = active
+            part.locked = locked
+            part.save()
+
+            with self.assertRaises(ValidationError):
+                part.delete()
+
+        part.active = False
+        part.locked = False
+
+        part.delete()
+
+    def test_revisions(self):
+        """Test the 'revision' and 'revision_of' field."""
+        template = Part.objects.create(
+            name='Template part', description='A template part', is_template=True
+        )
+
+        # Create a new part
+        part = Part.objects.create(
+            name='Master Part',
+            description='Master part (will have revisions)',
+            variant_of=template,
+        )
+
+        self.assertEqual(part.revisions.count(), 0)
+
+        # Try to set as revision of itself
+        with self.assertRaises(ValidationError) as exc:
+            part.revision_of = part
+            part.save()
+
+        self.assertIn('Part cannot be a revision of itself', str(exc.exception))
+
+        part.refresh_from_db()
+
+        rev_a = Part.objects.create(
+            name='Master Part', description='Master part (revision A)'
+        )
+
+        with self.assertRaises(ValidationError) as exc:
+            print('rev a:', rev_a.revision_of, part.revision_of)
+            rev_a.revision_of = part
+            rev_a.save()
+
+        self.assertIn('Revision code must be specified', str(exc.exception))
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_a.revision_of = template
+            rev_a.revision = 'A'
+            rev_a.save()
+
+        self.assertIn('Cannot make a revision of a template part', str(exc.exception))
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_a.revision_of = part
+            rev_a.revision = 'A'
+            rev_a.save()
+
+        self.assertIn('Parent part must point to the same template', str(exc.exception))
+
+        rev_a.variant_of = template
+        rev_a.revision_of = part
+        rev_a.revision = 'A'
+        rev_a.save()
+
+        self.assertEqual(part.revisions.count(), 1)
+
+        rev_b = Part.objects.create(
+            name='Master Part', description='Master part (revision B)'
+        )
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_b.revision_of = rev_a
+            rev_b.revision = 'B'
+            rev_b.save()
+
+        self.assertIn(
+            'Cannot make a revision of a part which is already a revision',
+            str(exc.exception),
+        )
+
+        rev_b.variant_of = template
+        rev_b.revision_of = part
+        rev_b.revision = 'B'
+        rev_b.save()
+
+        self.assertEqual(part.revisions.count(), 2)
 
 
 class TestTemplateTest(TestCase):
@@ -496,17 +595,17 @@ class PartSettingsTest(InvenTreeTestCase):
     def test_custom(self):
         """Update some of the part values and re-test."""
         for val in [True, False]:
-            InvenTreeSetting.set_setting('PART_COMPONENT', val, self.user)
-            InvenTreeSetting.set_setting('PART_PURCHASEABLE', val, self.user)
-            InvenTreeSetting.set_setting('PART_SALABLE', val, self.user)
-            InvenTreeSetting.set_setting('PART_TRACKABLE', val, self.user)
-            InvenTreeSetting.set_setting('PART_ASSEMBLY', val, self.user)
-            InvenTreeSetting.set_setting('PART_TEMPLATE', val, self.user)
+            set_global_setting('PART_COMPONENT', val, self.user)
+            set_global_setting('PART_PURCHASEABLE', val, self.user)
+            set_global_setting('PART_SALABLE', val, self.user)
+            set_global_setting('PART_TRACKABLE', val, self.user)
+            set_global_setting('PART_ASSEMBLY', val, self.user)
+            set_global_setting('PART_TEMPLATE', val, self.user)
 
-            self.assertEqual(val, InvenTreeSetting.get_setting('PART_COMPONENT'))
-            self.assertEqual(val, InvenTreeSetting.get_setting('PART_PURCHASEABLE'))
-            self.assertEqual(val, InvenTreeSetting.get_setting('PART_SALABLE'))
-            self.assertEqual(val, InvenTreeSetting.get_setting('PART_TRACKABLE'))
+            self.assertEqual(val, get_global_setting('PART_COMPONENT'))
+            self.assertEqual(val, get_global_setting('PART_PURCHASEABLE'))
+            self.assertEqual(val, get_global_setting('PART_SALABLE'))
+            self.assertEqual(val, get_global_setting('PART_TRACKABLE'))
 
             part = self.make_part()
 
@@ -542,7 +641,7 @@ class PartSettingsTest(InvenTreeTestCase):
             part.validate_unique()
 
         # Now update the settings so duplicate IPN values are *not* allowed
-        InvenTreeSetting.set_setting('PART_ALLOW_DUPLICATE_IPN', False, self.user)
+        set_global_setting('PART_ALLOW_DUPLICATE_IPN', False, self.user)
 
         with self.assertRaises(ValidationError):
             part = Part(name='Hello', description='A thing', IPN='IPN123', revision='C')

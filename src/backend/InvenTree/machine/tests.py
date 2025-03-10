@@ -9,8 +9,7 @@ from django.urls import reverse
 
 from rest_framework import serializers
 
-from InvenTree.unit_test import InvenTreeAPITestCase
-from label.models import PartLabel
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 from machine.machine_types.label_printer import LabelPrinterBaseDriver
 from machine.models import MachineConfig
@@ -18,6 +17,7 @@ from machine.registry import registry
 from part.models import Part
 from plugin.models import PluginConfig
 from plugin.registry import registry as plg_registry
+from report.models import LabelTemplate
 
 
 class TestMachineRegistryMixin(TestCase):
@@ -32,7 +32,7 @@ class TestMachineRegistryMixin(TestCase):
         registry.driver_instances = {}
         registry.machines = {}
         registry.base_drivers = []
-        registry.errors = []
+        registry.set_shared_state('errors', [])
 
         return super().tearDown()
 
@@ -111,7 +111,7 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
         self.machines = [self.machine1, self.machine2, self.machine3]
 
         # init registry
-        registry.initialize()
+        registry.initialize(main=True)
 
         # mock machine implementation
         self.machine_mocks = {
@@ -230,7 +230,7 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
             active=True,
         )
 
-        registry.initialize()
+        registry.initialize(main=True)
         driver_instance = cast(
             TestingLabelPrinterDriver,
             registry.get_driver_instance('testing-label-printer'),
@@ -247,36 +247,33 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         plugin_ref = 'inventreelabelmachine'
 
         # setup the label app
-        apps.get_app_config('label').create_defaults()  # type: ignore
+        apps.get_app_config('report').create_default_labels()  # type: ignore
         plg_registry.reload_plugins()
         config = cast(PluginConfig, plg_registry.get_plugin(plugin_ref).plugin_config())  # type: ignore
         config.active = True
         config.save()
 
         parts = Part.objects.all()[:2]
-        label = cast(PartLabel, PartLabel.objects.first())
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
 
-        url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-        url += f'/?plugin={plugin_ref}&part[]={parts[0].pk}&part[]={parts[1].pk}'
+        url = reverse('api-label-print')
 
         self.post(
             url,
             {
+                'plugin': config.key,
+                'items': [a.pk for a in parts],
+                'template': template.pk,
                 'machine': str(self.machine.pk),
                 'driver_options': {'copies': '1', 'test_option': '2'},
             },
-            expected_code=200,
+            expected_code=201,
         )
 
         # test the print labels method call
         self.print_labels.assert_called_once()
         self.assertEqual(self.print_labels.call_args.args[0], self.machine.machine)
-        self.assertEqual(self.print_labels.call_args.args[1], label)
-
-        # TODO re-activate test
-        # self.assertQuerySetEqual(
-        #    self.print_labels.call_args.args[2], parts, transform=lambda x: x
-        # )
+        self.assertEqual(self.print_labels.call_args.args[1], template)
 
         self.assertIn('printing_options', self.print_labels.call_args.kwargs)
         self.assertEqual(
@@ -290,7 +287,7 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         # test the single print label method calls
         self.assertEqual(self.print_label.call_count, 2)
         self.assertEqual(self.print_label.call_args.args[0], self.machine.machine)
-        self.assertEqual(self.print_label.call_args.args[1], label)
+        self.assertEqual(self.print_label.call_args.args[1], template)
         self.assertEqual(self.print_label.call_args.args[2], parts[1])
         self.assertIn('printing_options', self.print_labels.call_args.kwargs)
         self.assertEqual(
@@ -307,3 +304,11 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
             },
             expected_code=400,
         )
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=MachineConfig)

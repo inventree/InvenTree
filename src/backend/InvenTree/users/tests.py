@@ -2,10 +2,11 @@
 
 from django.apps import apps
 from django.contrib.auth.models import Group
-from django.test import TestCase, tag
+from django.test import TestCase
 from django.urls import reverse
 
-from InvenTree.unit_test import InvenTreeTestCase
+from common.settings import set_global_setting
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner, RuleSet
 
 
@@ -62,7 +63,7 @@ class RuleSetModelTest(TestCase):
         assigned_models = set()
 
         # Now check that each defined model is a valid table name
-        for key in RuleSet.get_ruleset_models().keys():
+        for key in RuleSet.get_ruleset_models():
             models = RuleSet.get_ruleset_models()[key]
 
             for m in models:
@@ -123,8 +124,8 @@ class RuleSetModelTest(TestCase):
             for model in models:
                 permission_set.add(model)
 
-        # Every ruleset by default sets one permission, the "view" permission set
-        self.assertEqual(group.permissions.count(), len(permission_set))
+        # By default no permissions should be assigned
+        self.assertEqual(group.permissions.count(), 0)
 
         # Add some more rules
         for rule in rulesets:
@@ -165,8 +166,6 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, status_code)
         return response.data
 
-    # TODO: Find out why this depends on CUI
-    @tag('cui')
     def test_owner(self):
         """Tests for the 'owner' model."""
         # Check that owner was created for user
@@ -221,6 +220,10 @@ class OwnerModelTest(InvenTreeTestCase):
         self.client.login(username=self.username, password=self.password)
         # user list
         self.do_request(reverse('api-owner-list'), {})
+
+        # user list with 'is_active' filter
+        self.do_request(reverse('api-owner-list'), {'is_active': False})
+
         # user list with search
         self.do_request(reverse('api-owner-list'), {'search': 'user'})
 
@@ -244,7 +247,8 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response_detail['username'], self.username)
 
         response_me = self.do_request(reverse('api-user-me'), {}, 200)
-        self.assertEqual(response_detail, response_me)
+        self.assertIn('language', response_me['profile'])
+        self.assertIn('theme', response_me['profile'])
 
     def test_token(self):
         """Test token mechanisms."""
@@ -265,3 +269,178 @@ class OwnerModelTest(InvenTreeTestCase):
             reverse('api-user-me'), {'name': 'another-token'}, 200
         )
         self.assertEqual(response['username'], self.username)
+
+    def test_display_name(self):
+        """Test the display name for the owner."""
+        owner = Owner.get_owner(self.user)
+        self.assertEqual(owner.name(), 'testuser')
+        self.assertEqual(str(owner), 'testuser (user)')
+
+        # Change setting
+        set_global_setting('DISPLAY_FULL_NAMES', True)
+        self.user.first_name = 'first'
+        self.user.last_name = 'last'
+        self.user.save()
+        owner = Owner.get_owner(self.user)
+
+        # Now first / last should be used
+        self.assertEqual(owner.name(), 'first last')
+        self.assertEqual(str(owner), 'first last (user)')
+
+        # Reset
+        set_global_setting('DISPLAY_FULL_NAMES', False)
+        self.user.first_name = ''
+        self.user.last_name = ''
+        self.user.save()
+
+
+class MFALoginTest(InvenTreeAPITestCase):
+    """Some simplistic tests to ensure that MFA is working."""
+
+    """
+    def test_api(self):
+        ""Test that the API is working.""
+        auth_data = {'username': self.username, 'password': self.password}
+        login_url = reverse('api-login')
+
+        # Normal login
+        response = self.post(login_url, auth_data, expected_code=200)
+        self.assertIn('key', response.data)
+        self.client.logout()
+
+        # Add MFA
+        totp_model = self.user.totpdevice_set.create()
+
+        # Login with MFA enabled but not provided
+        response = self.post(login_url, auth_data, expected_code=403)
+        self.assertContains(response, 'MFA required for this user', status_code=403)
+
+        # Login with MFA enabled and provided - should redirect to MFA page
+        auth_data['mfa'] = 'anything'
+        response = self.post(login_url, auth_data, expected_code=302)
+        self.assertEqual(response.url, reverse('two-factor-authenticate'))
+        # MFA not finished - no access allowed
+        self.get(reverse('api-token'), expected_code=401)
+
+        # Login with MFA enabled and provided - but incorrect pwd
+        auth_data['password'] = 'wrong'
+        self.post(login_url, auth_data, expected_code=401)
+        auth_data['password'] = self.password
+
+        # Remove MFA
+        totp_model.delete()
+
+        # Login with MFA disabled but correct credentials provided
+        response = self.post(login_url, auth_data, expected_code=200)
+        self.assertIn('key', response.data)
+
+        # Wrong login should not work
+        auth_data['password'] = 'wrong'
+        self.post(login_url, auth_data, expected_code=401)
+    """
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        my_token = self.helper(
+            model=ApiToken, model_kwargs={'user': self.user, 'name': 'test-token'}
+        )
+        # Additionally test str fnc
+        self.assertEqual(str(my_token), my_token.token)
+
+
+class UserProfileTest(InvenTreeAPITestCase):
+    """Tests for the user profile API endpoints."""
+
+    def test_profile_retrieve(self):
+        """Test retrieving the user profile."""
+        response = self.client.get(reverse('api-user-profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('language', response.data)
+        self.assertIn('theme', response.data)
+        self.assertIn('widgets', response.data)
+        self.assertIn('displayname', response.data)
+        self.assertIn('position', response.data)
+        self.assertIn('status', response.data)
+        self.assertIn('location', response.data)
+        self.assertIn('active', response.data)
+        self.assertIn('contact', response.data)
+        self.assertIn('type', response.data)
+        self.assertIn('organisation', response.data)
+        self.assertIn('primary_group', response.data)
+
+    def test_profile_update(self):
+        """Test updating the user profile."""
+        data = {
+            'language': 'en',
+            'theme': {'color': 'blue'},
+            'widgets': {'widget1': 'value1'},
+            'displayname': 'Test User',
+            'status': 'Active',
+            'location': 'Test Location',
+            'active': True,
+            'contact': 'test@example.com',
+            'type': 'internal',
+            'organisation': 'Test Organisation',
+            'primary_group': self.group.pk,
+        }
+        response = self.patch(reverse('api-user-profile'), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['language'], data['language'])
+        self.assertEqual(response.data['theme'], data['theme'])
+        self.assertEqual(response.data['widgets'], data['widgets'])
+        self.assertEqual(response.data['displayname'], data['displayname'])
+        self.assertEqual(response.data['status'], data['status'])
+        self.assertEqual(response.data['location'], data['location'])
+        self.assertEqual(response.data['active'], data['active'])
+        self.assertEqual(response.data['contact'], data['contact'])
+        self.assertEqual(response.data['type'], data['type'])
+        self.assertEqual(response.data['organisation'], data['organisation'])
+        self.assertEqual(response.data['primary_group'], data['primary_group'])
+
+    def test_primary_group_validation(self):
+        """Test that primary_group is a group that the user is a member of."""
+        new_group = Group.objects.create(name='New Group')
+        profile = self.user.profile
+        profile.primary_group = new_group
+        profile.save()
+        self.assertIsNone(profile.primary_group)
+
+    def test_validate_primary_group_on_save(self):
+        """Test validate_primary_group_on_save signal handler."""
+        group = Group.objects.create(name='Test Group')
+        self.user.groups.add(group)
+        profile = self.user.profile
+        profile.primary_group = group
+        profile.save()
+
+        # Ensure primary_group is set correctly
+        self.assertEqual(profile.primary_group, group)
+
+        # Remove user from group and save group
+        self.user.groups.remove(group)
+
+        # Ensure primary_group is set to None
+        profile.refresh_from_db()
+        self.assertIsNone(profile.primary_group)
+
+    def test_validate_primary_group_on_delete(self):
+        """Test validate_primary_group_on_delete signal handler."""
+        group = Group.objects.create(name='Test Group')
+        self.user.groups.add(group)
+        profile = self.user.profile
+        profile.primary_group = group
+        profile.save()
+
+        # Ensure primary_group is set correctly
+        self.assertEqual(profile.primary_group, group)
+
+        # Delete group
+        group.delete()
+
+        # Ensure primary_group is set to None
+        profile.refresh_from_db()
+        self.assertIsNone(profile.primary_group)

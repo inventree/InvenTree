@@ -1,533 +1,466 @@
 """API functionality for the 'report' app."""
 
-from django.core.exceptions import FieldError, ValidationError
-from django.core.files.base import ContentFile
-from django.http import HttpResponse
-from django.template.exceptions import TemplateDoesNotExist
-from django.urls import include, path, re_path
+from django.core.exceptions import ValidationError
+from django.urls import include, path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.cache import never_cache
 
+from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-import build.models
-import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
-import order.models
-import part.models
+import InvenTree.permissions
+import report.helpers
 import report.models
 import report.serializers
-from InvenTree.api import MetadataView
-from InvenTree.exceptions import log_error
-from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
-from stock.models import StockItem, StockItemAttachment, StockLocation
+from InvenTree.api import BulkDeleteMixin, MetadataView
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
+from InvenTree.mixins import ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 
 
-class ReportListView(ListCreateAPI):
-    """Generic API class for report templates."""
+class TemplatePermissionMixin:
+    """Permission mixin for report and label templates."""
 
-    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    # Read only for non-staff users
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsStaffOrReadOnly,
+    ]
 
-    filterset_fields = ['enabled']
 
-    search_fields = ['name', 'description']
+class ReportFilterBase(rest_filters.FilterSet):
+    """Base filter class for label and report templates."""
 
+    enabled = rest_filters.BooleanFilter()
 
-class ReportFilterMixin:
-    """Mixin for extracting multiple objects from query params.
+    model_type = rest_filters.ChoiceFilter(
+        choices=report.helpers.report_model_options(), label=_('Model Type')
+    )
 
-    Each subclass *must* have an attribute called 'ITEM_KEY',
-    which is used to determine what 'key' is used in the query parameters.
+    items = rest_filters.CharFilter(method='filter_items', label=_('Items'))
 
-    This mixin defines a 'get_items' method which provides a generic implementation
-    to return a list of matching database model instances
-    """
+    def filter_items(self, queryset, name, values):
+        """Filter against a comma-separated list of provided items.
 
-    # Database model for instances to actually be "printed" against this report template
-    ITEM_MODEL = None
-
-    # Default key for looking up database model instances
-    ITEM_KEY = 'item'
-
-    def get_items(self):
-        """Return a list of database objects from query parameters."""
-        if not self.ITEM_MODEL:
-            raise NotImplementedError(
-                f'ITEM_MODEL attribute not defined for {__class__}'
-            )
-
-        ids = []
-
-        # Construct a list of possible query parameter value options
-        # e.g. if self.ITEM_KEY = 'order' -> ['order', 'order[]', 'orders', 'orders[]']
-        for k in [self.ITEM_KEY + x for x in ['', '[]', 's', 's[]']]:
-            if ids := self.request.query_params.getlist(k, []):
-                # Return the first list of matches
-                break
-
-        # Next we must validated each provided object ID
-        valid_ids = []
-
-        for id in ids:
-            try:
-                valid_ids.append(int(id))
-            except ValueError:
-                pass
-
-        # Filter queryset by matching ID values
-        return self.ITEM_MODEL.objects.filter(pk__in=valid_ids)
-
-    def filter_queryset(self, queryset):
-        """Filter the queryset based on the provided report ID values.
-
-        As each 'report' instance may optionally define its own filters,
-        the resulting queryset is the 'union' of the two
+        Note: This filter is only applied if the 'model_type' is also provided.
         """
-        queryset = super().filter_queryset(queryset)
+        model_type = self.data.get('model_type', None)
+        values = values.strip().split(',')
 
-        items = self.get_items()
+        if model_class := report.helpers.report_model_from_name(model_type):
+            model_items = model_class.objects.filter(pk__in=values)
 
-        if len(items) > 0:
-            """At this point, we are basically forced to be inefficient:
+            # Ensure that we have already filtered by model_type
+            queryset = queryset.filter(model_type=model_type)
 
-            We need to compare the 'filters' string of each report template,
-            and see if it matches against each of the requested items.
+            # Construct a list of templates which match the list of provided IDs
+            matching_template_ids = []
 
-            In practice, this is not too bad.
-            """
+            for template in queryset.all():
+                filters = template.get_filters()
+                results = model_items.filter(**filters)
+                # If the resulting queryset is *shorter* than the provided items, then this template does not match
+                if results.count() == model_items.count():
+                    matching_template_ids.append(template.pk)
 
-            valid_report_ids = set()
-
-            for report in queryset.all():
-                matches = True
-
-                try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
-                except ValidationError:
-                    continue
-
-                for item in items:
-                    item_query = self.ITEM_MODEL.objects.filter(pk=item.pk)
-
-                    try:
-                        if not item_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                # Matched all items
-                if matches:
-                    valid_report_ids.add(report.pk)
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=list(valid_report_ids))
+            queryset = queryset.filter(pk__in=matching_template_ids)
 
         return queryset
 
 
-@method_decorator(cache_page(5), name='dispatch')
-class ReportPrintMixin:
-    """Mixin for printing reports."""
+class ReportFilter(ReportFilterBase):
+    """Filter class for report template list."""
 
-    @method_decorator(never_cache)
-    def dispatch(self, *args, **kwargs):
-        """Prevent caching when printing report templates."""
-        return super().dispatch(*args, **kwargs)
+    class Meta:
+        """Filter options."""
 
-    def report_callback(self, object, report, request):
-        """Callback function for each object/report combination.
+        model = report.models.ReportTemplate
+        fields = ['landscape']
 
-        Allows functionality to be performed before returning the consolidated PDF
 
-        Arguments:
-            object: The model instance to be printed
-            report: The individual PDF file object
-            request: The request instance associated with this print call
-        """
-        ...
+class LabelFilter(ReportFilterBase):
+    """Filter class for label template list."""
 
-    def print(self, request, items_to_print):
-        """Print this report template against a number of pre-validated items."""
-        if len(items_to_print) == 0:
-            # No valid items provided, return an error message
-            data = {'error': _('No valid objects provided to template')}
+    class Meta:
+        """Filter options."""
 
-            return Response(data, status=400)
+        model = report.models.LabelTemplate
+        fields = []
 
-        outputs = []
 
-        # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting(
-            'REPORT_DEBUG_MODE', cache=False
-        )
+class LabelPrint(GenericAPIView):
+    """API endpoint for printing labels."""
 
-        # Start with a default report name
-        report_name = 'report.pdf'
+    # Any authenticated user can print labels
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = report.serializers.LabelPrintSerializer
+
+    def get_plugin_class(self, plugin_slug: str, raise_error=False):
+        """Return the plugin class for the given plugin key."""
+        from plugin.models import PluginConfig
+
+        if not plugin_slug:
+            # Use the default label printing plugin
+            plugin_slug = InvenTreeLabelPlugin.NAME.lower()
+
+        plugin = None
 
         try:
-            # Merge one or more PDF files into a single download
-            for item in items_to_print:
-                report = self.get_object()
-                report.object_to_print = item
+            plugin_config = PluginConfig.objects.get(key=plugin_slug)
+            plugin = plugin_config.plugin
+        except (ValueError, PluginConfig.DoesNotExist):
+            pass
 
-                report_name = report.generate_filename(request)
-                output = report.render(request)
+        error = None
 
-                # Run report callback for each generated report
-                self.report_callback(item, output, request)
+        if not plugin:
+            error = _('Plugin not found')
+        elif not plugin.is_active():
+            error = _('Plugin is not active')
+        elif not plugin.mixin_enabled('labels'):
+            error = _('Plugin does not support label printing')
 
-                try:
-                    if debug_mode:
-                        outputs.append(report.render_as_string(request))
-                    else:
-                        outputs.append(output)
-                except TemplateDoesNotExist as e:
-                    template = str(e)
-                    if not template:
-                        template = report.template
+        if error:
+            plugin = None
 
-                    return Response(
-                        {
-                            'error': _(
-                                f"Template file '{template}' is missing or does not exist"
-                            )
-                        },
-                        status=400,
-                    )
+            if raise_error:
+                raise ValidationError({'plugin': error})
 
-            if not report_name.endswith('.pdf'):
-                report_name += '.pdf'
+        return plugin
 
-            if debug_mode:
-                """Concatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
-
-                html = '\n'.join(outputs)
-
-                return HttpResponse(html)
-            else:
-                """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
-
-                pages = []
-
-                try:
-                    for output in outputs:
-                        doc = output.get_document()
-                        for page in doc.pages:
-                            pages.append(page)
-
-                    pdf = outputs[0].get_document().copy(pages).write_pdf()
-
-                except TemplateDoesNotExist as e:
-                    template = str(e)
-
-                    if not template:
-                        template = report.template
-
-                    return Response(
-                        {
-                            'error': _(
-                                f"Template file '{template}' is missing or does not exist"
-                            )
-                        },
-                        status=400,
-                    )
-
-                inline = common.models.InvenTreeUserSetting.get_setting(
-                    'REPORT_INLINE', user=request.user, cache=False
-                )
-
-                return InvenTree.helpers.DownloadFile(
-                    pdf, report_name, content_type='application/pdf', inline=inline
-                )
-
-        except Exception as exc:
-            # Log the exception to the database
-            if InvenTree.helpers.str2bool(
-                common.models.InvenTreeSetting.get_setting(
-                    'REPORT_LOG_ERRORS', cache=False
-                )
-            ):
-                log_error(request.path)
-
-            # Re-throw the exception to the client as a DRF exception
-            raise ValidationError({
-                'error': 'Report printing failed',
-                'detail': str(exc),
-                'path': request.path,
-            })
-
-    def get(self, request, *args, **kwargs):
-        """Default implementation of GET for a print endpoint.
-
-        Note that it expects the class has defined a get_items() method
-        """
-        items = self.get_items()
-        return self.print(request, items)
-
-
-class StockItemTestReportMixin(ReportFilterMixin):
-    """Mixin for StockItemTestReport report template."""
-
-    ITEM_MODEL = StockItem
-    ITEM_KEY = 'item'
-    queryset = report.models.TestReport.objects.all()
-    serializer_class = report.serializers.TestReportSerializer
-
-
-class StockItemTestReportList(StockItemTestReportMixin, ReportListView):
-    """API endpoint for viewing list of TestReport objects.
-
-    Filterable by:
-
-    - enabled: Filter by enabled / disabled status
-    - item: Filter by stock item(s)
-    """
-
-    pass
-
-
-class StockItemTestReportDetail(StockItemTestReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single TestReport object."""
-
-    pass
-
-
-class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a TestReport object."""
-
-    def report_callback(self, item, report, request):
-        """Callback to (optionally) save a copy of the generated report."""
-        if common.models.InvenTreeSetting.get_setting(
-            'REPORT_ATTACH_TEST_REPORT', cache=False
-        ):
-            # Construct a PDF file object
-            try:
-                pdf = report.get_document().write_pdf()
-                pdf_content = ContentFile(pdf, 'test_report.pdf')
-            except TemplateDoesNotExist:
-                return
-
-            StockItemAttachment.objects.create(
-                attachment=pdf_content,
-                stock_item=item,
-                user=request.user,
-                comment=_('Test report'),
+    def get_plugin_serializer(self, plugin):
+        """Return the serializer for the given plugin."""
+        if plugin and hasattr(plugin, 'get_printing_options_serializer'):
+            return plugin.get_printing_options_serializer(
+                self.request,
+                data=self.request.data,
+                context=self.get_serializer_context(),
             )
 
+        return None
 
-class BOMReportMixin(ReportFilterMixin):
-    """Mixin for BillOfMaterialsReport report template."""
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer information for the label print endpoint."""
+        plugin = None
 
-    ITEM_MODEL = part.models.Part
-    ITEM_KEY = 'part'
+        # Plugin information provided?
+        if self.request:
+            plugin_key = self.request.data.get('plugin', '')
+            # Legacy url based lookup
+            if not plugin_key:
+                plugin_key = self.request.query_params.get('plugin', '')
+            plugin = self.get_plugin_class(plugin_key)
+            plugin_serializer = self.get_plugin_serializer(plugin)
 
-    queryset = report.models.BillOfMaterialsReport.objects.all()
-    serializer_class = report.serializers.BOMReportSerializer
+            if plugin_serializer:
+                kwargs['plugin_serializer'] = plugin_serializer
 
+        serializer = super().get_serializer(*args, **kwargs)
+        return serializer
 
-class BOMReportList(BOMReportMixin, ReportListView):
-    """API endpoint for viewing a list of BillOfMaterialReport objects.
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        """POST action for printing labels."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-    Filterably by:
+        template = serializer.validated_data['template']
 
-    - enabled: Filter by enabled / disabled status
-    - part: Filter by part(s)
-    """
+        if template.width <= 0 or template.height <= 0:
+            raise ValidationError({'template': _('Invalid label dimensions')})
 
-    pass
+        items = serializer.validated_data['items']
 
+        # Default to the InvenTreeLabelPlugin
+        plugin_key = InvenTreeLabelPlugin.NAME.lower()
 
-class BOMReportDetail(BOMReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single BillOfMaterialReport object."""
+        if plugin_config := serializer.validated_data.get('plugin', None):
+            plugin_key = plugin_config.key
 
-    pass
+        plugin = self.get_plugin_class(plugin_key, raise_error=True)
 
+        instances = template.get_model().objects.filter(pk__in=items)
 
-class BOMReportPrint(BOMReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a BillOfMaterialReport object."""
+        if instances.count() == 0:
+            raise ValidationError(_('No valid items provided to template'))
 
-    pass
+        return self.print(template, instances, plugin, request)
 
+    def print(self, template, items_to_print, plugin, request):
+        """Print this label template against a number of provided items."""
+        import report.tasks
+        from InvenTree.tasks import offload_task
 
-class BuildReportMixin(ReportFilterMixin):
-    """Mixin for the BuildReport report template."""
+        if plugin_serializer := plugin.get_printing_options_serializer(
+            request, data=request.data, context=self.get_serializer_context()
+        ):
+            plugin_serializer.is_valid(raise_exception=True)
 
-    ITEM_MODEL = build.models.Build
-    ITEM_KEY = 'build'
+        # Generate a new LabelOutput object to print against
+        output = report.models.LabelOutput.objects.create(
+            template=template,
+            plugin=plugin.slug,
+            user=request.user,
+            progress=0,
+            items=len(items_to_print),
+            complete=False,
+            output=None,
+        )
 
-    queryset = report.models.BuildReport.objects.all()
-    serializer_class = report.serializers.BuildReportSerializer
+        offload_task(
+            report.tasks.print_labels,
+            template.pk,
+            [item.pk for item in items_to_print],
+            output.pk,
+            plugin.slug,
+            options=(plugin_serializer.data if plugin_serializer else {}),
+        )
 
+        output.refresh_from_db()
 
-class BuildReportList(BuildReportMixin, ReportListView):
-    """API endpoint for viewing a list of BuildReport objects.
+        return Response(
+            report.serializers.LabelOutputSerializer(output).data, status=201
+        )
 
-    Can be filtered by:
 
-    - enabled: Filter by enabled / disabled status
-    - build: Filter by Build object
-    """
+class LabelTemplateList(TemplatePermissionMixin, ListCreateAPI):
+    """API endpoint for viewing list of LabelTemplate objects."""
 
-    pass
+    queryset = report.models.LabelTemplate.objects.all()
+    serializer_class = report.serializers.LabelTemplateSerializer
+    filterset_class = LabelFilter
+    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'enabled']
 
 
-class BuildReportDetail(BuildReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single BuildReport object."""
+class LabelTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for label template model."""
 
-    pass
+    queryset = report.models.LabelTemplate.objects.all()
+    serializer_class = report.serializers.LabelTemplateSerializer
 
 
-class BuildReportPrint(BuildReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a BuildReport."""
+class ReportPrint(GenericAPIView):
+    """API endpoint for printing reports."""
 
-    pass
+    # Any authenticated user can print reports
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = report.serializers.ReportPrintSerializer
 
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        """POST action for printing a report."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-class PurchaseOrderReportMixin(ReportFilterMixin):
-    """Mixin for the PurchaseOrderReport report template."""
+        template = serializer.validated_data['template']
+        items = serializer.validated_data['items']
 
-    ITEM_MODEL = order.models.PurchaseOrder
-    ITEM_KEY = 'order'
+        instances = template.get_model().objects.filter(pk__in=items)
 
-    queryset = report.models.PurchaseOrderReport.objects.all()
-    serializer_class = report.serializers.PurchaseOrderReportSerializer
+        if instances.count() == 0:
+            raise ValidationError(_('No valid items provided to template'))
 
+        return self.print(template, instances, request)
 
-class PurchaseOrderReportList(PurchaseOrderReportMixin, ReportListView):
-    """API list endpoint for the PurchaseOrderReport model."""
+    def print(self, template, items_to_print, request):
+        """Print this report template against a number of provided items.
 
-    pass
+        This functionality is offloaded to the background worker process,
+        which will update the status of the ReportOutput object as it progresses.
+        """
+        import report.tasks
+        from InvenTree.tasks import offload_task
 
+        # Generate a new ReportOutput object
+        output = report.models.ReportOutput.objects.create(
+            template=template,
+            user=request.user,
+            progress=0,
+            items=len(items_to_print),
+            complete=False,
+            output=None,
+        )
 
-class PurchaseOrderReportDetail(PurchaseOrderReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single PurchaseOrderReport object."""
+        item_ids = [item.pk for item in items_to_print]
 
-    pass
+        # Offload the task to the background worker
+        offload_task(report.tasks.print_reports, template.pk, item_ids, output.pk)
 
+        output.refresh_from_db()
 
-class PurchaseOrderReportPrint(PurchaseOrderReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a PurchaseOrderReport object."""
+        return Response(
+            report.serializers.ReportOutputSerializer(output).data, status=201
+        )
 
-    pass
 
+class ReportTemplateList(TemplatePermissionMixin, ListCreateAPI):
+    """API endpoint for viewing list of ReportTemplate objects."""
 
-class SalesOrderReportMixin(ReportFilterMixin):
-    """Mixin for the SalesOrderReport report template."""
+    queryset = report.models.ReportTemplate.objects.all()
+    serializer_class = report.serializers.ReportTemplateSerializer
+    filterset_class = ReportFilter
+    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'enabled']
 
-    ITEM_MODEL = order.models.SalesOrder
-    ITEM_KEY = 'order'
 
-    queryset = report.models.SalesOrderReport.objects.all()
-    serializer_class = report.serializers.SalesOrderReportSerializer
+class ReportTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for report template model."""
 
+    queryset = report.models.ReportTemplate.objects.all()
+    serializer_class = report.serializers.ReportTemplateSerializer
 
-class SalesOrderReportList(SalesOrderReportMixin, ReportListView):
-    """API list endpoint for the SalesOrderReport model."""
 
-    pass
-
-
-class SalesOrderReportDetail(SalesOrderReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single SalesOrderReport object."""
-
-    pass
-
-
-class SalesOrderReportPrint(SalesOrderReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a PurchaseOrderReport object."""
-
-    pass
-
-
-class ReturnOrderReportMixin(ReportFilterMixin):
-    """Mixin for the ReturnOrderReport report template."""
-
-    ITEM_MODEL = order.models.ReturnOrder
-    ITEM_KEY = 'order'
-
-    queryset = report.models.ReturnOrderReport.objects.all()
-    serializer_class = report.serializers.ReturnOrderReportSerializer
-
-
-class ReturnOrderReportList(ReturnOrderReportMixin, ReportListView):
-    """API list endpoint for the ReturnOrderReport model."""
-
-    pass
-
-
-class ReturnOrderReportDetail(ReturnOrderReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single ReturnOrderReport object."""
-
-    pass
-
-
-class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a ReturnOrderReport object."""
-
-    pass
-
-
-class StockLocationReportMixin(ReportFilterMixin):
-    """Mixin for StockLocation report template."""
-
-    ITEM_MODEL = StockLocation
-    ITEM_KEY = 'location'
-    queryset = report.models.StockLocationReport.objects.all()
-    serializer_class = report.serializers.StockLocationReportSerializer
-
-
-class StockLocationReportList(StockLocationReportMixin, ReportListView):
-    """API list endpoint for the StockLocationReportList model."""
-
-    pass
-
-
-class StockLocationReportDetail(StockLocationReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single StockLocationReportDetail object."""
-
-    pass
-
-
-class StockLocationReportPrint(StockLocationReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a StockLocationReportPrint object."""
-
-    pass
-
-
-class ReportSnippetList(ListCreateAPI):
+class ReportSnippetList(TemplatePermissionMixin, ListCreateAPI):
     """API endpoint for listing ReportSnippet objects."""
 
     queryset = report.models.ReportSnippet.objects.all()
     serializer_class = report.serializers.ReportSnippetSerializer
 
 
-class ReportSnippetDetail(RetrieveUpdateDestroyAPI):
+class ReportSnippetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single ReportSnippet object."""
 
     queryset = report.models.ReportSnippet.objects.all()
     serializer_class = report.serializers.ReportSnippetSerializer
 
 
-class ReportAssetList(ListCreateAPI):
+class ReportAssetList(TemplatePermissionMixin, ListCreateAPI):
     """API endpoint for listing ReportAsset objects."""
 
     queryset = report.models.ReportAsset.objects.all()
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class ReportAssetDetail(RetrieveUpdateDestroyAPI):
+class ReportAssetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single ReportAsset object."""
 
     queryset = report.models.ReportAsset.objects.all()
     serializer_class = report.serializers.ReportAssetSerializer
 
 
+class TemplateOutputMixin:
+    """Mixin class for template output API endpoints."""
+
+    filter_backends = [InvenTreeOrderingFilter]
+    ordering_fields = ['created', 'model_type', 'user']
+    ordering_field_aliases = {'model_type': 'template__model_type'}
+
+
+class LabelOutputMixin(TemplatePermissionMixin, TemplateOutputMixin):
+    """Mixin class for a label output API endpoint."""
+
+    queryset = report.models.LabelOutput.objects.all()
+    serializer_class = report.serializers.LabelOutputSerializer
+
+
+class LabelOutputList(LabelOutputMixin, BulkDeleteMixin, ListAPI):
+    """List endpoint for LabelOutput objects."""
+
+
+class LabelOutputDetail(LabelOutputMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for LabelOutput objects."""
+
+
+class ReportOutputMixin(TemplatePermissionMixin, TemplateOutputMixin):
+    """Mixin class for a report output API endpoint."""
+
+    queryset = report.models.ReportOutput.objects.all()
+    serializer_class = report.serializers.ReportOutputSerializer
+
+
+class ReportOutputList(ReportOutputMixin, BulkDeleteMixin, ListAPI):
+    """List endpoint for ReportOutput objects."""
+
+
+class ReportOutputDetail(ReportOutputMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for ReportOutput objects."""
+
+
+label_api_urls = [
+    # Printing endpoint
+    path('print/', LabelPrint.as_view(), name='api-label-print'),
+    # Label templates
+    path(
+        'template/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': report.models.LabelTemplate},
+                        name='api-label-template-metadata',
+                    ),
+                    path(
+                        '',
+                        LabelTemplateDetail.as_view(),
+                        name='api-label-template-detail',
+                    ),
+                ]),
+            ),
+            path('', LabelTemplateList.as_view(), name='api-label-template-list'),
+        ]),
+    ),
+    # Label outputs
+    path(
+        'output/',
+        include([
+            path(
+                '<int:pk>/', LabelOutputDetail.as_view(), name='api-label-output-detail'
+            ),
+            path('', LabelOutputList.as_view(), name='api-label-output-list'),
+        ]),
+    ),
+]
+
 report_api_urls = [
+    # Printing endpoint
+    path('print/', ReportPrint.as_view(), name='api-report-print'),
+    # Report templates
+    path(
+        'template/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': report.models.ReportTemplate},
+                        name='api-report-template-metadata',
+                    ),
+                    path(
+                        '',
+                        ReportTemplateDetail.as_view(),
+                        name='api-report-template-detail',
+                    ),
+                ]),
+            ),
+            path('', ReportTemplateList.as_view(), name='api-report-template-list'),
+        ]),
+    ),
+    # Generated report outputs
+    path(
+        'output/',
+        include([
+            path(
+                '<int:pk>/',
+                ReportOutputDetail.as_view(),
+                name='api-report-output-detail',
+            ),
+            path('', ReportOutputList.as_view(), name='api-report-output-list'),
+        ]),
+    ),
     # Report assets
     path(
         'asset/',
@@ -548,217 +481,6 @@ report_api_urls = [
                 name='api-report-snippet-detail',
             ),
             path('', ReportSnippetList.as_view(), name='api-report-snippet-list'),
-        ]),
-    ),
-    # Purchase order reports
-    path(
-        'po/',
-        include([
-            # Detail views
-            path(
-                '<int:pk>/',
-                include([
-                    re_path(
-                        r'print/?',
-                        PurchaseOrderReportPrint.as_view(),
-                        name='api-po-report-print',
-                    ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.PurchaseOrderReport},
-                        name='api-po-report-metadata',
-                    ),
-                    path(
-                        '',
-                        PurchaseOrderReportDetail.as_view(),
-                        name='api-po-report-detail',
-                    ),
-                ]),
-            ),
-            # List view
-            path('', PurchaseOrderReportList.as_view(), name='api-po-report-list'),
-        ]),
-    ),
-    # Sales order reports
-    path(
-        'so/',
-        include([
-            # Detail views
-            path(
-                '<int:pk>/',
-                include([
-                    re_path(
-                        r'print/?',
-                        SalesOrderReportPrint.as_view(),
-                        name='api-so-report-print',
-                    ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.SalesOrderReport},
-                        name='api-so-report-metadata',
-                    ),
-                    path(
-                        '',
-                        SalesOrderReportDetail.as_view(),
-                        name='api-so-report-detail',
-                    ),
-                ]),
-            ),
-            path('', SalesOrderReportList.as_view(), name='api-so-report-list'),
-        ]),
-    ),
-    # Return order reports
-    path(
-        'ro/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        r'print/',
-                        ReturnOrderReportPrint.as_view(),
-                        name='api-return-order-report-print',
-                    ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.ReturnOrderReport},
-                        name='api-so-report-metadata',
-                    ),
-                    path(
-                        '',
-                        ReturnOrderReportDetail.as_view(),
-                        name='api-return-order-report-detail',
-                    ),
-                ]),
-            ),
-            path(
-                '', ReturnOrderReportList.as_view(), name='api-return-order-report-list'
-            ),
-        ]),
-    ),
-    # Build reports
-    path(
-        'build/',
-        include([
-            # Detail views
-            path(
-                '<int:pk>/',
-                include([
-                    re_path(
-                        r'print/?',
-                        BuildReportPrint.as_view(),
-                        name='api-build-report-print',
-                    ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.BuildReport},
-                        name='api-build-report-metadata',
-                    ),
-                    path(
-                        '', BuildReportDetail.as_view(), name='api-build-report-detail'
-                    ),
-                ]),
-            ),
-            # List view
-            path('', BuildReportList.as_view(), name='api-build-report-list'),
-        ]),
-    ),
-    # Bill of Material reports
-    path(
-        'bom/',
-        include([
-            # Detail views
-            path(
-                '<int:pk>/',
-                include([
-                    re_path(
-                        r'print/?',
-                        BOMReportPrint.as_view(),
-                        name='api-bom-report-print',
-                    ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.BillOfMaterialsReport},
-                        name='api-bom-report-metadata',
-                    ),
-                    path('', BOMReportDetail.as_view(), name='api-bom-report-detail'),
-                ]),
-            ),
-            # List view
-            path('', BOMReportList.as_view(), name='api-bom-report-list'),
-        ]),
-    ),
-    # Stock item test reports
-    path(
-        'test/',
-        include([
-            # Detail views
-            path(
-                '<int:pk>/',
-                include([
-                    re_path(
-                        r'print/?',
-                        StockItemTestReportPrint.as_view(),
-                        name='api-stockitem-testreport-print',
-                    ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(),
-                        {'report': report.models.TestReport},
-                        name='api-stockitem-testreport-metadata',
-                    ),
-                    path(
-                        '',
-                        StockItemTestReportDetail.as_view(),
-                        name='api-stockitem-testreport-detail',
-                    ),
-                ]),
-            ),
-            # List view
-            path(
-                '',
-                StockItemTestReportList.as_view(),
-                name='api-stockitem-testreport-list',
-            ),
-        ]),
-    ),
-    # Stock Location reports (Stock Location Reports -> sir)
-    path(
-        'slr/',
-        include([
-            # Detail views
-            path(
-                '<int:pk>/',
-                include([
-                    re_path(
-                        r'print/?',
-                        StockLocationReportPrint.as_view(),
-                        name='api-stocklocation-report-print',
-                    ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(),
-                        {'report': report.models.StockLocationReport},
-                        name='api-stocklocation-report-metadata',
-                    ),
-                    path(
-                        '',
-                        StockLocationReportDetail.as_view(),
-                        name='api-stocklocation-report-detail',
-                    ),
-                ]),
-            ),
-            # List view
-            path(
-                '',
-                StockLocationReportList.as_view(),
-                name='api-stocklocation-report-list',
-            ),
         ]),
     ),
 ]

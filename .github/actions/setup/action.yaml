@@ -35,7 +35,9 @@ runs:
     using: 'composite'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
@@ -44,14 +46,20 @@ runs:
         with:
           python-version: ${{ env.python_version }}
           cache: pip
+          cache-dependency-path: |
+            src/backend/requirements.txt
+            src/backend/requirements-dev.txt
+            contrib/container/requirements.txt
+            contrib/dev_reqs/requirements.txt
       - name: Install Base Python Dependencies
         if: ${{ inputs.python == 'true' }}
         shell: bash
         run: |
           python3 -m pip install -U pip
-          pip3 install invoke wheel uv
-      - name: Set the VIRTUAL_ENV variable for uv to work
-        run: echo "VIRTUAL_ENV=${Python_ROOT_DIR}" >> $GITHUB_ENV
+          pip3 install -U invoke wheel
+          pip3 install 'uv<0.3.0'
+      - name: Allow uv to use the system Python by default
+        run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
@@ -64,13 +72,6 @@ runs:
         uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7  # pin to v3.8.2
         with:
           node-version: ${{ env.node_version }}
-          cache: 'npm'
-          cache-dependency-path: src/backend/package-lock.json
-      - name: Install npm packages
-        if: ${{ inputs.npm == 'true' }}
-        shell: bash
-        run: cd src/backend && npm install
-
       # OS installs
       - name: Install OS Dependencies
         if: ${{ inputs.apt-dependency }}
@@ -82,7 +83,7 @@ runs:
 
       # Invoke commands
       - name: Install dev requirements
-        if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
+        if: ${{ inputs.dev-install == 'true' || inputs.install == 'true' }}
         shell: bash
         run: uv pip install --require-hashes -r src/backend/requirements-dev.txt
       - name: Run invoke install
@@ -92,4 +93,4 @@ runs:
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --uv
+        run: invoke update --uv --skip-backup --skip-static

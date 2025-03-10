@@ -1,18 +1,17 @@
 """Custom field validators for InvenTree."""
 
-import re
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.core import validators
-from django.core.exceptions import FieldDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import pint
-from jinja2 import Template
 from moneyed import CURRENCIES
 
 import InvenTree.conversion
+from common.settings import get_global_setting
 
 
 def validate_physical_units(unit):
@@ -27,9 +26,7 @@ def validate_physical_units(unit):
 
     try:
         ureg(unit)
-    except AttributeError:
-        raise ValidationError(_('Invalid physical unit'))
-    except pint.errors.UndefinedUnitError:
+    except (AssertionError, AttributeError, pint.errors.UndefinedUnitError):
         raise ValidationError(_('Invalid physical unit'))
 
 
@@ -63,14 +60,10 @@ class AllowedURLValidator(validators.URLValidator):
 
     def __call__(self, value):
         """Validate the URL."""
-        import common.models
-
         self.schemes = allowable_url_schemes()
 
         # Determine if 'strict' URL validation is required (i.e. if the URL must have a schema prefix)
-        strict_urls = common.models.InvenTreeSetting.get_setting(
-            'INVENTREE_STRICT_URLS', True, cache=False
-        )
+        strict_urls = get_global_setting('INVENTREE_STRICT_URLS', cache=False)
 
         if not strict_urls:
             # Allow URLs which do not have a provided schema
@@ -99,7 +92,6 @@ def validate_sales_order_reference(value):
 
 def validate_tree_name(value):
     """Placeholder for legacy function used in migrations."""
-    ...
 
 
 def validate_overage(value):
@@ -121,7 +113,7 @@ def validate_overage(value):
             raise ValidationError(_('Overage value must not be negative'))
 
         # Looks like a number
-        return True
+        return
     except (ValueError, InvalidOperation):
         pass
 
@@ -138,46 +130,8 @@ def validate_overage(value):
             elif f > 100:
                 raise ValidationError(_('Overage must not exceed 100%'))
 
-            return True
+            return
         except ValueError:
             pass
 
     raise ValidationError(_('Invalid value for overage'))
-
-
-def validate_part_name_format(value):
-    """Validate part name format.
-
-    Make sure that each template container has a field of Part Model
-    """
-    # Make sure that the field_name exists in Part model
-    from part.models import Part
-
-    jinja_template_regex = re.compile('{{.*?}}')
-    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
-
-    for jinja_template in jinja_template_regex.findall(str(value)):
-        # make sure at least one and only one field is present inside the parser
-        field_names = field_name_regex.findall(jinja_template)
-        if len(field_names) < 1:
-            raise ValidationError({
-                'value': 'At least one field must be present inside a jinja template container i.e {{}}'
-            })
-
-        for field_name in field_names:
-            try:
-                Part._meta.get_field(field_name)
-            except FieldDoesNotExist:
-                raise ValidationError({
-                    'value': f'{field_name} does not exist in Part Model'
-                })
-
-    # Attempt to render the template with a dummy Part instance
-    p = Part(name='test part', description='some test part')
-
-    try:
-        Template(value).render({'part': p})
-    except Exception as exc:
-        raise ValidationError({'value': str(exc)})
-
-    return True

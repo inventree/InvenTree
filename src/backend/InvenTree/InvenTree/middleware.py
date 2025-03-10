@@ -1,21 +1,23 @@
 """Middleware for InvenTree."""
 
-import logging
 import sys
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import Resolver404, include, path, resolve, reverse_lazy
+from django.urls import resolve, reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
 
-from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
+import structlog
 from error_report.middleware import ExceptionProcessor
 
-from InvenTree.urls import frontendpatterns
+from common.settings import get_global_setting
+from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
+from InvenTree.cache import create_session_cache, delete_session_cache
 from users.models import ApiToken
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_token_from_request(request):
@@ -35,7 +37,18 @@ def get_token_from_request(request):
     return None
 
 
-class AuthRequiredMiddleware(object):
+# List of target URL endpoints where *do not* want to redirect to
+urls = [
+    reverse_lazy('account_login'),
+    reverse_lazy('admin:login'),
+    reverse_lazy('admin:logout'),
+]
+
+# Do not redirect requests to any of these paths
+paths_ignore = ['/api/', '/auth/', settings.MEDIA_URL, settings.STATIC_URL]
+
+
+class AuthRequiredMiddleware:
     """Check for user to be authenticated."""
 
     def __init__(self, get_response):
@@ -91,43 +104,21 @@ class AuthRequiredMiddleware(object):
 
             # Allow static files to be accessed without auth
             # Important for e.g. login page
-            if request.path_info.startswith('/static/'):
-                authorized = True
-
-            # Unauthorized users can access the login page
-            elif request.path_info.startswith('/accounts/'):
-                authorized = True
-
-            elif (
-                request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
-                or request.path_info.startswith('/assets/')
-                or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
+            if (
+                request.path_info.startswith('/static/')
+                or request.path_info.startswith('/accounts/')
+                or (
+                    request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
+                    or request.path_info.startswith('/assets/')
+                    or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
+                )
+                or self.check_token(request)
             ):
-                authorized = True
-
-            elif self.check_token(request):
                 authorized = True
 
             # No authorization was found for the request
             if not authorized:
                 path = request.path_info
-
-                # List of URL endpoints we *do not* want to redirect to
-                urls = [
-                    reverse_lazy('account_login'),
-                    reverse_lazy('account_logout'),
-                    reverse_lazy('admin:login'),
-                    reverse_lazy('admin:logout'),
-                ]
-
-                # Do not redirect requests to any of these paths
-                paths_ignore = [
-                    '/api/',
-                    '/auth/',
-                    '/js/',
-                    settings.MEDIA_URL,
-                    settings.STATIC_URL,
-                ]
 
                 if path not in urls and not any(
                     path.startswith(p) for p in paths_ignore
@@ -145,34 +136,12 @@ class AuthRequiredMiddleware(object):
         return response
 
 
-url_matcher = path('', include(frontendpatterns))
+class Check2FAMiddleware(AllUserRequire2FAMiddleware):
+    """Ensure that mfa is enforced if set so."""
 
-
-class Check2FAMiddleware(BaseRequire2FAMiddleware):
-    """Check if user is required to have MFA enabled."""
-
-    def require_2fa(self, request):
-        """Use setting to check if MFA should be enforced for frontend page."""
-        from common.models import InvenTreeSetting
-
-        try:
-            if url_matcher.resolve(request.path[1:]):
-                return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
-        except Resolver404:
-            pass
-        return False
-
-
-class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
-    """This function ensures only frontend code triggers the MFA auth cycle."""
-
-    def process_request(self, request):
-        """Check if requested url is forntend and enforce MFA check."""
-        try:
-            if not url_matcher.resolve(request.path[1:]):
-                super().process_request(request)
-        except Resolver404:
-            pass
+    def enforce_2fa(self, request):
+        """Use setting to check if MFA should be enforced."""
+        return get_global_setting('LOGIN_ENFORCE_MFA')
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
@@ -227,3 +196,23 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         )
 
         error.save()
+
+
+class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
+    """Middleware to perform caching against the request object.
+
+    This middleware is used to cache data against the request object,
+    which can be used to store data for the duration of the request.
+
+    In this fashion, we can avoid hitting the external cache multiple times,
+    much less the database!
+    """
+
+    def process_request(self, request):
+        """Create a request-specific cache object."""
+        create_session_cache(request)
+
+    def process_response(self, request, response):
+        """Clear the cache object."""
+        delete_session_cache()
+        return response

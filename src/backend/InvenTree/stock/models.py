@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
-import logging
 import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import FieldError, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, Sum
+from django.db.models import Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save, pre_delete
 from django.db.utils import IntegrityError, OperationalError
@@ -20,7 +19,8 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from jinja2 import Template
+import structlog
+from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
@@ -31,9 +31,14 @@ import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
-import label.models
+import report.mixins
 import report.models
+import stock.tasks
+from common.icons import validate_icon
+from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.states import StatusCodeMixin
+from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
@@ -43,9 +48,11 @@ from InvenTree.status_codes import (
 )
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock.events import StockEvents
+from stock.generators import generate_batch_code
 from users.models import Owner
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
@@ -88,6 +95,7 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Default icon for all locations that have no icon set (optional)'),
+        validators=[validate_icon],
     )
 
 
@@ -107,7 +115,9 @@ class StockLocationManager(TreeManager):
 
 
 class StockLocation(
-    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeTree
+    InvenTree.models.InvenTreeBarcodeMixin,
+    report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
 
@@ -116,6 +126,8 @@ class StockLocation(
     """
 
     ITEM_PARENT_KEY = 'location'
+
+    EXTRA_PATH_FIELDS = ['icon']
 
     objects = StockLocationManager()
 
@@ -142,12 +154,29 @@ class StockLocation(
         """Return API url."""
         return reverse('api-location-list')
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SL'
+
+    def report_context(self):
+        """Return report context data for this StockLocation."""
+        return {
+            'location': self,
+            'qr_data': self.barcode,
+            'parent': self.parent,
+            'stock_location': self,
+            'stock_items': self.get_stock_items(),
+        }
+
     custom_icon = models.CharField(
         blank=True,
+        null=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
         db_column='icon',
+        validators=[validate_icon],
     )
 
     owner = models.ForeignKey(
@@ -197,6 +226,11 @@ class StockLocation(
         if self.location_type:
             return self.location_type.icon
 
+        if default_icon := get_global_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', cache=True
+        ):
+            return default_icon
+
         return ''
 
     @icon.setter
@@ -226,9 +260,7 @@ class StockLocation(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -259,8 +291,6 @@ class StockLocation(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('stock-location-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/stock/location/{self.id}')
 
     def get_stock_items(self, cascade=True):
@@ -295,65 +325,25 @@ class StockLocation(
         return self.get_stock_items(cascade=cascade)
 
 
-def generate_batch_code():
-    """Generate a default 'batch code' for a new StockItem.
-
-    By default, this uses the value of the 'STOCK_BATCH_CODE_TEMPLATE' setting (if configured),
-    which can be passed through a simple template.
-
-    Also, this function is exposed to the ValidationMixin plugin class,
-    allowing custom plugins to be used to generate new batch code values
-    """
-    # First, check if any plugins can generate batch codes
-    from plugin.registry import registry
-
-    for plugin in registry.with_mixin('validation'):
-        batch = plugin.generate_batch_code()
-
-        if batch is not None:
-            # Return the first non-null value generated by a plugin
-            return batch
-
-    # If we get to this point, no plugin was able to generate a new batch code
-    batch_template = common.models.InvenTreeSetting.get_setting(
-        'STOCK_BATCH_CODE_TEMPLATE', ''
-    )
-
-    now = InvenTree.helpers.current_time()
-
-    # Pass context data through to the template rendering.
-    # The following context variables are available for custom batch code generation
-    context = {
-        'date': now,
-        'year': now.year,
-        'month': now.month,
-        'day': now.day,
-        'hour': now.hour,
-        'minute': now.minute,
-        'week': now.isocalendar()[1],
-    }
-
-    return Template(batch_template).render(context)
-
-
 def default_delete_on_deplete():
     """Return a default value for the 'delete_on_deplete' field.
 
     Prior to 2022-12-24, this field was set to True by default.
-    Now, there is a user-configurable setting to govern default behaviour.
+    Now, there is a user-configurable setting to govern default behavior.
     """
     try:
-        return common.models.InvenTreeSetting.get_setting(
-            'STOCK_DELETE_DEPLETED_DEFAULT', True
-        )
+        return get_global_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
-        # Revert to original default behaviour
+        # Revert to original default behavior
         return True
 
 
 class StockItem(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    StatusCodeMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     common.models.MetaMixin,
@@ -376,7 +366,7 @@ class StockItem(
         stocktake_user: User that performed the most recent stocktake
         review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
-        status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
+        status: Status of this StockItem (ref: stock.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
@@ -385,6 +375,13 @@ class StockItem(
         purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
+
+    STATUS_CLASS = StockStatus
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Stock Item')
 
     @staticmethod
     def get_api_url():
@@ -395,9 +392,59 @@ class StockItem(
         """Custom API instance filters."""
         return {'parent': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SI'
+
+    def get_test_keys(self, include_installed=True):
+        """Construct a flattened list of test 'keys' for this StockItem."""
+        keys = []
+
+        for test in self.part.getTestTemplates(required=True):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for test in self.part.getTestTemplates(required=False):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for result in self.testResultList(include_installed=include_installed):
+            if result.key not in keys:
+                keys.append(result.key)
+
+        return list(keys)
+
+    def report_context(self):
+        """Generate custom report context data for this StockItem."""
+        return {
+            'barcode_data': self.barcode_data,
+            'barcode_hash': self.barcode_hash,
+            'batch': self.batch,
+            'child_items': self.get_children(),
+            'ipn': self.part.IPN,
+            'installed_items': self.get_installed_items(cascade=True),
+            'item': self,
+            'name': self.part.full_name,
+            'part': self.part,
+            'qr_data': self.barcode,
+            'qr_url': self.get_absolute_url(),
+            'parameters': self.part.parameters_map(),
+            'quantity': InvenTree.helpers.normalize(self.quantity),
+            'result_list': self.testResultList(include_installed=True),
+            'results': self.testResultMap(include_installed=True, cascade=True),
+            'serial': self.serial,
+            'stock_item': self,
+            'tests': self.testResultMap(),
+            'test_keys': self.get_test_keys(),
+            'test_template_list': self.part.getTestTemplates(),
+            'test_templates': self.part.getTestTemplateMap(),
+        }
+
     tags = TaggableManager(blank=True)
 
-    # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    # A Query filter which will be reused in multiple places to determine if a StockItem is actually "in stock"
+    # See also: StockItem.in_stock() method
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
         sales_order=None,
@@ -415,6 +462,103 @@ class StockItem(
         & Q(expiry_date__lt=InvenTree.helpers.current_date())
     )
 
+    @classmethod
+    def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
+        """Create multiple stock items with the provided serial numbers.
+
+        Arguments:
+            serials: List of serial numbers to create
+            **kwargs: Additional keyword arguments to pass to the StockItem creation function
+
+        Returns:
+            QuerySet: The created StockItem objects
+
+        Raises:
+            ValidationError: If any of the provided serial numbers are invalid
+
+        This method uses bulk_create to create multiple StockItem objects in a single query,
+        which is much more efficient than creating them one-by-one.
+
+        However, it does not perform any validation checks on the provided serial numbers,
+        and also does not generate any "stock tracking entries".
+
+        Note: This is an 'internal' function and should not be used by external code / plugins.
+        """
+        # Ensure the primary-key field is not provided
+        kwargs.pop('id', None)
+        kwargs.pop('pk', None)
+
+        part = kwargs.get('part')
+
+        if not part:
+            raise ValidationError({'part': _('Part must be specified')})
+
+        # Create a list of StockItem objects
+        items = []
+
+        # Provide some default field values
+        data = {**kwargs}
+
+        # Remove some extraneous keys which cause issues
+        for key in ['parent_id', 'part_id', 'build_id']:
+            data.pop(key, None)
+
+        data['parent'] = kwargs.pop('parent', None)
+        data['tree_id'] = kwargs.pop('tree_id', 0)
+        data['level'] = kwargs.pop('level', 0)
+        data['rght'] = kwargs.pop('rght', 0)
+        data['lft'] = kwargs.pop('lft', 0)
+
+        # Force single quantity for each item
+        data['quantity'] = 1
+
+        for serial in serials:
+            data['serial'] = serial
+            data['serial_int'] = StockItem.convert_serial_to_int(serial)
+
+            items.append(StockItem(**data))
+
+        # Create the StockItem objects in bulk
+        StockItem.objects.bulk_create(items)
+
+        # Return the newly created StockItem objects
+        return StockItem.objects.filter(part=part, serial__in=serials)
+
+    @staticmethod
+    def convert_serial_to_int(serial: str) -> int:
+        """Convert the provided serial number to an integer value.
+
+        This function hooks into the plugin system to allow for custom serial number conversion.
+        """
+        from plugin.registry import registry
+
+        # First, let any plugins convert this serial number to an integer value
+        # If a non-null value is returned (by any plugin) we will use that
+
+        for plugin in registry.with_mixin('validation'):
+            try:
+                serial_int = plugin.convert_serial_to_int(serial)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.convert_serial_to_int'
+                )
+                serial_int = None
+
+            # Save the first returned result
+            if serial_int is not None:
+                # Ensure that it is clipped within a range allowed in the database schema
+                clip = 0x7FFFFFFF
+                serial_int = abs(serial_int)
+                serial_int = min(serial_int, clip)
+                # Return the first non-null value
+                return serial_int
+
+        # None of the plugins provided a valid integer value
+        if serial not in [None, '']:
+            return InvenTree.helpers.extract_int(serial)
+        else:
+            return None
+
     def update_serial_number(self):
         """Update the 'serial_int' field, to be an integer representation of the serial number.
 
@@ -422,36 +566,15 @@ class StockItem(
         """
         serial = str(getattr(self, 'serial', '')).strip()
 
-        from plugin.registry import registry
+        serial_int = self.convert_serial_to_int(serial)
 
-        # First, let any plugins convert this serial number to an integer value
-        # If a non-null value is returned (by any plugin) we will use that
+        try:
+            serial_int = int(serial_int)
 
-        serial_int = None
-
-        for plugin in registry.with_mixin('validation'):
-            serial_int = plugin.convert_serial_to_int(serial)
-
-            if serial_int is not None:
-                # Save the first returned result
-                # Ensure that it is clipped within a range allowed in the database schema
-                clip = 0x7FFFFFFF
-
-                serial_int = abs(serial_int)
-
-                if serial_int > clip:
-                    serial_int = clip
-
-                self.serial_int = serial_int
-                return
-
-        # If we get to this point, none of the available plugins provided an integer value
-
-        # Default value if we cannot convert to an integer
-        serial_int = 0
-
-        if serial not in [None, '']:
-            serial_int = InvenTree.helpers.extract_int(serial)
+            if serial_int <= 0:
+                serial_int = 0
+        except (ValueError, TypeError):
+            serial_int = 0
 
         self.serial_int = serial_int
 
@@ -546,7 +669,7 @@ class StockItem(
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-        super(StockItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # If user information is provided, and no existing note exists, create one!
         if user and self.tracking_info.count() == 0:
@@ -581,7 +704,7 @@ class StockItem(
         If the StockItem is serialized, the same serial number.
         cannot exist for the same part (or part tree).
         """
-        super(StockItem, self).validate_unique(exclude)
+        super().validate_unique(exclude)
 
         # If the serial number is set, make sure it is not a duplicate
         if self.serial:
@@ -698,8 +821,6 @@ class StockItem(
                     self.delete_on_deplete = False
 
         except PartModels.Part.DoesNotExist:
-            # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
@@ -727,8 +848,6 @@ class StockItem(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('stock-item-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/stock/item/{self.id}')
 
     def get_part_name(self):
@@ -816,7 +935,10 @@ class StockItem(
     serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
-        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     batch = models.CharField(
@@ -904,8 +1026,9 @@ class StockItem(
         help_text=_('Delete this Stock Item when stock is depleted'),
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=StockStatus.OK.value,
+        status_class=StockStatus,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)],
     )
@@ -979,9 +1102,7 @@ class StockItem(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -1010,7 +1131,7 @@ class StockItem(
 
         today = InvenTree.helpers.current_date()
 
-        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+        stale_days = get_global_setting('STOCK_STALE_DAYS')
 
         if stale_days <= 0:
             return False
@@ -1095,7 +1216,11 @@ class StockItem(
 
         item.add_tracking_entry(code, user, deltas, notes=notes)
 
-        trigger_event('stockitem.assignedtocustomer', id=self.id, customer=customer.id)
+        trigger_event(
+            StockEvents.ITEM_ASSIGNED_TO_CUSTOMER,
+            id=self.id,
+            customer=customer.id if customer else None,
+        )
 
         # Return the reference to the stock item
         return item
@@ -1104,8 +1229,16 @@ class StockItem(
     def return_from_customer(self, location, user=None, **kwargs):
         """Return stock item from customer, back into the specified location.
 
+        Arguments:
+            location: The location to return the stock item to
+            user: The user performing the action
+
+        Keyword Arguments:
+            notes: Additional notes to add to the tracking entry
+            status: Optionally set the status of the stock item
+
         If the selected location is the same as the parent, merge stock back into the parent.
-        Otherwise create the stock in the new location
+        Otherwise create the stock in the new location.
         """
         notes = kwargs.get('notes', '')
 
@@ -1115,6 +1248,20 @@ class StockItem(
             tracking_info['customer'] = self.customer.id
             tracking_info['customer_name'] = self.customer.name
 
+        # Clear out allocation information for the stock item
+        self.customer = None
+        self.belongs_to = None
+        self.sales_order = None
+        self.location = location
+
+        if status := kwargs.get('status'):
+            self.status = status
+            tracking_info['status'] = status
+
+        self.save()
+
+        self.clearAllocations()
+
         self.add_tracking_entry(
             StockHistoryCode.RETURNED_FROM_CUSTOMER,
             user,
@@ -1123,12 +1270,7 @@ class StockItem(
             location=location,
         )
 
-        self.customer = None
-        self.belongs_to = None
-        self.sales_order = None
-        self.location = location
-
-        trigger_event('stockitem.returnedfromcustomer', id=self.id)
+        trigger_event(StockEvents.ITEM_RETURNED_FROM_CUSTOMER, id=self.id)
 
         """If new location is the same as the parent location, merge this stock back in the parent"""
         if self.parent and self.location == self.parent.location:
@@ -1140,20 +1282,19 @@ class StockItem(
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
-        # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
-        # TODO - In future, once the "build" is working better, check this too
+        return self.allocation_count() > 0
 
-        if self.allocations.count() > 0:
-            return True
+    def build_allocation_count(self, **kwargs):
+        """Return the total quantity allocated to builds, with optional filters."""
+        query = self.allocations.all()
 
-        if self.sales_order_allocations.count() > 0:
-            return True
+        if filter_allocations := kwargs.get('filter_allocations'):
+            query = query.filter(**filter_allocations)
 
-        return False
+        if exclude_allocations := kwargs.get('exclude_allocations'):
+            query = query.exclude(**exclude_allocations)
 
-    def build_allocation_count(self):
-        """Return the total quantity allocated to builds."""
-        query = self.allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+        query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
         total = query['q']
 
@@ -1170,10 +1311,10 @@ class StockItem(
         """
         query = self.sales_order_allocations.all()
 
-        if filter_allocations := kwargs.get('filter_allocations', None):
+        if filter_allocations := kwargs.get('filter_allocations'):
             query = query.filter(**filter_allocations)
 
-        if exclude_allocations := kwargs.get('exclude_allocations', None):
+        if exclude_allocations := kwargs.get('exclude_allocations'):
             query = query.exclude(**exclude_allocations)
 
         if active is True:
@@ -1223,10 +1364,7 @@ class StockItem(
         if self.installed_item_count() > 0:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return self.sales_order is None
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
@@ -1285,7 +1423,11 @@ class StockItem(
 
         # Assign the other stock item into this one
         stock_item.belongs_to = self
-        stock_item.consumed_by = build
+
+        if build is not None:
+            stock_item.consumed_by = build
+
+        stock_item.location = None
         stock_item.save(add_note=False)
 
         deltas = {'stockitem': self.pk}
@@ -1306,6 +1448,12 @@ class StockItem(
             deltas={'stockitem': stock_item.pk},
         )
 
+        trigger_event(
+            StockEvents.ITEM_INSTALLED_INTO_ASSEMBLY,
+            id=stock_item.pk,
+            assembly_id=self.pk,
+        )
+
     @transaction.atomic
     def uninstall_into_location(self, location, user, notes):
         """Uninstall this stock item from another item, into a location.
@@ -1318,8 +1466,6 @@ class StockItem(
         # If the stock item is not installed in anything, ignore
         if self.belongs_to is None:
             return False
-
-        # TODO - Are there any other checks that need to be performed at this stage?
 
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
@@ -1359,17 +1505,36 @@ class StockItem(
         """
         return self.children.count()
 
+    def is_in_stock(
+        self, check_status: bool = True, check_quantity: bool = True
+    ) -> bool:
+        """Return True if this StockItem is "in stock".
+
+        Args:
+            check_status: If True, check the status of the StockItem. Defaults to True.
+            check_quantity: If True, check the quantity of the StockItem. Defaults to True.
+        """
+        if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
+            return False
+
+        if check_quantity and self.quantity <= 0:
+            return False
+
+        return all([
+            self.sales_order is None,  # Not assigned to a SalesOrder
+            self.belongs_to is None,  # Not installed inside another StockItem
+            self.customer is None,  # Not assigned to a customer
+            self.consumed_by is None,  # Not consumed by a build
+            not self.is_building,  # Not part of an active build
+        ])
+
     @property
-    def in_stock(self):
+    def in_stock(self) -> bool:
         """Returns True if this item is in stock.
 
-        See also: IN_STOCK_FILTER
+        See also: StockItem.IN_STOCK_FILTER for the db optimized version of this check.
         """
-        query = StockItem.objects.filter(pk=self.pk)
-
-        query = query.filter(StockItem.IN_STOCK_FILTER)
-
-        return query.exists()
+        return self.is_in_stock(check_status=True)
 
     @property
     def can_adjust_location(self):
@@ -1385,10 +1550,7 @@ class StockItem(
         if self.belongs_to is not None:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return self.sales_order is None
 
     @property
     def tracking_info_count(self):
@@ -1404,8 +1566,9 @@ class StockItem(
         self,
         entry_type: int,
         user: User,
-        deltas: dict = None,
+        deltas: dict | None = None,
         notes: str = '',
+        commit: bool = True,
         **kwargs,
     ):
         """Add a history tracking entry for this StockItem.
@@ -1415,23 +1578,34 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
+
+        Returns:
+            StockItemTracking: The created tracking entry
         """
         if deltas is None:
             deltas = {}
 
+        # Prevent empty entry
+        if (
+            entry_type == StockHistoryCode.STOCK_UPDATE
+            and len(deltas) == 0
+            and not notes
+        ):
+            return None
+
         # Has a location been specified?
-        location = kwargs.get('location', None)
+        location = kwargs.get('location')
 
         if location:
             deltas['location'] = location.id
 
         # Quantity specified?
-        quantity = kwargs.get('quantity', None)
+        quantity = kwargs.get('quantity')
 
         if quantity:
             deltas['quantity'] = float(quantity)
 
-        entry = StockItemTracking.objects.create(
+        entry = StockItemTracking(
             item=self,
             tracking_type=entry_type.value,
             user=user,
@@ -1440,7 +1614,10 @@ class StockItem(
             deltas=deltas,
         )
 
-        entry.save()
+        if commit:
+            entry.save()
+
+        return entry
 
     @transaction.atomic
     def serializeStock(self, quantity, serials, user, notes='', location=None):
@@ -1482,7 +1659,7 @@ class StockItem(
 
         if type(serials) not in [list, tuple]:
             raise ValidationError({
-                'serial_numbers': _('Serial numbers must be a list of integers')
+                'serial_numbers': _('Serial numbers must be provided as a list')
             })
 
         if quantity != len(serials):
@@ -1494,42 +1671,59 @@ class StockItem(
         existing = self.part.find_conflicting_serial_numbers(serials)
 
         if len(existing) > 0:
-            exists = ','.join([str(x) for x in existing])
-            msg = _('Serial numbers already exist') + f': {exists}'
+            msg = _('The following serial numbers already exist or are invalid')
+            msg += ' : '
+            msg += ','.join([str(x) for x in existing])
             raise ValidationError({'serial_numbers': msg})
 
-        # Create a new stock item for each unique serial number
-        for serial in serials:
-            # Create a copy of this StockItem
-            new_item = StockItem.objects.get(pk=self.pk)
-            new_item.quantity = 1
-            new_item.serial = serial
-            new_item.pk = None
-            new_item.parent = self
+        # Serialize this StockItem
+        data = dict(StockItem.objects.filter(pk=self.pk).values()[0])
 
-            if location:
-                new_item.location = location
+        if location:
+            data['location'] = location
 
-            # The item already has a transaction history, don't create a new note
-            new_item.save(user=user, notes=notes)
+        data['part'] = self.part
+        data['parent'] = self
+        data['tree_id'] = self.tree_id
 
-            # Copy entire transaction history
-            new_item.copyHistoryFrom(self)
+        # Generate a new serial number for each item
+        items = StockItem._create_serial_numbers(serials, **data)
 
-            # Copy test result history
-            new_item.copyTestResultsFrom(self)
+        # Create a new tracking entry for each item
+        history_items = []
 
-            # Create a new stock tracking item
-            new_item.add_tracking_entry(
+        for item in items:
+            if entry := item.add_tracking_entry(
                 StockHistoryCode.ASSIGNED_SERIAL,
                 user,
                 notes=notes,
-                deltas={'serial': serial},
+                deltas={'serial': item.serial},
                 location=location,
-            )
+                commit=False,
+            ):
+                history_items.append(entry)
+
+        StockItemTracking.objects.bulk_create(history_items)
+
+        # Duplicate test results
+        test_results = []
+
+        for test_result in self.test_results.all():
+            for item in items:
+                test_result.pk = None
+                test_result.stock_item = item
+
+                test_results.append(test_result)
+
+        StockItemTestResult.objects.bulk_create(test_results)
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
+
+        # Rebuild the stock tree
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='part'
+        )
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -1571,7 +1765,7 @@ class StockItem(
             user: The user who performed the test
             notes: Any notes associated with the test
         """
-        template = kwargs.get('template', None)
+        template = kwargs.get('template')
         test_name = kwargs.pop('test_name', None)
 
         test_key = InvenTree.helpers.generateTestKey(test_name)
@@ -1670,27 +1864,43 @@ class StockItem(
         - Tracking history for the *other* item is deleted
         - Any allocations (build order, sales order) are moved to this StockItem
         """
+        if isinstance(other_items, StockItem):
+            other_items = [other_items]
+
         if len(other_items) == 0:
             return
 
         # Keep track of the tree IDs that are being merged
         tree_ids = {self.tree_id}
 
-        user = kwargs.get('user', None)
-        location = kwargs.get('location', None)
-        notes = kwargs.get('notes', None)
+        user = kwargs.get('user')
+        location = kwargs.get('location', self.location)
+        notes = kwargs.get('notes')
 
         parent_id = self.parent.pk if self.parent else None
+
+        # Keep track of pricing data for the merged data
+        pricing_data = []
+
+        if self.purchase_price:
+            pricing_data.append([self.purchase_price, self.quantity])
 
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
+                logger.warning(
+                    'Stock item <%s> could not be merge into <%s>', other.pk, self.pk
+                )
                 return
 
+        for other in other_items:
             tree_ids.add(other.tree_id)
 
-        for other in other_items:
             self.quantity += other.quantity
+
+            if other.purchase_price:
+                # Only add pricing data if it is available
+                pricing_data.append([other.purchase_price, other.quantity])
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
@@ -1699,7 +1909,7 @@ class StockItem(
 
             # Any "sales order allocations" for the other item must be assigned to this one
             for allocation in other.sales_order_allocations.all():
-                allocation.stock_item = self()
+                allocation.stock_item = self
                 allocation.save()
 
             # Prevent atomicity issues when we are merging our own "parent" part in
@@ -1714,19 +1924,41 @@ class StockItem(
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={'location': location.pk},
+            deltas={'location': location.pk if location else None},
         )
 
+        # Update the location of the item
         self.location = location
+
+        # Update the unit price - calculate weighted average of available pricing data
+        if len(pricing_data) > 0:
+            unit_price, quantity = pricing_data[0]
+
+            # Use the first currency as the base currency
+            base_currency = unit_price.currency
+
+            total_price = unit_price * quantity
+
+            for price, qty in pricing_data[1:]:
+                # Attempt to convert the price to the base currency
+                try:
+                    price = convert_money(price, base_currency)
+                    total_price += price * qty
+                    quantity += qty
+                except Exception:
+                    # Skip this entry, cannot convert to base currency
+                    continue
+
+            if quantity > 0:
+                self.purchase_price = total_price / quantity
+
         self.save()
 
         # Rebuild stock trees as required
-        try:
-            for tree_id in tree_ids:
-                StockItem.objects.partial_rebuild(tree_id=tree_id)
-        except Exception:
-            logger.warning('Rebuilding entire StockItem tree')
-            StockItem.objects.rebuild()
+        for tree_id in tree_ids:
+            InvenTree.tasks.offload_task(
+                stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock'
+            )
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -1749,9 +1981,18 @@ class StockItem(
         Returns:
             The new StockItem object
 
+        Raises:
+            ValidationError: If the stock item cannot be split
+
         - The provided quantity will be subtracted from this item and given to the new one.
         - The new item will have a different StockItem ID, while this will remain the same.
         """
+        # Run initial checks to test if the stock item can actually be "split"
+
+        # Cannot split a stock item which is in production
+        if self.is_building:
+            raise ValidationError(_('Stock item is currently in production'))
+
         notes = kwargs.get('notes', '')
 
         # Do not split a serialized part
@@ -1821,17 +2062,17 @@ class StockItem(
         )
 
         # Rebuild the tree for this parent item
-        try:
-            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
-        except Exception:
-            logger.warning('Rebuilding entire StockItem tree')
-            StockItem.objects.rebuild()
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='stock'
+        )
 
         # Attempt to reload the new item from the database
         try:
             new_stock.refresh_from_db()
         except Exception:
             pass
+
+        trigger_event(StockEvents.ITEM_SPLIT, id=new_stock.id, parent=self.id)
 
         # Return a copy of the "new" stock item
         return new_stock
@@ -1861,19 +2102,24 @@ class StockItem(
             status: If provided, override the status (default = existing status)
             packaging: If provided, override the packaging (default = existing packaging)
         """
+        current_location = self.location
+
         try:
             quantity = Decimal(kwargs.pop('quantity', self.quantity))
         except InvalidOperation:
             return False
 
-        if not self.in_stock:
+        allow_out_of_stock_transfer = get_global_setting(
+            'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
+        )
+
+        if not allow_out_of_stock_transfer and not self.is_in_stock(check_status=False):
             raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
             return False
 
         if location is None:
-            # TODO - Raise appropriate error (cannot move to blank location)
             return False
 
         # Test for a partial movement
@@ -1901,6 +2147,12 @@ class StockItem(
         else:
             tracking_info['location'] = location.pk
 
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            tracking_info['status'] = status
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -1909,7 +2161,16 @@ class StockItem(
 
         self.add_tracking_entry(tracking_code, user, notes=notes, deltas=tracking_info)
 
-        self.save()
+        self.save(add_note=False)
+
+        # Trigger event for the plugin system
+        trigger_event(
+            StockEvents.ITEM_MOVED,
+            id=self.id,
+            old_location=current_location.id if current_location else None,
+            new_location=location.id if location else None,
+            quantity=quantity,
+        )
 
         return True
 
@@ -1932,8 +2193,7 @@ class StockItem(
         except (InvalidOperation, ValueError):
             return
 
-        if quantity < 0:
-            quantity = 0
+        quantity = max(quantity, 0)
 
         self.quantity = quantity
 
@@ -1941,15 +2201,26 @@ class StockItem(
             self.delete()
 
             return False
+
         self.save()
+
+        trigger_event(
+            StockEvents.ITEM_QUANTITY_UPDATED, id=self.id, quantity=float(self.quantity)
+        )
+
         return True
 
     @transaction.atomic
-    def stocktake(self, count, user, notes=''):
+    def stocktake(self, count, user, **kwargs):
         """Perform item stocktake.
 
-        When the quantity of an item is counted,
-        record the date of stocktake
+        Arguments:
+            count: The new quantity of the item
+            user: The user performing the stocktake
+
+        Keyword Arguments:
+            notes: Optional notes for the stocktake
+            status: Optionally adjust the stock status
         """
         try:
             count = Decimal(count)
@@ -1959,25 +2230,55 @@ class StockItem(
         if count < 0:
             return False
 
-        self.stocktake_date = InvenTree.helpers.current_date()
-        self.stocktake_user = user
+        tracking_info = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            tracking_info['status'] = status
 
         if self.updateQuantity(count):
+            tracking_info['quantity'] = float(count)
+
+            self.stocktake_date = InvenTree.helpers.current_date()
+            self.stocktake_user = user
+
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    tracking_info[field] = kwargs[field]
+
+            self.save(add_note=False)
+
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_COUNT,
                 user,
-                notes=notes,
-                deltas={'quantity': float(self.quantity)},
+                notes=kwargs.get('notes', ''),
+                deltas=tracking_info,
             )
+
+        trigger_event(
+            StockEvents.ITEM_COUNTED,
+            'stockitem.counted',
+            id=self.id,
+            quantity=float(self.quantity),
+        )
 
         return True
 
     @transaction.atomic
-    def add_stock(self, quantity, user, notes=''):
-        """Add items to stock.
+    def add_stock(self, quantity, user, **kwargs):
+        """Add a specified quantity of stock to this item.
 
-        This function can be called by initiating a ProjectRun,
-        or by manually adding the items to the stock location
+        Arguments:
+            quantity: The quantity to add
+            user: The user performing the action
+
+        Keyword Arguments:
+            notes: Optional notes for the stock addition
+            status: Optionally adjust the stock status
         """
         # Cannot add items to a serialized part
         if self.serialized:
@@ -1992,21 +2293,48 @@ class StockItem(
         if quantity <= 0:
             return False
 
+        tracking_info = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            tracking_info['status'] = status
+
         if self.updateQuantity(self.quantity + quantity):
+            tracking_info['added'] = float(quantity)
+            tracking_info['quantity'] = float(self.quantity)
+
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    tracking_info[field] = kwargs[field]
+
+            self.save(add_note=False)
+
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_ADD,
                 user,
-                notes=notes,
-                deltas={'added': float(quantity), 'quantity': float(self.quantity)},
+                notes=kwargs.get('notes', ''),
+                deltas=tracking_info,
             )
 
         return True
 
     @transaction.atomic
-    def take_stock(
-        self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE, **kwargs
-    ):
-        """Remove items from stock."""
+    def take_stock(self, quantity, user, code=StockHistoryCode.STOCK_REMOVE, **kwargs):
+        """Remove the specified quantity from this StockItem.
+
+        Arguments:
+            quantity: The quantity to remove
+            user: The user performing the action
+
+        Keyword Arguments:
+            code: The stock history code to use
+            notes: Optional notes for the stock removal
+            status: Optionally adjust the stock status
+        """
         # Cannot remove items from a serialized part
         if self.serialized:
             return False
@@ -2019,16 +2347,35 @@ class StockItem(
         if quantity <= 0:
             return False
 
-        if self.updateQuantity(self.quantity - quantity):
-            deltas = {'removed': float(quantity), 'quantity': float(self.quantity)}
+        deltas = {}
 
-            if location := kwargs.get('location', None):
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            deltas['status'] = status
+
+        if self.updateQuantity(self.quantity - quantity):
+            deltas['removed'] = float(quantity)
+            deltas['quantity'] = float(self.quantity)
+
+            if location := kwargs.get('location'):
                 deltas['location'] = location.pk
 
-            if stockitem := kwargs.get('stockitem', None):
+            if stockitem := kwargs.get('stockitem'):
                 deltas['stockitem'] = stockitem.pk
 
-            self.add_tracking_entry(code, user, notes=notes, deltas=deltas)
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    deltas[field] = kwargs[field]
+
+            self.save(add_note=False)
+
+            self.add_tracking_entry(
+                code, user, notes=kwargs.get('notes', ''), deltas=deltas
+            )
 
         return True
 
@@ -2052,9 +2399,6 @@ class StockItem(
         """Remove all test results."""
         # All test results
         results = self.test_results.all()
-
-        # TODO - Perhaps some filtering options supplied by kwargs?
-
         results.delete()
 
     def getTestResults(self, template=None, test=None, result=None, user=None):
@@ -2097,6 +2441,7 @@ class StockItem(
         """
         # Do we wish to include test results from installed items?
         include_installed = kwargs.pop('include_installed', False)
+        cascade = kwargs.pop('cascade', False)
 
         # Filter results by "date", so that newer results
         # will override older ones.
@@ -2107,27 +2452,24 @@ class StockItem(
         for result in results:
             result_map[result.key] = result
 
-        # Do we wish to "cascade" and include test results from installed stock items?
-        cascade = kwargs.get('cascade', False)
-
         if include_installed:
             installed_items = self.get_installed_items(cascade=cascade)
 
             for item in installed_items:
                 item_results = item.testResultMap()
 
-                for key in item_results.keys():
+                for key in item_results:
                     # Results from sub items should not override master ones
-                    if key not in result_map.keys():
+                    if key not in result_map:
                         result_map[key] = item_results[key]
 
         return result_map
 
     def testResultList(self, **kwargs):
         """Return a list of test-result objects for this StockItem."""
-        return self.testResultMap(**kwargs).values()
+        return list(self.testResultMap(**kwargs).values())
 
-    def requiredTestStatus(self):
+    def requiredTestStatus(self, required_tests=None):
         """Return the status of the tests required for this StockItem.
 
         Return:
@@ -2137,15 +2479,17 @@ class StockItem(
             - failed: Number of tests that have failed
         """
         # All the tests required by the part object
-        required = self.part.getRequiredTests()
+
+        if required_tests is None:
+            required_tests = self.part.getRequiredTests()
 
         results = self.testResultMap()
 
-        total = len(required)
+        total = len(required_tests)
         passed = 0
         failed = 0
 
-        for test in required:
+        for test in required_tests:
             key = InvenTree.helpers.generateTestKey(test.test_name)
 
             if key in results:
@@ -2167,55 +2511,11 @@ class StockItem(
         """Return True if there are any 'required tests' associated with this StockItem."""
         return self.required_test_count > 0
 
-    def passedAllRequiredTests(self):
+    def passedAllRequiredTests(self, required_tests=None):
         """Returns True if this StockItem has passed all required tests."""
-        status = self.requiredTestStatus()
+        status = self.requiredTestStatus(required_tests=required_tests)
 
         return status['passed'] >= status['total']
-
-    def available_test_reports(self):
-        """Return a list of TestReport objects which match this StockItem."""
-        reports = []
-
-        item_query = StockItem.objects.filter(pk=self.pk)
-
-        for test_report in report.models.TestReport.objects.filter(enabled=True):
-            # Attempt to validate report filter (skip if invalid)
-            try:
-                filters = InvenTree.helpers.validateFilterString(test_report.filters)
-                if item_query.filter(**filters).exists():
-                    reports.append(test_report)
-            except (ValidationError, FieldError):
-                continue
-
-        return reports
-
-    @property
-    def has_test_reports(self):
-        """Return True if there are test reports available for this stock item."""
-        return len(self.available_test_reports()) > 0
-
-    def available_labels(self):
-        """Return a list of Label objects which match this StockItem."""
-        labels = []
-
-        item_query = StockItem.objects.filter(pk=self.pk)
-
-        for lbl in label.models.StockItemLabel.objects.filter(enabled=True):
-            try:
-                filters = InvenTree.helpers.validateFilterString(lbl.filters)
-
-                if item_query.filter(**filters).exists():
-                    labels.append(lbl)
-            except (ValidationError, FieldError):
-                continue
-
-        return labels
-
-    @property
-    def has_labels(self):
-        """Return True if there are any label templates available for this stock item."""
-        return len(self.available_labels()) > 0
 
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
@@ -2236,14 +2536,21 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData():
+    if InvenTree.ready.isImportingData():
+        return
+
+    if InvenTree.ready.canAppAccessDatabase(allow_test=True):
         # Run this check in the background
         InvenTree.tasks.offload_task(
-            part_tasks.notify_low_stock_if_required, instance.part
+            part_tasks.notify_low_stock_if_required,
+            instance.part.pk,
+            group='notification',
+            force_async=True,
         )
 
+    if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         # Schedule an update on parent part pricing
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        if instance.part:
             instance.part.schedule_pricing_update(create=False)
 
 
@@ -2252,31 +2559,18 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if created and not InvenTree.ready.isImportingData():
-        # Run this check in the background
-        InvenTree.tasks.offload_task(
-            part_tasks.notify_low_stock_if_required, instance.part
-        )
-
+    if not InvenTree.ready.isImportingData():
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            instance.part.schedule_pricing_update(create=True)
+            InvenTree.tasks.offload_task(
+                part_tasks.notify_low_stock_if_required,
+                instance.part.pk,
+                group='notification',
+                force_async=True,
+            )
 
-
-class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a StockItem object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return API url."""
-        return reverse('api-stock-attachment-list')
-
-    def getSubdir(self):
-        """Override attachment location."""
-        return os.path.join('stock_files', str(self.stock_item.id))
-
-    stock_item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='attachments'
-    )
+        if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+            if instance.part:
+                instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):
@@ -2299,6 +2593,11 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
         deltas: The changes associated with this history item
     """
 
+    class Meta:
+        """Meta data for the StockItemTracking class."""
+
+        verbose_name = _('Stock Item Tracking')
+
     @staticmethod
     def get_api_url():
         """Return API url."""
@@ -2306,13 +2605,11 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return f'/stock/track/{self.id}'
         return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
 
     def label(self):
         """Return label."""
-        if self.tracking_type in StockHistoryCode.keys():
+        if self.tracking_type in StockHistoryCode.keys():  # noqa: SIM118
             return StockHistoryCode.label(self.tracking_type)
 
         return getattr(self, 'title', '')
@@ -2367,6 +2664,11 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         date: Date the test result was recorded
     """
 
+    class Meta:
+        """Meta data for the StockItemTestResult class."""
+
+        verbose_name = _('Stock Item Test Result')
+
     def __str__(self):
         """Return string representation."""
         return f'{self.test_name} - {self.result}'
@@ -2387,23 +2689,25 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
-        key = self.key
+        try:
+            template = self.template
+        except PartModels.PartTestTemplate.DoesNotExist:
+            template = None
 
-        templates = self.stock_item.part.getTestTemplates()
+        if not template:
+            raise ValidationError({'template': _('Test template does not exist')})
 
-        for template in templates:
-            if key == template.key:
-                if template.requires_value and not self.value:
-                    raise ValidationError({
-                        'value': _('Value must be provided for this test')
-                    })
+        if template.requires_value and not self.value:
+            raise ValidationError({'value': _('Value must be provided for this test')})
 
-                if template.requires_attachment and not self.attachment:
-                    raise ValidationError({
-                        'attachment': _('Attachment must be uploaded for this test')
-                    })
+        if template.requires_attachment and not self.attachment:
+            raise ValidationError({
+                'attachment': _('Attachment must be uploaded for this test')
+            })
 
-                break
+        if choices := template.get_choices():
+            if self.value not in choices:
+                raise ValidationError({'value': _('Invalid value for this test')})
 
     @property
     def key(self):
@@ -2471,7 +2775,5 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Finished'),
         help_text=_('The timestamp of the test finish'),
     )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     date = models.DateTimeField(auto_now_add=True, editable=False)

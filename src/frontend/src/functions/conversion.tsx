@@ -15,7 +15,7 @@ export function isTrue(value: any): boolean {
     return false;
   }
 
-  let s = String(value).trim().toLowerCase();
+  const s = String(value).trim().toLowerCase();
 
   return ['true', 'yes', '1', 'on', 't', 'y'].includes(s);
 }
@@ -29,6 +29,14 @@ export function isTrue(value: any): boolean {
  * Allows for retrieval of nested items in an object.
  */
 export function resolveItem(obj: any, path: string): any {
-  let properties = path.split('.');
+  const properties = path.split('.');
   return properties.reduce((prev, curr) => prev?.[curr], obj);
+}
+
+export function identifierString(value: string): string {
+  // Convert an input string e.g. "Hello World" into a string that can be used as an identifier, e.g. "hello-world"
+
+  value = value || '-';
+
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '-');
 }

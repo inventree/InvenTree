@@ -43,7 +43,9 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -71,15 +73,17 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set Up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
         with:
           python-version: ${{ env.python_version }}
       - name: Version Check
         id: version
         run: |
-          pip install --require-hashes -r .github/requirements.txt
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_OUTPUT
@@ -87,18 +91,25 @@ jobs:
         id: test-docker
         run: |
           docker build . --target production --tag inventree-test -f contrib/container/Dockerfile
+          docker run --rm inventree-test invoke version
           docker run --rm inventree-test invoke --version
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
           docker run --rm inventree-test pg_dump --version
+          docker run --rm inventree-test test -f /home/inventree/init.sh
+          docker run --rm inventree-test test -f /home/inventree/tasks.py
+          docker run --rm inventree-test test -f /home/inventree/gunicorn.conf.py
+          docker run --rm inventree-test test -f /home/inventree/src/backend/requirements.txt
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/manage.py
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: docker compose --project-directory . -f contrib/container/dev-docker-compose.yml build --no-cache
       - name: Update Docker Image
         run: |
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke install
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke version
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke setup-dev
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke dev.setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke wait
       - name: Check Data Directory
@@ -116,24 +127,40 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke test --disable-pty
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke test --migrations --disable-pty
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml down
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty --translations
+      - name: Run Migration Tests
+        run: |
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --migrations --translations
       - name: Clean up test folder
         run: |
           rm -rf InvenTree/_testfolder
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
-        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # pin@v3.0.0
+        uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25 # pin@v3.4.0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@d70bba72b1f3fd22344832f00baa16ece964efeb # pin@v3.3.0
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-buildx-action@f7ce87c1d6bead3e36075b2ce75da1f6cc28aaca # pin@v3.9.0
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # pin@v3.5.0
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # pin@v3.8.1
+      - name: Check if Dockerhub login is required
+        id: docker_login
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "skip_dockerhub_login=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip_dockerhub_login=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Login to Dockerhub
+        if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # pin@v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log into registry ghcr.io
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # pin@v3.1.0
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # pin@v3.3.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -142,20 +169,18 @@ jobs:
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # pin@v5.5.1
+        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # pin@v5.6.1
         with:
           images: |
-            ${{ env.image }}
-
-      - name: Set SOURCE_DATE_EPOCH
-        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_OUTPUT
-        shell: bash
-        id: epoch
-
+            inventree/inventree
+            ghcr.io/${{ github.repository }}
+      - uses: depot/setup-action@v1
       - name: Push Docker Images
         id: push-docker
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # pin@v5.3.0
+        if: github.event_name != 'pull_request'
+        uses: depot/build-push-action@v1
         with:
+          project: jczzbjkk68
           context: .
           file: ./contrib/container/Dockerfile
           platforms: ${{ env.platforms }}

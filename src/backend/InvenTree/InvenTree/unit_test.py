@@ -3,16 +3,20 @@
 import csv
 import io
 import json
+import os
 import re
+import time
 from contextlib import contextmanager
 from pathlib import Path
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django.db import connections
+from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
+from django.urls import reverse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
@@ -83,10 +87,80 @@ def getNewestMigrationFile(app, exclude_extension=True):
             newest_num = num
             newest_file = f
 
+    if not newest_file:  # pragma: no cover
+        return newest_file
+
     if exclude_extension:
         newest_file = newest_file.replace('.py', '')
 
     return newest_file
+
+
+def findOffloadedTask(
+    task_name: str,
+    clear_after: bool = False,
+    reverse: bool = False,
+    matching_args=None,
+    matching_kwargs=None,
+):
+    """Find an offloaded tasks in the background worker queue.
+
+    Arguments:
+        task_name: The name of the task to search for
+        clear_after: Clear the task queue after searching
+        reverse: Search in reverse order (most recent first)
+        matching_args: List of argument names to match against
+        matching_kwargs: List of keyword argument names to match against
+    """
+    from django_q.models import OrmQ
+
+    tasks = OrmQ.objects.all()
+
+    if reverse:
+        tasks = tasks.order_by('-pk')
+
+    task = None
+
+    for t in tasks:
+        if t.func() == task_name:
+            found = True
+
+            if matching_args:
+                for arg in matching_args:
+                    if arg not in t.args():
+                        found = False
+                        break
+
+            if matching_kwargs:
+                for kwarg in matching_kwargs:
+                    if kwarg not in t.kwargs():
+                        found = False
+                        break
+
+            if found:
+                task = t
+                break
+
+    if clear_after:
+        OrmQ.objects.all().delete()
+
+    return task
+
+
+def findOffloadedEvent(
+    event_name: str,
+    clear_after: bool = False,
+    reverse: bool = False,
+    matching_kwargs=None,
+):
+    """Find an offloaded event in the background worker queue."""
+    return findOffloadedTask(
+        'plugin.base.event.events.register_event',
+        matching_args=[str(event_name)],
+        matching_kwargs=matching_kwargs,
+        clear_after=clear_after,
+        reverse=reverse,
+    )
 
 
 class UserMixin:
@@ -141,7 +215,26 @@ class UserMixin:
     def setUp(self):
         """Run setup for individual test methods."""
         if self.auto_login:
-            self.client.login(username=self.username, password=self.password)
+            self.login()
+
+    def login(self):
+        """Login with the current user credentials."""
+        self.client.login(username=self.username, password=self.password)
+
+    def logout(self):
+        """Lougout current user."""
+        self.client.logout()
+
+    @classmethod
+    def clearRoles(cls):
+        """Remove all user roles from the registered user."""
+        for ruleset in cls.group.rule_sets.all():
+            ruleset.can_view = False
+            ruleset.can_change = False
+            ruleset.can_delete = False
+            ruleset.can_add = False
+
+            ruleset.save()
 
     @classmethod
     def assignRole(cls, role=None, assign_all: bool = False, group=None):
@@ -181,7 +274,8 @@ class UserMixin:
                     ruleset.can_add = True
 
                 ruleset.save()
-                break
+                if not assign_all:
+                    break
 
 
 class PluginMixin:
@@ -220,17 +314,26 @@ class ExchangeRateMixin:
 
 
 class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup buildin."""
-
-    pass
+    """Testcase with user setup build in."""
 
 
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
+    # Default query count threshold value
+    # TODO: This value should be reduced
+    MAX_QUERY_COUNT = 250
+
+    WARNING_QUERY_THRESHOLD = 100
+
+    # Default query time threshold value
+    # TODO: This value should be reduced
+    # Note: There is a lot of variability in the query time in unit testing...
+    MAX_QUERY_TIME = 7.5
+
     @contextmanager
     def assertNumQueriesLessThan(
-        self, value, using='default', verbose=False, debug=False
+        self, value, using='default', verbose=False, url=None, log_to_file=False
     ):
         """Context manager to check that the number of queries is less than a certain value.
 
@@ -242,41 +345,59 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         with CaptureQueriesContext(connections[using]) as context:
             yield  # your test will be run here
 
-        if verbose:
-            msg = '\r\n%s' % json.dumps(
-                context.captured_queries, indent=4
+        n = len(context.captured_queries)
+
+        if url and n >= value:
+            print(
+                f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
+
+            # Useful for debugging, disabled by default
+            if log_to_file:
+                with open('queries.txt', 'w', encoding='utf-8') as f:
+                    for q in context.captured_queries:
+                        f.write(str(q['sql']) + '\n')
+
+        if verbose and n >= value:
+            msg = f'\r\n{json.dumps(context.captured_queries, indent=4)}'  # pragma: no cover
         else:
             msg = None
 
-        n = len(context.captured_queries)
-
-        if debug:
-            print(
-                f'Expected less than {value} queries, got {n} queries'
-            )  # pragma: no cover
+        if url and n > self.WARNING_QUERY_THRESHOLD:
+            print(f'Warning: {n} queries executed at {url}')
 
         self.assertLess(n, value, msg=msg)
 
-    def checkResponse(self, url, method, expected_code, response):
+    @classmethod
+    def setUpTestData(cls):
+        """Setup for API tests.
+
+        - Ensure that all global settings are assigned default values.
+        """
+        from common.models import InvenTreeSetting
+
+        InvenTreeSetting.build_default_values()
+
+        super().setUpTestData()
+
+    def check_response(self, url, response, expected_code=None):
         """Debug output for an unexpected response."""
-        # No expected code, return
-        if expected_code is None:
-            return
+        # Check that the response returned the expected status code
 
-        if expected_code != response.status_code:  # pragma: no cover
-            print(
-                f"Unexpected {method} response at '{url}': status_code = {response.status_code}"
-            )
+        if expected_code is not None:
+            if expected_code != response.status_code:  # pragma: no cover
+                print(
+                    f"Unexpected response at '{url}': status_code = {response.status_code} (expected {expected_code})"
+                )
 
-            if hasattr(response, 'data'):
-                print('data:', response.data)
-            if hasattr(response, 'body'):
-                print('body:', response.body)
-            if hasattr(response, 'content'):
-                print('content:', response.content)
+                if hasattr(response, 'data'):
+                    print('data:', response.data)
+                if hasattr(response, 'body'):
+                    print('body:', response.body)
+                if hasattr(response, 'content'):
+                    print('content:', response.content)
 
-        self.assertEqual(expected_code, response.status_code)
+            self.assertEqual(response.status_code, expected_code)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -289,72 +410,88 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         actions = response.data.get('actions', {})
         return actions
 
-    def get(self, url, data=None, expected_code=200, format='json', **kwargs):
+    def query(self, url, method, data=None, **kwargs):
+        """Perform a generic API query."""
+        if data is None:
+            data = {}
+
+        kwargs['format'] = kwargs.get('format', 'json')
+
+        expected_code = kwargs.pop('expected_code', None)
+        max_queries = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
+        max_query_time = kwargs.pop('max_query_time', self.MAX_QUERY_TIME)
+
+        t1 = time.time()
+
+        with self.assertNumQueriesLessThan(max_queries, url=url):
+            response = method(url, data, **kwargs)
+
+        t2 = time.time()
+        dt = t2 - t1
+
+        self.check_response(url, response, expected_code=expected_code)
+
+        if dt > max_query_time:
+            print(
+                f'Query time exceeded at {url}: Expected {max_query_time}s, got {dt}s'
+            )
+
+        self.assertLessEqual(dt, max_query_time)
+
+        return response
+
+    def get(self, url, data=None, expected_code=200, **kwargs):
         """Issue a GET request."""
-        # Set default - see B006
-        if data is None:
-            data = {}
+        kwargs['data'] = data
 
-        response = self.client.get(url, data, format=format, **kwargs)
+        return self.query(url, self.client.get, expected_code=expected_code, **kwargs)
 
-        self.checkResponse(url, 'GET', expected_code, response)
-
-        return response
-
-    def post(self, url, data=None, expected_code=None, format='json', **kwargs):
+    def post(self, url, data=None, expected_code=201, **kwargs):
         """Issue a POST request."""
-        # Set default value - see B006
-        if data is None:
-            data = {}
+        # Default query limit is higher for POST requests, due to extra event processing
+        kwargs['max_query_count'] = kwargs.get(
+            'max_query_count', self.MAX_QUERY_COUNT + 100
+        )
 
-        response = self.client.post(url, data=data, format=format, **kwargs)
+        kwargs['data'] = data
 
-        self.checkResponse(url, 'POST', expected_code, response)
+        return self.query(url, self.client.post, expected_code=expected_code, **kwargs)
 
-        return response
-
-    def delete(self, url, data=None, expected_code=None, format='json', **kwargs):
+    def delete(self, url, data=None, expected_code=204, **kwargs):
         """Issue a DELETE request."""
-        if data is None:
-            data = {}
+        kwargs['data'] = data
 
-        response = self.client.delete(url, data=data, format=format, **kwargs)
+        return self.query(
+            url, self.client.delete, expected_code=expected_code, **kwargs
+        )
 
-        self.checkResponse(url, 'DELETE', expected_code, response)
-
-        return response
-
-    def patch(self, url, data, expected_code=None, format='json', **kwargs):
+    def patch(self, url, data, expected_code=200, **kwargs):
         """Issue a PATCH request."""
-        response = self.client.patch(url, data=data, format=format, **kwargs)
+        kwargs['data'] = data
 
-        self.checkResponse(url, 'PATCH', expected_code, response)
+        return self.query(url, self.client.patch, expected_code=expected_code, **kwargs)
 
-        return response
-
-    def put(self, url, data, expected_code=None, format='json', **kwargs):
+    def put(self, url, data, expected_code=200, **kwargs):
         """Issue a PUT request."""
-        response = self.client.put(url, data=data, format=format, **kwargs)
+        kwargs['data'] = data
 
-        self.checkResponse(url, 'PUT', expected_code, response)
-
-        return response
+        return self.query(url, self.client.put, expected_code=expected_code, **kwargs)
 
     def options(self, url, expected_code=None, **kwargs):
         """Issue an OPTIONS request."""
-        response = self.client.options(url, format='json', **kwargs)
+        kwargs['data'] = kwargs.get('data')
 
-        self.checkResponse(url, 'OPTIONS', expected_code, response)
-
-        return response
+        return self.query(
+            url, self.client.options, expected_code=expected_code, **kwargs
+        )
 
     def download_file(
-        self, url, data, expected_code=None, expected_fn=None, decode=True
+        self, url, data, expected_code=None, expected_fn=None, decode=True, **kwargs
     ):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
 
-        self.checkResponse(url, 'DOWNLOAD_FILE', expected_code, response)
+        self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):
@@ -365,12 +502,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
-        result = re.search(r'attachment; filename="([\w.]+)"', disposition)
+        result = re.search(r'attachment; filename="([\w\d\-.]+)"', disposition)
 
         fn = result.groups()[0]
 
         if expected_fn is not None:
-            self.assertEqual(expected_fn, fn)
+            self.assertRegex(fn, expected_fn)
 
         if decode:
             # Decode data and return as StringIO file object
@@ -439,3 +576,35 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     def assertDictContainsSubset(self, a, b):
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
+
+
+class AdminTestCase(InvenTreeAPITestCase):
+    """Tests for the admin interface integration."""
+
+    superuser = True
+
+    def helper(self, model: type[models.Model], model_kwargs=None):
+        """Test the admin URL."""
+        if model_kwargs is None:
+            model_kwargs = {}
+
+        # Add object
+        obj = model.objects.create(**model_kwargs)
+        app_app, app_mdl = model._meta.app_label, model._meta.model_name
+
+        # 'Test listing
+        response = self.get(reverse(f'admin:{app_app}_{app_mdl}_changelist'))
+        self.assertEqual(response.status_code, 200)
+
+        # Test change view
+        response = self.get(
+            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return obj
+
+
+def in_env_context(envs):
+    """Patch the env to include the given dict."""
+    return mock.patch.dict(os.environ, envs)

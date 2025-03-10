@@ -1,7 +1,6 @@
 """Main JSON interface views."""
 
 import json
-import logging
 import sys
 from pathlib import Path
 
@@ -10,6 +9,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
@@ -20,21 +20,61 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
-from InvenTree.filters import SEARCH_ORDER_FILTER
+from common.settings import get_global_setting
+from InvenTree import helpers
+from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.permissions import RolePermission
-from InvenTree.templatetags.inventree_extras import plugins_info
+from InvenTree.sso import sso_registration_enabled
 from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
-from .email import is_email_configured
+from .helpers import plugins_info
+from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
-from .views import AjaxView
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
+
+
+def read_license_file(path: Path) -> list:
+    """Extract license information from the provided file.
+
+    Arguments:
+        path: Path to the license file
+
+    Returns: A list of items containing the license information
+    """
+    # Check if the file exists
+    if not path.exists():
+        logger.error("License file not found at '%s'", path)
+        return []
+
+    try:
+        data = json.loads(path.read_text())
+    except Exception as e:
+        logger.exception("Failed to parse license file '%s': %s", path, e)
+        return []
+
+    output = []
+    names = set()
+
+    # Ensure we do not have any duplicate 'name' values in the list
+    for entry in data:
+        name = None
+        for key in entry:
+            if key.lower() == 'name':
+                name = entry[key]
+                break
+
+        if name is None or name in names:
+            continue
+
+        names.add(name)
+        output.append({key.lower(): value for key, value in entry.items()})
+
+    return output
 
 
 class LicenseViewSerializer(serializers.Serializer):
@@ -51,47 +91,6 @@ class LicenseView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def read_license_file(self, path: Path) -> list:
-        """Extract license information from the provided file.
-
-        Arguments:
-            path: Path to the license file
-
-        Returns: A list of items containing the license information
-        """
-        # Check if the file exists
-        if not path.exists():
-            logger.error("License file not found at '%s'", path)
-            return []
-
-        try:
-            data = json.loads(path.read_text())
-        except json.JSONDecodeError as e:
-            logger.exception("Failed to parse license file '%s': %s", path, e)
-            return []
-        except Exception as e:
-            logger.exception("Exception while reading license file '%s': %s", path, e)
-            return []
-
-        output = []
-        names = set()
-
-        # Ensure we do not have any duplicate 'name' values in the list
-        for entry in data:
-            name = None
-            for key in entry.keys():
-                if key.lower() == 'name':
-                    name = entry[key]
-                    break
-
-            if name is None or name in names:
-                continue
-
-            names.add(name)
-            output.append({key.lower(): value for key, value in entry.items()})
-
-        return output
-
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
@@ -100,8 +99,8 @@ class LicenseView(APIView):
             'web/static/web/.vite/dependencies.json'
         )
         return JsonResponse({
-            'backend': self.read_license_file(backend),
-            'frontend': self.read_license_file(frontend),
+            'backend': read_license_file(backend),
+            'frontend': read_license_file(frontend),
         })
 
 
@@ -198,8 +197,53 @@ class VersionTextView(ListAPI):
         return JsonResponse(inventreeApiText())
 
 
-class InfoView(AjaxView):
-    """Simple JSON endpoint for InvenTree information.
+class InfoApiSerializer(serializers.Serializer):
+    """InvenTree server information - some information might be blanked if called without elevated credentials."""
+
+    class SettingsSerializer(serializers.Serializer):
+        """Serializer for InfoApiSerializer."""
+
+        sso_registration = serializers.BooleanField()
+        registration_enabled = serializers.BooleanField()
+        password_forgotten_enabled = serializers.BooleanField()
+
+    class CustomizeSerializer(serializers.Serializer):
+        """Serializer for customize field."""
+
+        logo = serializers.CharField()
+        splash = serializers.CharField()
+        login_message = serializers.CharField()
+        navbar_message = serializers
+
+    server = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True)
+    version = serializers.CharField(read_only=True)
+    instance = serializers.CharField(read_only=True)
+    apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
+    worker_running = serializers.BooleanField(read_only=True)
+    worker_count = serializers.IntegerField(read_only=True)
+    worker_pending_tasks = serializers.IntegerField(read_only=True)
+    plugins_enabled = serializers.BooleanField(read_only=True)
+    plugins_install_disabled = serializers.BooleanField(read_only=True)
+    active_plugins = serializers.JSONField(read_only=True)
+    email_configured = serializers.BooleanField(read_only=True)
+    debug_mode = serializers.BooleanField(read_only=True)
+    docker_mode = serializers.BooleanField(read_only=True)
+    default_locale = serializers.ChoiceField(
+        choices=settings.LOCALE_CODES, read_only=True
+    )
+    customize = CustomizeSerializer(read_only=True)
+    system_health = serializers.BooleanField(read_only=True)
+    database = serializers.CharField(read_only=True)
+    platform = serializers.CharField(read_only=True)
+    installer = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True)
+    django_admin = serializers.CharField(read_only=True)
+    settings = SettingsSerializer(read_only=True, many=False)
+
+
+class InfoView(APIView):
+    """JSON endpoint for InvenTree server information.
 
     Use to confirm that the server is running, etc.
     """
@@ -210,6 +254,13 @@ class InfoView(AjaxView):
         """Return the current number of outstanding background tasks."""
         return OrmQ.objects.count()
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=InfoApiSerializer, description='InvenTree server information'
+            )
+        }
+    )
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
         is_staff = request.user.is_staff
@@ -219,10 +270,12 @@ class InfoView(AjaxView):
 
         data = {
             'server': 'InvenTree',
+            'id': InvenTree.version.inventree_identifier(),
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
+            'worker_count': settings.BACKGROUND_WORKER_COUNT,
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
@@ -231,12 +284,28 @@ class InfoView(AjaxView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
+            'customize': {
+                'logo': helpers.getLogoImage(),
+                'splash': helpers.getSplashScreen(),
+                'login_message': helpers.getCustomOption('login_message'),
+                'navbar_message': helpers.getCustomOption('navbar_message'),
+            },
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
             'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
             'target': InvenTree.version.inventreeTarget() if is_staff else None,
+            'django_admin': settings.INVENTREE_ADMIN_URL
+            if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
+            else None,
+            'settings': {
+                'sso_registration': sso_registration_enabled(),
+                'registration_enabled': registration_enabled(),
+                'password_forgotten_enabled': get_global_setting(
+                    'LOGIN_ENABLE_PWD_FORGOT'
+                ),
+            },
         }
 
         return JsonResponse(data)
@@ -259,7 +328,7 @@ class InfoView(AjaxView):
         return False
 
 
-class NotFoundView(AjaxView):
+class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
     permission_classes = [permissions.AllowAny]
@@ -278,22 +347,27 @@ class NotFoundView(AjaxView):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def get(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def post(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def patch(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def put(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def delete(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
@@ -310,8 +384,25 @@ class BulkDeleteMixin:
     - Speed (single API call and DB query)
     """
 
+    def validate_delete(self, queryset, request) -> None:
+        """Perform validation right before deletion.
+
+        Arguments:
+            queryset: The queryset to be deleted
+            request: The request object
+
+        Returns:
+            None
+
+        Raises:
+            ValidationError: If the deletion should not proceed
+        """
+
     def filter_delete_queryset(self, queryset, request):
-        """Provide custom filtering for the queryset *before* it is deleted."""
+        """Provide custom filtering for the queryset *before* it is deleted.
+
+        The default implementation does nothing, just returns the queryset.
+        """
         return queryset
 
     def delete(self, request, *args, **kwargs):
@@ -364,11 +455,29 @@ class BulkDeleteMixin:
 
             # Filter by provided item ID values
             if items:
-                queryset = queryset.filter(id__in=items)
+                try:
+                    queryset = queryset.filter(id__in=items)
+                except Exception:
+                    raise ValidationError({
+                        'non_field_errors': _('Invalid items list provided')
+                    })
 
             # Filter by provided filters
             if filters:
-                queryset = queryset.filter(**filters)
+                try:
+                    queryset = queryset.filter(**filters)
+                except Exception:
+                    raise ValidationError({
+                        'non_field_errors': _('Invalid filters provided')
+                    })
+
+            if queryset.count() == 0:
+                raise ValidationError({
+                    'non_field_errors': _('No items found to delete')
+                })
+
+            # Run a final validation step (should raise an error if the deletion should not proceed)
+            self.validate_delete(queryset, request)
 
             n_deleted = queryset.count()
             queryset.delete()
@@ -378,60 +487,6 @@ class BulkDeleteMixin:
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     """Custom API endpoint which provides BulkDelete functionality in addition to List and Create."""
-
-    ...
-
-
-class APIDownloadMixin:
-    """Mixin for enabling a LIST endpoint to be downloaded a file.
-
-    To download the data, add the ?export=<fmt> to the query string.
-
-    The implementing class must provided a download_queryset method,
-    e.g.
-
-    def download_queryset(self, queryset, export_format):
-        dataset = StockItemResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-
-        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
-            date=datetime.now().strftime("%d-%b-%Y"),
-            fmt=export_format
-        )
-
-        return DownloadFile(filedata, filename)
-    """
-
-    def get(self, request, *args, **kwargs):
-        """Generic handler for a download request."""
-        export_format = request.query_params.get('export', None)
-
-        if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-            queryset = self.filter_queryset(self.get_queryset())
-            return self.download_queryset(queryset, export_format)
-        # Default to the parent class implementation
-        return super().get(request, *args, **kwargs)
-
-    def download_queryset(self, queryset, export_format):
-        """This function must be implemented to provide a downloadFile request."""
-        raise NotImplementedError('download_queryset method not implemented!')
-
-
-class AttachmentMixin:
-    """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
-
-    permission_classes = [permissions.IsAuthenticated, RolePermission]
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['attachment', 'comment', 'link']
-
-    def perform_create(self, serializer):
-        """Save the user information when a file is uploaded."""
-        attachment = serializer.save()
-        attachment.user = self.request.user
-        attachment.save()
 
 
 class APISearchViewSerializer(serializers.Serializer):
@@ -467,6 +522,9 @@ class APISearchView(GenericAPIView):
         return {
             'build': build.api.BuildList,
             'company': company.api.CompanyList,
+            'supplier': company.api.CompanyList,
+            'manufacturer': company.api.CompanyList,
+            'customer': company.api.CompanyList,
             'manufacturerpart': company.api.ManufacturerPartList,
             'supplierpart': company.api.SupplierPartList,
             'part': part.api.PartList,
@@ -474,8 +532,17 @@ class APISearchView(GenericAPIView):
             'purchaseorder': order.api.PurchaseOrderList,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
+            'salesordershipment': order.api.SalesOrderShipmentList,
             'stockitem': stock.api.StockList,
             'stocklocation': stock.api.StockLocationList,
+        }
+
+    def get_result_filters(self):
+        """Provide extra filtering options for particular search groups."""
+        return {
+            'supplier': {'is_supplier': True},
+            'manufacturer': {'is_manufacturer': True},
+            'customer': {'is_customer': True},
         }
 
     def post(self, request, *args, **kwargs):
@@ -496,6 +563,8 @@ class APISearchView(GenericAPIView):
         if 'search' not in data:
             raise ValidationError({'search': 'Search term must be provided'})
 
+        search_filters = self.get_result_filters()
+
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
             if key in data:
@@ -503,6 +572,11 @@ class APISearchView(GenericAPIView):
 
                 for k, v in pass_through_params.items():
                     params[k] = request.data.get(k, v)
+
+                # Add in any extra filters for this particular search type
+                if key in search_filters:
+                    for k, v in search_filters[key].items():
+                        params[k] = v
 
                 # Enforce json encoding
                 params['format'] = 'json'
@@ -550,10 +624,14 @@ class MetadataView(RetrieveUpdateAPI):
         """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
 
+        if 'lookup_field' in self.kwargs:
+            # Set custom lookup field (instead of default 'pk' value) if supplied
+            self.lookup_field = self.kwargs.pop('lookup_field')
+
         if model is None:
             raise ValidationError(
                 f"MetadataView called without '{self.MODEL_REF}' parameter"
-            )
+            )  # pragma: no cover
 
         return model
 
@@ -569,5 +647,5 @@ class MetadataView(RetrieveUpdateAPI):
         """Return MetadataSerializer instance."""
         # Detect if we are currently generating the OpenAPI schema
         if 'spectacular' in sys.argv:
-            return MetadataSerializer(Part, *args, **kwargs)
+            return MetadataSerializer(Part, *args, **kwargs)  # pragma: no cover
         return MetadataSerializer(self.get_model_type(), *args, **kwargs)

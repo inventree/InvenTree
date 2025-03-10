@@ -23,17 +23,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='company',
             name='is_customer',
-            field=models.BooleanField(default=False, help_text='Do you sell items to this company?', verbose_name='is customer'),
+            field=models.BooleanField(default=False, help_text='Do you sell items to this company?', verbose_name='Is customer'),
         ),
         migrations.AlterField(
             model_name='company',
             name='is_manufacturer',
-            field=models.BooleanField(default=False, help_text='Does this company manufacture parts?', verbose_name='is manufacturer'),
+            field=models.BooleanField(default=False, help_text='Does this company manufacture parts?', verbose_name='Is manufacturer'),
         ),
         migrations.AlterField(
             model_name='company',
             name='is_supplier',
-            field=models.BooleanField(default=True, help_text='Do you purchase items from this company?', verbose_name='is supplier'),
+            field=models.BooleanField(default=True, help_text='Do you purchase items from this company?', verbose_name='Is supplier'),
         ),
         migrations.AlterField(
             model_name='company',

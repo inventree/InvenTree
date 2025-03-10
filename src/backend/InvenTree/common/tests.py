@@ -11,6 +11,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.test.utils import override_settings
@@ -18,26 +20,185 @@ from django.urls import reverse
 
 import PIL
 
+import common.validators
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from InvenTree.unit_test import (
+    AdminTestCase,
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    PluginMixin,
+)
+from part.models import Part, PartParameterTemplate
 from plugin import registry
 from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
-    ColorTheme,
+    Attachment,
     CustomUnit,
+    InvenTreeCustomUserStateModel,
     InvenTreeSetting,
     InvenTreeUserSetting,
     NotesImage,
     NotificationEntry,
     NotificationMessage,
     ProjectCode,
+    SelectionList,
+    SelectionListEntry,
     WebhookEndpoint,
     WebhookMessage,
 )
 
 CONTENT_TYPE_JSON = 'application/json'
+
+
+class AttachmentTest(InvenTreeAPITestCase):
+    """Unit tests for the 'Attachment' model."""
+
+    fixtures = ['part', 'category', 'location']
+
+    def generate_file(self, fn: str):
+        """Generate an attachment file object."""
+        file_object = io.StringIO('Some dummy data')
+        file_object.seek(0)
+
+        return ContentFile(file_object.getvalue(), fn)
+
+    def test_filename_validation(self):
+        """Test that the filename validation works as expected.
+
+        The django file-upload mechanism should sanitize filenames correctly.
+        """
+        part = Part.objects.first()
+
+        filenames = {
+            'test.txt': 'test.txt',
+            'r####at.mp4': 'rat.mp4',
+            '../../../win32.dll': 'win32.dll',
+            'ABC!@#$%^&&&&&&&)-XYZ-(**&&&\\/QqQ.sqlite': 'QqQ.sqlite',
+            '/var/log/inventree.log': 'inventree.log',
+            'c:\\Users\\admin\\passwd.txt': 'cUsersadminpasswd.txt',
+            '8&&&8.txt': '88.txt',
+        }
+
+        for fn, expected in filenames.items():
+            attachment = Attachment.objects.create(
+                attachment=self.generate_file(fn),
+                comment=f'Testing filename: {fn}',
+                model_type='part',
+                model_id=part.pk,
+            )
+
+            expected_path = f'attachments/part/{part.pk}/{expected}'
+            self.assertEqual(attachment.attachment.name, expected_path)
+            self.assertEqual(attachment.file_size, 15)
+
+        self.assertEqual(part.attachments.count(), len(filenames.keys()))
+
+        # Delete any attachments after the test is completed
+        for attachment in part.attachments.all():
+            path = attachment.attachment.name
+            attachment.delete()
+
+            # Remove uploaded files to prevent them sticking around
+            if default_storage.exists(path):
+                default_storage.delete(path)
+
+        self.assertEqual(
+            Attachment.objects.filter(model_type='part', model_id=part.pk).count(), 0
+        )
+
+    def test_mixin(self):
+        """Test that the mixin class works as expected."""
+        part = Part.objects.first()
+
+        self.assertEqual(part.attachments.count(), 0)
+
+        part.create_attachment(
+            attachment=self.generate_file('test.txt'), comment='Hello world'
+        )
+
+        self.assertEqual(part.attachments.count(), 1)
+
+        attachment = part.attachments.first()
+
+        self.assertEqual(attachment.comment, 'Hello world')
+        self.assertIn(f'attachments/part/{part.pk}/test', attachment.attachment.name)
+
+    def test_upload_via_api(self):
+        """Test that we can upload attachments via the API."""
+        part = Part.objects.first()
+        url = reverse('api-attachment-list')
+
+        data = {
+            'model_type': 'part',
+            'model_id': part.pk,
+            'link': 'https://www.google.com',
+            'comment': 'Some appropriate comment',
+        }
+
+        # Start without appropriate permissions
+        # User must have 'part.change' to upload an attachment against a Part instance
+        self.logout()
+        self.user.is_staff = False
+        self.user.is_superuser = False
+        self.user.save()
+        self.clearRoles()
+
+        # Check without login (401)
+        response = self.post(url, data, expected_code=401)
+
+        self.login()
+
+        response = self.post(url, data, expected_code=403)
+
+        self.assertIn(
+            'User does not have permission to create or edit attachments for this model',
+            str(response.data['detail']),
+        )
+
+        # Add the required permission
+        self.assignRole('part.change')
+
+        # Upload should now work!
+        response = self.post(url, data, expected_code=201)
+
+        pk = response.data['pk']
+
+        # Edit the attachment via API
+        response = self.patch(
+            reverse('api-attachment-detail', kwargs={'pk': pk}),
+            {'comment': 'New comment'},
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['comment'], 'New comment')
+
+        attachment = Attachment.objects.get(pk=pk)
+        self.assertEqual(attachment.comment, 'New comment')
+
+        # And check that we cannot edit the attachment without the correct permissions
+        self.clearRoles()
+
+        self.patch(
+            reverse('api-attachment-detail', kwargs={'pk': pk}),
+            {'comment': 'New comment 2'},
+            expected_code=403,
+        )
+
+        # Try to delete the attachment via API (should fail)
+        attachment = part.attachments.first()
+        url = reverse('api-attachment-detail', kwargs={'pk': attachment.pk})
+        response = self.delete(url, expected_code=403)
+        self.assertIn(
+            'User does not have permission to delete this attachment',
+            str(response.data['detail']),
+        )
+
+        # Assign 'delete' permission to 'part' model
+        self.assignRole('part.delete')
+        response = self.delete(url, expected_code=204)
 
 
 class SettingsTest(InvenTreeTestCase):
@@ -73,9 +234,6 @@ class SettingsTest(InvenTreeTestCase):
         report_size_obj = InvenTreeSetting.get_setting_object(
             'REPORT_DEFAULT_PAGE_SIZE'
         )
-        report_test_obj = InvenTreeSetting.get_setting_object(
-            'REPORT_ENABLE_TEST_REPORT'
-        )
 
         # check settings base fields
         self.assertEqual(instance_obj.name, 'Server Instance Name')
@@ -105,7 +263,6 @@ class SettingsTest(InvenTreeTestCase):
 
         # check setting_type
         self.assertEqual(instance_obj.setting_type(), 'string')
-        self.assertEqual(report_test_obj.setting_type(), 'boolean')
         self.assertEqual(stale_days.setting_type(), 'integer')
 
         # check as_int
@@ -113,9 +270,6 @@ class SettingsTest(InvenTreeTestCase):
         self.assertEqual(
             instance_obj.as_int(), 'InvenTree'
         )  # not an int -> return default
-
-        # check as_bool
-        self.assertEqual(report_test_obj.as_bool(), True)
 
         # check to_native_value
         self.assertEqual(stale_days.to_native_value(), 0)
@@ -238,7 +392,7 @@ class SettingsTest(InvenTreeTestCase):
             'before_save',
         ]
 
-        for k in setting.keys():
+        for k in setting:
             self.assertIn(k, allowed_keys)
 
         # Check default value for boolean settings
@@ -273,13 +427,17 @@ class SettingsTest(InvenTreeTestCase):
                 print(f"run_settings_check failed for user setting '{key}'")
                 raise exc
 
-    @override_settings(SITE_URL=None)
+    @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key in InvenTreeSetting.SETTINGS:
             value = InvenTreeSetting.get_setting_default(key)
 
-            InvenTreeSetting.set_setting(key, value, self.user)
+            try:
+                InvenTreeSetting.set_setting(key, value, change_user=self.user)
+            except Exception as exc:  # pragma: no cover
+                print(f"test_defaults: Failed to set default value for setting '{key}'")
+                raise exc
 
             self.assertEqual(value, InvenTreeSetting.get_setting(key))
 
@@ -287,11 +445,6 @@ class SettingsTest(InvenTreeTestCase):
             setting = InvenTreeSetting.get_setting_object(key)
 
             if setting.is_bool():
-                if setting.default_value in ['', None]:
-                    raise ValueError(
-                        f'Default value for boolean setting {key} not provided'
-                    )  # pragma: no cover
-
                 if setting.default_value not in [True, False]:
                     raise ValueError(
                         f'Non-boolean default value specified for {key}'
@@ -366,11 +519,35 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
 
         n_public_settings = len([
-            k for k in InvenTreeSetting.SETTINGS.keys() if not k.startswith('_')
+            k for k in InvenTreeSetting.SETTINGS if not k.startswith('_')
         ])
 
         # Number of results should match the number of settings
         self.assertEqual(len(response.data), n_public_settings)
+
+    def test_currency_settings(self):
+        """Run tests for currency specific settings."""
+        url = reverse('api-global-setting-detail', kwargs={'key': 'CURRENCY_CODES'})
+
+        response = self.patch(url, data={'value': 'USD,XYZ'}, expected_code=400)
+
+        self.assertIn("Invalid currency code: 'XYZ'", str(response.data))
+
+        response = self.patch(
+            url, data={'value': 'AUD,USD, AUD,AUD,'}, expected_code=400
+        )
+
+        self.assertIn("Duplicate currency code: 'AUD'", str(response.data))
+
+        response = self.patch(url, data={'value': ',,,,,'}, expected_code=400)
+
+        self.assertIn('No valid currency codes provided', str(response.data))
+
+        response = self.patch(url, data={'value': 'AUD,USD,GBP'}, expected_code=200)
+
+        codes = InvenTreeSetting.get_setting('CURRENCY_CODES')
+
+        self.assertEqual(codes, 'AUD,USD,GBP')
 
     def test_company_name(self):
         """Test a settings object lifecycle e2e."""
@@ -451,7 +628,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
     def test_user_setting_init(self):
         """Test we can retrieve a setting which has not yet been initialized."""
-        key = 'HOMEPAGE_PART_LATEST'
+        key = 'LABEL_INLINE'
 
         # Ensure it does not actually exist in the database
         self.assertFalse(InvenTreeUserSetting.objects.filter(key=key).exists())
@@ -606,6 +783,9 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
         # Request with filter
         self.get(url, expected_code=200, data={'mixin': 'settings'})
+        self.get(url, expected_code=200, data={'builtin': True})
+        self.get(url, expected_code=200, data={'sample': True})
+        self.get(url, expected_code=200, data={'installed': True})
 
     def test_api_list(self):
         """Test list URL."""
@@ -654,11 +834,9 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
     def test_invalid_setting_key(self):
         """Test that an invalid setting key returns a 404."""
-        ...
 
     def test_uninitialized_setting(self):
         """Test that requesting an uninitialized setting creates the setting."""
-        ...
 
 
 class ErrorReportTest(InvenTreeAPITestCase):
@@ -756,7 +934,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         """Test that a wrong token is not working."""
         response = self.client.post(
-            self.url, content_type=CONTENT_TYPE_JSON, **{'HTTP_TOKEN': '1234567fghj'}
+            self.url, content_type=CONTENT_TYPE_JSON, HTTP_TOKEN='1234567fghj'
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -779,7 +957,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data="{'this': 123}",
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
@@ -827,7 +1005,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str('68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=')},
+            HTTP_TOKEN='68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=',
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -842,7 +1020,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -947,21 +1125,16 @@ class CommonTest(InvenTreeAPITestCase):
 
     def test_restart_flag(self):
         """Test that the restart flag is reset on start."""
-        import common.models
         from plugin import registry
 
         # set flag true
-        common.models.InvenTreeSetting.set_setting(
-            'SERVER_RESTART_REQUIRED', True, None
-        )
+        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
 
         # reload the app
         registry.reload_plugins()
 
         # now it should be false again
-        self.assertFalse(
-            common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED')
-        )
+        self.assertFalse(get_global_setting('SERVER_RESTART_REQUIRED'))
 
     def test_config_api(self):
         """Test config URLs."""
@@ -1042,38 +1215,6 @@ class CommonTest(InvenTreeAPITestCase):
         self.user.save()
 
 
-class ColorThemeTest(TestCase):
-    """Tests for ColorTheme."""
-
-    def test_choices(self):
-        """Test that default choices are returned."""
-        result = ColorTheme.get_color_themes_choices()
-
-        # skip due to directories not being set up
-        if not result:
-            return  # pragma: no cover
-        self.assertIn(('default', 'Default'), result)
-
-    def test_valid_choice(self):
-        """Check that is_valid_choice works correctly."""
-        result = ColorTheme.get_color_themes_choices()
-
-        # skip due to directories not being set up
-        if not result:
-            return  # pragma: no cover
-
-        # check wrong reference
-        self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
-
-        # create themes
-        aa = ColorTheme.objects.create(user='aa', name='testname')
-        ab = ColorTheme.objects.create(user='ab', name='darker')
-
-        # check valid theme
-        self.assertFalse(ColorTheme.is_valid_choice(aa))
-        self.assertTrue(ColorTheme.is_valid_choice(ab))
-
-
 class CurrencyAPITests(InvenTreeAPITestCase):
     """Unit tests for the currency exchange API endpoints."""
 
@@ -1093,7 +1234,9 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         # Updating via the external exchange may not work every time
         for _idx in range(5):
-            self.post(reverse('api-currency-refresh'))
+            self.post(
+                reverse('api-currency-refresh'), expected_code=200, max_query_time=30
+            )
 
             # There should be some new exchange rate objects now
             if Rate.objects.all().exists():
@@ -1225,7 +1368,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
         )
 
         self.assertIn(
-            'project code with this Project Code already exists',
+            'Project Code with this Project Code already exists',
             str(response.data['code']),
         )
 
@@ -1341,6 +1484,14 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         for name in invalid_name_values:
             self.patch(url, {'name': name}, expected_code=400)
 
+    def test_api(self):
+        """Test the CustomUnit API."""
+        response = self.get(reverse('api-all-unit-list'))
+        self.assertIn('default_system', response.data)
+        self.assertIn('available_systems', response.data)
+        self.assertIn('available_units', response.data)
+        self.assertEqual(len(response.data['available_units']) > 100, True)
+
 
 class ContentTypeAPITest(InvenTreeAPITestCase):
     """Unit tests for the ContentType API."""
@@ -1382,4 +1533,301 @@ class ContentTypeAPITest(InvenTreeAPITestCase):
         self.get(
             reverse('api-contenttype-detail-modelname', kwargs={'model': None}),
             expected_code=404,
+        )
+
+
+class IconAPITest(InvenTreeAPITestCase):
+    """Unit tests for the Icons API."""
+
+    def test_list(self):
+        """Test API list functionality."""
+        response = self.get(reverse('api-icon-list'), expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        self.assertEqual(response.data[0]['prefix'], 'ti')
+        self.assertEqual(response.data[0]['name'], 'Tabler Icons')
+        for font_format in ['woff2', 'woff', 'truetype']:
+            self.assertIn(font_format, response.data[0]['fonts'])
+
+        self.assertGreater(len(response.data[0]['icons']), 1000)
+
+
+class ValidatorsTest(TestCase):
+    """Unit tests for the custom validators."""
+
+    def test_validate_icon(self):
+        """Test the validate_icon function."""
+        common.validators.validate_icon('')
+        common.validators.validate_icon(None)
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon('invalid')
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon('my:package:non-existing')
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon(
+                'ti:my-non-existing-icon:non-existing-variant'
+            )
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon('ti:package:non-existing-variant')
+
+        common.validators.validate_icon('ti:package:outline')
+
+
+class CustomStatusTest(TestCase):
+    """Unit tests for the custom status model."""
+
+    def setUp(self):
+        """Setup for all tests."""
+        self.data = {
+            'key': 11,
+            'name': 'OK - advanced',
+            'label': 'OK - adv.',
+            'color': 'secondary',
+            'logical_key': 10,
+            'model': ContentType.objects.get(model='stockitem'),
+            'reference_status': 'StockStatus',
+        }
+
+    def test_validation_model(self):
+        """Test that model is present."""
+        data = self.data
+        data.pop('model')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_key(self):
+        """Tests Model must have a key."""
+        data = self.data
+        data.pop('key')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logicalkey(self):
+        """Tests Logical key must be present."""
+        data = self.data
+        data.pop('logical_key')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_reference(self):
+        """Tests Reference status must be present."""
+        data = self.data
+        data.pop('reference_status')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logical_unique(self):
+        """Tests Logical key must be unique."""
+        data = self.data
+        data['logical_key'] = data['key']
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_reference_exsists(self):
+        """Tests Reference status set not found."""
+        data = self.data
+        data['reference_status'] = 'abcd'
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_key_unique(self):
+        """Tests Key must be different from the logical keys of the reference."""
+        data = self.data
+        data['key'] = 50
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logical_key_exsists(self):
+        """Tests Logical key must be in the logical keys of the reference status."""
+        data = self.data
+        data['logical_key'] = 12
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation(self):
+        """Tests Valid run."""
+        data = self.data
+        instance = InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(data['key'], instance.key)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 1)
+        self.assertEqual(
+            instance.__str__(), 'Stock Item (StockStatus): OK - advanced | 11 (10)'
+        )
+
+
+class SelectionListTest(InvenTreeAPITestCase):
+    """Tests for the SelectionList and SelectionListEntry model and API endpoints."""
+
+    fixtures = ['category', 'part', 'location', 'params', 'test_templates']
+
+    def setUp(self):
+        """Setup for all tests."""
+        super().setUp()
+
+        self.list = SelectionList.objects.create(name='Test List')
+        self.entry1 = SelectionListEntry.objects.create(
+            list=self.list,
+            value='test1',
+            label='Test Entry',
+            description='Test Description',
+        )
+        self.entry2 = SelectionListEntry.objects.create(
+            list=self.list,
+            value='test2',
+            label='Test Entry 2',
+            description='Test Description 2',
+            active=False,
+        )
+        self.list2 = SelectionList.objects.create(name='Test List 2', active=False)
+
+        # Urls
+        self.list_url = reverse('api-selectionlist-detail', kwargs={'pk': self.list.pk})
+        self.entry_url = reverse(
+            'api-selectionlistentry-detail',
+            kwargs={'entrypk': self.entry1.pk, 'pk': self.list.pk},
+        )
+
+    def test_api(self):
+        """Test the SelectionList and SelctionListEntry API endpoints."""
+        url = reverse('api-selectionlist-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 2)
+
+        response = self.get(self.list_url, expected_code=200)
+        self.assertEqual(response.data['name'], 'Test List')
+        self.assertEqual(len(response.data['choices']), 2)
+        self.assertEqual(response.data['choices'][0]['value'], 'test1')
+        self.assertEqual(response.data['choices'][0]['label'], 'Test Entry')
+
+        response = self.get(self.entry_url, expected_code=200)
+        self.assertEqual(response.data['value'], 'test1')
+        self.assertEqual(response.data['label'], 'Test Entry')
+        self.assertEqual(response.data['description'], 'Test Description')
+
+    def test_api_update(self):
+        """Test adding and editing via the SelectionList."""
+        # Test adding a new list via the API
+        response = self.post(
+            reverse('api-selectionlist-list'),
+            {
+                'name': 'New List',
+                'active': True,
+                'choices': [{'value': '1', 'label': 'Test Entry'}],
+            },
+            expected_code=201,
+        )
+        list_pk = response.data['pk']
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '1')
+
+        # Test editing the list choices via the API (remove and add in same call)
+        response = self.patch(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            {'choices': [{'value': '2', 'label': 'New Label'}]},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '2')
+        self.assertEqual(response.data['choices'][0]['label'], 'New Label')
+        entry_id = response.data['choices'][0]['id']
+
+        # Test changing an entry via list API
+        response = self.patch(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            {'choices': [{'id': entry_id, 'value': '2', 'label': 'New Label Text'}]},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '2')
+        self.assertEqual(response.data['choices'][0]['label'], 'New Label Text')
+
+    def test_api_locked(self):
+        """Test editing with locked/unlocked list."""
+        # Lock list
+        self.list.locked = True
+        self.list.save()
+        response = self.patch(self.entry_url, {'label': 'New Label'}, expected_code=400)
+        self.assertIn('Selection list is locked', response.data['list'])
+        response = self.patch(self.list_url, {'name': 'New Name'}, expected_code=400)
+        self.assertIn('Selection list is locked', response.data['locked'])
+
+        # Unlock the list
+        self.list.locked = False
+        self.list.save()
+        response = self.patch(self.entry_url, {'label': 'New Label'}, expected_code=200)
+        self.assertEqual(response.data['label'], 'New Label')
+        response = self.patch(self.list_url, {'name': 'New Name'}, expected_code=200)
+        self.assertEqual(response.data['name'], 'New Name')
+
+    def test_model_meta(self):
+        """Test model meta functions."""
+        # Models str
+        self.assertEqual(str(self.list), 'Test List')
+        self.assertEqual(str(self.list2), 'Test List 2 (Inactive)')
+        self.assertEqual(str(self.entry1), 'Test Entry')
+        self.assertEqual(str(self.entry2), 'Test Entry 2 (Inactive)')
+
+        # API urls
+        self.assertEqual(self.list.get_api_url(), '/api/selection/')
+
+    def test_parameter(self):
+        """Test the SelectionList parameter."""
+        self.assertEqual(self.list.get_choices(), ['test1'])
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Add to parameter
+        part = Part.objects.get(pk=1)
+        template = PartParameterTemplate.objects.create(
+            name='test_parameter', units='', selectionlist=self.list
+        )
+        rsp = self.get(
+            reverse('api-part-parameter-template-detail', kwargs={'pk': template.pk})
+        )
+        self.assertEqual(rsp.data['name'], 'test_parameter')
+        self.assertEqual(rsp.data['choices'], '')
+
+        # Add to part
+        url = reverse('api-part-parameter-list')
+        response = self.post(
+            url,
+            {'part': part.pk, 'template': template.pk, 'data': 70},
+            expected_code=400,
+        )
+        self.assertIn('Invalid choice for parameter value', response.data['data'])
+
+        response = self.post(
+            url,
+            {'part': part.pk, 'template': template.pk, 'data': self.entry1.value},
+            expected_code=201,
+        )
+        self.assertEqual(response.data['data'], self.entry1.value)
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(
+            model=Attachment,
+            model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
         )

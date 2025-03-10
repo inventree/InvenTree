@@ -3,9 +3,10 @@
  *
  * Image caching is handled automagically by the browsers cache
  */
-import { Image, ImageProps, Skeleton, Stack } from '@mantine/core';
+import { Image, type ImageProps, Skeleton, Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { generateUrl } from '../../functions/urls';
 import { useLocalState } from '../../states/LocalState';
 
 interface ApiImageProps extends ImageProps {
@@ -19,13 +20,13 @@ export function ApiImage(props: Readonly<ApiImageProps>) {
   const { host } = useLocalState.getState();
 
   const imageUrl = useMemo(() => {
-    return `${host}${props.src}`;
+    return generateUrl(props.src, host);
   }, [host, props.src]);
 
   return (
     <Stack>
       {imageUrl ? (
-        <Image {...props} src={imageUrl} fit="contain" />
+        <Image {...props} src={imageUrl} fit='contain' />
       ) : (
         <Skeleton h={props?.h ?? props.w} w={props?.w ?? props.h} />
       )}

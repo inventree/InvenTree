@@ -10,19 +10,18 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 18
+  node_version: 20
   # The OS version must be set per job
   server_start_sleep: 60
-  requests_version: 2.31.0
-  pyyaml_version: 6.0.1
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
-  INVENTREE_MEDIA_ROOT: ../test_inventree_media
-  INVENTREE_STATIC_ROOT: ../test_inventree_static
-  INVENTREE_BACKUP_DIR: ../test_inventree_backup
+  INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+  INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+  INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
   INVENTREE_SITE_URL: http://localhost:8000
+  INVENTREE_DEBUG: true
 
 permissions:
   contents: read
@@ -38,9 +37,12 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       api: ${{ steps.filter.outputs.api }}
       force: ${{ steps.force.outputs.force }}
+      cicd: ${{ steps.filter.outputs.cicd }}
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -58,34 +60,14 @@ jobs:
               - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
+            cicd:
+              - '.github/workflows/**'
       - name: Is CI being forced?
         run: echo "force=true" >> $GITHUB_OUTPUT
         id: force
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
-
-  javascript:
-    name: Style - Classic UI [JS]
-    runs-on: ubuntu-20.04
-
-    needs: ["pre-commit"]
-
-    steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-          install: true
-      - name: Check Templated JS Files
-        run: |
-          cd .github/scripts
-          python3 check_js_templates.py
-      - name: Lint Javascript Files
-        run: |
-          python src/backend/InvenTree/manage.py prerender
-          cd src/backend && npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   pre-commit:
     name: Style [pre-commit]
@@ -94,9 +76,11 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -104,8 +88,36 @@ jobs:
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
-          pip install --require-hashes -r .github/requirements.txt
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
+
+  mkdocs:
+    name: Style [Documentation]
+    runs-on: ubuntu-20.04
+
+    needs: paths-filter
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
+        with:
+          python-version: ${{ env.python_version }}
+      - name: Check Config
+        run: |
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes -r docs/requirements.txt
+          python docs/ci/check_mkdocs_config.py
+      - name: Check Links
+        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # pin@v1
+        with:
+          folder-path: docs
+          config-file: docs/mlc_config.json
+          check-modified-files-only: "yes"
+          use-quiet-mode: "yes"
 
   schema:
     name: Tests - API Schema Documentation
@@ -125,7 +137,9 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -133,38 +147,112 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
-        run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
+        run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
       - name: Download public schema
-        if: needs.paths-filter.outputs.api == 'false'
+        env:
+          API: ${{ needs.paths-filter.outputs.api }}
         run: |
-          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
-          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
+          version="$(python3 .github/scripts/version_check.py only_version ${API} 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
-          curl -s -o api.yaml $url
+          code=$(curl -s -o api.yaml $url --write-out '%{http_code}' --silent)
+          if [ "$code" != "200" ]; then
+            exit 1
+          fi
           echo "Downloaded api.yaml"
+      - name: Running OpenAPI Spec diff action
+        id: breaking_changes
+        uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
+        with:
+          base: "api.yaml"
+          revision: "src/backend/InvenTree/schema.yml"
+          format: "html"
+      - name: Echoing diff to step
+        continue-on-error: true
+        env:
+          DIFF: ${{ steps.breaking_changes.outputs.diff }}
+        run: echo "${DIFF}" >> $GITHUB_STEP_SUMMARY
+
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
           diff --color -u src/backend/InvenTree/schema.yml api.yaml
           diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
-        run: invoke schema
+        run: invoke dev.schema
         continue-on-error: true
       - name: Extract version for publishing
         id: version
         if: github.ref == 'refs/heads/main' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Extract settings / tags
+        run: invoke int.export-definitions --basedir src/backend/InvenTree
+      - name: Upload settings
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+        with:
+          name: inventree_settings.json
+          path: src/backend/InvenTree/inventree_settings.json
+      - name: Upload tags
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+        with:
+          name: inventree_tags.yml
+          path: src/backend/InvenTree/inventree_tags.yml
+      - name: Upload filters
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+        with:
+          name: inventree_filters.yml
+          path: src/backend/InvenTree/inventree_filters.yml
+
+  schema-push:
+    name: Push new schema
+    runs-on: ubuntu-20.04
+    needs: [paths-filter, schema]
+    if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
+    env:
+      version: ${{ needs.schema.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        name: Checkout Code
+        with:
+          repository: inventree/schema
+          token: ${{ secrets.SCHEMA_PAT }}
+          persist-credentials: true
+      - name: Create artifact directory
+        run: mkdir -p artifact
+      - name: Download schema artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
+        with:
+          path: artifact
+          merge-multiple: true
+      - name: Move files to correct location
+        run: |
+          echo "Version: ${version}"
+          echo "before move"
+          ls -la artifact
+          mkdir export/${version}
+          mv artifact/schema.yml export/${version}/api.yaml
+          mv artifact/inventree_settings.json export/${version}/inventree_settings.json
+          mv artifact/inventree_tags.yml export/${version}/inventree_tags.yml
+          mv artifact/inventree_filters.yml export/${version}/inventree_filters.yml
+          echo "after move"
+          ls -la artifact
+          rm -rf artifact
+      - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # pin@v5.1.0
+        name: Commit schema changes
+        with:
+          commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
 
   python:
     name: Tests - inventree-python
@@ -174,7 +262,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
-      wrapper_name: inventree-python
+      WRAPPER_NAME: inventree-python
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
       INVENTREE_ADMIN_USER: testuser
@@ -184,27 +272,30 @@ jobs:
       INVENTREE_PYTHON_TEST_USERNAME: testuser
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
       INVENTREE_SITE_URL: http://127.0.0.1:12345
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: true
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
-          npm: true
-      - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
+      - name: Download Python Code For `${WRAPPER_NAME}`
+        run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
         run: |
-          invoke delete-data -f
-          invoke import-fixtures
-          invoke server -a 127.0.0.1:12345 &
+          invoke dev.delete-data -f
+          invoke dev.import-fixtures
+          invoke dev.server -a 127.0.0.1:12345 &
           invoke wait
-      - name: Run Tests For `${{ env.wrapper_name }}`
+      - name: Run Tests For `${WRAPPER_NAME}`
         run: |
-          cd ${{ env.wrapper_name }}
+          cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
 
@@ -217,17 +308,21 @@ jobs:
     continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
       matrix:
-        python_version: [3.9, 3.12]
+        python_version: [3.9]
+        # python_version: [3.9, 3.12]  # Disabled due to requirement issues
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_PLUGINS_ENABLED: true
+      INVENTREE_CONSOLE_LOG: false
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -237,13 +332,13 @@ jobs:
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke test --coverage
+        run: invoke dev.test --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be # pin@v4.3.1
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -262,7 +357,9 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_CONSOLE_LOG: false
       INVENTREE_CACHE_HOST: localhost
       INVENTREE_PLUGINS_ENABLED: true
 
@@ -281,7 +378,9 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -290,7 +389,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -308,7 +407,9 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 3306
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_CONSOLE_LOG: false
       INVENTREE_PLUGINS_ENABLED: true
 
     services:
@@ -325,7 +426,9 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -334,7 +437,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -351,7 +454,8 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
       INVENTREE_PLUGINS_ENABLED: false
 
     services:
@@ -364,7 +468,9 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -373,9 +479,9 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test --migrations --report --coverage
+        run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be # pin@v4.3.1
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -391,11 +497,14 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -403,12 +512,6 @@ jobs:
           install: true
       - name: Fetch Database
         run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
-
-      - name: Latest Database
-        run: |
-          cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
 
       - name: 0.10.0 Database
         run: |
@@ -424,14 +527,21 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-      - name: 0.12.0 Database
+      - name: 0.13.5 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-      - name: 0.13.5 Database
+      - name: 0.16.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.17.0 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
@@ -444,33 +554,56 @@ jobs:
     timeout-minutes: 60
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: inventree
+          POSTGRES_USER: inventree_user
+          POSTGRES_PASSWORD: inventree_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      INVENTREE_DB_ENGINE: sqlite3
-      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: True
+      INVENTREE_DB_ENGINE: postgresql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_HOST: "127.0.0.1"
+      INVENTREE_DB_PORT: 5432
+      INVENTREE_DB_USER: inventree_user
+      INVENTREE_DB_PASSWORD: inventree_password
+      INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
       VITE_COVERAGE: true
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           npm: true
           install: true
           update: true
+          apt-dependency: postgresql-client libpq-dev
+          pip-dependency: psycopg2
       - name: Set up test data
-        run: invoke setup-test -i
+        run: invoke dev.setup-test -iv
       - name: Rebuild thumbnails
-        run: invoke rebuild-thumbnails
+        run: invoke int.rebuild-thumbnails
       - name: Install dependencies
-        run: inv frontend-compile
+        run: invoke int.frontend-compile
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4
+      - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -480,12 +613,19 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be # pin@v4.3.1
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: pui
+      - name: Upload bundler info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          cd src/frontend
+          yarn install
+          yarn run build
 
   platform_ui_build:
     name: Build - UI Platform
@@ -493,7 +633,9 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -502,11 +644,38 @@ jobs:
         run: cd src/frontend && yarn install
       - name: Build frontend
         run: cd src/frontend && yarn run compile && yarn run build
+      - name: Write version file - SHA
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
+      - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
+          include-hidden-files: true
+
+  zizmor:
+    name: Security [Zizmor]
+    runs-on: ubuntu-20.04
+    needs: ["pre-commit", "paths-filter"]
+    if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
+
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2
+      - name: Run zizmor
+        run: uvx zizmor --format sarif . > results.sarif
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # pin@v3
+        with:
+          sarif_file: results.sarif
+          category: zizmor

@@ -1,6 +1,9 @@
-import { ReactNode } from 'react';
+import { Text } from '@mantine/core';
+import type { ReactNode } from 'react';
 
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { ModelType } from '../../enums/ModelType';
+import { getDetailUrl } from '../../functions/urls';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Address instance
@@ -8,7 +11,7 @@ import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 export function RenderAddress({
   instance
 }: Readonly<InstanceRenderInterface>): ReactNode {
-  let text = [
+  const text = [
     instance.country,
     instance.postal_code,
     instance.postal_city,
@@ -25,16 +28,20 @@ export function RenderAddress({
 /**
  * Inline rendering of a single Company instance
  */
-export function RenderCompany({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
-  // TODO: Handle URL
+export function RenderCompany(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
 
   return (
     <RenderInlineModel
+      {...props}
       image={instance.thumnbnail || instance.image}
       primary={instance.name}
       secondary={instance.description}
+      url={
+        props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
+      }
     />
   );
 }
@@ -51,20 +58,29 @@ export function RenderContact({
 /**
  * Inline rendering of a single SupplierPart instance
  */
-export function RenderSupplierPart({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
-  // TODO: handle URL
-
-  let supplier = instance.supplier_detail ?? {};
-  let part = instance.part_detail ?? {};
+export function RenderSupplierPart(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const supplier = instance.supplier_detail ?? {};
+  const part = instance.part_detail ?? {};
 
   return (
     <RenderInlineModel
+      {...props}
       primary={supplier?.name}
       secondary={instance.SKU}
-      image={part?.thumbnail ?? part?.image}
-      suffix={part.full_name}
+      image={
+        part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
+      }
+      suffix={
+        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
+      }
+      url={
+        props.link
+          ? getDetailUrl(ModelType.supplierpart, instance.pk)
+          : undefined
+      }
     />
   );
 }
@@ -72,18 +88,27 @@ export function RenderSupplierPart({
 /**
  * Inline rendering of a single ManufacturerPart instance
  */
-export function RenderManufacturerPart({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
-  let part = instance.part_detail ?? {};
-  let manufacturer = instance.manufacturer_detail ?? {};
+export function RenderManufacturerPart(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const part = instance.part_detail ?? {};
+  const manufacturer = instance.manufacturer_detail ?? {};
 
   return (
     <RenderInlineModel
+      {...props}
       primary={manufacturer.name}
       secondary={instance.MPN}
-      suffix={part.full_name}
+      suffix={
+        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
+      }
       image={manufacturer?.thumnbnail ?? manufacturer.image}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.manufacturerpart, instance.pk)
+          : undefined
+      }
     />
   );
 }

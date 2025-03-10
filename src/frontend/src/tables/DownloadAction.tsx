@@ -1,41 +1,41 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Menu, Tooltip } from '@mantine/core';
-import { IconDownload } from '@tabler/icons-react';
+import {
+  IconDownload,
+  IconFileSpreadsheet,
+  IconFileText,
+  IconFileTypeCsv
+} from '@tabler/icons-react';
+import { useMemo } from 'react';
+
+import {
+  ActionDropdown,
+  type ActionDropdownItem
+} from '../components/items/ActionDropdown';
 
 export function DownloadAction({
   downloadCallback
-}: {
+}: Readonly<{
   downloadCallback: (fileFormat: string) => void;
-}) {
+}>) {
   const formatOptions = [
-    { value: 'csv', label: t`CSV` },
-    { value: 'tsv', label: t`TSV` },
-    { value: 'xlsx', label: t`Excel` }
+    { value: 'csv', label: t`CSV`, icon: <IconFileTypeCsv /> },
+    { value: 'tsv', label: t`TSV`, icon: <IconFileText /> },
+    { value: 'xlsx', label: t`Excel (.xlsx)`, icon: <IconFileSpreadsheet /> }
   ];
 
+  const actions: ActionDropdownItem[] = useMemo(() => {
+    return formatOptions.map((format) => ({
+      name: format.label,
+      icon: format.icon,
+      onClick: () => downloadCallback(format.value)
+    }));
+  }, [formatOptions, downloadCallback]);
+
   return (
-    <>
-      <Menu>
-        <Menu.Target>
-          <ActionIcon variant="transparent">
-            <Tooltip label={t`Download selected data`}>
-              <IconDownload />
-            </Tooltip>
-          </ActionIcon>
-        </Menu.Target>
-        <Menu.Dropdown>
-          {formatOptions.map((format) => (
-            <Menu.Item
-              key={format.value}
-              onClick={() => {
-                downloadCallback(format.value);
-              }}
-            >
-              {format.label}
-            </Menu.Item>
-          ))}
-        </Menu.Dropdown>
-      </Menu>
-    </>
+    <ActionDropdown
+      tooltip={t`Download Data`}
+      icon={<IconDownload />}
+      actions={actions}
+    />
   );
 }

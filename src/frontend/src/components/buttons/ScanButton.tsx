@@ -1,25 +1,25 @@
 import { t } from '@lingui/macro';
 import { ActionIcon } from '@mantine/core';
-import { openContextModal } from '@mantine/modals';
+import { useDisclosure } from '@mantine/hooks';
 import { IconQrcode } from '@tabler/icons-react';
+import BarcodeScanDialog from '../barcodes/BarcodeScanDialog';
 
 /**
  * A button which opens the QR code scanner modal
  */
 export function ScanButton() {
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
-    <ActionIcon
-      onClick={() =>
-        openContextModal({
-          modal: 'qr',
-          title: t`Scan QR code`,
-          innerProps: {}
-        })
-      }
-      variant="transparent"
-      title={t`Open QR code scanner`}
-    >
-      <IconQrcode />
-    </ActionIcon>
+    <>
+      <ActionIcon
+        onClick={open}
+        variant='transparent'
+        title={t`Open Barcode Scanner`}
+      >
+        <IconQrcode />
+      </ActionIcon>
+      <BarcodeScanDialog opened={opened} onClose={close} />
+    </>
   );
 }

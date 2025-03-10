@@ -1,4 +1,3 @@
-import { t } from '@lingui/macro';
 import {
   Button,
   Group,
@@ -9,103 +8,30 @@ import {
   Text,
   useMantineColorScheme
 } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
 import { IconEdit } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
-import { openModalApiForm } from '../../functions/forms';
 import { apiUrl } from '../../states/ApiState';
-import { SettingsStateProps } from '../../states/SettingsState';
-import { Setting, SettingType } from '../../states/states';
+import type { Setting } from '../../states/states';
 import { vars } from '../../theme';
-import { ApiFormFieldType } from '../forms/fields/ApiFormField';
+import { Boundary } from '../Boundary';
+import { RenderInstance } from '../render/Instance';
+import { ModelInformationDict } from '../render/ModelType';
 
 /**
  * Render a single setting value
  */
 function SettingValue({
-  settingsState,
   setting,
-  onChange
-}: {
-  settingsState: SettingsStateProps;
+  onEdit,
+  onToggle
+}: Readonly<{
   setting: Setting;
-  onChange?: () => void;
-}) {
-  // Callback function when a boolean value is changed
-  function onToggle(value: boolean) {
-    api
-      .patch(
-        apiUrl(settingsState.endpoint, setting.key, settingsState.pathParams),
-        { value: value }
-      )
-      .then(() => {
-        showNotification({
-          title: t`Setting updated`,
-          message: t`${setting?.name} updated successfully`,
-          color: 'green'
-        });
-        settingsState.fetchSettings();
-        onChange?.();
-      })
-      .catch((error) => {
-        showNotification({
-          title: t`Error editing setting`,
-          message: error.message,
-          color: 'red'
-        });
-      });
-  }
-
-  // Callback function to open the edit dialog (for non-boolean settings)
-  function onEditButton() {
-    const fieldDefinition: ApiFormFieldType = {
-      value: setting?.value ?? '',
-      field_type: setting?.type ?? 'string',
-      label: setting?.name,
-      description: setting?.description
-    };
-
-    // Match related field
-    if (
-      fieldDefinition.field_type === SettingType.Model &&
-      setting.api_url &&
-      setting.model_name
-    ) {
-      fieldDefinition.api_url = setting.api_url;
-
-      // TODO: improve this model matching mechanism
-      fieldDefinition.model = setting.model_name.split('.')[1] as ModelType;
-    } else if (setting.choices?.length > 0) {
-      // Match choices
-      fieldDefinition.field_type = SettingType.Choice;
-      fieldDefinition.choices = setting?.choices || [];
-    }
-
-    openModalApiForm({
-      url: settingsState.endpoint,
-      pk: setting.key,
-      pathParams: settingsState.pathParams,
-      method: 'PATCH',
-      title: t`Edit Setting`,
-      ignorePermissionCheck: true,
-      fields: {
-        value: fieldDefinition
-      },
-      onFormSuccess() {
-        showNotification({
-          title: t`Setting updated`,
-          message: t`${setting?.name} updated successfully`,
-          color: 'green'
-        });
-        settingsState.fetchSettings();
-        onChange?.();
-      }
-    });
-  }
-
+  onEdit: (setting: Setting) => void;
+  onToggle: (setting: Setting, value: boolean) => void;
+}>) {
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
     let value = setting.value;
@@ -123,14 +49,63 @@ function SettingValue({
     return value;
   }, [setting]);
 
+  const [modelInstance, setModelInstance] = useState<any>(null);
+
+  // Does this setting map to an internal database model?
+  const modelType: ModelType | null = useMemo(() => {
+    if (setting.model_name) {
+      const model = setting.model_name.split('.')[1];
+      return ModelType[model as keyof typeof ModelType] || null;
+    }
+    return null;
+  }, [setting]);
+
+  useEffect(() => {
+    setModelInstance(null);
+
+    if (modelType && setting.value) {
+      const endpoint = ModelInformationDict[modelType].api_endpoint;
+
+      api
+        .get(apiUrl(endpoint, setting.value))
+        .then((response) => {
+          if (response.data) {
+            setModelInstance(response.data);
+          } else {
+            setModelInstance(null);
+          }
+        })
+        .catch((error) => {
+          setModelInstance(null);
+        });
+    }
+  }, [setting, modelType]);
+
+  // If a full model instance is available, render it
+  if (modelInstance && modelType && setting.value) {
+    return (
+      <Group justify='right' gap='xs'>
+        <RenderInstance instance={modelInstance} model={modelType} />
+        <Button
+          aria-label={`edit-setting-${setting.key}`}
+          variant='subtle'
+          onClick={() => onEdit(setting)}
+        >
+          <IconEdit />
+        </Button>
+      </Group>
+    );
+  }
+
   switch (setting?.type || 'string') {
     case 'boolean':
       return (
         <Switch
-          size="sm"
-          radius="lg"
+          size='sm'
+          radius='lg'
+          aria-label={`toggle-setting-${setting.key}`}
           checked={setting.value.toLowerCase() == 'true'}
-          onChange={(event) => onToggle(event.currentTarget.checked)}
+          onChange={(event) => onToggle(setting, event.currentTarget.checked)}
           style={{
             paddingRight: '20px'
           }}
@@ -138,14 +113,22 @@ function SettingValue({
       );
     default:
       return valueText ? (
-        <Group gap="xs" justify="right">
+        <Group gap='xs' justify='right'>
           <Space />
-          <Button variant="subtle" onClick={onEditButton}>
+          <Button
+            aria-label={`edit-setting-${setting.key}`}
+            variant='subtle'
+            onClick={() => onEdit(setting)}
+          >
             {valueText}
           </Button>
         </Group>
       ) : (
-        <Button variant="subtle" onClick={onEditButton}>
+        <Button
+          aria-label={`edit-setting-${setting.key}`}
+          variant='subtle'
+          onClick={() => onEdit(setting)}
+        >
           <IconEdit />
         </Button>
       );
@@ -156,16 +139,16 @@ function SettingValue({
  * Display a single setting item, and allow editing of the value
  */
 export function SettingItem({
-  settingsState,
   setting,
   shaded,
-  onChange
-}: {
-  settingsState: SettingsStateProps;
+  onEdit,
+  onToggle
+}: Readonly<{
   setting: Setting;
   shaded: boolean;
-  onChange?: () => void;
-}) {
+  onEdit: (setting: Setting) => void;
+  onToggle: (setting: Setting, value: boolean) => void;
+}>) {
   const { colorScheme } = useMantineColorScheme();
 
   const style: Record<string, string> = { paddingLeft: '8px' };
@@ -176,19 +159,17 @@ export function SettingItem({
 
   return (
     <Paper style={style}>
-      <Group justify="space-between" p="3">
-        <Stack gap="2" p="4px">
+      <Group justify='space-between' p='3'>
+        <Stack gap='2' p='4px'>
           <Text>
             {setting.name}
             {setting.required ? ' *' : ''}
           </Text>
-          <Text size="xs">{setting.description}</Text>
+          <Text size='xs'>{setting.description}</Text>
         </Stack>
-        <SettingValue
-          settingsState={settingsState}
-          setting={setting}
-          onChange={onChange}
-        />
+        <Boundary label={`setting-value-${setting.key}`}>
+          <SettingValue setting={setting} onEdit={onEdit} onToggle={onToggle} />
+        </Boundary>
       </Group>
     </Paper>
   );

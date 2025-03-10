@@ -1,17 +1,21 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { Group } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
-import { IconEdit } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { useApi } from '../../contexts/ApiContext';
+import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { usePartParameterFields } from '../../forms/PartForms';
 import { cancelEvent } from '../../functions/events';
+import { navigateToLink } from '../../functions/navigation';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -19,8 +23,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -28,28 +33,32 @@ import { TableHoverCard } from '../TableHoverCard';
 function ParameterCell({
   record,
   template,
-  canEdit,
-  onEdit
-}: {
+  canEdit
+}: Readonly<{
   record: any;
   template: any;
   canEdit: boolean;
-  onEdit: () => void;
-}) {
+}>) {
   const { hovered, ref } = useHover();
 
   // Find matching template parameter
-  let parameter = record.parameters?.find(
-    (p: any) => p.template == template.pk
-  );
+  const parameter = useMemo(() => {
+    return record.parameters?.find((p: any) => p.template == template.pk);
+  }, [record.parameters, template]);
 
-  let extra: any[] = [];
+  const extra: any[] = [];
 
-  let value: any = parameter?.data;
+  // Format the value for display
+  const value: ReactNode = useMemo(() => {
+    let v: any = parameter?.data;
 
-  if (template?.checkbox && value != undefined) {
-    value = <YesNoButton value={parameter.data} />;
-  }
+    // Handle boolean values
+    if (template?.checkbox && v != undefined) {
+      v = <YesNoButton value={parameter.data} />;
+    }
+
+    return v;
+  }, [parameter, template]);
 
   if (
     template.units &&
@@ -57,33 +66,25 @@ function ParameterCell({
     parameter.data_numeric &&
     parameter.data_numeric != parameter.data
   ) {
-    extra.push(`${parameter.data_numeric} [${template.units}]`);
+    const numeric = formatDecimal(parameter.data_numeric, { digits: 15 });
+    extra.push(`${numeric} [${template.units}]`);
   }
 
-  const handleClick = useCallback((event: any) => {
-    cancelEvent(event);
-    onEdit();
-  }, []);
+  if (hovered && canEdit) {
+    extra.push(t`Click to edit`);
+  }
 
   return (
     <div>
-      <Group grow ref={ref} justify="space-between">
-        <Group grow style={{ flex: 1 }}>
+      <Group grow ref={ref} justify='space-between'>
+        <Group grow>
           <TableHoverCard
             value={value ?? '-'}
             extra={extra}
-            title={t`Internal Units`}
+            icon={hovered && canEdit ? 'edit' : 'info'}
+            title={template.name}
           />
         </Group>
-        {hovered && canEdit && (
-          <div style={{ flex: 0 }}>
-            <Tooltip label={t`Edit parameter`}>
-              <ActionIcon size="xs" onClick={handleClick} variant="transparent">
-                <IconEdit />
-              </ActionIcon>
-            </Tooltip>
-          </div>
-        )}
       </Group>
     </div>
   );
@@ -91,13 +92,15 @@ function ParameterCell({
 
 export default function ParametricPartTable({
   categoryId
-}: {
+}: Readonly<{
   categoryId?: any;
-}) {
+}>) {
+  const api = useApi();
   const table = useTable('parametric-parts');
   const user = useUserState();
+  const navigate = useNavigate();
 
-  const categoryParmeters = useQuery({
+  const categoryParameters = useQuery({
     queryKey: ['category-parameters', categoryId],
     queryFn: async () => {
       return api
@@ -116,22 +119,14 @@ export default function ParametricPartTable({
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
   const [selectedParameter, setSelectedParameter] = useState<number>(0);
 
-  const partParameterFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      part: {
-        disabled: true
-      },
-      template: {
-        disabled: true
-      },
-      data: {}
-    };
-  }, []);
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields({
+    editTemplate: false
+  });
 
   const addParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     title: t`Add Part Parameter`,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);
@@ -146,7 +141,7 @@ export default function ParametricPartTable({
     url: ApiEndpoints.part_parameter_list,
     title: t`Edit Part Parameter`,
     pk: selectedParameter,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);
@@ -156,8 +151,8 @@ export default function ParametricPartTable({
   // Update a single parameter record in the table
   const updateParameterRecord = useCallback(
     (part: number, parameter: any) => {
-      let records = table.records;
-      let partIndex = records.findIndex((record: any) => record.pk == part);
+      const records = table.records;
+      const partIndex = records.findIndex((record: any) => record.pk == part);
 
       if (partIndex < 0) {
         // No matching part: reload the entire table
@@ -165,7 +160,7 @@ export default function ParametricPartTable({
         return;
       }
 
-      let parameterIndex = records[partIndex].parameters.findIndex(
+      const parameterIndex = records[partIndex].parameters.findIndex(
         (p: any) => p.pk == parameter.pk
       );
 
@@ -176,13 +171,13 @@ export default function ParametricPartTable({
         records[partIndex].parameters[parameterIndex] = parameter;
       }
 
-      table.setRecords(records);
+      table.updateRecord(records[partIndex]);
     },
-    [table.records]
+    [table.updateRecord]
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
-    let data = categoryParmeters.data ?? [];
+    const data = categoryParameters.data ?? [];
 
     return data.map((template: any) => {
       let title = template.name;
@@ -203,25 +198,44 @@ export default function ParametricPartTable({
             record={record}
             template={template}
             canEdit={user.hasChangeRole(UserRoles.part)}
-            onEdit={() => {
-              setSelectedTemplate(template.pk);
-              setSelectedPart(record.pk);
-              let parameter = record.parameters?.find(
-                (p: any) => p.template == template.pk
-              );
-
-              if (parameter) {
-                setSelectedParameter(parameter.pk);
-                editParameter.open();
-              } else {
-                addParameter.open();
-              }
-            }}
           />
         )
       };
     });
-  }, [user, categoryParmeters.data]);
+  }, [user, categoryParameters.data]);
+
+  const onParameterClick = useCallback((template: number, part: any) => {
+    setSelectedTemplate(template);
+    setSelectedPart(part.pk);
+    const parameter = part.parameters?.find((p: any) => p.template == template);
+
+    if (parameter) {
+      setSelectedParameter(parameter.pk);
+      editParameter.open();
+    } else {
+      addParameter.open();
+    }
+  }, []);
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'active',
+        label: t`Active`,
+        description: t`Show active parts`
+      },
+      {
+        name: 'locked',
+        label: t`Locked`,
+        description: t`Show locked parts`
+      },
+      {
+        name: 'assembly',
+        label: t`Assembly`,
+        description: t`Show assembly parts`
+      }
+    ];
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     const partColumns: TableColumn[] = [
@@ -230,7 +244,7 @@ export default function ParametricPartTable({
         sortable: true,
         switchable: false,
         noWrap: true,
-        render: (record: any) => PartColumn(record)
+        render: (record: any) => PartColumn({ part: record })
       },
       DescriptionColumn({}),
       {
@@ -256,13 +270,26 @@ export default function ParametricPartTable({
         columns={tableColumns}
         props={{
           enableDownload: false,
+          tableFilters: tableFilters,
           params: {
             category: categoryId,
             cascade: true,
             category_detail: true,
             parameters: true
           },
-          modelType: ModelType.part
+          onCellClick: ({ event, record, index, column, columnIndex }) => {
+            cancelEvent(event);
+
+            // Is this a "parameter" cell?
+            if (column?.accessor?.toString()?.startsWith('parameter_')) {
+              const col = column as any;
+              onParameterClick(col.extra.template, record);
+            } else if (record?.pk) {
+              // Navigate through to the part detail page
+              const url = getDetailUrl(ModelType.part, record.pk);
+              navigateToLink(url, navigate, event);
+            }
+          }
         }}
       />
     </>

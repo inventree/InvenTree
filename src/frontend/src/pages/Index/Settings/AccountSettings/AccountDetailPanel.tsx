@@ -1,75 +1,160 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Group, Stack, Text, TextInput, Title } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useToggle } from '@mantine/hooks';
+import { Badge, Group, Stack, Table, Title } from '@mantine/core';
+import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
+import { useMemo } from 'react';
 
-import { api } from '../../../../App';
-import { EditButton } from '../../../../components/buttons/EditButton';
+import { useNavigate } from 'react-router-dom';
+import { ActionButton } from '../../../../components/buttons/ActionButton';
+import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
+import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
+import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { apiUrl } from '../../../../states/ApiState';
+import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
+  const navigate = useNavigate();
+
   const [user, fetchUserState] = useUserState((state) => [
     state.user,
     state.fetchUserState
   ]);
-  const form = useForm({ initialValues: user });
-  const [editing, setEditing] = useToggle([false, true] as const);
-  function SaveData(values: any) {
-    api
-      .put(apiUrl(ApiEndpoints.user_me), values)
-      .then((res) => {
-        if (res.status === 200) {
-          setEditing();
-          fetchUserState();
-        }
-      })
-      .catch(() => {
-        console.error('ERR: Error saving user data');
-      });
-  }
+
+  const userFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      first_name: {},
+      last_name: {}
+    };
+  }, []);
+
+  const editAccount = useEditApiFormModal({
+    title: t`Edit Account Information`,
+    url: ApiEndpoints.user_me,
+    onFormSuccess: fetchUserState,
+    fields: userFields,
+    successMessage: t`Account details updated`
+  });
+
+  const profileFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      displayname: {},
+      position: {},
+      status: {},
+      location: {},
+      active: {},
+      contact: {},
+      type: {},
+      organisation: {},
+      primary_group: {}
+    };
+  }, []);
+
+  const editProfile = useEditApiFormModal({
+    title: t`Edit Profile Information`,
+    url: ApiEndpoints.user_profile,
+    onFormSuccess: fetchUserState,
+    fields: profileFields,
+    successMessage: t`Profile details updated`
+  });
+
+  const accountDetailFields = useMemo(
+    () => [
+      { label: t`Username`, value: user?.username },
+      { label: t`First Name`, value: user?.first_name },
+      { label: t`Last Name`, value: user?.last_name },
+      {
+        label: t`Staff Access`,
+        value: <YesNoUndefinedButton value={user?.is_staff} />
+      },
+      {
+        label: t`Superuser`,
+        value: <YesNoUndefinedButton value={user?.is_superuser} />
+      }
+    ],
+    [user]
+  );
+
+  const profileDetailFields = useMemo(
+    () => [
+      { label: t`Display Name`, value: user?.profile?.displayname },
+      { label: t`Position`, value: user?.profile?.position },
+      { label: t`Status`, value: user?.profile?.status },
+      { label: t`Location`, value: user?.profile?.location },
+      {
+        label: t`Active`,
+        value: <YesNoUndefinedButton value={user?.profile?.active} />
+      },
+      { label: t`Contact`, value: user?.profile?.contact },
+      { label: t`Type`, value: <Badge>{user?.profile?.type}</Badge> },
+      { label: t`Organisation`, value: user?.profile?.organisation },
+      { label: t`Primary Group`, value: user?.profile?.primary_group }
+    ],
+    [user]
+  );
 
   return (
-    <form onSubmit={form.onSubmit((values) => SaveData(values))}>
-      <Group>
-        <Title order={3}>
-          <Trans>Account Details</Trans>
-        </Title>
-        <EditButton setEditing={setEditing} editing={editing} />
-      </Group>
-      <Group>
-        {editing ? (
-          <Stack gap="xs">
-            <TextInput
-              label="first name"
-              placeholder={t`First name`}
-              {...form.getInputProps('first_name')}
-            />
-            <TextInput
-              label="Last name"
-              placeholder={t`Last name`}
-              {...form.getInputProps('last_name')}
-            />
-            <Group justify="right" mt="md">
-              <Button type="submit">
-                <Trans>Submit</Trans>
-              </Button>
-            </Group>
-          </Stack>
-        ) : (
-          <Stack gap="0">
-            <Text>
-              <Trans>First name: </Trans>
-              {form.values.first_name}
-            </Text>
-            <Text>
-              <Trans>Last name: </Trans>
-              {form.values.last_name}
-            </Text>
-          </Stack>
-        )}
-      </Group>
-    </form>
+    <>
+      {editAccount.modal}
+      {editProfile.modal}
+      <Stack gap='xs'>
+        <Group justify='space-between'>
+          <Title order={3}>
+            <Trans>Account Details</Trans>
+          </Title>
+          <ActionDropdown
+            tooltip={t`Account Actions`}
+            icon={<IconUser />}
+            actions={[
+              {
+                name: t`Edit Account`,
+                icon: <IconEdit />,
+                tooltip: t`Edit Account Information`,
+                onClick: editAccount.open
+              },
+              {
+                name: t`Change Password`,
+                icon: <IconKey />,
+                tooltip: t`Change User Password`,
+                onClick: () => {
+                  navigate('/change-password');
+                }
+              }
+            ]}
+          />
+        </Group>
+        {renderDetailTable(accountDetailFields)}
+
+        <Group justify='space-between'>
+          <Title order={3}>
+            <Trans>Profile Details</Trans>
+          </Title>
+          <ActionButton
+            text={t`Edit Profile`}
+            icon={<IconEdit />}
+            tooltip={t`Edit Profile Information`}
+            onClick={editProfile.open}
+            variant='light'
+          />
+        </Group>
+        {renderDetailTable(profileDetailFields)}
+      </Stack>
+    </>
   );
+
+  function renderDetailTable(data: { label: string; value: any }[]) {
+    return (
+      <Table>
+        <Table.Tbody>
+          {data.map((item) => (
+            <Table.Tr key={item.label}>
+              <Table.Td>
+                <Trans>{item.label}</Trans>
+              </Table.Td>
+              <Table.Td>{item.value}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    );
+  }
 }

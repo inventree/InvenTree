@@ -2,26 +2,37 @@ import { create } from 'zustand';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { UserPermissions, UserRoles } from '../enums/Roles';
+import type { ModelType } from '../enums/ModelType';
+import { UserPermissions, type UserRoles } from '../enums/Roles';
 import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
-import { UserProps } from './states';
+import type { UserProps } from './states';
 
-interface UserStateProps {
+export interface UserStateProps {
   user: UserProps | undefined;
   token: string | undefined;
+  userId: () => number | undefined;
   username: () => string;
-  setUser: (newUser: UserProps) => void;
-  setToken: (newToken: string) => void;
+  setUser: (newUser: UserProps | undefined) => void;
+  getUser: () => UserProps | undefined;
+  setToken: (newToken: string | undefined) => void;
   clearToken: () => void;
   fetchUserToken: () => void;
-  fetchUserState: () => void;
+  fetchUserState: () => Promise<void>;
   clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
   hasDeleteRole: (role: UserRoles) => boolean;
   hasChangeRole: (role: UserRoles) => boolean;
   hasAddRole: (role: UserRoles) => boolean;
   hasViewRole: (role: UserRoles) => boolean;
+  checkUserPermission: (
+    model: ModelType,
+    permission: UserPermissions
+  ) => boolean;
+  hasDeletePermission: (model: ModelType) => boolean;
+  hasChangePermission: (model: ModelType) => boolean;
+  hasAddPermission: (model: ModelType) => boolean;
+  hasViewPermission: (model: ModelType) => boolean;
   isLoggedIn: () => boolean;
   isStaff: () => boolean;
   isSuperuser: () => boolean;
@@ -33,13 +44,17 @@ interface UserStateProps {
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
   token: undefined,
-  setToken: (newToken: string) => {
+  setToken: (newToken: string | undefined) => {
     set({ token: newToken });
     setApiDefaults();
   },
   clearToken: () => {
-    set({ token: undefined });
+    get().setToken(undefined);
     setApiDefaults();
+  },
+  userId: () => {
+    const user: UserProps = get().user as UserProps;
+    return user?.pk;
   },
   username: () => {
     const user: UserProps = get().user as UserProps;
@@ -50,14 +65,24 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return user?.username ?? '';
     }
   },
-  setUser: (newUser: UserProps) => set({ user: newUser }),
+  setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
+  getUser: () => get().user,
   clearUserState: () => {
-    set({ user: undefined });
-    set({ token: undefined });
+    get().setUser(undefined);
+    get().setToken(undefined);
     clearCsrfCookie();
     setApiDefaults();
   },
   fetchUserToken: async () => {
+    // If neither the csrf or session cookies are available, we cannot fetch a token
+    if (
+      !document.cookie.includes('csrftoken') &&
+      !document.cookie.includes('sessionid')
+    ) {
+      get().clearToken();
+      return;
+    }
+
     await api
       .get(apiUrl(ApiEndpoints.user_token))
       .then((response) => {
@@ -76,6 +101,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       await get().fetchUserToken();
     }
 
+    // If we still don't have a token, clear the user state and return
+    if (!get().token) {
+      get().clearUserState();
+      return;
+    }
+
     // Fetch user data
     await api
       .get(apiUrl(ApiEndpoints.user_me), {
@@ -88,9 +119,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             first_name: response.data?.first_name ?? '',
             last_name: response.data?.last_name ?? '',
             email: response.data.email,
-            username: response.data.username
+            username: response.data.username,
+            groups: response.data.groups,
+            profile: response.data.profile
           };
-          set({ user: user });
+          get().setUser(user);
+          // profile info
         } else {
           get().clearUserState();
         }
@@ -113,9 +147,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
           // Update user with role data
           if (user) {
             user.roles = response.data?.roles ?? {};
+            user.permissions = response.data?.permissions ?? {};
             user.is_staff = response.data?.is_staff ?? false;
             user.is_superuser = response.data?.is_superuser ?? false;
-            set({ user: user });
+            get().setUser(user);
           }
         } else {
           get().clearUserState();
@@ -125,21 +160,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         console.error('ERR: Error fetching user roles');
         get().clearUserState();
       });
-  },
-  checkUserRole: (role: UserRoles, permission: UserPermissions) => {
-    // Check if the user has the specified permission for the specified role
-    const user: UserProps = get().user as UserProps;
-
-    if (!user) {
-      return false;
-    }
-
-    if (user?.is_superuser) return true;
-    if (user?.roles === undefined) return false;
-    if (user?.roles[role] === undefined) return false;
-    if (user?.roles[role] === null) return false;
-
-    return user?.roles[role]?.includes(permission) ?? false;
   },
   isLoggedIn: () => {
     if (!get().token) {
@@ -156,6 +176,21 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     const user: UserProps = get().user as UserProps;
     return user?.is_superuser ?? false;
   },
+  checkUserRole: (role: UserRoles, permission: UserPermissions) => {
+    // Check if the user has the specified permission for the specified role
+    const user: UserProps = get().user as UserProps;
+
+    if (!user) {
+      return false;
+    }
+
+    if (user?.is_superuser) return true;
+    if (user?.roles === undefined) return false;
+    if (user?.roles[role] === undefined) return false;
+    if (user?.roles[role] === null) return false;
+
+    return user?.roles[role]?.includes(permission) ?? false;
+  },
   hasDeleteRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.delete);
   },
@@ -167,5 +202,33 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   hasViewRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.view);
+  },
+  checkUserPermission: (model: ModelType, permission: UserPermissions) => {
+    // Check if the user has the specified permission for the specified model
+    const user: UserProps = get().user as UserProps;
+
+    if (!user) {
+      return false;
+    }
+
+    if (user?.is_superuser) return true;
+
+    if (user?.permissions === undefined) return false;
+    if (user?.permissions[model] === undefined) return false;
+    if (user?.permissions[model] === null) return false;
+
+    return user?.permissions[model]?.includes(permission) ?? false;
+  },
+  hasDeletePermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.delete);
+  },
+  hasChangePermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.change);
+  },
+  hasAddPermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.add);
+  },
+  hasViewPermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.view);
   }
 }));

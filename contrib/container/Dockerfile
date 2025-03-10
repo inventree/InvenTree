@@ -9,8 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-ARG base_image=python:3.11-alpine3.18
-FROM ${base_image} AS inventree_base
+FROM python:3.11-alpine3.20 AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -20,8 +19,8 @@ ARG SOURCE_DATE_EPOCH
 
 ARG data_dir="data"
 
-ENV PYTHONUNBUFFERED 1
-ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV INVOKE_RUN_SHELL="/bin/ash"
 
 ENV INVENTREE_DOCKER="true"
@@ -49,13 +48,16 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-LABEL org.label-schema.schema-version="1.0" \
-      org.label-schema.build-date=${DATE} \
-      org.label-schema.vendor="inventree" \
-      org.label-schema.name="inventree/inventree" \
-      org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
-      org.label-schema.vcs-ref=${commit_tag}
+LABEL org.opencontainers.image.vendor="inventree" \
+      org.opencontainers.image.title="InvenTree backend server" \
+      org.opencontainers.image.description="InvenTree is the open-source inventory management system" \
+      org.opencontainers.image.url="https://inventree.org" \
+      org.opencontainers.image.documentation="https://docs.inventree.org" \
+      org.opencontainers.image.source="https://github.com/inventree/InvenTree" \
+      org.opencontainers.image.revision=${commit_hash} \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.version=${commit_tag}
+
 
 # Install required system level packages
 RUN apk add --no-cache \
@@ -64,13 +66,14 @@ RUN apk add --no-cache \
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # Postgres client
-    postgresql13-client \
+    # Postgres client (note: backwards compatible with postgres server <= 16)
+    postgresql16-client \
     # MySQL / MariaDB client
     mariadb-client mariadb-connector-c \
     && \
-    # fonts
-    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
+    # font support
+    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-terminus font-noto font-noto-cjk font-noto-extra \
+    && fc-cache -f
 
 EXPOSE 8000
 
@@ -109,7 +112,7 @@ RUN apk add --no-cache --update nodejs npm yarn
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
-RUN cd ${INVENTREE_HOME} && inv frontend-compile
+RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile
 
 # InvenTree production image:
 # - Copies required files from local directory
@@ -129,14 +132,7 @@ COPY --from=prebuild /root/.local /root/.local
 
 # Copy source code
 COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
-
-# Clean up python caches, default config, old frontend compiles
-RUN find . | grep -E "(/__pycache__$|\.pyc$|\.pyo$)" | xargs rm -rf && \
-    rm -f ${INVENTREE_BACKEND_DIR}/InvenTree/plugins.txt && \
-    rm -f ${INVENTREE_BACKEND_DIR}/InvenTree/secret_key.txt && \
-    rm -f ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
-
-# Copy frontend source code
+COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
 COPY --from=frontend ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 
 # Launch the production server
@@ -172,4 +168,4 @@ WORKDIR ${INVENTREE_HOME}
 ENTRYPOINT ["/bin/ash", "./contrib/container/init.sh"]
 
 # Launch the development server
-CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+CMD ["invoke", "dev.server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]

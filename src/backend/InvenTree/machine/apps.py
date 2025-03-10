@@ -1,9 +1,9 @@
 """Django machine app config."""
 
-import logging
-
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
+
+import structlog
 
 from InvenTree.ready import (
     canAppAccessDatabase,
@@ -13,7 +13,7 @@ from InvenTree.ready import (
     isRunningMigrations,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MachineConfig(AppConfig):
@@ -26,7 +26,6 @@ class MachineConfig(AppConfig):
         if (
             not canAppAccessDatabase(allow_test=True)
             or not isPluginRegistryLoaded()
-            or not isInMainThread()
             or isRunningMigrations()
             or isImportingData()
         ):
@@ -37,7 +36,7 @@ class MachineConfig(AppConfig):
 
         try:
             logger.info('Loading InvenTree machines')
-            registry.initialize()
+            registry.initialize(main=isInMainThread())
         except (OperationalError, ProgrammingError):
             # Database might not yet be ready
             logger.warn('Database was not ready for initializing machines')

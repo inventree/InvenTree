@@ -1,132 +1,121 @@
 import { test } from '../baseFixtures';
-import { baseUrl } from '../defaults';
+import { navigate } from '../helpers';
 import { doQuickLogin } from '../login';
 
-async function defaultScanTest(page, search_text) {
+const scan = async (page, barcode) => {
+  await page.getByLabel('barcode-input-scanner').click();
+  await page.getByLabel('barcode-scan-keyboard-input').fill(barcode);
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+};
+
+test('Scanning - Dialog', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/scan`);
-  await page.getByPlaceholder('Select input method').click();
-  await page.getByRole('option', { name: 'Manual input' }).click();
-  await page.getByPlaceholder('Enter item serial or data').click();
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
+  await scan(page, '{"part": 15}');
 
-  // nonsense data
-  await page.getByPlaceholder('Enter item serial or data').fill('123');
-  await page.getByPlaceholder('Enter item serial or data').press('Enter');
-  await page.getByRole('cell', { name: '123' }).click();
-  await page.getByRole('cell', { name: 'manually' }).click();
-  await page.getByRole('button', { name: 'Lookup part' }).click();
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByText('Part: R_550R_0805_1%', { exact: true }).waitFor();
+  await page.getByText('Available:').waitFor();
+  await page.getByText('Required:').waitFor();
+});
 
-  await page.getByPlaceholder('Enter item serial or data').fill(search_text);
-  await page.getByPlaceholder('Enter item serial or data').press('Enter');
-  await page.getByRole('checkbox').nth(2).check();
-  await page.getByRole('button', { name: 'Lookup part' }).click();
-}
+test('Scanning - Basic', async ({ page }) => {
+  await doQuickLogin(page);
 
-test('PUI - Pages - Index - Scan (Part)', async ({ page }) => {
-  await defaultScanTest(page, '{"part": 1}');
+  // Navigate to the 'scan' page
+  await page.getByLabel('navigation-menu').click();
+  await page.getByRole('button', { name: 'Scan Barcode' }).click();
 
-  // part: 1
+  await page.getByText('Scan or enter barcode data').waitFor();
+
+  // Select the scanner input
+  await page.getByLabel('barcode-input-scanner').click();
+  await page.getByPlaceholder('Enter barcode data').fill('123-abc');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+
+  // Select the camera input
+  await page.getByLabel('barcode-input-camera').click();
+  await page.getByText('Start scanning by selecting a camera').waitFor();
+
+  await page.getByText('No match found for barcode').waitFor();
+});
+
+test('Scanning - Part', async ({ page }) => {
+  await doQuickLogin(page);
+  await navigate(page, 'scan/');
+
+  await scan(page, '{"part": 1}');
+
   await page.getByText('R_10R_0402_1%').waitFor();
   await page.getByText('Stock:').waitFor();
-  await page.getByRole('cell', { name: 'part' }).waitFor();
+  await page.getByRole('cell', { name: 'part', exact: true }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan (Stockitem)', async ({ page }) => {
-  await defaultScanTest(page, '{"stockitem": 408}');
+test('Scanning - Stockitem', async ({ page }) => {
+  await doQuickLogin(page);
+  await navigate(page, 'scan/');
+  await scan(page, '{"stockitem": 408}');
 
-  // stockitem: 408
   await page.getByText('1551ABK').waitFor();
-  await page.getByText('Quantity: 145').waitFor();
-  await page.getByRole('cell', { name: 'Quantity: 145' }).waitFor();
+  await page.getByText('Quantity: 100').waitFor();
+  await page.getByRole('cell', { name: 'Quantity: 100' }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan (StockLocation)', async ({ page }) => {
-  await defaultScanTest(page, '{"stocklocation": 3}');
+test('Scanning - StockLocation', async ({ page }) => {
+  await doQuickLogin(page);
+  await navigate(page, 'scan/');
+  await scan(page, '{"stocklocation": 3}');
 
   // stocklocation: 3
-  await page.getByText('Storage Room B', { exact: true }).waitFor();
+  await page.getByText('Factory/Storage Room B', { exact: true }).waitFor();
   await page.getByText('Storage Room B (green door)').waitFor();
-  await page.getByRole('cell', { name: 'stocklocation' }).waitFor();
+  await page
+    .getByRole('cell', { name: 'stocklocation', exact: true })
+    .waitFor();
 });
 
-test('PUI - Pages - Index - Scan (SupplierPart)', async ({ page }) => {
-  await defaultScanTest(page, '{"supplierpart": 204}');
+test('Scanning - SupplierPart', async ({ page }) => {
+  await doQuickLogin(page);
+  await navigate(page, 'scan/');
+  await scan(page, '{"supplierpart": 204}');
 
   // supplierpart: 204
   await page.waitForTimeout(1000);
   await page.getByText('1551ABK').first().waitFor();
-  await page.getByRole('cell', { name: 'supplierpart' }).waitFor();
+  await page.getByRole('cell', { name: 'supplierpart', exact: true }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan (PurchaseOrder)', async ({ page }) => {
-  await defaultScanTest(page, '{"purchaseorder": 12}');
+test('Scanning - PurchaseOrder', async ({ page }) => {
+  await doQuickLogin(page);
+  await navigate(page, 'scan/');
+  await scan(page, '{"purchaseorder": 12}');
 
   // purchaseorder: 12
   await page.getByText('PO0012').waitFor();
   await page.getByText('Wire from Wirey').waitFor();
-  await page.getByRole('cell', { name: 'purchaseorder' }).waitFor();
+  await page
+    .getByRole('cell', { name: 'purchaseorder', exact: true })
+    .waitFor();
 });
 
-test('PUI - Pages - Index - Scan (SalesOrder)', async ({ page }) => {
-  await defaultScanTest(page, '{"salesorder": 6}');
+test('Scanning - SalesOrder', async ({ page }) => {
+  await doQuickLogin(page);
+  await navigate(page, 'scan/');
+  await scan(page, '{"salesorder": 6}');
 
   // salesorder: 6
   await page.getByText('SO0006').waitFor();
   await page.getByText('Selling more stuff to this').waitFor();
-  await page.getByRole('cell', { name: 'salesorder' }).waitFor();
+  await page.getByRole('cell', { name: 'salesorder', exact: true }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan (Build)', async ({ page }) => {
-  await defaultScanTest(page, '{"build": 8}');
+test('Scanning - Build', async ({ page }) => {
+  await doQuickLogin(page);
+  await navigate(page, 'scan/');
+  await scan(page, '{"build": 8}');
 
   // build: 8
   await page.getByText('BO0008').waitFor();
   await page.getByText('PCBA build').waitFor();
   await page.getByRole('cell', { name: 'build', exact: true }).waitFor();
-});
-
-test('PUI - Pages - Index - Scan (General)', async ({ page }) => {
-  await defaultScanTest(page, '{"unknown": 312}');
-  await page.getByText('"unknown": 312').waitFor();
-
-  // checkAll
-  await page.getByRole('checkbox').nth(0).check();
-
-  // Delete
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
-
-  // Reload to check history is working
-  await page.goto(`${baseUrl}/scan`);
-  await page.getByText('"unknown": 312').waitFor();
-
-  // Clear history
-  await page.getByRole('button', { name: 'Delete History' }).click();
-  await page.getByText('No history').waitFor();
-
-  // reload again
-  await page.goto(`${baseUrl}/scan`);
-  await page.getByText('No history').waitFor();
-
-  // Empty dummy input
-  await page.getByPlaceholder('Enter item serial or data').fill('');
-  await page.getByPlaceholder('Enter item serial or data').press('Enter');
-
-  // Empty add dummy item
-  await page.getByRole('button', { name: 'Add dummy item' }).click();
-
-  // Empty plus sign
-  await page
-    .locator('div')
-    .filter({ hasText: /^InputAdd dummy item$/ })
-    .getByRole('button')
-    .first()
-    .click();
-
-  // Toggle fullscreen
-  await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
-  await page.waitForTimeout(1000);
 });

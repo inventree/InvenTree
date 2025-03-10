@@ -13,9 +13,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom physical units
@@ -49,7 +49,7 @@ export default function CustomUnitsTable() {
     url: ApiEndpoints.custom_unit_list,
     title: t`Add Custom Unit`,
     fields: customUnitsFields(),
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedUnit, setSelectedUnit] = useState<number>(-1);
@@ -66,7 +66,7 @@ export default function CustomUnitsTable() {
     url: ApiEndpoints.custom_unit_list,
     pk: selectedUnit,
     title: t`Delete Custom Unit`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(
@@ -92,18 +92,18 @@ export default function CustomUnitsTable() {
   );
 
   const tableActions = useMemo(() => {
-    let actions = [];
+    const actions = [];
 
     actions.push(
-      // TODO: Adjust actions based on user permissions
       <AddItemButton
         tooltip={t`Add custom unit`}
         onClick={() => newUnit.open()}
+        hidden={!user.isStaff() || !user.hasChangeRole(UserRoles.admin)}
       />
     );
 
     return actions;
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -116,7 +116,8 @@ export default function CustomUnitsTable() {
         columns={columns}
         props={{
           rowActions: rowActions,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

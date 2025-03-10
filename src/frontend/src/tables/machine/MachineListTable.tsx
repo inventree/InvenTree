@@ -1,6 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import {
-  ActionIcon,
+  Accordion,
   Badge,
   Box,
   Card,
@@ -10,26 +10,25 @@ import {
   Indicator,
   List,
   LoadingOverlay,
-  Space,
   Stack,
   Text,
   Title
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconDots, IconRefresh } from '@tabler/icons-react';
+import { IconCheck, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
-  ActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
+import { StylishText } from '../../components/items/StylishText';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
 import {
   DetailDrawer,
@@ -40,15 +39,19 @@ import {
   TableStatusRenderer
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { MachineDriverI, MachineTypeI } from './MachineTypeTable';
+import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';
 
 interface MachineI {
   pk: string;
@@ -65,14 +68,14 @@ interface MachineI {
   restart_required: boolean;
 }
 
-function MachineStatusIndicator({ machine }: { machine: MachineI }) {
+function MachineStatusIndicator({ machine }: Readonly<{ machine: MachineI }>) {
   const style = { marginLeft: '4px' };
 
   // machine is not active, show a gray dot
   if (!machine.active) {
     return (
-      <Indicator style={style} color="gray">
-        <Box></Box>
+      <Indicator style={style} color='gray'>
+        <Box />
       </Indicator>
     );
   }
@@ -91,7 +94,7 @@ function MachineStatusIndicator({ machine }: { machine: MachineI }) {
 
   return (
     <Indicator processing={processing} style={style} color={color}>
-      <Box></Box>
+      <Box />
     </Indicator>
   );
 }
@@ -100,6 +103,8 @@ export function useMachineTypeDriver({
   includeTypes = true,
   includeDrivers = true
 }: { includeTypes?: boolean; includeDrivers?: boolean } = {}) {
+  const api = useApi();
+
   const {
     data: machineTypes,
     isFetching: isMachineTypesFetching,
@@ -139,10 +144,11 @@ export function useMachineTypeDriver({
 function MachineDrawer({
   machinePk,
   refreshTable
-}: {
+}: Readonly<{
   machinePk: string;
   refreshTable: () => void;
-}) {
+}>) {
+  const api = useApi();
   const navigate = useNavigate();
   const {
     data: machine,
@@ -198,196 +204,212 @@ function MachineDrawer({
           notifications.show({
             message: t`Machine restarted`,
             color: 'green',
-            icon: <IconCheck size="1rem" />
+            icon: <IconCheck size='1rem' />
           });
         });
     },
     [refreshAll]
   );
 
+  const machineEditModal = useEditApiFormModal({
+    title: t`Edit machine`,
+    url: ApiEndpoints.machine_list,
+    pk: machinePk,
+    fields: useMemo(
+      () => ({
+        name: {},
+        active: {}
+      }),
+      []
+    ),
+    onClose: () => refreshAll()
+  });
+
+  const machineDeleteModal = useDeleteApiFormModal({
+    title: t`Delete machine`,
+    successMessage: t`Machine successfully deleted.`,
+    url: ApiEndpoints.machine_list,
+    pk: machinePk,
+    preFormContent: (
+      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
+    ),
+    onFormSuccess: () => {
+      refreshTable();
+      navigate(-1);
+    }
+  });
+
   return (
-    <Stack gap="xs">
-      <Group justify="space-between">
-        <Box></Box>
+    <>
+      <Stack gap='xs'>
+        {machineEditModal.modal}
+        {machineDeleteModal.modal}
 
-        <Group>
-          {machine && <MachineStatusIndicator machine={machine} />}
-          <Title order={4}>{machine?.name}</Title>
-        </Group>
-
-        <Group>
-          {machine?.restart_required && (
-            <Badge color="red">
-              <Trans>Restart required</Trans>
-            </Badge>
-          )}
-          <ActionDropdown
-            tooltip={t`Machine Actions`}
-            icon={<IconDots />}
-            actions={[
-              EditItemAction({
-                tooltip: t`Edit machine`,
-                onClick: () => {
-                  openEditApiForm({
-                    title: t`Edit machine`,
-                    url: ApiEndpoints.machine_list,
-                    pk: machinePk,
-                    fields: {
-                      name: {},
-                      active: {}
-                    },
-                    onClose: () => refreshAll()
-                  });
-                }
-              }),
-              DeleteItemAction({
-                tooltip: t`Delete machine`,
-                onClick: () => {
-                  openDeleteApiForm({
-                    title: t`Delete machine`,
-                    successMessage: t`Machine successfully deleted.`,
-                    url: ApiEndpoints.machine_list,
-                    pk: machinePk,
-                    preFormContent: (
-                      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
-                    ),
-                    onFormSuccess: () => {
-                      refreshTable();
-                      navigate(-1);
-                    }
-                  });
-                }
-              }),
-              {
-                icon: <IconRefresh />,
-                name: t`Restart`,
-                tooltip:
-                  t`Restart machine` +
-                  (machine?.restart_required
-                    ? ' (' + t`manual restart required` + ')'
-                    : ''),
-                indicator: machine?.restart_required
-                  ? { color: 'red' }
-                  : undefined,
-                onClick: () => machine && restartMachine(machine?.pk)
-              }
-            ]}
-          />
-        </Group>
-      </Group>
-
-      <Card withBorder>
-        <Stack gap="md">
-          <Group justify="space-between">
-            <Title order={4}>
-              <Trans>Machine information</Trans>
-            </Title>
-            <ActionIcon variant="outline" onClick={() => refetch()}>
-              <IconRefresh />
-            </ActionIcon>
+        <Group justify='space-between'>
+          <Group>
+            {machine && <MachineStatusIndicator machine={machine} />}
+            <Title order={4}>{machine?.name}</Title>
           </Group>
-          <Stack pos="relative" gap="xs">
-            <LoadingOverlay
-              visible={isFetching}
-              overlayProps={{ opacity: 0 }}
-            />
-            <InfoItem name={t`Machine Type`}>
-              <Group gap="xs">
-                {machineType ? (
-                  <DetailDrawerLink
-                    to={`../type-${machine?.machine_type}`}
-                    text={machineType.name}
-                  />
-                ) : (
-                  <Text>{machine?.machine_type}</Text>
-                )}
-                {machine && !machineType && <UnavailableIndicator />}
-              </Group>
-            </InfoItem>
-            <InfoItem name={t`Machine Driver`}>
-              <Group gap="xs">
-                {machineDriver ? (
-                  <DetailDrawerLink
-                    to={`../driver-${machine?.driver}`}
-                    text={machineDriver.name}
-                  />
-                ) : (
-                  <Text>{machine?.driver}</Text>
-                )}
-                {!machine?.is_driver_available && <UnavailableIndicator />}
-              </Group>
-            </InfoItem>
-            <InfoItem name={t`Initialized`}>
-              <YesNoButton value={machine?.initialized || false} />
-            </InfoItem>
-            <InfoItem name={t`Active`}>
-              <YesNoButton value={machine?.active || false} />
-            </InfoItem>
-            <InfoItem name={t`Status`}>
-              <Flex direction="column">
-                {machine?.status === -1 ? (
-                  <Text fz="xs">No status</Text>
-                ) : (
-                  StatusRenderer({
-                    status: `${machine?.status || -1}`,
-                    type: `MachineStatus__${machine?.status_model}` as any
-                  })
-                )}
-                <Text fz="sm">{machine?.status_text}</Text>
-              </Flex>
-            </InfoItem>
-            <Group justify="space-between" gap="xs">
-              <Text fz="sm" fw={700}>
-                <Trans>Errors</Trans>:
-              </Text>
-              {machine && machine?.machine_errors.length > 0 ? (
-                <Badge color="red" style={{ marginLeft: '10px' }}>
-                  {machine?.machine_errors.length}
-                </Badge>
-              ) : (
-                <Text fz="xs">
-                  <Trans>No errors reported</Trans>
-                </Text>
-              )}
-              <List w="100%">
-                {machine?.machine_errors.map((error, i) => (
-                  <List.Item key={i}>
-                    <Code>{error}</Code>
-                  </List.Item>
-                ))}
-              </List>
-            </Group>
-          </Stack>
-        </Stack>
-      </Card>
-      <Space h="10px" />
 
-      {machine?.is_driver_available && (
-        <>
-          <Card withBorder>
-            <Title order={5} pb={4}>
-              <Trans>Machine Settings</Trans>
-            </Title>
-            <MachineSettingList
-              machinePk={machinePk}
-              configType="M"
-              onChange={refreshAll}
+          <Group>
+            {machine?.restart_required && (
+              <Badge color='red'>
+                <Trans>Restart required</Trans>
+              </Badge>
+            )}
+            <OptionsActionDropdown
+              tooltip={t`Machine Actions`}
+              actions={[
+                EditItemAction({
+                  tooltip: t`Edit machine`,
+                  onClick: machineEditModal.open
+                }),
+                DeleteItemAction({
+                  tooltip: t`Delete machine`,
+                  onClick: machineDeleteModal.open
+                }),
+                {
+                  icon: <IconRefresh />,
+                  name: t`Restart`,
+                  tooltip:
+                    t`Restart machine` +
+                    (machine?.restart_required
+                      ? ` (${t`manual restart required`})`
+                      : ''),
+                  indicator: machine?.restart_required
+                    ? { color: 'red' }
+                    : undefined,
+                  onClick: () => machine && restartMachine(machine?.pk)
+                }
+              ]}
             />
-          </Card>
+          </Group>
+        </Group>
 
-          <Card withBorder>
-            <Title order={5} pb={4}>
-              <Trans>Driver Settings</Trans>
-            </Title>
-            <MachineSettingList
-              machinePk={machinePk}
-              configType="D"
-              onChange={refreshAll}
-            />
-          </Card>
-        </>
-      )}
-    </Stack>
+        <Accordion
+          multiple
+          defaultValue={['machine-info', 'machine-settings', 'driver-settings']}
+        >
+          <Accordion.Item value='machine-info'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Machine Information`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Card withBorder>
+                <Stack gap='md'>
+                  <Stack pos='relative' gap='xs'>
+                    <LoadingOverlay
+                      visible={isFetching}
+                      overlayProps={{ opacity: 0 }}
+                    />
+                    <InfoItem name={t`Machine Type`}>
+                      <Group gap='xs'>
+                        {machineType ? (
+                          <DetailDrawerLink
+                            to={`../type-${machine?.machine_type}`}
+                            text={machineType.name}
+                          />
+                        ) : (
+                          <Text>{machine?.machine_type}</Text>
+                        )}
+                        {machine && !machineType && <UnavailableIndicator />}
+                      </Group>
+                    </InfoItem>
+                    <InfoItem name={t`Machine Driver`}>
+                      <Group gap='xs'>
+                        {machineDriver ? (
+                          <DetailDrawerLink
+                            to={`../driver-${machine?.driver}`}
+                            text={machineDriver.name}
+                          />
+                        ) : (
+                          <Text>{machine?.driver}</Text>
+                        )}
+                        {!machine?.is_driver_available && (
+                          <UnavailableIndicator />
+                        )}
+                      </Group>
+                    </InfoItem>
+                    <InfoItem name={t`Initialized`}>
+                      <YesNoButton value={machine?.initialized || false} />
+                    </InfoItem>
+                    <InfoItem name={t`Active`}>
+                      <YesNoButton value={machine?.active || false} />
+                    </InfoItem>
+                    <InfoItem name={t`Status`}>
+                      <Flex direction='column'>
+                        {machine?.status === -1 ? (
+                          <Text fz='xs'>No status</Text>
+                        ) : (
+                          StatusRenderer({
+                            status: `${machine?.status || -1}`,
+                            type: `MachineStatus__${machine?.status_model}` as any
+                          })
+                        )}
+                        <Text fz='sm'>{machine?.status_text}</Text>
+                      </Flex>
+                    </InfoItem>
+                    <Group justify='space-between' gap='xs'>
+                      <Text fz='sm' fw={700}>
+                        <Trans>Errors</Trans>:
+                      </Text>
+                      {machine && machine?.machine_errors.length > 0 ? (
+                        <Badge color='red' style={{ marginLeft: '10px' }}>
+                          {machine?.machine_errors.length}
+                        </Badge>
+                      ) : (
+                        <Text fz='xs'>
+                          <Trans>No errors reported</Trans>
+                        </Text>
+                      )}
+                      <List w='100%'>
+                        {machine?.machine_errors.map((error, i) => (
+                          <List.Item key={i}>
+                            <Code>{error}</Code>
+                          </List.Item>
+                        ))}
+                      </List>
+                    </Group>
+                  </Stack>
+                </Stack>
+              </Card>
+            </Accordion.Panel>
+          </Accordion.Item>
+          {machine?.is_driver_available && (
+            <Accordion.Item value='machine-settings'>
+              <Accordion.Control>
+                <StylishText size='lg'>{t`Machine Settings`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Card withBorder>
+                  <MachineSettingList
+                    machinePk={machinePk}
+                    configType='M'
+                    onChange={refreshAll}
+                  />
+                </Card>
+              </Accordion.Panel>
+            </Accordion.Item>
+          )}
+          {machine?.is_driver_available && (
+            <Accordion.Item value='driver-settings'>
+              <Accordion.Control>
+                <StylishText size='lg'>{t`Driver Settings`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Card withBorder>
+                  <MachineSettingList
+                    machinePk={machinePk}
+                    configType='D'
+                    onChange={refreshAll}
+                  />
+                </Card>
+              </Accordion.Panel>
+            </Accordion.Item>
+          )}
+        </Accordion>
+      </Stack>
+    </>
   );
 }
 
@@ -398,11 +420,11 @@ export function MachineListTable({
   props,
   renderMachineDrawer = true,
   createProps
-}: {
+}: Readonly<{
   props: InvenTreeTableProps;
   renderMachineDrawer?: boolean;
   createProps?: { machine_type?: string; driver?: string };
-}) {
+}>) {
   const { machineTypes, machineDrivers } = useMachineTypeDriver();
 
   const table = useTable('machine');
@@ -413,19 +435,17 @@ export function MachineListTable({
       {
         accessor: 'name',
         sortable: true,
-        render: function (record) {
-          return (
-            <Group justify="left" wrap="nowrap">
-              <MachineStatusIndicator machine={record} />
-              <Text>{record.name}</Text>
-              {record.restart_required && (
-                <Badge color="red">
-                  <Trans>Restart required</Trans>
-                </Badge>
-              )}
-            </Group>
-          );
-        }
+        render: (record) => (
+          <Group justify='left' wrap='nowrap'>
+            <MachineStatusIndicator machine={record} />
+            <Text>{record.name}</Text>
+            {record.restart_required && (
+              <Badge color='red'>
+                <Trans>Restart required</Trans>
+              </Badge>
+            )}
+          </Group>
+        )
       },
       {
         accessor: 'machine_type',
@@ -435,7 +455,7 @@ export function MachineListTable({
             (m) => m.slug === record.machine_type
           );
           return (
-            <Group gap="xs">
+            <Group gap='xs'>
               <Text>
                 {machineType ? machineType.name : record.machine_type}
               </Text>
@@ -450,7 +470,7 @@ export function MachineListTable({
         render: (record) => {
           const driver = machineDrivers?.find((d) => d.slug === record.driver);
           return (
-            <Group gap="xs">
+            <Group gap='xs'>
               <Text>{driver ? driver.name : record.driver}</Text>
               {!record.is_driver_available && <UnavailableIndicator />}
             </Group>
@@ -494,7 +514,7 @@ export function MachineListTable({
   }, [machineDrivers, createFormMachineType]);
 
   const createMachineForm = useCreateApiFormModal({
-    title: t`Add machine`,
+    title: t`Add Machine`,
     url: ApiEndpoints.machine_list,
     fields: {
       name: {},
@@ -535,7 +555,8 @@ export function MachineListTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        variant="outline"
+        key='add-machine'
+        tooltip={t`Add machine`}
         onClick={() => {
           setCreateFormMachineType(null);
           createMachineForm.open();
@@ -549,8 +570,8 @@ export function MachineListTable({
       {createMachineForm.modal}
       {renderMachineDrawer && (
         <DetailDrawer
-          title={t`Machine detail`}
-          size={'lg'}
+          title={t`Machine Detail`}
+          size={'xl'}
           renderContent={(id) => {
             if (!id || !id.startsWith('machine-')) return false;
             return (

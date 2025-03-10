@@ -1,67 +1,58 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
   Anchor,
+  Avatar,
   Badge,
-  CopyButton,
+  Group,
+  HoverCard,
   Paper,
   Skeleton,
   Stack,
   Table,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useCallback, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getValueAtPath } from 'mantine-datatable';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
+import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
+import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
+import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 
-export type PartIconsType = {
-  assembly: boolean;
-  template: boolean;
-  component: boolean;
-  trackable: boolean;
-  purchaseable: boolean;
-  saleable: boolean;
-  virtual: boolean;
-  active: boolean;
-};
-
-export type DetailsField =
-  | {
-      hidden?: boolean;
-      icon?: string;
-      name: string;
-      label?: string;
-      badge?: BadgeType;
-      copy?: boolean;
-      value_formatter?: () => ValueFormatterReturn;
-    } & (
-      | StringDetailField
-      | BooleanField
-      | LinkDetailField
-      | ProgressBarField
-      | StatusField
-    );
+export type DetailsField = {
+  hidden?: boolean;
+  icon?: InvenTreeIconType;
+  name: string;
+  label?: string;
+  badge?: BadgeType;
+  copy?: boolean;
+  value_formatter?: () => ValueFormatterReturn;
+} & (
+  | StringDetailField
+  | BooleanField
+  | LinkDetailField
+  | ProgressBarField
+  | StatusField
+);
 
 type BadgeType = 'owner' | 'user' | 'group';
-type ValueFormatterReturn = string | number | null;
+type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
-  type: 'string' | 'text';
+  type: 'string' | 'text' | 'date';
   unit?: boolean;
 };
 
@@ -78,6 +69,7 @@ type InternalLinkField = {
   model: ModelType;
   model_field?: string;
   model_formatter?: (value: any) => string;
+  model_filters?: any;
   backup_value?: string;
 };
 
@@ -102,16 +94,83 @@ type FieldProps = {
   unit?: string | null;
 };
 
+function HoverNameBadge(data: any, type: BadgeType) {
+  function lines(data: any) {
+    switch (type) {
+      case 'owner':
+        return [
+          `${data.label}: ${data.name}`,
+          data.name,
+          getDetailUrl(data.owner_model, data.pk, true),
+          undefined,
+          undefined
+        ];
+      case 'user':
+        return [
+          `${data.first_name} ${data.last_name}`,
+          data.username,
+          getDetailUrl(ModelType.user, data.pk, true),
+          data?.image,
+          <>
+            {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
+            {data.is_staff && <Badge color='blue'>{t`Staff`}</Badge>}
+            {data.email && t`Email: ` + data.email}
+          </>
+        ];
+      case 'group':
+        return [
+          data.name,
+          data.name,
+          getDetailUrl(ModelType.group, data.pk, true),
+          data?.image,
+          undefined
+        ];
+      default:
+        return 'dd';
+    }
+  }
+  const line_data = lines(data);
+  return (
+    <HoverCard.Dropdown>
+      <Group>
+        <Avatar src={line_data[3]} radius='xl' />
+        <Stack gap={5}>
+          <Text size='sm' fw={700} style={{ lineHeight: 1 }}>
+            {line_data[0]}
+          </Text>
+          <Anchor
+            href={line_data[2]}
+            c='dimmed'
+            size='xs'
+            style={{ lineHeight: 1 }}
+          >
+            {line_data[1]}
+          </Anchor>
+        </Stack>
+      </Group>
+
+      <Text size='sm' mt='md'>
+        {line_data[4]}
+      </Text>
+    </HoverCard.Dropdown>
+  );
+}
+
 /**
  * Fetches user or group info from backend and formats into a badge.
  * Badge shows username, full name, or group name depending on server settings.
  * Badge appends icon to describe type of Owner
  */
-function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
-  const { data } = useSuspenseQuery({
+function NameBadge({
+  pk,
+  type
+}: Readonly<{ pk: string | number; type: BadgeType }>) {
+  const api = useApi();
+
+  const { data } = useQuery({
     queryKey: ['badge', type, pk],
     queryFn: async () => {
-      let path: string = '';
+      let path = '';
 
       switch (type) {
         case 'owner':
@@ -123,6 +182,8 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
         case 'group':
           path = ApiEndpoints.group_list;
           break;
+        default:
+          return {};
       }
 
       const url = apiUrl(path, pk);
@@ -134,20 +195,30 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
             case 200:
               return response.data;
             default:
-              return null;
+              return {};
           }
         })
         .catch(() => {
-          return null;
+          return {};
         });
     }
   });
 
   const settings = useGlobalSettingsState();
+  const nameComp = useMemo(() => {
+    if (!data) return <Skeleton height={12} radius='md' />;
+    return HoverNameBadge(data, type);
+  }, [data]);
 
-  // Rendering a user's rame for the badge
+  if (!data || data.isLoading || data.isFetching) {
+    return <Skeleton height={12} radius='md' />;
+  }
+
+  // Rendering a user's name for the badge
   function _render_name() {
-    if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
+    if (!data || !data.pk) {
+      return '';
+    } else if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
       if (data.first_name || data.last_name) {
         return `${data.first_name} ${data.last_name}`;
       } else {
@@ -161,19 +232,32 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
   }
 
   return (
-    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Badge
-          color="dark"
-          variant="filled"
-          style={{ display: 'flex', alignItems: 'center' }}
+    <Group wrap='nowrap' gap='sm' justify='right'>
+      <Badge
+        color='dark'
+        variant='filled'
+        style={{ display: 'flex', alignItems: 'center' }}
+      >
+        <HoverCard
+          width={320}
+          shadow='md'
+          withArrow
+          openDelay={200}
+          closeDelay={400}
         >
-          {data.name ?? _render_name()}
-        </Badge>
-        <InvenTreeIcon icon={type === 'user' ? type : data.label} />
-      </div>
-    </Suspense>
+          <HoverCard.Target>
+            <p>{data?.name ?? _render_name()}</p>
+          </HoverCard.Target>
+          {nameComp}
+        </HoverCard>
+      </Badge>
+      <InvenTreeIcon icon={type === 'user' ? type : data.label} />
+    </Group>
   );
+}
+
+function DateValue(props: Readonly<FieldProps>) {
+  return <Text size='sm'>{formatDate(props.field_value?.toString())}</Text>;
 }
 
 /**
@@ -182,39 +266,30 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
  * If user is defined, a badge is rendered in addition to main value
  */
 function TableStringValue(props: Readonly<FieldProps>) {
-  let value = props?.field_value;
+  const value = props?.field_value;
 
-  if (props?.field_data?.value_formatter) {
-    value = props.field_data.value_formatter();
-  }
-
-  if (value === undefined) {
-    return '---';
-  }
+  let renderedValue = null;
 
   if (props.field_data?.badge) {
     return <NameBadge pk={value} type={props.field_data.badge} />;
+  } else if (props?.field_data?.value_formatter) {
+    renderedValue = props.field_data.value_formatter();
+  } else if (value === null || value === undefined) {
+    renderedValue = <Text size='sm'>'---'</Text>;
+  } else {
+    renderedValue = <Text size='sm'>{value.toString()}</Text>;
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        wordBreak: 'break-word',
-        alignItems: 'flex-start'
-      }}
-    >
-      <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-        <span>
-          {value ? value : props.field_data?.unit && '0'}{' '}
-          {props.field_data.unit == true && props.unit}
-        </span>
-      </Suspense>
+    <Group wrap='nowrap' gap='xs' justify='space-apart'>
+      <Group wrap='nowrap' gap='xs' justify='left'>
+        {renderedValue}
+        {props.field_data.unit && <Text size='xs'>{props.unit}</Text>}
+      </Group>
       {props.field_data.user && (
-        <NameBadge pk={props.field_data?.user} type="user" />
+        <NameBadge pk={props.field_data?.user} type='user' />
       )}
-    </div>
+    </Group>
   );
 }
 
@@ -223,9 +298,10 @@ function BooleanValue(props: Readonly<FieldProps>) {
 }
 
 function TableAnchorValue(props: Readonly<FieldProps>) {
+  const api = useApi();
   const navigate = useNavigate();
 
-  const { data } = useSuspenseQuery({
+  const { data } = useQuery({
     queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
       if (!props.field_data?.model) {
@@ -241,7 +317,9 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       const url = apiUrl(modelDef.api_endpoint, props.field_value);
 
       return api
-        .get(url)
+        .get(url, {
+          params: props.field_data.model_filters ?? undefined
+        })
         .then((response) => {
           switch (response.status) {
             case 200:
@@ -270,6 +348,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     [detailUrl]
   );
 
+  if (!data || data.isLoading || data.isFetching) {
+    return <Skeleton height={12} radius='md' />;
+  }
+
   if (props.field_data.external) {
     return (
       <Anchor
@@ -279,7 +361,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
           <Text>{props.field_value}</Text>
-          <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
+          <InvenTreeIcon icon='external' iconProps={{ size: 15 }} />
         </span>
       </Anchor>
     );
@@ -304,19 +386,23 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   }
 
   return (
-    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
+    <>
       {make_link ? (
-        <Anchor href="#" onClick={handleLinkClick}>
+        <Anchor href='#' onClick={handleLinkClick}>
           <Text>{value}</Text>
         </Anchor>
       ) : (
         <Text>{value}</Text>
       )}
-    </Suspense>
+    </>
   );
 }
 
 function ProgressBarValue(props: Readonly<FieldProps>) {
+  if (props.field_data.total <= 0) {
+    return <Text size='sm'>{props.field_data.progress}</Text>;
+  }
+
   return (
     <ProgressBar
       value={props.field_data.progress}
@@ -332,41 +418,19 @@ function StatusValue(props: Readonly<FieldProps>) {
   );
 }
 
-function CopyField({ value }: { value: string }) {
-  return (
-    <CopyButton value={value}>
-      {({ copied, copy }) => (
-        <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
-          <ActionIcon
-            color={copied ? 'teal' : 'gray'}
-            onClick={copy}
-            variant="transparent"
-            size="sm"
-          >
-            {copied ? (
-              <InvenTreeIcon icon="check" />
-            ) : (
-              <InvenTreeIcon icon="copy" />
-            )}
-          </ActionIcon>
-        </Tooltip>
-      )}
-    </CopyButton>
-  );
+function CopyField({ value }: Readonly<{ value: string }>) {
+  return <CopyButton value={value} />;
 }
 
 export function DetailsTableField({
   item,
   field
-}: {
+}: Readonly<{
   item: any;
   field: DetailsField;
-}) {
+}>) {
   function getFieldType(type: string) {
     switch (type) {
-      case 'text':
-      case 'string':
-        return TableStringValue;
       case 'boolean':
         return BooleanValue;
       case 'link':
@@ -375,6 +439,10 @@ export function DetailsTableField({
         return ProgressBarValue;
       case 'status':
         return StatusValue;
+      case 'date':
+        return DateValue;
+      case 'text':
+      case 'string':
       default:
         return TableStringValue;
     }
@@ -382,24 +450,33 @@ export function DetailsTableField({
 
   const FieldType: any = getFieldType(field.type);
 
+  const fieldValue = useMemo(
+    () => getValueAtPath(item, field.name) as string,
+    [item, field.name]
+  );
+
   return (
     <Table.Tr style={{ verticalAlign: 'top' }}>
+      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
+        <Group gap='xs' wrap='nowrap'>
+          <InvenTreeIcon
+            icon={field.icon ?? (field.name as InvenTreeIconType)}
+          />
+          <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
+        </Group>
+      </Table.Td>
       <Table.Td
         style={{
-          width: '50',
-          maxWidth: '50'
+          lineBreak: 'anywhere',
+          minWidth: 100,
+          flex: 10,
+          display: 'inline-block'
         }}
       >
-        <InvenTreeIcon icon={(field.icon ?? field.name) as InvenTreeIconType} />
-      </Table.Td>
-      <Table.Td style={{ maxWidth: '65%' }}>
-        <Text>{field.label}</Text>
-      </Table.Td>
-      <Table.Td style={{}}>
-        <FieldType field_data={field} field_value={item[field.name]} />
+        <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>
-        {field.copy && <CopyField value={item[field.name]} />}
+        {field.copy && <CopyField value={fieldValue} />}
       </Table.Td>
     </Table.Tr>
   );
@@ -409,16 +486,20 @@ export function DetailsTable({
   item,
   fields,
   title
-}: {
+}: Readonly<{
   item: any;
   fields: DetailsField[];
   title?: string;
-}) {
+}>) {
   return (
-    <Paper p="xs" withBorder radius="xs">
-      <Stack gap="xs">
-        {title && <StylishText size="lg">{title}</StylishText>}
-        <Table striped verticalSpacing={5} horizontalSpacing="sm">
+    <Paper
+      p='xs'
+      withBorder
+      style={{ overflowX: 'hidden', width: '100%', minWidth: 200 }}
+    >
+      <Stack gap='xs'>
+        {title && <StylishText size='lg'>{title}</StylishText>}
+        <Table striped verticalSpacing={5} horizontalSpacing='sm'>
           <Table.Tbody>
             {fields
               .filter((field: DetailsField) => !field.hidden)

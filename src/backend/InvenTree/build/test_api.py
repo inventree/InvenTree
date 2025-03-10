@@ -1,4 +1,4 @@
-"""Unit tests for the BuildOrder API"""
+"""Unit tests for the BuildOrder API."""
 
 from datetime import datetime, timedelta
 
@@ -6,12 +6,12 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from part.models import Part
-from build.models import Build, BuildItem
-from stock.models import StockItem
-
-from InvenTree.status_codes import BuildStatus, StockStatus
+from build.models import Build, BuildItem, BuildLine
+from build.status_codes import BuildStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
+from part.models import BomItem, Part
+from stock.models import StockItem
+from stock.status_codes import StockStatus
 
 
 class TestBuildAPI(InvenTreeAPITestCase):
@@ -21,18 +21,9 @@ class TestBuildAPI(InvenTreeAPITestCase):
     - Tests for BuildItem API
     """
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'build',
-    ]
+    fixtures = ['category', 'part', 'location', 'build']
 
-    roles = [
-        'build.change',
-        'build.add',
-        'build.delete',
-    ]
+    roles = ['build.change', 'build.add', 'build.delete']
 
     def test_get_build_list(self):
         """Test that we can retrieve list of build objects."""
@@ -44,7 +35,9 @@ class TestBuildAPI(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 5)
 
         # Filter query by build status
-        response = self.get(url, {'status': 40}, expected_code=200)
+        response = self.get(
+            url, {'status': BuildStatus.COMPLETE.value}, expected_code=200
+        )
 
         self.assertEqual(len(response.data), 4)
 
@@ -87,27 +80,17 @@ class TestBuildAPI(InvenTreeAPITestCase):
 class BuildAPITest(InvenTreeAPITestCase):
     """Series of tests for the Build DRF API."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'bom',
-        'build',
-        'stock',
-    ]
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'stock']
 
     # Required roles to access Build API endpoints
-    roles = [
-        'build.change',
-        'build.add',
-    ]
+    roles = ['build.change', 'build.add']
 
 
 class BuildTest(BuildAPITest):
     """Unit testing for the build complete API endpoint."""
 
     def setUp(self):
-        """Basic setup for this test suite"""
+        """Basic setup for this test suite."""
         super().setUp()
 
         self.build = Build.objects.get(pk=1)
@@ -120,79 +103,47 @@ class BuildTest(BuildAPITest):
         self.post(
             reverse('api-build-output-complete', kwargs={'pk': 99999}),
             {},
-            expected_code=400
+            expected_code=400,
         )
 
         data = self.post(self.url, {}, expected_code=400).data
 
-        self.assertIn("This field is required", str(data['outputs']))
-        self.assertIn("This field is required", str(data['location']))
+        self.assertIn('This field is required', str(data['outputs']))
+        self.assertIn('This field is required', str(data['location']))
 
         # Test with an invalid location
         data = self.post(
-            self.url,
-            {
-                "outputs": [],
-                "location": 999999,
-            },
-            expected_code=400
+            self.url, {'outputs': [], 'location': 999999}, expected_code=400
         ).data
 
-        self.assertIn(
-            "Invalid pk",
-            str(data["location"])
-        )
+        self.assertIn('Invalid pk', str(data['location']))
 
         data = self.post(
-            self.url,
-            {
-                "outputs": [],
-                "location": 1,
-            },
-            expected_code=400
+            self.url, {'outputs': [], 'location': 1}, expected_code=400
         ).data
 
-        self.assertIn("A list of build outputs must be provided", str(data))
+        self.assertIn('A list of build outputs must be provided', str(data))
 
-        stock_item = StockItem.objects.create(
-            part=self.build.part,
-            quantity=100,
-        )
+        stock_item = StockItem.objects.create(part=self.build.part, quantity=100)
 
-        post_data = {
-            "outputs": [
-                {
-                    "output": stock_item.pk,
-                },
-            ],
-            "location": 1,
-        }
+        post_data = {'outputs': [{'output': stock_item.pk}], 'location': 1}
 
         # Post with a stock item that does not match the build
-        data = self.post(
-            self.url,
-            post_data,
-            expected_code=400
-        ).data
+        data = self.post(self.url, post_data, expected_code=400).data
 
         self.assertIn(
-            "Build output does not match the parent build",
-            str(data["outputs"][0])
+            'Build output does not match the parent build', str(data['outputs'][0])
         )
 
         # Now, ensure that the stock item *does* match the build
         stock_item.build = self.build
         stock_item.save()
 
-        data = self.post(
-            self.url,
-            post_data,
-            expected_code=400,
-        ).data
+        data = self.post(self.url, post_data, expected_code=400).data
 
         self.assertIn(
-            "This build output has already been completed",
-            str(data["outputs"][0]["output"])
+            'This build output has already been completed',
+            str(data['outputs'][0]['output']),
         )
 
     def test_complete(self):
@@ -218,11 +169,12 @@ class BuildTest(BuildAPITest):
         self.post(
             self.url,
             {
-                "outputs": [{"output": output.pk} for output in outputs],
-                "location": 1,
-                "status": 50,  # Item requires attention
+                'outputs': [{'output': output.pk} for output in outputs],
+                'location': 1,
+                'status': StockStatus.ATTENTION.value,
             },
             expected_code=201,
+            max_query_count=600,  # TODO: Try to optimize this
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -241,22 +193,12 @@ class BuildTest(BuildAPITest):
         # Try to complete the build (it should fail)
         finish_url = reverse('api-build-finish', kwargs={'pk': self.build.pk})
 
-        response = self.post(
-            finish_url,
-            {},
-            expected_code=400
-        )
+        response = self.post(finish_url, {}, expected_code=400)
 
         self.assertIn('accept_unallocated', response.data)
 
         # Accept unallocated stock
-        self.post(
-            finish_url,
-            {
-                'accept_unallocated': True,
-            },
-            expected_code=201,
-        )
+        self.post(finish_url, {'accept_unallocated': True}, expected_code=201)
 
         self.build.refresh_from_db()
 
@@ -272,16 +214,10 @@ class BuildTest(BuildAPITest):
 
         def make_new_build(ref):
             """Make a new build order, and allocate stock to it."""
-
             data = self.post(
                 reverse('api-build-list'),
-                {
-                    'part': 100,
-                    'quantity': 10,
-                    'title': 'Test build',
-                    'reference': ref,
-                },
-                expected_code=201
+                {'part': 100, 'quantity': 10, 'title': 'Test build', 'reference': ref},
+                expected_code=201,
             ).data
 
             build = Build.objects.get(pk=data['pk'])
@@ -322,33 +258,24 @@ class BuildTest(BuildAPITest):
         self.assertGreater(bo.consumed_stock.count(), 0)
 
     def test_delete(self):
-        """Test that we can delete a BuildOrder via the API"""
+        """Test that we can delete a BuildOrder via the API."""
         bo = Build.objects.get(pk=1)
 
         url = reverse('api-build-detail', kwargs={'pk': bo.pk})
 
         # At first we do not have the required permissions
-        self.delete(
-            url,
-            expected_code=403,
-        )
+        self.delete(url, expected_code=403)
 
         self.assignRole('build.delete')
 
         # As build is currently not 'cancelled', it cannot be deleted
-        self.delete(
-            url,
-            expected_code=400,
-        )
+        self.delete(url, expected_code=400)
 
         bo.status = BuildStatus.CANCELLED.value
         bo.save()
 
         # Now, we should be able to delete
-        self.delete(
-            url,
-            expected_code=204,
-        )
+        self.delete(url, expected_code=204)
 
         with self.assertRaises(Build.DoesNotExist):
             Build.objects.get(pk=1)
@@ -363,56 +290,43 @@ class BuildTest(BuildAPITest):
 
         # Attempt to create outputs with invalid data
         response = self.post(
-            create_url,
-            {
-                'quantity': 'not a number',
-            },
-            expected_code=400
+            create_url, {'quantity': 'not a number'}, expected_code=400
         )
 
         self.assertIn('A valid number is required', str(response.data))
 
         for q in [-100, -10.3, 0]:
-
-            response = self.post(
-                create_url,
-                {
-                    'quantity': q,
-                },
-                expected_code=400
-            )
+            response = self.post(create_url, {'quantity': q}, expected_code=400)
 
             if q == 0:
                 self.assertIn('Quantity must be greater than zero', str(response.data))
             else:
-                self.assertIn('Ensure this value is greater than or equal to 0', str(response.data))
+                self.assertIn(
+                    'Ensure this value is greater than or equal to 0',
+                    str(response.data),
+                )
 
         # Mark the part being built as 'trackable' (requires integer quantity)
         bo.part.trackable = True
         bo.part.save()
 
-        response = self.post(
-            create_url,
-            {
-                'quantity': 12.3,
-            },
-            expected_code=400
-        )
+        response = self.post(create_url, {'quantity': 12.3}, expected_code=400)
 
-        self.assertIn('Integer quantity required for trackable parts', str(response.data))
+        self.assertIn(
+            'Integer quantity required for trackable parts', str(response.data)
+        )
 
         # Erroneous serial numbers
         response = self.post(
             create_url,
-            {
-                'quantity': 5,
-                'serial_numbers': '1, 2, 3, 4, 5, 6',
-                'batch': 'my-batch',
-            },
-            expected_code=400
+            {'quantity': 5, 'serial_numbers': '1, 2, 3, 4, 5, 6', 'batch': 'my-batch'},
+            expected_code=400,
         )
 
-        self.assertIn('Number of unique serial numbers (6) must match quantity (5)', str(response.data))
+        self.assertIn(
+            'Number of unique serial numbers (6) must match quantity (5)',
+            str(response.data),
+        )
 
         # At this point, no new build outputs should have been created
         self.assertEqual(n_outputs, bo.output_count)
@@ -420,11 +334,7 @@ class BuildTest(BuildAPITest):
         # Now, create with *good* data
         self.post(
             create_url,
-            {
-                'quantity': 5,
-                'serial_numbers': '1, 2, 3, 4, 5',
-                'batch': 'my-batch',
-            },
+            {'quantity': 5, 'serial_numbers': '1, 2, 3, 4, 5', 'batch': 'my-batch'},
             expected_code=201,
         )
 
@@ -433,15 +343,13 @@ class BuildTest(BuildAPITest):
 
         # Attempt to create with identical serial numbers
         response = self.post(
-            create_url,
-            {
-                'quantity': 3,
-                'serial_numbers': '1-3',
-            },
-            expected_code=400,
+            create_url, {'quantity': 3, 'serial_numbers': '1-3'}, expected_code=400
         )
 
-        self.assertIn('The following serial numbers already exist or are invalid : 1,2,3', str(response.data))
+        self.assertIn(
+            'The following serial numbers already exist or are invalid : 1,2,3',
+            str(response.data),
+        )
 
         # Double check no new outputs have been created
         self.assertEqual(n_outputs + 5, bo.output_count)
@@ -449,15 +357,13 @@ class BuildTest(BuildAPITest):
         # Now, let's delete each build output individually via the API
         outputs = bo.build_outputs.all()
 
+        # Assert that each output is currently in production
+        for output in outputs:
+            self.assertTrue(output.is_building)
+
         delete_url = reverse('api-build-output-delete', kwargs={'pk': 1})
 
-        response = self.post(
-            delete_url,
-            {
-                'outputs': [],
-            },
-            expected_code=400
-        )
+        response = self.post(delete_url, {'outputs': []}, expected_code=400)
 
         self.assertIn('A list of build outputs must be provided', str(response.data))
 
@@ -471,17 +377,13 @@ class BuildTest(BuildAPITest):
         # Note: One has been completed, so this should fail!
         response = self.post(
             delete_url,
-            {
-                'outputs': [
-                    {
-                        'output': output.pk,
-                    } for output in outputs
-                ]
-            },
-            expected_code=400
+            {'outputs': [{'output': output.pk} for output in outputs]},
+            expected_code=400,
         )
 
-        self.assertIn('This build output has already been completed', str(response.data))
+        self.assertIn(
+            'This build output has already been completed', str(response.data)
+        )
 
         # No change to the build outputs
         self.assertEqual(n_outputs + 5, bo.output_count)
@@ -490,14 +392,8 @@ class BuildTest(BuildAPITest):
         # Let's delete 2 build outputs
         self.post(
             delete_url,
-            {
-                'outputs': [
-                    {
-                        'output': output.pk,
-                    } for output in outputs[1:3]
-                ]
-            },
-            expected_code=201
+            {'outputs': [{'output': output.pk} for output in outputs[1:3]]},
+            expected_code=201,
         )
 
         # Two build outputs have been removed
@@ -509,12 +405,7 @@ class BuildTest(BuildAPITest):
 
         # Let's mark the remaining outputs as complete
         response = self.post(
-            complete_url,
-            {
-                'outputs': [],
-                'location': 4,
-            },
-            expected_code=400,
+            complete_url, {'outputs': [], 'location': 4}, expected_code=400
         )
 
         self.assertIn('A list of build outputs must be provided', str(response.data))
@@ -526,11 +417,7 @@ class BuildTest(BuildAPITest):
         self.post(
             complete_url,
             {
-                'outputs': [
-                    {
-                        'output': output.pk
-                    } for output in outputs[3:]
-                ],
+                'outputs': [{'output': output.pk} for output in outputs[3:]],
                 'location': 4,
             },
             expected_code=201,
@@ -547,61 +434,117 @@ class BuildTest(BuildAPITest):
         # Try again, with an output which has already been completed
         response = self.post(
             complete_url,
-            {
-                'outputs': [
-                    {
-                        'output': outputs.last().pk,
-                    }
-                ]
-            },
+            {'outputs': [{'output': outputs.last().pk}]},
             expected_code=400,
         )
 
-        self.assertIn('This build output has already been completed', str(response.data))
+        self.assertIn(
+            'This build output has already been completed', str(response.data)
+        )
 
     def test_download_build_orders(self):
-        """Test that we can download a list of build orders via the API"""
+        """Test that we can download a list of build orders via the API."""
         required_cols = [
-            'reference',
-            'status',
-            'completed',
-            'batch',
-            'notes',
-            'title',
-            'part',
-            'part_name',
-            'id',
-            'quantity',
+            'Reference',
+            'Build Status',
+            'Completed items',
+            'Batch Code',
+            'Notes',
+            'Description',
+            'Part',
+            'Part Name',
+            'ID',
+            'Quantity',
         ]
 
-        excluded_cols = [
-            'lft', 'rght', 'tree_id', 'level',
-            'metadata',
-        ]
+        excluded_cols = ['lft', 'rght', 'tree_id', 'level', 'metadata']
 
-        with self.download_file(
-            reverse('api-build-list'),
-            {
-                'export': 'csv',
-            }
-        ) as file:
-
+        with self.download_file(reverse('api-build-list'), {'export': 'csv'}) as file:
             data = self.process_csv(
                 file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
-                required_rows=Build.objects.count()
+                required_rows=Build.objects.count(),
             )
 
             for row in data:
+                build = Build.objects.get(pk=row['ID'])
 
-                build = Build.objects.get(pk=row['id'])
+                self.assertEqual(str(build.part.pk), row['Part'])
+                self.assertEqual(build.part.name, row['Part Name'])
 
-                self.assertEqual(str(build.part.pk), row['part'])
-                self.assertEqual(build.part.full_name, row['part_name'])
+                self.assertEqual(build.reference, row['Reference'])
+                self.assertEqual(build.title, row['Description'])
 
-                self.assertEqual(build.reference, row['reference'])
-                self.assertEqual(build.title, row['title'])
+    def test_create(self):
+        """Test creation of new build orders via the API."""
+        url = reverse('api-build-list')
+
+        # First, we'll create a tree of part assemblies
+        part_a = Part.objects.create(
+            name='Part A', description='Part A description', assembly=True
+        )
+        part_b = Part.objects.create(
+            name='Part B', description='Part B description', assembly=True
+        )
+        part_c = Part.objects.create(
+            name='Part C', description='Part C description', assembly=True
+        )
+
+        # Create a BOM for Part A
+        BomItem.objects.create(part=part_a, sub_part=part_b, quantity=5)
+
+        # Create a BOM for Part B
+        BomItem.objects.create(part=part_b, sub_part=part_c, quantity=7)
+
+        n = Build.objects.count()
+
+        # Create a build order for Part A, with a quantity of 10
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9876',
+                'part': part_a.pk,
+                'quantity': 10,
+                'title': 'A build',
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(n + 1, Build.objects.count())
+
+        bo = Build.objects.get(pk=response.data['pk'])
+
+        self.assertEqual(bo.children.count(), 0)
+
+        # Create a build order for Part A, and auto-create child builds
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9875',
+                'part': part_a.pk,
+                'quantity': 15,
+                'title': 'A build - with childs',
+                'create_child_builds': True,
+            },
+        )
+
+        # An addition 1 + 2 builds should have been created
+        self.assertEqual(n + 4, Build.objects.count())
+
+        bo = Build.objects.get(pk=response.data['pk'])
+
+        # One build has a direct child
+        self.assertEqual(bo.children.count(), 1)
+        child = bo.children.first()
+        self.assertEqual(child.part.pk, part_b.pk)
+        self.assertEqual(child.quantity, 75)
+
+        # And there should be a second-level child build too
+        self.assertEqual(child.children.count(), 1)
+        child = child.children.first()
+        self.assertEqual(child.part.pk, part_c.pk)
+        self.assertEqual(child.quantity, 7 * 5 * 15)
 
 
 class BuildAllocationTest(BuildAPITest):
@@ -615,7 +558,7 @@ class BuildAllocationTest(BuildAPITest):
     """
 
     def setUp(self):
-        """Basic operation as part of test suite setup"""
+        """Basic operation as part of test suite setup."""
         super().setUp()
 
         self.assignRole('build.add')
@@ -639,7 +582,9 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(self.build.part.bom_items.count(), 4)
 
         # No items yet allocated to this build
-        self.assertEqual(BuildItem.objects.filter(build_line__build=self.build).count(), 0)
+        self.assertEqual(
+            BuildItem.objects.filter(build_line__build=self.build).count(), 0
+        )
 
     def test_get(self):
         """A GET request to the endpoint should return an error."""
@@ -649,7 +594,9 @@ class BuildAllocationTest(BuildAPITest):
         """An OPTIONS request to the endpoint should return information about the endpoint."""
         response = self.options(self.url, expected_code=200)
 
-        self.assertIn("API endpoint to allocate stock items to a build order", str(response.data))
+        self.assertIn(
+            'API endpoint to allocate stock items to a build order', str(response.data)
+        )
 
     def test_empty(self):
         """Test without any POST data."""
@@ -659,13 +606,7 @@ class BuildAllocationTest(BuildAPITest):
         self.assertIn('This field is required', str(data['items']))
 
         # Now test but with an empty items list
-        data = self.post(
-            self.url,
-            {
-                "items": []
-            },
-            expected_code=400
-        ).data
+        data = self.post(self.url, {'items': []}, expected_code=400).data
 
         self.assertIn('Allocation items must be provided', str(data))
 
@@ -678,49 +619,35 @@ class BuildAllocationTest(BuildAPITest):
         data = self.post(
             self.url,
             {
-                "items": [
+                'items': [
                     {
-                        "build_line": 1,  # M2x4 LPHS
-                        "stock_item": 2,  # 5,000 screws available
+                        'build_line': 1,  # M2x4 LPHS
+                        'stock_item': 2,  # 5,000 screws available
                     }
                 ]
             },
-            expected_code=400
+            expected_code=400,
         ).data
 
-        self.assertIn('This field is required', str(data["items"][0]["quantity"]))
+        self.assertIn('This field is required', str(data['items'][0]['quantity']))
 
         # Missing bom_item
         data = self.post(
             self.url,
-            {
-                "items": [
-                    {
-                        "stock_item": 2,
-                        "quantity": 5000,
-                    }
-                ]
-            },
-            expected_code=400
+            {'items': [{'stock_item': 2, 'quantity': 5000}]},
+            expected_code=400,
         ).data
 
-        self.assertIn("This field is required", str(data["items"][0]["build_line"]))
+        self.assertIn('This field is required', str(data['items'][0]['build_line']))
 
         # Missing stock_item
         data = self.post(
             self.url,
-            {
-                "items": [
-                    {
-                        "build_line": 1,
-                        "quantity": 5000,
-                    }
-                ]
-            },
-            expected_code=400
+            {'items': [{'build_line': 1, 'quantity': 5000}]},
+            expected_code=400,
         ).data
 
-        self.assertIn("This field is required", str(data["items"][0]["stock_item"]))
+        self.assertIn('This field is required', str(data['items'][0]['stock_item']))
 
         # No new BuildItem objects have been created during this test
         self.assertEqual(self.n, BuildItem.objects.count())
@@ -741,15 +668,11 @@ class BuildAllocationTest(BuildAPITest):
         data = self.post(
             self.url,
             {
-                "items": [
-                    {
-                        "build_line": wrong_line.pk,
-                        "stock_item": 11,
-                        "quantity": 500,
-                    }
+                'items': [
+                    {'build_line': wrong_line.pk, 'stock_item': 11, 'quantity': 500}
                 ]
             },
-            expected_code=400
+            expected_code=400,
         ).data
 
         self.assertIn('Selected stock item does not match BOM line', str(data))
@@ -765,7 +688,6 @@ class BuildAllocationTest(BuildAPITest):
         right_line = None
 
         for line in self.build.build_lines.all():
-
             if line.bom_item.sub_part.pk == si.part.pk:
                 right_line = line
                 break
@@ -773,15 +695,11 @@ class BuildAllocationTest(BuildAPITest):
         self.post(
             self.url,
             {
-                "items": [
-                    {
-                        "build_line": right_line.pk,
-                        "stock_item": 2,
-                        "quantity": 5000,
-                    }
+                'items': [
+                    {'build_line': right_line.pk, 'stock_item': 2, 'quantity': 5000}
                 ]
             },
-            expected_code=201
+            expected_code=201,
         )
 
         # A new BuildItem should have been created
@@ -810,15 +728,11 @@ class BuildAllocationTest(BuildAPITest):
         self.post(
             self.url,
             {
-                "items": [
-                    {
-                        "build_line": right_line.pk,
-                        "stock_item": 2,
-                        "quantity": 3000,
-                    }
+                'items': [
+                    {'build_line': right_line.pk, 'stock_item': 2, 'quantity': 3000}
                 ]
             },
-            expected_code=201
+            expected_code=201,
         )
 
         # A new BuildItem should have been created
@@ -834,15 +748,11 @@ class BuildAllocationTest(BuildAPITest):
         self.post(
             self.url,
             {
-                "items": [
-                    {
-                        "build_line": right_line.pk,
-                        "stock_item": 2,
-                        "quantity": 2001,
-                    }
+                'items': [
+                    {'build_line': right_line.pk, 'stock_item': 2, 'quantity': 2001}
                 ]
             },
-            expected_code=400
+            expected_code=400,
         )
 
         allocation.refresh_from_db()
@@ -852,15 +762,11 @@ class BuildAllocationTest(BuildAPITest):
         self.post(
             self.url,
             {
-                "items": [
-                    {
-                        "build_line": right_line.pk,
-                        "stock_item": 2,
-                        "quantity": 2000,
-                    }
+                'items': [
+                    {'build_line': right_line.pk, 'stock_item': 2, 'quantity': 2000}
                 ]
             },
-            expected_code=201
+            expected_code=201,
         )
 
         allocation.refresh_from_db()
@@ -871,7 +777,6 @@ class BuildAllocationTest(BuildAPITest):
 
         Ref: https://github.com/inventree/InvenTree/issues/6508
         """
-
         si = StockItem.objects.get(pk=2)
 
         # Find line item
@@ -884,39 +789,77 @@ class BuildAllocationTest(BuildAPITest):
         self.post(
             self.url,
             {
-                "items": [
-                    {
-                        "build_line": line.pk,
-                        "stock_item": si.pk,
-                        "quantity": 0.1616,
-                    }
+                'items': [
+                    {'build_line': line.pk, 'stock_item': si.pk, 'quantity': 0.1616}
                 ]
             },
-            expected_code=201
+            expected_code=201,
         )
 
         # Test a fractional quantity when the *available* quantity is less than 1
         si = StockItem.objects.create(
-            part=si.part,
-            quantity=0.3159,
-            tree_id=0,
-            level=0,
-            lft=0, rght=0
+            part=si.part, quantity=0.3159, tree_id=0, level=0, lft=0, rght=0
         )
 
         self.post(
             self.url,
             {
-                "items": [
-                    {
-                        "build_line": line.pk,
-                        "stock_item": si.pk,
-                        "quantity": 0.1616,
-                    }
+                'items': [
+                    {'build_line': line.pk, 'stock_item': si.pk, 'quantity': 0.1616}
                 ]
             },
             expected_code=201,
         )
+
+
+class BuildItemTest(BuildAPITest):
+    """Unit tests for build items.
+
+    For this test, we will be using Build ID=1;
+
+    - This points to Part 100 (see fixture data in part.yaml)
+    - This Part already has a BOM with 4 items (see fixture data in bom.yaml)
+    - There are no BomItem objects yet created for this build
+    """
+
+    def setUp(self):
+        """Basic operation as part of test suite setup."""
+        super().setUp()
+
+        self.assignRole('build.add')
+        self.assignRole('build.change')
+
+        self.build = Build.objects.get(pk=1)
+
+        # Regenerate BuildLine objects
+        self.build.create_build_line_items()
+
+        # Record number of build items which exist at the start of each test
+        self.n = BuildItem.objects.count()
+
+    def test_update_overallocated(self):
+        """Test update of overallocated stock items."""
+        si = StockItem.objects.get(pk=2)
+
+        # Find line item
+        line = self.build.build_lines.all().filter(bom_item__sub_part=si.part).first()
+
+        # Set initial stock item quantity
+        si.quantity = 100
+        si.save()
+
+        # Create build item
+        bi = BuildItem(build_line=line, stock_item=si, quantity=100)
+        bi.save()
+
+        # Reduce stock item quantity
+        si.quantity = 50
+        si.save()
+
+        # Reduce build item quantity
+        url = reverse('api-build-item-detail', kwargs={'pk': bi.pk})
+
+        self.patch(url, {'quantity': 50}, expected_code=200)
 
 
 class BuildOverallocationTest(BuildAPITest):
@@ -927,7 +870,7 @@ class BuildOverallocationTest(BuildAPITest):
 
     @classmethod
     def setUpTestData(cls):
-        """Basic operation as part of test suite setup"""
+        """Basic operation as part of test suite setup."""
         super().setUpTestData()
 
         cls.assignRole('build.add')
@@ -951,11 +894,9 @@ class BuildOverallocationTest(BuildAPITest):
 
             cls.state[sub_part] = (si, si.quantity, required)
 
-            items_to_create.append(BuildItem(
-                build_line=build_line,
-                stock_item=si,
-                quantity=required,
-            ))
+            items_to_create.append(
+                BuildItem(build_line=build_line, stock_item=si, quantity=required)
+            )
 
         BuildItem.objects.bulk_create(items_to_create)
 
@@ -963,6 +904,12 @@ class BuildOverallocationTest(BuildAPITest):
         cls.build.create_build_output(cls.build.quantity)
         outputs = cls.build.build_outputs.all()
         cls.build.complete_build_output(outputs[0], cls.user)
+
+    def setUp(self):
+        """Basic operation as part of test suite setup."""
+        super().setUp()
+
+        self.generate_exchange_rates()
 
     def test_setup(self):
         """Validate expected state after set-up."""
@@ -973,11 +920,7 @@ class BuildOverallocationTest(BuildAPITest):
     def test_overallocated_requires_acceptance(self):
         """Test build order cannot complete with overallocated items."""
         # Try to complete the build (it should fail due to overallocation)
-        response = self.post(
-            self.url,
-            {},
-            expected_code=400
-        )
+        response = self.post(self.url, {}, expected_code=400)
         self.assertIn('accept_overallocated', response.data)
 
         # Check stock items have not reduced at all
@@ -988,10 +931,9 @@ class BuildOverallocationTest(BuildAPITest):
         # Accept overallocated stock
         self.post(
             self.url,
-            {
-                'accept_overallocated': 'accept',
-            },
+            {'accept_overallocated': 'accept'},
             expected_code=201,
+            max_query_count=1000,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()
@@ -1008,11 +950,12 @@ class BuildOverallocationTest(BuildAPITest):
         """Test build order will trim/de-allocate overallocated stock when requested."""
         self.post(
             self.url,
-            {
-                'accept_overallocated': 'trim',
-            },
+            {'accept_overallocated': 'trim'},
             expected_code=201,
+            max_query_count=1000,  # TODO: Come back and refactor this
         )
+
+        # Note: Large number of queries is due to pricing recalculation for each stock item
 
         self.build.refresh_from_db()
 
@@ -1021,7 +964,6 @@ class BuildOverallocationTest(BuildAPITest):
 
         # Check stock items have reduced only by bom requirement (overallocation trimmed)
         for line in self.build.build_lines.all():
-
             si, oq, _ = self.state[line.bom_item.sub_part]
             rq = line.quantity
             si.refresh_from_db()
@@ -1059,11 +1001,11 @@ class BuildListTest(BuildAPITest):
 
         Build.objects.create(
             part=part,
-            reference="BO-0006",
+            reference='BO-0006',
             quantity=10,
             title='Just some thing',
             status=BuildStatus.PRODUCTION.value,
-            target_date=in_the_past
+            target_date=in_the_past,
         )
 
         response = self.get(self.url, data={'overdue': True})
@@ -1085,24 +1027,22 @@ class BuildListTest(BuildAPITest):
             Build.objects.create(
                 part=part,
                 quantity=10,
-                reference=f"BO-{i + 10}",
-                title=f"Sub build {i}",
-                parent=parent
+                reference=f'BO-{i + 10}',
+                title=f'Sub build {i}',
+                parent=parent,
             )
 
         # And some sub-sub builds
         for ii, sub_build in enumerate(Build.objects.filter(parent=parent)):
-
             for i in range(3):
-
                 x = ii * 10 + i + 50
 
                 Build.objects.create(
                     part=part,
-                    reference=f"BO-{x}",
-                    title=f"{sub_build.reference}-00{i}-sub",
+                    reference=f'BO-{x}',
+                    title=f'{sub_build.reference}-00{i}-sub',
                     quantity=40,
-                    parent=sub_build
+                    parent=sub_build,
                 )
 
         # 20 new builds should have been created!
@@ -1125,11 +1065,77 @@ class BuildListTest(BuildAPITest):
         self.assertEqual(len(builds), 20)
 
 
+class BuildOutputCreateTest(BuildAPITest):
+    """Unit test for creating build output via API."""
+
+    def test_create_serialized_output(self):
+        """Create a serialized build output via the API."""
+        build_id = 1
+
+        url = reverse('api-build-output-create', kwargs={'pk': build_id})
+
+        build = Build.objects.get(pk=build_id)
+        part = build.part
+
+        n_outputs = build.output_count
+        n_items = part.stock_items.count()
+
+        # Post with invalid data
+        response = self.post(
+            url, data={'quantity': 10, 'serial_numbers': '1-100'}, expected_code=400
+        )
+
+        self.assertIn(
+            'Group range 1-100 exceeds allowed quantity (10)',
+            str(response.data['serial_numbers']),
+        )
+
+        # Build outputs have not increased
+        self.assertEqual(n_outputs, build.output_count)
+
+        # Stock items have not increased
+        self.assertEqual(n_items, part.stock_items.count())
+
+        response = self.post(
+            url, data={'quantity': 5, 'serial_numbers': '1,2,3-5'}, expected_code=201
+        )
+
+        # Build outputs have incdeased
+        self.assertEqual(n_outputs + 5, build.output_count)
+
+        # Stock items have increased
+        self.assertEqual(n_items + 5, part.stock_items.count())
+
+        # Serial numbers have been created
+        for sn in range(1, 6):
+            self.assertTrue(part.stock_items.filter(serial=sn).exists())
+
+    def test_create_unserialized_output(self):
+        """Create an unserialized build output via the API."""
+        build_id = 1
+        url = reverse('api-build-output-create', kwargs={'pk': build_id})
+
+        build = Build.objects.get(pk=build_id)
+        part = build.part
+
+        n_outputs = build.output_count
+        n_items = part.stock_items.count()
+
+        # Create a single new output
+        self.post(url, data={'quantity': 10}, expected_code=201)
+
+        # Build outputs have increased
+        self.assertEqual(n_outputs + 1, build.output_count)
+
+        # Stock items have increased
+        self.assertEqual(n_items + 1, part.stock_items.count())
+
+
 class BuildOutputScrapTest(BuildAPITest):
-    """Unit tests for scrapping build outputs"""
+    """Unit tests for scrapping build outputs."""
 
     def scrap(self, build_id, data, expected_code=None):
-        """Helper method to POST to the scrap API"""
+        """Helper method to POST to the scrap API."""
         url = reverse('api-build-output-scrap', kwargs={'pk': build_id})
 
         response = self.post(url, data, expected_code=expected_code)
@@ -1137,7 +1143,7 @@ class BuildOutputScrapTest(BuildAPITest):
         return response.data
 
     def test_invalid_scraps(self):
-        """Test that invalid scrap attempts are rejected"""
+        """Test that invalid scrap attempts are rejected."""
         # Test with missing required fields
         response = self.scrap(1, {}, expected_code=400)
 
@@ -1145,30 +1151,15 @@ class BuildOutputScrapTest(BuildAPITest):
             self.assertIn('This field is required', str(response[field]))
 
         # Scrap with no outputs specified
-        response = self.scrap(
-            1,
-            {
-                'outputs': [],
-                'location': 1,
-                'notes': 'Should fail',
-            }
-        )
+        response = self.scrap(1, {'outputs': [], 'location': 1, 'notes': 'Should fail'})
 
         self.assertIn('A list of build outputs must be provided', str(response))
 
         # Scrap with an invalid output ID
         response = self.scrap(
             1,
-            {
-                'outputs': [
-                    {
-                        'output': 9999,
-                    }
-                ],
-                'location': 1,
-                'notes': 'Should fail',
-            },
-            expected_code=400
+            {'outputs': [{'output': 9999}], 'location': 1, 'notes': 'Should fail'},
+            expected_code=400,
         )
 
         self.assertIn('object does not exist', str(response['outputs']))
@@ -1185,22 +1176,16 @@ class BuildOutputScrapTest(BuildAPITest):
 
         response = self.scrap(
             1,
-            {
-                'outputs': [
-                    {
-                        'output': output.pk,
-                    },
-                ],
-                'location': 1,
-                'notes': 'Should fail',
-            },
-            expected_code=400
+            {'outputs': [{'output': output.pk}], 'location': 1, 'notes': 'Should fail'},
+            expected_code=400,
         )
 
-        self.assertIn("Build output does not match the parent build", str(response['outputs']))
+        self.assertIn(
+            'Build output does not match the parent build', str(response['outputs'])
+        )
 
     def test_valid_scraps(self):
-        """Test that valid scrap attempts succeed"""
+        """Test that valid scrap attempts succeed."""
         # Create a build output
         build = Build.objects.get(pk=1)
 
@@ -1221,23 +1206,14 @@ class BuildOutputScrapTest(BuildAPITest):
             1,
             {
                 'outputs': [
-                    {
-                        'output': outputs[0].pk,
-                        'quantity': outputs[0].quantity,
-                    },
-                    {
-                        'output': outputs[1].pk,
-                        'quantity': outputs[1].quantity,
-                    },
-                    {
-                        'output': outputs[2].pk,
-                        'quantity': outputs[2].quantity,
-                    },
+                    {'output': outputs[0].pk, 'quantity': outputs[0].quantity},
+                    {'output': outputs[1].pk, 'quantity': outputs[1].quantity},
+                    {'output': outputs[2].pk, 'quantity': outputs[2].quantity},
                 ],
                 'location': 1,
                 'notes': 'Should succeed',
             },
-            expected_code=201
+            expected_code=201,
         )
 
         # There should still be three outputs associated with this build
@@ -1247,3 +1223,28 @@ class BuildOutputScrapTest(BuildAPITest):
             output.refresh_from_db()
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
+
+
+class BuildLineTests(BuildAPITest):
+    """Unit tests for the BuildLine API endpoints."""
+
+    def test_filter_available(self):
+        """Filter BuildLine objects by 'available' status."""
+        url = reverse('api-build-line-list')
+
+        # First *all* BuildLine objects
+        response = self.get(url)
+        self.assertEqual(len(response.data), BuildLine.objects.count())
+
+        # Filter by 'available' status
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': True}, max_query_time=15)
+        n_t = len(response.data)
+        self.assertGreater(n_t, 0)
+
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': False}, max_query_time=15)
+        n_f = len(response.data)
+        self.assertGreater(n_f, 0)
+
+        self.assertEqual(n_t + n_f, BuildLine.objects.count())

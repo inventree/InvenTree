@@ -1,32 +1,32 @@
 """Generic models which provide extra functionality over base Django model types."""
 
-import logging
-import os
 from datetime import datetime
-from io import BytesIO
+from string import Formatter
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import common.settings
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
-from InvenTree.sanitizer import sanitize_svg
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DiffMixin:
@@ -97,7 +97,7 @@ class PluginValidationMixin(DiffMixin):
                     return
             except ValidationError as exc:
                 raise exc
-            except Exception as exc:
+            except Exception:
                 # Log the exception to the database
                 import InvenTree.exceptions
 
@@ -121,6 +121,28 @@ class PluginValidationMixin(DiffMixin):
         """
         self.run_plugin_validation()
         super().save(*args, **kwargs)
+
+    def delete(self):
+        """Run plugin validation on model delete.
+
+        Allows plugins to prevent model instances from being deleted.
+
+        Note: Each plugin may raise a ValidationError to prevent deletion.
+        """
+        from InvenTree.exceptions import log_error
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+            try:
+                plugin.validate_model_deletion(self)
+            except ValidationError as e:
+                # Plugin might raise a ValidationError to prevent deletion
+                raise e
+            except Exception:
+                log_error('plugin.validate_model_deletion')
+                continue
+
+        super().delete()
 
 
 class MetadataMixin(models.Model):
@@ -204,58 +226,6 @@ class MetadataMixin(models.Model):
             self.save()
 
 
-class DataImportMixin(object):
-    """Model mixin class which provides support for 'data import' functionality.
-
-    Models which implement this mixin should provide information on the fields available for import
-    """
-
-    # Define a map of fields available for import
-    IMPORT_FIELDS = {}
-
-    @classmethod
-    def get_import_fields(cls):
-        """Return all available import fields.
-
-        Where information on a particular field is not explicitly provided,
-        introspect the base model to (attempt to) find that information.
-        """
-        fields = cls.IMPORT_FIELDS
-
-        for name, field in fields.items():
-            # Attempt to extract base field information from the model
-            base_field = None
-
-            for f in cls._meta.fields:
-                if f.name == name:
-                    base_field = f
-                    break
-
-            if base_field:
-                if 'label' not in field:
-                    field['label'] = base_field.verbose_name
-
-                if 'help_text' not in field:
-                    field['help_text'] = base_field.help_text
-
-            fields[name] = field
-
-        return fields
-
-    @classmethod
-    def get_required_import_fields(cls):
-        """Return all *required* import fields."""
-        fields = {}
-
-        for name, field in cls.get_import_fields().items():
-            required = field.get('required', False)
-
-            if required:
-                fields[name] = field
-
-        return fields
-
-
 class ReferenceIndexingMixin(models.Model):
     """A mixin for keeping track of numerical copies of the "reference" field.
 
@@ -290,10 +260,7 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        # import at function level to prevent cyclic imports
-        from common.models import InvenTreeSetting
-
-        return InvenTreeSetting.get_setting(
+        return common.settings.get_global_setting(
             cls.REFERENCE_PATTERN_SETTING, create=False
         ).strip()
 
@@ -303,8 +270,9 @@ class ReferenceIndexingMixin(models.Model):
 
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
+        - The '?' key is required to accept our wildcard-with-default syntax {?:default}
         """
-        return {'ref': cls.get_next_reference(), 'date': datetime.now()}
+        return {'ref': cls.get_next_reference(), 'date': datetime.now(), '?': '?'}
 
     @classmethod
     def get_most_recent_item(cls):
@@ -351,8 +319,18 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def generate_reference(cls):
         """Generate the next 'reference' field based on specified pattern."""
-        fmt = cls.get_reference_pattern()
+
+        # Based on https://stackoverflow.com/a/57570269/14488558
+        class ReferenceFormatter(Formatter):
+            def format_field(self, value, format_spec):
+                if isinstance(value, str) and value == '?':
+                    value = format_spec
+                    format_spec = ''
+                return super().format_field(value, format_spec)
+
+        ref_ptn = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
+        fmt = ReferenceFormatter()
 
         reference = None
 
@@ -360,7 +338,7 @@ class ReferenceIndexingMixin(models.Model):
 
         while reference is None:
             try:
-                ref = fmt.format(**ctx)
+                ref = fmt.format(ref_ptn, **ctx)
 
                 if ref in attempts:
                     # We are stuck in a loop!
@@ -380,10 +358,7 @@ class ReferenceIndexingMixin(models.Model):
             except Exception:
                 # If anything goes wrong, return the most recent reference
                 recent = cls.get_most_recent_item()
-                if recent:
-                    reference = recent.reference
-                else:
-                    reference = ''
+                reference = recent.reference if recent else ''
 
         return reference
 
@@ -400,14 +375,14 @@ class ReferenceIndexingMixin(models.Model):
             })
 
         # Check that only 'allowed' keys are provided
-        for key in info.keys():
-            if key not in ctx.keys():
+        for key in info:
+            if key not in ctx:
                 raise ValidationError({
                     'value': _('Unknown format key specified') + f": '{key}'"
                 })
 
         # Check that the 'ref' variable is specified
-        if 'ref' not in info.keys():
+        if 'ref' not in info:
             raise ValidationError({
                 'value': _('Missing required format key') + ": 'ref'"
             })
@@ -432,7 +407,7 @@ class ReferenceIndexingMixin(models.Model):
             )
 
         # Check that the reference field can be rebuild
-        cls.rebuild_reference_field(value, validate=True)
+        return cls.rebuild_reference_field(value, validate=True)
 
     @classmethod
     def rebuild_reference_field(cls, reference, validate=False):
@@ -489,207 +464,71 @@ class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
         abstract = True
 
 
-def rename_attachment(instance, filename):
-    """Function for renaming an attachment file. The subdirectory for the uploaded file is determined by the implementing class.
-
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
-
-    Returns:
-        path to store file, format: '<subdir>/<id>/filename'
-    """
-    # Construct a path to store a file attachment for a given model type
-    return os.path.join(instance.getSubdir(), filename)
-
-
-class InvenTreeAttachment(InvenTreeModel):
+class InvenTreeAttachmentMixin:
     """Provides an abstracted class for managing file attachments.
 
-    An attachment can be either an uploaded file, or an external URL
+    Links the implementing model to the common.models.Attachment table,
+    and provides the following methods:
 
-    Attributes:
-        attachment: Upload file
-        link: External URL
-        comment: String descriptor for the attachment
-        user: User associated with file upload
-        upload_date: Date the file was uploaded
+    - attachments: Return a queryset containing all attachments for this model
     """
 
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
+    def delete(self):
+        """Handle the deletion of a model instance.
 
-        abstract = True
-
-    def getSubdir(self):
-        """Return the subdirectory under which attachments should be stored.
-
-        Note: Re-implement this for each subclass of InvenTreeAttachment
+        Before deleting the model instance, delete any associated attachments.
         """
-        return 'attachments'
-
-    def save(self, *args, **kwargs):
-        """Provide better validation error."""
-        # Either 'attachment' or 'link' must be specified!
-        if not self.attachment and not self.link:
-            raise ValidationError({
-                'attachment': _('Missing file'),
-                'link': _('Missing external link'),
-            })
-
-        if self.attachment and self.attachment.name.lower().endswith('.svg'):
-            self.attachment.file.file = self.clean_svg(self.attachment)
-
-        super().save(*args, **kwargs)
-
-    def clean_svg(self, field):
-        """Sanitize SVG file before saving."""
-        cleaned = sanitize_svg(field.file.read())
-        return BytesIO(bytes(cleaned, 'utf8'))
-
-    def __str__(self):
-        """Human name for attachment."""
-        if self.attachment is not None:
-            return os.path.basename(self.attachment.name)
-        return str(self.link)
-
-    attachment = models.FileField(
-        upload_to=rename_attachment,
-        verbose_name=_('Attachment'),
-        help_text=_('Select file to attach'),
-        blank=True,
-        null=True,
-    )
-
-    link = InvenTree.fields.InvenTreeURLField(
-        blank=True,
-        null=True,
-        verbose_name=_('Link'),
-        help_text=_('Link to external URL'),
-    )
-
-    comment = models.CharField(
-        blank=True,
-        max_length=100,
-        verbose_name=_('Comment'),
-        help_text=_('File comment'),
-    )
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('User'),
-        help_text=_('User'),
-    )
-
-    upload_date = models.DateField(
-        auto_now_add=True, null=True, blank=True, verbose_name=_('upload date')
-    )
+        self.attachments.all().delete()
+        super().delete()
 
     @property
-    def basename(self):
-        """Base name/path for attachment."""
-        if self.attachment:
-            return os.path.basename(self.attachment.name)
-        return None
+    def attachments(self):
+        """Return a queryset containing all attachments for this model."""
+        return self.attachments_for_model().filter(model_id=self.pk)
 
-    @basename.setter
-    def basename(self, fn):
-        """Function to rename the attachment file.
+    @classmethod
+    def check_attachment_permission(cls, permission, user) -> bool:
+        """Check if the user has permission to perform the specified action on the attachment.
 
-        - Filename cannot be empty
-        - Filename cannot contain illegal characters
-        - Filename must specify an extension
-        - Filename cannot match an existing file
+        The default implementation runs a permission check against *this* model class,
+        but this can be overridden in the implementing class if required.
+
+        Arguments:
+            permission: The permission to check (add / change / view / delete)
+            user: The user to check against
+
+        Returns:
+            bool: True if the user has permission, False otherwise
         """
-        fn = fn.strip()
+        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
+        return user.has_perm(perm)
 
-        if len(fn) == 0:
-            raise ValidationError(_('Filename must not be empty'))
+    def attachments_for_model(self):
+        """Return all attachments for this model class."""
+        from common.models import Attachment
 
-        attachment_dir = settings.MEDIA_ROOT.joinpath(self.getSubdir())
-        old_file = settings.MEDIA_ROOT.joinpath(self.attachment.name)
-        new_file = settings.MEDIA_ROOT.joinpath(self.getSubdir(), fn).resolve()
+        model_type = self.__class__.__name__.lower()
 
-        # Check that there are no directory tricks going on...
-        if new_file.parent != attachment_dir:
-            logger.error(
-                "Attempted to rename attachment outside valid directory: '%s'", new_file
-            )
-            raise ValidationError(_('Invalid attachment directory'))
+        return Attachment.objects.filter(model_type=model_type)
 
-        # Ignore further checks if the filename is not actually being renamed
-        if new_file == old_file:
-            return
+    def create_attachment(self, attachment=None, link=None, comment='', **kwargs):
+        """Create an attachment / link for this model."""
+        from common.models import Attachment
 
-        forbidden = [
-            "'",
-            '"',
-            '#',
-            '@',
-            '!',
-            '&',
-            '^',
-            '<',
-            '>',
-            ':',
-            ';',
-            '/',
-            '\\',
-            '|',
-            '?',
-            '*',
-            '%',
-            '~',
-            '`',
-        ]
+        kwargs['attachment'] = attachment
+        kwargs['link'] = link
+        kwargs['comment'] = comment
+        kwargs['model_type'] = self.__class__.__name__.lower()
+        kwargs['model_id'] = self.pk
 
-        for c in forbidden:
-            if c in fn:
-                raise ValidationError(_(f"Filename contains illegal character '{c}'"))
-
-        if len(fn.split('.')) < 2:
-            raise ValidationError(_('Filename missing extension'))
-
-        if not old_file.exists():
-            logger.error(
-                "Trying to rename attachment '%s' which does not exist", old_file
-            )
-            return
-
-        if new_file.exists():
-            raise ValidationError(_('Attachment with this filename already exists'))
-
-        try:
-            os.rename(old_file, new_file)
-            self.attachment.name = os.path.join(self.getSubdir(), fn)
-            self.save()
-        except Exception:
-            raise ValidationError(_('Error renaming file'))
-
-    def fully_qualified_url(self):
-        """Return a 'fully qualified' URL for this attachment.
-
-        - If the attachment is a link to an external resource, return the link
-        - If the attachment is an uploaded file, return the fully qualified media URL
-        """
-        if self.link:
-            return self.link
-
-        if self.attachment:
-            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
-            return InvenTree.helpers_model.construct_absolute_url(media_url)
-
-        return ''
+        Attachment.objects.create(**kwargs)
 
 
 class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model for data categories.
 
     - Each Category has one parent Category, which can be blank (for a top-level Category).
-    - Each Category can have zero-or-more child Categor(y/ies)
+    - Each Category can have zero-or-more child Category(y/ies)
 
     Attributes:
         name: brief name
@@ -700,6 +539,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     # How items (not nodes) are hooked into the tree
     # e.g. for StockLocation, this value is 'location'
     ITEM_PARENT_KEY = None
+
+    # Extra fields to include in the get_path result. E.g. icon
+    EXTRA_PATH_FIELDS = []
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -866,8 +708,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         pathstring = self.construct_pathstring()
 
         if pathstring != self.pathstring:
-            if 'force_insert' in kwargs:
-                del kwargs['force_insert']
+            kwargs.pop('force_insert', None)
 
             kwargs['force_update'] = True
 
@@ -906,7 +747,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
-        verbose_name=_('parent'),
+        verbose_name='parent',
         related_name='children',
     )
 
@@ -925,26 +766,20 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         """
         raise NotImplementedError(f'items() method not implemented for {type(self)}')
 
-    def getUniqueParents(self):
-        """Return a flat set of all parent items that exist above this node.
-
-        If any parents are repeated (which would be very bad!), the process is halted
-        """
+    def getUniqueParents(self) -> QuerySet:
+        """Return a flat set of all parent items that exist above this node."""
         return self.get_ancestors()
 
-    def getUniqueChildren(self, include_self=True):
-        """Return a flat set of all child items that exist under this node.
-
-        If any child items are repeated, the repetitions are omitted.
-        """
+    def getUniqueChildren(self, include_self=True) -> QuerySet:
+        """Return a flat set of all child items that exist under this node."""
         return self.get_descendants(include_self=include_self)
 
     @property
-    def has_children(self):
+    def has_children(self) -> bool:
         """True if there are any children under this item."""
         return self.getUniqueChildren(include_self=False).count() > 0
 
-    def getAcceptableParents(self):
+    def getAcceptableParents(self) -> list:
         """Returns a list of acceptable parent items within this model Acceptable parents are ones which are not underneath this item.
 
         Setting the parent of an item to its own child results in recursion.
@@ -965,7 +800,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return acceptable
 
     @property
-    def parentpath(self):
+    def parentpath(self) -> list:
         """Get the parent path of this category.
 
         Returns:
@@ -974,7 +809,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return list(self.get_ancestors())
 
     @property
-    def path(self):
+    def path(self) -> list:
         """Get the complete part of this category.
 
         e.g. ["Top", "Second", "Third", "This"]
@@ -982,9 +817,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Returns:
             List of category names from the top level to this category
         """
-        return self.parentpath + [self]
+        return [*self.parentpath, self]
 
-    def get_path(self):
+    def get_path(self) -> list:
         """Return a list of element in the item tree.
 
         Contains the full path to this item, with each entry containing the following data:
@@ -994,7 +829,14 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
             name: <name>,
         }
         """
-        return [{'pk': item.pk, 'name': item.name} for item in self.path]
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name,
+                **{k: getattr(item, k, None) for k in self.EXTRA_PATH_FIELDS},
+            }
+            for item in self.path
+        ]
 
     def __str__(self):
         """String representation of a category is the full path to that category."""
@@ -1017,6 +859,30 @@ class InvenTreeNotesMixin(models.Model):
 
         abstract = True
 
+    def delete(self):
+        """Custom delete method for InvenTreeNotesMixin.
+
+        - Before deleting the object, check if there are any uploaded images associated with it.
+        - If so, delete the notes first
+        """
+        from common.models import NotesImage
+
+        images = NotesImage.objects.filter(
+            model_type=self.__class__.__name__.lower(), model_id=self.pk
+        )
+
+        if images.exists():
+            logger.info(
+                'Deleting %s uploaded images associated with %s <%s>',
+                images.count(),
+                self.__class__.__name__,
+                self.pk,
+            )
+
+            images.delete()
+
+        super().delete()
+
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
     )
@@ -1034,6 +900,8 @@ class InvenTreeBarcodeMixin(models.Model):
 
     - barcode_data : Raw data associated with an assigned barcode
     - barcode_hash : A 'hash' of the assigned barcode data used to improve matching
+
+    The barcode_model_type_code() classmethod must be implemented in the model class.
     """
 
     class Meta:
@@ -1064,11 +932,25 @@ class InvenTreeBarcodeMixin(models.Model):
         # By default, use the name of the class
         return cls.__name__.lower()
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        r"""Return a 'short' code for the model type.
+
+        This is used to generate a efficient QR code for the model type.
+        It is expected to match this pattern: [0-9A-Z $%*+-.\/:]{2}
+
+        Note: Due to the shape constrains (45**2=2025 different allowed codes)
+        this needs to be explicitly implemented in the model class to avoid collisions.
+        """
+        raise NotImplementedError(
+            'barcode_model_type_code() must be implemented in the model class'
+        )
+
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a QR code for this model instance."""
-        return InvenTree.helpers.MakeBarcode(
-            self.__class__.barcode_model_type(), self.pk, **kwargs
-        )
+        from plugin.base.barcodes.helper import generate_barcode
+
+        return generate_barcode(self)
 
     def format_matched_response(self):
         """Format a standard response for a matched barcode."""
@@ -1086,7 +968,7 @@ class InvenTreeBarcodeMixin(models.Model):
     @property
     def barcode(self):
         """Format a minimal barcode string (e.g. for label printing)."""
-        return self.format_barcode(brief=True)
+        return self.format_barcode()
 
     @classmethod
     def lookup_barcode(cls, barcode_hash):
@@ -1130,6 +1012,72 @@ class InvenTreeBarcodeMixin(models.Model):
         self.save()
 
 
+def notify_staff_users_of_error(instance, label: str, context: dict):
+    """Helper function to notify staff users of an error."""
+    import common.models
+    import common.notifications
+
+    try:
+        # Get all staff users
+        staff_users = get_user_model().objects.filter(is_staff=True)
+
+        target_users = []
+
+        # Send a notification to each staff user (unless they have disabled error notifications)
+        for user in staff_users:
+            if common.models.InvenTreeUserSetting.get_setting(
+                'NOTIFICATION_ERROR_REPORT', True, user=user
+            ):
+                target_users.append(user)
+
+        if len(target_users) > 0:
+            common.notifications.trigger_notification(
+                instance,
+                label,
+                context=context,
+                targets=target_users,
+                delivery_methods={common.notifications.UIMessageNotification},
+            )
+
+    except Exception as exc:
+        # We do not want to throw an exception while reporting an exception!
+        logger.error(exc)
+
+
+@receiver(post_save, sender=Task, dispatch_uid='failure_post_save_notification')
+def after_failed_task(sender, instance: Task, created: bool, **kwargs):
+    """Callback when a new task failure log is generated."""
+    from django.conf import settings
+
+    max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
+    n = instance.attempt_count
+
+    # Only notify once the maximum number of attempts has been reached
+    if not instance.success and n >= max_attempts:
+        try:
+            url = InvenTree.helpers_model.construct_absolute_url(
+                reverse(
+                    'admin:django_q_failure_change', kwargs={'object_id': instance.pk}
+                )
+            )
+        except (ValueError, NoReverseMatch):
+            url = ''
+
+        # Function name
+        f = instance.func
+
+        notify_staff_users_of_error(
+            instance,
+            'inventree.task_failure',
+            {
+                'failure': instance,
+                'name': _('Task Failure'),
+                'message': _(f"Background worker task '{f}' failed after {n} attempts"),
+                'link': url,
+            },
+        )
+
+
 @receiver(post_save, sender=Error, dispatch_uid='error_post_save_notification')
 def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """Callback when a server error is logged.
@@ -1138,41 +1086,21 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """
     if created:
         try:
-            import common.models
-            import common.notifications
-
-            users = get_user_model().objects.filter(is_staff=True)
-
-            link = InvenTree.helpers_model.construct_absolute_url(
+            url = InvenTree.helpers_model.construct_absolute_url(
                 reverse(
                     'admin:error_report_error_change', kwargs={'object_id': instance.pk}
                 )
             )
+        except NoReverseMatch:
+            url = ''
 
-            context = {
+        notify_staff_users_of_error(
+            instance,
+            'inventree.error_log',
+            {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': link,
-            }
-
-            target_users = []
-
-            for user in users:
-                if common.models.InvenTreeUserSetting.get_setting(
-                    'NOTIFICATION_ERROR_REPORT', True, user=user
-                ):
-                    target_users.append(user)
-
-            if len(target_users) > 0:
-                common.notifications.trigger_notification(
-                    instance,
-                    'inventree.error_log',
-                    context=context,
-                    targets=target_users,
-                    delivery_methods={common.notifications.UIMessageNotification},
-                )
-
-        except Exception as exc:
-            """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)  # noqa: LOG005
+                'link': url,
+            },
+        )

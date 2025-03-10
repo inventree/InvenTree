@@ -1,35 +1,27 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { type ReactNode, useMemo } from 'react';
 
-import { CHART_COLORS } from '../../../components/charts/colors';
-import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { DateColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
-export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
-  const table = useTable('pricing-sale-history');
+export default function SaleHistoryPanel({
+  part
+}: Readonly<{ part: any }>): ReactNode {
+  const table = useTable('pricingsalehistory');
 
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'order',
-        title: t`Sale Order`,
+        title: t`Sales Order`,
         render: (record: any) => record?.order_detail?.reference,
         sortable: true,
         switchable: false
@@ -61,24 +53,17 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
     ];
   }, []);
 
-  const currency: string = useMemo(() => {
-    if (table.records.length === 0) {
-      return '';
-    }
-    return table.records[0].sale_price_currency;
-  }, [table.records]);
-
   const saleHistoryData = useMemo(() => {
     return table.records.map((record: any) => {
       return {
         name: record.order_detail.reference,
-        sale_price: record.sale_price
+        sale_price: Number.parseFloat(record.sale_price)
       };
     });
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
@@ -95,27 +80,13 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
         }}
       />
       {saleHistoryData.length > 0 ? (
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={saleHistoryData}>
-            <XAxis dataKey="name" />
-            <YAxis
-              tickFormatter={(value, index) =>
-                formatCurrency(value, {
-                  currency: currency
-                })?.toString() ?? ''
-              }
-            />
-            <Tooltip
-              formatter={(label, payload) => tooltipFormatter(label, currency)}
-            />
-            <Legend />
-            <Bar
-              dataKey="sale_price"
-              fill={CHART_COLORS[0]}
-              label={t`Sale Price`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <BarChart
+          data={saleHistoryData}
+          dataKey='name'
+          series={[
+            { name: 'sale_price', label: t`Sale Price`, color: 'blue.6' }
+          ]}
+        />
       ) : (
         <NoPricingData />
       )}

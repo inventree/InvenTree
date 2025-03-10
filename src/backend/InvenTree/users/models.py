@@ -1,7 +1,6 @@
 """Database model definitions for the 'users' app."""
 
 import datetime
-import logging
 
 from django.conf import settings
 from django.contrib import admin
@@ -9,24 +8,25 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework.authtoken.models import Token as AuthToken
 
-import common.models as common_models
+import InvenTree.cache
 import InvenTree.helpers
 import InvenTree.models
+from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 #  OVERRIDE START
@@ -34,7 +34,7 @@ logger = logging.getLogger('inventree')
 # string representation of a user
 def user_model_str(self):
     """Function to override the default Django User __str__."""
-    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES', cache=True):
+    if get_global_setting('DISPLAY_FULL_NAMES', cache=True):
         if self.first_name or self.last_name:
             return f'{self.first_name} {self.last_name}'
     return self.username
@@ -51,8 +51,6 @@ def default_token():
 
 def default_token_expiry():
     """Generate an expiry date for a newly created token."""
-    # TODO: Custom value for default expiry timeout
-    # TODO: For now, tokens last for 1 year
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
 
 
@@ -139,7 +137,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     )
 
     @staticmethod
-    def sanitize_name(name: str):
+    def sanitize_name(name: str) -> str:
         """Sanitize the provide name value."""
         name = str(name).strip()
 
@@ -157,14 +155,14 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(description=_('Token'))
-    def token(self):
+    def token(self) -> str:
         """Provide a redacted version of the token.
 
         The *raw* key value should never be displayed anywhere!
         """
         # If the token has not yet been saved, return the raw key
         if self.pk is None:
-            return self.key
+            return self.key  # pragma: no cover
 
         M = len(self.key) - 20
 
@@ -172,7 +170,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
-    def expired(self):
+    def expired(self) -> bool:
         """Test if this token has expired."""
         return (
             self.expiry is not None and self.expiry < InvenTree.helpers.current_date()
@@ -180,7 +178,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Active'))
-    def active(self):
+    def active(self) -> bool:
         """Test if this token is active."""
         return not self.revoked and not self.expired
 
@@ -224,11 +222,12 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
+                'report_labeloutput',
+                'report_labeltemplate',
                 'report_reportasset',
+                'report_reportoutput',
                 'report_reportsnippet',
-                'report_billofmaterialsreport',
-                'report_purchaseorderreport',
-                'report_salesorderreport',
+                'report_reporttemplate',
                 'account_emailaddress',
                 'account_emailconfirmation',
                 'socialaccount_socialaccount',
@@ -237,9 +236,11 @@ class RuleSet(models.Model):
                 'otp_totp_totpdevice',
                 'otp_static_statictoken',
                 'otp_static_staticdevice',
+                'mfa_authenticator',
                 'plugin_pluginconfig',
                 'plugin_pluginsetting',
                 'plugin_notificationusersetting',
+                'common_barcodescanresult',
                 'common_newsfeedentry',
                 'taggit_tag',
                 'taggit_taggeditem',
@@ -257,7 +258,6 @@ class RuleSet(models.Model):
                 'part_partpricing',
                 'part_bomitem',
                 'part_bomitemsubstitute',
-                'part_partattachment',
                 'part_partsellpricebreak',
                 'part_partinternalpricebreak',
                 'part_parttesttemplate',
@@ -269,23 +269,13 @@ class RuleSet(models.Model):
                 'company_supplierpart',
                 'company_manufacturerpart',
                 'company_manufacturerpartparameter',
-                'company_manufacturerpartattachment',
-                'label_partlabel',
             ],
             'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
-            'stock_location': [
-                'stock_stocklocation',
-                'stock_stocklocationtype',
-                'label_stocklocationlabel',
-                'report_stocklocationreport',
-            ],
+            'stock_location': ['stock_stocklocation', 'stock_stocklocationtype'],
             'stock': [
                 'stock_stockitem',
-                'stock_stockitemattachment',
                 'stock_stockitemtracking',
                 'stock_stockitemtestresult',
-                'report_testreport',
-                'label_stockitemlabel',
             ],
             'build': [
                 'part_part',
@@ -295,15 +285,11 @@ class RuleSet(models.Model):
                 'build_build',
                 'build_builditem',
                 'build_buildline',
-                'build_buildorderattachment',
                 'stock_stockitem',
                 'stock_stocklocation',
-                'report_buildreport',
-                'label_buildlinelabel',
             ],
             'purchase_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'company_manufacturerpart',
@@ -311,34 +297,26 @@ class RuleSet(models.Model):
                 'company_supplierpart',
                 'company_supplierpricebreak',
                 'order_purchaseorder',
-                'order_purchaseorderattachment',
                 'order_purchaseorderlineitem',
                 'order_purchaseorderextraline',
-                'report_purchaseorderreport',
             ],
             'sales_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'order_salesorder',
                 'order_salesorderallocation',
-                'order_salesorderattachment',
                 'order_salesorderlineitem',
                 'order_salesorderextraline',
                 'order_salesordershipment',
-                'report_salesorderreport',
             ],
             'return_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'order_returnorder',
                 'order_returnorderlineitem',
                 'order_returnorderextraline',
-                'order_returnorderattachment',
-                'report_returnorderreport',
             ],
         }
 
@@ -356,7 +334,7 @@ class RuleSet(models.Model):
             'admin_logentry',
             'contenttypes_contenttype',
             # Models which currently do not require permissions
-            'common_colortheme',
+            'common_attachment',
             'common_customunit',
             'common_inventreesetting',
             'common_inventreeusersetting',
@@ -366,19 +344,27 @@ class RuleSet(models.Model):
             'common_projectcode',
             'common_webhookendpoint',
             'common_webhookmessage',
-            'label_labeloutput',
+            'common_inventreecustomuserstatemodel',
+            'common_selectionlistentry',
+            'common_selectionlist',
             'users_owner',
+            'users_userprofile',  # User profile is handled in the serializer - only own user can change
             # Third-party tables
             'error_report_error',
             'exchange_rate',
             'exchange_exchangebackend',
-            'user_sessions_session',
+            'usersessions_usersession',
+            'sessions_session',
             # Django-q
             'django_q_ormq',
             'django_q_failure',
             'django_q_task',
             'django_q_schedule',
             'django_q_success',
+            # Importing
+            'importer_dataimportsession',
+            'importer_dataimportcolumnmap',
+            'importer_dataimportrow',
         ]
 
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
@@ -407,7 +393,7 @@ class RuleSet(models.Model):
     )
 
     can_view = models.BooleanField(
-        verbose_name=_('View'), default=True, help_text=_('Permission to view items')
+        verbose_name=_('View'), default=False, help_text=_('Permission to view items')
     )
 
     can_add = models.BooleanField(
@@ -427,7 +413,7 @@ class RuleSet(models.Model):
     )
 
     @classmethod
-    def check_table_permission(cls, user, table, permission):
+    def check_table_permission(cls, user: User, table, permission):
         """Check if the provided user has the specified permission against the table."""
         # Superuser knows no bounds
         if user.is_superuser:
@@ -507,10 +493,7 @@ def split_model(model):
     *app, model = model.split('_')
 
     # handle models that have
-    if len(app) > 1:
-        app = '_'.join(app)
-    else:
-        app = app[0]
+    app = '_'.join(app) if len(app) > 1 else app[0]
 
     return model, app
 
@@ -575,10 +558,8 @@ def update_group_roles(group, debug=False):
 
             permissions_to_add.add(permission_string)
 
-        else:
-            # A forbidden action will be ignored if we have already allowed it
-            if permission_string not in permissions_to_add:
-                permissions_to_delete.add(permission_string)
+        elif permission_string not in permissions_to_add:
+            permissions_to_delete.add(permission_string)
 
     # Pre-fetch all the RuleSet objects
     rulesets = {
@@ -626,9 +607,9 @@ def update_group_roles(group, debug=False):
                 content_type=content_type, codename=perm
             )
         except ContentType.DoesNotExist:  # pragma: no cover
-            logger.warning(
-                "Error: Could not find permission matching '%s'", permission_string
-            )
+            # logger.warning(
+            #     "Error: Could not find permission matching '%s'", permission_string
+            # )
             permission = None
 
         return permission
@@ -686,54 +667,47 @@ def update_group_roles(group, debug=False):
                         )
 
 
-def clear_user_role_cache(user):
-    """Remove user role permission information from the cache.
+def check_user_permission(user: User, model, permission) -> bool:
+    """Check if the user has a particular permission against a given model type.
 
-    - This function is called whenever the user / group is updated
+    Arguments:
+        user: The user object to check
+        model: The model class to check (e.g. 'part')
+        permission: The permission to check (e.g. 'view' / 'delete')
 
-    Args:
-        user: The User object to be expunged from the cache
+    Returns:
+        bool: True if the user has the specified permission
     """
-    for role in RuleSet.get_ruleset_models().keys():
-        for perm in ['add', 'change', 'view', 'delete']:
-            key = f'role_{user}_{role}_{perm}'
-            cache.delete(key)
+    if not user:
+        return False
 
-
-def get_user_roles(user):
-    """Return all roles available to a given user."""
-    roles = set()
-
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
-            name = rule.name
-            if rule.can_view:
-                roles.add(f'{name}.view')
-            if rule.can_add:
-                roles.add(f'{name}.add')
-            if rule.can_change:
-                roles.add(f'{name}.change')
-            if rule.can_delete:
-                roles.add(f'{name}.delete')
-
-    return roles
-
-
-def check_user_role(user, role, permission):
-    """Check if a user has a particular role:permission combination.
-
-    If the user is a superuser, this will return True
-    """
     if user.is_superuser:
         return True
 
-    # First, check the cache
-    key = f'role_{user}_{role}_{permission}'
+    permission_name = f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
+    return user.has_perm(permission_name)
 
-    try:
-        result = cache.get(key)
-    except Exception:
-        result = None
+
+def check_user_role(user: User, role, permission) -> bool:
+    """Check if a user has a particular role:permission combination.
+
+    Arguments:
+        user: The user object to check
+        role: The role to check (e.g. 'part' / 'stock')
+        permission: The permission to check (e.g. 'view' / 'delete')
+
+    Returns:
+        bool: True if the user has the specified role:permission combination
+    """
+    if not user:
+        return False
+
+    if user.is_superuser:
+        return True
+
+    # First, check the session cache
+    cache_key = f'role_{user.pk}_{role}_{permission}'
+    result = InvenTree.cache.get_session_cache(cache_key)
 
     if result is not None:
         return result
@@ -760,11 +734,8 @@ def check_user_role(user, role, permission):
                     result = True
                     break
 
-    # Save result to cache
-    try:
-        cache.set(key, result, timeout=3600)
-    except Exception:
-        pass
+    # Save result to session-cache
+    InvenTree.cache.set_session_cache(cache_key, result)
 
     return result
 
@@ -829,11 +800,8 @@ class Owner(models.Model):
 
     def __str__(self):
         """Defines the owner string representation."""
-        if (
-            self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting(
-                'DISPLAY_FULL_NAMES', cache=True
-            )
+        if self.owner_type.name == 'user' and get_global_setting(
+            'DISPLAY_FULL_NAMES', cache=True
         ):
             display_name = self.owner.get_full_name()
         else:
@@ -842,11 +810,8 @@ class Owner(models.Model):
 
     def name(self):
         """Return the 'name' of this owner."""
-        if (
-            self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting(
-                'DISPLAY_FULL_NAMES', cache=True
-            )
+        if self.owner_type.name == 'user' and get_global_setting(
+            'DISPLAY_FULL_NAMES', cache=True
         ):
             return self.owner.get_full_name() or str(self.owner)
         return str(self.owner)
@@ -953,12 +918,6 @@ def delete_owner(sender, instance, **kwargs):
     owner.delete()
 
 
-@receiver(post_save, sender=get_user_model(), dispatch_uid='clear_user_cache')
-def clear_user_cache(sender, instance, **kwargs):
-    """Callback function when a user object is saved."""
-    clear_user_role_cache(instance)
-
-
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
 def create_missing_rule_sets(sender, instance, **kwargs):
     """Called *after* a Group object is saved.
@@ -967,5 +926,152 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     """
     update_group_roles(instance)
 
-    for user in get_user_model().objects.filter(groups__name=instance.name):
-        clear_user_role_cache(user)
+
+class UserProfile(InvenTree.models.MetadataMixin):
+    """Model to store additional user profile information."""
+
+    class UserType(models.TextChoices):
+        """Enumeration for user types."""
+
+        BOT = 'bot', _('Bot')
+        INTERNAL = 'internal', _('Internal')
+        EXTERNAL = 'external', _('External')
+        GUEST = 'guest', _('Guest')
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='profile', verbose_name=_('User')
+    )
+    language = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        verbose_name=_('Language'),
+        help_text=_('Preferred language for the user'),
+    )
+    theme = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Theme'),
+        help_text=_('Settings for the web UI as JSON - do not edit manually!'),
+    )
+    widgets = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Widgets'),
+        help_text=_(
+            'Settings for the dashboard widgets as JSON - do not edit manually!'
+        ),
+    )
+    displayname = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Display Name'),
+        help_text=_('Chosen display name for the user'),
+    )
+    position = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Position'),
+        help_text=_('Main job title or position'),
+    )
+    status = models.CharField(
+        max_length=2000,
+        blank=True,
+        null=True,
+        verbose_name=_('Status'),
+        help_text=_('User status message'),
+    )
+    location = models.CharField(
+        max_length=2000,
+        blank=True,
+        null=True,
+        verbose_name=_('Location'),
+        help_text=_('User location information'),
+    )
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('User is actively using the system'),
+    )
+    contact = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Preferred contact information for the user'),
+    )
+    type = models.CharField(
+        max_length=10,
+        choices=UserType.choices,
+        default=UserType.INTERNAL,
+        verbose_name=_('Type'),
+        help_text=_('Which type of user is this?'),
+    )
+    organisation = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Organisation'),
+        help_text=_('Users primary organisation/affiliation'),
+    )
+    primary_group = models.ForeignKey(
+        Group,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='primary_users',
+        verbose_name=_('Primary Group'),
+        help_text=_('Primary group for the user'),
+    )
+
+    def __str__(self):
+        """Return string representation of the user profile."""
+        return f'{self.user.username} user profile'
+
+    def save(self, *args, **kwargs):
+        """Ensure primary_group is a group that the user is a member of."""
+        if self.primary_group and self.primary_group not in self.user.groups.all():
+            self.primary_group = None
+        super().save(*args, **kwargs)
+
+
+# Signal to create or update user profile when user is saved
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    """Create or update user profile when user is saved."""
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.profile.save()
+
+
+# Validate groups
+@receiver(post_save, sender=Group)
+def validate_primary_group_on_save(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is created or updated."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group and profile.primary_group not in user.groups.all():
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(post_delete, sender=Group)
+def validate_primary_group_on_delete(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is deleted."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group == instance:
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
+    """Validate primary_group on user profiles when a group is added or removed."""
+    if action in ['post_add', 'post_remove']:
+        profile = instance.profile
+        if profile.primary_group and profile.primary_group not in instance.groups.all():
+            profile.primary_group = None
+            profile.save()

@@ -1,4 +1,4 @@
-"""Custom query filters for the Part models.
+"""Custom query filters for the Part app.
 
 The code here makes heavy use of subquery annotations!
 
@@ -40,11 +40,8 @@ from sql_util.utils import SubquerySum
 
 import part.models
 import stock.models
-from InvenTree.status_codes import (
-    BuildStatusGroups,
-    PurchaseOrderStatusGroups,
-    SalesOrderStatusGroups,
-)
+from build.status_codes import BuildStatusGroups
+from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 
 
 def annotate_in_production_quantity(reference=''):
@@ -76,7 +73,7 @@ def annotate_on_order_quantity(reference: str = ''):
 
     Note that in addition to the 'quantity' on order, we must also take into account 'pack_quantity'.
     """
-    # Filter only 'active' purhase orders
+    # Filter only 'active' purchase orders
     # Filter only line with outstanding quantity
     order_filter = Q(
         order__status__in=PurchaseOrderStatusGroups.OPEN, quantity__gt=F('received')
@@ -299,15 +296,12 @@ def annotate_default_location(reference=''):
         rght__gt=OuterRef(f'{reference}rght'),
         level__lte=OuterRef(f'{reference}level'),
         parent__isnull=False,
-    )
+        default_location__isnull=False,
+    ).order_by('-level')
 
     return Coalesce(
         F(f'{reference}default_location'),
-        Subquery(
-            subquery.order_by('-level')
-            .filter(default_location__isnull=False)
-            .values('default_location')
-        ),
+        Subquery(subquery.values('default_location')[:1]),
         Value(None),
         output_field=IntegerField(),
     )

@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('manufacturer_part', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='parameters', to='company.manufacturerpart', verbose_name='Manufacturer Part')),
             ],
             options={
+                'verbose_name': 'Manufacturer Part Parameter',
                 'unique_together': {('manufacturer_part', 'name')},
             },
         ),

@@ -1,46 +1,52 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
-  IconBuildingFactory2,
   IconBuildingWarehouse,
-  IconDots,
   IconInfoCircle,
   IconMap2,
-  IconNotes,
   IconPackageExport,
   IconPackages,
-  IconPaperclip,
   IconShoppingCart,
   IconTruckDelivery,
   IconTruckReturn,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { type ReactNode, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import AdminButton from '../../components/buttons/AdminButton';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  ActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { Breadcrumb } from '../../components/nav/BreadcrumbList';
+import type { Breadcrumb } from '../../components/nav/BreadcrumbList';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
@@ -51,6 +57,7 @@ import { StockItemTable } from '../../tables/stock/StockItemTable';
 export type CompanyDetailProps = {
   title: string;
   breadcrumbs: Breadcrumb[];
+  last_crumb_url: string;
 };
 
 /**
@@ -59,12 +66,14 @@ export type CompanyDetailProps = {
 export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const {
     instance: company,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
@@ -77,7 +86,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'description',
@@ -108,7 +117,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'currency',
@@ -136,21 +145,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
-              src={company.image}
-              pk={company.pk}
-              refresh={refreshInstance}
-              imageActions={{
-                uploadFile: true,
-                deleteFile: true
-              }}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
+            src={company.image}
+            pk={company.pk}
+            refresh={refreshInstance}
+            imageActions={{
+              uploadFile: true,
+              downloadImage: true,
+              deleteFile: true
+            }}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable item={company} fields={tl} />
           </Grid.Col>
         </Grid>
@@ -163,26 +171,26 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       {
         name: 'details',
-        label: t`Details`,
+        label: t`Company Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
-        name: 'manufactured-parts',
-        label: t`Manufactured Parts`,
-        icon: <IconBuildingFactory2 />,
-        hidden: !company?.is_manufacturer,
-        content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
-        )
-      },
-      {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
-        icon: <IconBuildingWarehouse />,
+        icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
         content: company?.pk && (
           <SupplierPartTable params={{ supplier: company.pk }} />
+        )
+      },
+      {
+        name: 'manufactured-parts',
+        label: t`Manufactured Parts`,
+        icon: <IconBuildingWarehouse />,
+        hidden: !company?.is_manufacturer,
+        content: company?.pk && (
+          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
         )
       },
       {
@@ -200,7 +208,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: company?.pk && (
           <StockItemTable
             allowAdd={false}
-            tableName="company-stock"
+            tableName='company-stock'
             params={{ company: company.pk }}
           />
         )
@@ -217,8 +225,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
         hidden: !company?.is_customer,
-        content: company.pk && (
-          <ReturnOrderTable params={{ customer: company.pk }} />
+        content: company.pk ? (
+          <ReturnOrderTable customerId={company.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {
@@ -229,7 +239,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: company?.pk ? (
           <StockItemTable
             allowAdd={false}
-            tableName="assigned-stock"
+            tableName='assigned-stock'
+            showLocation={false}
             params={{ customer: company.pk }}
           />
         ) : (
@@ -248,32 +259,16 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            endpoint={ApiEndpoints.company_attachment_list}
-            model="company"
-            pk={company.pk ?? -1}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            url={apiUrl(ApiEndpoints.company_list, company.pk)}
-            data={company?.notes ?? ''}
-            allowEdit={true}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.company,
+        model_id: company.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.company,
+        model_id: company.pk
+      })
     ];
-  }, [id, company]);
+  }, [id, company, user]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
@@ -283,19 +278,28 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     onFormSuccess: refreshInstance
   });
 
+  const deleteCompany = useDeleteApiFormModal({
+    url: ApiEndpoints.company_list,
+    pk: company?.pk,
+    title: t`Delete Company`,
+    onFormSuccess: () => {
+      navigate('/');
+    }
+  });
+
   const companyActions = useMemo(() => {
     return [
-      <ActionDropdown
-        key="company"
+      <AdminButton model={ModelType.company} id={company.pk} />,
+      <OptionsActionDropdown
         tooltip={t`Company Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => editCompany.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+            onClick: () => deleteCompany.open()
           })
         ]}
       />
@@ -306,7 +310,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
+        color='red'
         visible={company.active == false}
       />
     ];
@@ -315,18 +319,34 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   return (
     <>
       {editCompany.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Company` + `: ${company.name}`}
-          subtitle={company.description}
-          actions={companyActions}
-          imageUrl={company.image}
-          breadcrumbs={props.breadcrumbs}
-          badges={badges}
-        />
-        <PanelGroup pageKey="company" panels={companyPanels} />
-      </Stack>
+      {deleteCompany.modal}
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap='xs'>
+          <PageDetail
+            title={`${t`Company`}: ${company.name}`}
+            subtitle={company.description}
+            actions={companyActions}
+            imageUrl={company.image}
+            breadcrumbs={props.breadcrumbs}
+            lastCrumb={[
+              {
+                name: company.name,
+                url: `${props.last_crumb_url}/${company.pk}/`
+              }
+            ]}
+            badges={badges}
+            editAction={editCompany.open}
+            editEnabled={user.hasChangePermission(ModelType.company)}
+          />
+          <PanelGroup
+            pageKey='company'
+            panels={companyPanels}
+            instance={company}
+            model={ModelType.company}
+            id={company.pk}
+          />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

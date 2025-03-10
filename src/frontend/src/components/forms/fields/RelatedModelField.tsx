@@ -9,16 +9,16 @@ import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  FieldValues,
-  UseControllerReturn,
+  type FieldValues,
+  type UseControllerReturn,
   useFormContext
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { api } from '../../../App';
+import { useApi } from '../../../contexts/ApiContext';
 import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type
@@ -28,12 +28,13 @@ export function RelatedModelField({
   fieldName,
   definition,
   limit = 10
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   limit?: number;
-}) {
+}>) {
+  const api = useApi();
   const fieldId = useId();
   const {
     field,
@@ -59,27 +60,39 @@ export function RelatedModelField({
     if (field.value === pk) return;
 
     if (
-      field.value !== null &&
-      field.value !== undefined &&
-      field.value !== ''
+      field?.value !== null &&
+      field?.value !== undefined &&
+      field?.value !== ''
     ) {
       const url = `${definition.api_url}${field.value}/`;
+
+      if (!url) {
+        setPk(null);
+        return;
+      }
+
       api.get(url).then((response) => {
-        if (response.data && response.data.pk) {
+        const pk_field = definition.pk_field ?? 'pk';
+        if (response.data?.[pk_field]) {
           const value = {
-            value: response.data.pk,
+            value: response.data[pk_field],
             data: response.data
           };
 
+          // Run custom callback for this field (if provided)
+          if (definition.onValueChange) {
+            definition.onValueChange(response.data[pk_field], response.data);
+          }
+
           setInitialData(value);
           dataRef.current = [value];
-          setPk(response.data.pk);
+          setPk(response.data[pk_field]);
         }
       });
     } else {
       setPk(null);
     }
-  }, [definition.api_url, field.value]);
+  }, [definition.api_url, definition.pk_field, field.value]);
 
   // Search input query
   const [value, setValue] = useState<string>('');
@@ -126,7 +139,7 @@ export function RelatedModelField({
         setFilters(_filters);
       }
 
-      let params = {
+      const params = {
         ..._filters,
         search: searchText,
         offset: offset,
@@ -146,13 +159,15 @@ export function RelatedModelField({
           const results = response.data?.results ?? response.data ?? [];
 
           results.forEach((item: any) => {
-            // do not push already existing items into the values array
-            if (alreadyPresentPks.includes(item.pk)) return;
+            const pk_field = definition.pk_field ?? 'pk';
+            const pk = item[pk_field];
 
-            values.push({
-              value: item.pk ?? -1,
-              data: item
-            });
+            if (pk && !alreadyPresentPks.includes(pk)) {
+              values.push({
+                value: pk,
+                data: item
+              });
+            }
           });
 
           setData(values);
@@ -187,13 +202,13 @@ export function RelatedModelField({
   // Update form values when the selected value changes
   const onChange = useCallback(
     (value: any) => {
-      let _pk = value?.value ?? null;
+      const _pk = value?.value ?? null;
       field.onChange(_pk);
 
       setPk(_pk);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.(_pk, value.data ?? {});
+      definition.onValueChange?.(_pk, value?.data ?? {});
     },
     [field.onChange, definition]
   );
@@ -206,6 +221,7 @@ export function RelatedModelField({
       ...definition,
       onValueChange: undefined,
       adjustFilters: undefined,
+      exclude: undefined,
       read_only: undefined
     };
   }, [definition]);
@@ -215,32 +231,30 @@ export function RelatedModelField({
       return null;
     }
 
-    let _data = [...data, initialData];
+    const _data = [...data, initialData];
     return _data.find((item) => item.value === pk);
   }, [pk, data]);
 
   // Field doesn't follow Mantine theming
   // Define color theme to pass to field based on Mantine theme
   const theme = useMantineTheme();
-
-  const colorschema = vars.colors.primaryColors;
   const { colorScheme } = useMantineColorScheme();
 
   const colors = useMemo(() => {
     let colors: any;
     if (colorScheme === 'dark') {
       colors = {
-        neutral0: colorschema[6],
-        neutral5: colorschema[4],
-        neutral10: colorschema[4],
-        neutral20: colorschema[4],
-        neutral30: colorschema[3],
-        neutral40: colorschema[2],
-        neutral50: colorschema[1],
-        neutral60: colorschema[0],
-        neutral70: colorschema[0],
-        neutral80: colorschema[0],
-        neutral90: colorschema[0],
+        neutral0: vars.colors.dark[6],
+        neutral5: vars.colors.dark[4],
+        neutral10: vars.colors.dark[4],
+        neutral20: vars.colors.dark[4],
+        neutral30: vars.colors.dark[3],
+        neutral40: vars.colors.dark[2],
+        neutral50: vars.colors.dark[1],
+        neutral60: vars.colors.dark[0],
+        neutral70: vars.colors.dark[0],
+        neutral80: vars.colors.dark[0],
+        neutral90: vars.colors.dark[0],
         primary: vars.colors.primaryColors[7],
         primary25: vars.colors.primaryColors[6],
         primary50: vars.colors.primaryColors[5],
@@ -271,11 +285,12 @@ export function RelatedModelField({
   return (
     <Input.Wrapper
       {...fieldDefinition}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Select
         id={fieldId}
+        aria-label={`related-field-${field.name}`}
         value={currentValue}
         ref={field.ref}
         options={data}
@@ -302,11 +317,11 @@ export function RelatedModelField({
         isClearable={!definition.required}
         isDisabled={definition.disabled}
         isSearchable={true}
-        placeholder={definition.placeholder || t`Search` + `...`}
-        loadingMessage={() => t`Loading` + `...`}
+        placeholder={definition.placeholder || `${t`Search`}...`}
+        loadingMessage={() => `${t`Loading`}...`}
         menuPortalTarget={document.body}
         noOptionsMessage={() => t`No results found`}
-        menuPosition="fixed"
+        menuPosition='fixed'
         styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
         formatOptionLabel={(option: any) => formatOption(option)}
         theme={(theme) => {

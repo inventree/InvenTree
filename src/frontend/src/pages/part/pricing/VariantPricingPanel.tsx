@@ -1,24 +1,15 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import { SimpleGrid, Stack } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { type ReactNode, useMemo } from 'react';
 
-import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
@@ -26,11 +17,11 @@ import { NoPricingData } from './PricingPanel';
 export default function VariantPricingPanel({
   part,
   pricing
-}: {
+}: Readonly<{
   part: any;
   pricing: any;
-}): ReactNode {
-  const table = useTable('pricing-variants');
+}>): ReactNode {
+  const table = useTable('pricingvariants');
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -39,7 +30,7 @@ export default function VariantPricingPanel({
         title: t`Variant Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record, true)
+        render: (record: any) => PartColumn({ part: record, full_name: true })
       },
       {
         accessor: 'pricing_min',
@@ -72,8 +63,10 @@ export default function VariantPricingPanel({
       return {
         part: variant,
         name: variant.full_name,
-        pmin: variant.pricing_min ?? variant.pricing_max ?? 0,
-        pmax: variant.pricing_max ?? variant.pricing_min ?? 0
+        pmin: Number.parseFloat(
+          variant.pricing_min ?? variant.pricing_max ?? 0
+        ),
+        pmax: Number.parseFloat(variant.pricing_max ?? variant.pricing_min ?? 0)
       };
     });
 
@@ -81,8 +74,8 @@ export default function VariantPricingPanel({
   }, [table.records]);
 
   return (
-    <Stack gap="xs">
-      <SimpleGrid cols={2}>
+    <Stack gap='xs'>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           tableState={table}
           url={apiUrl(ApiEndpoints.part_list)}
@@ -97,34 +90,19 @@ export default function VariantPricingPanel({
           }}
         />
         {variantPricingData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={500}>
-            <BarChart data={variantPricingData}>
-              <XAxis dataKey="name" />
-              <YAxis
-                tickFormatter={(value, index) =>
-                  formatCurrency(value, {
-                    currency: pricing?.currency
-                  })?.toString() ?? ''
-                }
-              />
-              <Tooltip
-                formatter={(label, payload) =>
-                  tooltipFormatter(label, pricing?.currency)
-                }
-              />
-              <Legend />
-              <Bar
-                dataKey="pmin"
-                fill={CHART_COLORS[0]}
-                label={t`Minimum Price`}
-              />
-              <Bar
-                dataKey="pmax"
-                fill={CHART_COLORS[1]}
-                label={t`Maximum Price`}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <BarChart
+            dataKey='name'
+            data={variantPricingData}
+            xAxisLabel={t`Variant Part`}
+            yAxisLabel={t`Price Range`}
+            series={[
+              { name: 'pmin', label: t`Minimum Price`, color: 'blue.6' },
+              { name: 'pmax', label: t`Maximum Price`, color: 'teal.6' }
+            ]}
+            valueFormatter={(value) =>
+              tooltipFormatter(value, pricing?.currency)
+            }
+          />
         ) : (
           <NoPricingData />
         )}

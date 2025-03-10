@@ -1,17 +1,25 @@
 import { t } from '@lingui/macro';
 import { Drawer, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { hideNotification, showNotification } from '@mantine/notifications';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { StylishText } from '../../components/items/StylishText';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import { useUserState } from '../../states/UserState';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export default function FailedTasksTable() {
+export default function FailedTasksTable({
+  onRecordsUpdated
+}: Readonly<{
+  onRecordsUpdated: () => void;
+}>) {
   const table = useTable('tasks-failed');
+  const user = useUserState();
 
   const [error, setError] = useState<string>('');
 
@@ -52,13 +60,17 @@ export default function FailedTasksTable() {
     <>
       <Drawer
         opened={opened}
-        size="xl"
-        position="right"
+        size='xl'
+        position='right'
         title={<StylishText>{t`Error Details`}</StylishText>}
         onClose={close}
       >
-        {error.split('\n').map((line: string) => {
-          return <Text size="sm">{line}</Text>;
+        {error.split('\n').map((line: string, index: number) => {
+          return (
+            <Text key={`error-${index}`} size='sm'>
+              {line}
+            </Text>
+          );
         })}
       </Drawer>
       <InvenTreeTable
@@ -66,11 +78,23 @@ export default function FailedTasksTable() {
         tableState={table}
         columns={columns}
         props={{
-          enableBulkDelete: true,
+          enableBulkDelete: user.isStaff(),
+          afterBulkDelete: onRecordsUpdated,
           enableSelection: true,
           onRowClick: (row: any) => {
-            setError(row.result);
-            open();
+            if (row.result) {
+              setError(row.result);
+              open();
+            } else {
+              hideNotification('failed-task');
+              showNotification({
+                id: 'failed-task',
+                title: t`No Information`,
+                message: t`No error details are available for this task`,
+                color: 'red',
+                icon: <IconExclamationCircle />
+              });
+            }
           }
         }}
       />

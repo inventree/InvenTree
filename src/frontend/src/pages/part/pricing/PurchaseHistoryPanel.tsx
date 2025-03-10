@@ -1,36 +1,27 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import { Group, SimpleGrid, Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { type ReactNode, useCallback, useMemo } from 'react';
 
-import { CHART_COLORS } from '../../../components/charts/colors';
-import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { formatCurrency, renderDate } from '../../../defaults/formatters';
+import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({
   part
-}: {
+}: Readonly<{
   part: any;
-}): ReactNode {
-  const table = useTable('pricing-purchase-history');
+}>): ReactNode {
+  const table = useTable('pricingpurchasehistory');
 
   const calculateUnitPrice = useCallback((record: any) => {
-    let pack_quantity = record?.supplier_part_detail?.pack_quantity_native ?? 1;
-    let unit_price = record.purchase_price / pack_quantity;
+    const pack_quantity =
+      record?.supplier_part_detail?.pack_quantity_native ?? 1;
+    const unit_price = Number.parseFloat(record.purchase_price) / pack_quantity;
 
     return unit_price;
   }, []);
@@ -50,7 +41,7 @@ export default function PurchaseHistoryPanel({
         title: t`Date`,
         sortable: true,
         switchable: true,
-        render: (record: any) => renderDate(record.order_detail.complete_date)
+        render: (record: any) => formatDate(record.order_detail.complete_date)
       },
       {
         accessor: 'purchase_price',
@@ -58,16 +49,19 @@ export default function PurchaseHistoryPanel({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let price = formatCurrency(record.purchase_price, {
+          const price = formatCurrency(record.purchase_price, {
             currency: record.purchase_price_currency
           });
 
-          let units = record.supplier_part_detail?.pack_quantity;
+          const packQuatity = record.supplier_part_detail?.pack_quantity;
+          const hasPackQuantity =
+            !!packQuatity &&
+            record.supplier_part_detail?.pack_quantity_native != 1;
 
           return (
-            <Group justify="space-between" gap="xs">
+            <Group justify='space-between' gap='xs'>
               <Text>{price}</Text>
-              {units && <Text size="xs">[{units}]</Text>}
+              {hasPackQuantity && <Text size='xs'>[{packQuatity}]</Text>}
             </Group>
           );
         }
@@ -79,16 +73,17 @@ export default function PurchaseHistoryPanel({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let price = formatCurrency(calculateUnitPrice(record), {
+          const price = formatCurrency(calculateUnitPrice(record), {
             currency: record.purchase_price_currency
           });
 
-          let units = record.part_detail?.units;
+          const units = record.part_detail?.units;
+          const hasUnits = !!units && units !== 1;
 
           return (
-            <Group justify="space-between" gap="xs">
+            <Group justify='space-between' gap='xs'>
               <Text>{price}</Text>
-              {units && <Text size="xs">[{units}]</Text>}
+              {hasUnits && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
         }
@@ -96,18 +91,11 @@ export default function PurchaseHistoryPanel({
     ];
   }, []);
 
-  const currency: string = useMemo(() => {
-    if (table.records.length === 0) {
-      return '';
-    }
-    return table.records[0].purchase_price_currency;
-  }, [table.records]);
-
   const purchaseHistoryData = useMemo(() => {
     return table.records.map((record: any) => {
       return {
         quantity: record.quantity,
-        purchase_price: record.purchase_price,
+        purchase_price: Number.parseFloat(record.purchase_price),
         unit_price: calculateUnitPrice(record),
         name: record.order_detail.reference
       };
@@ -115,7 +103,7 @@ export default function PurchaseHistoryPanel({
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.purchase_order_line_list)}
@@ -131,32 +119,13 @@ export default function PurchaseHistoryPanel({
         }}
       />
       {purchaseHistoryData.length > 0 ? (
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={purchaseHistoryData}>
-            <XAxis dataKey="name" />
-            <YAxis
-              tickFormatter={(value, index) =>
-                formatCurrency(value, {
-                  currency: currency
-                })?.toString() ?? ''
-              }
-            />
-            <Tooltip
-              formatter={(label, payload) => tooltipFormatter(label, currency)}
-            />
-            <Legend />
-            <Bar
-              dataKey="unit_price"
-              fill={CHART_COLORS[0]}
-              label={t`Unit Price`}
-            />
-            <Bar
-              dataKey="purchase_price"
-              fill={CHART_COLORS[1]}
-              label={t`Purchase Price`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <BarChart
+          data={purchaseHistoryData}
+          dataKey='name'
+          series={[
+            { name: 'unit_price', label: t`Unit Price`, color: 'blue.5' }
+          ]}
+        />
       ) : (
         <NoPricingData />
       )}

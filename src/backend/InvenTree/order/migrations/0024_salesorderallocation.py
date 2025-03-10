@@ -22,5 +22,8 @@ class Migration(migrations.Migration):
                 ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='sales_order_allocation', to='stock.StockItem')),
                 ('line', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='allocations', to='order.SalesOrderLineItem')),
             ],
+            options={
+                'verbose_name': 'Sales Order Allocation',
+            },
         ),
     ]

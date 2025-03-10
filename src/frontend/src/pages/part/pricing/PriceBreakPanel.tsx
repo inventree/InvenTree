@@ -1,22 +1,13 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
-import {
-  Bar,
-  BarChart,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
 
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
-import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import type { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
@@ -26,20 +17,24 @@ import {
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
   part,
   endpoint
-}: {
+}: Readonly<{
   part: any;
   endpoint: ApiEndpoints;
-}) {
+}>) {
   const user = useUserState();
-  const table = useTable('pricing-internal');
+  const table = useTable('pricinginternal');
 
   const priceBreakFields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -84,9 +79,7 @@ export default function PriceBreakPanel({
     url: tableUrl,
     pk: selectedPriceBreak,
     title: t`Delete Price Break`,
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const columns: TableColumn[] = useMemo(() => {
@@ -114,6 +107,7 @@ export default function PriceBreakPanel({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-price-break'
         tooltip={t`Add Price Break`}
         onClick={() => {
           newPriceBreak.open();
@@ -124,7 +118,7 @@ export default function PriceBreakPanel({
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
@@ -157,7 +151,7 @@ export default function PriceBreakPanel({
       {newPriceBreak.modal}
       {editPriceBreak.modal}
       {deletePriceBreak.modal}
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           tableState={table}
           url={tableUrl}
@@ -171,29 +165,14 @@ export default function PriceBreakPanel({
           }}
         />
         {table.records.length > 0 ? (
-          <ResponsiveContainer width="100%" height={500}>
-            <BarChart data={table.records}>
-              <XAxis dataKey="quantity" />
-              <YAxis
-                tickFormatter={(value, index) =>
-                  formatCurrency(value, {
-                    currency: currency
-                  })?.toString() ?? ''
-                }
-              />
-              <Tooltip
-                formatter={(label, payload) =>
-                  tooltipFormatter(label, currency)
-                }
-              />
-              <Legend />
-              <Bar
-                dataKey="price"
-                fill={CHART_COLORS[0]}
-                label={t`Price Break`}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <BarChart
+            dataKey='quantity'
+            data={table.records}
+            series={[{ name: 'price', label: t`Price`, color: 'blue.6' }]}
+            xAxisLabel={t`Quantity`}
+            yAxisLabel={t`Unit Price`}
+            valueFormatter={(value) => tooltipFormatter(value, currency)}
+          />
         ) : (
           <NoPricingData />
         )}

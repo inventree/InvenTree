@@ -1,22 +1,22 @@
 """Label printing plugin which supports printing multiple labels on a single page."""
 
-import logging
 import math
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 import weasyprint
 from rest_framework import serializers
 
 import report.helpers
-from label.models import LabelOutput, LabelTemplate
+from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
+from report.models import LabelOutput, LabelTemplate
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class LabelPrintingOptionsSerializer(serializers.Serializer):
@@ -64,12 +64,24 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
     BLOCKING_PRINT = True
 
-    SETTINGS = {}
+    SETTINGS = {
+        'DEBUG': {
+            'name': _('Debug mode'),
+            'description': _('Enable debug mode - returns raw HTML instead of PDF'),
+            'validator': bool,
+            'default': False,
+        }
+    }
 
     PrintingOptionsSerializer = LabelPrintingOptionsSerializer
 
-    def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Handle printing of the provided labels."""
+    def print_labels(
+        self, label: LabelTemplate, output: LabelOutput, items: list, request, **kwargs
+    ):
+        """Handle printing of the provided labels.
+
+        Note that we override the entire print_labels method for this plugin.
+        """
         printing_options = kwargs['printing_options']
 
         # Extract page size for the label sheet
@@ -124,25 +136,29 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
             idx += n_cells
 
+            # Update printing progress
+            output.progress += 1
+            output.save()
+
         if len(pages) == 0:
             raise ValidationError(_('No labels were generated'))
 
         # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
 
-        # Render HTML to PDF
-        html = weasyprint.HTML(string=html_data)
-        document = html.render().write_pdf()
+        if str2bool(self.get_setting('DEBUG')):
+            # In debug mode return with the raw HTML
+            output.output = ContentFile(html_data, 'labels.html')
+        else:
+            # Render HTML to PDF
+            html = weasyprint.HTML(string=html_data)
+            document = html.render().write_pdf()
 
-        output_file = ContentFile(document, 'labels.pdf')
+            output.output = ContentFile(document, 'labels.pdf')
 
-        output = LabelOutput.objects.create(label=output_file, user=request.user)
-
-        return JsonResponse({
-            'file': output.label.url,
-            'success': True,
-            'message': f'{len(items)} labels generated',
-        })
+        output.progress = n_labels
+        output.complete = True
+        output.save()
 
     def print_page(self, label: LabelTemplate, items: list, request, **kwargs):
         """Generate a single page of labels.
@@ -185,7 +201,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                         # Render the individual label template
                         # Note that we disable @page styling for this
                         cell = label.render_as_string(
-                            request, target_object=items[idx], insert_page_style=False
+                            items[idx], request, insert_page_style=False
                         )
                         html += cell
                     except Exception as exc:

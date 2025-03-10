@@ -1,109 +1,309 @@
 """Report template model definitions."""
 
-import datetime
-import logging
 import os
 import sys
 
 from django.conf import settings
-from django.core.cache import cache
+from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
+from django.http import HttpRequest
 from django.template import Context, Template
+from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
+from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-import build.models
-import common.models
+import structlog
+
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
-import order.models
-import part.models
 import report.helpers
-import stock.models
-from InvenTree.helpers import validateFilterString
+import report.validators
+from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
+from plugin import InvenTreePlugin
 from plugin.registry import registry
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
+    print("Unable to import 'django_weasyprint' module.")
     print('You may require some further system packages to be installed.')
     sys.exit(1)
 
 
-logger = logging.getLogger('inventree')
+logger = structlog.getLogger('inventree')
 
 
-def rename_template(instance, filename):
-    """Helper function for 'renaming' uploaded report files.
+def dummy_print_request() -> HttpRequest:
+    """Generate a dummy HTTP request object.
 
-    Pass responsibility back to the calling class,
-    to ensure that files are uploaded to the correct directory.
+    This is required for internal print calls, as WeasyPrint *requires* a request object.
     """
-    return instance.rename_file(filename)
+    factory = RequestFactory()
+    request = factory.get('/')
+    request.user = AnonymousUser()
+    return request
 
 
-def validate_stock_item_report_filters(filters):
-    """Validate filter string against StockItem model."""
-    return validateFilterString(filters, model=stock.models.StockItem)
-
-
-def validate_part_report_filters(filters):
-    """Validate filter string against Part model."""
-    return validateFilterString(filters, model=part.models.Part)
-
-
-def validate_build_report_filters(filters):
-    """Validate filter string against Build model."""
-    return validateFilterString(filters, model=build.models.Build)
-
-
-def validate_purchase_order_filters(filters):
-    """Validate filter string against PurchaseOrder model."""
-    return validateFilterString(filters, model=order.models.PurchaseOrder)
-
-
-def validate_sales_order_filters(filters):
-    """Validate filter string against SalesOrder model."""
-    return validateFilterString(filters, model=order.models.SalesOrder)
-
-
-def validate_return_order_filters(filters):
-    """Validate filter string against ReturnOrder model."""
-    return validateFilterString(filters, model=order.models.ReturnOrder)
-
-
-def validate_stock_location_report_filters(filters):
-    """Validate filter string against StockLocation model."""
-    return validateFilterString(filters, model=stock.models.StockLocation)
-
-
-class WeasyprintReportMixin(WeasyTemplateResponseMixin):
+class WeasyprintReport(WeasyTemplateResponseMixin):
     """Class for rendering a HTML template to a PDF."""
-
-    pdf_filename = 'report.pdf'
-    pdf_attachment = True
 
     def __init__(self, request, template, **kwargs):
         """Initialize the report mixin with some standard attributes."""
         self.request = request
         self.template_name = template
-        self.pdf_filename = kwargs.get('filename', 'report.pdf')
+        self.pdf_filename = kwargs.get('filename', 'output.pdf')
 
 
-class ReportBase(InvenTree.models.InvenTreeModel):
-    """Base class for uploading html templates."""
+def rename_template(instance, filename):
+    """Function to rename a report template once uploaded.
+
+    - Retains the original uploaded filename
+    - Checks for duplicate filenames across instance class
+    """
+    path = instance.get_upload_path(filename)
+
+    # Throw error if any other model instances reference this path
+    instance.check_existing_file(path, raise_error=True)
+
+    # Delete file with this name if it already exists
+    if default_storage.exists(path):
+        logger.info(f'Deleting existing template file: {path}')
+        default_storage.delete(path)
+
+    return path
+
+
+class TemplateUploadMixin:
+    """Mixin class for providing template path management functions.
+
+    - Provides generic method for determining the upload path for a template
+    - Provides generic method for checking for duplicate filenames
+
+    Classes which inherit this mixin can guarantee that uploaded templates are unique,
+    and that the same filename will be retained when uploaded.
+    """
+
+    # Directory in which to store uploaded templates
+    SUBDIR = ''
+
+    # Name of the template field
+    TEMPLATE_FIELD = 'template'
+
+    def __str__(self) -> str:
+        """String representation of a TemplateUploadMixin instance."""
+        return str(os.path.basename(self.template_name))
+
+    @property
+    def template_name(self):
+        """Return the filename of the template associated with this model class."""
+        template = getattr(self, self.TEMPLATE_FIELD).name
+        template = template.replace('/', os.path.sep)
+        template = template.replace('\\', os.path.sep)
+
+        template = settings.MEDIA_ROOT.joinpath(template)
+
+        return str(template)
+
+    @property
+    def extension(self):
+        """Return the filename extension of the associated template file."""
+        return os.path.splitext(self.template.name)[1].lower()
+
+    def get_upload_path(self, filename):
+        """Generate an upload path for the given filename."""
+        fn = os.path.basename(filename)
+        return os.path.join('report', self.SUBDIR, fn)
+
+    def check_existing_file(self, path, raise_error=False):
+        """Check if a file already exists with the given filename."""
+        filters = {self.TEMPLATE_FIELD: self.get_upload_path(path)}
+
+        exists = self.__class__.objects.filter(**filters).exclude(pk=self.pk).exists()
+
+        if exists and raise_error:
+            raise ValidationError({
+                self.TEMPLATE_FIELD: _('Template file with this name already exists')
+            })
+
+        return exists
+
+    def validate_unique(self, exclude=None):
+        """Validate that this template is unique."""
+        proposed_path = self.get_upload_path(self.template_name)
+        self.check_existing_file(proposed_path, raise_error=True)
+        return super().validate_unique(exclude)
+
+
+class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Base class for reports, labels."""
 
     class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
+        """Metaclass options."""
 
         abstract = True
+        unique_together = ('name', 'model_type')
+
+    def save(self, *args, **kwargs):
+        """Perform additional actions when the report is saved."""
+        # Increment revision number
+        self.revision += 1
+
+        super().save()
+
+    name = models.CharField(
+        blank=False,
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Template name'),
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Template description'),
+    )
+
+    revision = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_('Revision'),
+        help_text=_('Revision number (auto-increments)'),
+        editable=False,
+    )
+
+    attach_to_model = models.BooleanField(
+        default=False,
+        verbose_name=_('Attach to Model on Print'),
+        help_text=_(
+            'Save report output as an attachment against linked model instance when printing'
+        ),
+    )
+
+    def generate_filename(self, context, **kwargs):
+        """Generate a filename for this report."""
+        template_string = Template(self.filename_pattern)
+
+        return template_string.render(Context(context))
+
+    def render_as_string(self, instance, request=None, **kwargs):
+        """Render the report to a HTML string.
+
+        Useful for debug mode (viewing generated code)
+        """
+        context = self.get_context(instance, request, **kwargs)
+
+        return render_to_string(self.template_name, context, request)
+
+    def render(self, instance, request=None, **kwargs):
+        """Render the template to a PDF file.
+
+        Uses django-weasyprint plugin to render HTML template against Weasyprint
+        """
+        context = self.get_context(instance, request)
+
+        # Render HTML template to PDF
+        wp = WeasyprintReport(
+            request,
+            self.template_name,
+            base_url=get_base_url(request=request),
+            presentational_hints=True,
+            filename=self.generate_filename(context),
+            **kwargs,
+        )
+
+        return wp.render_to_response(context, **kwargs)
+
+    filename_pattern = models.CharField(
+        default='output.pdf',
+        verbose_name=_('Filename Pattern'),
+        help_text=_('Pattern for generating filenames'),
+        max_length=100,
+    )
+
+    enabled = models.BooleanField(
+        default=True, verbose_name=_('Enabled'), help_text=_('Template is enabled')
+    )
+
+    model_type = models.CharField(
+        max_length=100,
+        validators=[report.validators.validate_report_model_type],
+        help_text=_('Target model type for template'),
+    )
+
+    def clean(self):
+        """Clean model instance, and ensure validity."""
+        super().clean()
+
+        model = self.get_model()
+        filters = self.filters
+
+        if model and filters:
+            report.validators.validate_filters(filters, model=model)
+
+    def get_model(self):
+        """Return the database model class associated with this report template."""
+        return report.helpers.report_model_from_name(self.model_type)
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_('Template query filters (comma-separated list of key=value pairs)'),
+        validators=[report.validators.validate_filters],
+    )
+
+    def get_filters(self):
+        """Return a filter dict which can be applied to the target model."""
+        return report.validators.validate_filters(self.filters, model=self.get_model())
+
+    def base_context(self, request=None):
+        """Return base context data (available to all templates)."""
+        return {
+            'base_url': get_base_url(request=request),
+            'date': InvenTree.helpers.current_date(),
+            'datetime': InvenTree.helpers.current_time(),
+            'template': self,
+            'template_description': self.description,
+            'template_name': self.name,
+            'template_revision': self.revision,
+            'user': request.user if request else None,
+        }
+
+    def get_context(self, instance, request=None, **kwargs):
+        """Supply context data to the generic template for rendering.
+
+        Arguments:
+            instance: The model instance we are printing against
+            request: The request object (optional)
+        """
+        # Provide base context information to all templates
+        base_context = self.base_context(request=request)
+
+        # Add in an context information provided by the model instance itself
+        context = {**base_context, **instance.report_context()}
+
+        return context
+
+
+class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
+    """Class representing the ReportTemplate database model."""
+
+    SUBDIR = 'report'
+    TEMPLATE_FIELD = 'template'
+
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint for the ReportTemplate model."""
+        return reverse('api-report-template-list')
 
     def __init__(self, *args, **kwargs):
         """Initialize the particular report instance."""
@@ -113,88 +313,11 @@ class ReportBase(InvenTree.models.InvenTreeModel):
             'page_size'
         ).choices = report.helpers.report_page_size_options()
 
-    def save(self, *args, **kwargs):
-        """Perform additional actions when the report is saved."""
-        # Increment revision number
-        self.revision += 1
-
-        super().save()
-
-    def __str__(self):
-        """Format a string representation of a report instance."""
-        return f'{self.name} - {self.description}'
-
-    @classmethod
-    def getSubdir(cls):
-        """Return the subdirectory where template files for this report model will be located."""
-        return ''
-
-    def rename_file(self, filename):
-        """Function for renaming uploaded file."""
-        filename = os.path.basename(filename)
-
-        path = os.path.join('report', 'report_template', self.getSubdir(), filename)
-
-        fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
-
-        # If the report file is the *same* filename as the one being uploaded,
-        # remove the original one from the media directory
-        if str(filename) == str(self.template):
-            if fullpath.exists():
-                logger.info("Deleting existing report template: '%s'", filename)
-                os.remove(fullpath)
-
-        # Ensure that the cache is cleared for this template!
-        cache.delete(fullpath)
-
-        return path
-
-    @property
-    def extension(self):
-        """Return the filename extension of the associated template file."""
-        return os.path.splitext(self.template.name)[1].lower()
-
-    @property
-    def template_name(self):
-        """Returns the file system path to the template file.
-
-        Required for passing the file to an external process
-        """
-        template = self.template.name
-
-        # TODO @matmair change to using new file objects
-        template = template.replace('/', os.path.sep)
-        template = template.replace('\\', os.path.sep)
-
-        template = settings.MEDIA_ROOT.joinpath(template)
-
-        return template
-
-    name = models.CharField(
-        blank=False,
-        max_length=100,
-        verbose_name=_('Name'),
-        help_text=_('Template name'),
-    )
-
     template = models.FileField(
         upload_to=rename_template,
         verbose_name=_('Template'),
-        help_text=_('Report template file'),
+        help_text=_('Template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
-    )
-
-    description = models.CharField(
-        max_length=250,
-        verbose_name=_('Description'),
-        help_text=_('Report template description'),
-    )
-
-    revision = models.PositiveIntegerField(
-        default=1,
-        verbose_name=_('Revision'),
-        help_text=_('Report revision number (auto-increments)'),
-        editable=False,
     )
 
     page_size = models.CharField(
@@ -210,30 +333,11 @@ class ReportBase(InvenTree.models.InvenTreeModel):
         help_text=_('Render report in landscape orientation'),
     )
 
-
-class ReportTemplateBase(MetadataMixin, ReportBase):
-    """Reporting template model.
-
-    Able to be passed context data
-    """
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
-
-    # Pass a single top-level object to the report template
-    object_to_print = None
-
-    def get_context_data(self, request):
-        """Supply context data to the template for rendering."""
-        return {}
-
     def get_report_size(self):
         """Return the printable page size for this report."""
         try:
-            page_size_default = common.models.InvenTreeSetting.get_setting(
-                'REPORT_DEFAULT_PAGE_SIZE', 'A4'
+            page_size_default = get_global_setting(
+                'REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False
             )
         except Exception:
             page_size_default = 'A4'
@@ -245,29 +349,18 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
 
         return page_size
 
-    def context(self, request):
-        """All context to be passed to the renderer."""
-        # Generate custom context data based on the particular report subclass
-        context = self.get_context_data(request)
+    def get_context(self, instance, request=None, **kwargs):
+        """Supply context data to the report template for rendering."""
+        context = {
+            **super().get_context(instance, request),
+            'page_size': self.get_report_size(),
+            'landscape': self.landscape,
+        }
 
-        context['base_url'] = get_base_url(request=request)
-        context['date'] = InvenTree.helpers.current_date()
-        context['datetime'] = InvenTree.helpers.current_time()
-        context['page_size'] = self.get_report_size()
-        context['report_template'] = self
-        context['report_description'] = self.description
-        context['report_name'] = self.name
-        context['report_revision'] = self.revision
-        context['request'] = request
-        context['user'] = request.user
-
-        # Pass the context through to any active reporting plugins
-        plugins = registry.with_mixin('report')
-
-        for plugin in plugins:
-            # Let each plugin add its own context data
+        # Pass the context through to the plugin registry for any additional information
+        for plugin in registry.with_mixin('report'):
             try:
-                plugin.add_report_context(self, self.object_to_print, request, context)
+                plugin.add_report_context(self, instance, request, context)
             except Exception:
                 InvenTree.exceptions.log_error(
                     f'plugins.{plugin.slug}.add_report_context'
@@ -275,376 +368,375 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
 
         return context
 
-    def generate_filename(self, request, **kwargs):
-        """Generate a filename for this report."""
-        template_string = Template(self.filename_pattern)
+    def print(self, items: list, request=None, output=None, **kwargs) -> 'ReportOutput':
+        """Print reports for a list of items against this template.
 
-        ctx = self.context(request)
+        Arguments:
+            items: A list of items to print reports for (model instance)
+            output: The ReportOutput object to use (if provided)
+            request: The request object (optional)
 
-        context = Context(ctx)
+        Returns:
+            output: The ReportOutput object representing the generated report(s)
 
-        return template_string.render(context)
+        Raises:
+            ValidationError: If there is an error during report printing
 
-    def render_as_string(self, request, **kwargs):
-        """Render the report to a HTML string.
+        Notes:
+            Currently, all items are rendered separately into PDF files,
+            and then combined into a single PDF file.
 
-        Useful for debug mode (viewing generated code)
+            Further work is required to allow the following extended features:
+            - Render a single PDF file with the collated items (optional per template)
+            - Render a raw file (do not convert to PDF) - allows for other file types
+            - Render using background worker, provide progress updates to UI
+            - Run report generation in the background worker process
         """
-        return render_to_string(self.template_name, self.context(request), request)
+        logger.info("Printing %s reports against template '%s'", len(items), self.name)
 
-    def render(self, request, **kwargs):
-        """Render the template to a PDF file.
+        outputs = []
 
-        Uses django-weasyprint plugin to render HTML template against Weasyprint
+        debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
+
+        # Start with a default report name
+        report_name = None
+
+        if request is None:
+            # Generate a dummy request object
+            request = dummy_print_request()
+
+        report_plugins = registry.with_mixin('report')
+
+        # If a ReportOutput object is not provided, create a new one
+        if not output:
+            output = ReportOutput.objects.create(
+                template=self,
+                items=len(items),
+                user=request.user
+                if request.user and request.user.is_authenticated
+                else None,
+                progress=0,
+                complete=False,
+                output=None,
+            )
+
+        if output.progress != 0:
+            output.progress = 0
+            output.save()
+
+        try:
+            for instance in items:
+                context = self.get_context(instance, request)
+
+                if report_name is None:
+                    report_name = self.generate_filename(context)
+
+                # Render the report output
+                try:
+                    if debug_mode:
+                        report = self.render_as_string(instance, request)
+                    else:
+                        report = self.render(instance, request)
+                except TemplateDoesNotExist as e:
+                    t_name = str(e) or self.template
+                    raise ValidationError(f'Template file {t_name} does not exist')
+
+                outputs.append(report)
+
+                # Attach the generated report to the model instance (if required)
+                if self.attach_to_model and not debug_mode:
+                    data = report.get_document().write_pdf()
+                    instance.create_attachment(
+                        attachment=ContentFile(data, report_name),
+                        comment=_(f'Report generated from template {self.name}'),
+                        upload_user=request.user
+                        if request.user.is_authenticated
+                        else None,
+                    )
+
+                # Provide generated report to any interested plugins
+                for plugin in report_plugins:
+                    try:
+                        plugin.report_callback(self, instance, report, request)
+                    except Exception:
+                        InvenTree.exceptions.log_error(
+                            f'plugins.{plugin.slug}.report_callback'
+                        )
+
+                # Update the progress of the report generation
+                output.progress += 1
+                output.save()
+
+        except Exception as exc:
+            # Something went wrong during the report generation process
+            if get_global_setting('REPORT_LOG_ERRORS', backup_value=True):
+                InvenTree.exceptions.log_error('report.print')
+
+            raise ValidationError({
+                'error': _('Error generating report'),
+                'detail': str(exc),
+                'path': request.path,
+            })
+
+        if not report_name.endswith('.pdf'):
+            report_name += '.pdf'
+
+        # Combine all the generated reports into a single PDF file
+        if debug_mode:
+            data = '\n'.join(outputs)
+            report_name = report_name.replace('.pdf', '.html')
+        else:
+            pages = []
+
+            try:
+                for report in outputs:
+                    doc = report.get_document()
+                    for page in doc.pages:
+                        pages.append(page)
+
+                data = outputs[0].get_document().copy(pages).write_pdf()
+            except TemplateDoesNotExist as exc:
+                t_name = str(exc) or self.template
+                raise ValidationError(f'Template file {t_name} does not exist')
+
+        # Save the generated report to the database
+        output.complete = True
+        output.output = ContentFile(data, report_name)
+        output.save()
+
+        return output
+
+
+class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
+    """Class representing the LabelTemplate database model."""
+
+    SUBDIR = 'label'
+    TEMPLATE_FIELD = 'template'
+
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint for the LabelTemplate model."""
+        return reverse('api-label-template-list')
+
+    template = models.FileField(
+        upload_to=rename_template,
+        verbose_name=_('Template'),
+        help_text=_('Template file'),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+    )
+
+    width = models.FloatField(
+        default=50,
+        verbose_name=_('Width [mm]'),
+        help_text=_('Label width, specified in mm'),
+        validators=[MinValueValidator(2)],
+    )
+
+    height = models.FloatField(
+        default=20,
+        verbose_name=_('Height [mm]'),
+        help_text=_('Label height, specified in mm'),
+        validators=[MinValueValidator(2)],
+    )
+
+    def generate_page_style(self, **kwargs):
+        """Generate @page style for the label template.
+
+        This is inserted at the top of the style block for a given label
         """
-        # TODO: Support custom filename generation!
-        # filename = kwargs.get('filename', 'report.pdf')
+        width = kwargs.get('width', self.width)
+        height = kwargs.get('height', self.height)
+        margin = kwargs.get('margin', 0)
 
-        # Render HTML template to PDF
-        wp = WeasyprintReportMixin(
-            request,
-            self.template_name,
-            base_url=request.build_absolute_uri('/'),
-            presentational_hints=True,
-            filename=self.generate_filename(request),
-            **kwargs,
+        return f"""
+        @page {{
+            size: {width}mm {height}mm;
+            margin: {margin}mm;
+        }}
+        """
+
+    def get_context(self, instance, request=None, **kwargs):
+        """Supply context data to the label template for rendering."""
+        context = {
+            **super().get_context(instance, request, **kwargs),
+            'width': self.width,
+            'height': self.height,
+        }
+
+        if kwargs.pop('insert_page_style', True):
+            context['page_style'] = self.generate_page_style()
+
+        # Pass the context through to any registered plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            # Let each plugin add its own context data
+            try:
+                plugin.add_label_context(self, instance, request, context)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.add_label_context'
+                )
+
+        return context
+
+    def print(
+        self,
+        items: list,
+        plugin: InvenTreePlugin,
+        output=None,
+        options=None,
+        request=None,
+        **kwargs,
+    ) -> 'LabelOutput':
+        """Print labels for a list of items against this template.
+
+        Arguments:
+            items: A list of items to print labels for (model instance)
+            plugin: The plugin to use for label rendering
+            output: The LabelOutput object to use (if provided)
+            options: Additional options for the label printing plugin (optional)
+            request: The request object (optional)
+
+        Returns:
+            output: The LabelOutput object representing the generated label(s)
+
+        Raises:
+            ValidationError: If there is an error during label printing
+        """
+        logger.info(
+            "Printing %s labels against template '%s' using plugin '%s'",
+            len(items),
+            plugin.slug,
+            self.name,
         )
 
-        return wp.render_to_response(self.context(request), **kwargs)
+        if not output:
+            output = LabelOutput.objects.create(
+                template=self,
+                items=len(items),
+                plugin=plugin.slug,
+                user=request.user if request else None,
+                progress=0,
+                complete=False,
+            )
 
-    filename_pattern = models.CharField(
-        default='report.pdf',
-        verbose_name=_('Filename Pattern'),
-        help_text=_('Pattern for generating report filenames'),
-        max_length=100,
+        if options is None:
+            options = {}
+
+        if request is None:
+            # If the request object is not provided, we need to create a dummy one
+            # Otherwise, WeasyPrint throws an error
+            request = dummy_print_request()
+
+        try:
+            if hasattr(plugin, 'before_printing'):
+                plugin.before_printing()
+
+            plugin.print_labels(self, output, items, request, printing_options=options)
+
+            if hasattr(plugin, 'after_printing'):
+                plugin.after_printing()
+        except ValidationError as e:
+            output.delete()
+            raise e
+        except Exception as e:
+            output.delete()
+            InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
+            raise ValidationError([_('Error printing labels'), str(e)])
+
+        output.refresh_from_db()
+
+        # Return the output object
+        return output
+
+
+class TemplateOutput(models.Model):
+    """Base class representing a generated file from a template.
+
+    As reports (or labels) may take a long time to render,
+    this process is offloaded to the background worker process.
+
+    The result is either a file made available for download,
+    or a message indicating that the output is handled externally.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        abstract = True
+
+    created = models.DateField(auto_now_add=True, editable=False)
+
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, blank=True, null=True, related_name='+'
     )
 
-    enabled = models.BooleanField(
-        default=True,
-        verbose_name=_('Enabled'),
-        help_text=_('Report template is enabled'),
+    items = models.PositiveIntegerField(
+        default=0, verbose_name=_('Items'), help_text=_('Number of items to process')
     )
 
-
-class TestReport(ReportTemplateBase):
-    """Render a TestReport against a StockItem object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the TestReport model."""
-        return reverse('api-stockitem-testreport-list')
-
-    @classmethod
-    def getSubdir(cls):
-        """Return the subdirectory where TestReport templates are located."""
-        return 'test'
-
-    filters = models.CharField(
-        blank=True,
-        max_length=250,
-        verbose_name=_('Filters'),
-        help_text=_(
-            'StockItem query filters (comma-separated list of key=value pairs)'
-        ),
-        validators=[validate_stock_item_report_filters],
-    )
-
-    include_installed = models.BooleanField(
+    complete = models.BooleanField(
         default=False,
-        verbose_name=_('Include Installed Tests'),
-        help_text=_(
-            'Include test results for stock items installed inside assembled item'
-        ),
+        verbose_name=_('Complete'),
+        help_text=_('Report generation is complete'),
     )
 
-    def get_test_keys(self, stock_item):
-        """Construct a flattened list of test 'keys' for this StockItem.
-
-        The list is constructed as follows:
-        - First, any 'required' tests
-        - Second, any 'non required' tests
-        - Finally, any test results which do not match a test
-        """
-        keys = []
-
-        for test in stock_item.part.getTestTemplates(required=True):
-            if test.key not in keys:
-                keys.append(test.key)
-
-        for test in stock_item.part.getTestTemplates(required=False):
-            if test.key not in keys:
-                keys.append(test.key)
-
-        for result in stock_item.testResultList(
-            include_installed=self.include_installed
-        ):
-            if result.key not in keys:
-                keys.append(result.key)
-
-        return list(keys)
-
-    def get_context_data(self, request):
-        """Return custom context data for the TestReport template."""
-        stock_item = self.object_to_print
-
-        return {
-            'stock_item': stock_item,
-            'serial': stock_item.serial,
-            'part': stock_item.part,
-            'parameters': stock_item.part.parameters_map(),
-            'test_keys': self.get_test_keys(stock_item),
-            'test_template_list': stock_item.part.getTestTemplates(),
-            'test_template_map': stock_item.part.getTestTemplateMap(),
-            'results': stock_item.testResultMap(
-                include_installed=self.include_installed
-            ),
-            'result_list': stock_item.testResultList(
-                include_installed=self.include_installed
-            ),
-            'installed_items': stock_item.get_installed_items(cascade=True),
-        }
+    progress = models.PositiveIntegerField(
+        default=0, verbose_name=_('Progress'), help_text=_('Report generation progress')
+    )
 
 
-class BuildReport(ReportTemplateBase):
-    """Build order / work order report."""
+class ReportOutput(TemplateOutput):
+    """Class representing a generated report output file."""
 
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the BuildReport model."""
-        return reverse('api-build-report-list')
+    template = models.ForeignKey(
+        ReportTemplate, on_delete=models.CASCADE, verbose_name=_('Report Template')
+    )
 
-    @classmethod
-    def getSubdir(cls):
-        """Return the subdirectory where BuildReport templates are located."""
-        return 'build'
-
-    filters = models.CharField(
+    output = models.FileField(
+        upload_to='report/output',
         blank=True,
-        max_length=250,
-        verbose_name=_('Build Filters'),
-        help_text=_('Build query filters (comma-separated list of key=value pairs'),
-        validators=[validate_build_report_filters],
+        null=True,
+        verbose_name=_('Output File'),
+        help_text=_('Generated output file'),
     )
 
-    def get_context_data(self, request):
-        """Custom context data for the build report."""
-        my_build = self.object_to_print
 
-        if not isinstance(my_build, build.models.Build):
-            raise TypeError('Provided model is not a Build object')
+class LabelOutput(TemplateOutput):
+    """Class representing a generated label output file."""
 
-        return {
-            'build': my_build,
-            'part': my_build.part,
-            'build_outputs': my_build.build_outputs.all(),
-            'line_items': my_build.build_lines.all(),
-            'bom_items': my_build.part.get_bom_items(),
-            'reference': my_build.reference,
-            'quantity': my_build.quantity,
-            'title': str(my_build),
-        }
-
-
-class BillOfMaterialsReport(ReportTemplateBase):
-    """Render a Bill of Materials against a Part object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the BillOfMaterialsReport model."""
-        return reverse('api-bom-report-list')
-
-    @classmethod
-    def getSubdir(cls):
-        """Return the directory where BillOfMaterialsReport templates are located."""
-        return 'bom'
-
-    filters = models.CharField(
+    plugin = models.CharField(
+        max_length=100,
         blank=True,
-        max_length=250,
-        verbose_name=_('Part Filters'),
-        help_text=_('Part query filters (comma-separated list of key=value pairs'),
-        validators=[validate_part_report_filters],
+        verbose_name=_('Plugin'),
+        help_text=_('Label output plugin'),
     )
 
-    def get_context_data(self, request):
-        """Return custom context data for the BillOfMaterialsReport template."""
-        part = self.object_to_print
+    template = models.ForeignKey(
+        LabelTemplate, on_delete=models.CASCADE, verbose_name=_('Label Template')
+    )
 
-        return {
-            'part': part,
-            'category': part.category,
-            'bom_items': part.get_bom_items(),
-        }
-
-
-class PurchaseOrderReport(ReportTemplateBase):
-    """Render a report against a PurchaseOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the PurchaseOrderReport model."""
-        return reverse('api-po-report-list')
-
-    @classmethod
-    def getSubdir(cls):
-        """Return the directory where PurchaseOrderReport templates are stored."""
-        return 'purchaseorder'
-
-    filters = models.CharField(
+    output = models.FileField(
+        upload_to='label/output',
         blank=True,
-        max_length=250,
-        verbose_name=_('Filters'),
-        help_text=_('Purchase order query filters'),
-        validators=[validate_purchase_order_filters],
+        null=True,
+        verbose_name=_('Output File'),
+        help_text=_('Generated output file'),
     )
 
-    def get_context_data(self, request):
-        """Return custom context data for the PurchaseOrderReport template."""
-        order = self.object_to_print
 
-        return {
-            'description': order.description,
-            'lines': order.lines,
-            'extra_lines': order.extra_lines,
-            'order': order,
-            'reference': order.reference,
-            'supplier': order.supplier,
-            'title': str(order),
-        }
-
-
-class SalesOrderReport(ReportTemplateBase):
-    """Render a report against a SalesOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the SalesOrderReport model."""
-        return reverse('api-so-report-list')
-
-    @classmethod
-    def getSubdir(cls):
-        """Return the subdirectory where SalesOrderReport templates are located."""
-        return 'salesorder'
-
-    filters = models.CharField(
-        blank=True,
-        max_length=250,
-        verbose_name=_('Filters'),
-        help_text=_('Sales order query filters'),
-        validators=[validate_sales_order_filters],
-    )
-
-    def get_context_data(self, request):
-        """Return custom context data for a SalesOrderReport template."""
-        order = self.object_to_print
-
-        return {
-            'customer': order.customer,
-            'description': order.description,
-            'lines': order.lines,
-            'extra_lines': order.extra_lines,
-            'order': order,
-            'reference': order.reference,
-            'title': str(order),
-        }
-
-
-class ReturnOrderReport(ReportTemplateBase):
-    """Render a custom report against a ReturnOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ReturnOrderReport model."""
-        return reverse('api-return-order-report-list')
-
-    @classmethod
-    def getSubdir(cls):
-        """Return the directory where the ReturnOrderReport templates are stored."""
-        return 'returnorder'
-
-    filters = models.CharField(
-        blank=True,
-        max_length=250,
-        verbose_name=_('Filters'),
-        help_text=_('Return order query filters'),
-        validators=[validate_return_order_filters],
-    )
-
-    def get_context_data(self, request):
-        """Return custom context data for the ReturnOrderReport template."""
-        order = self.object_to_print
-
-        return {
-            'order': order,
-            'description': order.description,
-            'reference': order.reference,
-            'customer': order.customer,
-            'lines': order.lines,
-            'extra_lines': order.extra_lines,
-            'title': str(order),
-        }
-
-
-def rename_snippet(instance, filename):
-    """Function to rename a report snippet once uploaded."""
-    path = ReportSnippet.snippet_path(filename)
-    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
-
-    # If the snippet file is the *same* filename as the one being uploaded,
-    # delete the original one from the media directory
-    if str(filename) == str(instance.snippet):
-        if fullpath.exists():
-            logger.info("Deleting existing snippet file: '%s'", filename)
-            os.remove(fullpath)
-
-    # Ensure that the cache is deleted for this snippet
-    cache.delete(fullpath)
-
-    return path
-
-
-class ReportSnippet(models.Model):
+class ReportSnippet(TemplateUploadMixin, models.Model):
     """Report template 'snippet' which can be used to make templates that can then be included in other reports.
 
     Useful for 'common' template actions, sub-templates, etc
     """
 
-    def __str__(self) -> str:
-        """String representation of a ReportSnippet instance."""
-        return f'snippets/{self.filename}'
-
-    @property
-    def filename(self):
-        """Return the filename of the asset."""
-        path = self.snippet.name
-        if path:
-            return os.path.basename(path)
-        else:
-            return '-'
-
-    @staticmethod
-    def snippet_path(filename):
-        """Return the fully-qualified snippet path for the given filename."""
-        return os.path.join('report', 'snippets', os.path.basename(str(filename)))
-
-    def validate_unique(self, exclude=None):
-        """Validate that this report asset is unique."""
-        proposed_path = self.snippet_path(self.snippet)
-
-        if (
-            ReportSnippet.objects.filter(snippet=proposed_path)
-            .exclude(pk=self.pk)
-            .count()
-            > 0
-        ):
-            raise ValidationError({
-                'snippet': _('Snippet file with this name already exists')
-            })
-
-        return super().validate_unique(exclude)
+    SUBDIR = 'snippets'
+    TEMPLATE_FIELD = 'snippet'
 
     snippet = models.FileField(
-        upload_to=rename_snippet,
+        upload_to=rename_template,
         verbose_name=_('Snippet'),
         help_text=_('Report snippet file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
@@ -657,26 +749,7 @@ class ReportSnippet(models.Model):
     )
 
 
-def rename_asset(instance, filename):
-    """Function to rename an asset file when uploaded."""
-    path = ReportAsset.asset_path(filename)
-    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
-
-    # If the asset file is the *same* filename as the one being uploaded,
-    # delete the original one from the media directory
-    if str(filename) == str(instance.asset):
-        if fullpath.exists():
-            # Check for existing asset file with the same name
-            logger.info("Deleting existing asset file: '%s'", filename)
-            os.remove(fullpath)
-
-    # Ensure the cache is deleted for this asset
-    cache.delete(fullpath)
-
-    return path
-
-
-class ReportAsset(models.Model):
+class ReportAsset(TemplateUploadMixin, models.Model):
     """Asset file for use in report templates.
 
     For example, an image to use in a header file.
@@ -684,41 +757,12 @@ class ReportAsset(models.Model):
     and can be loaded in a template using the {% report_asset <filename> %} tag.
     """
 
-    def __str__(self):
-        """String representation of a ReportAsset instance."""
-        return f'assets/{self.filename}'
-
-    @property
-    def filename(self):
-        """Return the filename of the asset."""
-        path = self.asset.name
-        if path:
-            return os.path.basename(path)
-        else:
-            return '-'
-
-    @staticmethod
-    def asset_path(filename):
-        """Return the fully-qualified asset path for the given filename."""
-        return os.path.join('report', 'assets', os.path.basename(str(filename)))
-
-    def validate_unique(self, exclude=None):
-        """Validate that this report asset is unique."""
-        proposed_path = self.asset_path(self.asset)
-
-        if (
-            ReportAsset.objects.filter(asset=proposed_path).exclude(pk=self.pk).count()
-            > 0
-        ):
-            raise ValidationError({
-                'asset': _('Asset file with this name already exists')
-            })
-
-        return super().validate_unique(exclude)
+    SUBDIR = 'assets'
+    TEMPLATE_FIELD = 'asset'
 
     # Asset file
     asset = models.FileField(
-        upload_to=rename_asset,
+        upload_to=rename_template,
         verbose_name=_('Asset'),
         help_text=_('Report asset file'),
     )
@@ -729,42 +773,3 @@ class ReportAsset(models.Model):
         verbose_name=_('Description'),
         help_text=_('Asset file description'),
     )
-
-
-class StockLocationReport(ReportTemplateBase):
-    """Render a StockLocationReport against a StockLocation object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the StockLocationReport model."""
-        return reverse('api-stocklocation-report-list')
-
-    @classmethod
-    def getSubdir(cls):
-        """Return the subdirectory where StockLocationReport templates are located."""
-        return 'slr'
-
-    filters = models.CharField(
-        blank=True,
-        max_length=250,
-        verbose_name=_('Filters'),
-        help_text=_(
-            'stock location query filters (comma-separated list of key=value pairs)'
-        ),
-        validators=[validate_stock_location_report_filters],
-    )
-
-    def get_context_data(self, request):
-        """Return custom context data for the StockLocationReport template."""
-        stock_location = self.object_to_print
-
-        if not isinstance(stock_location, stock.models.StockLocation):
-            raise TypeError(
-                'Provided model is not a StockLocation object -> '
-                + str(type(stock_location))
-            )
-
-        return {
-            'stock_location': stock_location,
-            'stock_items': stock_location.get_stock_items(),
-        }

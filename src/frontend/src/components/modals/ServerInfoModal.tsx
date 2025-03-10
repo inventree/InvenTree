@@ -1,17 +1,10 @@
 import { Trans } from '@lingui/macro';
-import {
-  Badge,
-  Button,
-  Divider,
-  Group,
-  Stack,
-  Table,
-  Title
-} from '@mantine/core';
-import { ContextModalProps } from '@mantine/modals';
+import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
+import type { ContextModalProps } from '@mantine/modals';
 
 import { useServerApiState } from '../../states/ApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
+import { StylishText } from '../items/StylishText';
 
 export function ServerInfoModal({
   context,
@@ -22,50 +15,62 @@ export function ServerInfoModal({
   return (
     <Stack>
       <Divider />
-      <Title order={5}>
+      <StylishText size='lg'>
         <Trans>Server</Trans>
-      </Title>
-      <Table>
-        <tbody>
-          <tr>
-            <td>
+      </StylishText>
+      <Table striped>
+        <Table.Tbody>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Instance Name</Trans>
-            </td>
-            <td>{server.instance}</td>
-          </tr>
-          <tr>
-            <td>
+            </Table.Td>
+            <Table.Td>{server.instance}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Server Version</Trans>
+            </Table.Td>
+            <Table.Td>{server.version}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>API Version</Trans>
+            </Table.Td>
+            <Table.Td>{server.apiVersion}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Database</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <OnlyStaff>{server.database}</OnlyStaff>
-            </td>
-          </tr>
+            </Table.Td>
+          </Table.Tr>
           {server.debug_mode && (
-            <tr>
-              <td>
+            <Table.Tr>
+              <Table.Td>
                 <Trans>Debug Mode</Trans>
-              </td>
-              <td>
+              </Table.Td>
+              <Table.Td>
                 <Trans>Server is running in debug mode</Trans>
-              </td>
-            </tr>
+              </Table.Td>
+            </Table.Tr>
           )}
           {server.docker_mode && (
-            <tr>
-              <td>
+            <Table.Tr>
+              <Table.Td>
                 <Trans>Docker Mode</Trans>
-              </td>
-              <td>
+              </Table.Td>
+              <Table.Td>
                 <Trans>Server is deployed using docker</Trans>
-              </td>
-            </tr>
+              </Table.Td>
+            </Table.Tr>
           )}
-          <tr>
-            <td>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Plugin Support</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <Badge color={server.plugins_enabled ? 'green' : 'red'}>
                 {server.plugins_enabled ? (
                   <Trans>Plugin support enabled</Trans>
@@ -73,13 +78,13 @@ export function ServerInfoModal({
                   <Trans>Plugin support disabled</Trans>
                 )}
               </Badge>
-            </td>
-          </tr>
-          <tr>
-            <td>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Server status</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <OnlyStaff>
                 <Badge color={server.system_health ? 'green' : 'yellow'}>
                   {server.system_health ? (
@@ -89,62 +94,42 @@ export function ServerInfoModal({
                   )}
                 </Badge>
               </OnlyStaff>
-            </td>
-          </tr>
-          {server.worker_running != true && (
-            <tr>
-              <td>
+            </Table.Td>
+          </Table.Tr>
+          {server?.worker_running == false && (
+            <Table.Tr>
+              <Table.Td>
                 <Trans>Background Worker</Trans>
-              </td>
-              <td>
-                <Badge color="red">
+              </Table.Td>
+              <Table.Td>
+                <Badge color='red'>
                   <Trans>Background worker not running</Trans>
                 </Badge>
-              </td>
-            </tr>
+              </Table.Td>
+            </Table.Tr>
           )}
-          {server.email_configured != true && (
-            <tr>
-              <td>
+          {server?.email_configured == false && (
+            <Table.Tr>
+              <Table.Td>
                 <Trans>Email Settings</Trans>
-              </td>
-              <td>
-                <Badge color="red">
+              </Table.Td>
+              <Table.Td>
+                <Badge color='red'>
                   <Trans>Email settings not configured</Trans>
                 </Badge>
-              </td>
-            </tr>
+              </Table.Td>
+            </Table.Tr>
           )}
-        </tbody>
-      </Table>
-      <Title order={5}>
-        <Trans>Version</Trans>
-      </Title>
-      <Table>
-        <tbody>
-          <tr>
-            <td>
-              <Trans>Server Version</Trans>
-            </td>
-            <td>{server.version}</td>
-          </tr>
-          <tr>
-            <td>
-              <Trans>API Version</Trans>
-            </td>
-            <td>{server.apiVersion}</td>
-          </tr>
-        </tbody>
+        </Table.Tbody>
       </Table>
       <Divider />
-      <Group justify="right">
+      <Group justify='right'>
         <Button
-          color="red"
           onClick={() => {
             context.closeModal(id);
           }}
         >
-          <Trans>Dismiss</Trans>
+          <Trans>Close</Trans>
         </Button>
       </Group>
     </Stack>

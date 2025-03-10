@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
-import { BaseContext } from '../contexts/BaseContext';
+import { ThemeContext } from '../contexts/ThemeContext';
 import { docLinks } from '../defaults/links';
 import { IS_DEV } from '../main';
 import { useLocalState } from '../states/LocalState';
@@ -14,11 +14,11 @@ export default function MobileAppView() {
     window.location.reload();
   }
   return (
-    <BaseContext>
-      <Center h="100vh">
+    <ThemeContext>
+      <Center h='100vh'>
         <Container>
           <Stack>
-            <Title c="red">
+            <Title c='red'>
               <Trans>Mobile viewport detected</Trans>
             </Title>
             <Text>
@@ -38,6 +38,6 @@ export default function MobileAppView() {
           </Stack>
         </Container>
       </Center>
-    </BaseContext>
+    </ThemeContext>
   );
 }

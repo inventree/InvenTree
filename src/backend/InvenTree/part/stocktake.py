@@ -1,24 +1,24 @@
 """Stocktake report functionality."""
 
 import io
-import logging
 import time
-from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 import tablib
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
+import common.currency
 import common.models
 import InvenTree.helpers
 import part.models
 import stock.models
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def perform_stocktake(
@@ -45,7 +45,7 @@ def perform_stocktake(
     In this case, the stocktake *report* will be limited to the specified location.
     """
     # Determine which locations are "valid" for the generated report
-    location = kwargs.get('location', None)
+    location = kwargs.get('location')
     locations = location.get_descendants(include_self=True) if location else []
 
     # Grab all "available" stock items for the Part
@@ -67,7 +67,7 @@ def perform_stocktake(
         pricing.update_pricing(cascade=False)
         pricing.refresh_from_db()
 
-    base_currency = common.settings.currency_code_default()
+    base_currency = common.currency.currency_code_default()
 
     # Keep track of total quantity and cost for this part
     total_quantity = 0
@@ -169,24 +169,24 @@ def generate_stocktake_report(**kwargs):
     )
 
     parts = part.models.Part.objects.all()
-    user = kwargs.get('user', None)
+    user = kwargs.get('user')
 
     generate_report = kwargs.get('generate_report', True)
     update_parts = kwargs.get('update_parts', True)
 
     # Filter by 'Part' instance
-    if p := kwargs.get('part', None):
+    if p := kwargs.get('part'):
         variants = p.get_descendants(include_self=True)
         parts = parts.filter(pk__in=[v.pk for v in variants])
 
     # Filter by 'Category' instance (cascading)
-    if category := kwargs.get('category', None):
+    if category := kwargs.get('category'):
         categories = category.get_descendants(include_self=True)
         parts = parts.filter(category__in=categories)
 
     # Filter by 'Location' instance (cascading)
     # Stocktake report will be limited to parts which have stock items within this location
-    if location := kwargs.get('location', None):
+    if location := kwargs.get('location'):
         # Extract flat list of all sublocations
         locations = list(location.get_descendants(include_self=True))
 
@@ -210,7 +210,7 @@ def generate_stocktake_report(**kwargs):
 
     logger.info('Generating new stocktake report for %s parts', n_parts)
 
-    base_currency = common.settings.currency_code_default()
+    base_currency = common.currency.currency_code_default()
 
     # Construct an initial dataset for the stocktake report
     dataset = tablib.Dataset(

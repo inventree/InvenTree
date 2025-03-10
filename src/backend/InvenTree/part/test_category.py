@@ -1,8 +1,9 @@
 """Unit tests for the PartCategory model."""
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+
+from common.models import InvenTreeSetting
 
 from .models import Part, PartCategory, PartParameter, PartParameterTemplate
 
@@ -126,8 +127,9 @@ class CategoryTest(TestCase):
 
     def test_url(self):
         """Test that the PartCategory URL works."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(self.capacitors.get_absolute_url(), '/part/category/3/')
+        self.assertEqual(
+            self.capacitors.get_absolute_url(), '/platform/part/category/3'
+        )
 
     def test_part_count(self):
         """Test that the Category part count works."""
@@ -412,3 +414,29 @@ class CategoryTest(TestCase):
         # should log an exception
         with self.assertRaises(ValidationError):
             B3.delete()
+
+    def test_icon(self):
+        """Test the category icon."""
+        # No default icon set
+        cat = PartCategory.objects.create(name='Test Category')
+        self.assertIn(cat.icon, ['', None])
+
+        # Set a default icon
+        InvenTreeSetting.set_setting('PART_CATEGORY_DEFAULT_ICON', 'ti:package:outline')
+        self.assertEqual(cat.icon, 'ti:package:outline')
+
+        # Set custom icon to default icon and assert that it does not get written to the database
+        cat.icon = 'ti:package:outline'
+        cat.save()
+        self.assertIn(cat._icon, ['', None])
+
+        # Set a different custom icon and assert that it takes precedence
+        cat.icon = 'ti:tag:outline'
+        cat.save()
+        self.assertEqual(cat.icon, 'ti:tag:outline')
+        InvenTreeSetting.set_setting('PART_CATEGORY_DEFAULT_ICON', '')
+
+        # Test that the icon can be set to None again
+        cat.icon = ''
+        cat.save()
+        self.assertIn(cat.icon, ['', None])

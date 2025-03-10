@@ -121,7 +121,7 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if d >= 100:
                 self.raise_error('Value must be less than 100')
 
-    def validate_serial_number(self, serial: str, part):
+    def validate_serial_number(self, serial: str, part, stock_item=None):
         """Validate serial number for a given StockItem.
 
         These examples are silly, but serve to demonstrate how the feature could be used
@@ -135,6 +135,34 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if serial[0] != part.name[0]:
                 self.raise_error('Serial number must start with same letter as part')
 
+        # Prevent serial numbers which are a multiple of 5
+        try:
+            sn = int(serial)
+            if sn % 5 == 0:
+                self.raise_error('Serial number cannot be a multiple of 5')
+        except ValueError:
+            pass
+
+    def increment_serial_number(self, serial: str, part=None, **kwargs):
+        """Increment a serial number.
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
+        try:
+            sn = int(serial)
+            sn += 1
+
+            # Skip any serial number which is a multiple of 5
+            if sn % 5 == 0:
+                sn += 1
+
+            return str(sn)
+        except ValueError:
+            pass
+
+        # Return "None" to defer to the next plugin or builtin functionality
+        return None
+
     def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification.
 
@@ -145,7 +173,17 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if len(batch_code) > 0 and prefix and not batch_code.startswith(prefix):
             self.raise_error(f"Batch code must start with '{prefix}'")
 
-    def generate_batch_code(self):
+    def generate_batch_code(self, **kwargs):
         """Generate a new batch code."""
         now = datetime.now()
-        return f'BATCH-{now.year}:{now.month}:{now.day}'
+        batch = f'SAMPLE-BATCH-{now.year}:{now.month}:{now.day}'
+
+        # If a Part instance is provided, prepend the part name to the batch code
+        if part := kwargs.get('part'):
+            batch = f'{part.name}-{batch}'
+
+        # If a Build instance is provided, prepend the build number to the batch code
+        if build := kwargs.get('build_order'):
+            batch = f'{build.reference}-{batch}'
+
+        return batch

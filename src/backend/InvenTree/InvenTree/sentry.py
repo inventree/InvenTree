@@ -1,18 +1,19 @@
 """Configuration for Sentry.io error reporting."""
 
-import logging
-
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import Http404
+from django.template.exceptions import TemplateSyntaxError
 
 import rest_framework.exceptions
 import sentry_sdk
+import structlog
+from djmoney.contrib.exchange.exceptions import MissingRate
 from sentry_sdk.integrations.django import DjangoIntegration
 
 import InvenTree.version
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def default_sentry_dsn():
@@ -27,6 +28,8 @@ def sentry_ignore_errors():
     """
     return [
         Http404,
+        MissingRate,
+        TemplateSyntaxError,
         ValidationError,
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,

@@ -19,6 +19,7 @@ import {
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -27,11 +28,12 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { GroupDetailI } from './GroupTable';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import type { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {
   pk: number;
@@ -48,10 +50,10 @@ export interface UserDetailI {
 export function UserDrawer({
   id,
   refreshTable
-}: {
+}: Readonly<{
   id: string;
   refreshTable: () => void;
-}) {
+}>) {
   const {
     instance: userDetail,
     refreshInstance,
@@ -64,7 +66,7 @@ export function UserDrawer({
 
   const currentUserPk = useUserState((s) => s.user?.pk);
   const isCurrentUser = useMemo(
-    () => currentUserPk === parseInt(id, 10),
+    () => currentUserPk === Number.parseInt(id, 10),
     [currentUserPk, id]
   );
 
@@ -114,7 +116,7 @@ export function UserDrawer({
           postFormContent: isCurrentUser ? (
             <Alert
               title={<Trans>Info</Trans>}
-              color="blue"
+              color='blue'
               icon={<IconInfoCircle />}
             >
               <Trans>
@@ -134,11 +136,11 @@ export function UserDrawer({
         <Title order={5}>
           <Trans>Groups</Trans>
         </Title>
-        <Spoiler maxHeight={125} showLabel="Show More" hideLabel="Show Less">
+        <Spoiler maxHeight={125} showLabel='Show More' hideLabel='Show Less'>
           <Text ml={'md'}>
             {userDetail?.groups && userDetail?.groups?.length > 0 ? (
               <List>
-                {userDetail?.groups?.map((group) => (
+                {userDetail?.groups?.map((group: any) => (
                   <List.Item key={group.pk}>
                     <DetailDrawerLink
                       to={`../group-${group.pk}`}
@@ -163,18 +165,19 @@ export function UserDrawer({
 export function UserTable() {
   const table = useTable('users');
   const navigate = useNavigate();
+  const user = useUserState();
 
   const openDetailDrawer = useCallback(
-    (pk: number) => navigate(`user-${pk}/`),
-    []
+    (pk: number) => {
+      if (user.hasChangePermission(ModelType.user)) {
+        navigate(`user-${pk}/`);
+      }
+    },
+    [user]
   );
 
   const columns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'email',
-        sortable: true
-      },
       {
         accessor: 'username',
         sortable: true,
@@ -189,7 +192,12 @@ export function UserTable() {
         sortable: true
       },
       {
+        accessor: 'email',
+        sortable: true
+      },
+      {
         accessor: 'groups',
+        title: t`Groups`,
         sortable: true,
         switchable: true,
         render: (record: any) => {
@@ -211,26 +219,31 @@ export function UserTable() {
   // Row Actions
   const [selectedUser, setSelectedUser] = useState<number>(-1);
 
-  const rowActions = useCallback((record: UserDetailI): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => openDetailDrawer(record.pk)
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          setSelectedUser(record.pk);
-          deleteUser.open();
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: UserDetailI): RowAction[] => {
+      return [
+        RowEditAction({
+          onClick: () => openDetailDrawer(record.pk),
+          hidden: !user.hasChangePermission(ModelType.user)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeletePermission(ModelType.user),
+          onClick: () => {
+            setSelectedUser(record.pk);
+            deleteUser.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const deleteUser = useDeleteApiFormModal({
     url: ApiEndpoints.user_list,
     pk: selectedUser,
     title: t`Delete user`,
     successMessage: t`User deleted`,
-    onFormSuccess: table.refreshTable,
+    table: table,
     preFormWarning: t`Are you sure you want to delete this user?`
   });
 
@@ -244,22 +257,43 @@ export function UserTable() {
       first_name: {},
       last_name: {}
     },
-    onFormSuccess: table.refreshTable,
+    table: table,
     successMessage: t`Added user`
   });
 
   const tableActions = useMemo(() => {
-    let actions = [];
+    const actions = [];
 
     actions.push(
       <AddItemButton
-        key="add-user"
+        key='add-user'
         onClick={newUser.open}
         tooltip={t`Add user`}
+        hidden={!user.hasAddPermission(ModelType.user)}
       />
     );
 
     return actions;
+  }, [user]);
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'is_active',
+        label: t`Active`,
+        description: t`Show active users`
+      },
+      {
+        name: 'is_staff',
+        label: t`Staff`,
+        description: t`Show staff users`
+      },
+      {
+        name: 'is_superuser',
+        label: t`Superuser`,
+        description: t`Show superusers`
+      }
+    ];
   }, []);
 
   return (
@@ -285,6 +319,7 @@ export function UserTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />

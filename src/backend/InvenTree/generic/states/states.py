@@ -1,10 +1,14 @@
 """Generic implementation of status for InvenTree models."""
 
 import enum
+import logging
 import re
+from enum import Enum
+
+logger = logging.getLogger('inventree')
 
 
-class BaseEnum(enum.IntEnum):
+class BaseEnum(enum.IntEnum):  # noqa: PLW1641
     """An `Enum` capabile of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
@@ -16,11 +20,26 @@ class BaseEnum(enum.IntEnum):
         obj._value_ = args[0]
         return obj
 
+    def __int__(self):
+        """Return an integer representation of the value."""
+        return self.value
+
+    def __str__(self):
+        """Return a string representation of the value."""
+        return str(self.value)
+
     def __eq__(self, obj):
         """Override equality operator to allow comparison with int."""
-        if type(self) is type(obj):
-            return super().__eq__(obj)
-        return self.value == obj
+        if type(obj) is int:
+            return self.value == obj
+
+        if isinstance(obj, BaseEnum):
+            return self.value == obj.value
+
+        if hasattr(obj, 'value'):
+            return self.value == obj.value
+
+        return super().__eq__(obj)
 
     def __ne__(self, obj):
         """Override inequality operator to allow comparison with int."""
@@ -50,10 +69,23 @@ class StatusCode(BaseEnum):
         # Normal item definition
         if len(args) == 1:
             obj.label = args[0]
-            obj.color = 'secondary'
+            obj.color = ColorEnum.secondary
         else:
             obj.label = args[1]
-            obj.color = args[2] if len(args) > 2 else 'secondary'
+            obj.color = args[2] if len(args) > 2 else ColorEnum.secondary
+
+        # Ensure color is a valid value
+        if isinstance(obj.color, str):
+            try:
+                obj.color = ColorEnum(obj.color)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid color value '{obj.color}' for status '{obj.label}'"
+                )
+
+        # Set color value as string
+        obj.color = obj.color.value
+        obj.color_class = obj.color
 
         return obj
 
@@ -71,14 +103,32 @@ class StatusCode(BaseEnum):
             return False
         if callable(value):
             return False
-        if not isinstance(value.value, int):
-            return False
-        return True
+        return isinstance(value.value, int)
+
+    @classmethod
+    def custom_queryset(cls):
+        """Return a queryset of all custom values for this status class."""
+        from common.models import InvenTreeCustomUserStateModel
+
+        try:
+            return InvenTreeCustomUserStateModel.objects.filter(
+                reference_status=cls.__name__
+            )
+        except Exception:
+            return None
+
+    @classmethod
+    def custom_values(cls):
+        """Return all user-defined custom values for this status class."""
+        if query := cls.custom_queryset():
+            return list(query)
+        return []
 
     @classmethod
     def values(cls, key=None):
         """Return a dict representation containing all required information."""
         elements = [itm for itm in cls if cls._is_element(itm.name)]
+
         if key is None:
             return elements
 
@@ -111,19 +161,28 @@ class StatusCode(BaseEnum):
         return re.sub(r'(?<!^)(?=[A-Z])', '_', ref_name).lower()
 
     @classmethod
-    def items(cls):
+    def items(cls, custom=False):
         """All status code items."""
-        return [(x.value, x.label) for x in cls.values()]
+        data = [(x.value, x.label) for x in cls.values()]
+
+        if custom:
+            try:
+                for item in cls.custom_values():
+                    data.append((item.key, item.label))
+            except Exception:
+                pass
+
+        return data
 
     @classmethod
-    def keys(cls):
+    def keys(cls, custom=True):
         """All status code keys."""
-        return [x.value for x in cls.values()]
+        return [el[0] for el in cls.items(custom=custom)]
 
     @classmethod
-    def labels(cls):
+    def labels(cls, custom=True):
         """All status code labels."""
-        return [x.label for x in cls.values()]
+        return [el[1] for el in cls.items(custom=custom)]
 
     @classmethod
     def names(cls):
@@ -147,22 +206,128 @@ class StatusCode(BaseEnum):
         return filtered.label
 
     @classmethod
-    def dict(cls, key=None):
+    def dict(cls, key=None, custom=True):
         """Return a dict representation containing all required information."""
-        return {
+        data = {
             x.name: {'color': x.color, 'key': x.value, 'label': x.label, 'name': x.name}
             for x in cls.values(key)
         }
 
-    @classmethod
-    def list(cls):
-        """Return the StatusCode options as a list of mapped key / value items."""
-        return list(cls.dict().values())
+        if custom:
+            try:
+                for item in cls.custom_values():
+                    if item.name not in data:
+                        data[item.name] = {
+                            'color': item.color,
+                            'key': item.key,
+                            'label': item.label,
+                            'name': item.name,
+                            'custom': True,
+                        }
+            except Exception:
+                pass
+
+        return data
 
     @classmethod
-    def template_context(cls):
+    def list(cls, custom=True):
+        """Return the StatusCode options as a list of mapped key / value items."""
+        return list(cls.dict(custom=custom).values())
+
+    @classmethod
+    def template_context(cls, custom=True):
         """Return a dict representation containing all required information for templates."""
-        ret = {x.name: x.value for x in cls.values()}
-        ret['list'] = cls.list()
+        data = cls.dict(custom=custom)
+
+        ret = {x['name']: x['key'] for x in data.values()}
+
+        ret['list'] = list(data.values())
 
         return ret
+
+
+class ColorEnum(Enum):
+    """Enum for color values."""
+
+    primary = 'primary'
+    secondary = 'secondary'
+    success = 'success'
+    danger = 'danger'
+    warning = 'warning'
+    info = 'info'
+    dark = 'dark'
+
+
+class StatusCodeMixin:
+    """Mixin class which handles custom 'status' fields.
+
+    - Implements a 'set_stutus' method which can be used to set the status of an object
+    - Implements a 'get_status' method which can be used to retrieve the status of an object
+
+    This mixin assumes that the implementing class has a 'status' field,
+    which must be an instance of the InvenTreeCustomStatusModelField class.
+    """
+
+    STATUS_CLASS = None
+    STATUS_FIELD = 'status'
+
+    @property
+    def status_class(self):
+        """Return the status class associated with this model."""
+        return self.STATUS_CLASS
+
+    def save(self, *args, **kwargs):
+        """Custom save method for StatusCodeMixin.
+
+        - Ensure custom status code values are correctly updated
+        """
+        if self.status_class:
+            # Check that the current 'logical key' actually matches the current status code
+            custom_values = self.status_class.custom_queryset().filter(
+                logical_key=self.get_status(), key=self.get_custom_status()
+            )
+
+            if not custom_values.exists():
+                # No match - null out the custom value
+                setattr(self, f'{self.STATUS_FIELD}_custom_key', None)
+
+        super().save(*args, **kwargs)
+
+    def get_status(self) -> int:
+        """Return the status code for this object."""
+        return getattr(self, self.STATUS_FIELD)
+
+    def get_custom_status(self) -> int:
+        """Return the custom status code for this object."""
+        return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
+
+    def set_status(self, status: int) -> bool:
+        """Set the status code for this object."""
+        if not self.status_class:
+            raise NotImplementedError('Status class not defined')
+
+        base_values = self.status_class.values()
+        custom_value_set = self.status_class.custom_values()
+
+        custom_field = f'{self.STATUS_FIELD}_custom_key'
+
+        result = False
+
+        if status in base_values:
+            # Set the status to a 'base' value
+            setattr(self, self.STATUS_FIELD, status)
+            setattr(self, custom_field, None)
+            result = True
+        else:
+            for item in custom_value_set:
+                if item.key == status:
+                    # Set the status to a 'custom' value
+                    setattr(self, self.STATUS_FIELD, item.logical_key)
+                    setattr(self, custom_field, item.key)
+                    result = True
+                    break
+
+        if not result:
+            logger.warning(f'Failed to set status {status} for class {self.__class__}')
+
+        return result

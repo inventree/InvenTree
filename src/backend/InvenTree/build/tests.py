@@ -1,37 +1,26 @@
-"""Basic unit tests for the BuildOrder app"""
-
-from django.conf import settings
-from django.test import tag
-from django.urls import reverse
+"""Basic unit tests for the BuildOrder app."""
 
 from datetime import datetime, timedelta
 
+from django.core.exceptions import ValidationError
+
+from build.status_codes import BuildStatus
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
+from part.models import BomItem, Part
 
 from .models import Build
-from stock.models import StockItem
-
-from InvenTree.status_codes import BuildStatus
 
 
 class BuildTestSimple(InvenTreeTestCase):
-    """Basic set of tests for the BuildOrder model functionality"""
+    """Basic set of tests for the BuildOrder model functionality."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'build',
-    ]
+    fixtures = ['category', 'part', 'location', 'build']
 
-    roles = [
-        'build.change',
-        'build.add',
-        'build.delete',
-    ]
+    roles = ['build.change', 'build.add', 'build.delete']
 
     def test_build_objects(self):
-        """Ensure the Build objects were correctly created"""
+        """Ensure the Build objects were correctly created."""
         self.assertEqual(Build.objects.count(), 5)
         b = Build.objects.get(pk=2)
         self.assertEqual(b.batch, 'B2')
@@ -40,13 +29,12 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(str(b), 'BO-0002')
 
     def test_url(self):
-        """Test URL lookup"""
+        """Test URL lookup."""
         b1 = Build.objects.get(pk=1)
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(b1.get_absolute_url(), '/build/1/')
+        self.assertEqual(b1.get_absolute_url(), '/platform/manufacturing/build-order/1')
 
     def test_is_complete(self):
-        """Test build completion status"""
+        """Test build completion status."""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -71,7 +59,7 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertFalse(build.is_overdue)
 
     def test_is_active(self):
-        """Test active / inactive build status"""
+        """Test active / inactive build status."""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -88,53 +76,71 @@ class BuildTestSimple(InvenTreeTestCase):
 
         self.assertEqual(build.status, BuildStatus.CANCELLED)
 
+    def test_build_create(self):
+        """Test creation of build orders via API."""
+        n = Build.objects.count()
 
-class TestBuildViews(InvenTreeTestCase):
-    """Tests for Build app views."""
+        # Find an assembly part
+        assembly = Part.objects.filter(assembly=True).first()
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'build',
-    ]
+        assembly.active = True
+        assembly.locked = False
+        assembly.save()
 
-    roles = [
-        'build.change',
-        'build.add',
-        'build.delete',
-    ]
+        self.assertEqual(assembly.get_bom_items().count(), 0)
 
-    def setUp(self):
-        """Fixturing for this suite of unit tests"""
-        super().setUp()
+        # Let's create some BOM items for this assembly
+        for component in Part.objects.filter(assembly=False, component=True)[:15]:
+            try:
+                BomItem.objects.create(
+                    part=assembly, sub_part=component, reference='xxx', quantity=5
+                )
+            except ValidationError:
+                pass
 
-        # Create a build output for build # 1
-        self.build = Build.objects.get(pk=1)
+        # The assembly has a BOM, and is now *invalid*
+        self.assertGreater(assembly.get_bom_items().count(), 0)
+        self.assertFalse(assembly.is_bom_valid())
 
-        self.output = StockItem.objects.create(
-            part=self.build.part,
-            quantity=self.build.quantity,
-            build=self.build,
-            is_building=True,
-        )
+        # Create a build for an assembly with an *invalid* BOM
+        set_global_setting('BUILDORDER_REQUIRE_VALID_BOM', False)
+        set_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART', True)
+        set_global_setting('BUILDORDER_REQUIRE_LOCKED_PART', False)
 
-    @tag('cui')
-    def test_build_index(self):
-        """Test build index view."""
-        response = self.client.get(reverse('build-index'))
-        self.assertEqual(response.status_code, 200)
+        bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9990')
+        bo.save()
 
-    @tag('cui')
-    def test_build_detail(self):
-        """Test the detail view for a Build object."""
-        pk = 1
+        # Now, require a *valid* BOM
+        set_global_setting('BUILDORDER_REQUIRE_VALID_BOM', True)
 
-        response = self.client.get(reverse('build-detail', args=(pk,)))
-        self.assertEqual(response.status_code, 200)
+        with self.assertRaises(ValidationError):
+            bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9991')
 
-        build = Build.objects.get(pk=pk)
+        # Now, validate the BOM, and try again
+        assembly.validate_bom(None)
+        self.assertTrue(assembly.is_bom_valid())
 
-        content = str(response.content)
+        bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9992')
 
-        self.assertIn(build.title, content)
+        # Now, try and create a build for an inactive assembly
+        assembly.active = False
+        assembly.save()
+
+        with self.assertRaises(ValidationError):
+            bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9993')
+
+        set_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART', False)
+        Build.objects.create(part=assembly, quantity=10, reference='BO-9994')
+
+        # Check that the "locked" requirement works
+        set_global_setting('BUILDORDER_REQUIRE_LOCKED_PART', True)
+        with self.assertRaises(ValidationError):
+            Build.objects.create(part=assembly, quantity=10, reference='BO-9995')
+
+        assembly.locked = True
+        assembly.save()
+
+        Build.objects.create(part=assembly, quantity=10, reference='BO-9996')
+
+        # Check that expected quantity of new builds is created
+        self.assertEqual(Build.objects.count(), n + 4)

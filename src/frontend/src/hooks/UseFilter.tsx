@@ -5,11 +5,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../App';
+import { useApi } from '../contexts/ApiContext';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { resolveItem } from '../functions/conversion';
 import { apiUrl } from '../states/ApiState';
-import { TableFilterChoice } from '../tables/Filter';
+import type { TableFilterChoice } from '../tables/Filter';
 
 type UseFilterProps = {
   url: string;
@@ -20,8 +20,11 @@ type UseFilterProps = {
 };
 
 export function useFilters(props: UseFilterProps) {
+  const api = useApi();
+
   const query = useQuery({
     enabled: true,
+    gcTime: 500,
     queryKey: [props.url, props.method, props.params],
     queryFn: async () => {
       return await api
@@ -31,7 +34,7 @@ export function useFilters(props: UseFilterProps) {
           params: props.params
         })
         .then((response) => {
-          let data = resolveItem(response, props.accessor ?? 'data');
+          const data = resolveItem(response, props.accessor ?? 'data');
 
           if (data == null || data == undefined) {
             return [];
@@ -44,7 +47,15 @@ export function useFilters(props: UseFilterProps) {
   });
 
   const choices: TableFilterChoice[] = useMemo(() => {
-    return query.data?.map(props.transform) ?? [];
+    const opts = query.data?.map(props.transform) ?? [];
+
+    // Ensure stringiness
+    return opts.map((opt: any) => {
+      return {
+        value: opt.value.toString(),
+        label: opt?.label?.toString() ?? opt.value.toString()
+      };
+    });
   }, [props.transform, query.data]);
 
   const refresh = useCallback(() => {
@@ -72,6 +83,9 @@ export function useProjectCodeFilters() {
 export function useUserFilters() {
   return useFilters({
     url: apiUrl(ApiEndpoints.user_list),
+    params: {
+      is_active: true
+    },
     transform: (item) => ({
       value: item.pk,
       label: item.username
@@ -83,6 +97,9 @@ export function useUserFilters() {
 export function useOwnerFilters() {
   return useFilters({
     url: apiUrl(ApiEndpoints.owner_list),
+    params: {
+      is_active: true
+    },
     transform: (item) => ({
       value: item.pk,
       label: item.name

@@ -1,9 +1,8 @@
-import { Trans, t } from '@lingui/macro';
-import { Stack } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
-  IconDeviceDesktopAnalytics,
   IconFileAnalytics,
   IconLock,
   IconSearch,
@@ -11,8 +10,10 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import type { PanelType } from '../../../components/panels/Panel';
+import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';
@@ -22,6 +23,11 @@ import { AccountContent } from './AccountSettings/UserPanel';
  * User settings page
  */
 export default function UserSettings() {
+  const [user, isLoggedIn] = useUserState((state) => [
+    state.user,
+    state.isLoggedIn
+  ]);
+
   const userSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -37,11 +43,6 @@ export default function UserSettings() {
         content: <SecurityContent />
       },
       {
-        name: 'dashboard',
-        label: t`Dashboard`,
-        icon: <IconDeviceDesktopAnalytics />
-      },
-      {
         name: 'display',
         label: t`Display Options`,
         icon: <IconDeviceDesktop />,
@@ -54,7 +55,8 @@ export default function UserSettings() {
               'PART_SHOW_QUANTITY_IN_FORMS',
               'DISPLAY_SCHEDULE_TAB',
               'DISPLAY_STOCKTAKE_TAB',
-              'TABLE_STRING_MAX_LENGTH'
+              'TABLE_STRING_MAX_LENGTH',
+              'ENABLE_LAST_BREADCRUMB'
             ]}
           />
         )
@@ -83,6 +85,7 @@ export default function UserSettings() {
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS',
               'SEARCH_PREVIEW_SHOW_SALES_ORDERS',
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS',
+              'SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS',
               'SEARCH_PREVIEW_SHOW_RETURN_ORDERS',
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS'
             ]}
@@ -92,7 +95,8 @@ export default function UserSettings() {
       {
         name: 'notifications',
         label: t`Notifications`,
-        icon: <IconBellCog />
+        icon: <IconBellCog />,
+        content: <UserSettingList keys={['NOTIFICATION_ERROR_REPORT']} />
       },
       {
         name: 'reporting',
@@ -106,20 +110,31 @@ export default function UserSettings() {
       }
     ];
   }, []);
-  const [user] = useUserState((state) => [state.user]);
+
+  if (!isLoggedIn()) {
+    return <Skeleton />;
+  }
 
   return (
     <>
-      <Stack gap="xs">
+      <PageTitle title={t`User Settings`} />
+      <Stack gap='xs'>
         <SettingsHeader
+          label='user'
           title={t`Account Settings`}
-          subtitle={`${user?.first_name} ${user?.last_name}`}
+          subtitle={
+            user?.first_name && user?.last_name
+              ? `${user?.first_name} ${user?.last_name}`
+              : null
+          }
           shorthand={user?.username || ''}
-          switch_link="/settings/system"
-          switch_text={<Trans>Switch to System Setting</Trans>}
-          switch_condition={user?.is_staff || false}
         />
-        <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
+        <PanelGroup
+          pageKey='user-settings'
+          panels={userSettingsPanels}
+          model='usersettings'
+          id={null}
+        />
       </Stack>
     </>
   );

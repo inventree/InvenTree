@@ -25,11 +25,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchaseorderattachment',
             name='attachment',
-            field=models.FileField(blank=True, help_text='Select file to attach', null=True, upload_to=InvenTree.models.rename_attachment, verbose_name='Attachment'),
+            field=models.FileField(blank=True, help_text='Select file to attach', null=True, upload_to='attachments', verbose_name='Attachment'),
         ),
         migrations.AlterField(
             model_name='salesorderattachment',
             name='attachment',
-            field=models.FileField(blank=True, help_text='Select file to attach', null=True, upload_to=InvenTree.models.rename_attachment, verbose_name='Attachment'),
+            field=models.FileField(blank=True, help_text='Select file to attach', null=True, upload_to='attachments', verbose_name='Attachment'),
         ),
     ]

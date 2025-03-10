@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='testreport',
             name='template',
-            field=models.FileField(help_text='Report template file', upload_to=report.models.rename_template, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template'),
+            field=models.FileField(help_text='Report template file', upload_to='report', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template'),
         ),
     ]

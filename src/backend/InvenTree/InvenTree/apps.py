@@ -1,6 +1,5 @@
 """AppConfig for InvenTree app."""
 
-import logging
 from importlib import import_module
 from pathlib import Path
 
@@ -11,12 +10,16 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError
 
+import structlog
+from allauth.socialaccount.signals import social_account_updated
+
 import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeConfig(AppConfig):
@@ -37,9 +40,14 @@ class InvenTreeConfig(AppConfig):
         - Adding users set in the current environment
         """
         # skip loading if plugin registry is not loaded or we run in a background thread
+
+        if not InvenTree.ready.isPluginRegistryLoaded():
+            return
+
+        # Skip if not in worker or main thread
         if (
-            not InvenTree.ready.isPluginRegistryLoaded()
-            or not InvenTree.ready.isInMainThread()
+            not InvenTree.ready.isInMainThread()
+            and not InvenTree.ready.isInWorkerThread()
         ):
             return
 
@@ -49,7 +57,6 @@ class InvenTreeConfig(AppConfig):
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.remove_obsolete_tasks()
-
             self.collect_tasks()
             self.start_background_tasks()
 
@@ -69,11 +76,18 @@ class InvenTreeConfig(AppConfig):
             self.add_user_on_startup()
             self.add_user_from_file()
 
+        # register event receiver and connect signal for SSO group sync. The connected signal is
+        # used for account updates whereas the receiver is used for the initial account creation.
+        from InvenTree import sso
+
+        social_account_updated.connect(sso.ensure_sso_groups)
+
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
         obsolete = [
             'InvenTree.tasks.delete_expired_sessions',
             'stock.tasks.delete_old_stock_items',
+            'label.tasks.cleanup_old_label_outputs',
         ]
 
         try:
@@ -83,7 +97,14 @@ class InvenTreeConfig(AppConfig):
 
         # Remove any existing obsolete tasks
         try:
-            Schedule.objects.filter(func__in=obsolete).delete()
+            obsolete_tasks = Schedule.objects.filter(func__in=obsolete)
+
+            if obsolete_tasks.exists():
+                logger.info(
+                    'Removing %s obsolete background tasks', obsolete_tasks.count()
+                )
+                obsolete_tasks.delete()
+
         except Exception:
             logger.exception('Failed to remove obsolete tasks - database not ready')
 
@@ -108,7 +129,7 @@ class InvenTreeConfig(AppConfig):
         for task in tasks:
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 
-            if ref_name in existing_tasks.keys():
+            if ref_name in existing_tasks:
                 # This task already exists - update the details if required
                 existing_task = existing_tasks[ref_name]
 
@@ -177,7 +198,7 @@ class InvenTreeConfig(AppConfig):
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
 
-            from common.settings import currency_code_default
+            from common.currency import currency_code_default
             from InvenTree.tasks import update_exchange_rates
         except AppRegistryNotReady:  # pragma: no cover
             pass
@@ -230,8 +251,6 @@ class InvenTreeConfig(AppConfig):
         - If a fixed SITE_URL is specified (via configuration), it should override the INVENTREE_BASE_URL setting
         - If multi-site support is enabled, update the site URL for the current site
         """
-        import common.models
-
         if not InvenTree.ready.canAppAccessDatabase():
             return
 
@@ -240,13 +259,8 @@ class InvenTreeConfig(AppConfig):
 
         if settings.SITE_URL:
             try:
-                if (
-                    common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
-                    != settings.SITE_URL
-                ):
-                    common.models.InvenTreeSetting.set_setting(
-                        'INVENTREE_BASE_URL', settings.SITE_URL
-                    )
+                if get_global_setting('INVENTREE_BASE_URL') != settings.SITE_URL:
+                    set_global_setting('INVENTREE_BASE_URL', settings.SITE_URL)
                     logger.info('Updated INVENTREE_SITE_URL to %s', settings.SITE_URL)
             except Exception:
                 pass

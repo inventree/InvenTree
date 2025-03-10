@@ -9,21 +9,24 @@ import { ModelType } from '../enums/ModelType';
 export const statusCodeList: Record<string, ModelType> = {
   BuildStatus: ModelType.build,
   PurchaseOrderStatus: ModelType.purchaseorder,
-  ReturnOrderLineStatus: ModelType.purchaseorderline,
   ReturnOrderStatus: ModelType.returnorder,
+  ReturnOrderLineStatus: ModelType.returnorderlineitem,
   SalesOrderStatus: ModelType.salesorder,
   StockHistoryCode: ModelType.stockhistory,
-  StockStatus: ModelType.stockitem
+  StockStatus: ModelType.stockitem,
+  DataImportStatusCode: ModelType.importsession
 };
 
 /*
  * Map the colors used in the backend to the colors used in the frontend
  */
-export const colorMap: { [key: string]: string } = {
+export const statusColorMap: { [key: string]: string } = {
   dark: 'dark',
   warning: 'yellow',
   success: 'green',
   info: 'cyan',
   danger: 'red',
+  primary: 'blue',
+  secondary: 'gray',
   default: 'gray'
 };
