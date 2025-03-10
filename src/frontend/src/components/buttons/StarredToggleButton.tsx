@@ -3,22 +3,36 @@ import { showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { ActionButton } from './ActionButton';
 
 export default function StarredToggleButton({
-  part,
+  instance,
+  model,
   successFunction
-}: Readonly<{ part: any; successFunction: () => void }>): JSX.Element {
+}: Readonly<{
+  instance: any;
+  model: ModelType.part | ModelType.partcategory;
+  successFunction: () => void;
+}>): JSX.Element {
   const api = useApi();
 
   function change(starred: boolean, partPk: number) {
     api
-      .patch(apiUrl(ApiEndpoints.part_list, partPk), { starred: !starred })
+      .patch(
+        apiUrl(
+          model == ModelType.part
+            ? ApiEndpoints.part_list
+            : ApiEndpoints.category_list,
+          partPk
+        ),
+        { starred: !starred }
+      )
       .then(() => {
         showNotification({
-          title: 'Part Subscription',
-          message: `Part subscription ${starred ? 'removed' : 'added'}`,
+          title: 'Subscription updated',
+          message: `Subscription ${starred ? 'removed' : 'added'}`,
           autoClose: 5000,
           color: 'blue'
         });
@@ -29,11 +43,11 @@ export default function StarredToggleButton({
   return (
     <ActionButton
       icon={<IconBell />}
-      color={part.starred ? 'green' : 'blue'}
+      color={instance.starred ? 'green' : 'blue'}
       size='lg'
-      variant={part.starred ? 'filled' : 'outline'}
+      variant={instance.starred ? 'filled' : 'outline'}
       tooltip={t`Unsubscribe from part`}
-      onClick={() => change(part.starred, part.pk)}
+      onClick={() => change(instance.starred, instance.pk)}
       tooltipAlignment='bottom'
     />
   );

@@ -884,7 +884,8 @@ export default function PartDetail() {
       <AdminButton model={ModelType.part} id={part.pk} />,
       <StarredToggleButton
         key='starred_change'
-        part={part}
+        instance={part}
+        model={ModelType.part}
         successFunction={() => {
           refreshInstance();
         }}
