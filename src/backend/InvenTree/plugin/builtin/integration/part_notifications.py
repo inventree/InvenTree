@@ -62,6 +62,7 @@ class PartNotificationsPlugin(SettingsMixin, EventMixin, InvenTreePlugin):
             part,
             'part.notification',
             target_fnc=part.get_subscribers,
+            check_recent=False,
             context={
                 'part': part,
                 'name': name,
