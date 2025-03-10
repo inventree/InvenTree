@@ -461,7 +461,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         )
 
         # There should be a link to the generated PDF
-        self.assertTrue(response.data['output'].startswith('/media/report/'))
+        self.assertTrue(response.data['output'].startswith('/media/data-output/'))
         self.assertTrue(response.data['output'].endswith('.pdf'))
 
         # By default, this should *not* have created an attachment against this stockitem

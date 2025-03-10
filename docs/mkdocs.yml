@@ -130,8 +130,6 @@ nav:
     - Allocating Stock: build/allocate.md
     - Example Build Order: build/example.md
     - Bill of Materials: build/bom.md
-    - Importing BOM Data: build/bom_import.md
-    - Exporting BOM Data: build/bom_export.md
   - Orders:
     - Companies: order/company.md
     - Purchase Orders: order/purchase_order.md
@@ -208,6 +206,7 @@ nav:
       - App Mixin: extend/plugins/app.md
       - Barcode Mixin: extend/plugins/barcode.md
       - Currency Mixin: extend/plugins/currency.md
+      - Data Export Mixin: extend/plugins/export.md
       - Event Mixin: extend/plugins/event.md
       - Icon Pack Mixin: extend/plugins/icon.md
       - Label Printing Mixin: extend/plugins/label.md

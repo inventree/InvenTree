@@ -12,12 +12,24 @@ import feedparser
 import requests
 import structlog
 
+import common.models
 import InvenTree.helpers
 from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
 logger = structlog.get_logger('inventree')
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def cleanup_old_data_outputs():
+    """Remove old data outputs from the database."""
+    # Remove any outputs which are older than 5 days
+    # Note: Remove them individually, to ensure that the files are removed too
+    threshold = InvenTree.helpers.current_date() - timedelta(days=5)
+
+    for output in common.models.DataOutput.objects.filter(created__lte=threshold):
+        output.delete()
 
 
 @scheduled_task(ScheduledTask.DAILY)

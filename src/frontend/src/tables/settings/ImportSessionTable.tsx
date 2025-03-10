@@ -71,6 +71,7 @@ export default function ImportSesssionTable() {
       {
         accessor: 'user',
         sortable: false,
+        title: t`User`,
         render: (record: any) => RenderUser({ instance: record.user_detail })
       },
       {
