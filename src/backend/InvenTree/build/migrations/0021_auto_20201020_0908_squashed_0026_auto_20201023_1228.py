@@ -10,8 +10,6 @@ from build.status_codes import BuildStatus
 
 class Migration(migrations.Migration):
 
-    replaces = [('build', '0021_auto_20201020_0908'), ('build', '0022_auto_20201020_0953'), ('build', '0023_auto_20201020_1009'), ('build', '0024_auto_20201020_1144'), ('build', '0025_auto_20201020_1248'), ('build', '0026_auto_20201023_1228')]
-
     dependencies = [
         ('stock', '0052_stockitem_is_building'),
         ('build', '0020_auto_20201019_1325'),
