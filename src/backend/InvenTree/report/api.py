@@ -210,7 +210,7 @@ class LabelPrint(GenericAPIView):
             progress=0,
             complete=False,
             output_type=DataOutput.DataOutputTypes.LABEL,
-            plugin_key=plugin.slug,
+            plugin=plugin.slug,
             template_name=template.name,
             output=None,
         )

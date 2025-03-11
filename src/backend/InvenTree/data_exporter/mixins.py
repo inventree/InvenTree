@@ -439,7 +439,7 @@ class DataExportViewMixin:
                 progress=0,
                 complete=False,
                 output_type=DataOutput.DataOutputTypes.EXPORT,
-                plugin_key=export_plugin.slug,
+                plugin=export_plugin.slug,
                 output=None,
             )
 

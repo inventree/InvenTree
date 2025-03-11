@@ -799,7 +799,7 @@ class DataOutputSerializer(InvenTreeModelSerializer):
             'complete',
             'output_type',
             'template_name',
-            'plugin_key',
+            'plugin',
             'output',
             'errors',
         ]

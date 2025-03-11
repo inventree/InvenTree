@@ -2329,7 +2329,7 @@ class DataOutput(models.Model):
         complete: Has the data output generation process completed?
         output_type: The type of data output generated (e.g. 'label', 'report', etc)
         template_name: Name of the template used to generate the data output (if applicable)
-        plugin_key: Key for the plugin which generated the data output (if applicable)
+        plugin: Key for the plugin which generated the data output (if applicable)
         output: File field for storing the generated file
         errors: JSON field for storing any errors generated during the data output generation process
     """
@@ -2361,7 +2361,7 @@ class DataOutput(models.Model):
 
     template_name = models.CharField(max_length=100, blank=True, null=True)
 
-    plugin_key = models.CharField(max_length=100, blank=True, null=True)
+    plugin = models.CharField(max_length=100, blank=True, null=True)
 
     output = models.FileField(upload_to='data_output', blank=True, null=True)
 

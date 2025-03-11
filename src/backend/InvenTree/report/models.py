@@ -621,7 +621,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
                 complete=False,
                 output_type=DataOutput.DataOutputTypes.LABEL,
                 template_name=self.name,
-                plugin_key=plugin.slug,
+                plugin=plugin.slug,
                 output=None,
             )
 
