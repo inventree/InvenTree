@@ -137,12 +137,15 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     )
 
     project_code_label = serializers.CharField(
-        source='project_code.code', read_only=True, label='Project Code Label'
+        source='project_code.code',
+        read_only=True,
+        label='Project Code Label',
+        allow_null=True,
     )
 
     # Detail for project code field
     project_code_detail = ProjectCodeSerializer(
-        source='project_code', read_only=True, many=False
+        source='project_code', read_only=True, many=False, allow_null=True
     )
 
     # Detail for address field
@@ -188,6 +191,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'pk',
             'created_by',
             'creation_date',
+            'issue_date',
             'start_date',
             'target_date',
             'description',
@@ -317,7 +321,6 @@ class PurchaseOrderSerializer(
         model = order.models.PurchaseOrder
 
         fields = AbstractOrderSerializer.order_fields([
-            'issue_date',
             'complete_date',
             'supplier',
             'supplier_detail',
@@ -1850,7 +1853,6 @@ class ReturnOrderSerializer(
         model = order.models.ReturnOrder
 
         fields = AbstractOrderSerializer.order_fields([
-            'issue_date',
             'complete_date',
             'customer',
             'customer_detail',

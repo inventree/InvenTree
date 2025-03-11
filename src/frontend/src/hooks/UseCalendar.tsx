@@ -1,7 +1,13 @@
 import type FullCalendar from '@fullcalendar/react';
 import type { DateValue } from '@mantine/dates';
 import { useLocalStorage } from '@mantine/hooks';
-import { useCallback, useRef, useState } from 'react';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { api } from '../App';
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import { showApiErrorMessage } from '../functions/notifications';
+import { apiUrl } from '../states/ApiState';
 import type { TableFilter } from '../tables/Filter';
 
 /*
@@ -41,9 +47,19 @@ export type CalendarState = {
   prevMonth: () => void;
   currentMonth: () => void;
   selectMonth: (date: DateValue) => void;
+  query: UseQueryResult;
+  data: any;
 };
 
-export default function useCalendar(calendarName: string): CalendarState {
+export default function useCalendar({
+  name,
+  endpoint,
+  queryParams
+}: {
+  name: string;
+  endpoint: ApiEndpoints;
+  queryParams?: any;
+}): CalendarState {
   const ref = useRef<FullCalendar | null>(null);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -56,7 +72,7 @@ export default function useCalendar(calendarName: string): CalendarState {
 
   // Array of active filters (saved to local storage)
   const [activeFilters, setActiveFilters] = useLocalStorage<TableFilter[]>({
-    key: `inventree-calendar-filters-${calendarName}`,
+    key: `inventree-calendar-filters-${name}`,
     defaultValue: [],
     getInitialValueInEffect: false
   });
@@ -65,6 +81,43 @@ export default function useCalendar(calendarName: string): CalendarState {
   const clearActiveFilters = useCallback(() => {
     setActiveFilters([]);
   }, []);
+
+  // Generate a set of API query filters
+  const queryFilters = useMemo(() => {
+    // Expand date range by one month, to ensure we capture all events
+
+    return {
+      min_date: startDate
+        ? dayjs(startDate).subtract(1, 'month').toISOString().split('T')[0]
+        : null,
+      max_date: endDate
+        ? dayjs(endDate).add(1, 'month').toISOString().split('T')[0]
+        : null,
+      search: searchTerm,
+      ...(queryParams || {})
+    };
+  }, [startDate, endDate, searchTerm, activeFilters, queryParams]);
+
+  const query = useQuery({
+    enabled: !!startDate && !!endDate,
+    queryKey: ['calendar', name, endpoint, queryFilters],
+    queryFn: async () => {
+      // Fetch data from the API
+      return api
+        .get(apiUrl(endpoint), {
+          params: queryFilters
+        })
+        .then((response) => {
+          return response.data ?? [];
+        })
+        .catch((error) => {
+          showApiErrorMessage({
+            error: error,
+            title: 'Error fetching calendar data'
+          });
+        });
+    }
+  });
 
   // Navigate to the previous month
   const prevMonth = useCallback(() => {
@@ -109,6 +162,8 @@ export default function useCalendar(calendarName: string): CalendarState {
     startDate,
     setStartDate,
     endDate,
-    setEndDate
+    setEndDate,
+    query: query,
+    data: query.data
   };
 }

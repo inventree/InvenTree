@@ -1,6 +1,5 @@
 """Order model definitions."""
 
-from datetime import datetime
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -210,6 +209,7 @@ class Order(
     """
 
     REQUIRE_RESPONSIBLE_SETTING = None
+    LOCK_SETTING = None
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -219,13 +219,50 @@ class Order(
     def save(self, *args, **kwargs):
         """Custom save method for the order models.
 
-        Ensures that the reference field is rebuilt whenever the instance is saved.
+        Enforces various business logics:
+        - Ensures the object is not locked
+        - Ensures that the reference field is rebuilt whenever the instance is saved.
         """
+        # check if we are updating the model, not adding it
+        update = self.pk is not None
+
+        # Locking
+        if update and self.check_locked(True):
+            # Ensure that order status can be changed still
+            if self.get_db_instance().status != self.status:
+                pass
+            else:
+                raise ValidationError({
+                    'reference': _('This order is locked and cannot be modified')
+                })
+
+        # Reference calculations
         self.reference_int = self.rebuild_reference_field(self.reference)
         if not self.creation_date:
             self.creation_date = InvenTree.helpers.current_date()
 
         super().save(*args, **kwargs)
+
+    def check_locked(self, db: bool = False) -> bool:
+        """Check if this order is 'locked'.
+
+        Args:
+            db: If True, check with the database. If False, check the instance (default False).
+        """
+        return (
+            self.LOCK_SETTING
+            and get_global_setting(self.LOCK_SETTING)
+            and self.check_complete(db)
+        )
+
+    def check_complete(self, db: bool = False) -> bool:
+        """Check if this order is 'complete'.
+
+        Args:
+            db: If True, check with the database. If False, check the instance (default False).
+        """
+        status = self.get_db_instance().status if db else self.status
+        return status in self.get_status_class().COMPLETE
 
     def clean(self):
         """Custom clean method for the generic order class."""
@@ -348,6 +385,13 @@ class Order(
         verbose_name=_('Created By'),
     )
 
+    issue_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Issue Date'),
+        help_text=_('Date order was issued'),
+    )
+
     responsible = models.ForeignKey(
         UserModels.Owner,
         on_delete=models.SET_NULL,
@@ -397,6 +441,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = PurchaseOrderStatus
+    LOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -439,52 +484,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
         return 'PO'
-
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by 'minimum and maximum date range'.
-
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist between these dates
-
-        To be "interesting":
-        - A "received" order where the received date lies within the date range
-        - A "pending" order where the target date lies within the date range
-        - TODO: An "overdue" order where the target date is in the past
-        """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
-
-        # Construct a queryset for "received" orders within the range
-        received = (
-            Q(status=PurchaseOrderStatus.COMPLETE.value)
-            & Q(complete_date__gte=min_date)
-            & Q(complete_date__lte=max_date)
-        )
-
-        # Construct a queryset for "pending" orders within the range
-        pending = (
-            Q(status__in=PurchaseOrderStatusGroups.OPEN)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO: Account for the 'start date' of the PurchaseOrder
-
-        # TODO - Construct a queryset for "overdue" orders within the range
-
-        queryset = queryset.filter(received | pending)
-
-        return queryset
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
@@ -542,13 +541,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         related_name='+',
         verbose_name=_('received by'),
-    )
-
-    issue_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Issue Date'),
-        help_text=_('Date order was issued'),
     )
 
     complete_date = models.DateField(
@@ -940,7 +932,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
                 trigger_event(
-                    PurchaseOrderEvents.ITEM_RECEIVED, order_id=self.pk, item_id=self.pk
+                    PurchaseOrderEvents.ITEM_RECEIVED,
+                    order_id=self.pk,
+                    item_id=item.pk,
+                    line_id=line.pk,
                 )
 
         # Update the number of parts received against the particular line item
@@ -969,6 +964,7 @@ class SalesOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = SalesOrderStatus
+    LOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -1009,52 +1005,6 @@ class SalesOrder(TotalPriceMixin, Order):
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
         return 'SO'
-
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by "minimum and maximum date range".
-
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist between these dates
-
-        To be "interesting":
-        - A "completed" order where the completion date lies within the date range
-        - A "pending" order where the target date lies within the date range
-        - TODO: An "overdue" order where the target date is in the past
-        """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
-
-        # Construct a queryset for "completed" orders within the range
-        completed = (
-            Q(status__in=SalesOrderStatusGroups.COMPLETE)
-            & Q(shipment_date__gte=min_date)
-            & Q(shipment_date__lte=max_date)
-        )
-
-        # TODO: Account for the 'start date' of the SalesOrder
-
-        # Construct a queryset for "pending" orders within the range
-        pending = (
-            Q(status__in=SalesOrderStatusGroups.OPEN)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO: Construct a queryset for "overdue" orders within the range
-
-        queryset = queryset.filter(completed | pending)
-
-        return queryset
 
     def __str__(self):
         """Render a string representation of this SalesOrder."""
@@ -1450,6 +1400,11 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
         Calls save method on the linked order
         """
+        if self.order and self.order.check_locked():
+            raise ValidationError({
+                'reference': _('The order is locked and cannot be modified')
+            })
+
         super().save(*args, **kwargs)
         self.order.save()
 
@@ -1458,6 +1413,11 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
         Calls save method on the linked order
         """
+        if self.order and self.order.check_locked():
+            raise ValidationError({
+                'reference': _('The order is locked and cannot be modified')
+            })
+
         super().delete(*args, **kwargs)
         self.order.save()
 
@@ -1667,7 +1627,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         return max(r, 0)
 
     def is_completed(self) -> bool:
-        """Determine if this lien item has been fully received."""
+        """Determine if this line item has been fully received."""
         return self.received >= self.quantity
 
     def update_pricing(self):
@@ -2216,6 +2176,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = ReturnOrderStatus
+    LOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -2302,13 +2263,6 @@ class ReturnOrder(TotalPriceMixin, Order):
         blank=True,
         verbose_name=_('Customer Reference '),
         help_text=_('Customer order reference code'),
-    )
-
-    issue_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Issue Date'),
-        help_text=_('Date order was issued'),
     )
 
     complete_date = models.DateField(

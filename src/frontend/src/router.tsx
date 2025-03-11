@@ -7,6 +7,10 @@ import { Loadable } from './functions/loading';
 export const LayoutComponent = Loadable(
   lazy(() => import('./components/nav/Layout'))
 );
+export const LoginLayoutComponent = Loadable(
+  lazy(() => import('./pages/Auth/Layout'))
+);
+
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 
 export const CompanyDetail = Loadable(
@@ -103,17 +107,24 @@ export const AdminCenter = Loadable(
 export const NotFound = Loadable(
   lazy(() => import('./components/errors/NotFound'))
 );
+
+// Auth
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
+export const LoggedIn = Loadable(lazy(() => import('./pages/Auth/LoggedIn')));
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
-export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
-export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
+export const Register = Loadable(lazy(() => import('./pages/Auth/Register')));
+export const Mfa = Loadable(lazy(() => import('./pages/Auth/MFA')));
+export const MfaSetup = Loadable(lazy(() => import('./pages/Auth/MFASetup')));
 
 export const ChangePassword = Loadable(
   lazy(() => import('./pages/Auth/ChangePassword'))
 );
-
+export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
 export const ResetPassword = Loadable(
   lazy(() => import('./pages/Auth/ResetPassword'))
+);
+export const VerifyEmail = Loadable(
+  lazy(() => import('./pages/Auth/VerifyEmail'))
 );
 
 // Routes
@@ -168,13 +179,21 @@ export const routes = (
         <Route path='customer/:id/*' element={<CustomerDetail />} />
       </Route>
     </Route>
-    <Route path='/' errorElement={<ErrorPage />}>
+    <Route
+      path='/'
+      element={<LoginLayoutComponent />}
+      errorElement={<ErrorPage />}
+    >
       <Route path='/login' element={<Login />} />,
+      <Route path='/logged-in' element={<LoggedIn />} />
       <Route path='/logout' element={<Logout />} />,
-      <Route path='/logged-in' element={<Logged_In />} />
+      <Route path='/register' element={<Register />} />,
+      <Route path='/mfa' element={<Mfa />} />,
+      <Route path='/mfa-setup' element={<MfaSetup />} />,
+      <Route path='/change-password' element={<ChangePassword />} />
       <Route path='/reset-password' element={<Reset />} />
       <Route path='/set-password' element={<ResetPassword />} />
-      <Route path='/change-password' element={<ChangePassword />} />
+      <Route path='/verify-email/:key' element={<VerifyEmail />} />
     </Route>
   </Routes>
 );

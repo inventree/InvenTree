@@ -113,7 +113,7 @@ class CompanySerializer(
 ):
     """Serializer for Company object (full detail)."""
 
-    export_exclude_fields = ['url', 'primary_address']
+    export_exclude_fields = ['primary_address']
 
     import_exclude_fields = ['image']
 
@@ -123,7 +123,6 @@ class CompanySerializer(
         model = Company
         fields = [
             'pk',
-            'url',
             'name',
             'description',
             'website',
@@ -161,9 +160,15 @@ class CompanySerializer(
 
         return queryset
 
-    primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
+    address = serializers.CharField(
+        label=_(
+            'Return the string representation for the primary address. This property exists for backwards compatibility.'
+        ),
+        allow_null=True,
+        read_only=True,
+    )
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
@@ -353,7 +358,6 @@ class SupplierPartSerializer(
             'SKU',
             'supplier',
             'supplier_detail',
-            'url',
             'updated',
             'notes',
             'tags',
@@ -444,8 +448,6 @@ class SupplierPartSerializer(
     MPN = serializers.CharField(
         source='manufacturer_part.MPN', read_only=True, label=_('MPN')
     )
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     # Date fields
     updated = serializers.DateTimeField(allow_null=True, read_only=True)

@@ -37,7 +37,6 @@ export const ModelInformationDict: ModelDict = {
   partparametertemplate: {
     label: () => t`Part Parameter Template`,
     label_multiple: () => t`Part Parameter Templates`,
-    url_overview: '/partparametertemplate',
     url_detail: '/partparametertemplate/:pk/',
     api_endpoint: ApiEndpoints.part_parameter_template_list,
     icon: 'test_templates'
@@ -45,7 +44,6 @@ export const ModelInformationDict: ModelDict = {
   parttesttemplate: {
     label: () => t`Part Test Template`,
     label_multiple: () => t`Part Test Templates`,
-    url_overview: '/parttesttemplate',
     url_detail: '/parttesttemplate/:pk/',
     api_endpoint: ApiEndpoints.part_test_template_list,
     icon: 'test'
@@ -53,7 +51,7 @@ export const ModelInformationDict: ModelDict = {
   supplierpart: {
     label: () => t`Supplier Part`,
     label_multiple: () => t`Supplier Parts`,
-    url_overview: '/supplierpart',
+    url_overview: '/purchasing/index/supplier-parts',
     url_detail: '/purchasing/supplier-part/:pk/',
     api_endpoint: ApiEndpoints.supplier_part_list,
     admin_url: '/company/supplierpart/',
@@ -62,7 +60,7 @@ export const ModelInformationDict: ModelDict = {
   manufacturerpart: {
     label: () => t`Manufacturer Part`,
     label_multiple: () => t`Manufacturer Parts`,
-    url_overview: '/manufacturerpart',
+    url_overview: '/purchasing/index/manufacturer-parts',
     url_detail: '/purchasing/manufacturer-part/:pk/',
     api_endpoint: ApiEndpoints.manufacturer_part_list,
     admin_url: '/company/manufacturerpart/',
@@ -133,7 +131,6 @@ export const ModelInformationDict: ModelDict = {
   company: {
     label: () => t`Company`,
     label_multiple: () => t`Companies`,
-    url_overview: '/company',
     url_detail: '/company/:pk/',
     api_endpoint: ApiEndpoints.company_list,
     admin_url: '/company/company/',
@@ -142,7 +139,6 @@ export const ModelInformationDict: ModelDict = {
   projectcode: {
     label: () => t`Project Code`,
     label_multiple: () => t`Project Codes`,
-    url_overview: '/project-code',
     url_detail: '/project-code/:pk/',
     api_endpoint: ApiEndpoints.project_code_list,
     icon: 'list_details'
@@ -174,7 +170,6 @@ export const ModelInformationDict: ModelDict = {
   salesordershipment: {
     label: () => t`Sales Order Shipment`,
     label_multiple: () => t`Sales Order Shipments`,
-    url_overview: '/sales/shipment/',
     url_detail: '/sales/shipment/:pk/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
     icon: 'sales_orders'
@@ -197,7 +192,6 @@ export const ModelInformationDict: ModelDict = {
   address: {
     label: () => t`Address`,
     label_multiple: () => t`Addresses`,
-    url_overview: '/address',
     url_detail: '/address/:pk/',
     api_endpoint: ApiEndpoints.address_list,
     icon: 'address'
@@ -205,7 +199,6 @@ export const ModelInformationDict: ModelDict = {
   contact: {
     label: () => t`Contact`,
     label_multiple: () => t`Contacts`,
-    url_overview: '/contact',
     url_detail: '/contact/:pk/',
     api_endpoint: ApiEndpoints.contact_list,
     icon: 'group'
@@ -213,7 +206,6 @@ export const ModelInformationDict: ModelDict = {
   owner: {
     label: () => t`Owner`,
     label_multiple: () => t`Owners`,
-    url_overview: '/owner',
     url_detail: '/owner/:pk/',
     api_endpoint: ApiEndpoints.owner_list,
     icon: 'group'
@@ -221,7 +213,6 @@ export const ModelInformationDict: ModelDict = {
   user: {
     label: () => t`User`,
     label_multiple: () => t`Users`,
-    url_overview: '/user',
     url_detail: '/user/:pk/',
     api_endpoint: ApiEndpoints.user_list,
     icon: 'user'
@@ -229,7 +220,6 @@ export const ModelInformationDict: ModelDict = {
   group: {
     label: () => t`Group`,
     label_multiple: () => t`Groups`,
-    url_overview: '/user/group',
     url_detail: '/user/group-:pk',
     api_endpoint: ApiEndpoints.group_list,
     admin_url: '/auth/group/',
@@ -238,7 +228,7 @@ export const ModelInformationDict: ModelDict = {
   importsession: {
     label: () => t`Import Session`,
     label_multiple: () => t`Import Sessions`,
-    url_overview: '/import',
+    url_overview: '/settings/admin/import',
     url_detail: '/import/:pk/',
     api_endpoint: ApiEndpoints.import_session_list,
     icon: 'import'
@@ -246,24 +236,24 @@ export const ModelInformationDict: ModelDict = {
   labeltemplate: {
     label: () => t`Label Template`,
     label_multiple: () => t`Label Templates`,
-    url_overview: '/labeltemplate',
-    url_detail: '/labeltemplate/:pk/',
+    url_overview: '/settings/admin/labels',
+    url_detail: '/settings/admin/labels/:pk/',
     api_endpoint: ApiEndpoints.label_list,
     icon: 'labels'
   },
   reporttemplate: {
     label: () => t`Report Template`,
     label_multiple: () => t`Report Templates`,
-    url_overview: '/reporttemplate',
-    url_detail: '/reporttemplate/:pk/',
+    url_overview: '/settings/admin/reports',
+    url_detail: '/settings/admin/reports/:pk/',
     api_endpoint: ApiEndpoints.report_list,
     icon: 'reports'
   },
   pluginconfig: {
     label: () => t`Plugin Configuration`,
     label_multiple: () => t`Plugin Configurations`,
-    url_overview: '/pluginconfig',
-    url_detail: '/pluginconfig/:pk/',
+    url_overview: '/settings/admin/plugin',
+    url_detail: '/settings/admin/plugin/:pk/',
     api_endpoint: ApiEndpoints.plugin_list,
     icon: 'plugin'
   },

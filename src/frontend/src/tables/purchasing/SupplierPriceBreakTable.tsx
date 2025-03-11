@@ -24,7 +24,7 @@ import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function calculateSupplierPartUnitPrice(record: any) {
   const pack_quantity = record?.part_detail?.pack_quantity_native ?? 1;
-  const unit_price = record.price / pack_quantity;
+  const unit_price = Number.parseFloat(record.price) / pack_quantity;
 
   return unit_price;
 }

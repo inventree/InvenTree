@@ -118,7 +118,7 @@ export function Header() {
           {navbar_message && (
             <Text>
               {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
-              <div dangerouslySetInnerHTML={{ __html: navbar_message }} />
+              <span dangerouslySetInnerHTML={{ __html: navbar_message }} />
             </Text>
           )}
           <Group>

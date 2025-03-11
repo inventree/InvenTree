@@ -172,12 +172,21 @@ class PluginsRegistry:
         # Check if the registry needs to be reloaded
         self.check_reload()
 
+        raise_error = kwargs.pop('raise_error', True)
+
         plugin = self.get_plugin(slug)
 
         if not plugin:
+            if raise_error:
+                raise AttributeError(f"Plugin '{slug}' not found")
             return
 
         plugin_func = getattr(plugin, func)
+
+        if not plugin_func or not callable(plugin_func):
+            if raise_error:
+                raise AttributeError(f"Plugin '{slug}' has no callable method '{func}'")
+            return
 
         return plugin_func(*args, **kwargs)
 
@@ -828,18 +837,23 @@ class PluginsRegistry:
         return str(data.hexdigest())
 
     def check_reload(self):
-        """Determine if the registry needs to be reloaded."""
+        """Determine if the registry needs to be reloaded.
+
+        Returns True if the registry has changed and was reloaded.
+        """
         if settings.TESTING:
             # Skip if running during unit testing
-            return
+            return False
 
-        if not canAppAccessDatabase(allow_shell=True):
+        if not canAppAccessDatabase(
+            allow_shell=True, allow_test=settings.PLUGIN_TESTING_RELOAD
+        ):
             # Skip check if database cannot be accessed
-            return
+            return False
 
         if InvenTree.cache.get_session_cache('plugin_registry_checked'):
             # Return early if the registry has already been checked (for this request)
-            return
+            return False
 
         InvenTree.cache.set_session_cache('plugin_registry_checked', True)
 
@@ -853,11 +867,13 @@ class PluginsRegistry:
             reg_hash = get_global_setting('_PLUGIN_REGISTRY_HASH', '', create=False)
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
-            return
+            return False
 
         if reg_hash and reg_hash != self.registry_hash:
             logger.info('Plugin registry hash has changed - reloading')
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
+            return True
+        return False
 
     # endregion
 

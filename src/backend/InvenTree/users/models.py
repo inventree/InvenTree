@@ -51,8 +51,6 @@ def default_token():
 
 def default_token_expiry():
     """Generate an expiry date for a newly created token."""
-    # TODO: Custom value for default expiry timeout
-    # TODO: For now, tokens last for 1 year
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
 
 
@@ -139,7 +137,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     )
 
     @staticmethod
-    def sanitize_name(name: str):
+    def sanitize_name(name: str) -> str:
         """Sanitize the provide name value."""
         name = str(name).strip()
 
@@ -157,7 +155,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(description=_('Token'))
-    def token(self):
+    def token(self) -> str:
         """Provide a redacted version of the token.
 
         The *raw* key value should never be displayed anywhere!
@@ -172,7 +170,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
-    def expired(self):
+    def expired(self) -> bool:
         """Test if this token has expired."""
         return (
             self.expiry is not None and self.expiry < InvenTree.helpers.current_date()
@@ -180,7 +178,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Active'))
-    def active(self):
+    def active(self) -> bool:
         """Test if this token is active."""
         return not self.revoked and not self.expired
 
@@ -238,6 +236,7 @@ class RuleSet(models.Model):
                 'otp_totp_totpdevice',
                 'otp_static_statictoken',
                 'otp_static_staticdevice',
+                'mfa_authenticator',
                 'plugin_pluginconfig',
                 'plugin_pluginsetting',
                 'plugin_notificationusersetting',
@@ -353,7 +352,8 @@ class RuleSet(models.Model):
             'error_report_error',
             'exchange_rate',
             'exchange_exchangebackend',
-            'user_sessions_session',
+            'usersessions_usersession',
+            'sessions_session',
             # Django-q
             'django_q_ormq',
             'django_q_failure',

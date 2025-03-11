@@ -5,14 +5,15 @@ import { useMemo } from 'react';
 
 import { useLocalStorage } from '@mantine/hooks';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
+import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import BuildCalendar from './BuildCalendar';
 
 function BuildOverview({
   view
@@ -21,7 +22,13 @@ function BuildOverview({
 }) {
   switch (view) {
     case 'calendar':
-      return <BuildCalendar />;
+      return (
+        <OrderCalendar
+          model={ModelType.build}
+          role={UserRoles.build}
+          params={{ outstanding: true }}
+        />
+      );
     case 'table':
     default:
       return <BuildOrderTable />;

@@ -13,7 +13,7 @@ import {
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { Boundary } from '../components/Boundary';
@@ -122,6 +122,18 @@ export default function InvenTreeTableHeader({
     }
   });
 
+  const hasCustomSearch = useMemo(() => {
+    return tableState.queryFilters.has('search');
+  }, [tableState.queryFilters]);
+
+  const hasCustomFilters = useMemo(() => {
+    if (hasCustomSearch) {
+      return tableState.queryFilters.size > 1;
+    } else {
+      return tableState.queryFilters.size > 0;
+    }
+  }, [hasCustomSearch, tableState.queryFilters]);
+
   return (
     <>
       {deleteRecords.modal}
@@ -135,7 +147,7 @@ export default function InvenTreeTableHeader({
           />
         </Boundary>
       )}
-      {tableState.queryFilters.size > 0 && (
+      {(hasCustomFilters || hasCustomSearch) && (
         <Alert
           color='yellow'
           withCloseButton
@@ -143,7 +155,6 @@ export default function InvenTreeTableHeader({
           onClose={() => tableState.clearQueryFilters()}
         />
       )}
-
       <Group justify='apart' grow wrap='nowrap'>
         <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
           <PrintingActions
@@ -180,6 +191,7 @@ export default function InvenTreeTableHeader({
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
             <TableSearchInput
+              disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
           )}
@@ -208,6 +220,7 @@ export default function InvenTreeTableHeader({
               disabled={tableState.activeFilters?.length == 0}
             >
               <ActionIcon
+                disabled={hasCustomFilters}
                 variant='transparent'
                 aria-label='table-select-filters'
               >

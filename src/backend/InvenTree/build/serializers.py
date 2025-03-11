@@ -62,7 +62,6 @@ class BuildSerializer(
         model = Build
         fields = [
             'pk',
-            'url',
             'title',
             'barcode_hash',
             'batch',
@@ -112,8 +111,6 @@ class BuildSerializer(
 
     level = serializers.IntegerField(label=_('Build Level'), read_only=True)
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     part_detail = part_serializers.PartBriefSerializer(
@@ -126,7 +123,7 @@ class BuildSerializer(
 
     quantity = InvenTreeDecimalField()
 
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, default=False)
 
     issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
@@ -135,11 +132,14 @@ class BuildSerializer(
     barcode_hash = serializers.CharField(read_only=True)
 
     project_code_label = serializers.CharField(
-        source='project_code.code', read_only=True, label=_('Project Code Label')
+        source='project_code.code',
+        read_only=True,
+        label=_('Project Code Label'),
+        allow_null=True,
     )
 
     project_code_detail = ProjectCodeSerializer(
-        source='project_code', many=False, read_only=True
+        source='project_code', many=False, read_only=True, allow_null=True
     )
 
     create_child_builds = serializers.BooleanField(
@@ -424,7 +424,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             except DjangoValidationError as e:
                 raise ValidationError({'serial_numbers': e.messages})
 
-            # Check for conflicting serial numbesr
+            # Check for conflicting serial numbers
             existing = part.find_conflicting_serial_numbers(self.serials)
 
             if len(existing) > 0:

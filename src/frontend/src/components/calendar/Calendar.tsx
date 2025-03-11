@@ -45,7 +45,7 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
 export default function Calendar({
   downloadData,
   enableDownload,
-  enableFilters,
+  enableFilters = false,
   enableSearch,
   isLoading,
   filters,
@@ -106,6 +106,7 @@ export default function Calendar({
                   <Button
                     m={0}
                     variant='transparent'
+                    aria-label='calendar-select-month'
                     onClick={() => {
                       setMonthSelectOpened(!monthSelectOpened);
                     }}
@@ -157,7 +158,7 @@ export default function Calendar({
           </Group>
         </Group>
         <Box pos='relative'>
-          <LoadingOverlay visible={isLoading} />
+          <LoadingOverlay visible={state.query.isFetching} />
           <FullCalendar
             ref={state.ref}
             plugins={[dayGridPlugin, interactionPlugin]}
