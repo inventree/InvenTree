@@ -168,8 +168,6 @@ function NavTabs() {
     context: {}
   });
 
-  console.log('extraNavs', extraNavs);
-
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
