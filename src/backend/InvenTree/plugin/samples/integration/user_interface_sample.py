@@ -197,6 +197,18 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             }
         ]
 
+    def get_ui_navigation_items(self, request, context, **kwargs):
+        """Return a list of custom navigation items."""
+        return [
+            {
+                'key': 'sample-navigation-item',
+                'title': 'Sample Navigation Item',
+                'icon': 'ti:menu',
+                'source': self.plugin_static_file('sample_navigation.js'),
+                'options': {'url': '/sample/page/'},
+            }
+        ]
+
     def get_admin_context(self) -> dict:
         """Return custom context data which can be rendered in the admin panel."""
         return {'apple': 'banana', 'foo': 'bar', 'hello': 'world'}

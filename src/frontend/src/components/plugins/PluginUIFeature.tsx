@@ -28,7 +28,8 @@ export enum PluginUIFeatureType {
   dashboard = 'dashboard',
   panel = 'panel',
   template_editor = 'template_editor',
-  template_preview = 'template_preview'
+  template_preview = 'template_preview',
+  navigation = 'navigation'
 }
 
 /**

@@ -13,9 +13,11 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -161,14 +163,21 @@ function NavTabs() {
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
 
+  const extraNavs = usePluginUIFeature<NavigationUIFeature>({
+    featureType: 'navigation',
+    context: {}
+  });
+
+  console.log('extraNavs', extraNavs);
+
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
+    // static content
     mainNavTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
-
       _tabs.push(
         <Tabs.Tab
           value={tab.name}
@@ -182,8 +191,23 @@ function NavTabs() {
       );
     });
 
+    // dynamic content
+    extraNavs.forEach((nav) => {
+      _tabs.push(
+        <Tabs.Tab
+          value={nav.options.title}
+          key={nav.options.key}
+          onClick={(event: any) =>
+            navigateToLink(nav.options.options.url, navigate, event)
+          }
+        >
+          {nav.options.title}
+        </Tabs.Tab>
+      );
+    });
+
     return _tabs;
-  }, [mainNavTabs, user]);
+  }, [extraNavs, mainNavTabs, user]);
 
   return (
     <Tabs
