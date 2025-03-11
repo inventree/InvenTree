@@ -1529,17 +1529,17 @@
     "@babel/runtime" "^7.20.13"
     "@lingui/core" "4.11.4"
 
-"@mantine/carousel@^8.0":
+"@mantine/carousel@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/carousel/-/carousel-8.0.0-alpha.1.tgz#022c8b280f8f7a679c237f7fd191a096ec06b3be"
   integrity sha512-AMmwW/aYDfQzHRvTuYzxav/2RTarVmAqYknLtR9H/DSa6bpf+fuG2AcPNnCZuKiocxqpy2FYjIzDiPjbwICNtw==
 
-"@mantine/charts@^8.0":
+"@mantine/charts@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/charts/-/charts-8.0.0-alpha.1.tgz#a6dcda4573b3333e4e40b3b1cfffc5c3dde6896f"
   integrity sha512-bcF3L6b/KpiGDIIRNtIjkX2cepC0y22Cx2O75/pT2CDDLxiPLVoBQZ8SGw4/Z3p6QKS1I79Bkf4pjwGAWLva2w==
 
-"@mantine/core@^8.0":
+"@mantine/core@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/core/-/core-8.0.0-alpha.1.tgz#0ec68ef9cca944f068c8db9feed5206c32b7bcfd"
   integrity sha512-ll67t5XCUZB7whtjES4+9CDauG8TJtF6J6gH+tB1keCHvFw18NLv2c9x1X0utDlLlOvqYWmHQT6rrEYVNouP9w==
@@ -1551,21 +1551,21 @@
     react-textarea-autosize "8.5.6"
     type-fest "^4.27.0"
 
-"@mantine/dates@^8.0":
+"@mantine/dates@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/dates/-/dates-8.0.0-alpha.1.tgz#c06ce6c4d477e420b79d98f36f0743f9fc1eaaa8"
   integrity sha512-ZT0irYOx7XsZm2rvCbQHZW3p545aMheBomZoqcj1YHowZY21z9qRMNptT5LhqhacfKYxheLxUYkB7asnUnWycw==
   dependencies:
     clsx "^2.1.1"
 
-"@mantine/dropzone@^8.0":
+"@mantine/dropzone@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/dropzone/-/dropzone-8.0.0-alpha.1.tgz#86ae30f026302146918e9ed1228bf8123941cf1c"
   integrity sha512-oTmjlA43Ejeih243+e42DWP8dwwB5T6DIam3+/VB92K7cLSDKMqqDDo/EoIEx3DXFx+3oim+SmfrK1rmAe+SnA==
   dependencies:
     react-dropzone-esm "15.2.0"
 
-"@mantine/form@^8.0":
+"@mantine/form@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/form/-/form-8.0.0-alpha.1.tgz#220bd268496d0e0191950fb1d1b341242abccfdb"
   integrity sha512-fONynZdrwTsJ5am6nbdbLby4qBax+0iNXPI7QQHhXR/ZE46NjoaK9/3XOpidkhhq23Ac8VMrQHBPsWTXQm7RwA==
@@ -1573,17 +1573,17 @@
     fast-deep-equal "^3.1.3"
     klona "^2.0.6"
 
-"@mantine/hooks@^8.0":
+"@mantine/hooks@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-8.0.0-alpha.1.tgz#4740824f41f06abbe1767567d8a5191e98ee40dc"
   integrity sha512-gWUfJB4ylkQJBcEQh5pmtMs4fJqo7uAubdUmJUXhhVg0ELxmEL7U8SHRJBcr+9+wLUWf9noTcDBLhwLdHZ5J0g==
 
-"@mantine/modals@^8.0":
+"@mantine/modals@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/modals/-/modals-8.0.0-alpha.1.tgz#479699d6505c52a1c6a30e64559bfd723cb5b39f"
   integrity sha512-+OM/ys6uZ3PAc9W8Q5sdOvn2HXWm7myAXC0yMTdT4koc2FnDFkFW6+vpsfK+asLef6hlj8bGgBdTOo3AEx9GPQ==
 
-"@mantine/notifications@^8.0":
+"@mantine/notifications@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/notifications/-/notifications-8.0.0-alpha.1.tgz#82fdf32b1d68dc81982061709c0d08266041aab1"
   integrity sha512-0Vb6ninX+xOhQvbTmCWVDRebJmnmoQ1ec3g0tjuZfcfHSrGD1gOcyrvW73tI/0BKP+iFZ0yp/KlAVWfSG6qubg==
@@ -1591,7 +1591,7 @@
     "@mantine/store" "8.0.0-alpha.1"
     react-transition-group "4.4.5"
 
-"@mantine/spotlight@^8.0":
+"@mantine/spotlight@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/spotlight/-/spotlight-8.0.0-alpha.1.tgz#d758b6c160e753f5191017d7850c0804b9e59c8d"
   integrity sha512-jvovui6tmTLzExUSR3QiTdWmgDT3MRrbg5M6q4ht2jSsVxFqGEH34vfZKQiJSW97HFk1QyifgZ4U4qdHgKCDSA==
@@ -1603,7 +1603,7 @@
   resolved "https://registry.yarnpkg.com/@mantine/store/-/store-8.0.0-alpha.1.tgz#f33ddf851ca98f0af6a4aa5bccfb568b8ced37bc"
   integrity sha512-7XDpfTPyzkgeD5lbfxsIHOge5fx/StCBczPFKA5+V5Uoe/3hSlelKcSbzkF77FLvEai+CE0n+/zN/59kJFo7YA==
 
-"@mantine/vanilla-extract@^8.0":
+"@mantine/vanilla-extract@^8.0.0-alpha.1":
   version "8.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@mantine/vanilla-extract/-/vanilla-extract-8.0.0-alpha.1.tgz#5833ea776b83782fbf52b5086d9a3f2b0a7705d3"
   integrity sha512-BNkkCeFrN5nGPVWPHWUgcuWAPqYIlIAKqFSI6mBXmZwAMOhnHoj7EjnGez5s+8g5XQAUfd3u5u/27Cd2ABdCOg==
