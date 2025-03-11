@@ -32,6 +32,7 @@ import {
   type TableFilter
 } from '../../tables/Filter';
 import { ModelInformationDict } from '../render/ModelType';
+import { StatusRenderer } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 
 /**
@@ -188,10 +189,11 @@ export default function OrderCalendar({
             {order.reference}
           </Text>
           <Text size='xs'>{order.description ?? order.title}</Text>
+          <StatusRenderer status={order.status} type={model} />
         </Group>
       );
     },
-    [calendarState.data]
+    [calendarState.data, model]
   );
 
   return (
