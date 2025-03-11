@@ -135,7 +135,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableColumnNames,
     getTableSorting,
     setTableSorting,
-    loader
+    usertheme
   } = useLocalState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
@@ -720,7 +720,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               withColumnBorders
               striped
               highlightOnHover
-              loaderType={loader}
+              loaderType={usertheme.loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}
