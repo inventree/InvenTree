@@ -429,12 +429,14 @@ class DataExportViewMixin:
                         plugin_serializer.is_valid(raise_exception=True)
                         export_context = plugin_serializer.validated_data
 
+            user = getattr(request, 'user', None)
+
             # Add in extra context data for the plugin
-            export_context['user'] = request.user
+            export_context['user'] = user
 
             # Create an output object to export against
             output = DataOutput.objects.create(
-                user=request.user,
+                user=user if user and user.is_authenticated else None,
                 total=0,  # Note: this should get updated by the export task
                 progress=0,
                 complete=False,

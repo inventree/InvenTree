@@ -203,9 +203,11 @@ class LabelPrint(GenericAPIView):
         ):
             plugin_serializer.is_valid(raise_exception=True)
 
+        user = getattr(request, 'user', None)
+
         # Generate a new DataOutput object to print against
         output = DataOutput.objects.create(
-            user=request.user,
+            user=user if user and user.is_authenticated else None,
             total=len(items_to_print),
             progress=0,
             complete=False,
@@ -279,9 +281,11 @@ class ReportPrint(GenericAPIView):
         import report.tasks
         from InvenTree.tasks import offload_task
 
+        user = getattr(request, 'user', None)
+
         # Generate a new DataOutput object
         output = DataOutput.objects.create(
-            user=request.user,
+            user=user if user and user.is_authenticated else None,
             total=len(items_to_print),
             progress=0,
             complete=False,

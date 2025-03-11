@@ -406,12 +406,12 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
+        user = getattr(request, 'user', None)
+
         # If a DataOutput object is not provided, create a new one
         if not output:
             output = DataOutput.objects.create(
-                user=request.user
-                if request.user and request.user.is_authenticated
-                else None,
+                user=user if user and user.is_authenticated else None,
                 total=len(items),
                 progress=0,
                 complete=False,
@@ -449,9 +449,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     instance.create_attachment(
                         attachment=ContentFile(data, report_name),
                         comment=_(f'Report generated from template {self.name}'),
-                        upload_user=request.user
-                        if request.user.is_authenticated
-                        else None,
+                        upload_user=getattr(request, 'user', None),
                     )
 
                 # Provide generated report to any interested plugins
@@ -611,11 +609,11 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             self.name,
         )
 
+        user = getattr(request, 'user', None)
+
         if not output:
             output = DataOutput.objects.create(
-                user=request.user
-                if request.user and request.user.is_authenticated
-                else None,
+                user=user if user and user.is_authenticated else None,
                 total=len(items),
                 progress=0,
                 complete=False,
