@@ -6,7 +6,11 @@ import type {
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { IconCalendarExclamation } from '@tabler/icons-react';
+import {
+  IconCalendarExclamation,
+  IconCircleCheck,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,8 +20,17 @@ import type { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
+import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import {
+  AssignedToMeFilter,
+  HasProjectCodeFilter,
+  OrderStatusFilter,
+  ProjectCodeFilter,
+  ResponsibleFilter,
+  type TableFilter
+} from '../../tables/Filter';
 import { ModelInformationDict } from '../render/ModelType';
 import Calendar from './Calendar';
 
@@ -33,14 +46,35 @@ import Calendar from './Calendar';
 export default function OrderCalendar({
   model,
   role,
-  params
+  params,
+  filters
 }: {
   model: ModelType;
   role: UserRoles;
   params: Record<string, any>;
+  filters?: TableFilter[];
 }) {
   const navigate = useNavigate();
   const user = useUserState();
+
+  const projectCodeFilters = useProjectCodeFilters();
+  const ownerFilters = useOwnerFilters();
+
+  // These filters apply to all order types
+  const orderFilters: TableFilter[] = useMemo(() => {
+    return [
+      OrderStatusFilter({ model: model }),
+      AssignedToMeFilter(),
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      HasProjectCodeFilter(),
+      ResponsibleFilter({ choices: ownerFilters.choices })
+    ];
+  }, [model, ownerFilters.choices, projectCodeFilters.choices]);
+
+  // Complete set of available filters
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return [...orderFilters, ...(filters ?? [])];
+  }, [orderFilters, filters]);
 
   const modelInfo = useMemo(() => {
     return ModelInformationDict[model];
@@ -100,7 +134,8 @@ export default function OrderCalendar({
           showNotification({
             id: 'calendar-edit-result',
             message: t`Order Updated`,
-            color: 'green'
+            color: 'green',
+            icon: <IconCircleCheck />
           });
         })
         .catch(() => {
@@ -109,7 +144,8 @@ export default function OrderCalendar({
           showNotification({
             id: 'calendar-edit-result',
             message: t`Error updating order`,
-            color: 'red'
+            color: 'red',
+            icon: <IconExclamationCircle />
           });
         });
     }
@@ -161,9 +197,11 @@ export default function OrderCalendar({
   return (
     <Calendar
       enableDownload
+      enableFilters
       enableSearch
       events={events}
       state={calendarState}
+      filters={calendarFilters}
       editable={true}
       eventContent={renderOrder}
       eventClick={onClickOrder}

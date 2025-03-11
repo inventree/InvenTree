@@ -1,6 +1,5 @@
 import type FullCalendar from '@fullcalendar/react';
 import type { DateValue } from '@mantine/dates';
-import { useLocalStorage } from '@mantine/hooks';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -8,15 +7,13 @@ import { api } from '../App';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import { showApiErrorMessage } from '../functions/notifications';
 import { apiUrl } from '../states/ApiState';
-import type { TableFilter } from '../tables/Filter';
+import { type FilterSetState, useFilterSet } from './UseFilterSet';
 
 /*
  * Type definition for representing the state of a calendar:
  *
  * ref: A reference to the FullCalendar component
- * activeFilters: An array of active filters (saved to local storage)
- * setActiveFilters: A function to set the active filters
- * clearActiveFilters: A function to clear all active filters
+ * filterSet: The current filter set state
  * monthName: The name of the current month (e.g. "January 2022")
  * setMonthName: A function to set the month name
  * searchTerm: The current search term for the calendar
@@ -31,10 +28,9 @@ import type { TableFilter } from '../tables/Filter';
  * selectMonth: A function to select a specific month
  */
 export type CalendarState = {
+  name: string;
   ref: React.RefObject<FullCalendar>;
-  activeFilters: TableFilter[];
-  setActiveFilters: (filters: TableFilter[]) => void;
-  clearActiveFilters: () => void;
+  filterSet: FilterSetState;
   monthName: string;
   setMonthName: (name: string) => void;
   searchTerm: string;
@@ -62,6 +58,8 @@ export default function useCalendar({
 }): CalendarState {
   const ref = useRef<FullCalendar | null>(null);
 
+  const filterSet = useFilterSet(`calendar-${name}`);
+
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const [monthName, setMonthName] = useState<string>('');
@@ -70,33 +68,33 @@ export default function useCalendar({
 
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  // Array of active filters (saved to local storage)
-  const [activeFilters, setActiveFilters] = useLocalStorage<TableFilter[]>({
-    key: `inventree-calendar-filters-${name}`,
-    defaultValue: [],
-    getInitialValueInEffect: false
-  });
-
-  // Callback to clear all active filters from the table
-  const clearActiveFilters = useCallback(() => {
-    setActiveFilters([]);
-  }, []);
-
   // Generate a set of API query filters
   const queryFilters = useMemo(() => {
     // Expand date range by one month, to ensure we capture all events
 
-    return {
+    let params = {
+      ...(queryParams || {})
+    };
+
+    if (filterSet.activeFilters) {
+      filterSet.activeFilters.forEach((filter) => {
+        params[filter.name] = filter.value;
+      });
+    }
+
+    params = {
+      ...params,
       min_date: startDate
         ? dayjs(startDate).subtract(1, 'month').toISOString().split('T')[0]
         : null,
       max_date: endDate
         ? dayjs(endDate).add(1, 'month').toISOString().split('T')[0]
         : null,
-      search: searchTerm,
-      ...(queryParams || {})
+      search: searchTerm
     };
-  }, [startDate, endDate, searchTerm, activeFilters, queryParams]);
+
+    return params;
+  }, [startDate, endDate, searchTerm, filterSet.activeFilters, queryParams]);
 
   const query = useQuery({
     enabled: !!startDate && !!endDate,
@@ -147,9 +145,8 @@ export default function useCalendar({
   );
 
   return {
-    activeFilters,
-    setActiveFilters,
-    clearActiveFilters,
+    name,
+    filterSet,
     ref,
     monthName,
     setMonthName,

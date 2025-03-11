@@ -629,7 +629,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     }
   };
 
-  // pagination refresth table if pageSize changes
+  // pagination refresh table if pageSize changes
   function updatePageSize(newData: number) {
     tableState.setPageSize(newData);
     tableState.setPage(1);

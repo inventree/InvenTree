@@ -97,7 +97,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     setTableKey(generateTableName());
   }, [generateTableName]);
 
-  const filterSet: FilterSetState = useFilterSet(tableName);
+  const filterSet: FilterSetState = useFilterSet(`table-${tableName}`);
 
   // Array of expanded records
   const [expandedRecords, setExpandedRecords] = useState<any[]>([]);

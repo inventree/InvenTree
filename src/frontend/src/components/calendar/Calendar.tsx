@@ -28,7 +28,9 @@ import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { DownloadAction } from '../../tables/DownloadAction';
 import type { TableFilter } from '../../tables/Filter';
+import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 import { TableSearchInput } from '../../tables/Search';
+import { Boundary } from '../Boundary';
 import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
 
@@ -86,6 +88,16 @@ export default function Calendar({
 
   return (
     <>
+      {enableFilters && filters && (filters?.length ?? 0) > 0 && (
+        <Boundary label={`InvenTreeCalendarFilterDrawer-${state.name}`}>
+          <FilterSelectDrawer
+            availableFilters={filters}
+            filterSet={state.filterSet}
+            opened={filtersVisible}
+            onClose={() => setFiltersVisible(false)}
+          />
+        </Boundary>
+      )}
       <Stack gap='xs'>
         <Group justify='space-between' gap='xs'>
           <Group gap={0} justify='left'>
@@ -134,8 +146,8 @@ export default function Calendar({
             {enableFilters && filters && filters.length > 0 && (
               <Indicator
                 size='xs'
-                label={state.activeFilters?.length ?? 0}
-                disabled={state.activeFilters?.length == 0}
+                label={state.filterSet.activeFilters?.length ?? 0}
+                disabled={state.filterSet.activeFilters?.length == 0}
               >
                 <ActionIcon
                   variant='transparent'
