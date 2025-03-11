@@ -361,7 +361,10 @@ class Build(
     )
 
     link = InvenTree.fields.InvenTreeURLField(
-        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     priority = models.PositiveIntegerField(

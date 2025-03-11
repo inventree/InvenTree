@@ -41,9 +41,7 @@ test('Label Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.locator('#form-success').waitFor();
-  await page.getByText('Label printing completed').waitFor();
-
+  await page.getByText('Printing completed successfully').first().waitFor();
   await page.context().close();
 });
 
@@ -76,12 +74,10 @@ test('Report Printing', async ({ page }) => {
   await page.waitForTimeout(100);
 
   // Submit the print form (should result in success)
-  await page.getByRole('button', { name: 'Generate', exact: true }).isEnabled();
-  await page.getByRole('button', { name: 'Generate', exact: true }).click();
+  await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.locator('#form-success').waitFor();
-  await page.getByText('Report printing completed').waitFor();
-
+  await page.getByText('Printing completed successfully').first().waitFor();
   await page.context().close();
 });
 
