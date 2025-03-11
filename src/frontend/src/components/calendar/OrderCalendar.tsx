@@ -96,18 +96,18 @@ export default function OrderCalendar({
       api
         .patch(apiUrl(modelInfo.api_endpoint, orderId), patch)
         .then(() => {
-          hideNotification('calendar-edit-success');
+          hideNotification('calendar-edit-result');
           showNotification({
-            id: 'calendar-edit-success',
+            id: 'calendar-edit-result',
             message: t`Order Updated`,
             color: 'green'
           });
         })
         .catch(() => {
           info.revert();
-          hideNotification('calendar-edit-error');
+          hideNotification('calendar-edit-result');
           showNotification({
-            id: 'calendar-edit-error',
+            id: 'calendar-edit-result',
             message: t`Error updating order`,
             color: 'red'
           });
