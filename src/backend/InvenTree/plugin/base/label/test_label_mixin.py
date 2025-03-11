@@ -148,7 +148,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             expected_code=201,
         )
 
-        self.assertEqual(response.data['plugin_key'], 'samplelabelprinter')
+        self.assertEqual(response.data['plugin'], 'samplelabelprinter')
         self.assertIsNone(response.data['output'])
 
         # Print multiple parts
@@ -162,7 +162,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             expected_code=201,
         )
 
-        self.assertEqual(response.data['plugin_key'], 'samplelabelprinter')
+        self.assertEqual(response.data['plugin'], 'samplelabelprinter')
         self.assertIsNone(response.data['output'])
 
         # Print multiple parts without a plugin
@@ -172,7 +172,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             expected_code=201,
         )
 
-        self.assertEqual(response.data['plugin_key'], 'inventreelabel')
+        self.assertEqual(response.data['plugin'], 'inventreelabel')
         self.assertIsNotNone(response.data['output'])
 
         data = json.loads(response.content)

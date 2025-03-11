@@ -449,7 +449,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     instance.create_attachment(
                         attachment=ContentFile(data, report_name),
                         comment=_(f'Report generated from template {self.name}'),
-                        upload_user=getattr(request, 'user', None),
+                        upload_user=user if user and user.is_authenticated else None,
                     )
 
                 # Provide generated report to any interested plugins
