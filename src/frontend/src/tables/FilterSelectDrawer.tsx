@@ -20,7 +20,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IconCheck } from '@tabler/icons-react';
 import { StylishText } from '../components/items/StylishText';
-import type { TableState } from '../hooks/UseTable';
+import type { FilterSetState } from '../hooks/UseFilterSet';
 import {
   type TableFilter,
   type TableFilterChoice,
@@ -33,16 +33,16 @@ import {
  */
 function FilterItem({
   flt,
-  tableState
+  filterSet
 }: Readonly<{
   flt: TableFilter;
-  tableState: TableState;
+  filterSet: FilterSetState;
 }>) {
   const removeFilter = useCallback(() => {
-    const newFilters = tableState.activeFilters.filter(
+    const newFilters = filterSet.activeFilters.filter(
       (f) => f.name !== flt.name
     );
-    tableState.setActiveFilters(newFilters);
+    filterSet.setActiveFilters(newFilters);
   }, [flt]);
 
   return (
@@ -135,19 +135,18 @@ function FilterElement({
 }
 
 function FilterAddGroup({
-  tableState,
+  filterSet,
   availableFilters
 }: Readonly<{
-  tableState: TableState;
+  filterSet: FilterSetState;
   availableFilters: TableFilter[];
 }>) {
   const filterOptions: TableFilterChoice[] = useMemo(() => {
     // List of filter names which are already active on this table
     let activeFilterNames: string[] = [];
 
-    if (tableState.activeFilters && tableState.activeFilters.length > 0) {
-      activeFilterNames =
-        tableState.activeFilters?.map((flt) => flt.name) ?? [];
+    if (filterSet.activeFilters && filterSet.activeFilters.length > 0) {
+      activeFilterNames = filterSet.activeFilters?.map((flt) => flt.name) ?? [];
     }
 
     return (
@@ -160,7 +159,7 @@ function FilterAddGroup({
           description: flt.description
         })) ?? []
     );
-  }, [tableState.activeFilters, availableFilters]);
+  }, [filterSet.activeFilters, availableFilters]);
 
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
@@ -204,9 +203,8 @@ function FilterAddGroup({
       }
 
       const filters =
-        tableState.activeFilters?.filter(
-          (flt) => flt.name !== selectedFilter
-        ) ?? [];
+        filterSet.activeFilters?.filter((flt) => flt.name !== selectedFilter) ??
+        [];
 
       const newFilter: TableFilter = {
         ...filter,
@@ -214,7 +212,7 @@ function FilterAddGroup({
         displayValue: valueOptions.find((v) => v.value === value)?.label
       };
 
-      tableState.setActiveFilters([...filters, newFilter]);
+      filterSet.setActiveFilters([...filters, newFilter]);
 
       // Clear selected filter
       setSelectedFilter(null);
@@ -246,12 +244,12 @@ function FilterAddGroup({
 
 export function FilterSelectDrawer({
   availableFilters,
-  tableState,
+  filterSet,
   opened,
   onClose
 }: Readonly<{
   availableFilters: TableFilter[];
-  tableState: TableState;
+  filterSet: FilterSetState;
   opened: boolean;
   onClose: () => void;
 }>) {
@@ -260,13 +258,13 @@ export function FilterSelectDrawer({
   // Hide the "add filter" selection whenever the selected filters change
   useEffect(() => {
     setAddFilter(false);
-  }, [tableState.activeFilters]);
+  }, [filterSet.activeFilters]);
 
   const hasFilters: boolean = useMemo(() => {
-    const filters = tableState?.activeFilters ?? [];
+    const filters = filterSet?.activeFilters ?? [];
 
     return filters.length > 0;
-  }, [tableState.activeFilters]);
+  }, [filterSet.activeFilters]);
 
   return (
     <Drawer
@@ -282,14 +280,14 @@ export function FilterSelectDrawer({
     >
       <Stack gap='xs'>
         {hasFilters &&
-          tableState.activeFilters?.map((f) => (
-            <FilterItem key={f.name} flt={f} tableState={tableState} />
+          filterSet.activeFilters?.map((f) => (
+            <FilterItem key={f.name} flt={f} filterSet={filterSet} />
           ))}
         {hasFilters && <Divider />}
         {addFilter && (
           <Stack gap='xs'>
             <FilterAddGroup
-              tableState={tableState}
+              filterSet={filterSet}
               availableFilters={availableFilters}
             />
           </Stack>
@@ -304,7 +302,7 @@ export function FilterSelectDrawer({
           </Button>
         )}
         {!addFilter &&
-          tableState.activeFilters.length < availableFilters.length && (
+          filterSet.activeFilters.length < availableFilters.length && (
             <Button
               onClick={() => setAddFilter(true)}
               color='green'
@@ -313,9 +311,9 @@ export function FilterSelectDrawer({
               <Text>{t`Add Filter`}</Text>
             </Button>
           )}
-        {!addFilter && tableState.activeFilters.length > 0 && (
+        {!addFilter && filterSet.activeFilters.length > 0 && (
           <Button
-            onClick={tableState.clearActiveFilters}
+            onClick={filterSet.clearActiveFilters}
             color='red'
             variant='subtle'
           >
