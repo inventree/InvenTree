@@ -31,6 +31,7 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CategoryFilter,
   CompletedAfterFilter,
   CompletedBeforeFilter,
   CreatedAfterFilter,
@@ -169,12 +170,7 @@ export function BuildOrderTable({
         choices: userFilters.choices
       },
       ResponsibleFilter({ choices: ownerFilters.choices }),
-      {
-        name: 'category',
-        label: t`Category`,
-        description: t`Filter by part category`,
-        choices: categoryFilters.choices
-      }
+      CategoryFilter({ choices: categoryFilters.choices })
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter

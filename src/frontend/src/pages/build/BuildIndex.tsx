@@ -12,8 +12,27 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useCategoryFilters } from '../../hooks/UseFilter';
 import { useUserState } from '../../states/UserState';
+import { CategoryFilter, type TableFilter } from '../../tables/Filter';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+
+function BuildOrderCalendar() {
+  const categoryFilters = useCategoryFilters();
+
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return [CategoryFilter({ choices: categoryFilters.choices })];
+  }, [categoryFilters]);
+
+  return (
+    <OrderCalendar
+      model={ModelType.build}
+      role={UserRoles.build}
+      params={{ outstanding: true }}
+      filters={calendarFilters}
+    />
+  );
+}
 
 function BuildOverview({
   view
@@ -22,13 +41,7 @@ function BuildOverview({
 }) {
   switch (view) {
     case 'calendar':
-      return (
-        <OrderCalendar
-          model={ModelType.build}
-          role={UserRoles.build}
-          params={{ outstanding: true }}
-        />
-      );
+      return <BuildOrderCalendar />;
     case 'table':
     default:
       return <BuildOrderTable />;

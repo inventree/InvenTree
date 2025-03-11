@@ -283,3 +283,14 @@ export function CreatedByFilter({
     choices: choices
   };
 }
+
+export function CategoryFilter({
+  choices
+}: { choices: TableFilterChoice[] }): TableFilter {
+  return {
+    name: 'category',
+    label: t`Category`,
+    description: t`Filter by part category`,
+    choices: choices
+  };
+}
