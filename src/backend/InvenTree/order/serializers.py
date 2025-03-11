@@ -50,7 +50,6 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     NotesFieldMixin,
-    UserSerializer,
 )
 from order.status_codes import (
     PurchaseOrderStatusGroups,
@@ -60,7 +59,7 @@ from order.status_codes import (
 )
 from part.serializers import PartBriefSerializer
 from stock.status_codes import StockStatus
-from users.serializers import OwnerSerializer
+from users.serializers import OwnerSerializer, UserSerializer
 
 
 class TotalPriceMixin(serializers.Serializer):
@@ -137,12 +136,15 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     )
 
     project_code_label = serializers.CharField(
-        source='project_code.code', read_only=True, label='Project Code Label'
+        source='project_code.code',
+        read_only=True,
+        label='Project Code Label',
+        allow_null=True,
     )
 
     # Detail for project code field
     project_code_detail = ProjectCodeSerializer(
-        source='project_code', read_only=True, many=False
+        source='project_code', read_only=True, many=False, allow_null=True
     )
 
     # Detail for address field

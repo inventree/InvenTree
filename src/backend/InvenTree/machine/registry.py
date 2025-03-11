@@ -4,9 +4,11 @@ from typing import Union, cast
 from uuid import UUID
 
 from django.core.cache import cache
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 import structlog
 
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
@@ -30,6 +32,7 @@ class MachineRegistry(
 
         self.base_drivers: list[type[BaseDriver]] = []
 
+        # Keep an internal hash of the machine registry state
         self._hash = None
 
     @property
@@ -267,7 +270,13 @@ class MachineRegistry(
         """Calculate a hash of the machine registry state."""
         from hashlib import md5
 
+        from plugin import registry as plugin_registry
+
         data = md5()
+
+        # If the plugin registry has changed, the machine registry hash will change
+        plugin_registry.update_plugin_hash()
+        data.update(plugin_registry.registry_hash.encode())
 
         for pk, machine in self.machines.items():
             data.update(str(pk).encode())
@@ -284,16 +293,84 @@ class MachineRegistry(
         if not self._hash:
             self._hash = self._calculate_registry_hash()
 
-        last_hash = self.get_shared_state('hash', None)
+        try:
+            reg_hash = get_global_setting('_MACHINE_REGISTRY_HASH', '', create=False)
+        except Exception as exc:
+            logger.exception('Failed to get machine registry hash: %s', str(exc))
+            return False
 
-        if last_hash and last_hash != self._hash:
+        if reg_hash and reg_hash != self._hash:
             logger.info('Machine registry has changed - reloading machines')
             self.reload_machines()
+            return True
+
+        return False
 
     def _update_registry_hash(self):
         """Save the current registry hash."""
         self._hash = self._calculate_registry_hash()
-        self.set_shared_state('hash', self._hash)
+
+        try:
+            old_hash = get_global_setting('_MACHINE_REGISTRY_HASH')
+        except Exception:
+            old_hash = None
+
+        if old_hash != self._hash:
+            try:
+                logger.info('Updating machine registry hash: %s', str(self._hash))
+                set_global_setting('_MACHINE_REGISTRY_HASH', self._hash)
+            except (IntegrityError, OperationalError, ProgrammingError):
+                pass
+            except Exception as exc:
+                logger.exception('Failed to update machine registry hash: %s', str(exc))
+
+    def call_machine_function(
+        self, machine_id: str, function_name: str, *args, **kwargs
+    ):
+        """Call a named function against a machine instance.
+
+        Arguments:
+            machine_id: The UUID of the machine to call the function against
+            function_name: The name of the function to call
+        """
+        logger.info('call_machine_function: %s -> %s', machine_id, function_name)
+
+        raise_error = kwargs.pop('raise_error', True)
+
+        self._check_reload()
+
+        # Fetch the machine instance based on the provided UUID
+        machine = self.get_machine(machine_id)
+
+        if not machine:
+            if raise_error:
+                raise AttributeError(f"Machine '{machine_id}' not found")
+            return
+
+        # Fetch the driver instance based on the machine driver
+        driver = machine.driver
+
+        if not driver:
+            if raise_error:
+                raise AttributeError(f"Machine '{machine_id}' has no specified driver")
+            return
+
+        # The function must be registered against the driver
+        func = getattr(driver, function_name)
+
+        if not func or not callable(func):
+            if raise_error:
+                raise AttributeError(
+                    f"Driver '{driver.SLUG}' has no callable method '{function_name}'"
+                )
+            return
+
+        return func(machine, *args, **kwargs)
 
 
 registry: MachineRegistry = MachineRegistry()
+
+
+def call_machine_function(machine_id: str, function: str, *args, **kwargs):
+    """Global helper function to call a specific function on a machine instance."""
+    return registry.call_machine_function(machine_id, function, *args, **kwargs)

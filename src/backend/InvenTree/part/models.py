@@ -128,6 +128,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     _icon = models.CharField(
         blank=True,
+        null=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
@@ -1070,6 +1071,7 @@ class Part(
         null=True,
         verbose_name=_('Link'),
         help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     image = StdImageField(

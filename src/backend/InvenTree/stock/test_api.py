@@ -2177,6 +2177,11 @@ class StockTrackingTest(StockAPITestCase):
         response = self.get(url, {'limit': 1})
         self.assertEqual(response.data['count'], N)
 
+        # Test with search and pagination
+        response = self.get(url, {'limit': 1, 'offset': 10, 'search': 'berries'})
+
+        self.assertEqual(response.data['count'], 0)
+
     def test_list(self):
         """Test list endpoint."""
         url = self.get_url()

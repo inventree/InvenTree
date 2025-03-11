@@ -36,13 +36,12 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,
-    UserSerializer,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
 from stock.status_codes import StockStatus
-from users.serializers import OwnerSerializer
+from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
@@ -123,7 +122,7 @@ class BuildSerializer(
 
     quantity = InvenTreeDecimalField()
 
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, default=False)
 
     issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
@@ -132,11 +131,14 @@ class BuildSerializer(
     barcode_hash = serializers.CharField(read_only=True)
 
     project_code_label = serializers.CharField(
-        source='project_code.code', read_only=True, label=_('Project Code Label')
+        source='project_code.code',
+        read_only=True,
+        label=_('Project Code Label'),
+        allow_null=True,
     )
 
     project_code_detail = ProjectCodeSerializer(
-        source='project_code', many=False, read_only=True
+        source='project_code', many=False, read_only=True, allow_null=True
     )
 
     create_child_builds = serializers.BooleanField(

@@ -23,18 +23,23 @@ import { hideNotification, showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconAt,
+  IconCircleX,
   IconExclamationCircle,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../../../App';
-import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
+import { showApiErrorMessage } from '../../../../functions/notifications';
+import { useTable } from '../../../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import type { AuthConfig, Provider } from '../../../../states/states';
+import { BooleanColumn } from '../../../../tables/ColumnRenderers';
+import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
+import type { RowAction } from '../../../../tables/RowActions';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
@@ -102,7 +107,6 @@ function EmailSection() {
     queryFn: () =>
       authApi(apiUrl(ApiEndpoints.auth_email)).then((res) => res.data.data)
   });
-
   const emailAvailable = useMemo(() => {
     return data == undefined || data.length == 0;
   }, [data]);
@@ -257,7 +261,9 @@ function ProviderSection({
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['provider-list'],
     queryFn: () =>
-      authApi(apiUrl(ApiEndpoints.auth_providers)).then((res) => res.data.data)
+      authApi(apiUrl(ApiEndpoints.auth_providers))
+        .then((res) => res?.data?.data ?? [])
+        .catch(() => [])
   });
 
   const availableProviders = useMemo(() => {
@@ -352,7 +358,8 @@ function MfaSection() {
     queryFn: () =>
       api
         .get(apiUrl(ApiEndpoints.auth_authenticators))
-        .then((res) => res.data.data)
+        .then((res) => res?.data?.data ?? [])
+        .catch(() => [])
   });
 
   function showRecoveryCodes(codes: Recoverycodes) {
@@ -710,83 +717,66 @@ async function runActionWithFallback(
 }
 
 function TokenSection() {
-  const { isLoading, data, refetch } = useQuery({
-    queryKey: ['token-list'],
-    queryFn: () =>
-      api.get(apiUrl(ApiEndpoints.user_tokens)).then((res) => res.data)
-  });
+  const table = useTable('api-tokens', 'id');
 
-  function revokeToken(id: string) {
+  const tableColumns = useMemo(() => {
+    return [
+      {
+        accessor: 'name'
+      },
+      BooleanColumn({
+        accessor: 'active'
+      }),
+      {
+        accessor: 'token'
+      },
+      {
+        accessor: 'last_seen'
+      },
+      {
+        accessor: 'expiry'
+      }
+    ];
+  }, []);
+
+  const rowActions = useCallback((record: any): RowAction[] => {
+    return [
+      {
+        title: t`Revoke`,
+        color: 'red',
+        hidden: !record.active || record.in_use,
+        icon: <IconCircleX />,
+        onClick: () => {
+          revokeToken(record.id);
+        }
+      }
+    ];
+  }, []);
+
+  const revokeToken = async (id: string) => {
     api
       .delete(apiUrl(ApiEndpoints.user_tokens, id))
       .then(() => {
-        refetch();
+        table.refreshTable();
       })
-      .catch((res) => console.log(res.data));
-  }
-
-  const rows = useMemo(() => {
-    if (isLoading || !data) return null;
-    return data.map((token: any) => (
-      <Table.Tr key={token.id}>
-        <Table.Td>
-          <YesNoButton value={token.active} />
-        </Table.Td>
-        <Table.Td>{token.expiry}</Table.Td>
-        <Table.Td>{token.last_seen}</Table.Td>
-        <Table.Td>{token.token}</Table.Td>
-        <Table.Td>{token.name}</Table.Td>
-        <Table.Td>
-          {token.in_use ? (
-            <Trans>Token is used - no actions</Trans>
-          ) : (
-            <Button
-              onClick={() => revokeToken(token.id)}
-              color='red'
-              disabled={!token.active}
-            >
-              <Trans>Revoke</Trans>
-            </Button>
-          )}
-        </Table.Td>
-      </Table.Tr>
-    ));
-  }, [data, isLoading]);
-
-  if (isLoading) return <Loader />;
-
-  if (data.length == 0)
-    return (
-      <Alert icon={<IconAlertCircle size='1rem' />} color='green'>
-        <Trans>No tokens configured</Trans>
-      </Alert>
-    );
+      .catch((error) => {
+        showApiErrorMessage({
+          error: error,
+          title: t`Error revoking token`
+        });
+      });
+  };
 
   return (
-    <Table stickyHeader striped highlightOnHover withTableBorder>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>
-            <Trans>Active</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Expiry</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Last Seen</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Token</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Name</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Actions</Trans>
-          </Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
-    </Table>
+    <InvenTreeTable
+      tableState={table}
+      url={apiUrl(ApiEndpoints.user_tokens)}
+      columns={tableColumns}
+      props={{
+        rowActions: rowActions,
+        enableSearch: false,
+        enableColumnSwitching: false
+      }}
+    />
   );
 }

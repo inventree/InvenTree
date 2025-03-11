@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { notifications } from '@mantine/notifications';
+import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
@@ -123,6 +123,7 @@ export const doBasicLogin = async (
     await fetchUserState();
     // see if mfa registration is required
     await fetchGlobalStates(navigate);
+    observeProfile();
   } else if (!success) {
     clearUserState();
   }
@@ -173,6 +174,46 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
+function observeProfile() {
+  // overwrite language and theme info in session with profile info
+
+  const user = useUserState.getState().getUser();
+  const { language, setLanguage, usertheme, setTheme } =
+    useLocalState.getState();
+  if (user) {
+    if (user.profile?.language && language != user.profile.language) {
+      showNotification({
+        title: t`Language changed`,
+        message: t`Your active language has been changed to the one set in your profile`,
+        color: 'blue',
+        icon: 'language'
+      });
+      setLanguage(user.profile.language, true);
+    }
+
+    if (user.profile?.theme) {
+      // extract keys of usertheme and set them to the values of user.profile.theme
+      const newTheme = Object.keys(usertheme).map((key) => {
+        return {
+          key: key as keyof typeof usertheme,
+          value: user.profile.theme[key] as string
+        };
+      });
+      const diff = newTheme.filter(
+        (item) => usertheme[item.key] !== item.value
+      );
+      if (diff.length > 0) {
+        showNotification({
+          title: t`Theme changed`,
+          message: t`Your active theme has been changed to the one set in your profile`,
+          color: 'blue'
+        });
+        setTheme(newTheme);
+      }
+    }
+  }
+}
+
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
@@ -210,8 +251,9 @@ export function handleMfaLogin(
   values: { code: string },
   setError: (message: string | undefined) => void
 ) {
-  const { setToken } = useUserState.getState();
+  const { setToken, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
+
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
   })
@@ -219,7 +261,11 @@ export function handleMfaLogin(
       setError(undefined);
       setAuthContext(response.data?.data);
       setToken(response.data.meta.access_token);
-      followRedirect(navigate, location?.state);
+
+      fetchUserState().finally(() => {
+        observeProfile();
+        followRedirect(navigate, location?.state);
+      });
     })
     .catch((err) => {
       if (err?.response?.status == 409) {
@@ -268,16 +314,10 @@ export const checkLoginState = async (
       message: t`Successfully logged in`
     });
 
+    observeProfile();
+
     fetchGlobalStates(navigate);
-
     followRedirect(navigate, redirect);
-  };
-
-  // Callback function when login fails
-  const loginFailure = () => {
-    if (!no_redirect) {
-      navigate('/login', { state: redirect });
-    }
   };
 
   if (isLoggedIn()) {
@@ -292,8 +332,8 @@ export const checkLoginState = async (
 
   if (isLoggedIn()) {
     loginSuccess();
-  } else {
-    loginFailure();
+  } else if (!no_redirect) {
+    navigate('/login', { state: redirect });
   }
 };
 
@@ -357,4 +397,173 @@ export function authApi(
 
   // use normal api
   return api(url, requestConfig);
+}
+
+export const getTotpSecret = async (setTotpQr: any) => {
+  await authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'get').catch(
+    (err) => {
+      if (err.status == 404 && err.response.data.meta.secret) {
+        setTotpQr(err.response.data.meta);
+      } else {
+        const msg = err.response.data.errors[0].message;
+        showNotification({
+          title: t`Failed to set up MFA`,
+          message: msg,
+          color: 'red'
+        });
+      }
+    }
+  );
+};
+
+export function handleVerifyTotp(
+  value: string,
+  navigate: NavigateFunction,
+  location: Location<any>
+) {
+  return () => {
+    authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
+      code: value
+    }).then(() => {
+      followRedirect(navigate, location?.state);
+    });
+  };
+}
+
+export function handlePasswordReset(
+  key: string | null,
+  password: string,
+  navigate: NavigateFunction
+) {
+  function success() {
+    notifications.show({
+      title: t`Password set`,
+      message: t`The password was set successfully. You can now login with your new password`,
+      color: 'green',
+      autoClose: false
+    });
+    navigate('/login');
+  }
+
+  function passwordError(values: any) {
+    notifications.show({
+      title: t`Reset failed`,
+      message: values?.errors.map((e: any) => e.message).join('\n'),
+      color: 'red'
+    });
+  }
+
+  // Set password with call to backend
+  api
+    .post(
+      apiUrl(ApiEndpoints.user_reset_set),
+      {
+        key: key,
+        password: password
+      },
+      { headers: { Authorization: '' } }
+    )
+    .then((val) => {
+      if (val.status === 200) {
+        success();
+      } else {
+        passwordError(val.data);
+      }
+    })
+    .catch((err) => {
+      if (err.response?.status === 400) {
+        passwordError(err.response.data);
+      } else if (err.response?.status === 401) {
+        success();
+      } else {
+        passwordError(err.response.data);
+      }
+    });
+}
+
+export function handleVerifyEmail(
+  key: string | undefined,
+  navigate: NavigateFunction
+) {
+  // Set password with call to backend
+  api
+    .post(apiUrl(ApiEndpoints.auth_email_verify), {
+      key: key
+    })
+    .then((val) => {
+      if (val.status === 200) {
+        navigate('/login');
+      }
+    });
+}
+
+export function handleChangePassword(
+  pwd1: string,
+  pwd2: string,
+  current: string,
+  navigate: NavigateFunction
+) {
+  const { clearUserState } = useUserState.getState();
+
+  function passwordError(values: any) {
+    let message: any =
+      values?.new_password ||
+      values?.new_password2 ||
+      values?.new_password1 ||
+      values?.current_password ||
+      values?.error ||
+      t`Password could not be changed`;
+
+    // If message is array
+    if (!Array.isArray(message)) {
+      message = [message];
+    }
+
+    message.forEach((msg: string) => {
+      notifications.show({
+        title: t`Error`,
+        message: msg,
+        color: 'red'
+      });
+    });
+  }
+
+  // check if passwords match
+  if (pwd1 !== pwd2) {
+    passwordError({ new_password2: t`The two password fields didn’t match` });
+    return;
+  }
+
+  // Set password with call to backend
+  api
+    .post(apiUrl(ApiEndpoints.auth_pwd_change), {
+      current_password: current,
+      new_password: pwd2
+    })
+    .then((val) => {
+      passwordError(val.data);
+    })
+    .catch((err) => {
+      if (err.status === 401) {
+        notifications.show({
+          title: t`Password Changed`,
+          message: t`The password was set successfully. You can now login with your new password`,
+          color: 'green',
+          autoClose: false
+        });
+        clearUserState();
+        clearCsrfCookie();
+        navigate('/login');
+      } else {
+        // compile errors
+        const errors: { [key: string]: string[] } = {};
+        for (const val of err.response.data.errors) {
+          if (!errors[val.param]) {
+            errors[val.param] = [];
+          }
+          errors[val.param].push(val.message);
+        }
+        passwordError(errors);
+      }
+    });
 }
