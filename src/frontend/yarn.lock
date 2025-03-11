@@ -1855,7 +1855,7 @@
     vite "^5.0.0 || ^6.0.0"
     vite-node "^3.0.4"
 
-"@vanilla-extract/css@^1.17.0", "@vanilla-extract/css@^1.17.1":
+"@vanilla-extract/css@^1.17.1":
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/@vanilla-extract/css/-/css-1.17.1.tgz#5e91d6bfbc5848a264bddcaf31d601f6f67e5cc1"
   integrity sha512-tOHQXHm10FrJeXKFeWE09JfDGN/tvV6mbjwoNB9k03u930Vg021vTnbrCwVLkECj9Zvh/SHLBHJ4r2flGqfovw==
@@ -4550,7 +4550,7 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^5.7.3:
+typescript@^5.8.2:
   version "5.8.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.2.tgz#8170b3702f74b79db2e5a96207c15e65807999e4"
   integrity sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==
@@ -4704,7 +4704,7 @@ vite-plugin-istanbul@^6.0.2:
     source-map "^0.7.4"
     test-exclude "^6.0.0"
 
-"vite@^5.0.0 || ^6.0.0", vite@^6.0.9:
+"vite@^5.0.0 || ^6.0.0", vite@^6.2.1:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/vite/-/vite-6.2.1.tgz#ae865d4bb93a11844be1bc647c8b2dd1856ea180"
   integrity sha512-n2GnqDb6XPhlt9B8olZPrgMD/es/Nd1RdChF6CBD/fHW6pUyUTt2sQW2fPRX5GiD9XEa6+8A6A4f2vT6pSsE7Q==
