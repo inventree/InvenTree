@@ -201,8 +201,8 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         """Return a list of custom navigation items."""
         return [
             {
-                'key': 'sample-navigation-item',
-                'title': 'Sample Navigation Item',
+                'key': 'sample-nav-item',
+                'title': 'Sample Nav Item',
                 'icon': 'ti:menu',
                 'source': self.plugin_static_file('sample_navigation.js'),
                 'options': {'url': '/sample/page/'},
