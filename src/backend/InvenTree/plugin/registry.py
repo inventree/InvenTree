@@ -854,7 +854,7 @@ class PluginsRegistry:
 
         Returns True if the registry has changed and was reloaded.
         """
-        if settings.TESTING:
+        if settings.TESTING and not settings.PLUGIN_TESTING_RELOAD:
             # Skip if running during unit testing
             return False
 
