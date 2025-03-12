@@ -9,7 +9,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { useOwnerFilters, useUserFilters } from '../../hooks/UseFilter';
+import { useUserFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -60,7 +60,6 @@ export function SalesOrderTable({
   const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
   const user = useUserState();
 
-  const responsibleFilters = useOwnerFilters();
   const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -93,7 +92,7 @@ export function SalesOrderTable({
       CompletedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
-      ResponsibleFilter({ choices: responsibleFilters.choices }),
+      ResponsibleFilter(),
       CreatedByFilter({ choices: createdByFilters.choices })
     ];
 
@@ -107,7 +106,7 @@ export function SalesOrderTable({
     }
 
     return filters;
-  }, [partId, responsibleFilters.choices, createdByFilters.choices]);
+  }, [partId, createdByFilters.choices]);
 
   const salesOrderFields = useSalesOrderFields({});
 

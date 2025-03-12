@@ -9,11 +9,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { shortenString } from '../../functions/tables';
-import {
-  useFilters,
-  useOwnerFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
+import { useFilters, useUserFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -127,7 +123,6 @@ export function BuildOrderTable({
     ];
   }, [parentBuildId]);
 
-  const ownerFilters = useOwnerFilters();
   const userFilters = useUserFilters();
 
   const categoryFilters = useFilters({
@@ -177,7 +172,7 @@ export function BuildOrderTable({
         description: t`Filter by user who issued this order`,
         choices: userFilters.choices
       },
-      ResponsibleFilter({ choices: ownerFilters.choices }),
+      ResponsibleFilter(),
       {
         name: 'category',
         label: t`Category`,
@@ -197,12 +192,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [
-    partId,
-    categoryFilters.choices,
-    ownerFilters.choices,
-    userFilters.choices
-  ]);
+  }, [partId, categoryFilters.choices, userFilters.choices]);
 
   const user = useUserState();
 

@@ -8,7 +8,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
-import { useOwnerFilters, useUserFilters } from '../../hooks/UseFilter';
+import { useUserFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -59,7 +59,6 @@ export function ReturnOrderTable({
   const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
   const user = useUserState();
 
-  const responsibleFilters = useOwnerFilters();
   const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -92,7 +91,7 @@ export function ReturnOrderTable({
       CompletedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
-      ResponsibleFilter({ choices: responsibleFilters.choices }),
+      ResponsibleFilter(),
       CreatedByFilter({ choices: createdByFilters.choices })
     ];
 
@@ -106,7 +105,7 @@ export function ReturnOrderTable({
     }
 
     return filters;
-  }, [partId, responsibleFilters.choices, createdByFilters.choices]);
+  }, [partId, createdByFilters.choices]);
 
   const tableColumns = useMemo(() => {
     return [

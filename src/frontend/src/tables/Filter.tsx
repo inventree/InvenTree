@@ -272,14 +272,15 @@ export function ProjectCodeFilter(): TableFilter {
   };
 }
 
-export function ResponsibleFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function ResponsibleFilter(): TableFilter {
   return {
     name: 'assigned_to',
     label: t`Responsible`,
     description: t`Filter by responsible owner`,
-    choices: choices
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.owner_list),
+    model: ModelType.owner,
+    modelRenderer: (instance) => instance.name
   };
 }
 
