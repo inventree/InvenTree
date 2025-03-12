@@ -124,7 +124,7 @@ function FilterElement({
       return (
         <Select
           data={valueOptions}
-          searchable={filterType != 'boolean'}
+          searchable={true}
           label={t`Value`}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}
