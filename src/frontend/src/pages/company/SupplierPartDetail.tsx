@@ -277,7 +277,7 @@ export default function SupplierPartDetail() {
         label: t`Supplier Pricing`,
         icon: <IconCurrencyDollar />,
         content: supplierPart?.pk ? (
-          <SupplierPriceBreakTable supplierPartId={supplierPart.pk} />
+          <SupplierPriceBreakTable supplierPart={supplierPart} />
         ) : (
           <Skeleton />
         )
