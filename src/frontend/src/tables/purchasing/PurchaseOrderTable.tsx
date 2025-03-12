@@ -8,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { useUserFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -62,8 +61,6 @@ export function PurchaseOrderTable({
   const table = useTable('purchase-order');
   const user = useUserState();
 
-  const createdByFilters = useUserFilters();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       OrderStatusFilter({ model: ModelType.purchaseorder }),
@@ -95,9 +92,9 @@ export function PurchaseOrderTable({
       ProjectCodeFilter(),
       HasProjectCodeFilter(),
       ResponsibleFilter(),
-      CreatedByFilter({ choices: createdByFilters.choices })
+      CreatedByFilter()
     ];
-  }, [createdByFilters.choices]);
+  }, []);
 
   const tableColumns = useMemo(() => {
     return [

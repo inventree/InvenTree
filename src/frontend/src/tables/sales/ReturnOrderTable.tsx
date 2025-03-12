@@ -8,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
-import { useUserFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -59,8 +58,6 @@ export function ReturnOrderTable({
   const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
   const user = useUserState();
 
-  const createdByFilters = useUserFilters();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OrderStatusFilter({ model: ModelType.returnorder }),
@@ -92,7 +89,7 @@ export function ReturnOrderTable({
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
       ResponsibleFilter(),
-      CreatedByFilter({ choices: createdByFilters.choices })
+      CreatedByFilter()
     ];
 
     if (!!partId) {
@@ -105,7 +102,7 @@ export function ReturnOrderTable({
     }
 
     return filters;
-  }, [partId, createdByFilters.choices]);
+  }, [partId]);
 
   const tableColumns = useMemo(() => {
     return [

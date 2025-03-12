@@ -272,25 +272,66 @@ export function ProjectCodeFilter(): TableFilter {
   };
 }
 
-export function ResponsibleFilter(): TableFilter {
+export function OwnerFilter({
+  name,
+  label,
+  description
+}: {
+  name: string;
+  label: string;
+  description: string;
+}): TableFilter {
   return {
-    name: 'assigned_to',
-    label: t`Responsible`,
-    description: t`Filter by responsible owner`,
+    name: name,
+    label: label,
+    description: description,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.owner_list),
     model: ModelType.owner,
-    modelRenderer: (instance) => instance.name
+    modelRenderer: (instance: any) => instance.name
   };
 }
 
-export function CreatedByFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function ResponsibleFilter(): TableFilter {
+  return OwnerFilter({
+    name: 'assigned_to',
+    label: t`Responsible`,
+    description: t`Filter by responsible owner`
+  });
+}
+
+export function UserFilter({
+  name,
+  label,
+  description
+}: {
+  name?: string;
+  label?: string;
+  description?: string;
+}): TableFilter {
   return {
+    name: name ?? 'user',
+    label: label ?? t`User`,
+    description: description ?? t`Filter by user`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.user_list),
+    model: ModelType.user,
+    modelRenderer: (instance: any) => instance.username
+  };
+}
+
+export function CreatedByFilter(): TableFilter {
+  return UserFilter({
     name: 'created_by',
     label: t`Created By`,
-    description: t`Filter by user who created the order`,
-    choices: choices
-  };
+    description: t`Filter by user who created the order`
+  });
+}
+
+export function IssuedByFilter(): TableFilter {
+  return UserFilter({
+    name: 'issued_by',
+    label: t`Issued By`,
+    description: t`Filter by user who issued the order`
+  });
 }

@@ -9,7 +9,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { shortenString } from '../../functions/tables';
-import { useFilters, useUserFilters } from '../../hooks/UseFilter';
+import { useFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -32,6 +32,7 @@ import {
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasProjectCodeFilter,
+  IssuedByFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
@@ -123,8 +124,6 @@ export function BuildOrderTable({
     ];
   }, [parentBuildId]);
 
-  const userFilters = useUserFilters();
-
   const categoryFilters = useFilters({
     url: apiUrl(ApiEndpoints.category_list),
     transform: (item) => ({
@@ -166,12 +165,7 @@ export function BuildOrderTable({
       CompletedAfterFilter(),
       ProjectCodeFilter(),
       HasProjectCodeFilter(),
-      {
-        name: 'issued_by',
-        label: t`Issued By`,
-        description: t`Filter by user who issued this order`,
-        choices: userFilters.choices
-      },
+      IssuedByFilter(),
       ResponsibleFilter(),
       {
         name: 'category',
@@ -192,7 +186,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [partId, categoryFilters.choices, userFilters.choices]);
+  }, [partId, categoryFilters.choices]);
 
   const user = useUserState();
 
