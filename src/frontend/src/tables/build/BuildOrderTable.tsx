@@ -8,8 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { shortenString } from '../../functions/tables';
-import { useFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -124,17 +122,6 @@ export function BuildOrderTable({
     ];
   }, [parentBuildId]);
 
-  const categoryFilters = useFilters({
-    url: apiUrl(ApiEndpoints.category_list),
-    transform: (item) => ({
-      value: item.pk,
-      label: shortenString({
-        str: item.pathstring,
-        len: 50
-      })
-    })
-  });
-
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OutstandingFilter(),
@@ -171,7 +158,9 @@ export function BuildOrderTable({
         name: 'category',
         label: t`Category`,
         description: t`Filter by part category`,
-        choices: categoryFilters.choices
+        apiUrl: apiUrl(ApiEndpoints.category_list),
+        model: ModelType.partcategory,
+        modelRenderer: (instance: any) => instance.name
       }
     ];
 
@@ -186,7 +175,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [partId, categoryFilters.choices]);
+  }, [partId]);
 
   const user = useUserState();
 
