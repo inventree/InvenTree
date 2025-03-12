@@ -73,7 +73,7 @@ function FilterElement({
   filterName: string;
   filterProps: TableFilter;
   valueOptions: TableFilterChoice[];
-  onValueChange: (value: string | null) => void;
+  onValueChange: (value: string | null, displayValue?: any) => void;
 }) {
   const setDateValue = useCallback(
     (value: DateValue) => {
@@ -99,7 +99,9 @@ function FilterElement({
             api_url: filterProps.apiUrl,
             model: filterProps.model,
             label: t`Select filter value`,
-            onValueChange: (value: any) => onValueChange(value)
+            onValueChange: (value: any, instance: any) => {
+              onValueChange(value, filterProps.modelRenderer?.(instance));
+            }
           }}
         />
       );
@@ -218,7 +220,7 @@ function FilterAddGroup({
   }, [availableFilters, selectedFilter]);
 
   const setSelectedValue = useCallback(
-    (value: string | null) => {
+    (value: string | null, displayValue?: any) => {
       // Find the matching filter
       const filter: TableFilter | undefined = availableFilters.find(
         (flt) => flt.name === selectedFilter
@@ -236,7 +238,8 @@ function FilterAddGroup({
       const newFilter: TableFilter = {
         ...filter,
         value: value,
-        displayValue: valueOptions.find((v) => v.value === value)?.label
+        displayValue:
+          displayValue ?? valueOptions.find((v) => v.value === value)?.label
       };
 
       tableState.setActiveFilters([...filters, newFilter]);

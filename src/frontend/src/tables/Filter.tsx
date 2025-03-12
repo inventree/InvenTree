@@ -44,6 +44,7 @@ export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text' | 'api';
  * active: Whether the filter is active (false = hidden, not used)
  * apiUrl: The API URL to use for fetching dynamic filter options
  * model: The model type to use for fetching dynamic filter options
+ * modelRenderer: A function to render a simple text version of the model type
  */
 export type TableFilter = {
   name: string;
@@ -58,6 +59,7 @@ export type TableFilter = {
   active?: boolean;
   apiUrl?: string;
   model?: ModelType;
+  modelRenderer?: (instance: any) => string;
 };
 
 /**
@@ -265,7 +267,8 @@ export function ProjectCodeFilter(): TableFilter {
     active: enabled,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.project_code_list),
-    model: ModelType.projectcode
+    model: ModelType.projectcode,
+    modelRenderer: (instance) => instance.code
   };
 }
 
