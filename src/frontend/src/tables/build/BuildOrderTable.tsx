@@ -12,7 +12,6 @@ import { shortenString } from '../../functions/tables';
 import {
   useFilters,
   useOwnerFilters,
-  useProjectCodeFilters,
   useUserFilters
 } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -128,7 +127,6 @@ export function BuildOrderTable({
     ];
   }, [parentBuildId]);
 
-  const projectCodeFilters = useProjectCodeFilters();
   const ownerFilters = useOwnerFilters();
   const userFilters = useUserFilters();
 
@@ -171,7 +169,7 @@ export function BuildOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ProjectCodeFilter(),
       HasProjectCodeFilter(),
       {
         name: 'issued_by',
@@ -202,7 +200,6 @@ export function BuildOrderTable({
   }, [
     partId,
     categoryFilters.choices,
-    projectCodeFilters.choices,
     ownerFilters.choices,
     userFilters.choices
   ]);

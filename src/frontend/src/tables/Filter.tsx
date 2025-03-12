@@ -4,7 +4,9 @@ import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import type { ModelType } from '../enums/ModelType';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
+import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
 
@@ -252,9 +254,7 @@ export function OrderStatusFilter({
   };
 }
 
-export function ProjectCodeFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function ProjectCodeFilter(): TableFilter {
   const globalSettings = useGlobalSettingsState.getState();
   const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
 
@@ -263,7 +263,9 @@ export function ProjectCodeFilter({
     label: t`Project Code`,
     description: t`Filter by project code`,
     active: enabled,
-    choices: choices
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.project_code_list),
+    model: ModelType.projectcode
   };
 }
 

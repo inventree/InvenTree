@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IconCheck } from '@tabler/icons-react';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import { StylishText } from '../components/items/StylishText';
 import type { TableState } from '../hooks/UseTable';
 import {
@@ -89,6 +90,19 @@ function FilterElement({
   const [textValue, setTextValue] = useState<string>('');
 
   switch (filterProps.type) {
+    case 'api':
+      return (
+        <StandaloneField
+          fieldName={`filter_value_${filterName}`}
+          fieldDefinition={{
+            field_type: 'related field',
+            api_url: filterProps.apiUrl,
+            model: filterProps.model,
+            label: t`Select filter value`,
+            onValueChange: (value: any) => onValueChange(value)
+          }}
+        />
+      );
     case 'text':
       return (
         <TextInput
@@ -179,12 +193,13 @@ function FilterAddGroup({
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
 
+  // Determine the filter "type" - if it is not supplied
   const getFilterType = (filter: TableFilter): TableFilterType => {
     if (filter.type) {
       return filter.type;
-    } else if (filter.apiUrl) {
-      return 'choice';
-    } else if (filter.choices) {
+    } else if (filter.apiUrl && filter.model) {
+      return 'api';
+    } else if (filter.choices || filter.choiceFunction) {
       return 'choice';
     } else {
       return 'boolean';
@@ -196,7 +211,6 @@ function FilterAddGroup({
     const filter = availableFilters?.find((flt) => flt.name === selectedFilter);
 
     if (filter) {
-      // Determine the filter "type" - if it is not supplied
       filter.type = getFilterType(filter);
     }
 
