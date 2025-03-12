@@ -74,7 +74,7 @@ const ExportSessionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ExportSessionTable'))
 );
 
-const ImportSesssionTable = Loadable(
+const ImportSessionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
 
@@ -119,7 +119,7 @@ export default function AdminCenter() {
         name: 'import',
         label: t`Data Import`,
         icon: <IconFileUpload />,
-        content: <ImportSesssionTable />
+        content: <ImportSessionTable />
       },
       {
         name: 'export',

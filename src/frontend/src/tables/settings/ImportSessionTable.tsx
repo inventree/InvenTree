@@ -22,7 +22,7 @@ import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 
-export default function ImportSesssionTable() {
+export default function ImportSessionTable() {
   const table = useTable('importsession');
 
   const [opened, setOpened] = useState<boolean>(false);

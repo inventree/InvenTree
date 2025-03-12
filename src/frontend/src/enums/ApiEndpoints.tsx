@@ -70,9 +70,6 @@ export enum ApiEndpoints {
   // Data output endpoints
   data_output = 'data-output/',
 
-  // Data export endpoints
-  export_session_list = 'exporter/session/',
-
   // Data import endpoints
   import_session_list = 'importer/session/',
   import_session_accept_fields = 'importer/session/:id/accept_fields/',

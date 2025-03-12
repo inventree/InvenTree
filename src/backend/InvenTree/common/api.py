@@ -862,8 +862,11 @@ class DataOutputEndpoint:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class DataOutputList(DataOutputEndpoint, ListAPI):
+class DataOutputList(DataOutputEndpoint, BulkDeleteMixin, ListAPI):
     """List view for DataOutput objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
 
 
 class DataOutputDetail(DataOutputEndpoint, RetrieveAPI):

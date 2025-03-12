@@ -794,6 +794,7 @@ class DataOutputSerializer(InvenTreeModelSerializer):
             'pk',
             'created',
             'user',
+            'user_detail',
             'total',
             'progress',
             'complete',
@@ -803,6 +804,8 @@ class DataOutputSerializer(InvenTreeModelSerializer):
             'output',
             'errors',
         ]
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     output = InvenTreeAttachmentSerializerField(
         required=False, allow_null=True, read_only=True

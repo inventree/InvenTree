@@ -29,20 +29,20 @@ test('Exporting - Orders', async ({ page }) => {
 
   // // Export the data
   await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Data exported successfully').waitFor();
+  await page.getByText('Process completed successfully').waitFor();
 
   // Download list of purchase order items
   await page.getByRole('cell', { name: 'PO0011' }).click();
   await loadTab(page, 'Line Items');
   await openExportDialog(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Data exported successfully').waitFor();
+  await page.getByText('Process completed successfully').waitFor();
 
   // Download a list of build orders
   await navigate(page, 'manufacturing/index/buildorders/');
   await openExportDialog(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Data exported successfully').waitFor();
+  await page.getByText('Process completed successfully').waitFor();
 
   // Finally, navigate to the admin center and ensure the export data is available
   await navigate(page, 'settings/admin/export/');
@@ -104,7 +104,7 @@ test('Exporting - BOM', async ({ page }) => {
     .click();
 
   await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Data exported successfully').waitFor();
+  await page.getByText('Process completed successfully').waitFor();
 
   // Finally, navigate to the admin center and ensure the export data is available
   await navigate(page, 'settings/admin/export/');

@@ -41,7 +41,7 @@ test('Label Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.getByText('Printing completed successfully').first().waitFor();
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 
@@ -76,7 +76,7 @@ test('Report Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.getByText('Printing completed successfully').first().waitFor();
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 

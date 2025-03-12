@@ -20,6 +20,11 @@ export default function ExportSessionTable() {
         render: (record: any) => <AttachmentLink attachment={record.output} />
       },
       {
+        accessor: 'output_type',
+        title: t`Output Type`,
+        sortable: true
+      },
+      {
         accessor: 'plugin',
         title: t`Plugin`,
         sortable: true
@@ -41,7 +46,7 @@ export default function ExportSessionTable() {
   return (
     <>
       <InvenTreeTable
-        url={apiUrl(ApiEndpoints.export_session_list)}
+        url={apiUrl(ApiEndpoints.data_output)}
         tableState={table}
         columns={columns}
         props={{
