@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import Http404
+from django.template.exceptions import TemplateSyntaxError
 
 import rest_framework.exceptions
 import sentry_sdk
@@ -28,6 +29,7 @@ def sentry_ignore_errors():
     return [
         Http404,
         MissingRate,
+        TemplateSyntaxError,
         ValidationError,
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,

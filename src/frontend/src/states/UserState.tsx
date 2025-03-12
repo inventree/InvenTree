@@ -13,9 +13,10 @@ export interface UserStateProps {
   is_authed: boolean;
   userId: () => number | undefined;
   username: () => string;
-  setUser: (newUser: UserProps) => void;
   setAuthenticated: (authed?: boolean) => void;
   fetchUserToken: () => Promise<void>;
+  setUser: (newUser: UserProps | undefined) => void;
+  getUser: () => UserProps | undefined;
   fetchUserState: () => Promise<void>;
   clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
@@ -49,7 +50,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   userId: () => {
     const user: UserProps = get().user as UserProps;
-    return user.pk;
+    return user?.pk;
   },
   username: () => {
     const user: UserProps = get().user as UserProps;
@@ -60,7 +61,8 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return user?.username ?? '';
     }
   },
-  setUser: (newUser: UserProps) => set({ user: newUser }),
+  setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
+  getUser: () => get().user,
   clearUserState: () => {
     set({ user: undefined, is_authed: false });
     clearCsrfCookie();
@@ -112,9 +114,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             first_name: response.data?.first_name ?? '',
             last_name: response.data?.last_name ?? '',
             email: response.data.email,
-            username: response.data.username
+            username: response.data.username,
+            groups: response.data.groups,
+            profile: response.data.profile
           };
-          set({ user: user });
+          get().setUser(user);
+          // profile info
         } else {
           get().clearUserState();
         }
@@ -140,7 +145,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             user.permissions = response.data?.permissions ?? {};
             user.is_staff = response.data?.is_staff ?? false;
             user.is_superuser = response.data?.is_superuser ?? false;
-            set({ user: user });
+            get().setUser(user);
           }
         } else {
           get().clearUserState();
