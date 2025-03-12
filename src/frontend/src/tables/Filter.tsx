@@ -23,8 +23,9 @@ export type TableFilterChoice = {
  * choice: A filter which allows selection from a list of (supplied)
  * date: A filter which allows selection from a date input
  * text: A filter which allows raw text input
+ * api: A filter which fetches its options from an API endpoint
  */
-export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
+export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text' | 'api';
 
 /**
  * Interface for the table filter type. Provides a number of options for selecting filter value:
@@ -39,6 +40,8 @@ export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
  * value: The current value of the filter
  * displayValue: The current display value of the filter
  * active: Whether the filter is active (false = hidden, not used)
+ * apiUrl: The API URL to use for fetching dynamic filter options
+ * model: The model type to use for fetching dynamic filter options
  */
 export type TableFilter = {
   name: string;
@@ -51,6 +54,8 @@ export type TableFilter = {
   value?: any;
   displayValue?: any;
   active?: boolean;
+  apiUrl?: string;
+  model?: ModelType;
 };
 
 /**
