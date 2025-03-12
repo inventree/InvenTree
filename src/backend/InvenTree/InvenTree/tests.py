@@ -1116,6 +1116,10 @@ class TestStatus(TestCase):
         """Test isImportingData check."""
         self.assertEqual(ready.isImportingData(), False)
 
+    def test_GeneratingSchema(self):
+        """Test isGeneratingSchema check."""
+        self.assertEqual(ready.isGeneratingSchema(), False)
+
 
 class TestSettings(InvenTreeTestCase):
     """Unit tests for settings."""
