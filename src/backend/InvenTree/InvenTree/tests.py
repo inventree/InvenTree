@@ -37,7 +37,7 @@ from InvenTree.unit_test import InvenTreeTestCase, in_env_context
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
-from . import config, helpers, ready, status, version
+from . import config, helpers, ready, schema, status, version
 from .tasks import offload_task
 from .validators import validate_overage
 
@@ -1635,3 +1635,42 @@ class ClassProviderMixinTest(TestCase):
     def test_get_is_builtin(self):
         """Test the get_is_builtin function."""
         self.assertTrue(self.TestClass.get_is_builtin())
+
+
+class SchemaPostprocessingTest(TestCase):
+    """Tests for schema postprocessing functions."""
+
+    def create_result_structure(self):
+        """Create a schema dict structure representative of the spectacular-generated on."""
+        return {
+            'openapi': {},
+            'info': {},
+            'paths': {},
+            'components': {
+                'examples': {},
+                'parameters': {},
+                'requestBodies': {},
+                'responses': {},
+                'schemas': {},
+                'securitySchemes': {},
+            },
+            'servers': {},
+            'externalDocs': {},
+        }
+
+    def test_postprocess_conditionally_removed(self):
+        """Verify that only selected elements are removed from required list."""
+        result_in = self.create_result_structure()
+        schemas_in = result_in.get('components').get('schemas')
+
+        schemas_in['SalesOrder'] = {'required': ['customer_detail', 'pk']}
+        schemas_in['SalesOrderShipment'] = {'required': ['order_detail']}
+
+        result_out = schema.postprocess_conditionally_removed(result_in, {}, {}, {})
+        schemas_out = result_out.get('components').get('schemas')
+
+        # only intended elements removed
+        self.assertIn('pk', schemas_out.get('SalesOrder')['required'])
+        self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
+        # required key removed when empty
+        self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
