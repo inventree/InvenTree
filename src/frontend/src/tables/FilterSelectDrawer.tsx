@@ -64,11 +64,13 @@ function FilterItem({
 }
 
 function FilterElement({
-  filterType,
+  filterName,
+  filterProps,
   valueOptions,
   onValueChange
 }: {
-  filterType: TableFilterType;
+  filterName: string;
+  filterProps: TableFilter;
   valueOptions: TableFilterChoice[];
   onValueChange: (value: string | null) => void;
 }) {
@@ -86,7 +88,7 @@ function FilterElement({
 
   const [textValue, setTextValue] = useState<string>('');
 
-  switch (filterType) {
+  switch (filterProps.type) {
     case 'text':
       return (
         <TextInput
@@ -124,7 +126,7 @@ function FilterElement({
       return (
         <Select
           data={valueOptions}
-          searchable={filterType != 'boolean'}
+          searchable={filterProps.type == 'choice'}
           label={t`Value`}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}
@@ -177,20 +179,29 @@ function FilterAddGroup({
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
 
-  // Determine the "type" of filter (default = boolean)
-  const filterType: TableFilterType = useMemo(() => {
-    const filter = availableFilters?.find((flt) => flt.name === selectedFilter);
-
-    if (filter?.type) {
+  const getFilterType = (filter: TableFilter): TableFilterType => {
+    if (filter.type) {
       return filter.type;
-    } else if (filter?.choices) {
-      // If choices are provided, it is a choice filter
+    } else if (filter.apiUrl) {
+      return 'choice';
+    } else if (filter.choices) {
       return 'choice';
     } else {
-      // Default fallback
       return 'boolean';
     }
-  }, [selectedFilter]);
+  };
+
+  // Extract filter definition
+  const filterProps: TableFilter | undefined = useMemo(() => {
+    const filter = availableFilters?.find((flt) => flt.name === selectedFilter);
+
+    if (filter) {
+      // Determine the filter "type" - if it is not supplied
+      filter.type = getFilterType(filter);
+    }
+
+    return filter;
+  }, [availableFilters, selectedFilter]);
 
   const setSelectedValue = useCallback(
     (value: string | null) => {
@@ -233,9 +244,10 @@ function FilterAddGroup({
         onChange={(value: string | null) => setSelectedFilter(value)}
         maxDropdownHeight={800}
       />
-      {selectedFilter && (
+      {selectedFilter && filterProps && (
         <FilterElement
-          filterType={filterType}
+          filterName={selectedFilter}
+          filterProps={filterProps}
           valueOptions={valueOptions}
           onValueChange={setSelectedValue}
         />
