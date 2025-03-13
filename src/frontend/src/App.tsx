@@ -6,6 +6,11 @@ import { useUserState } from './states/UserState';
 
 // Global API instance
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.xsrfCookieName = 'csrftoken';
+
 export const api = axios.create({
   withCredentials: true,
   withXSRFToken: true,
