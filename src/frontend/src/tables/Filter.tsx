@@ -336,13 +336,12 @@ export function IssuedByFilter(): TableFilter {
   });
 }
 
-export function CategoryFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function PartCategoryFilter(): TableFilter {
   return {
     name: 'category',
     label: t`Category`,
     description: t`Filter by part category`,
-    choices: choices
+    model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
   };
 }

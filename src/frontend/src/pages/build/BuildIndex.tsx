@@ -12,17 +12,14 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useCategoryFilters } from '../../hooks/UseFilter';
 import { useUserState } from '../../states/UserState';
-import { CategoryFilter, type TableFilter } from '../../tables/Filter';
+import { PartCategoryFilter, type TableFilter } from '../../tables/Filter';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
 function BuildOrderCalendar() {
-  const categoryFilters = useCategoryFilters();
-
   const calendarFilters: TableFilter[] = useMemo(() => {
-    return [CategoryFilter({ choices: categoryFilters.choices })];
-  }, [categoryFilters]);
+    return [PartCategoryFilter()];
+  }, []);
 
   return (
     <OrderCalendar

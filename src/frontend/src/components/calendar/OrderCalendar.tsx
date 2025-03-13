@@ -20,7 +20,6 @@ import type { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
@@ -58,19 +57,16 @@ export default function OrderCalendar({
   const navigate = useNavigate();
   const user = useUserState();
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const ownerFilters = useOwnerFilters();
-
   // These filters apply to all order types
   const orderFilters: TableFilter[] = useMemo(() => {
     return [
       OrderStatusFilter({ model: model }),
       AssignedToMeFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ProjectCodeFilter(),
       HasProjectCodeFilter(),
-      ResponsibleFilter({ choices: ownerFilters.choices })
+      ResponsibleFilter()
     ];
-  }, [model, ownerFilters.choices, projectCodeFilters.choices]);
+  }, [model]);
 
   // Complete set of available filters
   const calendarFilters: TableFilter[] = useMemo(() => {
