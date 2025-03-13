@@ -19,6 +19,11 @@ export function setApiDefaults() {
   api.defaults.withXSRFToken = true;
   api.defaults.xsrfCookieName = 'csrftoken';
   api.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+  axios.defaults.withCredentials = true;
+  axios.defaults.withXSRFToken = true;
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken';
 }
 
 export const queryClient = new QueryClient({
