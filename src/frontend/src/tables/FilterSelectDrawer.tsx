@@ -97,6 +97,7 @@ function FilterElement({
           fieldDefinition={{
             field_type: 'related field',
             api_url: filterProps.apiUrl,
+            placeholder: t`Select filter value`,
             model: filterProps.model,
             label: t`Select filter value`,
             onValueChange: (value: any, instance: any) => {
