@@ -103,6 +103,13 @@ export function BuildOrderTable({
         accessor: 'priority',
         sortable: true
       },
+      {
+        accessor: 'external',
+        title: t`External`,
+        sortable: true,
+        switchable: true,
+        render: (record: any) => 'TODO'
+      },
       CreationDateColumn({}),
       StartDateColumn({}),
       TargetDateColumn({}),
@@ -161,6 +168,11 @@ export function BuildOrderTable({
         apiUrl: apiUrl(ApiEndpoints.category_list),
         model: ModelType.partcategory,
         modelRenderer: (instance: any) => instance.name
+      },
+      {
+        name: 'external',
+        label: t`External`,
+        description: t`Show external build orders`
       }
     ];
 

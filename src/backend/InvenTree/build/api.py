@@ -46,6 +46,12 @@ class BuildFilter(rest_filters.FilterSet):
 
         return queryset.filter(q1 | q2).distinct()
 
+    external = rest_filters.BooleanFilter(label=_('External'), method='filter_external')
+
+    def filter_external(self, queryset, name, value):
+        """Filter the list by whether the build is 'external'."""
+        return queryset.filter(purchase_order_line__isnull=not str2bool(value))
+
     active = rest_filters.BooleanFilter(label='Build is active', method='filter_active')
 
     # 'outstanding' is an alias for 'active' here

@@ -3,10 +3,12 @@ import { Text } from '@mantine/core';
 import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import { RenderInstance } from '../../components/render/Instance';
 import { RenderStockLocation } from '../../components/render/Stock';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -40,7 +42,8 @@ import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -62,6 +65,7 @@ export function PurchaseOrderLineItemTable({
 }>) {
   const table = useTable('purchase-order-line-item');
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   // Data import
@@ -142,6 +146,23 @@ export function PurchaseOrderLineItemTable({
         sortable: false
       },
       ReferenceColumn({}),
+      {
+        accessor: 'build_order',
+        title: t`Build Order`,
+        sortable: true,
+        render: (record: any) => {
+          if (record.build_order_detail) {
+            return (
+              <RenderInstance
+                instance={record.build_order_detail}
+                model={ModelType.build}
+              />
+            );
+          } else {
+            return '-';
+          }
+        }
+      },
       {
         accessor: 'quantity',
         title: t`Quantity`,
@@ -326,6 +347,13 @@ export function PurchaseOrderLineItemTable({
             receiveLineItems.open();
           }
         },
+        RowViewAction({
+          hidden: !record.build_order,
+          title: t`View Build Order`,
+          modelType: ModelType.build,
+          modelId: record.build_order,
+          navigate: navigate
+        }),
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
