@@ -93,7 +93,7 @@ function FilterElement({
     case 'api':
       return (
         <StandaloneField
-          fieldName={`filter_value_${filterName}`}
+          fieldName={`filter-${filterName}`}
           fieldDefinition={{
             field_type: 'related field',
             api_url: filterProps.apiUrl,
@@ -273,11 +273,13 @@ function FilterAddGroup({
 }
 
 export function FilterSelectDrawer({
+  title,
   availableFilters,
   filterSet,
   opened,
   onClose
 }: Readonly<{
+  title?: string;
   availableFilters: TableFilter[];
   filterSet: FilterSetState;
   opened: boolean;
@@ -306,7 +308,7 @@ export function FilterSelectDrawer({
       closeButtonProps={{
         'aria-label': 'filter-drawer-close'
       }}
-      title={<StylishText size='lg'>{t`Table Filters`}</StylishText>}
+      title={<StylishText size='lg'>{title ?? t`Table Filters`}</StylishText>}
     >
       <Stack gap='xs'>
         {hasFilters &&

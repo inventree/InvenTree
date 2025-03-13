@@ -91,6 +91,7 @@ export default function Calendar({
       {enableFilters && filters && (filters?.length ?? 0) > 0 && (
         <Boundary label={`InvenTreeCalendarFilterDrawer-${state.name}`}>
           <FilterSelectDrawer
+            title={t`Calendar Filters`}
             availableFilters={filters}
             filterSet={state.filterSet}
             opened={filtersVisible}
@@ -151,9 +152,9 @@ export default function Calendar({
               >
                 <ActionIcon
                   variant='transparent'
-                  aria-label='table-select-filters'
+                  aria-label='calendar-select-filters'
                 >
-                  <Tooltip label={t`Table Filters`}>
+                  <Tooltip label={t`Calendar Filters`}>
                     <IconFilter
                       onClick={() => setFiltersVisible(!filtersVisible)}
                     />
