@@ -5,7 +5,14 @@ import { useLocalState } from './states/LocalState';
 import { useUserState } from './states/UserState';
 
 // Global API instance
-export const api = axios.create({});
+
+export const api = axios.create({
+  withCredentials: true,
+  withXSRFToken: true,
+  xsrfCookieName: 'csrftoken',
+  xsrfHeaderName: 'X-CSRFToken',
+  timeout: 5000
+});
 
 /*
  * Setup default settings for the Axios API instance.
