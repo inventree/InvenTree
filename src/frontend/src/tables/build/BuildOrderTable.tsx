@@ -11,8 +11,10 @@ import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import {
+  BooleanColumn,
   CreationDateColumn,
   DateColumn,
   PartColumn,
@@ -58,6 +60,7 @@ export function BuildOrderTable({
   parentBuildId?: number;
   salesOrderId?: number;
 }>) {
+  const globalSettings = useGlobalSettingsState();
   const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
 
   const tableColumns = useMemo(() => {
@@ -103,13 +106,13 @@ export function BuildOrderTable({
         accessor: 'priority',
         sortable: true
       },
-      {
+      BooleanColumn({
         accessor: 'external',
         title: t`External`,
         sortable: true,
         switchable: true,
-        render: (record: any) => 'TODO'
-      },
+        hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      }),
       CreationDateColumn({}),
       StartDateColumn({}),
       TargetDateColumn({}),
@@ -127,7 +130,7 @@ export function BuildOrderTable({
       },
       ResponsibleColumn({})
     ];
-  }, [parentBuildId]);
+  }, [parentBuildId, globalSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
@@ -172,7 +175,8 @@ export function BuildOrderTable({
       {
         name: 'external',
         label: t`External`,
-        description: t`Show external build orders`
+        description: t`Show external build orders`,
+        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       }
     ];
 
@@ -187,7 +191,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [partId]);
+  }, [partId, globalSettings]);
 
   const user = useUserState();
 

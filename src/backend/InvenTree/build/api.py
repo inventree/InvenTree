@@ -32,7 +32,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = Build
-        fields = ['sales_order']
+        fields = ['sales_order', 'external']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
@@ -45,12 +45,6 @@ class BuildFilter(rest_filters.FilterSet):
         q2 = Q(status_custom_key=value)
 
         return queryset.filter(q1 | q2).distinct()
-
-    external = rest_filters.BooleanFilter(label=_('External'), method='filter_external')
-
-    def filter_external(self, queryset, name, value):
-        """Filter the list by whether the build is 'external'."""
-        return queryset.filter(purchase_order_line__isnull=not str2bool(value))
 
     active = rest_filters.BooleanFilter(label='Build is active', method='filter_active')
 
@@ -298,6 +292,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'project_code',
         'priority',
         'level',
+        'external',
     ]
 
     ordering_field_aliases = {
