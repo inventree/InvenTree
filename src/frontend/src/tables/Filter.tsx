@@ -4,7 +4,9 @@ import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import type { ModelType } from '../enums/ModelType';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
+import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
 
@@ -23,8 +25,9 @@ export type TableFilterChoice = {
  * choice: A filter which allows selection from a list of (supplied)
  * date: A filter which allows selection from a date input
  * text: A filter which allows raw text input
+ * api: A filter which fetches its options from an API endpoint
  */
-export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
+export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text' | 'api';
 
 /**
  * Interface for the table filter type. Provides a number of options for selecting filter value:
@@ -39,6 +42,9 @@ export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
  * value: The current value of the filter
  * displayValue: The current display value of the filter
  * active: Whether the filter is active (false = hidden, not used)
+ * apiUrl: The API URL to use for fetching dynamic filter options
+ * model: The model type to use for fetching dynamic filter options
+ * modelRenderer: A function to render a simple text version of the model type
  */
 export type TableFilter = {
   name: string;
@@ -51,6 +57,9 @@ export type TableFilter = {
   value?: any;
   displayValue?: any;
   active?: boolean;
+  apiUrl?: string;
+  model?: ModelType;
+  modelRenderer?: (instance: any) => string;
 };
 
 /**
@@ -247,9 +256,7 @@ export function OrderStatusFilter({
   };
 }
 
-export function ProjectCodeFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function ProjectCodeFilter(): TableFilter {
   const globalSettings = useGlobalSettingsState.getState();
   const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
 
@@ -258,30 +265,75 @@ export function ProjectCodeFilter({
     label: t`Project Code`,
     description: t`Filter by project code`,
     active: enabled,
-    choices: choices
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.project_code_list),
+    model: ModelType.projectcode,
+    modelRenderer: (instance) => instance.code
   };
 }
 
-export function ResponsibleFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function OwnerFilter({
+  name,
+  label,
+  description
+}: {
+  name: string;
+  label: string;
+  description: string;
+}): TableFilter {
   return {
+    name: name,
+    label: label,
+    description: description,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.owner_list),
+    model: ModelType.owner,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
+
+export function ResponsibleFilter(): TableFilter {
+  return OwnerFilter({
     name: 'assigned_to',
     label: t`Responsible`,
-    description: t`Filter by responsible owner`,
-    choices: choices
+    description: t`Filter by responsible owner`
+  });
+}
+
+export function UserFilter({
+  name,
+  label,
+  description
+}: {
+  name?: string;
+  label?: string;
+  description?: string;
+}): TableFilter {
+  return {
+    name: name ?? 'user',
+    label: label ?? t`User`,
+    description: description ?? t`Filter by user`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.user_list),
+    model: ModelType.user,
+    modelRenderer: (instance: any) => instance.username
   };
 }
 
-export function CreatedByFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
-  return {
+export function CreatedByFilter(): TableFilter {
+  return UserFilter({
     name: 'created_by',
     label: t`Created By`,
-    description: t`Filter by user who created the order`,
-    choices: choices
-  };
+    description: t`Filter by user who created the order`
+  });
+}
+
+export function IssuedByFilter(): TableFilter {
+  return UserFilter({
+    name: 'issued_by',
+    label: t`Issued By`,
+    description: t`Filter by user who issued the order`
+  });
 }
 
 export function CategoryFilter({
