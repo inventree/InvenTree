@@ -288,6 +288,7 @@ The following [global settings](../settings/global.md) are available for adjusti
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("BUILDORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("BUILDORDER_EXTERNAL_BUILDS") }}
 {{ globalsetting("BUILDORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("BUILDORDER_REQUIRE_ACTIVE_PART") }}
 {{ globalsetting("BUILDORDER_REQUIRE_LOCKED_PART") }}

@@ -63,6 +63,8 @@ export function usePurchaseOrderLineItemFields({
   orderId?: number;
   create?: boolean;
 }) {
+  const globalSettings = useGlobalSettingsState();
+
   const [purchasePrice, setPurchasePrice] = useState<string>('');
   const [autoPricing, setAutoPricing] = useState(true);
 
@@ -118,6 +120,12 @@ export function usePurchaseOrderLineItemFields({
       destination: {
         icon: <IconSitemap />
       },
+      build_order: {
+        filters: {
+          outstanding: true
+          // TODO: Filter by selected part...
+        }
+      },
       notes: {
         icon: <IconNotes />
       },
@@ -126,12 +134,16 @@ export function usePurchaseOrderLineItemFields({
       }
     };
 
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', false)) {
+      delete fields.build_order;
+    }
+
     if (create) {
       fields['merge_items'] = {};
     }
 
     return fields;
-  }, [create, orderId, supplierId, autoPricing, purchasePrice]);
+  }, [create, orderId, globalSettings, supplierId, autoPricing, purchasePrice]);
 
   return fields;
 }

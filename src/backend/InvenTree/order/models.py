@@ -1637,6 +1637,20 @@ class PurchaseOrderLineItem(OrderLineItem):
             if self.part.supplier != self.order.supplier:
                 raise ValidationError({'part': _('Supplier part must match supplier')})
 
+        if self.build_order:
+            if part := self.part.part:
+                if self.build_order.part != self.part.part:
+                    raise ValidationError({
+                        'build_order': _('Build order part must match line item part')
+                    })
+
+                if not part.assembly:
+                    raise ValidationError({
+                        'build_order': _(
+                            'Build orders can only be linked to assembly parts'
+                        )
+                    })
+
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
         return '{n} x {part} - {po}'.format(
