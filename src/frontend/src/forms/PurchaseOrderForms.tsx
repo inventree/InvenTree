@@ -68,6 +68,9 @@ export function usePurchaseOrderLineItemFields({
   const [purchasePrice, setPurchasePrice] = useState<string>('');
   const [autoPricing, setAutoPricing] = useState(true);
 
+  // Internal part information
+  const [part, setPart] = useState<any>({});
+
   useEffect(() => {
     if (autoPricing) {
       setPurchasePrice('');
@@ -92,6 +95,10 @@ export function usePurchaseOrderLineItemFields({
           supplier_detail: true,
           active: true,
           part_active: true
+        },
+        onValueChange: (value, record) => {
+          setPart(record?.part_detail ?? {});
+          console.log('part:', record.part_detail);
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
           return {
@@ -121,9 +128,10 @@ export function usePurchaseOrderLineItemFields({
         icon: <IconSitemap />
       },
       build_order: {
+        disabled: !part?.assembly,
         filters: {
-          outstanding: true
-          // TODO: Filter by selected part...
+          outstanding: true,
+          part: part?.pk
         }
       },
       notes: {
@@ -143,7 +151,15 @@ export function usePurchaseOrderLineItemFields({
     }
 
     return fields;
-  }, [create, orderId, globalSettings, supplierId, autoPricing, purchasePrice]);
+  }, [
+    create,
+    orderId,
+    part,
+    globalSettings,
+    supplierId,
+    autoPricing,
+    purchasePrice
+  ]);
 
   return fields;
 }
