@@ -1601,6 +1601,11 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     Attributes:
         order: Reference to a PurchaseOrder object
+        part: Reference to a SupplierPart object
+        received: Number of items received
+        purchase_price: Unit purchase price for this line item
+        destination: Destination for received items
+        build_order: Link to a BuildOrder for this line item
     """
 
     class Meta:
@@ -1688,6 +1693,16 @@ class PurchaseOrderLineItem(OrderLineItem):
     def price(self):
         """Return the 'purchase_price' field as 'price'."""
         return self.purchase_price
+
+    build_order = models.OneToOneField(
+        'build.Build',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Build Order'),
+        help_text=_('External Build Order for this line item'),
+        related_name='purchase_order_line',
+    )
 
     destination = TreeForeignKey(
         'stock.StockLocation',
