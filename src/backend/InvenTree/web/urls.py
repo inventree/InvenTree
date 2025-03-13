@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import TemplateView
@@ -10,16 +9,6 @@ from django.views.generic import TemplateView
 from rest_framework import permissions, serializers
 
 from InvenTree.mixins import RetrieveUpdateAPI
-
-
-class RedirectAssetView(TemplateView):
-    """View to redirect to static asset."""
-
-    def get(self, request, *args, **kwargs):
-        """Redirect to static asset."""
-        return redirect(
-            f'{settings.STATIC_URL}web/assets/{kwargs["path"]}', permanent=True
-        )
 
 
 class PreferredSerializer(serializers.Serializer):
@@ -72,14 +61,12 @@ class PreferredUiView(RetrieveUpdateAPI):
 
 
 spa_view = ensure_csrf_cookie(TemplateView.as_view(template_name='web/index.html'))
-assets_path = path('assets/<path:path>', RedirectAssetView.as_view())
 
 
 urlpatterns = [
     path(
         f'{settings.FRONTEND_URL_BASE}/',
         include([
-            assets_path,
             path(
                 'set-password?uid=<uid>&token=<token>',
                 spa_view,
@@ -88,7 +75,6 @@ urlpatterns = [
             re_path('.*', spa_view),
         ]),
     ),
-    assets_path,
     path(settings.FRONTEND_URL_BASE, spa_view, name='platform'),
 ]
 
