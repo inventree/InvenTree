@@ -13,6 +13,8 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
@@ -86,6 +88,7 @@ class InvenTreeMoneySerializer(MoneyField):
             return amount
 
 
+@extend_schema_field(OpenApiTypes.STR)
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
     """Custom serializers for selecting currency option."""
 
