@@ -41,14 +41,6 @@
 		max_size 100MB
 	}
 
-	# Redirect 'asset' requests to the static file server
-	handle_path /assets/* {
-		import cors-headers assets
-
-		root * /var/www/static/web/assets
-		file_server
-	}
-
 	# Handle static request files
 	handle_path /static/* {
 		import cors-headers static
