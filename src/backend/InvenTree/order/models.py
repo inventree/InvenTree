@@ -1638,6 +1638,11 @@ class PurchaseOrderLineItem(OrderLineItem):
                 raise ValidationError({'part': _('Supplier part must match supplier')})
 
         if self.build_order:
+            if not self.build_order.external:
+                raise ValidationError({
+                    'build_order': _('Build order must be marked as external')
+                })
+
             if part := self.part.part:
                 if self.build_order.part != self.part.part:
                     raise ValidationError({

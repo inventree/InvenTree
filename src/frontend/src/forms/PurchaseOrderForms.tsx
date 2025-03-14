@@ -130,6 +130,7 @@ export function usePurchaseOrderLineItemFields({
       build_order: {
         disabled: !part?.assembly,
         filters: {
+          external: true,
           outstanding: true,
           part: part?.pk
         }
