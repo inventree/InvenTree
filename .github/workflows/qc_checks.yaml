@@ -232,7 +232,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # pin@v4.1.9
         with:
           path: artifact
           merge-multiple: true
@@ -338,7 +338,7 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -481,7 +481,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -613,7 +613,7 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -675,7 +675,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # pin@v3
+        uses: github/codeql-action/upload-sarif@6bb031afdd8eb862ea3fc1848194185e076637e5 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

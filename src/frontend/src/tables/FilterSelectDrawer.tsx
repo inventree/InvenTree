@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IconCheck } from '@tabler/icons-react';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import { StylishText } from '../components/items/StylishText';
 import type { TableState } from '../hooks/UseTable';
 import {
@@ -64,13 +65,15 @@ function FilterItem({
 }
 
 function FilterElement({
-  filterType,
+  filterName,
+  filterProps,
   valueOptions,
   onValueChange
 }: {
-  filterType: TableFilterType;
+  filterName: string;
+  filterProps: TableFilter;
   valueOptions: TableFilterChoice[];
-  onValueChange: (value: string | null) => void;
+  onValueChange: (value: string | null, displayValue?: any) => void;
 }) {
   const setDateValue = useCallback(
     (value: DateValue) => {
@@ -86,7 +89,23 @@ function FilterElement({
 
   const [textValue, setTextValue] = useState<string>('');
 
-  switch (filterType) {
+  switch (filterProps.type) {
+    case 'api':
+      return (
+        <StandaloneField
+          fieldName={`filter_value_${filterName}`}
+          fieldDefinition={{
+            field_type: 'related field',
+            api_url: filterProps.apiUrl,
+            placeholder: t`Select filter value`,
+            model: filterProps.model,
+            label: t`Select filter value`,
+            onValueChange: (value: any, instance: any) => {
+              onValueChange(value, filterProps.modelRenderer?.(instance));
+            }
+          }}
+        />
+      );
     case 'text':
       return (
         <TextInput
@@ -124,7 +143,7 @@ function FilterElement({
       return (
         <Select
           data={valueOptions}
-          searchable={filterType != 'boolean'}
+          searchable={filterProps.type == 'choice'}
           label={t`Value`}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}
@@ -177,23 +196,32 @@ function FilterAddGroup({
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
 
-  // Determine the "type" of filter (default = boolean)
-  const filterType: TableFilterType = useMemo(() => {
-    const filter = availableFilters?.find((flt) => flt.name === selectedFilter);
-
-    if (filter?.type) {
+  // Determine the filter "type" - if it is not supplied
+  const getFilterType = (filter: TableFilter): TableFilterType => {
+    if (filter.type) {
       return filter.type;
-    } else if (filter?.choices) {
-      // If choices are provided, it is a choice filter
+    } else if (filter.apiUrl && filter.model) {
+      return 'api';
+    } else if (filter.choices || filter.choiceFunction) {
       return 'choice';
     } else {
-      // Default fallback
       return 'boolean';
     }
-  }, [selectedFilter]);
+  };
+
+  // Extract filter definition
+  const filterProps: TableFilter | undefined = useMemo(() => {
+    const filter = availableFilters?.find((flt) => flt.name === selectedFilter);
+
+    if (filter) {
+      filter.type = getFilterType(filter);
+    }
+
+    return filter;
+  }, [availableFilters, selectedFilter]);
 
   const setSelectedValue = useCallback(
-    (value: string | null) => {
+    (value: string | null, displayValue?: any) => {
       // Find the matching filter
       const filter: TableFilter | undefined = availableFilters.find(
         (flt) => flt.name === selectedFilter
@@ -211,7 +239,8 @@ function FilterAddGroup({
       const newFilter: TableFilter = {
         ...filter,
         value: value,
-        displayValue: valueOptions.find((v) => v.value === value)?.label
+        displayValue:
+          displayValue ?? valueOptions.find((v) => v.value === value)?.label
       };
 
       tableState.setActiveFilters([...filters, newFilter]);
@@ -233,9 +262,10 @@ function FilterAddGroup({
         onChange={(value: string | null) => setSelectedFilter(value)}
         maxDropdownHeight={800}
       />
-      {selectedFilter && (
+      {selectedFilter && filterProps && (
         <FilterElement
-          filterType={filterType}
+          filterName={selectedFilter}
+          filterProps={filterProps}
           valueOptions={valueOptions}
           onValueChange={setSelectedValue}
         />
