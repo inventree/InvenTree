@@ -128,7 +128,8 @@ export function useBuildOrderFields({
         filters: {
           is_active: true
         }
-      }
+      },
+      external: {}
     };
 
     if (create) {
@@ -137,6 +138,10 @@ export function useBuildOrderFields({
 
     if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
       delete fields.project_code;
+    }
+
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', true)) {
+      delete fields.external;
     }
 
     return fields;

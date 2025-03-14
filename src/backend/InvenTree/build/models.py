@@ -169,6 +169,13 @@ class Build(
         """Validate the BuildOrder model."""
         super().clean()
 
+        if self.external and not self.part.purchaseable:
+            raise ValidationError({
+                'external': _(
+                    'Build orders can only be external for purchaseable parts'
+                )
+            })
+
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
                 raise ValidationError({
