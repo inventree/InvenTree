@@ -10,6 +10,7 @@ INVENTREE_API_TEXT = """
 
 v321 - 2025-03-06 : https://github.com/inventree/InvenTree/pull/9236
     - Adds conditionally-returned fields to the schema to match API behavior
+    - Removes required flag for nullable read-only fields to match API behavior
 
 v320 - 2025-03-05 : https://github.com/inventree/InvenTree/pull/9243
     - Link fields are now up to 2000 chars long

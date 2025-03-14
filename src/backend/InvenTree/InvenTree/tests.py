@@ -1658,18 +1658,38 @@ class SchemaPostprocessingTest(TestCase):
             'externalDocs': {},
         }
 
-    def test_postprocess_conditionally_removed(self):
+    def test_postprocess_required_nullable(self):
         """Verify that only selected elements are removed from required list."""
         result_in = self.create_result_structure()
         schemas_in = result_in.get('components').get('schemas')
 
-        schemas_in['SalesOrder'] = {'required': ['customer_detail', 'pk']}
-        schemas_in['SalesOrderShipment'] = {'required': ['order_detail']}
+        schemas_in['SalesOrder'] = {
+            'properties': {
+                'pk': {'type': 'integer', 'readOnly': True, 'title': 'ID'},
+                'customer_detail': {
+                    'allOf': [{'$ref': '#/components/schemas/CompanyBrief'}],
+                    'readOnly': True,
+                    'nullable': True,
+                },
+            },
+            'required': ['customer_detail', 'pk'],
+        }
 
-        result_out = schema.postprocess_conditionally_removed(result_in, {}, {}, {})
+        schemas_in['SalesOrderShipment'] = {
+            'properties': {
+                'order_detail': {
+                    'allOf': [{'$ref': '#/components/schemas/SalesOrder'}],
+                    'readOnly': True,
+                    'nullable': True,
+                }
+            },
+            'required': ['order_detail'],
+        }
+
+        result_out = schema.postprocess_required_nullable(result_in, {}, {}, {})
         schemas_out = result_out.get('components').get('schemas')
 
-        # only intended elements removed
+        # only intended elements removed (read-only, required, and object type)
         self.assertIn('pk', schemas_out.get('SalesOrder')['required'])
         self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
         # required key removed when empty

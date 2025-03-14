@@ -50,7 +50,7 @@ class GroupSerializer(InvenTreeModelSerializer):
         except AppRegistryNotReady:
             pass
 
-    permissions = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField(allow_null=True)
 
     def get_permissions(self, group: Group):
         """Return a list of permissions associated with the group."""
@@ -75,7 +75,7 @@ class RoleSerializer(InvenTreeModelSerializer):
 
     user = serializers.IntegerField(source='pk')
     roles = serializers.SerializerMethodField()
-    permissions = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField(allow_null=True)
 
     def get_roles(self, user: User) -> dict:
         """Roles associated with the user."""

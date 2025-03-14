@@ -129,11 +129,13 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     reference = serializers.CharField(required=True)
 
     # Detail for point-of-contact field
-    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
+    contact_detail = ContactSerializer(
+        source='contact', many=False, read_only=True, allow_null=True
+    )
 
     # Detail for responsible field
     responsible_detail = OwnerSerializer(
-        source='responsible', read_only=True, many=False
+        source='responsible', read_only=True, allow_null=True, many=False
     )
 
     project_code_label = serializers.CharField(
@@ -150,7 +152,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
 
     # Detail for address field
     address_detail = AddressBriefSerializer(
-        source='address', many=False, read_only=True
+        source='address', many=False, read_only=True, allow_null=True
     )
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
@@ -385,7 +387,7 @@ class PurchaseOrderSerializer(
     )
 
     supplier_detail = CompanyBriefSerializer(
-        source='supplier', many=False, read_only=True
+        source='supplier', many=False, read_only=True, allow_null=True
     )
 
 
@@ -612,11 +614,11 @@ class PurchaseOrderLineItemSerializer(
     total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(
-        source='get_base_part', many=False, read_only=True
+        source='get_base_part', many=False, read_only=True, allow_null=True
     )
 
     supplier_part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True
+        source='part', brief=True, many=False, read_only=True, allow_null=True
     )
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
@@ -637,7 +639,9 @@ class PurchaseOrderLineItemSerializer(
         help_text=_('Purchase price currency')
     )
 
-    order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
+    order_detail = PurchaseOrderSerializer(
+        source='order', read_only=True, allow_null=True, many=False
+    )
 
     merge_items = serializers.BooleanField(
         label=_('Merge Items'),
@@ -703,7 +707,9 @@ class PurchaseOrderExtraLineSerializer(
 ):
     """Serializer for a PurchaseOrderExtraLine object."""
 
-    order_detail = PurchaseOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = PurchaseOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
 
     class Meta(AbstractExtraLineMeta):
         """Metaclass options."""
@@ -1073,7 +1079,7 @@ class SalesOrderSerializer(
         return queryset
 
     customer_detail = CompanyBriefSerializer(
-        source='customer', many=False, read_only=True
+        source='customer', many=False, read_only=True, allow_null=True
     )
 
     shipments_count = serializers.IntegerField(read_only=True, label=_('Shipments'))
@@ -1240,10 +1246,14 @@ class SalesOrderLineItemSerializer(
 
         return queryset
 
-    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    order_detail = SalesOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
+    part_detail = PartBriefSerializer(
+        source='part', many=False, read_only=True, allow_null=True
+    )
     customer_detail = CompanyBriefSerializer(
-        source='order.customer', many=False, read_only=True
+        source='order.customer', many=False, read_only=True, allow_null=True
     )
 
     # Annotated fields
@@ -1313,7 +1323,9 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
         read_only=True, label=_('Allocated Items')
     )
 
-    order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
+    order_detail = SalesOrderSerializer(
+        source='order', read_only=True, allow_null=True, many=False
+    )
 
 
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
@@ -1388,16 +1400,20 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
     # Extra detail fields
-    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
-    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    order_detail = SalesOrderSerializer(
+        source='line.order', many=False, read_only=True, allow_null=True
+    )
+    part_detail = PartBriefSerializer(
+        source='item.part', many=False, read_only=True, allow_null=True
+    )
     item_detail = stock.serializers.StockItemSerializerBrief(
-        source='item', many=False, read_only=True
+        source='item', many=False, read_only=True, allow_null=True
     )
     location_detail = stock.serializers.LocationBriefSerializer(
-        source='item.location', many=False, read_only=True
+        source='item.location', many=False, read_only=True, allow_null=True
     )
     customer_detail = CompanyBriefSerializer(
-        source='line.order.customer', many=False, read_only=True
+        source='line.order.customer', many=False, read_only=True, allow_null=True
     )
 
     shipment_detail = SalesOrderShipmentSerializer(
@@ -1843,7 +1859,9 @@ class SalesOrderExtraLineSerializer(
 
         model = order.models.SalesOrderExtraLine
 
-    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = SalesOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
 
 
 @register_importer()
@@ -1912,7 +1930,7 @@ class ReturnOrderSerializer(
         return queryset
 
     customer_detail = CompanyBriefSerializer(
-        source='customer', many=False, read_only=True
+        source='customer', many=False, read_only=True, allow_null=True
     )
 
 
@@ -2103,17 +2121,21 @@ class ReturnOrderLineItemSerializer(
         if not part_detail:
             self.fields.pop('part_detail', None)
 
-    order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = ReturnOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
 
     quantity = serializers.FloatField(
         label=_('Quantity'), help_text=_('Quantity to return')
     )
 
     item_detail = stock.serializers.StockItemSerializer(
-        source='item', many=False, read_only=True
+        source='item', many=False, read_only=True, allow_null=True
     )
 
-    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    part_detail = PartBriefSerializer(
+        source='item.part', many=False, read_only=True, allow_null=True
+    )
 
     price = InvenTreeMoneySerializer(allow_null=True)
     price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))
@@ -2130,4 +2152,6 @@ class ReturnOrderExtraLineSerializer(
 
         model = order.models.ReturnOrderExtraLine
 
-    order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = ReturnOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )

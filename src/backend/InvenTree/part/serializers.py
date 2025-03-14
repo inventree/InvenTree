@@ -134,7 +134,10 @@ class CategorySerializer(
     starred = serializers.SerializerMethodField()
 
     path = serializers.ListField(
-        child=serializers.DictField(), source='get_path', read_only=True
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     icon = serializers.CharField(
@@ -454,9 +457,11 @@ class PartParameterSerializer(
         if not template_detail:
             self.fields.pop('template_detail', None)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = PartBriefSerializer(
+        source='part', many=False, read_only=True, allow_null=True
+    )
     template_detail = PartParameterTemplateSerializer(
-        source='template', many=False, read_only=True
+        source='template', many=False, read_only=True, allow_null=True
     )
 
 
@@ -930,14 +935,19 @@ class PartSerializer(
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    category_detail = CategorySerializer(
+        source='category', many=False, read_only=True, allow_null=True
+    )
 
     category_path = serializers.ListField(
-        child=serializers.DictField(), source='category.get_path', read_only=True
+        child=serializers.DictField(),
+        source='category.get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     default_location_detail = DefaultLocationSerializer(
-        source='default_location', many=False, read_only=True
+        source='default_location', many=False, read_only=True, allow_null=True
     )
 
     category_name = serializers.CharField(
@@ -1010,7 +1020,7 @@ class PartSerializer(
         source='pricing_data.updated', allow_null=True, read_only=True
     )
 
-    parameters = PartParameterSerializer(many=True, read_only=True)
+    parameters = PartParameterSerializer(many=True, read_only=True, allow_null=True)
 
     # Extra fields used only for creation of a new Part instance
     duplicate = DuplicatePartSerializer(
@@ -1658,10 +1668,12 @@ class BomItemSerializer(
         help_text=_('Select the parent assembly'),
     )
 
-    substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
+    substitutes = BomItemSubstituteSerializer(
+        many=True, read_only=True, allow_null=True
+    )
 
     part_detail = PartBriefSerializer(
-        source='part', label=_('Assembly'), many=False, read_only=True
+        source='part', label=_('Assembly'), many=False, read_only=True, allow_null=True
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1671,7 +1683,11 @@ class BomItemSerializer(
     )
 
     sub_part_detail = PartBriefSerializer(
-        source='sub_part', label=_('Component'), many=False, read_only=True
+        source='sub_part',
+        label=_('Component'),
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
@@ -1877,7 +1893,9 @@ class CategoryParameterTemplateSerializer(
         source='parameter_template', many=False, read_only=True
     )
 
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    category_detail = CategorySerializer(
+        source='category', many=False, read_only=True, allow_null=True
+    )
 
 
 class PartCopyBOMSerializer(serializers.Serializer):
