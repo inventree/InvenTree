@@ -1,5 +1,6 @@
 """Functions to check if certain parts of InvenTree are ready."""
 
+import inspect
 import os
 import sys
 
@@ -42,6 +43,14 @@ def isRunningBackup():
             'mediarestore',
         ]
     )
+
+
+def isGeneratingSchema():
+    """Return true if schema generation is being executed."""
+    if 'schema' in sys.argv:
+        return True
+
+    return any('drf_spectacular' in frame.filename for frame in inspect.stack())
 
 
 def isInWorkerThread():
