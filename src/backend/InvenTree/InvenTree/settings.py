@@ -1452,6 +1452,11 @@ SPECTACULAR_SETTINGS = {
     'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/',
+    # oAuth2
+    'OAUTH2_FLOWS': ['authorizationCode', 'clientCredentials'],
+    'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
+    'OAUTH2_TOKEN_URL': '/o/token/',
+    'OAUTH2_REFRESH_URL': '/o/revoke_token/',
 }
 
 if SITE_URL and not TESTING:
