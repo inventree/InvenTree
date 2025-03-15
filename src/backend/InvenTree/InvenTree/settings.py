@@ -873,7 +873,7 @@ SENTRY_SAMPLE_RATE = float(
     get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
 )
 
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # OpenTelemetry tracing
