@@ -8,13 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { shortenString } from '../../functions/tables';
-import {
-  useFilters,
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -37,6 +30,7 @@ import {
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasProjectCodeFilter,
+  IssuedByFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
@@ -128,21 +122,6 @@ export function BuildOrderTable({
     ];
   }, [parentBuildId]);
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const ownerFilters = useOwnerFilters();
-  const userFilters = useUserFilters();
-
-  const categoryFilters = useFilters({
-    url: apiUrl(ApiEndpoints.category_list),
-    transform: (item) => ({
-      value: item.pk,
-      label: shortenString({
-        str: item.pathstring,
-        len: 50
-      })
-    })
-  });
-
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OutstandingFilter(),
@@ -171,20 +150,17 @@ export function BuildOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ProjectCodeFilter(),
       HasProjectCodeFilter(),
-      {
-        name: 'issued_by',
-        label: t`Issued By`,
-        description: t`Filter by user who issued this order`,
-        choices: userFilters.choices
-      },
-      ResponsibleFilter({ choices: ownerFilters.choices }),
+      IssuedByFilter(),
+      ResponsibleFilter(),
       {
         name: 'category',
         label: t`Category`,
         description: t`Filter by part category`,
-        choices: categoryFilters.choices
+        apiUrl: apiUrl(ApiEndpoints.category_list),
+        model: ModelType.partcategory,
+        modelRenderer: (instance: any) => instance.name
       }
     ];
 
@@ -199,13 +175,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [
-    partId,
-    categoryFilters.choices,
-    projectCodeFilters.choices,
-    ownerFilters.choices,
-    userFilters.choices
-  ]);
+  }, [partId]);
 
   const user = useUserState();
 

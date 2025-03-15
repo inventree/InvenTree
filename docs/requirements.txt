@@ -128,7 +128,6 @@ click==8.1.8 \
     --hash=sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a
     # via
     #   mkdocs
-    #   mkdocstrings
     #   neoteroi-mkdocs
 colorama==0.4.6 \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
@@ -320,9 +319,9 @@ mkdocs-get-deps==0.2.0 \
     --hash=sha256:162b3d129c7fad9b19abfdcb9c1458a651628e4b1dea628ac68790fb3061c60c \
     --hash=sha256:2bf11d0b133e77a0dd036abeeb06dec8775e46efa526dc70667d8863eefc6134
     # via mkdocs
-mkdocs-git-revision-date-localized-plugin==1.4.4 \
-    --hash=sha256:c1c4fd622e44eb81b9b0b0402f0367fb28f597828b1463c55452df691ceb54ca \
-    --hash=sha256:cc805d020e0eb2df9d52cfad195f89237a8c6a47ac5ca9e5a5ba95aee06f2140
+mkdocs-git-revision-date-localized-plugin==1.4.5 \
+    --hash=sha256:395ae0b9eec565c78a76fffc938b70f52774bf2971245482d31aba47018c5fa9 \
+    --hash=sha256:9e37f1343d314c9cd8f9cbbf117c4bdc1d2d24a0653c5bbd7059d072f2cd0972
     # via -r docs/requirements.in
 mkdocs-include-markdown-plugin==7.1.5 \
     --hash=sha256:a986967594da6789226798e3c41c70bc17130fadb92b4313f42bd3defdac0adc \
@@ -332,9 +331,9 @@ mkdocs-macros-plugin==1.3.7 \
     --hash=sha256:02432033a5b77fb247d6ec7924e72fc4ceec264165b1644ab8d0dc159c22ce59 \
     --hash=sha256:17c7fd1a49b94defcdb502fd453d17a1e730f8836523379d21292eb2be4cb523
     # via -r docs/requirements.in
-mkdocs-material==9.6.7 \
-    --hash=sha256:3e2c1fceb9410056c2d91f334a00cdea3215c28750e00c691c1e46b2a33309b4 \
-    --hash=sha256:8a159e45e80fcaadd9fbeef62cbf928569b93df954d4dc5ba76d46820caf7b47
+mkdocs-material==9.6.8 \
+    --hash=sha256:0a51532dd8aa80b232546c073fe3ef60dfaef1b1b12196ac7191ee01702d1cf8 \
+    --hash=sha256:8de31bb7566379802532b248bd56d9c4bc834afc4625884bf5769f9412c6a354
     # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
@@ -344,15 +343,15 @@ mkdocs-simple-hooks==0.1.5 \
     --hash=sha256:dddbdf151a18723c9302a133e5cf79538be8eb9d274e8e07d2ac3ac34890837c \
     --hash=sha256:efeabdbb98b0850a909adee285f3404535117159d5cb3a34f541d6eaa644d50a
     # via -r docs/requirements.in
-mkdocstrings[python]==0.27.0 \
-    --hash=sha256:16adca6d6b0a1f9e0c07ff0b02ced8e16f228a9d65a37c063ec4c14d7b76a657 \
-    --hash=sha256:6ceaa7ea830770959b55a16203ac63da24badd71325b96af950e59fd37366332
+mkdocstrings[python]==0.29.0 \
+    --hash=sha256:3657be1384543ce0ee82112c3e521bbf48e41303aa0c229b9ffcccba057d922e \
+    --hash=sha256:8ea98358d2006f60befa940fdebbbc88a26b37ecbcded10be726ba359284f73d
     # via
     #   -r docs/requirements.in
     #   mkdocstrings-python
-mkdocstrings-python==1.13.0 \
-    --hash=sha256:2dbd5757e8375b9720e81db16f52f1856bf59905428fd7ef88005d1370e2f64c \
-    --hash=sha256:b88bbb207bab4086434743849f8e796788b373bd32e7bfefbf8560ac45d88f97
+mkdocstrings-python==1.16.5 \
+    --hash=sha256:0899a12e356eab8e83720c63e15d0ff51cd96603216c837618de346e086b39ba \
+    --hash=sha256:706b28dd0f59249a7c22cc5d517c9521e06c030b57e2a5478e1928a58f900abb
     # via mkdocstrings
 neoteroi-mkdocs==1.1.0 \
     --hash=sha256:609aae655e781c7aec517ab14759c34ce896b8132d1df4b9c2e504779c2e48ef \
@@ -377,9 +376,7 @@ pathspec==0.12.1 \
 platformdirs==4.3.6 \
     --hash=sha256:357fb2acbc885b0419afd3ce3ed34564c13c9b95c89360cd9563f73aa5e2b907 \
     --hash=sha256:73e575e1408ab8103900836b97580d5307456908a03e92031bab39e4554cc3fb
-    # via
-    #   mkdocs-get-deps
-    #   mkdocstrings
+    # via mkdocs-get-deps
 pygments==2.19.1 \
     --hash=sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f \
     --hash=sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c
@@ -501,6 +498,7 @@ typing-extensions==4.12.2 \
     # via
     #   anyio
     #   mkdocstrings
+    #   mkdocstrings-python
     #   rich
 urllib3==2.3.0 \
     --hash=sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df \
