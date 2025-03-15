@@ -405,6 +405,7 @@ django==4.2.20 \
     #   django-q2
     #   django-recurrence
     #   django-redis
+    #   django-remake-migrations
     #   django-sesame
     #   django-sql-utils
     #   django-sslserver
@@ -493,6 +494,10 @@ django-recurrence==1.11.1 \
 django-redis==5.4.0 \
     --hash=sha256:6a02abaa34b0fea8bf9b707d2c363ab6adc7409950b2db93602e6cb292818c42 \
     --hash=sha256:ebc88df7da810732e2af9987f7f426c96204bf89319df4c6da6ca9a2942edd5b
+    # via -r src/backend/requirements.in
+django-remake-migrations==2.6.0 \
+    --hash=sha256:6fd369aee4d9faa8dc25c56a62742609a4bcd2220fd99e7d134bde4240fec51c \
+    --hash=sha256:c31e8481284c5fc6397b43fb142da182aa55c8935286335336136d9c59217654
     # via -r src/backend/requirements.in
 django-sesame==3.2.2 \
     --hash=sha256:523ebd4d04e28c897c262f25b78b6fd8f37e11cdca6e277fdc8bf496bd686cf5 \

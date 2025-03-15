@@ -299,6 +299,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',  # Backup codes
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
+    'django_remake_migrations',
 ]
 
 MIDDLEWARE = CONFIG.get(
