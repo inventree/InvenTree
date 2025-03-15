@@ -5,15 +5,14 @@ from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-from InvenTree.unit_test import InvenTreeAPITestCase
-
-from .models import (
-    Part,
-    PartCategory,
+from generic.parameters.models import (
     PartCategoryParameterTemplate,
     PartParameter,
     PartParameterTemplate,
 )
+from InvenTree.unit_test import InvenTreeAPITestCase
+
+from .models import Part, PartCategory
 
 
 class TestParams(TestCase):
