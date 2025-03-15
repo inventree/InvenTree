@@ -290,7 +290,7 @@ class ReportTest(InvenTreeAPITestCase):
         output = template.print(items)
 
         self.assertTrue(output.complete)
-        self.assertEqual(output.items, 5)
+        self.assertEqual(output.total, 5)
         self.assertIsNotNone(output.output)
         self.assertTrue(output.output.name.endswith('.pdf'))
 
@@ -341,8 +341,9 @@ class LabelTest(InvenTreeAPITestCase):
         output = template.print(items=parts, plugin=plugin)
 
         self.assertTrue(output.complete)
-        self.assertEqual(output.items, 10)
+        self.assertEqual(output.total, 10)
         self.assertIsNotNone(output.output)
+        self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
 
 
@@ -461,7 +462,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         )
 
         # There should be a link to the generated PDF
-        self.assertTrue(response.data['output'].startswith('/media/report/'))
+        self.assertTrue(response.data['output'].startswith('/media/data_output/'))
         self.assertTrue(response.data['output'].endswith('.pdf'))
 
         # By default, this should *not* have created an attachment against this stockitem

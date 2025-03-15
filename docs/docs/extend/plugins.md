@@ -113,6 +113,7 @@ Supported mixin classes are:
 | [AppMixin](./plugins/app.md) | Integrate additional database tables |
 | [BarcodeMixin](./plugins/barcode.md) | Support custom barcode actions |
 | [CurrencyExchangeMixin](./plugins/currency.md) | Custom interfaces for currency exchange rates |
+| [DataExport](./plugins/export.md) | Customize data export functionality |
 | [EventMixin](./plugins/event.md) | Respond to events |
 | [LabelPrintingMixin](./plugins/label.md) | Custom label printing support |
 | [LocateMixin](./plugins/locate.md) | Locate and identify stock items |

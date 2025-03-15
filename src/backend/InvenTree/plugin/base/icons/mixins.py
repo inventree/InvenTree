@@ -3,6 +3,7 @@
 import structlog
 
 from common.icons import IconPack, reload_icon_packs
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
 
 logger = structlog.get_logger('inventree')
@@ -19,7 +20,7 @@ class IconPackMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('icon_pack', True, __class__)
+        self.add_mixin(PluginMixinEnum.ICON_PACK, True, __class__)
 
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
