@@ -15,6 +15,7 @@ from django.template import Context, Template
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
 from django.test.client import RequestFactory
+from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -43,13 +44,18 @@ except OSError as err:  # pragma: no cover
 logger = structlog.getLogger('inventree')
 
 
+MOCK_PRINT_HOST = 'localhost'
+
+
+@override_settings(SITE_URL=MOCK_PRINT_HOST)
 def dummy_print_request() -> HttpRequest:
     """Generate a dummy HTTP request object.
 
-    This is required for internal print calls, as WeasyPrint *requires* a request object.
+    - This is required for internal print calls, as WeasyPrint *requires* a request object.
+    - Additionally, we have to mock the HOST header, as WeasyPrint requires a valid HOST URL.
     """
     factory = RequestFactory()
-    request = factory.get('/')
+    request = factory.get('/', headers={'host': MOCK_PRINT_HOST})
     request.user = AnonymousUser()
     return request
 
