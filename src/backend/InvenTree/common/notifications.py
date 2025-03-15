@@ -366,6 +366,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     target_exclude = kwargs.get('target_exclude')
     context = kwargs.get('context', {})
     delivery_methods = kwargs.get('delivery_methods')
+    check_recent = kwargs.get('check_recent', True)
 
     # Check if data is importing currently
     if isImportingData() or isRebuildingData():
@@ -391,7 +392,9 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     # Check if we have notified recently...
     delta = timedelta(days=1)
 
-    if common.models.NotificationEntry.check_recent(category, obj_ref_value, delta):
+    if check_recent and common.models.NotificationEntry.check_recent(
+        category, obj_ref_value, delta
+    ):
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
             category,
