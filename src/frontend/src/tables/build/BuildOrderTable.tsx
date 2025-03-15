@@ -36,6 +36,7 @@ import {
   OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
+  PartCategoryFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
   StartDateAfterFilter,
@@ -154,14 +155,7 @@ export function BuildOrderTable({
       HasProjectCodeFilter(),
       IssuedByFilter(),
       ResponsibleFilter(),
-      {
-        name: 'category',
-        label: t`Category`,
-        description: t`Filter by part category`,
-        apiUrl: apiUrl(ApiEndpoints.category_list),
-        model: ModelType.partcategory,
-        modelRenderer: (instance: any) => instance.name
-      }
+      PartCategoryFilter()
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter

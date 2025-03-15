@@ -63,8 +63,8 @@ export default function InvenTreeTableHeader({
     };
 
     // Add in active filters
-    if (tableState.activeFilters) {
-      tableState.activeFilters.forEach((filter) => {
+    if (tableState.filterSet.activeFilters) {
+      tableState.filterSet.activeFilters.forEach((filter) => {
         queryParams[filter.name] = filter.value;
       });
     }
@@ -141,7 +141,7 @@ export default function InvenTreeTableHeader({
         <Boundary label={`InvenTreeTableFilterDrawer-${tableState.tableKey}`}>
           <FilterSelectDrawer
             availableFilters={filters}
-            tableState={tableState}
+            filterSet={tableState.filterSet}
             opened={filtersVisible}
             onClose={() => setFiltersVisible(false)}
           />
@@ -216,8 +216,8 @@ export default function InvenTreeTableHeader({
           {tableProps.enableFilters && filters.length > 0 && (
             <Indicator
               size='xs'
-              label={tableState.activeFilters?.length ?? 0}
-              disabled={tableState.activeFilters?.length == 0}
+              label={tableState.filterSet.activeFilters?.length ?? 0}
+              disabled={tableState.filterSet.activeFilters?.length == 0}
             >
               <ActionIcon
                 disabled={hasCustomFilters}

@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 320
+INVENTREE_API_VERSION = 321
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v321 - 2025-03-11 : https://github.com/inventree/InvenTree/pull/8933
+    - Add min_date and max_date query filters for orders, for use in calendar views
 
 v320 - 2025-03-05 : https://github.com/inventree/InvenTree/pull/9243
     - Link fields are now up to 2000 chars long

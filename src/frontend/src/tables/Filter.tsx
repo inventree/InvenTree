@@ -335,3 +335,14 @@ export function IssuedByFilter(): TableFilter {
     description: t`Filter by user who issued the order`
   });
 }
+
+export function PartCategoryFilter(): TableFilter {
+  return {
+    name: 'category',
+    label: t`Category`,
+    description: t`Filter by part category`,
+    apiUrl: apiUrl(ApiEndpoints.category_list),
+    model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
