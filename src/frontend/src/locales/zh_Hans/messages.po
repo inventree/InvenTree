@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-03-07 03:34\n"
+"PO-Revision-Date: 2025-03-15 21:40\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -52,7 +52,7 @@ msgstr "开始扫描"
 
 #: src/components/barcodes/BarcodeInput.tsx:34
 #: src/tables/general/BarcodeScanTable.tsx:55
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:64
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:63
 msgid "Barcode"
 msgstr "条形码"
 
@@ -92,7 +92,7 @@ msgstr ""
 #: src/components/modals/LicenseModal.tsx:87
 #: src/components/nav/SearchDrawer.tsx:553
 #: src/components/render/ModelType.tsx:273
-#: src/functions/auth.tsx:524
+#: src/functions/auth.tsx:525
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:128
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:639
@@ -298,12 +298,12 @@ msgid "Fail"
 msgstr "失效"
 
 #: src/components/buttons/YesNoButton.tsx:33
-#: src/tables/Filter.tsx:74
+#: src/tables/Filter.tsx:83
 msgid "Yes"
 msgstr "是"
 
 #: src/components/buttons/YesNoButton.tsx:33
-#: src/tables/Filter.tsx:75
+#: src/tables/Filter.tsx:84
 msgid "No"
 msgstr "否"
 
@@ -611,7 +611,7 @@ msgstr "移除"
 #: src/contexts/ThemeContext.tsx:40
 #: src/hooks/UseForm.tsx:40
 #: src/pages/Index/Settings/AccountSettings/useConfirm.tsx:105
-#: src/tables/FilterSelectDrawer.tsx:303
+#: src/tables/FilterSelectDrawer.tsx:333
 #: src/tables/RowActions.tsx:85
 #: src/tables/build/BuildOutputTable.tsx:441
 msgid "Cancel"
@@ -958,12 +958,12 @@ msgstr "登录失败"
 #: src/components/forms/AuthenticationForm.tsx:80
 #: src/components/forms/AuthenticationForm.tsx:96
 #: src/components/forms/AuthenticationForm.tsx:262
-#: src/functions/auth.tsx:241
+#: src/functions/auth.tsx:242
 msgid "Check your input and try again."
 msgstr "请检查您的输入并重试。"
 
 #: src/components/forms/AuthenticationForm.tsx:90
-#: src/functions/auth.tsx:232
+#: src/functions/auth.tsx:233
 msgid "Mail delivery successful"
 msgstr "邮件发送成功"
 
@@ -1321,7 +1321,7 @@ msgstr "处理数据中"
 #: src/components/importer/ImporterColumnSelector.tsx:185
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:57
-#: src/functions/auth.tsx:280
+#: src/functions/auth.tsx:281
 msgid "An error occurred"
 msgstr "发生错误"
 
@@ -2011,7 +2011,7 @@ msgstr "附件"
 
 #: src/components/panels/NotesPanel.tsx:23
 #: src/tables/build/BuildOrderTestTable.tsx:150
-#: src/tables/stock/StockTrackingTable.tsx:214
+#: src/tables/stock/StockTrackingTable.tsx:210
 msgid "Notes"
 msgstr "备注"
 
@@ -2216,7 +2216,7 @@ msgstr "未知模型: {model}"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:129
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:100
 #: src/tables/sales/SalesOrderAllocationTable.tsx:118
-#: src/tables/stock/StockTrackingTable.tsx:88
+#: src/tables/stock/StockTrackingTable.tsx:85
 msgid "Part"
 msgstr "零件"
 
@@ -2281,8 +2281,8 @@ msgstr "零件类别"
 #: src/forms/BuildForms.tsx:546
 #: src/forms/SalesOrderForms.tsx:268
 #: src/pages/stock/StockDetail.tsx:911
-#: src/tables/stock/StockTrackingTable.tsx:49
-#: src/tables/stock/StockTrackingTable.tsx:56
+#: src/tables/stock/StockTrackingTable.tsx:46
+#: src/tables/stock/StockTrackingTable.tsx:53
 msgid "Stock Item"
 msgstr "库存项"
 
@@ -2364,7 +2364,7 @@ msgstr "公司"
 #: src/pages/sales/ReturnOrderDetail.tsx:186
 #: src/pages/sales/SalesOrderDetail.tsx:198
 #: src/tables/ColumnRenderers.tsx:175
-#: src/tables/Filter.tsx:258
+#: src/tables/Filter.tsx:265
 #: src/tables/TableHoverCard.tsx:81
 msgid "Project Code"
 msgstr "项目编码"
@@ -2381,7 +2381,7 @@ msgstr "项目编码"
 #: src/pages/stock/StockDetail.tsx:276
 #: src/tables/part/PartPurchaseOrdersTable.tsx:31
 #: src/tables/stock/StockItemTable.tsx:229
-#: src/tables/stock/StockTrackingTable.tsx:121
+#: src/tables/stock/StockTrackingTable.tsx:118
 msgid "Purchase Order"
 msgstr "采购订单"
 
@@ -2411,7 +2411,7 @@ msgstr "采购订单行"
 #: src/pages/stock/StockDetail.tsx:285
 #: src/tables/part/PartSalesAllocationsTable.tsx:38
 #: src/tables/sales/SalesOrderAllocationTable.tsx:99
-#: src/tables/stock/StockTrackingTable.tsx:132
+#: src/tables/stock/StockTrackingTable.tsx:129
 msgid "Sales Order"
 msgstr "销售订单"
 
@@ -2434,7 +2434,7 @@ msgstr "销售订单配送"
 
 #: src/components/render/ModelType.tsx:178
 #: src/pages/sales/ReturnOrderDetail.tsx:492
-#: src/tables/stock/StockTrackingTable.tsx:143
+#: src/tables/stock/StockTrackingTable.tsx:140
 msgid "Return Order"
 msgstr "退货订单"
 
@@ -2490,13 +2490,12 @@ msgstr "所有者"
 #: src/components/render/ModelType.tsx:214
 #: src/pages/Auth/ChangePassword.tsx:35
 #: src/pages/core/UserDetail.tsx:171
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:79
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:209
-#: src/tables/settings/ImportSessionTable.tsx:121
+#: src/tables/Filter.tsx:314
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:78
 #: src/tables/settings/StocktakeReportTable.tsx:45
 #: src/tables/stock/StockItemTestResultTable.tsx:208
-#: src/tables/stock/StockTrackingTable.tsx:191
-#: src/tables/stock/StockTrackingTable.tsx:220
+#: src/tables/stock/StockTrackingTable.tsx:188
+#: src/tables/stock/StockTrackingTable.tsx:216
 msgid "User"
 msgstr "用户"
 
@@ -2628,7 +2627,7 @@ msgstr "序列号"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:178
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:77
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:114
-#: src/tables/stock/StockTrackingTable.tsx:73
+#: src/tables/stock/StockTrackingTable.tsx:70
 msgid "Quantity"
 msgstr "数量"
 
@@ -3619,15 +3618,15 @@ msgstr "生产产出"
 #: src/pages/sales/ReturnOrderDetail.tsx:116
 #: src/pages/sales/SalesOrderDetail.tsx:125
 #: src/pages/stock/StockDetail.tsx:140
-#: src/tables/Filter.tsx:244
+#: src/tables/Filter.tsx:253
 #: src/tables/machine/MachineListTable.tsx:339
 #: src/tables/part/PartPurchaseOrdersTable.tsx:37
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:128
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:165
 #: src/tables/settings/CustomStateTable.tsx:79
-#: src/tables/settings/ImportSessionTable.tsx:115
+#: src/tables/settings/ImportSessionTable.tsx:113
 #: src/tables/stock/StockItemTable.tsx:311
-#: src/tables/stock/StockTrackingTable.tsx:66
+#: src/tables/stock/StockTrackingTable.tsx:63
 msgid "Status"
 msgstr "状态"
 
@@ -3806,7 +3805,7 @@ msgstr "添加备注"
 #: src/pages/core/UserDetail.tsx:115
 #: src/pages/stock/StockDetail.tsx:222
 #: src/tables/ColumnRenderers.tsx:61
-#: src/tables/stock/StockTrackingTable.tsx:99
+#: src/tables/stock/StockTrackingTable.tsx:96
 msgid "Location"
 msgstr "位置"
 
@@ -4089,9 +4088,9 @@ msgstr ""
 
 #: src/forms/selectionListFields.tsx:104
 #: src/pages/part/PartStocktakeDetail.tsx:63
-#: src/tables/FilterSelectDrawer.tsx:93
-#: src/tables/FilterSelectDrawer.tsx:116
-#: src/tables/FilterSelectDrawer.tsx:128
+#: src/tables/FilterSelectDrawer.tsx:112
+#: src/tables/FilterSelectDrawer.tsx:135
+#: src/tables/FilterSelectDrawer.tsx:147
 #: src/tables/build/BuildOrderTestTable.tsx:142
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:38
 #: src/tables/stock/StockItemTestResultTable.tsx:193
@@ -4150,13 +4149,13 @@ msgstr ""
 #~ msgid "You have been logged out"
 #~ msgstr "You have been logged out"
 
-#: src/functions/auth.tsx:114
-#: src/functions/auth.tsx:273
+#: src/functions/auth.tsx:115
+#: src/functions/auth.tsx:274
 msgid "Already logged in"
 msgstr ""
 
-#: src/functions/auth.tsx:115
-#: src/functions/auth.tsx:274
+#: src/functions/auth.tsx:116
+#: src/functions/auth.tsx:275
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr ""
 
@@ -4168,69 +4167,69 @@ msgstr ""
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:147
+#: src/functions/auth.tsx:148
 msgid "Logged Out"
 msgstr "已登出"
 
-#: src/functions/auth.tsx:148
+#: src/functions/auth.tsx:149
 msgid "Successfully logged out"
 msgstr "已成功登出"
 
-#: src/functions/auth.tsx:186
+#: src/functions/auth.tsx:187
 msgid "Language changed"
 msgstr ""
 
-#: src/functions/auth.tsx:187
+#: src/functions/auth.tsx:188
 msgid "Your active language has been changed to the one set in your profile"
 msgstr ""
 
-#: src/functions/auth.tsx:207
+#: src/functions/auth.tsx:208
 msgid "Theme changed"
 msgstr ""
 
-#: src/functions/auth.tsx:208
+#: src/functions/auth.tsx:209
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr ""
 
-#: src/functions/auth.tsx:233
+#: src/functions/auth.tsx:234
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "查看收件箱中的重置链接。这只有在您有账户的情况下才会起作用。也请检查垃圾邮件。"
 
-#: src/functions/auth.tsx:240
-#: src/functions/auth.tsx:450
+#: src/functions/auth.tsx:241
+#: src/functions/auth.tsx:451
 msgid "Reset failed"
 msgstr "重置失败"
 
-#: src/functions/auth.tsx:313
+#: src/functions/auth.tsx:314
 msgid "Logged In"
 msgstr "已登录"
 
-#: src/functions/auth.tsx:314
+#: src/functions/auth.tsx:315
 msgid "Successfully logged in"
 msgstr "已成功登入"
 
-#: src/functions/auth.tsx:410
+#: src/functions/auth.tsx:411
 msgid "Failed to set up MFA"
 msgstr ""
 
-#: src/functions/auth.tsx:440
+#: src/functions/auth.tsx:441
 msgid "Password set"
 msgstr "密码已设置"
 
-#: src/functions/auth.tsx:441
-#: src/functions/auth.tsx:550
+#: src/functions/auth.tsx:442
+#: src/functions/auth.tsx:551
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "密码设置成功。您现在可以使用新密码登录"
 
-#: src/functions/auth.tsx:515
+#: src/functions/auth.tsx:516
 msgid "Password could not be changed"
 msgstr ""
 
-#: src/functions/auth.tsx:533
+#: src/functions/auth.tsx:534
 msgid "The two password fields didn’t match"
 msgstr ""
 
-#: src/functions/auth.tsx:549
+#: src/functions/auth.tsx:550
 msgid "Password Changed"
 msgstr ""
 
@@ -5585,7 +5584,7 @@ msgstr ""
 #: src/tables/bom/UsedInTable.tsx:39
 #: src/tables/build/BuildAllocatedStockTable.tsx:104
 #: src/tables/build/BuildLineTable.tsx:324
-#: src/tables/build/BuildOrderTable.tsx:82
+#: src/tables/build/BuildOrderTable.tsx:76
 #: src/tables/part/RelatedPartTable.tsx:69
 #: src/tables/sales/SalesOrderAllocationTable.tsx:131
 #: src/tables/sales/SalesOrderLineItemTable.tsx:86
@@ -5625,7 +5624,7 @@ msgid "Completed Outputs"
 msgstr "已出产"
 
 #: src/pages/build/BuildDetail.tsx:172
-#: src/tables/build/BuildOrderTable.tsx:178
+#: src/tables/Filter.tsx:334
 msgid "Issued By"
 msgstr "发布人"
 
@@ -5634,7 +5633,7 @@ msgstr "发布人"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:230
 #: src/pages/sales/ReturnOrderDetail.tsx:194
 #: src/pages/sales/SalesOrderDetail.tsx:206
-#: src/tables/Filter.tsx:270
+#: src/tables/Filter.tsx:298
 msgid "Responsible"
 msgstr "责任人"
 
@@ -5764,8 +5763,8 @@ msgid "Edit Build Order"
 msgstr "编辑生产订单"
 
 #: src/pages/build/BuildDetail.tsx:395
-#: src/tables/build/BuildOrderTable.tsx:216
-#: src/tables/build/BuildOrderTable.tsx:231
+#: src/tables/build/BuildOrderTable.tsx:186
+#: src/tables/build/BuildOrderTable.tsx:201
 msgid "Add Build Order"
 msgstr "添加生产订单"
 
@@ -5891,7 +5890,7 @@ msgstr "取消订单"
 #: src/pages/stock/StockDetail.tsx:268
 #: src/tables/build/BuildAllocatedStockTable.tsx:77
 #: src/tables/part/PartBuildAllocationsTable.tsx:41
-#: src/tables/stock/StockTrackingTable.tsx:110
+#: src/tables/stock/StockTrackingTable.tsx:107
 msgid "Build Order"
 msgstr "生产订单"
 
@@ -5927,7 +5926,7 @@ msgstr "默认货币单位"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:139
 #: src/tables/company/CompanyTable.tsx:101
 #: src/tables/part/PartPurchaseOrdersTable.tsx:42
-#: src/tables/purchasing/PurchaseOrderTable.tsx:118
+#: src/tables/purchasing/PurchaseOrderTable.tsx:105
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:36
 msgid "Supplier"
 msgstr "供应商"
@@ -5950,9 +5949,9 @@ msgstr "制造商"
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:103
 #: src/pages/stock/StockDetail.tsx:294
 #: src/tables/company/CompanyTable.tsx:111
-#: src/tables/sales/ReturnOrderTable.tsx:126
-#: src/tables/sales/SalesOrderTable.tsx:151
-#: src/tables/stock/StockTrackingTable.tsx:154
+#: src/tables/sales/ReturnOrderTable.tsx:112
+#: src/tables/sales/SalesOrderTable.tsx:137
+#: src/tables/stock/StockTrackingTable.tsx:151
 msgid "Customer"
 msgstr "客户"
 
@@ -6165,7 +6164,7 @@ msgstr "子类别"
 #: src/pages/part/CategoryDetail.tsx:144
 #: src/pages/stock/LocationDetail.tsx:137
 #: src/tables/part/PartCategoryTable.tsx:85
-#: src/tables/stock/StockLocationTable.tsx:49
+#: src/tables/stock/StockLocationTable.tsx:40
 msgid "Structural"
 msgstr "结构性"
 
@@ -6251,7 +6250,7 @@ msgid "Revision"
 msgstr "版本"
 
 #: src/pages/part/PartDetail.tsx:205
-#: src/tables/build/BuildOrderTable.tsx:185
+#: src/tables/build/BuildOrderTable.tsx:159
 #: src/tables/notifications/NotificationTable.tsx:32
 #: src/tables/part/PartCategoryTemplateTable.tsx:67
 msgid "Category"
@@ -6388,7 +6387,7 @@ msgstr "创建日期"
 
 #: src/pages/part/PartDetail.tsx:398
 #: src/tables/ColumnRenderers.tsx:216
-#: src/tables/Filter.tsx:281
+#: src/tables/Filter.tsx:326
 #: src/tables/settings/TemplateTable.tsx:458
 msgid "Created By"
 msgstr "创建人"
@@ -6647,10 +6646,10 @@ msgstr "最大值"
 #: src/tables/bom/BomTable.tsx:187
 #: src/tables/general/ExtraLineItemTable.tsx:64
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:231
-#: src/tables/purchasing/PurchaseOrderTable.tsx:147
-#: src/tables/sales/ReturnOrderTable.tsx:157
+#: src/tables/purchasing/PurchaseOrderTable.tsx:134
+#: src/tables/sales/ReturnOrderTable.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:113
-#: src/tables/sales/SalesOrderTable.tsx:192
+#: src/tables/sales/SalesOrderTable.tsx:178
 msgid "Total Price"
 msgstr "总价"
 
@@ -6713,17 +6712,17 @@ msgstr "柱状图"
 #: src/pages/part/pricing/PriceBreakPanel.tsx:58
 #: src/pages/part/pricing/PriceBreakPanel.tsx:111
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:142
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:169
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:170
 msgid "Add Price Break"
 msgstr "新增批发价"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:71
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:153
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:154
 msgid "Edit Price Break"
 msgstr "编辑批发价"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:81
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:161
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:162
 msgid "Delete Price Break"
 msgstr "删除批发价"
 
@@ -6841,8 +6840,8 @@ msgid "Edit Purchase Order"
 msgstr "编辑采购订单"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:108
+#: src/tables/purchasing/PurchaseOrderTable.tsx:150
 #: src/tables/purchasing/PurchaseOrderTable.tsx:163
-#: src/tables/purchasing/PurchaseOrderTable.tsx:176
 msgid "Add Purchase Order"
 msgstr "添加采购订单"
 
@@ -6895,7 +6894,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:236
 #: src/pages/sales/SalesOrderDetail.tsx:246
 #: src/tables/ColumnRenderers.tsx:276
-#: src/tables/build/BuildOrderTable.tsx:117
+#: src/tables/build/BuildOrderTable.tsx:111
 #: src/tables/part/PartPurchaseOrdersTable.tsx:105
 msgid "Completion Date"
 msgstr ""
@@ -6937,7 +6936,7 @@ msgstr "订单操作"
 #: src/pages/sales/ReturnOrderDetail.tsx:95
 #: src/pages/sales/SalesOrderDetail.tsx:104
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:112
-#: src/tables/sales/SalesOrderTable.tsx:167
+#: src/tables/sales/SalesOrderTable.tsx:153
 msgid "Customer Reference"
 msgstr "客户参考"
 
@@ -6950,8 +6949,8 @@ msgstr "编辑退货订单"
 #~ msgstr "Order canceled"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:358
-#: src/tables/sales/ReturnOrderTable.tsx:172
-#: src/tables/sales/ReturnOrderTable.tsx:185
+#: src/tables/sales/ReturnOrderTable.tsx:158
+#: src/tables/sales/ReturnOrderTable.tsx:171
 msgid "Add Return Order"
 msgstr "添加退货订单"
 
@@ -6984,13 +6983,13 @@ msgid "Edit Sales Order"
 msgstr "编辑销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:301
-#: src/tables/sales/SalesOrderTable.tsx:126
-#: src/tables/sales/SalesOrderTable.tsx:139
+#: src/tables/sales/SalesOrderTable.tsx:112
+#: src/tables/sales/SalesOrderTable.tsx:125
 msgid "Add Sales Order"
 msgstr "添加销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:359
-#: src/tables/sales/SalesOrderTable.tsx:173
+#: src/tables/sales/SalesOrderTable.tsx:159
 msgid "Shipments"
 msgstr "配送"
 
@@ -7114,12 +7113,12 @@ msgid "Sublocations"
 msgstr "次级地点"
 
 #: src/pages/stock/LocationDetail.tsx:143
-#: src/tables/stock/StockLocationTable.tsx:54
+#: src/tables/stock/StockLocationTable.tsx:45
 msgid "External"
 msgstr "外部"
 
 #: src/pages/stock/LocationDetail.tsx:149
-#: src/tables/stock/StockLocationTable.tsx:63
+#: src/tables/stock/StockLocationTable.tsx:54
 msgid "Location Type"
 msgstr "位置类型"
 
@@ -7137,7 +7136,7 @@ msgstr "默认零件"
 
 #: src/pages/stock/LocationDetail.tsx:216
 #: src/pages/stock/LocationDetail.tsx:335
-#: src/tables/stock/StockLocationTable.tsx:123
+#: src/tables/stock/StockLocationTable.tsx:116
 msgid "Edit Stock Location"
 msgstr "编辑库存地点"
 
@@ -7404,170 +7403,181 @@ msgstr "下载数据"
 #~ msgid "Show overdue orders"
 #~ msgstr "Show overdue orders"
 
-#: src/tables/Filter.tsx:115
+#: src/tables/Filter.tsx:124
 msgid "Assigned to me"
 msgstr "已分派给我的"
 
-#: src/tables/Filter.tsx:116
+#: src/tables/Filter.tsx:125
 msgid "Show orders assigned to me"
 msgstr "显示分配给我的订单"
 
-#: src/tables/Filter.tsx:123
+#: src/tables/Filter.tsx:132
 #: src/tables/sales/SalesOrderAllocationTable.tsx:73
 msgid "Outstanding"
 msgstr "未完成"
 
-#: src/tables/Filter.tsx:124
+#: src/tables/Filter.tsx:133
 msgid "Show outstanding items"
 msgstr ""
 
-#: src/tables/Filter.tsx:131
+#: src/tables/Filter.tsx:140
 msgid "Overdue"
 msgstr "逾期"
 
-#: src/tables/Filter.tsx:132
+#: src/tables/Filter.tsx:141
 msgid "Show overdue items"
 msgstr ""
 
-#: src/tables/Filter.tsx:139
+#: src/tables/Filter.tsx:148
 msgid "Minimum Date"
 msgstr ""
 
-#: src/tables/Filter.tsx:140
+#: src/tables/Filter.tsx:149
 msgid "Show items after this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:148
+#: src/tables/Filter.tsx:157
 msgid "Maximum Date"
 msgstr ""
 
-#: src/tables/Filter.tsx:149
+#: src/tables/Filter.tsx:158
 msgid "Show items before this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:157
+#: src/tables/Filter.tsx:166
 msgid "Created Before"
 msgstr ""
 
-#: src/tables/Filter.tsx:158
+#: src/tables/Filter.tsx:167
 msgid "Show items created before this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:166
+#: src/tables/Filter.tsx:175
 msgid "Created After"
 msgstr ""
 
-#: src/tables/Filter.tsx:167
+#: src/tables/Filter.tsx:176
 msgid "Show items created after this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:175
+#: src/tables/Filter.tsx:184
 msgid "Start Date Before"
 msgstr ""
 
-#: src/tables/Filter.tsx:176
+#: src/tables/Filter.tsx:185
 msgid "Show items with a start date before this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:184
+#: src/tables/Filter.tsx:193
 msgid "Start Date After"
 msgstr ""
 
-#: src/tables/Filter.tsx:185
+#: src/tables/Filter.tsx:194
 msgid "Show items with a start date after this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:193
+#: src/tables/Filter.tsx:202
 msgid "Target Date Before"
 msgstr ""
 
-#: src/tables/Filter.tsx:194
+#: src/tables/Filter.tsx:203
 msgid "Show items with a target date before this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:202
+#: src/tables/Filter.tsx:211
 msgid "Target Date After"
 msgstr ""
 
-#: src/tables/Filter.tsx:203
+#: src/tables/Filter.tsx:212
 msgid "Show items with a target date after this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:211
+#: src/tables/Filter.tsx:220
 msgid "Completed Before"
 msgstr ""
 
-#: src/tables/Filter.tsx:212
+#: src/tables/Filter.tsx:221
 msgid "Show items completed before this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:220
+#: src/tables/Filter.tsx:229
 msgid "Completed After"
 msgstr ""
 
-#: src/tables/Filter.tsx:221
+#: src/tables/Filter.tsx:230
 msgid "Show items completed after this date"
 msgstr ""
 
-#: src/tables/Filter.tsx:233
+#: src/tables/Filter.tsx:242
 msgid "Has Project Code"
 msgstr "有项目编码"
 
-#: src/tables/Filter.tsx:234
+#: src/tables/Filter.tsx:243
 msgid "Show orders with an assigned project code"
 msgstr ""
 
-#: src/tables/Filter.tsx:245
+#: src/tables/Filter.tsx:254
 #: src/tables/part/PartPurchaseOrdersTable.tsx:132
 msgid "Filter by order status"
 msgstr "按订单状态筛选"
 
-#: src/tables/Filter.tsx:259
+#: src/tables/Filter.tsx:266
 msgid "Filter by project code"
 msgstr "按项目编码筛选"
 
-#: src/tables/Filter.tsx:271
+#: src/tables/Filter.tsx:299
 msgid "Filter by responsible owner"
 msgstr "根据负责人进行筛选"
 
-#: src/tables/Filter.tsx:282
+#: src/tables/Filter.tsx:315
+#: src/tables/stock/StockTrackingTable.tsx:189
+msgid "Filter by user"
+msgstr "按用户筛选"
+
+#: src/tables/Filter.tsx:327
 msgid "Filter by user who created the order"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:57
+#: src/tables/Filter.tsx:335
+msgid "Filter by user who issued the order"
+msgstr ""
+
+#: src/tables/FilterSelectDrawer.tsx:58
 msgid "Remove filter"
 msgstr "移除过滤器"
 
-#: src/tables/FilterSelectDrawer.tsx:95
-msgid "Enter filter value"
-msgstr ""
-
-#: src/tables/FilterSelectDrawer.tsx:117
-msgid "Select date value"
-msgstr ""
-
-#: src/tables/FilterSelectDrawer.tsx:129
+#: src/tables/FilterSelectDrawer.tsx:100
+#: src/tables/FilterSelectDrawer.tsx:102
+#: src/tables/FilterSelectDrawer.tsx:148
 msgid "Select filter value"
 msgstr "选择过滤器值"
 
-#: src/tables/FilterSelectDrawer.tsx:231
+#: src/tables/FilterSelectDrawer.tsx:114
+msgid "Enter filter value"
+msgstr ""
+
+#: src/tables/FilterSelectDrawer.tsx:136
+msgid "Select date value"
+msgstr ""
+
+#: src/tables/FilterSelectDrawer.tsx:260
 msgid "Select filter"
 msgstr "选择过滤器"
 
-#: src/tables/FilterSelectDrawer.tsx:232
+#: src/tables/FilterSelectDrawer.tsx:261
 msgid "Filter"
 msgstr "过滤器"
 
-#: src/tables/FilterSelectDrawer.tsx:281
+#: src/tables/FilterSelectDrawer.tsx:311
 #: src/tables/InvenTreeTableHeader.tsx:227
 msgid "Table Filters"
 msgstr "表格筛选"
 
-#: src/tables/FilterSelectDrawer.tsx:313
+#: src/tables/FilterSelectDrawer.tsx:343
 msgid "Add Filter"
 msgstr "添加过滤条件"
 
-#: src/tables/FilterSelectDrawer.tsx:322
+#: src/tables/FilterSelectDrawer.tsx:352
 msgid "Clear Filters"
 msgstr "清除筛选"
 
@@ -7912,22 +7922,22 @@ msgid "Show items allocated to a build output"
 msgstr "显示分配给构建输出的项目"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:65
-#: src/tables/build/BuildOrderTable.tsx:196
+#: src/tables/build/BuildOrderTable.tsx:172
 #: src/tables/part/PartParameterTable.tsx:212
 #: src/tables/part/PartPurchaseOrdersTable.tsx:138
-#: src/tables/sales/ReturnOrderTable.tsx:108
+#: src/tables/sales/ReturnOrderTable.tsx:99
 #: src/tables/sales/SalesOrderAllocationTable.tsx:87
-#: src/tables/sales/SalesOrderTable.tsx:109
+#: src/tables/sales/SalesOrderTable.tsx:100
 #: src/tables/stock/StockItemTable.tsx:352
 msgid "Include Variants"
 msgstr "包含变体"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:66
-#: src/tables/build/BuildOrderTable.tsx:197
+#: src/tables/build/BuildOrderTable.tsx:173
 #: src/tables/part/PartPurchaseOrdersTable.tsx:139
-#: src/tables/sales/ReturnOrderTable.tsx:109
+#: src/tables/sales/ReturnOrderTable.tsx:100
 #: src/tables/sales/SalesOrderAllocationTable.tsx:88
-#: src/tables/sales/SalesOrderTable.tsx:110
+#: src/tables/sales/SalesOrderTable.tsx:101
 msgid "Include orders for part variants"
 msgstr ""
 
@@ -8103,41 +8113,41 @@ msgstr ""
 #~ msgid "Filter by whether the purchase order has a project code"
 #~ msgstr "Filter by whether the purchase order has a project code"
 
-#: src/tables/build/BuildOrderTable.tsx:163
-#: src/tables/purchasing/PurchaseOrderTable.tsx:90
-#: src/tables/sales/ReturnOrderTable.tsx:87
-#: src/tables/sales/SalesOrderTable.tsx:88
+#: src/tables/build/BuildOrderTable.tsx:142
+#: src/tables/purchasing/PurchaseOrderTable.tsx:81
+#: src/tables/sales/ReturnOrderTable.tsx:78
+#: src/tables/sales/SalesOrderTable.tsx:79
 msgid "Has Target Date"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:164
-#: src/tables/purchasing/PurchaseOrderTable.tsx:91
-#: src/tables/sales/ReturnOrderTable.tsx:88
-#: src/tables/sales/SalesOrderTable.tsx:89
+#: src/tables/build/BuildOrderTable.tsx:143
+#: src/tables/purchasing/PurchaseOrderTable.tsx:82
+#: src/tables/sales/ReturnOrderTable.tsx:79
+#: src/tables/sales/SalesOrderTable.tsx:80
 msgid "Show orders with a target date"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:169
-#: src/tables/purchasing/PurchaseOrderTable.tsx:96
-#: src/tables/sales/ReturnOrderTable.tsx:93
-#: src/tables/sales/SalesOrderTable.tsx:94
+#: src/tables/build/BuildOrderTable.tsx:148
+#: src/tables/purchasing/PurchaseOrderTable.tsx:87
+#: src/tables/sales/ReturnOrderTable.tsx:84
+#: src/tables/sales/SalesOrderTable.tsx:85
 msgid "Has Start Date"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:170
-#: src/tables/purchasing/PurchaseOrderTable.tsx:97
-#: src/tables/sales/ReturnOrderTable.tsx:94
-#: src/tables/sales/SalesOrderTable.tsx:95
+#: src/tables/build/BuildOrderTable.tsx:149
+#: src/tables/purchasing/PurchaseOrderTable.tsx:88
+#: src/tables/sales/ReturnOrderTable.tsx:85
+#: src/tables/sales/SalesOrderTable.tsx:86
 msgid "Show orders with a start date"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:179
-msgid "Filter by user who issued this order"
-msgstr "按发布此订单的用户筛选"
-
-#: src/tables/build/BuildOrderTable.tsx:186
+#: src/tables/build/BuildOrderTable.tsx:160
 msgid "Filter by part category"
 msgstr ""
+
+#: src/tables/build/BuildOrderTable.tsx:179
+#~ msgid "Filter by user who issued this order"
+#~ msgstr "Filter by user who issued this order"
 
 #: src/tables/build/BuildOrderTestTable.tsx:83
 #: src/tables/build/BuildOrderTestTable.tsx:119
@@ -8389,7 +8399,7 @@ msgid "Model"
 msgstr "型号"
 
 #: src/tables/general/BarcodeScanTable.tsx:60
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:75
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:74
 #: src/tables/settings/ErrorTable.tsx:59
 msgid "Timestamp"
 msgstr "时间戳"
@@ -9528,51 +9538,45 @@ msgstr "显示已发货的货物"
 msgid "Show shipments which have been delivered"
 msgstr "显示已送达的货物"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:60
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:59
 msgid "Barcode Information"
 msgstr "条形码信息"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:85
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:84
 msgid "Endpoint"
 msgstr "端点"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:89
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:215
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:88
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:207
 #: src/tables/stock/StockItemTestResultTable.tsx:175
 msgid "Result"
 msgstr "结果"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:97
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:96
 msgid "Context"
 msgstr "内容"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:118
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:117
 msgid "Response"
 msgstr "响应"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:211
-#: src/tables/settings/ImportSessionTable.tsx:122
-#: src/tables/stock/StockTrackingTable.tsx:193
-msgid "Filter by user"
-msgstr "按用户筛选"
-
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:216
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:208
 msgid "Filter by result"
 msgstr "按结果过滤"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:230
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:222
 msgid "Delete Barcode Scan Record"
 msgstr "删除条形码扫描记录"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:256
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:248
 msgid "Barcode Scan Details"
 msgstr "条码扫描详情"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:266
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:258
 msgid "Logging Disabled"
 msgstr "日志已禁用"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:268
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:260
 msgid "Barcode logging is not enabled"
 msgstr "条码日志未启用"
 
@@ -9721,7 +9725,7 @@ msgid "Delete Import Session"
 msgstr "删除导入的会话"
 
 #: src/tables/settings/ImportSessionTable.tsx:43
-#: src/tables/settings/ImportSessionTable.tsx:132
+#: src/tables/settings/ImportSessionTable.tsx:125
 msgid "Create Import Session"
 msgstr "创建导入会话"
 
@@ -9729,18 +9733,18 @@ msgstr "创建导入会话"
 msgid "Uploaded"
 msgstr "已上传"
 
-#: src/tables/settings/ImportSessionTable.tsx:109
+#: src/tables/settings/ImportSessionTable.tsx:107
 #: src/tables/settings/TemplateTable.tsx:370
 #: src/tables/settings/TemplateTable.tsx:441
 msgid "Model Type"
 msgstr "型号类型"
 
-#: src/tables/settings/ImportSessionTable.tsx:110
+#: src/tables/settings/ImportSessionTable.tsx:108
 #: src/tables/settings/TemplateTable.tsx:371
 msgid "Filter by target model type"
 msgstr "按目标型号筛选"
 
-#: src/tables/settings/ImportSessionTable.tsx:116
+#: src/tables/settings/ImportSessionTable.tsx:114
 msgid "Filter by import session status"
 msgstr "按导入会话状态筛选"
 
@@ -10021,7 +10025,7 @@ msgid "Show items which are available"
 msgstr "显示可用的项目"
 
 #: src/tables/stock/StockItemTable.tsx:332
-#: src/tables/stock/StockLocationTable.tsx:44
+#: src/tables/stock/StockLocationTable.tsx:35
 msgid "Include Sublocations"
 msgstr "包括子地点"
 
@@ -10311,52 +10315,52 @@ msgstr "只显示通过的测试"
 msgid "Show results for enabled tests"
 msgstr ""
 
+#: src/tables/stock/StockLocationTable.tsx:36
+msgid "Include sublocations in results"
+msgstr "在结果中包含子地点"
+
 #: src/tables/stock/StockLocationTable.tsx:38
 #~ msgid "structural"
 #~ msgstr "structural"
+
+#: src/tables/stock/StockLocationTable.tsx:41
+msgid "Show structural locations"
+msgstr "显示结构性地点"
 
 #: src/tables/stock/StockLocationTable.tsx:43
 #~ msgid "external"
 #~ msgstr "external"
 
-#: src/tables/stock/StockLocationTable.tsx:45
-msgid "Include sublocations in results"
-msgstr "在结果中包含子地点"
-
-#: src/tables/stock/StockLocationTable.tsx:50
-msgid "Show structural locations"
-msgstr "显示结构性地点"
-
-#: src/tables/stock/StockLocationTable.tsx:55
+#: src/tables/stock/StockLocationTable.tsx:46
 msgid "Show external locations"
 msgstr "显示外部地点"
 
-#: src/tables/stock/StockLocationTable.tsx:59
+#: src/tables/stock/StockLocationTable.tsx:50
 msgid "Has location type"
 msgstr "有位置类型"
 
-#: src/tables/stock/StockLocationTable.tsx:64
+#: src/tables/stock/StockLocationTable.tsx:55
 msgid "Filter by location type"
 msgstr "按位置类型筛选"
 
-#: src/tables/stock/StockLocationTable.tsx:107
-#: src/tables/stock/StockLocationTable.tsx:134
+#: src/tables/stock/StockLocationTable.tsx:100
+#: src/tables/stock/StockLocationTable.tsx:127
 msgid "Add Stock Location"
 msgstr "添加库存地点"
 
-#: src/tables/stock/StockTrackingTable.tsx:78
+#: src/tables/stock/StockTrackingTable.tsx:75
 msgid "Added"
 msgstr "已添加"
 
-#: src/tables/stock/StockTrackingTable.tsx:83
+#: src/tables/stock/StockTrackingTable.tsx:80
 msgid "Removed"
 msgstr "已删除"
 
-#: src/tables/stock/StockTrackingTable.tsx:208
+#: src/tables/stock/StockTrackingTable.tsx:204
 msgid "Details"
 msgstr "详情"
 
-#: src/tables/stock/StockTrackingTable.tsx:223
+#: src/tables/stock/StockTrackingTable.tsx:219
 msgid "No user information"
 msgstr "没有用户信息"
 
