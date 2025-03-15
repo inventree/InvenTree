@@ -8,6 +8,8 @@ from django.db import models
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.fields import ChoiceField
 
@@ -73,6 +75,7 @@ class CustomChoiceField(serializers.ChoiceField):
         return field_info
 
 
+@extend_schema_field(OpenApiTypes.INT)
 class ExtraCustomChoiceField(CustomChoiceField):
     """Custom Choice Field that returns value of status if empty.
 
