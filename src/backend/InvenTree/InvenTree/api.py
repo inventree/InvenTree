@@ -483,6 +483,8 @@ class BulkUpdateMixin(BulkOperationMixin):
         # Perform the update operation
         data = request.data
 
+        n = queryset.count()
+
         with transaction.atomic():
             # Perform object update
             # Note that we do not perform a bulk-update operation here,
@@ -493,7 +495,7 @@ class BulkUpdateMixin(BulkOperationMixin):
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
 
-        return Response({'success': f'Updated {queryset.count()} items'}, status=200)
+        return Response({'success': f'Updated {n} items'}, status=200)
 
 
 class BulkDeleteMixin(BulkOperationMixin):
