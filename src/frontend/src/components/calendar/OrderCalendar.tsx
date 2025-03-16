@@ -89,7 +89,7 @@ export default function OrderCalendar({
 
   // Build the events
   const events = useMemo(() => {
-    const today = dayjs().toISOString().split('T')[0];
+    const today = dayjs().format('YYYY-MM-DD');
 
     return (
       calendarState.data?.map((order: any) => {

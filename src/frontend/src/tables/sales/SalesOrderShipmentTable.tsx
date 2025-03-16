@@ -3,6 +3,7 @@ import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import dayjs from 'dayjs';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -82,7 +83,7 @@ export default function SalesOrderShipmentTable({
     focus: 'tracking_number',
     initialData: {
       ...selectedShipment,
-      shipment_date: new Date().toISOString().split('T')[0]
+      shipment_date: dayjs().format('YYYY-MM-DD')
     }
   });
 

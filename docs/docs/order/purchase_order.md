@@ -18,7 +18,7 @@ The following view modes are available:
 
 #### Table View
 
-*Table View* provides a list of Purchase Orders, which can be filtered to display a subset of orders as per user supplier parameters.
+*Table View* provides a list of Purchase Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
 {% with id="purchase_order_list", url="order/po_list.png", description="Purchase Order List" %}
 {% include "img.html" %}

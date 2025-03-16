@@ -85,10 +85,10 @@ export default function useCalendar({
     params = {
       ...params,
       min_date: startDate
-        ? dayjs(startDate).subtract(1, 'month').toISOString().split('T')[0]
+        ? dayjs(startDate).subtract(1, 'month').format('YYYY-MM-DD')
         : null,
       max_date: endDate
-        ? dayjs(endDate).add(1, 'month').toISOString().split('T')[0]
+        ? dayjs(endDate).add(1, 'month').format('YYYY-MM-DD')
         : null,
       search: searchTerm
     };
