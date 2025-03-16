@@ -98,7 +98,6 @@ export function usePurchaseOrderLineItemFields({
         },
         onValueChange: (value, record) => {
           setPart(record?.part_detail ?? {});
-          console.log('part:', record.part_detail);
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
           return {
