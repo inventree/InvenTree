@@ -114,6 +114,7 @@ export default function InvenTreeTableHeader({
         hidden: true
       }
     },
+    successMessage: t`Items deleted`,
     onFormError: (response) => {
       showNotification({
         id: 'bulk-delete-error',
