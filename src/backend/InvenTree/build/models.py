@@ -1,7 +1,6 @@
 """Build database model definitions."""
 
 import decimal
-from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -204,44 +203,6 @@ class Build(
             'reference': self.reference,
             'title': str(self),
         }
-
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by 'minimum and maximum date range'.
-
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
-
-        # Order was completed within the specified range
-        completed = (
-            Q(status=BuildStatus.COMPLETE.value)
-            & Q(completion_date__gte=min_date)
-            & Q(completion_date__lte=max_date)
-        )
-
-        # Order target date falls within specified range
-        pending = (
-            Q(status__in=BuildStatusGroups.ACTIVE_CODES)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO - Construct a queryset for "overdue" orders
-
-        queryset = queryset.filter(completed | pending)
-
-        return queryset
 
     def __str__(self):
         """String representation of a BuildOrder."""

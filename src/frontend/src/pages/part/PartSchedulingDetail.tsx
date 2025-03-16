@@ -12,6 +12,7 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import dayjs from 'dayjs';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
@@ -32,7 +33,7 @@ function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   }
 
   if (label && typeof label == 'number') {
-    label = formatDate(new Date(label).toISOString());
+    label = formatDate(dayjs().format('YYYY-MM-DD'));
   }
 
   const scheduled = payload.find((item) => item.name == 'scheduled');
@@ -154,7 +155,6 @@ export default function PartSchedulingDetail({
     // Construct initial chart entry (for today)
     const entries: any[] = [
       {
-        // date: formatDate(today.toISOString()),
         date: today.valueOf(),
         delta: 0,
         scheduled: stock,
@@ -282,7 +282,7 @@ export default function PartSchedulingDetail({
               scale: 'time',
               type: 'number',
               tickFormatter: (value: number) => {
-                return formatDate(new Date(value).toISOString());
+                return formatDate(dayjs().format('YYYY-MM-DD'));
               }
             }}
             series={[

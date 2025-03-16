@@ -12,11 +12,15 @@ A *Build Order* uses the BOM to allocate stock items to the assembly process. As
 
 ### View Build Orders
 
-To navigate to the Build Order display, select *Build* from the main navigation menu:
+To navigate to the Build Order display, select *Manufacturing* from the main navigation menu, and *Build Orders* from the sidebar.
+
+The *Build Order Index Page* allows the user to view all build orders:
 
 {% with id="build_display", url="build/build_display.png", description="Display Builds" %}
 {% include "img.html" %}
 {% endwith %}
+
+The following view modes are available:
 
 #### Table View
 
@@ -28,7 +32,13 @@ To navigate to the Build Order display, select *Build* from the main navigation 
 
 #### Calendar View
 
-*Calendar View* shows a calendar display with upcoming build orders, based on the various dates specified for each build.
+*Calendar View* shows a calendar display with outstanding build orders, based on the various dates specified for each order.
+
+{% with id="build_calendar", url="build/build_calendar.png", description="Build Calendar" %}
+{% include "img.html" %}
+{% endwith %}
+
+The build calendar allows the user to navigate month-by-month and display the filtered build orders
 
 ## Build Order Details
 

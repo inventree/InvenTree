@@ -38,6 +38,7 @@ import {
   OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
+  PartCategoryFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
   StartDateAfterFilter,
@@ -165,19 +166,12 @@ export function BuildOrderTable({
       IssuedByFilter(),
       ResponsibleFilter(),
       {
-        name: 'category',
-        label: t`Category`,
-        description: t`Filter by part category`,
-        apiUrl: apiUrl(ApiEndpoints.category_list),
-        model: ModelType.partcategory,
-        modelRenderer: (instance: any) => instance.name
-      },
-      {
         name: 'external',
         label: t`External`,
         description: t`Show external build orders`,
         active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
-      }
+      },
+      PartCategoryFilter()
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter
