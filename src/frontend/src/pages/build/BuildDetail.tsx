@@ -126,6 +126,17 @@ export default function BuildDetail() {
       },
       {
         type: 'text',
+        name: 'purchase_order',
+        label: t`Purchase Order`,
+        icon: 'purchase_orders',
+        copy: true,
+        hidden: !build.external,
+        value_formatter: () => {
+          return 'TODO: external PO';
+        }
+      },
+      {
+        type: 'text',
         name: 'reference',
         label: t`Reference`,
         copy: true
