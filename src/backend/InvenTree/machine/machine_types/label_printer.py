@@ -141,11 +141,7 @@ class LabelPrinterBaseDriver(BaseDriver):
             label: The LabelTemplate object to render
             item: The item to render the label with
         """
-        return (
-            self.render_to_pdf(label, item, **kwargs)
-            .get_document()  # type: ignore
-            .write_pdf()
-        )
+        return self.render_to_pdf(label, item, **kwargs)
 
     def render_to_html(self, label: LabelTemplate, item: models.Model, **kwargs) -> str:
         """Helper method to render a label to HTML format for a specific item.
