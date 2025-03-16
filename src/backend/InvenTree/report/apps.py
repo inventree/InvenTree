@@ -32,7 +32,7 @@ class ReportConfig(AppConfig):
         for name, log_manager in logging.root.manager.loggerDict.items():
             if name.lower().startswith(('fonttools', 'weasyprint')):
                 if hasattr(log_manager, 'setLevel'):
-                    log_manager.setLevel(logging.WARNING)
+                    log_manager.setLevel(logging.ERROR)
 
         super().ready()
 

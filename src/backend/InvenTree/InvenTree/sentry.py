@@ -66,6 +66,10 @@ def init_sentry(dsn, sample_rate, tags):
 
 def report_exception(exc):
     """Report an exception to sentry.io."""
+    if settings.TESTING:
+        # Skip reporting exceptions in testing mode
+        return
+
     if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
         if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
             logger.info('Reporting exception to sentry.io: %s', exc)

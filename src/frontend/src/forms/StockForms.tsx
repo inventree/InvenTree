@@ -115,7 +115,9 @@ export function useStockFields({
 
           if (expiry_days && expiry_days > 0) {
             // Adjust the expiry date based on the part default expiry
-            setExpiryDate(dayjs().add(expiry_days, 'days').toISOString());
+            setExpiryDate(
+              dayjs().add(expiry_days, 'days').format('YYYY-MM-DD')
+            );
           }
         }
       },
