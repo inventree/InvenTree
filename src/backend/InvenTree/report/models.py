@@ -425,7 +425,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         attachment=ContentFile(report, report_name),
                         comment=_(f'Report generated from template {self.name}'),
                         upload_user=request.user
-                        if request.user.is_authenticated
+                        if request and request.user.is_authenticated
                         else None,
                     )
 
@@ -450,7 +450,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             raise ValidationError({
                 'error': _('Error generating report'),
                 'detail': str(exc),
-                'path': request.path,
+                'path': request.path if request else None,
             })
 
         if not report_name.endswith('.pdf'):
