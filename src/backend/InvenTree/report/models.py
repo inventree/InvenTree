@@ -389,7 +389,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 template=self,
                 items=len(items),
                 user=request.user
-                if request.user and request.user.is_authenticated
+                if request and request.user and request.user.is_authenticated
                 else None,
                 progress=0,
                 complete=False,
@@ -596,7 +596,9 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
                 template=self,
                 items=len(items),
                 plugin=plugin.slug,
-                user=request.user if request else None,
+                user=request.user
+                if request and request.user.is_authenticated
+                else None,
                 progress=0,
                 complete=False,
             )
