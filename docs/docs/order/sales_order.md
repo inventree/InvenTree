@@ -6,9 +6,29 @@ title: Sales Orders
 
 Sales orders allow tracking of which stock items are sold to customers, therefore converting stock items / inventory into externally sold items.
 
-To access the sales order page, click on the <span class="badge inventree nav main"><span class='fas fa-truck'></span> Sell</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-list'></span> Sales Orders</span> option in the dropdown list.
+### View Sales Orders
+
+To navigate to the Sales Order display, select *Sales* from the main navigation menu, and *Sales Orders* from the sidebar:
+
+{% with id="sales_order_display", url="order/so_display.png", description="Sales Order Display" %}
+{% include "img.html" %}
+{% endwith %}
+
+The following view modes are available:
+
+#### Table View
+
+*Table View* provides a list of Sales Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
 {% with id="sales_order_list", url="order/so_list.png", description="Sales Order List" %}
+{% include "img.html" %}
+{% endwith %}
+
+#### Calendar View
+
+*Calendar View* shows a calendar display with outstanding sales orders.
+
+{% with id="sales_order_calendar", url="order/so_calendar.png", description="Sales Order Calendar" %}
 {% include "img.html" %}
 {% endwith %}
 
