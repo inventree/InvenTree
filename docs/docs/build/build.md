@@ -32,7 +32,7 @@ The following view modes are available:
 
 #### Calendar View
 
-*Calendar View* shows a calendar display with upcoming build orders, based on the various dates specified for each build.
+*Calendar View* shows a calendar display with outstanding build orders, based on the various dates specified for each order.
 
 {% with id="build_calendar", url="build/build_calendar.png", description="Build Calendar" %}
 {% include "img.html" %}
