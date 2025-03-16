@@ -20,7 +20,7 @@ import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
 from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -1239,7 +1239,7 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
+class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
