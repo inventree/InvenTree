@@ -13,26 +13,18 @@ import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
 import type { JSX } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 
 export function ThemeContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
-  const [primaryColor, whiteColor, blackColor, radius] = useLocalState(
-    useShallow((state) => [
-      state.primaryColor,
-      state.whiteColor,
-      state.blackColor,
-      state.radius
-    ])
-  );
+  const [usertheme] = useLocalState((state) => [state.usertheme]);
 
   // Theme
   const myTheme = createTheme({
-    primaryColor: primaryColor,
-    white: whiteColor,
-    black: blackColor,
-    defaultRadius: radius,
+    primaryColor: usertheme.primaryColor,
+    white: usertheme.whiteColor,
+    black: usertheme.blackColor,
+    defaultRadius: usertheme.radius,
     breakpoints: {
       xs: '30em',
       sm: '48em',

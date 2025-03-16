@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
+import {
+  Alert,
+  FileInput,
+  type MantineStyleProp,
+  NumberInput,
+  Stack,
+  Switch
+} from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import {
@@ -32,6 +39,12 @@ export type ApiFormAdjustFilterType = {
 export type ApiFormFieldChoice = {
   value: any;
   display_name: string;
+};
+
+// Define individual headers in a table field
+export type ApiFormFieldHeader = {
+  title: string;
+  style?: MantineStyleProp;
 };
 
 /** Definition of the ApiForm field component.
@@ -109,7 +122,7 @@ export type ApiFormFieldType = {
   onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
   addRow?: () => any;
-  headers?: string[];
+  headers?: ApiFormFieldHeader[];
   depends_on?: string[];
 };
 

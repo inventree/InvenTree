@@ -114,7 +114,6 @@ class StockLocationTest(StockAPITestCase):
             'items',
             'pathstring',
             'owner',
-            'url',
             'icon',
             'location_type',
             'location_type_detail',
@@ -1515,13 +1514,13 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.000000')
+        self.assertAlmostEqual(data['purchase_price'], 123, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update just the amount
         data = self.patch(url, {'purchase_price': 456}, expected_code=200).data
 
-        self.assertEqual(data['purchase_price'], '456.000000')
+        self.assertAlmostEqual(data['purchase_price'], 456, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
@@ -2177,6 +2176,11 @@ class StockTrackingTest(StockAPITestCase):
         # Test counting
         response = self.get(url, {'limit': 1})
         self.assertEqual(response.data['count'], N)
+
+        # Test with search and pagination
+        response = self.get(url, {'limit': 1, 'offset': 10, 'search': 'berries'})
+
+        self.assertEqual(response.data['count'], 0)
 
     def test_list(self):
         """Test list endpoint."""

@@ -23,8 +23,12 @@ export default function MainView() {
   );
   // Set initial login status
   useEffect(() => {
-    // Local state initialization
-    setApiDefaults();
+    try {
+      // Local state initialization
+      setApiDefaults();
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   // Check if mobile

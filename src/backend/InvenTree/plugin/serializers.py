@@ -32,7 +32,7 @@ class MetadataSerializer(serializers.ModelSerializer):
         - Else, if it is a PUT update, overwrite any existing metadata
         """
         if self.partial:
-            # Default behaviour is to "merge" new data in
+            # Default behavior is to "merge" new data in
             metadata = instance.metadata.copy() if instance.metadata else {}
             metadata.update(data['metadata'])
             data['metadata'] = metadata

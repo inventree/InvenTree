@@ -14,6 +14,10 @@ ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 
+# Required for running playwright within devcontainer
+ENV DISPLAY=:0
+ENV LIBGL_ALWAYS_INDIRECT=1
+
 COPY contrib/container/init.sh ./
 RUN chmod +x init.sh
 
@@ -23,14 +27,12 @@ RUN apt update && apt install -y \
    postgresql-client \
    libldap2-dev libsasl2-dev \
    libpango1.0-0 libcairo2 \
-   weasyprint
+   poppler-utils weasyprint
 
 # Install packages required for frontend development
 RUN apt install -y \
    yarn nodejs npm
 
 RUN yarn config set network-timeout 600000 -g
-
-# Install python database connectors
 
 ENTRYPOINT ["/bin/bash", "./init.sh"]

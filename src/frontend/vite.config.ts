@@ -48,6 +48,7 @@ export default defineConfig({
       uploadToken: process.env.CODECOV_TOKEN
     })
   ],
+  base: '',
   build: {
     manifest: true,
     outDir: '../../src/backend/InvenTree/web/static/web',

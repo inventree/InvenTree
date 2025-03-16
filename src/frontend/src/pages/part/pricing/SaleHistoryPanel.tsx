@@ -57,7 +57,7 @@ export default function SaleHistoryPanel({
     return table.records.map((record: any) => {
       return {
         name: record.order_detail.reference,
-        sale_price: record.sale_price
+        sale_price: Number.parseFloat(record.sale_price)
       };
     });
   }, [table.records]);

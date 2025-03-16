@@ -47,7 +47,8 @@ export function SupplierPartTable({
         accessor: 'part',
         switchable: 'part' in params,
         sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
+        render: (record: any) =>
+          PartColumn({ part: record?.part_detail, full_name: true })
       },
       {
         accessor: 'supplier',
@@ -73,7 +74,7 @@ export function SupplierPartTable({
       DescriptionColumn({}),
       {
         accessor: 'manufacturer',
-
+        title: t`Manufacturer`,
         sortable: true,
         render: (record: any) => {
           const manufacturer = record?.manufacturer_detail ?? {};

@@ -1,13 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Divider,
-  Group,
-  Paper,
-  Select,
-  Table,
-  Text
-} from '@mantine/core';
+import { ActionIcon, Divider, Group, Select, Table, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import {
   IconApi,
@@ -19,11 +11,11 @@ import {
 } from '@tabler/icons-react';
 
 import { useShallow } from 'zustand/react/shallow';
+import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import type { HostList } from '../../states/states';
 import { EditButton } from '../buttons/EditButton';
-import { StylishText } from '../items/StylishText';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({
@@ -53,46 +45,42 @@ export function InstanceOptions({
   }
 
   return (
-    <>
-      <Paper p='xl' withBorder>
-        <StylishText size='xl'>{t`Select Server`}</StylishText>
-        <Divider p='xs' />
-        <Group gap='xs' wrap='nowrap'>
-          <Select
-            value={hostKey}
-            onChange={ChangeHost}
-            data={hostListData}
-            disabled={HostListEdit}
-          />
-          <EditButton
-            setEditing={setHostListEdit}
-            editing={HostListEdit}
-            disabled={HostListEdit}
-          />
-          <EditButton
-            setEditing={setHostEdit}
-            editing={true}
-            disabled={HostListEdit}
-            saveIcon={<IconCheck />}
-          />
-        </Group>
+    <Wrapper titleText={t`Select Server`} smallPadding>
+      <Group gap='xs' wrap='nowrap'>
+        <Select
+          value={hostKey}
+          onChange={ChangeHost}
+          data={hostListData}
+          disabled={HostListEdit}
+        />
+        <EditButton
+          setEditing={setHostListEdit}
+          editing={HostListEdit}
+          disabled={HostListEdit}
+        />
+        <EditButton
+          setEditing={setHostEdit}
+          editing={true}
+          disabled={HostListEdit}
+          saveIcon={<IconCheck />}
+        />
+      </Group>
 
-        {HostListEdit ? (
-          <>
-            <Divider my={'sm'} />
-            <Text>
-              <Trans>Edit host options</Trans>
-            </Text>
-            <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
-          </>
-        ) : (
-          <>
-            <Divider my={'sm'} />
-            <ServerInfo hostList={hostList} hostKey={hostKey} />
-          </>
-        )}
-      </Paper>
-    </>
+      {HostListEdit ? (
+        <>
+          <Divider my={'sm'} />
+          <Text>
+            <Trans>Edit host options</Trans>
+          </Text>
+          <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
+        </>
+      ) : (
+        <>
+          <Divider my={'sm'} />
+          <ServerInfo hostList={hostList} hostKey={hostKey} />
+        </>
+      )}
+    </Wrapper>
   );
 }
 

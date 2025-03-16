@@ -1,23 +1,24 @@
 """Report template model definitions."""
 
-import logging
+import io
 import os
 import sys
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
-from django.http import HttpRequest
 from django.template import Context, Template
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
-from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+
+import structlog
+from pypdf import PdfWriter
 
 import InvenTree.exceptions
 import InvenTree.helpers
@@ -31,36 +32,15 @@ from plugin import InvenTreePlugin
 from plugin.registry import registry
 
 try:
-    from django_weasyprint import WeasyTemplateResponseMixin
+    from weasyprint import HTML
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
-    print("Unable to import 'django_weasyprint' module.")
+    print("Unable to import 'weasyprint' module.")
     print('You may require some further system packages to be installed.')
     sys.exit(1)
 
 
-logger = logging.getLogger('inventree')
-
-
-def dummy_print_request() -> HttpRequest:
-    """Generate a dummy HTTP request object.
-
-    This is required for internal print calls, as WeasyPrint *requires* a request object.
-    """
-    factory = RequestFactory()
-    request = factory.get('/')
-    request.user = AnonymousUser()
-    return request
-
-
-class WeasyprintReport(WeasyTemplateResponseMixin):
-    """Class for rendering a HTML template to a PDF."""
-
-    def __init__(self, request, template, **kwargs):
-        """Initialize the report mixin with some standard attributes."""
-        self.request = request
-        self.template_name = template
-        self.pdf_filename = kwargs.get('filename', 'output.pdf')
+logger = structlog.getLogger('inventree')
 
 
 def rename_template(instance, filename):
@@ -193,33 +173,34 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return template_string.render(Context(context))
 
-    def render_as_string(self, instance, request=None, **kwargs):
+    def render_as_string(self, instance, request=None, **kwargs) -> str:
         """Render the report to a HTML string.
 
-        Useful for debug mode (viewing generated code)
+        Arguments:
+            instance: The model instance to render against
+            request: A HTTPRequest object (optional)
+
+        Returns:
+            str: HTML string
         """
         context = self.get_context(instance, request, **kwargs)
 
         return render_to_string(self.template_name, context, request)
 
-    def render(self, instance, request=None, **kwargs):
+    def render(self, instance, request=None, **kwargs) -> bytes:
         """Render the template to a PDF file.
 
-        Uses django-weasyprint plugin to render HTML template against Weasyprint
+        Arguments:
+            instance: The model instance to render against
+            request: A HTTPRequest object (optional)
+
+        Returns:
+            bytes: PDF data
         """
-        context = self.get_context(instance, request)
+        html = self.render_as_string(instance, request, **kwargs)
+        pdf = HTML(string=html).write_pdf()
 
-        # Render HTML template to PDF
-        wp = WeasyprintReport(
-            request,
-            self.template_name,
-            base_url=get_base_url(request=request),
-            presentational_hints=True,
-            filename=self.generate_filename(context),
-            **kwargs,
-        )
-
-        return wp.render_to_response(context, **kwargs)
+        return pdf
 
     filename_pattern = models.CharField(
         default='output.pdf',
@@ -367,11 +348,12 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return context
 
-    def print(self, items: list, request=None, **kwargs) -> 'ReportOutput':
+    def print(self, items: list, request=None, output=None, **kwargs) -> 'ReportOutput':
         """Print reports for a list of items against this template.
 
         Arguments:
             items: A list of items to print reports for (model instance)
+            output: The ReportOutput object to use (if provided)
             request: The request object (optional)
 
         Returns:
@@ -390,6 +372,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             - Render using background worker, provide progress updates to UI
             - Run report generation in the background worker process
         """
+        logger.info("Printing %s reports against template '%s'", len(items), self.name)
+
         outputs = []
 
         debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
@@ -397,11 +381,24 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         # Start with a default report name
         report_name = None
 
-        if request is None:
-            # Generate a dummy request object
-            request = dummy_print_request()
-
         report_plugins = registry.with_mixin('report')
+
+        # If a ReportOutput object is not provided, create a new one
+        if not output:
+            output = ReportOutput.objects.create(
+                template=self,
+                items=len(items),
+                user=request.user
+                if request and request.user and request.user.is_authenticated
+                else None,
+                progress=0,
+                complete=False,
+                output=None,
+            )
+
+        if output.progress != 0:
+            output.progress = 0
+            output.save()
 
         try:
             for instance in items:
@@ -413,34 +410,38 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 # Render the report output
                 try:
                     if debug_mode:
-                        output = self.render_as_string(instance, request)
+                        report = self.render_as_string(instance, request)
                     else:
-                        output = self.render(instance, request)
+                        report = self.render(instance, request)
                 except TemplateDoesNotExist as e:
                     t_name = str(e) or self.template
                     raise ValidationError(f'Template file {t_name} does not exist')
 
-                outputs.append(output)
+                outputs.append(report)
 
                 # Attach the generated report to the model instance (if required)
                 if self.attach_to_model and not debug_mode:
-                    data = output.get_document().write_pdf()
                     instance.create_attachment(
-                        attachment=ContentFile(data, report_name),
+                        attachment=ContentFile(report, report_name),
                         comment=_(f'Report generated from template {self.name}'),
                         upload_user=request.user
-                        if request.user.is_authenticated
+                        if request and request.user.is_authenticated
                         else None,
                     )
 
                 # Provide generated report to any interested plugins
                 for plugin in report_plugins:
                     try:
-                        plugin.report_callback(self, instance, output, request)
+                        plugin.report_callback(self, instance, report, request)
                     except Exception:
                         InvenTree.exceptions.log_error(
                             f'plugins.{plugin.slug}.report_callback'
                         )
+
+                # Update the progress of the report generation
+                output.progress += 1
+                output.save()
+
         except Exception as exc:
             # Something went wrong during the report generation process
             if get_global_setting('REPORT_LOG_ERRORS', backup_value=True):
@@ -449,7 +450,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             raise ValidationError({
                 'error': _('Error generating report'),
                 'detail': str(exc),
-                'path': request.path,
+                'path': request.path if request else None,
             })
 
         if not report_name.endswith('.pdf'):
@@ -460,28 +461,28 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             data = '\n'.join(outputs)
             report_name = report_name.replace('.pdf', '.html')
         else:
-            pages = []
+            # Merge the outputs back together into a single PDF file
+            pdf_writer = PdfWriter()
 
             try:
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
+                for report in outputs:
+                    # Construct file object with raw PDF data
+                    report_file = io.BytesIO(report)
+                    pdf_writer.append(report_file)
 
-                data = outputs[0].get_document().copy(pages).write_pdf()
-            except TemplateDoesNotExist as exc:
-                t_name = str(exc) or self.template
-                raise ValidationError(f'Template file {t_name} does not exist')
+                # Generate raw output
+                pdf_file = io.BytesIO()
+                pdf_writer.write(pdf_file)
+                data = pdf_file.getvalue()
+                pdf_file.close()
+            except Exception:
+                InvenTree.exceptions.log_error('report.print')
+                data = None
 
         # Save the generated report to the database
-        output = ReportOutput.objects.create(
-            template=self,
-            items=len(items),
-            user=request.user if request.user.is_authenticated else None,
-            progress=100,
-            complete=True,
-            output=ContentFile(data, report_name),
-        )
+        output.complete = True
+        output.output = ContentFile(data, report_name)
+        output.save()
 
         return output
 
@@ -560,13 +561,20 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         return context
 
     def print(
-        self, items: list, plugin: InvenTreePlugin, options=None, request=None, **kwargs
+        self,
+        items: list,
+        plugin: InvenTreePlugin,
+        output=None,
+        options=None,
+        request=None,
+        **kwargs,
     ) -> 'LabelOutput':
         """Print labels for a list of items against this template.
 
         Arguments:
             items: A list of items to print labels for (model instance)
             plugin: The plugin to use for label rendering
+            output: The LabelOutput object to use (if provided)
             options: Additional options for the label printing plugin (optional)
             request: The request object (optional)
 
@@ -576,30 +584,33 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         Raises:
             ValidationError: If there is an error during label printing
         """
-        output = LabelOutput.objects.create(
-            template=self,
-            items=len(items),
-            plugin=plugin.slug,
-            user=request.user if request else None,
-            progress=0,
-            complete=False,
+        logger.info(
+            "Printing %s labels against template '%s' using plugin '%s'",
+            len(items),
+            plugin.slug,
+            self.name,
         )
+
+        if not output:
+            output = LabelOutput.objects.create(
+                template=self,
+                items=len(items),
+                plugin=plugin.slug,
+                user=request.user
+                if request and request.user.is_authenticated
+                else None,
+                progress=0,
+                complete=False,
+            )
 
         if options is None:
             options = {}
-
-        if request is None:
-            # If the request object is not provided, we need to create a dummy one
-            # Otherwise, WeasyPrint throws an error
-            request = dummy_print_request()
 
         try:
             if hasattr(plugin, 'before_printing'):
                 plugin.before_printing()
 
-                plugin.print_labels(
-                    self, output, items, request, printing_options=options
-                )
+            plugin.print_labels(self, output, items, request, printing_options=options)
 
             if hasattr(plugin, 'after_printing'):
                 plugin.after_printing()
@@ -611,8 +622,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
             raise ValidationError([_('Error printing labels'), str(e)])
 
-        output.complete = True
-        output.save()
+        output.refresh_from_db()
 
         # Return the output object
         return output

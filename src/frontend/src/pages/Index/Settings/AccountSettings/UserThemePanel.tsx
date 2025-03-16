@@ -34,65 +34,24 @@ const LOOKUP = Object.assign(
 
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
-
-  const [themeLoader, setThemeLoader] = useLocalState(
-    useShallow((state) => [state.loader, state.setLoader])
+  const [usertheme, setTheme, setLanguage] = useLocalState(
+    useShallow((state) => [state.usertheme, state.setTheme, state.setLanguage])
   );
 
-  // white color
-  const [whiteColor, setWhiteColor] = useState(theme.white);
-
-  function changeWhite(color: string) {
-    useLocalState.setState({ whiteColor: color });
-    setWhiteColor(color);
-  }
-
-  // black color
-  const [blackColor, setBlackColor] = useState(theme.black);
-
-  function changeBlack(color: string) {
-    useLocalState.setState({ blackColor: color });
-    setBlackColor(color);
-  }
   // radius
   function getMark(value: number) {
     const obj = SizeMarks.find((mark) => mark.value === value);
     if (obj) return obj;
     return SizeMarks[0];
   }
-
   function getDefaultRadius() {
-    const obj = SizeMarks.find(
-      (mark) => mark.label === useLocalState.getState().radius
-    );
-    if (obj) return obj.value;
-    return 50;
+    const value = Number.parseInt(usertheme.radius.toString());
+    return SizeMarks.some((mark) => mark.value === value) ? value : 50;
   }
   const [radius, setRadius] = useState(getDefaultRadius());
   function changeRadius(value: number) {
     setRadius(value);
-    useLocalState.setState({ radius: getMark(value).label });
-  }
-
-  // Set theme primary color
-  function changePrimary(color: string) {
-    useLocalState.setState({ primaryColor: LOOKUP[color] });
-  }
-
-  function enablePseudoLang(): void {
-    useLocalState.setState({ language: 'pseudo-LOCALE' });
-  }
-
-  // Custom loading indicator
-  const loaderDate = [
-    { value: 'bars', label: t`Bars` },
-    { value: 'oval', label: t`Oval` },
-    { value: 'dots', label: t`Dots` }
-  ];
-
-  function changeLoader(value: string | null) {
-    if (value === null) return;
-    setThemeLoader(value);
+    setTheme([{ key: 'radius', value: value.toString() }]);
   }
 
   return (
@@ -111,7 +70,10 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               {IS_DEV && (
-                <Button onClick={enablePseudoLang} variant='light'>
+                <Button
+                  onClick={() => setLanguage('pseudo-LOCALE', true)}
+                  variant='light'
+                >
                   <Trans>Use pseudo language</Trans>
                 </Button>
               )}
@@ -135,7 +97,9 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ColorPicker
                 format='hex'
-                onChange={changePrimary}
+                onChange={(v) =>
+                  setTheme([{ key: 'primaryColor', value: LOOKUP[v] }])
+                }
                 withPicker={false}
                 swatches={Object.keys(LOOKUP)}
               />
@@ -151,12 +115,19 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
               <Trans>White color</Trans>
             </Table.Td>
             <Table.Td>
-              <ColorInput value={whiteColor} onChange={changeWhite} />
+              <ColorInput
+                aria-label='Color Picker White'
+                value={usertheme.whiteColor}
+                onChange={(v) => setTheme([{ key: 'whiteColor', value: v }])}
+              />
             </Table.Td>
             <Table.Td>
               <ActionIcon
                 variant='default'
-                onClick={() => changeWhite('#FFFFFF')}
+                aria-label='Reset White Color'
+                onClick={() =>
+                  setTheme([{ key: 'whiteColor', value: '#FFFFFF' }])
+                }
               >
                 <IconRestore />
               </ActionIcon>
@@ -167,12 +138,19 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
               <Trans>Black color</Trans>
             </Table.Td>
             <Table.Td>
-              <ColorInput value={blackColor} onChange={changeBlack} />
+              <ColorInput
+                aria-label='Color Picker Black'
+                value={usertheme.blackColor}
+                onChange={(v) => setTheme([{ key: 'blackColor', value: v }])}
+              />
             </Table.Td>
             <Table.Td>
               <ActionIcon
                 variant='default'
-                onClick={() => changeBlack('#000000')}
+                aria-label='Reset Black Color'
+                onClick={() =>
+                  setTheme([{ key: 'blackColor', value: '#000000' }])
+                }
               >
                 <IconRestore />
               </ActionIcon>
@@ -201,15 +179,22 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <Group justify='left'>
                 <Select
-                  data={loaderDate}
-                  value={themeLoader}
-                  onChange={changeLoader}
+                  aria-label='Loader Type Selector'
+                  data={[
+                    { value: 'bars', label: t`Bars` },
+                    { value: 'oval', label: t`Oval` },
+                    { value: 'dots', label: t`Dots` }
+                  ]}
+                  value={usertheme.loader}
+                  onChange={(v) => {
+                    if (v != null) setTheme([{ key: 'loader', value: v }]);
+                  }}
                 />
               </Group>
             </Table.Td>
             <Table.Td>
               <Group justify='left'>
-                <Loader type={themeLoader} mah={16} size='sm' />
+                <Loader type={usertheme.loader} mah={16} size='sm' />
               </Group>
             </Table.Td>
           </Table.Tr>

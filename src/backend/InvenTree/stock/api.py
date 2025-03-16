@@ -6,7 +6,6 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import F, Q
-from django.http import JsonResponse
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -35,13 +34,7 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
 )
-from InvenTree.helpers import (
-    extract_serial_numbers,
-    generateTestKey,
-    is_ajax,
-    isNull,
-    str2bool,
-)
+from InvenTree.helpers import extract_serial_numbers, generateTestKey, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -1465,8 +1458,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if is_ajax(request):
-            return JsonResponse(data, safe=False)
+
         return Response(data)
 
     def create(self, request, *args, **kwargs):
@@ -1503,7 +1495,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
     ordering_fields = ['date']
 
-    search_fields = ['title', 'notes']
+    search_fields = ['notes']
 
 
 stock_api_urls = [

@@ -1,3 +1,4 @@
+import type { NavigateFunction } from 'react-router-dom';
 import { setApiDefaults } from '../App';
 import { useServerApiState } from './ApiState';
 import { useIconState } from './IconState';
@@ -25,6 +26,23 @@ export interface UserProps {
   is_superuser?: boolean;
   roles?: Record<string, string[]>;
   permissions?: Record<string, string[]>;
+  groups: any[] | null;
+  profile: Profile;
+}
+
+interface Profile {
+  language: string;
+  theme: any;
+  widgets: any;
+  displayname: string | null;
+  position: string | null;
+  status: string | null;
+  location: string | null;
+  active: boolean;
+  contact: string | null;
+  type: string;
+  organisation: string | null;
+  primary_group: number | null;
 }
 
 // Type interface fully defining the current server
@@ -48,6 +66,11 @@ export interface ServerAPIProps {
   target: null | string;
   default_locale: null | string;
   django_admin: null | string;
+  settings: {
+    sso_registration: null | boolean;
+    registration_enabled: null | boolean;
+    password_forgotten_enabled: null | boolean;
+  } | null;
   customize: null | {
     logo: string;
     splash: string;
@@ -56,22 +79,48 @@ export interface ServerAPIProps {
   };
 }
 
-export interface AuthProps {
-  sso_enabled: boolean;
-  sso_registration: boolean;
-  mfa_required: boolean;
-  providers: Provider[];
-  registration_enabled: boolean;
-  password_forgotten_enabled: boolean;
+export interface AuthContext {
+  status: number;
+  data: { flows: Flow[] };
+  meta: { is_authenticated: boolean };
+}
+
+export enum FlowEnum {
+  VerifyEmail = 'verify_email',
+  Login = 'login',
+  Signup = 'signup',
+  ProviderRedirect = 'provider_redirect',
+  ProviderSignup = 'provider_signup',
+  ProviderToken = 'provider_token',
+  MfaAuthenticate = 'mfa_authenticate',
+  Reauthenticate = 'reauthenticate',
+  MfaReauthenticate = 'mfa_reauthenticate'
+}
+
+export interface Flow {
+  id: FlowEnum;
+  providers?: string[];
+  is_pending?: boolean[];
+}
+
+export interface AuthConfig {
+  account: {
+    authentication_method: string;
+  };
+  socialaccount: { providers: Provider[] };
+  mfa: {
+    supported_types: string[];
+  };
+  usersessions: {
+    track_activity: boolean;
+  };
 }
 
 export interface Provider {
   id: string;
   name: string;
-  configured: boolean;
-  login: string;
-  connect: string;
-  display_name: string;
+  flows: string[];
+  client_id: string;
 }
 
 // Type interface defining a single 'setting' object
@@ -134,7 +183,9 @@ export type SettingsLookup = {
  * Refetch all global state information.
  * Necessary on login, or if locale is changed.
  */
-export function fetchGlobalStates() {
+export async function fetchGlobalStates(
+  navigate?: NavigateFunction | undefined
+) {
   const { isLoggedIn } = useUserState.getState();
 
   if (!isLoggedIn()) {
@@ -144,7 +195,12 @@ export function fetchGlobalStates() {
   setApiDefaults();
 
   useServerApiState.getState().fetchServerApiState();
-  useUserSettingsState.getState().fetchSettings();
+  const result = await useUserSettingsState.getState().fetchSettings();
+  if (!result && navigate) {
+    console.log('MFA is required - setting up');
+    // call mfa setup
+    navigate('/mfa-setup');
+  }
   useGlobalSettingsState.getState().fetchSettings();
   useGlobalStatusState.getState().fetchStatus();
   useIconState.getState().fetchIcons();
