@@ -277,12 +277,12 @@ class BulkDeleteTests(InvenTreeAPITestCase):
         # DELETE with invalid 'items'
         response = self.delete(url, {'items': {'hello': 'world'}}, expected_code=400)
 
-        self.assertIn("'items' must be supplied as a list object", str(response.data))
+        self.assertIn('Items must be provided as a list', str(response.data))
 
         # DELETE with invalid 'filters'
         response = self.delete(url, {'filters': [1, 2, 3]}, expected_code=400)
 
-        self.assertIn("'filters' must be supplied as a dict object", str(response.data))
+        self.assertIn('Filters must be provided as a dict', str(response.data))
 
 
 class SearchTests(InvenTreeAPITestCase):

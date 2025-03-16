@@ -420,7 +420,7 @@ class BulkOperationMixin:
         if filters:
             if type(filters) is not dict:
                 raise ValidationError({
-                    'non_field_errors': _('Filters must be provided as a dictionary')
+                    'non_field_errors': _('Filters must be provided as a dict')
                 })
 
             try:
