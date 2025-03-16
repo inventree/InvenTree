@@ -415,7 +415,6 @@ django==4.2.20 \
     #   django-stdimage
     #   django-structlog
     #   django-taggit
-    #   django-weasyprint
     #   django-xforwardedfor-middleware
     #   djangorestframework
     #   djangorestframework-simplejwt
@@ -520,10 +519,6 @@ django-structlog==9.0.1 \
 django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
     --hash=sha256:c4d1199e6df34125dd36db5eb0efe545b254dec3980ce5dd80e6bab3e78757c3
-    # via -r src/backend/requirements.in
-django-weasyprint==2.4.0 \
-    --hash=sha256:06bc90bcc84f33d6675815498616cc82153ea924227d336bf32e5bf54da117d1 \
-    --hash=sha256:9a1d7c687a6c4678f3ac97e48b0ede495b47e17218e8ee6bea454bc8cfa6b60f
     # via -r src/backend/requirements.in
 django-xforwardedfor-middleware==2.0 \
     --hash=sha256:16fd1cb27f33a5541b6f3e0b43afb1b7334a76f27a1255b69e14ec5c440f0b24
@@ -1222,6 +1217,10 @@ pyjwt[crypto]==2.9.0 \
     # via
     #   django-allauth
     #   djangorestframework-simplejwt
+pypdf==5.4.0 \
+    --hash=sha256:9af476a9dc30fcb137659b0dec747ea94aa954933c52cf02ee33e39a16fe9175 \
+    --hash=sha256:db994ab47cadc81057ea1591b90e5b543e2b7ef2d0e31ef41a9bfe763c119dab
+    # via -r src/backend/requirements.in
 pyphen==0.17.2 \
     --hash=sha256:3a07fb017cb2341e1d9ff31b8634efb1ae4dc4b130468c7c39dd3d32e7c3affd \
     --hash=sha256:f60647a9c9b30ec6c59910097af82bc5dd2d36576b918e44148d8b07ef3b4aa3
@@ -1641,6 +1640,7 @@ typing-extensions==4.12.2 \
     #   opentelemetry-sdk
     #   pint
     #   py-moneyed
+    #   pypdf
     #   referencing
     #   structlog
 tzdata==2025.1 \
@@ -1667,9 +1667,7 @@ wcwidth==0.2.13 \
 weasyprint==64.1 \
     --hash=sha256:28b02f2c6409bafce1b1220d9d76a7345875bd3bd08c4f6dfbf510bb92a94757 \
     --hash=sha256:f7c88ea8ce0ce0c527cbb9c802689e035fae50016d7efc5dfdaba4b75abf68f4
-    # via
-    #   -r src/backend/requirements.in
-    #   django-weasyprint
+    # via -r src/backend/requirements.in
 webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78 \
     --hash=sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923
