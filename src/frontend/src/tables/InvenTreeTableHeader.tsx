@@ -9,6 +9,7 @@ import {
 } from '@mantine/core';
 import {
   IconBarcode,
+  IconExclamationCircle,
   IconFilter,
   IconRefresh,
   IconTrash
@@ -16,6 +17,7 @@ import {
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
@@ -111,6 +113,16 @@ export default function InvenTreeTableHeader({
       items: {
         hidden: true
       }
+    },
+    onFormError: (response) => {
+      showNotification({
+        id: 'bulk-delete-error',
+        title: t`Error`,
+        message: t`Failed to delete items`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000
+      });
     },
     onFormSuccess: () => {
       tableState.clearSelectedRecords();
