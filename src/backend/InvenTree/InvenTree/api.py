@@ -430,6 +430,11 @@ class BulkOperationMixin:
                     'non_field_errors': _('Invalid filters provided')
                 })
 
+        if queryset.count() == 0:
+            raise ValidationError({
+                'non_field_errors': _('No items match the provided criteria')
+            })
+
         return queryset
 
 
