@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 321
+INVENTREE_API_VERSION = 322
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v322 - 2025-03-16 : https://github.com/inventree/InvenTree/pull/9313
+    - Adds BulkUpdate support to the Part API endpoint
+    - Remove legacy API endpoint to set part category for multiple parts
 
 v321 - 2025-03-06 : https://github.com/inventree/InvenTree/pull/9236
     - Adds conditionally-returned fields to the schema to match API behavior
