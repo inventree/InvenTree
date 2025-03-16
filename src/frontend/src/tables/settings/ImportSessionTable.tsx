@@ -9,7 +9,7 @@ import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
-import { useFilters, useUserFilters } from '../../hooks/UseFilter';
+import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -18,7 +18,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions, type TableFilter } from '../Filter';
+import { StatusFilterOptions, type TableFilter, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 
@@ -89,8 +89,6 @@ export default function ImportSessionTable() {
     ];
   }, []);
 
-  const userFilter = useUserFilters();
-
   const modelTypeFilters = useFilters({
     url: apiUrl(ApiEndpoints.import_session_list),
     method: 'OPTIONS',
@@ -117,14 +115,9 @@ export default function ImportSessionTable() {
         description: t`Filter by import session status`,
         choiceFunction: StatusFilterOptions(ModelType.importsession)
       },
-      {
-        name: 'user',
-        label: t`User`,
-        description: t`Filter by user`,
-        choices: userFilter.choices
-      }
+      UserFilter({})
     ];
-  }, [modelTypeFilters.choices, userFilter.choices]);
+  }, [modelTypeFilters.choices]);
 
   const tableActions = useMemo(() => {
     return [

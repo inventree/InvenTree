@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import InvenTreeModelSerializer
 
 from .models import ApiToken, Owner, RuleSet, UserProfile, check_user_role
@@ -44,12 +45,12 @@ class GroupSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         try:
-            if not permission_detail:
+            if not permission_detail and not isGeneratingSchema():
                 self.fields.pop('permissions', None)
         except AppRegistryNotReady:
             pass
 
-    permissions = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField(allow_null=True)
 
     def get_permissions(self, group: Group):
         """Return a list of permissions associated with the group."""
@@ -74,7 +75,7 @@ class RoleSerializer(InvenTreeModelSerializer):
 
     user = serializers.IntegerField(source='pk')
     roles = serializers.SerializerMethodField()
-    permissions = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField(allow_null=True)
 
     def get_roles(self, user: User) -> dict:
         """Roles associated with the user."""

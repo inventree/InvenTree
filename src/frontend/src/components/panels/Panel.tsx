@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 export type PanelType = {
   name: string;
   label: string;
+  controls?: ReactNode;
   icon?: ReactNode;
   content: ReactNode;
   hidden?: boolean;

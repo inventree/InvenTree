@@ -30,6 +30,7 @@ from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from users.serializers import UserSerializer
 
@@ -218,13 +219,16 @@ class StockItemTestResultSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if user_detail is not True:
             self.fields.pop('user_detail', None)
 
         if template_detail is not True:
             self.fields.pop('template_detail', None)
 
-    user_detail = UserSerializer(source='user', read_only=True)
+    user_detail = UserSerializer(source='user', read_only=True, allow_null=True)
 
     template = serializers.PrimaryKeyRelatedField(
         queryset=part_models.PartTestTemplate.objects.all(),
@@ -236,7 +240,7 @@ class StockItemTestResultSerializer(
     )
 
     template_detail = part_serializers.PartTestTemplateSerializer(
-        source='template', read_only=True
+        source='template', read_only=True, allow_null=True
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
@@ -442,6 +446,9 @@ class StockItemSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
@@ -473,7 +480,10 @@ class StockItemSerializer(
     )
 
     location_path = serializers.ListField(
-        child=serializers.DictField(), source='location.get_path', read_only=True
+        child=serializers.DictField(),
+        source='location.get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
@@ -617,18 +627,23 @@ class StockItemSerializer(
         part_detail=False,
         many=False,
         read_only=True,
+        allow_null=True,
     )
 
     part_detail = part_serializers.PartBriefSerializer(
-        label=_('Part'), source='part', many=False, read_only=True
+        label=_('Part'), source='part', many=False, read_only=True, allow_null=True
     )
 
     location_detail = LocationBriefSerializer(
-        label=_('Location'), source='location', many=False, read_only=True
+        label=_('Location'),
+        source='location',
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     tests = StockItemTestResultSerializer(
-        source='test_results', many=True, read_only=True
+        source='test_results', many=True, read_only=True, allow_null=True
     )
 
     quantity = InvenTreeDecimalField()
@@ -1184,7 +1199,7 @@ class LocationSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not path_detail:
+        if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
     @staticmethod
@@ -1219,7 +1234,10 @@ class LocationSerializer(
     tags = TagListSerializerField(required=False)
 
     path = serializers.ListField(
-        child=serializers.DictField(), source='get_path', read_only=True
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     # explicitly set this field, so it gets included for AutoSchema
@@ -1263,6 +1281,9 @@ class StockTrackingSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if item_detail is not True:
             self.fields.pop('item_detail', None)
 
@@ -1271,9 +1292,13 @@ class StockTrackingSerializer(
 
     label = serializers.CharField(read_only=True)
 
-    item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
+    item_detail = StockItemSerializerBrief(
+        source='item', many=False, read_only=True, allow_null=True
+    )
 
-    user_detail = UserSerializer(source='user', many=False, read_only=True)
+    user_detail = UserSerializer(
+        source='user', many=False, read_only=True, allow_null=True
+    )
 
     deltas = serializers.JSONField(read_only=True)
 

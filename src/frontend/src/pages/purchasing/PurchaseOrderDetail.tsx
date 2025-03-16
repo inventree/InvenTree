@@ -191,7 +191,7 @@ export default function PurchaseOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
-            currency: order?.order_currency ?? order?.supplier_detail?.currency
+            currency: order?.order_currency || order?.supplier_detail?.currency
           });
         }
       }

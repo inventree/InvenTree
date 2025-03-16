@@ -8,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
-import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -28,14 +27,6 @@ import { type RowAction, RowEditAction } from '../RowActions';
 export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('stocklocation');
   const user = useUserState();
-
-  const locationTypeFilters = useFilters({
-    url: apiUrl(ApiEndpoints.stock_location_type_list),
-    transform: (item) => ({
-      value: item.pk,
-      label: item.name
-    })
-  });
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -62,10 +53,12 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         name: 'location_type',
         label: t`Location Type`,
         description: t`Filter by location type`,
-        choices: locationTypeFilters.choices
+        apiUrl: apiUrl(ApiEndpoints.stock_location_type_list),
+        model: ModelType.stocklocationtype,
+        modelRenderer: (instance: any) => instance.name
       }
     ];
-  }, [locationTypeFilters.choices]);
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [

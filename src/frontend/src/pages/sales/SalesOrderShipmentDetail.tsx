@@ -4,6 +4,7 @@ import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import dayjs from 'dayjs';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -263,7 +264,7 @@ export default function SalesOrderShipmentDetail() {
     focus: 'tracking_number',
     initialData: {
       ...shipment,
-      shipment_date: new Date().toISOString().split('T')[0]
+      shipment_date: dayjs().format('YYYY-MM-DD')
     },
     onFormSuccess: refreshShipment
   });

@@ -333,7 +333,9 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
         model = common_models.ProjectCode
         fields = ['pk', 'code', 'description', 'responsible', 'responsible_detail']
 
-    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
+    responsible_detail = OwnerSerializer(
+        source='responsible', read_only=True, allow_null=True
+    )
 
 
 @register_importer()
