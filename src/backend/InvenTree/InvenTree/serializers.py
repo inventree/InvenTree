@@ -22,6 +22,7 @@ from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
+import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
@@ -468,7 +469,10 @@ class NotesFieldMixin:
 
         if hasattr(self, 'context'):
             if view := self.context.get('view', None):
-                if issubclass(view.__class__, ListModelMixin):
+                if (
+                    issubclass(view.__class__, ListModelMixin)
+                    and not InvenTree.ready.isGeneratingSchema()
+                ):
                     self.fields.pop('notes', None)
 
 

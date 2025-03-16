@@ -14,6 +14,7 @@ import part.filters
 import part.serializers as part_serializers
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -256,6 +257,9 @@ class ManufacturerPartSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if part_detail is not True:
             self.fields.pop('part_detail', None)
 
@@ -266,14 +270,14 @@ class ManufacturerPartSerializer(
             self.fields.pop('pretty_name', None)
 
     part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True
+        source='part', many=False, read_only=True, allow_null=True
     )
 
     manufacturer_detail = CompanyBriefSerializer(
-        source='manufacturer', many=False, read_only=True
+        source='manufacturer', many=False, read_only=True, allow_null=True
     )
 
-    pretty_name = serializers.CharField(read_only=True)
+    pretty_name = serializers.CharField(read_only=True, allow_null=True)
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
@@ -306,11 +310,11 @@ class ManufacturerPartParameterSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not man_detail:
+        if not man_detail and not isGeneratingSchema():
             self.fields.pop('manufacturer_part_detail', None)
 
     manufacturer_part_detail = ManufacturerPartSerializer(
-        source='manufacturer_part', many=False, read_only=True
+        source='manufacturer_part', many=False, read_only=True, allow_null=True
     )
 
 
@@ -389,6 +393,9 @@ class SupplierPartSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if part_detail is not True:
             self.fields.pop('part_detail', None)
 
@@ -409,20 +416,28 @@ class SupplierPartSerializer(
             self.fields.pop('availability_updated')
 
     # Annotated field showing total in-stock quantity
-    in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
+    in_stock = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('In Stock')
+    )
 
-    on_order = serializers.FloatField(read_only=True, label=_('On Order'))
+    on_order = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('On Order')
+    )
 
     available = serializers.FloatField(required=False, label=_('Available'))
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
     part_detail = part_serializers.PartBriefSerializer(
-        label=_('Part'), source='part', many=False, read_only=True
+        label=_('Part'), source='part', many=False, read_only=True, allow_null=True
     )
 
     supplier_detail = CompanyBriefSerializer(
-        label=_('Supplier'), source='supplier', many=False, read_only=True
+        label=_('Supplier'),
+        source='supplier',
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     manufacturer_detail = CompanyBriefSerializer(
@@ -430,9 +445,10 @@ class SupplierPartSerializer(
         source='manufacturer_part.manufacturer',
         many=False,
         read_only=True,
+        allow_null=True,
     )
 
-    pretty_name = serializers.CharField(read_only=True)
+    pretty_name = serializers.CharField(read_only=True, allow_null=True)
 
     supplier = serializers.PrimaryKeyRelatedField(
         label=_('Supplier'), queryset=Company.objects.filter(is_supplier=True)
@@ -443,6 +459,7 @@ class SupplierPartSerializer(
         source='manufacturer_part',
         part_detail=False,
         read_only=True,
+        allow_null=True,
     )
 
     MPN = serializers.CharField(
@@ -529,6 +546,9 @@ class SupplierPriceBreakSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not supplier_detail:
             self.fields.pop('supplier_detail', None)
 
@@ -553,10 +573,10 @@ class SupplierPriceBreakSerializer(
     )
 
     supplier_detail = CompanyBriefSerializer(
-        source='part.supplier', many=False, read_only=True
+        source='part.supplier', many=False, read_only=True, allow_null=True
     )
 
     # Detail serializer for SupplierPart
     part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True
+        source='part', brief=True, many=False, read_only=True, allow_null=True
     )
