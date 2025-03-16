@@ -103,7 +103,7 @@ export default function OrderCalendar({
           description: order.description,
           start: start,
           end: end,
-          startEditable: canEdit && !!order.start_date,
+          startEditable: canEdit,
           durationEditable: canEdit
         };
       }) ?? []
