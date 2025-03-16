@@ -116,11 +116,11 @@ export default function OrderCalendar({
     const patch: Record<string, string> = {};
 
     if (info.event.start && info.event.start != info.oldEvent.start) {
-      patch.start_date = info.event.start.toISOString().split('T')[0];
+      patch.start_date = dayjs(info.event.start).format('YYYY-MM-DD');
     }
 
     if (info.event.end && info.event.end != info.oldEvent.end) {
-      patch.target_date = info.event.end.toISOString().split('T')[0];
+      patch.target_date = dayjs(info.event.end).format('YYYY-MM-DD');
     }
 
     if (!!patch) {
