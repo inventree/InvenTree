@@ -795,7 +795,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         allow_blank=True,
     )
 
-    status = serializers.ChoiceField(
+    status = stock.serializers.StockStatusCustomSerializer(
         choices=StockStatus.items(custom=True),
         default=StockStatus.OK.value,
         label=_('Status'),
@@ -1982,8 +1982,8 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
         label=_('Return order line item'),
     )
 
-    status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(custom=True),
+    status = stock.serializers.StockStatusCustomSerializer(
+        choices=StockStatus.items(custom=True),
         default=None,
         label=_('Status'),
         help_text=_('Stock item status code'),

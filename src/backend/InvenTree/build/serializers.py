@@ -18,8 +18,6 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
@@ -42,7 +40,11 @@ from InvenTree.serializers import (
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
-from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
+from stock.serializers import (
+    LocationBriefSerializer,
+    StockItemSerializerBrief,
+    StockStatusCustomSerializer,
+)
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -559,11 +561,6 @@ class BuildOutputScrapSerializer(serializers.Serializer):
                 )
 
 
-@extend_schema_field(OpenApiTypes.INT)
-class BuildOutputStatusCustomKeySerializer(serializers.ChoiceField):
-    """Serializer to allow annotating the schema to use int on custom key fields."""
-
-
 class BuildOutputCompleteSerializer(serializers.Serializer):
     """DRF serializer for completing one or more build outputs."""
 
@@ -588,7 +585,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
-    status_custom_key = BuildOutputStatusCustomKeySerializer(
+    status_custom_key = StockStatusCustomSerializer(
         choices=StockStatus.items(custom=True),
         default=StockStatus.OK.value,
         label=_('Status'),

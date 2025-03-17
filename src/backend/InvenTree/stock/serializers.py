@@ -10,6 +10,8 @@ from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -984,6 +986,11 @@ class ConvertStockItemSerializer(serializers.Serializer):
         stock_item.convert_to_variant(part, request.user)
 
 
+@extend_schema_field(OpenApiTypes.INT)
+class StockStatusCustomSerializer(serializers.ChoiceField):
+    """Serializer to allow annotating the schema to use int where custom values may be entered."""
+
+
 class ReturnStockItemSerializer(serializers.Serializer):
     """DRF serializer for returning a stock item from a customer."""
 
@@ -1001,7 +1008,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
         help_text=_('Destination location for returned item'),
     )
 
-    status = serializers.ChoiceField(
+    status = StockStatusCustomSerializer(
         choices=stock.status_codes.StockStatus.items(custom=True),
         default=None,
         label=_('Status'),
@@ -1058,7 +1065,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         return items
 
-    status = serializers.ChoiceField(
+    status = StockStatusCustomSerializer(
         choices=stock.status_codes.StockStatus.items(custom=True),
         default=stock.status_codes.StockStatus.OK.value,
         label=_('Status'),
