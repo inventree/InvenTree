@@ -1877,7 +1877,7 @@
     vite "^5.0.0 || ^6.0.0"
     vite-node "^3.0.4"
 
-"@vanilla-extract/css@^1.17.1":
+"@vanilla-extract/css@^1.17.0", "@vanilla-extract/css@^1.17.1":
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/@vanilla-extract/css/-/css-1.17.1.tgz#5e91d6bfbc5848a264bddcaf31d601f6f67e5cc1"
   integrity sha512-tOHQXHm10FrJeXKFeWE09JfDGN/tvV6mbjwoNB9k03u930Vg021vTnbrCwVLkECj9Zvh/SHLBHJ4r2flGqfovw==
