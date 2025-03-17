@@ -24,13 +24,13 @@ import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { Boundary } from '../../../../lib/components/Boundary';
 import type { TablerIconType } from '../../../../lib/components/icons/icons';
 import { ModelType } from '../../../../lib/enums/ModelType';
 import { ModelInformationDict } from '../../../../lib/enums/ModelType';
 import { api } from '../../../App';
 import { apiUrl } from '../../../states/ApiState';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
-import { Boundary } from '../../Boundary';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
 

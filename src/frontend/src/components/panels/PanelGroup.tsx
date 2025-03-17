@@ -28,13 +28,13 @@ import {
   useParams
 } from 'react-router-dom';
 
+import { Boundary } from '../../../lib/components/Boundary';
 import type { ModelType } from '../../../lib/enums/ModelType';
 import { identifierString } from '../../../lib/functions/conversion';
 import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
-import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 import type { PanelType } from '../panels/Panel';
 

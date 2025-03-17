@@ -32,6 +32,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { showNotification } from '@mantine/notifications';
+import { Boundary } from '../../../lib/components/Boundary';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -41,7 +42,6 @@ import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
 import { ModelInformationDict, getModelInfo } from '../render/ModelType';
 

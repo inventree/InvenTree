@@ -3,8 +3,8 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { Boundary } from '../../../lib/components/Boundary';
 import { identifierString } from '../../../lib/functions/conversion';
-import { Boundary } from '../Boundary';
 import type { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 

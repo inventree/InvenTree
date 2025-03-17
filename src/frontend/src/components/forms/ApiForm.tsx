@@ -23,6 +23,7 @@ import {
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
+import { Boundary } from '../../../lib/components/Boundary';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import type { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
@@ -40,7 +41,6 @@ import {
 import { getDetailUrl } from '../../functions/urls';
 import type { TableState } from '../../hooks/UseTable';
 import type { PathParams } from '../../states/ApiState';
-import { Boundary } from '../Boundary';
 import {
   ApiFormField,
   type ApiFormFieldSet,

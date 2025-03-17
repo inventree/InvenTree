@@ -5,10 +5,10 @@ import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '../../../lib/components/Boundary';
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
