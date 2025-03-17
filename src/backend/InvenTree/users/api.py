@@ -9,10 +9,10 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions
-from rest_framework.generics import DestroyAPIView
+from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 import InvenTree.helpers
 import InvenTree.permissions
@@ -29,6 +29,7 @@ from users.models import ApiToken, Owner, UserProfile
 from users.serializers import (
     ApiTokenSerializer,
     ExtendedUserSerializer,
+    GetAuthTokenSerializer,
     GroupSerializer,
     MeUserSerializer,
     OwnerSerializer,
@@ -213,12 +214,23 @@ class GroupList(GroupMixin, ListCreateAPI):
     ordering_fields = ['name']
 
 
-class GetAuthToken(APIView):
+class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
-    serializer_class = None
+    serializer_class = GetAuthTokenSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='name',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description='Name of the token',
+            )
+        ],
+        responses={200: OpenApiResponse(response=GetAuthTokenSerializer())},
+    )
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.
 
@@ -271,15 +283,67 @@ class GetAuthToken(APIView):
             raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
-class TokenListView(DestroyAPIView, ListAPI):
-    """List of registered tokens for current users."""
+class TokenMixin:
+    """Mixin for API token endpoints."""
 
     permission_classes = (InvenTree.permissions.IsAuthenticatedOrReadScope,)
     serializer_class = ApiTokenSerializer
 
     def get_queryset(self):
         """Only return data for current user."""
+        if self.request.user.is_superuser and self.request.query_params.get(
+            'all_users', False
+        ):
+            return ApiToken.objects.all()
         return ApiToken.objects.filter(user=self.request.user)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='all_users',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Display tokens for all users (superuser only)',
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        """Details for a user token."""
+        return super().get(request, *args, **kwargs)
+
+
+class TokenListView(TokenMixin, ListCreateAPI):
+    """List of user tokens for current user."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name', 'key']
+    ordering_fields = [
+        'created',
+        'expiry',
+        'last_seen',
+        'user',
+        'name',
+        'revoked',
+        'revoked',
+    ]
+
+    filterset_fields = ['revoked', 'user']
+
+    def create(self, request, *args, **kwargs):
+        """Create token and show key to user."""
+        resp = super().create(request, *args, **kwargs)
+        resp.data['token'] = self.serializer_class.Meta.model.objects.get(
+            id=resp.data['id']
+        ).key
+        return resp
+
+    def get(self, request, *args, **kwargs):
+        """List of user tokens for current user."""
+        return super().get(request, *args, **kwargs)
+
+
+class TokenDetailView(TokenMixin, DestroyAPIView, RetrieveAPI):
+    """Details for a user token."""
 
     def perform_destroy(self, instance):
         """Revoke token."""
@@ -313,7 +377,7 @@ user_urls = [
     path(
         'tokens/',
         include([
-            path('<int:pk>/', TokenListView.as_view(), name='api-token-detail'),
+            path('<int:pk>/', TokenDetailView.as_view(), name='api-token-detail'),
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
