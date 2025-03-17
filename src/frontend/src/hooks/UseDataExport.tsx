@@ -114,6 +114,7 @@ export default function useDataExport({
     fields: exportFields,
     submitText: t`Export`,
     successMessage: null,
+    timeout: 30 * 1000,
     onFormSuccess: (response: any) => {
       setExportId(response.pk);
       setPluginKey('inventree-exporter');
