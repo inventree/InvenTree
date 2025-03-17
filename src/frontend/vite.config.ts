@@ -52,7 +52,9 @@ export default defineConfig({
   base: '',
   build: {
     manifest: true,
-    outDir: '../../src/backend/InvenTree/web/static/web',
+    // outDir: '../../src/backend/InvenTree/web/static/web',
+    // TODO: outDir should be set to the correct path,
+    // TODO: depending on whether we are building library or UI?
     sourcemap: is_coverage,
     lib: {
       entry: {
