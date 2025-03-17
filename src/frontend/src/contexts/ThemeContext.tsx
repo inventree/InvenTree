@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { t } from '@lingui/macro';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
