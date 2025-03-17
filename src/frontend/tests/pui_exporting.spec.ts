@@ -65,7 +65,7 @@ test('Exporting - Orders', async ({ page }) => {
   await page.getByRole('cell', { name: 'Select all records' }).click();
   await page.getByLabel('action-button-delete-selected').click();
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
-  await page.getByText('Item Deleted').waitFor();
+  await page.getByText('Items Deleted').waitFor();
 });
 
 // Test for custom BOM exporter
