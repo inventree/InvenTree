@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 import importer.models
 import importer.registry
 import importer.serializers
+import InvenTree.permissions
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
@@ -28,7 +29,7 @@ class DataImporterPermission(permissions.BasePermission):
     """Mixin class for determining if the user has correct permissions."""
 
     def has_permission(self, request, view):
-        """Class level permission checks are handled via permissions.IsAuthenticated."""
+        """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
         return True
 
     def has_object_permission(self, request, view, obj):
@@ -53,13 +54,16 @@ class DataImporterPermissionMixin:
     """Mixin class for checking permissions on DataImporter objects."""
 
     # Default permissions: User must be authenticated
-    permission_classes = [permissions.IsAuthenticated, DataImporterPermission]
+    permission_classes = [
+        InvenTree.permissions.IsAuthenticatedOrReadScope,
+        DataImporterPermission,
+    ]
 
 
 class DataImporterModelList(APIView):
     """API endpoint for displaying a list of models available for import."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def get(self, request):
         """Return a list of models available for import."""
@@ -101,7 +105,7 @@ class DataImportSessionDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
 class DataImportSessionAcceptFields(APIView):
     """API endpoint to accept the field mapping for a DataImportSession."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(
         responses={200: importer.serializers.DataImportSessionSerializer(many=False)}

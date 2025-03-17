@@ -29,6 +29,7 @@ from rest_framework.views import APIView
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.permissions
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from generic.states.api import urlpattern as generic_states_api_urls
@@ -44,7 +45,12 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.permissions import IsStaffOrReadOnly, IsSuperuser
+from InvenTree.permissions import (
+    IsAdminOrAdminScope,
+    IsAuthenticatedOrReadScope,
+    IsStaffOrReadOnly,
+    IsSuperuserOrSuperScope,
+)
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
@@ -134,7 +140,7 @@ class WebhookView(CsrfExemptMixin, APIView):
 class CurrencyExchangeView(APIView):
     """API endpoint for displaying currency information."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
     serializer_class = None
 
     @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
@@ -178,7 +184,7 @@ class CurrencyRefreshView(APIView):
     User must be a 'staff' user to access this endpoint
     """
 
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
     def post(self, request, *args, **kwargs):
@@ -253,7 +259,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
             key, cache=False, create=True
         )
 
-    permission_classes = [permissions.IsAuthenticated, GlobalSettingsPermissions]
+    permission_classes = [IsAuthenticatedOrReadScope, GlobalSettingsPermissions]
 
 
 class UserSettingsList(SettingsList):
@@ -384,7 +390,7 @@ class NotificationMessageMixin:
 class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for all notifications of the current user."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -437,7 +443,7 @@ class NewsFeedMixin:
 
     queryset = common.models.NewsFeedEntry.objects.all()
     serializer_class = common.serializers.NewsFeedEntrySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrAdminScope]
 
 
 class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
@@ -461,7 +467,7 @@ class ConfigList(ListAPI):
 
     queryset = CONFIG_LOOKUPS
     serializer_class = common.serializers.ConfigSerializer
-    permission_classes = [IsSuperuser]
+    permission_classes = [IsSuperuserOrSuperScope]
 
     # Specifically disable pagination for this view
     pagination_class = None
@@ -471,7 +477,7 @@ class ConfigDetail(RetrieveAPI):
     """Detail view for an individual configuration."""
 
     serializer_class = common.serializers.ConfigSerializer
-    permission_classes = [IsSuperuser]
+    permission_classes = [IsSuperuserOrSuperScope]
 
     def get_object(self):
         """Attempt to find a config object with the provided key."""
@@ -487,7 +493,7 @@ class NotesImageList(ListCreateAPI):
 
     queryset = common.models.NotesImage.objects.all()
     serializer_class = common.serializers.NotesImageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -505,7 +511,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
@@ -518,7 +524,7 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
 
 
 class CustomUnitList(DataExportViewMixin, ListCreateAPI):
@@ -526,7 +532,7 @@ class CustomUnitList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
     filter_backends = SEARCH_ORDER_FILTER
 
 
@@ -535,14 +541,14 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
 
 
 class AllUnitList(ListAPI):
     """List of all defined units."""
 
     serializer_class = common.serializers.AllUnitListResponseSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         """Return a list of all available units."""
@@ -573,7 +579,7 @@ class ErrorMessageList(BulkDeleteMixin, ListAPI):
 
     queryset = Error.objects.all()
     serializer_class = common.serializers.ErrorMessageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -589,13 +595,13 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
 
     queryset = Error.objects.all()
     serializer_class = common.serializers.ErrorMessageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
 
 class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
     def get(self, request, fmt=None):
@@ -617,7 +623,7 @@ class BackgroundTaskOverview(APIView):
 class PendingTaskList(BulkDeleteMixin, ListAPI):
     """Provides a read-only list of currently pending tasks."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     queryset = django_q.models.OrmQ.objects.all()
     serializer_class = common.serializers.PendingTaskSerializer
@@ -626,7 +632,7 @@ class PendingTaskList(BulkDeleteMixin, ListAPI):
 class ScheduledTaskList(ListAPI):
     """Provides a read-only list of currently scheduled tasks."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     queryset = django_q.models.Schedule.objects.all()
     serializer_class = common.serializers.ScheduledTaskSerializer
@@ -646,7 +652,7 @@ class ScheduledTaskList(ListAPI):
 class FailedTaskList(BulkDeleteMixin, ListAPI):
     """Provides a read-only list of currently failed tasks."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     queryset = django_q.models.Failure.objects.all()
     serializer_class = common.serializers.FailedTaskSerializer
@@ -663,14 +669,14 @@ class FlagList(ListAPI):
 
     queryset = settings.FLAGS
     serializer_class = common.serializers.FlagSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
 
 
 class FlagDetail(RetrieveAPI):
     """Detail view for an individual feature flag."""
 
     serializer_class = common.serializers.FlagSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
 
     def get_object(self):
         """Attempt to find a config object with the provided key."""
@@ -686,7 +692,7 @@ class ContentTypeList(ListAPI):
 
     queryset = ContentType.objects.all()
     serializer_class = common.serializers.ContentTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
     filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['app_label', 'model']
 
@@ -696,7 +702,7 @@ class ContentTypeDetail(RetrieveAPI):
 
     queryset = ContentType.objects.all()
     serializer_class = common.serializers.ContentTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
 @extend_schema(operation_id='contenttype_retrieve_model')
@@ -746,7 +752,7 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
@@ -784,7 +790,7 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     def destroy(self, request, *args, **kwargs):
         """Check user permissions before deleting an attachment."""
@@ -803,7 +809,7 @@ class IconList(ListAPI):
     """List view for available icon packages."""
 
     serializer_class = common.serializers.IconPackageSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
 
     def get_queryset(self):
         """Return a list of all available icon packages."""
@@ -815,7 +821,7 @@ class SelectionListList(ListCreateAPI):
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     def get_queryset(self):
         """Override the queryset method to include entry count."""
@@ -827,7 +833,7 @@ class SelectionListDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
 class EntryMixin:
@@ -835,7 +841,7 @@ class EntryMixin:
 
     queryset = common.models.SelectionListEntry.objects.all()
     serializer_class = common.serializers.SelectionEntrySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
     lookup_url_kwarg = 'entrypk'
 
     def get_queryset(self):

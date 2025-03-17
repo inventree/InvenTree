@@ -11,10 +11,11 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+import InvenTree.permissions
 import order.models
 import part.filters
 from build.models import Build, BuildItem
@@ -1739,7 +1740,10 @@ class PartStocktakeReportGenerate(CreateAPI):
 
     serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
 
-    permission_classes = [permissions.IsAuthenticated, RolePermission]
+    permission_classes = [
+        InvenTree.permissions.IsAuthenticatedOrReadScope,
+        RolePermission,
+    ]
 
     role_required = 'stocktake'
 

@@ -529,6 +529,8 @@ OAUTH2_PROVIDER = {
     'SCOPES': {
         'read': 'Read scope',
         'write': 'Write scope',
+        # user roles
+        'superuser': 'Role Superuser',
         # inventree roles
         'admin': 'Role Admin',
         'part_category': 'Role Part Categories',

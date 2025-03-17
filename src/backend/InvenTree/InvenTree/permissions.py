@@ -97,12 +97,14 @@ class RolePermission(permissions.BasePermission):
         return users.models.RuleSet.check_table_permission(user, table, permission)
 
 
-def map_scope(roles: Optional[list[str]] = None, only_read=False) -> dict:
+def map_scope(
+    roles: Optional[list[str]] = None, only_read=False, read_name='read'
+) -> dict:
     """Map the required scopes to the current view."""
 
     def scope_name(tables, action):
         if only_read:
-            return [['read']]
+            return [[read_name]]
         if tables:
             return [[action, table] for table in tables]
         return [[action]]
@@ -167,12 +169,16 @@ class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
             return map_scope(only_read=True)
 
 
-class IsSuperuser(permissions.IsAdminUser):
+class IsSuperuserOrSuperScope(TokenMatchesOASRequirements, permissions.IsAdminUser):
     """Allows access only to superuser users."""
 
     def has_permission(self, request, view):
         """Check if the user is a superuser."""
         return bool(request.user and request.user.is_superuser)
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True, read_name='superuser')
 
 
 class IsSuperuserOrReadOnly(permissions.IsAdminUser):
@@ -195,6 +201,36 @@ class IsStaffOrReadOnly(permissions.IsAdminUser):
             (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
         )
+
+
+class IsAuthenticatedOrReadScope(
+    TokenMatchesOASRequirements, permissions.IsAuthenticated
+):
+    """Allows access only to authenticated users or read scope tokens."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
+
+
+class IsAdminOrAdminScope(TokenMatchesOASRequirements, permissions.IsAdminUser):
+    """Allows access only to admin users or admin scope tokens."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True, read_name='admin')
+
+
+class AllowAnyOrReadScope(TokenMatchesOASRequirements, permissions.AllowAny):
+    """Allows access to any user or read scope tokens."""
+
+    def has_permission(self, request, view):
+        """Anyone is allowed."""
+        return True
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
 
 
 def auth_exempt(view_func):

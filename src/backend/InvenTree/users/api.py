@@ -9,9 +9,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
-from rest_framework import exceptions, permissions
+from rest_framework import exceptions
 from rest_framework.generics import DestroyAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -117,7 +116,7 @@ class OwnerDetail(RetrieveAPI):
 class RoleDetails(RetrieveAPI):
     """API endpoint which lists the available role permissions for the current user."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = RoleSerializer
 
     def get_object(self):
@@ -130,7 +129,7 @@ class UserDetail(RetrieveUpdateDestroyAPI):
 
     queryset = User.objects.all()
     serializer_class = ExtendedUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
@@ -158,7 +157,7 @@ class UserList(ListCreateAPI):
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
     permission_classes = [
-        permissions.IsAuthenticated,
+        InvenTree.permissions.IsAuthenticatedOrReadScope,
         InvenTree.permissions.IsSuperuserOrReadOnly,
     ]
     filter_backends = SEARCH_ORDER_FILTER
@@ -197,7 +196,7 @@ class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
 
 class GroupList(GroupMixin, ListCreateAPI):
@@ -205,7 +204,7 @@ class GroupList(GroupMixin, ListCreateAPI):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -217,7 +216,7 @@ class GroupList(GroupMixin, ListCreateAPI):
 class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = None
 
     def get(self, request, *args, **kwargs):
@@ -275,7 +274,7 @@ class GetAuthToken(APIView):
 class TokenListView(DestroyAPIView, ListAPI):
     """List of registered tokens for current users."""
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (InvenTree.permissions.IsAuthenticatedOrReadScope,)
     serializer_class = ApiTokenSerializer
 
     def get_queryset(self):
@@ -301,7 +300,7 @@ class UserProfileDetail(RetrieveUpdateAPI):
 
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def get_object(self):
         """Return the profile of the current user."""
