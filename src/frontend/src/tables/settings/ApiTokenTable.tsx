@@ -1,10 +1,12 @@
 import { Trans, t } from '@lingui/macro';
-import { Badge, Code, Modal, Text } from '@mantine/core';
+import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { CopyButton } from '../../components/buttons/CopyButton';
+import { StylishText } from '../../components/items/StylishText';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -132,13 +134,21 @@ export function ApiTokenTable({
       {only_myself && (
         <>
           {generateToken.modal}
-          <Modal opened={opened} onClose={close} title={t`Token`} centered>
+          <Modal
+            opened={opened}
+            onClose={close}
+            title={<StylishText size='xl'>{t`Token`}</StylishText>}
+            centered
+          >
             <Text c='dimmed'>
               <Trans>
                 Tokens are only shown once - make sure to note it down.
               </Trans>
             </Text>
-            <Code>{token}</Code>
+            <Flex>
+              <Code>{token}</Code>
+              <CopyButton value={token} />
+            </Flex>
           </Modal>
         </>
       )}
