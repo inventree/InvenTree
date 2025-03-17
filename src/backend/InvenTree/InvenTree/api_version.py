@@ -8,6 +8,10 @@ INVENTREE_API_VERSION = 321
 
 INVENTREE_API_TEXT = """
 
+v322 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9318
+    - Currency string is no longer restricted to a hardcoded enum
+    - Customizable status keys are no longer hardcoded enum values
+
 v321 - 2025-03-06 : https://github.com/inventree/InvenTree/pull/9236
     - Adds conditionally-returned fields to the schema to match API behavior
     - Removes required flag for nullable read-only fields to match API behavior
