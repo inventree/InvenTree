@@ -7,9 +7,12 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { stockLocationFields } from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import {
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -119,10 +122,38 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
+  const setParent = useBulkEditApiFormModal({
+    url: ApiEndpoints.stock_location_list,
+    items: table.selectedIds,
+    title: t`Set Parent Location`,
+    fields: {
+      parent: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const tableActions = useMemo(() => {
     const can_add = user.hasAddRole(UserRoles.stock_location);
+    const can_edit = user.hasChangeRole(UserRoles.stock_location);
 
     return [
+      <ActionDropdown
+        tooltip={t`Location Actions`}
+        icon={<InvenTreeIcon icon='location' />}
+        disabled={!table.hasSelectedRecords}
+        actions={[
+          {
+            name: t`Set Parent`,
+            icon: <InvenTreeIcon icon='location' />,
+            tooltip: t`Set parent location for the selected items`,
+            hidden: !can_edit,
+            disabled: !table.hasSelectedRecords,
+            onClick: () => {
+              setParent.open();
+            }
+          }
+        ]}
+      />,
       <AddItemButton
         key='add-stock-location'
         tooltip={t`Add Stock Location`}
@@ -130,7 +161,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         hidden={!can_add}
       />
     ];
-  }, [user]);
+  }, [user, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -153,6 +184,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     <>
       {newLocation.modal}
       {editLocation.modal}
+      {setParent.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_location_list)}
         tableState={table}

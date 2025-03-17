@@ -213,6 +213,7 @@ export default function SalesOrderShipmentDetail() {
         icon: <IconBookmark />,
         content: (
           <SalesOrderAllocationTable
+            orderId={shipment.order}
             shipmentId={shipment.pk}
             showPartInfo
             allowEdit={isPending}

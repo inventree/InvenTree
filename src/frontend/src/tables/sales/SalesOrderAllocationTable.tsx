@@ -1,13 +1,17 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components';
 import type { TableColumn } from '@lib/components/tables/Column';
 import type { TableFilter } from '@lib/components/tables/Filter';
+import { UserRoles } from '@lib/core';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import { IconTruckDelivery } from '@tabler/icons-react';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
+  useBulkEditApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -244,16 +248,51 @@ export default function SalesOrderAllocationTable({
     [allowEdit, user]
   );
 
-  const tableActions = useMemo(() => {
-    if (!allowEdit) {
-      return [];
-    }
+  // A subset of the selected allocations, which can be assigned to a shipment
+  const nonShippedAllocationIds: number[] = useMemo(() => {
+    // Only allow allocations which have not been shipped
+    return (
+      table.selectedRecords?.filter((record) => {
+        return !record.shipment_detail?.shipment_date;
+      }) ?? []
+    ).map((record: any) => record.pk);
+  }, [table.selectedRecords]);
 
-    return [];
-  }, [allowEdit, user]);
+  const setShipment = useBulkEditApiFormModal({
+    url: ApiEndpoints.sales_order_allocation_list,
+    items: nonShippedAllocationIds,
+    title: t`Assign to Shipment`,
+    fields: {
+      shipment: {
+        filters: {
+          order: orderId,
+          shipped: false
+        }
+      }
+    },
+    onFormSuccess: table.refreshTable
+  });
+
+  const tableActions = useMemo(() => {
+    return [
+      <ActionButton
+        tooltip={t`Assign to shipment`}
+        icon={<IconTruckDelivery />}
+        onClick={() => {
+          setShipment.open();
+        }}
+        disabled={nonShippedAllocationIds.length == 0}
+        hidden={
+          !orderId || !allowEdit || !user.hasChangeRole(UserRoles.sales_order)
+        }
+        // TODO: Hide if order is already shipped
+      />
+    ];
+  }, [allowEdit, nonShippedAllocationIds, orderId, user]);
 
   return (
     <>
+      {setShipment.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
       <InvenTreeTable
@@ -277,9 +316,10 @@ export default function SalesOrderAllocationTable({
           enableColumnSwitching: !isSubTable,
           enableFilters: !isSubTable,
           enableDownload: !isSubTable,
+          enableSelection: !isSubTable,
           minHeight: isSubTable ? 100 : undefined,
           rowActions: rowActions,
-          tableActions: tableActions,
+          tableActions: isSubTable ? undefined : tableActions,
           tableFilters: tableFilters,
           modelField: modelField ?? 'order',
           modelType: modelTarget ?? ModelType.salesorder

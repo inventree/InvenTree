@@ -173,6 +173,12 @@ export default function Stock() {
         content: detailsPanel
       },
       {
+        name: 'sublocations',
+        label: t`Stock Locations`,
+        icon: <IconSitemap />,
+        content: <StockLocationTable parentId={id} />
+      },
+      {
         name: 'stock-items',
         label: t`Stock Items`,
         icon: <IconPackages />,
@@ -185,12 +191,6 @@ export default function Stock() {
             }}
           />
         )
-      },
-      {
-        name: 'sublocations',
-        label: t`Stock Locations`,
-        icon: <IconSitemap />,
-        content: <StockLocationTable parentId={id} />
       },
       {
         name: 'default_parts',
