@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 
-import { StylishText } from '../../../lib/components/items/StylishText';
+import { StylishText } from '@lib/components/items/StylishText';
 import { useServerApiState } from '../../states/ApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
 

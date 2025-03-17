@@ -2,7 +2,7 @@ import type { DataTableSortStatus } from 'mantine-datatable';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { api } from '../App';
 import type { UiSizeType } from '../defaults/formatters';
 import { apiUrl } from './ApiState';

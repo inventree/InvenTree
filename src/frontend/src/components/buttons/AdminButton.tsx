@@ -2,9 +2,9 @@ import { t } from '@lingui/macro';
 import { IconUserStar } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { ActionButton } from '../../../lib/components/buttons/ActionButton';
-import type { ModelType } from '../../../lib/enums/ModelType';
-import { ModelInformationDict } from '../../../lib/enums/ModelType';
+import { ActionButton } from '@lib/components/buttons/ActionButton';
+import type { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict } from '@lib/enums/ModelType';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';

@@ -1,6 +1,6 @@
 import type { AxiosResponse } from 'axios';
 
-import type { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type {
   ApiFormFieldSet,
   ApiFormFieldType

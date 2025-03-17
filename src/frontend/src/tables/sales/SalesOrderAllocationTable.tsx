@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import type { TableColumn } from '../../../lib/components/tables/Column';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
+import type { TableColumn } from '@lib/components/tables/Column';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {

@@ -1,3 +1,4 @@
+import { StylishText } from '@lib/components/items/StylishText';
 import { Trans, t } from '@lingui/macro';
 import {
   Button,
@@ -10,7 +11,6 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
-import { StylishText } from '../../../lib/components/items/StylishText';
 import { handleChangePassword } from '../../functions/auth';
 import { useUserState } from '../../states/UserState';
 import { Wrapper } from './Layout';

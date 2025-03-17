@@ -18,11 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Boundary } from '../../../lib/components/items/Boundary';
-import { StylishText } from '../../../lib/components/items/StylishText';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../../lib/enums/ModelType';
-import { ModelInformationDict } from '../../../lib/enums/ModelType';
+import { Boundary } from '@lib/components/items/Boundary';
+import { StylishText } from '@lib/components/items/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict } from '@lib/enums/ModelType';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';

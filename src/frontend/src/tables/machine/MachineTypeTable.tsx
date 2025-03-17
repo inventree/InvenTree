@@ -17,9 +17,9 @@ import { IconExclamationCircle, IconRefresh } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StylishText } from '../../../lib/components/items/StylishText';
-import type { TableColumn } from '../../../lib/components/tables/Column';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import { StylishText } from '@lib/components/items/StylishText';
+import type { TableColumn } from '@lib/components/tables/Column';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { InfoItem } from '../../components/items/InfoItem';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useTable } from '../../hooks/UseTable';

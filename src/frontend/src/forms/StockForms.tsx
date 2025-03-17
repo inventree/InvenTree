@@ -13,12 +13,12 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/buttons/ActionButton';
+import { InvenTreeIcon } from '@lib/components/icons/icons';
+import { StylishText } from '@lib/components/items/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
-import { ActionButton } from '../../lib/components/buttons/ActionButton';
-import { InvenTreeIcon } from '../../lib/components/icons/icons';
-import { StylishText } from '../../lib/components/items/StylishText';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../lib/enums/ModelType';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';

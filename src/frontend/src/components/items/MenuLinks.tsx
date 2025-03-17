@@ -14,8 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   InvenTreeIcon,
   type InvenTreeIconType
-} from '../../../lib/components/icons/icons';
-import { StylishText } from '../../../lib/components/items/StylishText';
+} from '@lib/components/icons/icons';
+import { StylishText } from '@lib/components/items/StylishText';
 import { navigateToLink } from '../../functions/navigation';
 
 export interface MenuLinkItem {

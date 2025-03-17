@@ -1,3 +1,7 @@
+import { ProgressBar } from '@lib/components/items/ProgressBar';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import {
@@ -8,10 +12,6 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import { ProgressBar } from '../../../lib/components/items/ProgressBar';
-import { useApi } from '../../../lib/contexts/ApiContext';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../../lib/enums/ModelType';
 import { api } from '../../App';
 import { extractAvailableFields } from '../../functions/forms';
 import { generateUrl } from '../../functions/urls';

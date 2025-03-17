@@ -1,3 +1,5 @@
+import { StylishText } from '@lib/components/items/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { Trans, t } from '@lingui/macro';
 import {
   Accordion,
@@ -29,8 +31,6 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
-import { StylishText } from '../../../../../lib/components/items/StylishText';
-import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
 import { api } from '../../../../App';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { showApiErrorMessage } from '../../../../functions/notifications';

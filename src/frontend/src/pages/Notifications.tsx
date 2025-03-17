@@ -10,9 +10,9 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { ActionButton } from '../../lib/components/buttons/ActionButton';
-import { useApi } from '../../lib/contexts/ApiContext';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ActionButton } from '@lib/components/buttons/ActionButton';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
 import { useTable } from '../hooks/UseTable';

@@ -11,9 +11,9 @@ import {
 import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Boundary } from '../../../lib/components/items/Boundary';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { ModelInformationDict } from '../../../lib/enums/ModelType';
+import { Boundary } from '@lib/components/items/Boundary';
+import { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict } from '@lib/enums/ModelType';
 import { api } from '../../App';
 import { apiUrl } from '../../states/ApiState';
 import type { Setting } from '../../states/states';

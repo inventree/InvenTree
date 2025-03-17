@@ -11,15 +11,15 @@ import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../../lib/components/buttons/ActionButton';
-import { ProgressBar } from '../../../lib/components/items/ProgressBar';
-import type { TableColumn } from '../../../lib/components/tables/Column';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import RowExpansionIcon from '../../../lib/components/tables/RowExpansionIcon';
-import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { UserRoles } from '../../../lib/enums/Roles';
+import { ActionButton } from '@lib/components/buttons/ActionButton';
+import { ProgressBar } from '@lib/components/items/ProgressBar';
+import type { TableColumn } from '@lib/components/tables/Column';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import RowExpansionIcon from '@lib/components/tables/RowExpansionIcon';
+import { TableHoverCard } from '@lib/components/tables/TableHoverCard';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,

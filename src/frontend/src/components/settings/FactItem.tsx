@@ -1,6 +1,6 @@
 import { Paper, Stack, Text } from '@mantine/core';
 
-import { StylishText } from '../../../lib/components/items/StylishText';
+import { StylishText } from '@lib/components/items/StylishText';
 
 export function FactItem({
   title,

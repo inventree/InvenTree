@@ -18,11 +18,11 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { StylishText } from '@lib/components/items/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict } from '@lib/enums/ModelType';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { StylishText } from '../../../lib/components/items/StylishText';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../../lib/enums/ModelType';
-import { ModelInformationDict } from '../../../lib/enums/ModelType';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';

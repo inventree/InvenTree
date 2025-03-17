@@ -4,8 +4,8 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { InvenTreeIcon } from '../../../../lib/components/icons/icons';
-import { identifierString } from '../../../../lib/functions/conversion';
+import { InvenTreeIcon } from '@lib/components/icons/icons';
+import { identifierString } from '@lib/functions/conversion';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
 import type { ApiFormFieldType } from './ApiFormField';

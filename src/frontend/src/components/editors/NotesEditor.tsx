@@ -7,10 +7,10 @@ import 'easymde/dist/easymde.min.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
-import { useApi } from '../../../lib/contexts/ApiContext';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../../lib/enums/ModelType';
-import { ModelInformationDict } from '../../../lib/enums/ModelType';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict } from '@lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 
 /*

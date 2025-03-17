@@ -3,10 +3,10 @@ import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
-import { useApi } from '../../../lib/contexts/ApiContext';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { ModelInformationDict } from '../../../lib/enums/ModelType';
-import { shortenString } from '../../../lib/functions';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict } from '@lib/enums/ModelType';
+import { shortenString } from '@lib/functions';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';

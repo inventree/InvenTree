@@ -20,10 +20,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StylishText } from '../../../lib/components/items/StylishText';
-import type { TableColumn } from '../../../lib/components/tables/Column';
-import { useApi } from '../../../lib/contexts/ApiContext';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import { StylishText } from '@lib/components/items/StylishText';
+import type { TableColumn } from '@lib/components/tables/Column';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {

@@ -2,10 +2,7 @@ import { randomId, useLocalStorage } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 import { type SetURLSearchParams, useSearchParams } from 'react-router-dom';
 
-import {
-  type FilterSetState,
-  useFilterSet
-} from '../../lib/hooks/UseFilterSet';
+import { type FilterSetState, useFilterSet } from '@lib/hooks/UseFilterSet';
 
 /*
  * Type definition for representing the state of a table:

@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { UserRoles } from '../../../lib/enums/Roles';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';

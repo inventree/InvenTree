@@ -11,9 +11,9 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ProgressBar } from '../../lib/components/items/ProgressBar';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../lib/enums/ModelType';
+import { ProgressBar } from '@lib/components/items/ProgressBar';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import type {

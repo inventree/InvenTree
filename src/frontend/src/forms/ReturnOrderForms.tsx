@@ -8,8 +8,8 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../lib/enums/ModelType';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import type {

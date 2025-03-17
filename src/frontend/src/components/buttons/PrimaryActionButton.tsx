@@ -3,7 +3,7 @@ import { Button, Tooltip } from '@mantine/core';
 import {
   InvenTreeIcon,
   type InvenTreeIconType
-} from '../../../lib/components/icons/icons';
+} from '@lib/components/icons/icons';
 
 /**
  * A "primary action" button for display on a page detail, (for example)

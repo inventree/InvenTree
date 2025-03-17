@@ -16,17 +16,17 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { CopyButton } from '../../../lib/components/buttons/CopyButton';
+import { CopyButton } from '@lib/components/buttons/CopyButton';
 import {
   InvenTreeIcon,
   type InvenTreeIconType
-} from '../../../lib/components/icons/icons';
-import { ProgressBar } from '../../../lib/components/items/ProgressBar';
-import { StylishText } from '../../../lib/components/items/StylishText';
-import { useApi } from '../../../lib/contexts/ApiContext';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { getModelInfo } from '../../../lib/enums/ModelType';
+} from '@lib/components/icons/icons';
+import { ProgressBar } from '@lib/components/items/ProgressBar';
+import { StylishText } from '@lib/components/items/StylishText';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { getModelInfo } from '@lib/enums/ModelType';
 import { formatDate } from '../../defaults/formatters';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';

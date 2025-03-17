@@ -1,4 +1,4 @@
-import { ModelType } from '../../lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 
 /* Lookup tables for mapping backend responses to internal types */
 

@@ -3,10 +3,10 @@ import { Stack } from '@mantine/core';
 import { IconCalendar, IconTable, IconTools } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import type { TableFilter } from '@lib/components/tables/Filter';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { useLocalStorage } from '@mantine/hooks';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { UserRoles } from '../../../lib/enums/Roles';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';

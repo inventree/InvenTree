@@ -4,6 +4,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
+import { ActionButton } from '@lib/components/buttons/ActionButton';
+import { Boundary } from '@lib/components/items/Boundary';
+import { StylishText } from '@lib/components/items/StylishText';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import { TableSearchInput } from '@lib/components/tables/Search';
 import { t } from '@lingui/macro';
 import {
   ActionIcon,
@@ -24,11 +29,6 @@ import {
   IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
-import { ActionButton } from '../../../lib/components/buttons/ActionButton';
-import { Boundary } from '../../../lib/components/items/Boundary';
-import { StylishText } from '../../../lib/components/items/StylishText';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import { TableSearchInput } from '../../../lib/components/tables/Search';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { DownloadAction } from '../../tables/DownloadAction';

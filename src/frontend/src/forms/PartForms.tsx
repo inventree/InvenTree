@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { useApi } from '../../lib/contexts/ApiContext';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';

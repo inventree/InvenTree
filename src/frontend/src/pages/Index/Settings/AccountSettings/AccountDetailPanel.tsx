@@ -3,9 +3,9 @@ import { Badge, Group, Stack, Table, Title } from '@mantine/core';
 import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { ActionButton } from '@lib/components/buttons/ActionButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { useNavigate } from 'react-router-dom';
-import { ActionButton } from '../../../../../lib/components/buttons/ActionButton';
-import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';

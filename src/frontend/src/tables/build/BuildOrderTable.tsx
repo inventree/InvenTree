@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ProgressBar } from '../../../lib/components/items/ProgressBar';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { UserRoles } from '../../../lib/enums/Roles';
+import { ProgressBar } from '@lib/components/items/ProgressBar';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { RenderUser } from '../../components/render/User';
 import { useBuildOrderFields } from '../../forms/BuildForms';

@@ -1,8 +1,8 @@
 import { Trans, t } from '@lingui/macro';
 import { openContextModal } from '@mantine/modals';
 
-import { StylishText } from '../../lib/components/items/StylishText';
-import { UserRoles } from '../../lib/enums/Roles';
+import { StylishText } from '@lib/components/items/StylishText';
+import { UserRoles } from '@lib/enums/Roles';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
 import type { SettingsStateProps } from '../states/SettingsState';
 import type { UserStateProps } from '../states/UserState';

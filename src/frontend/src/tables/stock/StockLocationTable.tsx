@@ -2,10 +2,10 @@ import { t } from '@lingui/macro';
 import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import type { TableColumn } from '../../../lib/components/tables/Column';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { UserRoles } from '../../../lib/enums/Roles';
+import type { TableColumn } from '@lib/components/tables/Column';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { stockLocationFields } from '../../forms/StockForms';
@@ -18,7 +18,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 
-import type { TableFilter } from '../../../lib/components/tables/Filter';
+import type { TableFilter } from '@lib/components/tables/Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 

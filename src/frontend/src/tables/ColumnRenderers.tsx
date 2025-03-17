@@ -5,15 +5,15 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
-import { ProgressBar } from '../../lib/components/items/ProgressBar';
+import { ProgressBar } from '@lib/components/items/ProgressBar';
 import type {
   TableColumn,
   TableColumnProps
-} from '../../lib/components/tables/Column';
-import { ProjectCodeHoverCard } from '../../lib/components/tables/TableHoverCard';
-import type { ModelType } from '../../lib/enums/ModelType';
-import { resolveItem } from '../../lib/functions/conversion';
-import { cancelEvent } from '../../lib/functions/events';
+} from '@lib/components/tables/Column';
+import { ProjectCodeHoverCard } from '@lib/components/tables/TableHoverCard';
+import type { ModelType } from '@lib/enums/ModelType';
+import { resolveItem } from '@lib/functions/conversion';
+import { cancelEvent } from '@lib/functions/events';
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';

@@ -20,10 +20,10 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import { InvenTreeIcon } from '../../../lib/components/icons/icons';
-import { StylishText } from '../../../lib/components/items/StylishText';
-import type { ModelType } from '../../../lib/enums/ModelType';
-import { identifierString } from '../../../lib/functions/conversion';
+import { InvenTreeIcon } from '@lib/components/icons/icons';
+import { StylishText } from '@lib/components/items/StylishText';
+import type { ModelType } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/conversion';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
 
 export type ActionDropdownItem = {

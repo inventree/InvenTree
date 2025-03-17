@@ -3,8 +3,8 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useMemo } from 'react';
 
-import type { TableColumn } from '../../../../lib/components/tables/Column';
-import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
+import type { TableColumn } from '@lib/components/tables/Column';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';

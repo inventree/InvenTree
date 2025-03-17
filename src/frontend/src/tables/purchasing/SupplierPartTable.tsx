@@ -2,12 +2,12 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import type { TableColumn } from '../../../lib/components/tables/Column';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
-import { UserRoles } from '../../../lib/enums/Roles';
+import type { TableColumn } from '@lib/components/tables/Column';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import { TableHoverCard } from '@lib/components/tables/TableHoverCard';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { useSupplierPartFields } from '../../forms/CompanyForms';

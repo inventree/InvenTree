@@ -31,16 +31,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/items/Boundary';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict, getModelInfo } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/events';
 import { showNotification } from '@mantine/notifications';
-import { Boundary } from '../../../lib/components/items/Boundary';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
-import {
-  ModelInformationDict,
-  getModelInfo
-} from '../../../lib/enums/ModelType';
-import { UserRoles } from '../../../lib/enums/Roles';
-import { cancelEvent } from '../../../lib/functions/events';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';

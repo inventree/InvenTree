@@ -50,6 +50,12 @@ export default defineConfig({
     })
   ],
   base: '',
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@lib': '/lib'
+    }
+  },
   build: {
     manifest: true,
     sourcemap: true,

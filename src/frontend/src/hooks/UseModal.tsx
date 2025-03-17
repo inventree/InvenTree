@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import type React from 'react';
 import { useCallback } from 'react';
 
-import { StylishText } from '../../lib/components/items/StylishText';
+import { StylishText } from '@lib/components/items/StylishText';
 import type { UiSizeType } from '../defaults/formatters';
 
 export interface UseModalProps {

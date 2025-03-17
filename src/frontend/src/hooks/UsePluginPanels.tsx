@@ -1,8 +1,8 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../lib/enums/ModelType';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
 import { api } from '../App';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';

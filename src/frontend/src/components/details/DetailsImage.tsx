@@ -20,12 +20,12 @@ import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/buttons/ActionButton';
+import { InvenTreeIcon } from '@lib/components/icons/icons';
+import { StylishText } from '@lib/components/items/StylishText';
+import type { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/events';
 import { showNotification } from '@mantine/notifications';
-import { ActionButton } from '../../../lib/components/buttons/ActionButton';
-import { InvenTreeIcon } from '../../../lib/components/icons/icons';
-import { StylishText } from '../../../lib/components/items/StylishText';
-import type { UserRoles } from '../../../lib/enums/Roles';
-import { cancelEvent } from '../../../lib/functions/events';
 import { api } from '../../App';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';

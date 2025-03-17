@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 
-import { ModelType } from '../../../lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import type { DashboardWidgetProps } from './DashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';

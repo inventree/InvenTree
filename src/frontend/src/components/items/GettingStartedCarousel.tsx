@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Carousel } from '@mantine/carousel';
 import { Anchor, Button, Paper, Text } from '@mantine/core';
 
-import { StylishText } from '../../../lib/components/items/StylishText';
+import { StylishText } from '@lib/components/items/StylishText';
 import * as classes from './GettingStartedCarousel.css';
 import type { MenuLinkItem } from './MenuLinks';
 

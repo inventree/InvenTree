@@ -3,6 +3,10 @@ import type {
   EventClickArg,
   EventContentArg
 } from '@fullcalendar/core';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import type { ModelType } from '@lib/enums/ModelType';
+import { ModelInformationDict } from '@lib/enums/ModelType';
+import type { UserRoles } from '@lib/enums/Roles';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
@@ -14,10 +18,6 @@ import {
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import type { ModelType } from '../../../lib/enums/ModelType';
-import { ModelInformationDict } from '../../../lib/enums/ModelType';
-import type { UserRoles } from '../../../lib/enums/Roles';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';

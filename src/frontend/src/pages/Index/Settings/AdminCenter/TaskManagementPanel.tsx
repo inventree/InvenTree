@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
 import { lazy } from 'react';
 
-import { StylishText } from '../../../../../lib/components/items/StylishText';
-import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
+import { StylishText } from '@lib/components/items/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { Loadable } from '../../../../functions/loading';
 import { useInstance } from '../../../../hooks/UseInstance';

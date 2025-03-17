@@ -73,6 +73,7 @@
         "react-window": "1.8.10",
         "recharts": "^2.15.0",
         "styled-components": "^6.1.14",
+        "tsc-alias": "^1.8.11",
         "zustand": "^4.5.5"
     },
     "devDependencies": {

@@ -2,10 +2,10 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import type { TableColumn } from '../../../lib/components/tables/Column';
-import type { TableFilter } from '../../../lib/components/tables/Filter';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
+import type { TableColumn } from '@lib/components/tables/Column';
+import type { TableFilter } from '@lib/components/tables/Filter';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';

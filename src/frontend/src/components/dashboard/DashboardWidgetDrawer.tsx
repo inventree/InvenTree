@@ -15,7 +15,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { IconBackspace, IconLayoutGridAdd } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { StylishText } from '../../../lib/components/items/StylishText';
+import { StylishText } from '@lib/components/items/StylishText';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 
 /**

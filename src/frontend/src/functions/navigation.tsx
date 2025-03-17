@@ -1,4 +1,4 @@
-import { cancelEvent } from '../../lib/functions/events';
+import { cancelEvent } from '@lib/functions/events';
 import { base_url } from '../main';
 
 /*

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { ApiProvider } from '../../lib/contexts/ApiContext';
+import { ApiProvider } from '@lib/contexts/ApiContext';
 import { api, queryClient } from '../App';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { defaultHostList } from '../defaults/defaultHostList';

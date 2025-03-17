@@ -3,9 +3,9 @@ import { t } from '@lingui/macro';
 import type {
   TableFilter,
   TableFilterChoice
-} from '../../lib/components/tables/Filter';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../lib/enums/ModelType';
+} from '@lib/components/tables/Filter';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface

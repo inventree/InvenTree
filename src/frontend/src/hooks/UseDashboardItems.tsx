@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { identifierString } from '../../lib/functions/conversion';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { identifierString } from '@lib/functions/conversion';
 import { api } from '../App';
 import type { DashboardWidgetProps } from '../components/dashboard/DashboardWidget';
 import DashboardWidgetLibrary from '../components/dashboard/DashboardWidgetLibrary';
