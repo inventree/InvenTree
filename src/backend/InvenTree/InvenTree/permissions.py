@@ -129,8 +129,8 @@ for role, tables in roles.items():
         precalculated_roles[table].append(role)
 
 
-class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
-    """Permission that discovers the required scopes from the OpenAPI schema."""
+class CombinedPermissionMixin:
+    """Mixin that combines the permissions of normal classes and token classes."""
 
     def has_permission(self, request, view):
         """Check if the user has the required scopes or was authenticated another way."""
@@ -144,6 +144,12 @@ class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
         return (is_authenticated and not oauth2authenticated) or super().has_permission(
             request, view
         )
+
+
+class InvenTreeTokenMatchesOASRequirements(
+    CombinedPermissionMixin, TokenMatchesOASRequirements
+):
+    """Permission that discovers the required scopes from the OpenAPI schema."""
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
@@ -169,7 +175,9 @@ class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
             return map_scope(only_read=True)
 
 
-class IsSuperuserOrSuperScope(TokenMatchesOASRequirements, permissions.IsAdminUser):
+class IsSuperuserOrSuperScope(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
+):
     """Allows access only to superuser users."""
 
     def has_permission(self, request, view):
@@ -204,7 +212,7 @@ class IsStaffOrReadOnly(permissions.IsAdminUser):
 
 
 class IsAuthenticatedOrReadScope(
-    TokenMatchesOASRequirements, permissions.IsAuthenticated
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAuthenticated
 ):
     """Allows access only to authenticated users or read scope tokens."""
 
@@ -213,7 +221,9 @@ class IsAuthenticatedOrReadScope(
         return map_scope(only_read=True)
 
 
-class IsAdminOrAdminScope(TokenMatchesOASRequirements, permissions.IsAdminUser):
+class IsAdminOrAdminScope(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
+):
     """Allows access only to admin users or admin scope tokens."""
 
     def get_required_alternate_scopes(self, request, view):
