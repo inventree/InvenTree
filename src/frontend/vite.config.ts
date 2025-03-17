@@ -1,4 +1,5 @@
 import { platform, release } from 'node:os';
+import { resolve } from 'node:path';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
@@ -52,7 +53,11 @@ export default defineConfig({
   build: {
     manifest: true,
     outDir: '../../src/backend/InvenTree/web/static/web',
-    sourcemap: is_coverage
+    sourcemap: is_coverage,
+    lib: {
+      entry: resolve(__dirname, 'lib/main.ts'),
+      formats: ['es']
+    }
   },
   server: {
     proxy: {
