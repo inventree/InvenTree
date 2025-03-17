@@ -193,6 +193,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'pk',
             'created_by',
             'creation_date',
+            'issue_date',
             'start_date',
             'target_date',
             'description',
@@ -322,7 +323,6 @@ class PurchaseOrderSerializer(
         model = order.models.PurchaseOrder
 
         fields = AbstractOrderSerializer.order_fields([
-            'issue_date',
             'complete_date',
             'supplier',
             'supplier_detail',
@@ -1880,7 +1880,6 @@ class ReturnOrderSerializer(
         model = order.models.ReturnOrder
 
         fields = AbstractOrderSerializer.order_fields([
-            'issue_date',
             'complete_date',
             'customer',
             'customer_detail',
