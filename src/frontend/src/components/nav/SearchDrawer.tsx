@@ -33,11 +33,11 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';

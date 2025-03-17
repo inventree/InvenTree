@@ -13,8 +13,8 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { ModelType } from '../enums/ModelType';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
+import type { ModelType } from '../lib/enums/ModelType';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 

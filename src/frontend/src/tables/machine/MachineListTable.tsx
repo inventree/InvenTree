@@ -40,13 +40,13 @@ import {
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';

@@ -4,7 +4,7 @@ import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';

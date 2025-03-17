@@ -8,9 +8,6 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderStockLocation } from '../../components/render/Stock';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -23,6 +20,9 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

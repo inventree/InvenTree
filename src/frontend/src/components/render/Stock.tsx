@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
+import { ModelType } from '../../lib/enums/ModelType';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 

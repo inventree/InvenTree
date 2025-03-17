@@ -14,8 +14,8 @@ import { ActionButton } from '../components/buttons/ActionButton';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
 import { useApi } from '../contexts/ApiContext';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { NotificationTable } from '../tables/notifications/NotificationTable';
 

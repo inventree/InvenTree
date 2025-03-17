@@ -8,8 +8,8 @@ import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
+import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {

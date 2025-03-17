@@ -10,11 +10,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
 import { generateUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import {
   useGlobalSettingsState,

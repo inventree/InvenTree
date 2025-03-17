@@ -30,9 +30,6 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
   useCreateApiFormModal,
@@ -40,6 +37,9 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';

@@ -24,8 +24,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { useApi } from '../../contexts/ApiContext';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import {
   type NestedDict,
   constructField,
@@ -39,6 +37,8 @@ import {
 } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import type { TableState } from '../../hooks/UseTable';
+import type { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../lib/enums/ModelType';
 import type { PathParams } from '../../states/ApiState';
 import { Boundary } from '../Boundary';
 import {

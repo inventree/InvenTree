@@ -17,9 +17,9 @@ import type {
 } from '../components/forms/fields/ApiFormField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
+import { ModelType } from '../lib/enums/ModelType';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';

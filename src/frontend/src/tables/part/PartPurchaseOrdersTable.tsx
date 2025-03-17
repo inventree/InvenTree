@@ -4,9 +4,9 @@ import { useMemo } from 'react';
 
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';

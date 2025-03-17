@@ -18,14 +18,14 @@ import {
   DetailDrawer,
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

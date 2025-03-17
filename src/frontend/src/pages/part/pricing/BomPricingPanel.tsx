@@ -18,9 +18,9 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../../lib/enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
 import type { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';

@@ -25,12 +25,12 @@ import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem'
 import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
 import { ModelInformationDict } from '../../components/render/ModelType';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import {
   notYetImplemented,
   showApiErrorMessage
 } from '../../functions/notifications';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 

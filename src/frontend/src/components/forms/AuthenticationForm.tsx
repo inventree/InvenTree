@@ -16,7 +16,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   doBasicLogin,
   doSimpleLogin,
@@ -24,6 +23,7 @@ import {
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';

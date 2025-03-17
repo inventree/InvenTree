@@ -30,8 +30,6 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   type ApiFormModalProps,
@@ -43,6 +41,8 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
+import { ModelType } from '../lib/enums/ModelType';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';

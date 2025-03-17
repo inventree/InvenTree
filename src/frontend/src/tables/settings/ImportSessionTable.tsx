@@ -6,8 +6,6 @@ import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { useFilters } from '../../hooks/UseFilter';
 import {
@@ -15,6 +13,8 @@ import {
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';

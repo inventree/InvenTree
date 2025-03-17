@@ -3,9 +3,9 @@ import { Center, Container, Loader, Stack, Text } from '@mantine/core';
 import { useInterval } from '@mantine/hooks';
 import { useEffect } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { ModelType } from '../../lib/enums/ModelType';
 import { StylishText } from '../items/StylishText';
 
 export default function ImporterImportProgress({

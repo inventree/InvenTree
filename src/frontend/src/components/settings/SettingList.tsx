@@ -11,8 +11,8 @@ import React, {
 import { useStore } from 'zustand';
 
 import { useApi } from '../../contexts/ApiContext';
-import type { ModelType } from '../../enums/ModelType';
 import { useEditApiFormModal } from '../../hooks/UseForm';
+import type { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import {
   type SettingsStateProps,

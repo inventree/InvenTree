@@ -41,14 +41,14 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
+import { ModelType } from '../lib/enums/ModelType';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 /*

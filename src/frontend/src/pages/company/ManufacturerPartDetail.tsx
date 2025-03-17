@@ -27,9 +27,6 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import { getDetailUrl } from '../../functions/urls';
 import {
@@ -38,6 +35,9 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';

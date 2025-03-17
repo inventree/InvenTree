@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 
 import { api } from '../App';
 import type { UiSizeType } from '../defaults/formatters';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 import type { HostList } from './states';

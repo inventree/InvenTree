@@ -10,8 +10,8 @@ import {
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
 import RemoteComponent from '../components/plugins/RemoteComponent';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { identifierString } from '../functions/conversion';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { useUserState } from '../states/UserState';

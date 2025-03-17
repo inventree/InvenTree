@@ -8,8 +8,6 @@ import type {
   StatusCodeListInterface
 } from '../../components/render/StatusRenderer';
 import { statusColorMap } from '../../defaults/backendMappings';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import { useCustomStateFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -17,6 +15,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalStatusState } from '../../states/StatusState';
 import { useUserState } from '../../states/UserState';

@@ -14,10 +14,10 @@ import { useNavigate } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../../tables/Column';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';

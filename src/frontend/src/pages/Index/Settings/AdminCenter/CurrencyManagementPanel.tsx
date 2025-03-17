@@ -8,9 +8,9 @@ import { api } from '../../../../App';
 import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useTable } from '../../../../hooks/UseTable';
+import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 

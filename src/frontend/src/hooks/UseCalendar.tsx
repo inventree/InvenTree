@@ -4,8 +4,8 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { api } from '../App';
-import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import { showApiErrorMessage } from '../functions/notifications';
+import type { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { type FilterSetState, useFilterSet } from './UseFilterSet';
 

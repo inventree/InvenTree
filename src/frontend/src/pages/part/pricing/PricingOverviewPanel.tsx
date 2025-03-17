@@ -32,9 +32,9 @@ import {
   OptionsActionDropdown
 } from '../../../components/items/ActionDropdown';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useEditApiFormModal } from '../../../hooks/UseForm';
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../../states/ApiState';
 import { useGlobalSettingsState } from '../../../states/SettingsState';
 import { panelOptions } from '../PartPricingPanel';

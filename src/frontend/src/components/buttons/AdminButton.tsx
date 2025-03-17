@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { IconUserStar } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import type { ModelType } from '../../enums/ModelType';
 import { generateUrl } from '../../functions/urls';
+import type { ModelType } from '../../lib/enums/ModelType';
 import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { ModelInformationDict } from '../render/ModelType';

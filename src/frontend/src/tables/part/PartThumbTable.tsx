@@ -21,7 +21,7 @@ import { Suspense, useState } from 'react';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
 /**

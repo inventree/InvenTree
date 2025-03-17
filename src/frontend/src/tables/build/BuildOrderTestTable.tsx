@@ -15,10 +15,10 @@ import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

@@ -15,11 +15,11 @@ import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
-import type { ModelType } from '../../enums/ModelType';
-import type { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
+import type { ModelType } from '../../lib/enums/ModelType';
+import type { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {

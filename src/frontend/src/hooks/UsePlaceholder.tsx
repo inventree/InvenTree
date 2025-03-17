@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 
 /**

@@ -18,11 +18,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';

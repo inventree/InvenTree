@@ -6,8 +6,8 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { StylishText } from '../../components/items/StylishText';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

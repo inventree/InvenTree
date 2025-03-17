@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

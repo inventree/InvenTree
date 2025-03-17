@@ -14,8 +14,8 @@ import { useMatch, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import * as classes from '../../main.css';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';

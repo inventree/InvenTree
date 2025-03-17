@@ -4,8 +4,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { api } from '../App';
 import type { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { ModelType } from '../enums/ModelType';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
+import type { ModelType } from '../lib/enums/ModelType';
 import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 

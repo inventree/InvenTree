@@ -27,9 +27,6 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
 import { getDetailUrl } from '../../functions/urls';
 import {
@@ -37,6 +34,9 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
+import { UserRoles } from '../../lib/enums/Roles';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';

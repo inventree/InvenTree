@@ -4,9 +4,9 @@ import { lazy } from 'react';
 
 import { StylishText } from '../../../../components/items/StylishText';
 import { FactCollection } from '../../../../components/settings/FactCollection';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { Loadable } from '../../../../functions/loading';
 import { useInstance } from '../../../../hooks/UseInstance';
+import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import FailedTasksTable from '../../../../tables/settings/FailedTasksTable';
 import PendingTasksTable from '../../../../tables/settings/PendingTasksTable';
 

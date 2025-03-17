@@ -12,8 +12,8 @@ import { useId } from '@mantine/hooks';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import type { ModelType } from '../../../enums/ModelType';
 import { isTrue } from '../../../functions/conversion';
+import type { ModelType } from '../../../lib/enums/ModelType';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';

@@ -16,7 +16,7 @@ import { useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
 import { formatDate } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';

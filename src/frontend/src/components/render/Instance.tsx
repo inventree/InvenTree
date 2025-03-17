@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
 import { useApi } from '../../contexts/ApiContext';
-import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { shortenString } from '../../functions/tables';
+import { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';

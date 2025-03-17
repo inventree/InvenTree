@@ -7,9 +7,6 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -17,6 +14,9 @@ import {
   useCreateApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

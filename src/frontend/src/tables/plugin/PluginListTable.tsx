@@ -19,13 +19,13 @@ import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

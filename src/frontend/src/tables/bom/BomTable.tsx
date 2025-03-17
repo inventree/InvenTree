@@ -18,9 +18,6 @@ import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { navigateToLink } from '../../functions/navigation';
@@ -32,6 +29,9 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

@@ -4,7 +4,7 @@ import type {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import type { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { type PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 

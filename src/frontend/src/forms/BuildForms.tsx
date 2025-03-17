@@ -23,11 +23,11 @@ import {
 } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
+import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
+import { ModelType } from '../lib/enums/ModelType';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';

@@ -17,9 +17,9 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';

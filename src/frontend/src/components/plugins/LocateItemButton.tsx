@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
 import { IconRadar } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { ActionButton } from '../buttons/ActionButton';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';

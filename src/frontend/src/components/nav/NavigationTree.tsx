@@ -22,10 +22,10 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useApi } from '../../contexts/ApiContext';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
+import type { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';

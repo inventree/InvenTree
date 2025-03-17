@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 import { Accordion } from '@mantine/core';
 import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { ModelType } from '../../../../enums/ModelType';
+import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../../../lib/enums/ModelType';
 import {
   TemplateOutputTable,
   TemplateTable

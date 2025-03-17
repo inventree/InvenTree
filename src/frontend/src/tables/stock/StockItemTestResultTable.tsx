@@ -17,8 +17,6 @@ import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import { useTestResultFields } from '../../forms/StockForms';
 import {
   useCreateApiFormModal,
@@ -26,6 +24,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
