@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
         ("build", "0056_alter_build_link"),
         (
             "order",
-            "0108_alter_purchaseorder_link_and_more_squashed_0109_alter_purchaseorderextraline_link_and_more",
+            "0109_salesorder_issue_date",
         ),
     ]
 
