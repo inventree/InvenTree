@@ -1986,7 +1986,7 @@ class BomImportUploadSerializer(InvenTree.serializers.DataFileUploadSerializer):
 
 
 class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer):
-    """Serializer class for extracting BOM data from an uploaded file.
+    """Serializer class for exatracting BOM data from an uploaded file.
 
     The parent class DataFileExtractSerializer does most of the heavy lifting here.
 
