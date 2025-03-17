@@ -166,7 +166,8 @@ class DataImportSession(models.Model):
                 continue
 
             # Extract a "default" value for the field, if one exists
-            if 'default' in field_def:
+            # Skip if one has already been provided by the user
+            if field not in self.field_defaults and 'default' in field_def:
                 self.field_defaults[field] = field_def['default']
 
             # Generate a list of possible column names for this field
