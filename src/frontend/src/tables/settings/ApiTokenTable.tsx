@@ -14,6 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import type { RowAction } from '../../tables/RowActions';
 import { BooleanColumn } from '../ColumnRenderers';
+import { type TableFilter, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ApiTokenTable({
@@ -51,11 +52,17 @@ export function ApiTokenTable({
     const cols = [
       {
         accessor: 'name',
-        title: t`Name`
+        title: t`Name`,
+        sortable: true
       },
       BooleanColumn({
         accessor: 'active',
-        title: t`Active`
+        title: t`Active`,
+        sortable: false
+      }),
+      BooleanColumn({
+        accessor: 'revoked',
+        title: t`Revoked`
       }),
       {
         accessor: 'token',
@@ -75,21 +82,45 @@ export function ApiTokenTable({
       },
       {
         accessor: 'last_seen',
-        title: t`Last Seen`
+        title: t`Last Seen`,
+        sortable: true
       },
       {
         accessor: 'expiry',
-        title: t`Expiry`
+        title: t`Expiry`,
+        sortable: true
       },
       {
         accessor: 'created',
-        title: t`Created`
+        title: t`Created`,
+        sortable: true
       }
     ];
     if (!only_myself) {
-      cols.push({ accessor: 'user', title: t`User` });
+      cols.push({ accessor: 'user', title: t`User`, sortable: true });
     }
     return cols;
+  }, [only_myself]);
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    const filters: TableFilter[] = [
+      {
+        name: 'revoked',
+        label: t`Revoked`,
+        description: t`Show revoked tokens`
+      }
+    ];
+
+    if (!only_myself) {
+      filters.push(
+        UserFilter({
+          name: 'user',
+          label: t`User`,
+          description: t`Filter by user`
+        })
+      );
+    }
+    return filters;
   }, [only_myself]);
 
   const rowActions = useCallback((record: any): RowAction[] => {
@@ -161,7 +192,8 @@ export function ApiTokenTable({
           rowActions: rowActions,
           enableSearch: false,
           enableColumnSwitching: false,
-          tableActions: tableActions
+          tableActions: tableActions,
+          tableFilters: tableFilters
         }}
       />
     </>

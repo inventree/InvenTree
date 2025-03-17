@@ -316,6 +316,20 @@ class TokenMixin:
 class TokenListView(TokenMixin, ListCreateAPI):
     """List of user tokens for current user."""
 
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name', 'key']
+    ordering_fields = [
+        'created',
+        'expiry',
+        'last_seen',
+        'user',
+        'name',
+        'revoked',
+        'revoked',
+    ]
+
+    filterset_fields = ['revoked', 'user']
+
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
         resp = super().create(request, *args, **kwargs)
