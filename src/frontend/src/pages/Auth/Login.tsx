@@ -34,7 +34,10 @@ export default function Login() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const [sso_registration, registration_enabled] = useServerApiState(
-    (state) => [state.sso_registration_enabled, state.registration_enabled]
+    useShallow((state) => [
+      state.sso_registration_enabled,
+      state.registration_enabled
+    ])
   );
   const both_reg_enabled =
     registration_enabled() || sso_registration() || false;
