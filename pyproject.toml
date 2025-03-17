@@ -55,6 +55,8 @@ ignore = [
     "D417",
     # - RUF032 - decimal-from-float-literal
     "RUF032",
+    # - RUF045 - implicit-class-var-in-dataclass
+    "RUF045",
 
     # TODO These should be followed up and fixed
     # - B904 Within an `except` clause, raise exceptions
