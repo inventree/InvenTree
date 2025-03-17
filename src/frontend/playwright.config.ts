@@ -43,7 +43,8 @@ export default defineConfig({
         INVENTREE_ADMIN_URL: 'test-admin',
         INVENTREE_SITE_URL: 'http://localhost:8000',
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
-        INVENTREE_COOKIE_SAMESITE: 'Lax'
+        INVENTREE_COOKIE_SAMESITE: 'Lax',
+        INVENTREE_LOGIN_ATTEMPTS: '100'
       },
       url: 'http://127.0.0.1:8000/api/',
       reuseExistingServer: !process.env.CI,
