@@ -13,7 +13,7 @@ import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ModelType } from '../../../../lib/enums/ModelType';
-import { isTrue } from '../../../functions/conversion';
+import { isTrue } from '../../../../lib/functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';

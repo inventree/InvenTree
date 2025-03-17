@@ -1,8 +1,8 @@
 import { Badge, Center, type MantineSize } from '@mantine/core';
 
 import type { ModelType } from '../../../lib/enums/ModelType';
+import { resolveItem } from '../../../lib/functions/conversion';
 import { statusColorMap } from '../../defaults/backendMappings';
-import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/StatusState';
 
 export interface StatusCodeInterface {

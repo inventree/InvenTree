@@ -13,8 +13,8 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';

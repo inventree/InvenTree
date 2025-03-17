@@ -55,12 +55,29 @@ export default defineConfig({
     // outDir: '../../src/backend/InvenTree/web/static/web',
     // TODO: outDir should be set to the correct path,
     // TODO: depending on whether we are building library or UI?
-    sourcemap: is_coverage,
+    sourcemap: true, // is_coverage,
     lib: {
       entry: {
-        enums: resolve(__dirname, 'lib/enums.js')
+        buttons: resolve(__dirname, 'lib/buttons.js'),
+        enums: resolve(__dirname, 'lib/enums.js'),
+        functions: resolve(__dirname, 'lib/functions.js')
       },
+      name: 'InvenTree',
       formats: ['es']
+    },
+    rollupOptions: {
+      // TODO: This should be updated for all extrenal deps
+      external: ['React'],
+      output: {
+        globals: {
+          // TODO: This should be updated for all extrenal deps
+          // TODO: Mantine
+          // TODO: react-router
+          // TODO: tanstack-query
+          // TODO: ... etc ...
+          React: 'React'
+        }
+      }
     }
   },
   server: {

@@ -4,9 +4,9 @@ import { showNotification } from '@mantine/notifications';
 import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '../../../../../lib/components/buttons/ActionButton';
 import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
 import { api } from '../../../../App';
-import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { showApiErrorMessage } from '../../../../functions/notifications';

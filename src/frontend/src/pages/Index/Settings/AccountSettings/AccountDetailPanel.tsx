@@ -4,8 +4,8 @@ import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
+import { ActionButton } from '../../../../../lib/components/buttons/ActionButton';
 import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
-import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';

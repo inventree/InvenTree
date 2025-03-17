@@ -29,7 +29,7 @@ import {
 } from 'react-router-dom';
 
 import type { ModelType } from '../../../lib/enums/ModelType';
-import { identifierString } from '../../functions/conversion';
+import { identifierString } from '../../../lib/functions/conversion';
 import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';

@@ -6,13 +6,13 @@ import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
 import type { ModelType } from '../../lib/enums/ModelType';
+import { resolveItem } from '../../lib/functions/conversion';
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import type { TableColumn, TableColumnProps } from './Column';

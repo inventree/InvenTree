@@ -21,6 +21,7 @@ import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
 import { showNotification } from '@mantine/notifications';
+import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import type { UserRoles } from '../../../lib/enums/Roles';
 import { api } from '../../App';
 import { cancelEvent } from '../../functions/events';
@@ -31,7 +32,6 @@ import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
-import { ActionButton } from '../buttons/ActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 

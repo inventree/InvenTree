@@ -18,8 +18,8 @@ import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { showNotification } from '@mantine/notifications';
+import { ActionButton } from '../../lib/components/buttons/ActionButton';
 import { Boundary } from '../components/Boundary';
-import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import { useApi } from '../contexts/ApiContext';

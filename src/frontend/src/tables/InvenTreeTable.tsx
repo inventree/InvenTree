@@ -14,10 +14,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { hideNotification, showNotification } from '@mantine/notifications';
 import type { ModelType } from '../../lib/enums/ModelType';
+import { resolveItem } from '../../lib/functions/conversion';
 import { Boundary } from '../components/Boundary';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
-import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
