@@ -519,7 +519,22 @@ export function ApiForm({
             case 400:
               // Data validation errors
               const _nonFieldErrors: string[] = [];
+
               const processErrors = (errors: any, _path?: string) => {
+                // Handle an array of errors
+                if (Array.isArray(errors)) {
+                  errors.forEach((error: any) => {
+                    _nonFieldErrors.push(error.toString());
+                  });
+                  return;
+                }
+
+                // Handle simple string
+                if (typeof errors === 'string') {
+                  _nonFieldErrors.push(errors);
+                  return;
+                }
+
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
@@ -527,10 +542,8 @@ export function ApiForm({
                   const field = fields[k];
                   const valid = field && !field.hidden;
 
-                  if (!valid || k === 'non_field_errors' || k === '__all__') {
-                    if (Array.isArray(v)) {
-                      _nonFieldErrors.push(...v);
-                    }
+                  if (!valid || k == 'non_field_errors' || k == '__all__') {
+                    processErrors(v);
                     continue;
                   }
 

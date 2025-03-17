@@ -1,17 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 323
+INVENTREE_API_VERSION = 324
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v323 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9096
+v324 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9096
     - Overhaul the data-export API functionality
     - Allow customization of data exporting via plugins
     - Consolidate LabelOutput and ReportOutput API endpoints into single DataOutput endpoint
+
+v323 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9313
+    - Adds BulkUpdate support to the Part API endpoint
+    - Remove legacy API endpoint to set part category for multiple parts
 
 v322 - 2025-03-16 : https://github.com/inventree/InvenTree/pull/8933
     - Add min_date and max_date query filters for orders, for use in calendar views
