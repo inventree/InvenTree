@@ -35,6 +35,7 @@ import users.models
 from build.status_codes import BuildStatusGroups
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.tasks import offload_task
 from users.serializers import UserSerializer
 
@@ -94,7 +95,7 @@ class CategorySerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not path_detail:
+        if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
     def get_starred(self, category) -> bool:
@@ -133,7 +134,10 @@ class CategorySerializer(
     starred = serializers.SerializerMethodField()
 
     path = serializers.ListField(
-        child=serializers.DictField(), source='get_path', read_only=True
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     icon = serializers.CharField(
@@ -383,7 +387,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         super().__init__(*args, **kwargs)
 
-        if not pricing:
+        if not pricing and not isGeneratingSchema():
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
 
@@ -444,67 +448,21 @@ class PartParameterSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
         if not template_detail:
             self.fields.pop('template_detail', None)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = PartBriefSerializer(
+        source='part', many=False, read_only=True, allow_null=True
+    )
     template_detail = PartParameterTemplateSerializer(
-        source='template', many=False, read_only=True
+        source='template', many=False, read_only=True, allow_null=True
     )
-
-
-class PartSetCategorySerializer(serializers.Serializer):
-    """Serializer for changing PartCategory for multiple Part objects."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['parts', 'category']
-
-    parts = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        many=True,
-        required=True,
-        allow_null=False,
-        label=_('Parts'),
-    )
-
-    def validate_parts(self, parts):
-        """Validate the selected parts."""
-        if len(parts) == 0:
-            raise serializers.ValidationError(_('No parts selected'))
-
-        return parts
-
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=PartCategory.objects.filter(structural=False),
-        many=False,
-        required=True,
-        allow_null=False,
-        label=_('Category'),
-        help_text=_('Select category'),
-    )
-
-    @transaction.atomic
-    def save(self):
-        """Save the serializer to change the location of the selected parts."""
-        data = self.validated_data
-        parts = data['parts']
-        category = data['category']
-
-        parts_to_save = []
-
-        for p in parts:
-            if p.category == category:
-                continue
-
-            p.category = category
-            parts_to_save.append(p)
-
-        Part.objects.bulk_update(parts_to_save, ['category'])
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -782,6 +740,9 @@ class PartSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not category_detail:
             self.fields.pop('category_detail', None)
 
@@ -923,14 +884,19 @@ class PartSerializer(
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    category_detail = CategorySerializer(
+        source='category', many=False, read_only=True, allow_null=True
+    )
 
     category_path = serializers.ListField(
-        child=serializers.DictField(), source='category.get_path', read_only=True
+        child=serializers.DictField(),
+        source='category.get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     default_location_detail = DefaultLocationSerializer(
-        source='default_location', many=False, read_only=True
+        source='default_location', many=False, read_only=True, allow_null=True
     )
 
     category_name = serializers.CharField(
@@ -1003,7 +969,7 @@ class PartSerializer(
         source='pricing_data.updated', allow_null=True, read_only=True
     )
 
-    parameters = PartParameterSerializer(many=True, read_only=True)
+    parameters = PartParameterSerializer(many=True, read_only=True, allow_null=True)
 
     # Extra fields used only for creation of a new Part instance
     duplicate = DuplicatePartSerializer(
@@ -1617,6 +1583,9 @@ class BomItemSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
@@ -1648,10 +1617,12 @@ class BomItemSerializer(
         help_text=_('Select the parent assembly'),
     )
 
-    substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
+    substitutes = BomItemSubstituteSerializer(
+        many=True, read_only=True, allow_null=True
+    )
 
     part_detail = PartBriefSerializer(
-        source='part', label=_('Assembly'), many=False, read_only=True
+        source='part', label=_('Assembly'), many=False, read_only=True, allow_null=True
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1661,7 +1632,11 @@ class BomItemSerializer(
     )
 
     sub_part_detail = PartBriefSerializer(
-        source='sub_part', label=_('Component'), many=False, read_only=True
+        source='sub_part',
+        label=_('Component'),
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
@@ -1867,7 +1842,9 @@ class CategoryParameterTemplateSerializer(
         source='parameter_template', many=False, read_only=True
     )
 
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    category_detail = CategorySerializer(
+        source='category', many=False, read_only=True, allow_null=True
+    )
 
 
 class PartCopyBOMSerializer(serializers.Serializer):

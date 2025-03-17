@@ -374,15 +374,141 @@ class NotFoundView(APIView):
         return self.not_found(request)
 
 
-class BulkDeleteMixin:
+class BulkOperationMixin:
+    """Mixin class for handling bulk data operations.
+
+    Bulk operations are implemented for two major reasons:
+    - Speed (single API call vs multiple API calls)
+    - Atomicity (guaranteed that either *all* items are updated, or *none*)
+    """
+
+    def get_bulk_queryset(self, request):
+        """Return a queryset based on the selection made in the request.
+
+        Selection can be made by providing either:
+
+        - items: A list of primary key values
+        - filters: A dictionary of filter values
+        """
+        model = self.serializer_class.Meta.model
+
+        items = request.data.pop('items', None)
+        filters = request.data.pop('filters', None)
+
+        queryset = model.objects.all()
+
+        if not items and not filters:
+            raise ValidationError({
+                'non_field_errors': _(
+                    'List of items or filters must be provided for bulk operation'
+                )
+            })
+
+        if items:
+            if type(items) is not list:
+                raise ValidationError({
+                    'non_field_errors': _('Items must be provided as a list')
+                })
+
+            # Filter by primary key
+            try:
+                queryset = queryset.filter(pk__in=items)
+            except Exception:
+                raise ValidationError({
+                    'non_field_errors': _('Invalid items list provided')
+                })
+
+        if filters:
+            if type(filters) is not dict:
+                raise ValidationError({
+                    'non_field_errors': _('Filters must be provided as a dict')
+                })
+
+            try:
+                queryset = queryset.filter(**filters)
+            except Exception:
+                raise ValidationError({
+                    'non_field_errors': _('Invalid filters provided')
+                })
+
+        if queryset.count() == 0:
+            raise ValidationError({
+                'non_field_errors': _('No items match the provided criteria')
+            })
+
+        return queryset
+
+
+class BulkUpdateMixin(BulkOperationMixin):
+    """Mixin class for enabling 'bulk update' operations for various models.
+
+    Bulk update allows for multiple items to be updated in a single API query,
+    rather than using multiple API calls to the various detail endpoints.
+    """
+
+    def validate_update(self, queryset, request) -> None:
+        """Perform validation right before updating.
+
+        Arguments:
+            queryset: The queryset to be updated
+            request: The request object
+
+        Returns:
+            None
+
+        Raises:
+            ValidationError: If the update should not proceed
+        """
+        # Default implementation does nothing
+
+    def filter_update_queryset(self, queryset, request):
+        """Provide custom filtering for the queryset *before* it is updated.
+
+        The default implementation does nothing, just returns the queryset.
+        """
+        return queryset
+
+    def put(self, request, *args, **kwargs):
+        """Perform a PUT operation against this list endpoint.
+
+        Simply redirects to the PATCH method.
+        """
+        return self.patch(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """Perform a PATCH operation against this list endpoint.
+
+        Note that the typical DRF list endpoint does not support PATCH,
+        so this method is provided as a custom implementation.
+        """
+        queryset = self.get_bulk_queryset(request)
+        queryset = self.filter_update_queryset(queryset, request)
+
+        self.validate_update(queryset, request)
+
+        # Perform the update operation
+        data = request.data
+
+        n = queryset.count()
+
+        with transaction.atomic():
+            # Perform object update
+            # Note that we do not perform a bulk-update operation here,
+            # as we want to trigger any custom post_save methods on the model
+            for instance in queryset:
+                serializer = self.get_serializer(instance, data=data, partial=True)
+
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+
+        return Response({'success': f'Updated {n} items'}, status=200)
+
+
+class BulkDeleteMixin(BulkOperationMixin):
     """Mixin class for enabling 'bulk delete' operations for various models.
 
     Bulk delete allows for multiple items to be deleted in a single API query,
     rather than using multiple API calls to the various detail endpoints.
-
-    This is implemented for two major reasons:
-    - Atomicity (guaranteed that either *all* items are deleted, or *none*)
-    - Speed (single API call and DB query)
     """
 
     def validate_delete(self, queryset, request) -> None:
@@ -398,6 +524,7 @@ class BulkDeleteMixin:
         Raises:
             ValidationError: If the deletion should not proceed
         """
+        # Default implementation does nothing
 
     def filter_delete_queryset(self, queryset, request):
         """Provide custom filtering for the queryset *before* it is deleted.
@@ -409,79 +536,23 @@ class BulkDeleteMixin:
     def delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
-        We expect a list of primary-key (ID) values to be supplied as a JSON object, e.g.
-        {
-            items: [4, 8, 15, 16, 23, 42]
-        }
-
+        Note that the typical DRF list endpoint does not support DELETE,
+        so this method is provided as a custom implementation.
         """
-        model = self.serializer_class.Meta.model
+        queryset = self.get_bulk_queryset(request)
+        queryset = self.filter_delete_queryset(queryset, request)
 
-        # Extract the items from the request body
-        try:
-            items = request.data.getlist('items', None)
-        except AttributeError:
-            items = request.data.get('items', None)
-
-        # Extract the filters from the request body
-        try:
-            filters = request.data.getlist('filters', None)
-        except AttributeError:
-            filters = request.data.get('filters', None)
-
-        if not items and not filters:
-            raise ValidationError({
-                'non_field_errors': [
-                    'List of items or filters must be provided for bulk deletion'
-                ]
-            })
-
-        if items and type(items) is not list:
-            raise ValidationError({
-                'items': ["'items' must be supplied as a list object"]
-            })
-
-        if filters and type(filters) is not dict:
-            raise ValidationError({
-                'filters': ["'filters' must be supplied as a dict object"]
-            })
+        self.validate_delete(queryset, request)
 
         # Keep track of how many items we deleted
-        n_deleted = 0
+        n_deleted = queryset.count()
 
         with transaction.atomic():
-            # Start with *all* models and perform basic filtering
-            queryset = model.objects.all()
-            queryset = self.filter_delete_queryset(queryset, request)
-
-            # Filter by provided item ID values
-            if items:
-                try:
-                    queryset = queryset.filter(id__in=items)
-                except Exception:
-                    raise ValidationError({
-                        'non_field_errors': _('Invalid items list provided')
-                    })
-
-            # Filter by provided filters
-            if filters:
-                try:
-                    queryset = queryset.filter(**filters)
-                except Exception:
-                    raise ValidationError({
-                        'non_field_errors': _('Invalid filters provided')
-                    })
-
-            if queryset.count() == 0:
-                raise ValidationError({
-                    'non_field_errors': _('No items found to delete')
-                })
-
-            # Run a final validation step (should raise an error if the deletion should not proceed)
-            self.validate_delete(queryset, request)
-
-            n_deleted = queryset.count()
-            queryset.delete()
+            # Perform object deletion
+            # Note that we do not perform a bulk-delete operation here,
+            # as we want to trigger any custom post_delete methods on the model
+            for item in queryset:
+                item.delete()
 
         return Response({'success': f'Deleted {n_deleted} items'}, status=204)
 

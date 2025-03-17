@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
-import { Anchor, Divider, Text } from '@mantine/core';
+import { Anchor, Divider, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
@@ -27,6 +27,7 @@ export default function Login() {
     state.server,
     state.fetchServerApiState
   ]);
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
@@ -73,6 +74,7 @@ export default function Login() {
 
     // check if we got login params (login and password)
     if (searchParams.has('login') && searchParams.has('password')) {
+      setIsLoggingIn(true);
       doBasicLogin(
         searchParams.get('login') ?? '',
         searchParams.get('password') ?? '',
@@ -94,22 +96,28 @@ export default function Login() {
       ) : (
         <>
           <Wrapper titleText={t`Login`} smallPadding>
-            <AuthenticationForm />
-            {both_reg_enabled === false && (
-              <Text ta='center' size={'xs'} mt={'md'}>
-                <Trans>Don&apos;t have an account?</Trans>{' '}
-                <Anchor
-                  component='button'
-                  type='button'
-                  c='dimmed'
-                  size='xs'
-                  onClick={() => navigate('/register')}
-                >
-                  <Trans>Register</Trans>
-                </Anchor>
-              </Text>
+            {isLoggingIn ? (
+              <Loader />
+            ) : (
+              <>
+                <AuthenticationForm />
+                {both_reg_enabled === false && (
+                  <Text ta='center' size={'xs'} mt={'md'}>
+                    <Trans>Don&apos;t have an account?</Trans>{' '}
+                    <Anchor
+                      component='button'
+                      type='button'
+                      c='dimmed'
+                      size='xs'
+                      onClick={() => navigate('/register')}
+                    >
+                      <Trans>Register</Trans>
+                    </Anchor>
+                  </Text>
+                )}
+                {LoginMessage}{' '}
+              </>
             )}
-            {LoginMessage}
           </Wrapper>
           <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
         </>

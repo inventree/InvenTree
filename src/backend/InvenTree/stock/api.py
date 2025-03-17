@@ -28,7 +28,7 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from generic.states.api import StatusView
 from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -366,7 +366,9 @@ class StockLocationMixin:
         return queryset
 
 
-class StockLocationList(DataExportViewMixin, StockLocationMixin, ListCreateAPI):
+class StockLocationList(
+    DataExportViewMixin, BulkUpdateMixin, StockLocationMixin, ListCreateAPI
+):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects

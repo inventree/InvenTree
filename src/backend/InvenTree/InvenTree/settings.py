@@ -1454,6 +1454,10 @@ SPECTACULAR_SETTINGS = {
     'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/',
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+        'InvenTree.schema.postprocess_required_nullable',
+    ],
     # oAuth2
     'OAUTH2_FLOWS': ['authorizationCode', 'clientCredentials'],
     'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
