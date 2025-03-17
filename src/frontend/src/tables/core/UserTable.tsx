@@ -1,6 +1,6 @@
-import type { TableFilter } from '@lib/components/tables/Filter';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import {} from '../../hooks/UseFilter';

@@ -1,5 +1,5 @@
-import { Boundary } from '@lib/components/items/Boundary';
-import { StylishText } from '@lib/components/items/StylishText';
+import { Boundary } from '@lib/components';
+import { StylishText } from '@lib/components';
 import { t } from '@lingui/macro';
 import {
   ActionIcon,

@@ -273,7 +273,7 @@ export function GetIcon(field: string): TablerIconType {
 // Aliasing the new type name to make it distinct
 type TablerIconProps = IconProps;
 
-type InvenTreeIconProps = {
+export type InvenTreeIconProps = {
   icon: InvenTreeIconType;
   iconProps?: TablerIconProps;
 };

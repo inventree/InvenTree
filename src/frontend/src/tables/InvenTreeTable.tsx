@@ -12,13 +12,13 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Boundary } from '@lib/components/items/Boundary';
-import type { TableColumn } from '@lib/components/tables/Column';
-import type { TableFilter } from '@lib/components/tables/Filter';
+import { Boundary } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
-import type { ModelType } from '@lib/enums/ModelType';
+import type { ModelType } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { extractAvailableFields, mapFields } from '../functions/forms';

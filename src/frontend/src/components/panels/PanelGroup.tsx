@@ -28,9 +28,9 @@ import {
   useParams
 } from 'react-router-dom';
 
-import { Boundary } from '@lib/components/items/Boundary';
-import { StylishText } from '@lib/components/items/StylishText';
-import type { ModelType } from '@lib/enums/ModelType';
+import { Boundary } from '@lib/components';
+import { StylishText } from '@lib/components';
+import type { ModelType } from '@lib/core';
 import { identifierString } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
 import { navigateToLink } from '../../functions/navigation';

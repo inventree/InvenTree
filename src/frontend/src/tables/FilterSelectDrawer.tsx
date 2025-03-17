@@ -18,14 +18,14 @@ import { DateInput, type DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { StylishText } from '@lib/components/items/StylishText';
+import { StylishText } from '@lib/components';
+import type { FilterSetState } from '@lib/hooks/UseFilterSet';
 import {
   type TableFilter,
   type TableFilterChoice,
   getFilterType,
   getTableFilterOptions
-} from '@lib/components/tables/Filter';
-import type { FilterSetState } from '@lib/hooks/UseFilterSet';
+} from '@lib/tables';
 import { IconCheck } from '@tabler/icons-react';
 import { StandaloneField } from '../components/forms/StandaloneField';
 

@@ -24,10 +24,10 @@ import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { TablerIconType } from '@lib/components/icons/icons';
-import { Boundary } from '@lib/components/items/Boundary';
-import { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict } from '@lib/enums/ModelType';
+import type { TablerIconType } from '@lib/components';
+import { Boundary } from '@lib/components';
+import { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
 import { api } from '../../../App';
 import { apiUrl } from '../../../states/ApiState';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';

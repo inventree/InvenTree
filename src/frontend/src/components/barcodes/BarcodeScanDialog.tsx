@@ -1,7 +1,7 @@
-import { StylishText } from '@lib/components/items/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict } from '@lib/enums/ModelType';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
 import { t } from '@lingui/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';

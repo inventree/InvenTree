@@ -1,5 +1,5 @@
 import type FullCalendar from '@fullcalendar/react';
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ApiEndpoints } from '@lib/core';
 import { type FilterSetState, useFilterSet } from '@lib/hooks/UseFilterSet';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';

@@ -1,7 +1,7 @@
-import { ProgressBar } from '@lib/components/items/ProgressBar';
+import { ProgressBar } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import {

@@ -3,10 +3,10 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
-import type { TableColumn } from '@lib/components/tables/Column';
-import { TableHoverCard } from '@lib/components/tables/TableHoverCard';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { UserRoles } from '@lib/enums/Roles';
+import { ApiEndpoints } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';

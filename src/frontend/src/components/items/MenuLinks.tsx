@@ -11,11 +11,8 @@ import {
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  InvenTreeIcon,
-  type InvenTreeIconType
-} from '@lib/components/icons/icons';
-import { StylishText } from '@lib/components/items/StylishText';
+import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
+import { StylishText } from '@lib/components';
 import { navigateToLink } from '../../functions/navigation';
 
 export interface MenuLinkItem {

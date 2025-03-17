@@ -18,16 +18,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import { InvenTreeIcon } from '@lib/components/icons/icons';
-import { ProgressBar } from '@lib/components/items/ProgressBar';
-import { StylishText } from '@lib/components/items/StylishText';
-import type { TableColumn } from '@lib/components/tables/Column';
-import { TableHoverCard } from '@lib/components/tables/TableHoverCard';
+import { ActionButton } from '@lib/components';
+import { InvenTreeIcon } from '@lib/components';
+import { ProgressBar } from '@lib/components';
+import { StylishText } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   useBuildOrderOutputFields,

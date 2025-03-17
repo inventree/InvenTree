@@ -1,5 +1,5 @@
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ActionButton } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
 import { t } from '@lingui/macro';
 import { IconRadar } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';

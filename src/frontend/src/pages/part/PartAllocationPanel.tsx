@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 import { Accordion } from '@mantine/core';
 
-import { StylishText } from '@lib/components/items/StylishText';
-import { UserRoles } from '@lib/enums/Roles';
+import { StylishText } from '@lib/components';
+import { UserRoles } from '@lib/core';
 import { useUserState } from '../../states/UserState';
 import PartBuildAllocationsTable from '../../tables/part/PartBuildAllocationsTable';
 import PartSalesAllocationsTable from '../../tables/part/PartSalesAllocationsTable';

@@ -3,7 +3,7 @@
  */
 import { create, createStore } from 'zustand';
 
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
 import { isTrue } from '@lib/functions/conversion';
 import { api } from '../App';
 import { type PathParams, apiUrl } from './ApiState';

@@ -18,10 +18,10 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { StylishText } from '@lib/components/items/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict } from '@lib/enums/ModelType';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';

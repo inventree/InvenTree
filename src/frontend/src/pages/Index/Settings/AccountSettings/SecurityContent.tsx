@@ -1,5 +1,5 @@
-import { StylishText } from '@lib/components/items/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
 import { Trans, t } from '@lingui/macro';
 import {
   Accordion,

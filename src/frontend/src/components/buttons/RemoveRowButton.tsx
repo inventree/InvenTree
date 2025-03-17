@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import { InvenTreeIcon } from '@lib/components/icons/icons';
+import { ActionButton } from '@lib/components';
+import { InvenTreeIcon } from '@lib/components';
 
 export default function RemoveRowButton({
   onClick,

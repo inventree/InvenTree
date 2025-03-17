@@ -4,8 +4,8 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { StylishText } from '@lib/components/items/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
 import { useInstance } from '../../hooks/UseInstance';
 import { InfoItem } from '../items/InfoItem';
 import { PluginSettingList } from '../settings/SettingList';

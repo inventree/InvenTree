@@ -1,7 +1,7 @@
 import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/core';
 import { getDetailUrl } from '../../functions/urls';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 

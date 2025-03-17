@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
-import { UserPermissions, type UserRoles } from '@lib/enums/Roles';
+import { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
+import { UserPermissions, type UserRoles } from '@lib/core';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';

@@ -4,14 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  InvenTreeIcon,
-  type InvenTreeIconType
-} from '@lib/components/icons/icons';
-import { StylishText } from '@lib/components/items/StylishText';
+import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
+import { StylishText } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
-import type { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict } from '@lib/enums/ModelType';
+import type { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
 import { navigateToLink } from '../../../functions/navigation';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';

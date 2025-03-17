@@ -1,5 +1,5 @@
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import type { TableColumn } from '@lib/components/tables/Column';
+import { ActionButton } from '@lib/components';
+import type { TableColumn } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { IconTrash } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';

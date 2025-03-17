@@ -20,9 +20,9 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import { InvenTreeIcon } from '@lib/components/icons/icons';
-import { StylishText } from '@lib/components/items/StylishText';
-import type { ModelType } from '@lib/enums/ModelType';
+import { InvenTreeIcon } from '@lib/components';
+import { StylishText } from '@lib/components';
+import type { ModelType } from '@lib/core';
 import { identifierString } from '@lib/functions/conversion';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
 

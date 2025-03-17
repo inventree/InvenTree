@@ -12,7 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { navigateToLink } from '../../functions/navigation';

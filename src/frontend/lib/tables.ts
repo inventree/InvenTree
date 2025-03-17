@@ -1,3 +1,6 @@
+import RowExpansionIcon from './components/tables/RowExpansionIcon';
+export { RowExpansionIcon };
+
 export type { TableColumn, TableColumnProps } from './components/tables/Column';
 export { TableColumnSelect } from './components/tables/ColumnSelect';
 export type {

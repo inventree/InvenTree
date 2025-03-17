@@ -8,9 +8,9 @@ import {
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,

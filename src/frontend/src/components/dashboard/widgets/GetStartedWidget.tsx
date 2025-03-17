@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { StylishText } from '@lib/components/items/StylishText';
+import { StylishText } from '@lib/components';
 import { DocumentationLinks } from '../../../defaults/links';
 import { GettingStartedCarousel } from '../../items/GettingStartedCarousel';
 import type { MenuLinkItem } from '../../items/MenuLinks';

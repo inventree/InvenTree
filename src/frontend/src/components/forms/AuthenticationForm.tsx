@@ -14,7 +14,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import {

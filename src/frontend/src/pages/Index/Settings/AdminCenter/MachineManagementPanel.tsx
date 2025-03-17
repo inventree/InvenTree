@@ -13,8 +13,8 @@ import { IconInfoCircle, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { StylishText } from '@lib/components/items/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
 import { api } from '../../../../App';
 import { apiUrl } from '../../../../states/ApiState';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
 import { t } from '@lingui/macro';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { api } from '../App';

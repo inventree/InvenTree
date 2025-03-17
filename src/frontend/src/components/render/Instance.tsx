@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
 import { useApi } from '@lib/contexts/ApiContext';
-import { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
 import { shortenString } from '@lib/functions';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';

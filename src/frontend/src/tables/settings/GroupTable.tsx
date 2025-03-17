@@ -12,9 +12,9 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import type { TableColumn } from '@lib/components/tables/Column';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';

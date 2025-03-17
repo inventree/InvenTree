@@ -24,8 +24,8 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
-import { InvenTreeIcon } from '@lib/components/icons/icons';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { InvenTreeIcon } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';

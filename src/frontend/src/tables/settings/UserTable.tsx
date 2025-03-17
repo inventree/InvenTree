@@ -12,10 +12,10 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import type { TableColumn } from '@lib/components/tables/Column';
-import type { TableFilter } from '@lib/components/tables/Filter';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import {

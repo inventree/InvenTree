@@ -20,10 +20,10 @@ import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import { InvenTreeIcon } from '@lib/components/icons/icons';
-import { StylishText } from '@lib/components/items/StylishText';
-import type { UserRoles } from '@lib/enums/Roles';
+import { ActionButton } from '@lib/components';
+import { InvenTreeIcon } from '@lib/components';
+import { StylishText } from '@lib/components';
+import type { UserRoles } from '@lib/core';
 import { cancelEvent } from '@lib/functions/events';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';

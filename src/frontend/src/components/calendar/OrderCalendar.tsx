@@ -3,10 +3,10 @@ import type {
   EventClickArg,
   EventContentArg
 } from '@fullcalendar/core';
-import type { TableFilter } from '@lib/components/tables/Filter';
-import type { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict } from '@lib/enums/ModelType';
-import type { UserRoles } from '@lib/enums/Roles';
+import type { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
+import type { UserRoles } from '@lib/core';
+import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';

@@ -9,8 +9,8 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
 import { useLocalStorage } from '@mantine/hooks';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
 import OrderCalendar from '../../components/calendar/OrderCalendar';

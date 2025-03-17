@@ -1,5 +1,5 @@
-import type { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict } from '@lib/enums/ModelType';
+import type { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
 import { base_url } from '../main';
 import { useLocalState } from '../states/LocalState';
 

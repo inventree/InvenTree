@@ -1,6 +1,6 @@
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
+import { ActionButton } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
 import { t } from '@lingui/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';

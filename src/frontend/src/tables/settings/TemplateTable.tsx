@@ -4,12 +4,12 @@ import { IconFileCode } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { GetIcon } from '@lib/components/icons/icons';
-import type { TableColumn } from '@lib/components/tables/Column';
-import type { TableFilter } from '@lib/components/tables/Filter';
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import { GetIcon } from '@lib/components';
+import type { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
 import { identifierString } from '@lib/functions/conversion';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   CodeEditor,

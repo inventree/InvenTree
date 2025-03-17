@@ -9,13 +9,13 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import { ProgressBar } from '@lib/components/items/ProgressBar';
-import type { TableColumn } from '@lib/components/tables/Column';
-import type { TableFilter } from '@lib/components/tables/Filter';
+import { ActionButton } from '@lib/components';
+import { ProgressBar } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
 import { cancelEvent } from '@lib/functions/events';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal

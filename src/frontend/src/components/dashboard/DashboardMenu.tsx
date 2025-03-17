@@ -16,7 +16,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { StylishText } from '@lib/components/items/StylishText';
+import { StylishText } from '@lib/components';
 import useInstanceName from '../../hooks/UseInstanceName';
 import { useUserState } from '../../states/UserState';
 

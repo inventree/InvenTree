@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { ModelType } from '@lib/enums/ModelType';
+import type { ModelType } from '@lib/core';
 import { getStatusCodes } from '../components/render/StatusRenderer';
 import { useGlobalStatusState } from '../states/StatusState';
 

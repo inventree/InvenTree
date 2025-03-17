@@ -31,11 +31,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { Boundary } from '@lib/components/items/Boundary';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { ModelInformationDict, getModelInfo } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
+import { Boundary } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { ModelInformationDict, getModelInfo } from '@lib/core';
+import { UserRoles } from '@lib/core';
 import { cancelEvent } from '@lib/functions/events';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';

@@ -3,7 +3,7 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Boundary } from '@lib/components/items/Boundary';
+import { Boundary } from '@lib/components';
 import { identifierString } from '@lib/functions/conversion';
 import type { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';

@@ -12,9 +12,9 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import type { TableColumn } from '@lib/components/tables/Column';
-import { TableHoverCard } from '@lib/components/tables/TableHoverCard';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import dayjs from 'dayjs';
 import { formatDate } from '../../defaults/formatters';
 import { navigateToLink } from '../../functions/navigation';

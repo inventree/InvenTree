@@ -1,6 +1,6 @@
-import { StylishText } from '@lib/components/items/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
 import { t } from '@lingui/macro';
 import { Accordion } from '@mantine/core';
 import {

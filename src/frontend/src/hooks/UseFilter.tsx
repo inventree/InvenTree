@@ -5,9 +5,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import type { TableFilterChoice } from '@lib/components/tables/Filter';
 import { useApi } from '@lib/contexts/ApiContext';
 import { resolveItem } from '@lib/functions/conversion';
+import type { TableFilterChoice } from '@lib/tables';
 
 type UseFilterProps = {
   url: string;

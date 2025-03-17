@@ -10,12 +10,12 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { ActionButton } from '@lib/components/buttons/ActionButton';
-import type { TableColumn } from '@lib/components/tables/Column';
-import type { TableFilter } from '@lib/components/tables/Filter';
+import { ActionButton } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { formatFileSize } from '../../defaults/formatters';

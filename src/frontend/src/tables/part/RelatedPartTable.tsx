@@ -3,9 +3,9 @@ import { Group, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import type { TableColumn } from '@lib/components/tables/Column';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { UserRoles } from '@lib/enums/Roles';
+import { ApiEndpoints } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';

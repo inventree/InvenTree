@@ -1,4 +1,4 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
 import { useCallback } from 'react';
 import type { PluginInterface } from '../components/plugins/PluginInterface';
 import { useInstance } from './UseInstance';

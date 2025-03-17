@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { Code } from '@mantine/core';
 import { useMemo } from 'react';
 
-import type { TableColumn } from '@lib/components/tables/Column';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { InvenTreeTable } from '../InvenTreeTable';

@@ -3,7 +3,7 @@ import { Group, SegmentedControl, Stack, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StylishText } from '@lib/components/items/StylishText';
+import { StylishText } from '@lib/components';
 import { useUserState } from '../../states/UserState';
 
 interface SettingsHeaderInterface {

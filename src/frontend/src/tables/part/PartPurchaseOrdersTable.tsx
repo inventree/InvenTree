@@ -2,12 +2,12 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { ProgressBar } from '@lib/components/items/ProgressBar';
-import type { TableColumn } from '@lib/components/tables/Column';
-import type { TableFilter } from '@lib/components/tables/Filter';
-import { TableHoverCard } from '@lib/components/tables/TableHoverCard';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
+import { ProgressBar } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import { formatCurrency } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';

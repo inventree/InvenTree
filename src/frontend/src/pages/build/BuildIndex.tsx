@@ -3,9 +3,9 @@ import { Stack } from '@mantine/core';
 import { IconCalendar, IconTable, IconTools } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import type { TableFilter } from '@lib/components/tables/Filter';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { TableFilter } from '@lib/tables';
 import { useLocalStorage } from '@mantine/hooks';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
 import OrderCalendar from '../../components/calendar/OrderCalendar';

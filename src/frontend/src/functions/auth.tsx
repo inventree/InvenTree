@@ -1,4 +1,4 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/core';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';

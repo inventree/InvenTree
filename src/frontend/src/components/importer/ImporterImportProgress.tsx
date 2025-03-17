@@ -3,8 +3,8 @@ import { Center, Container, Loader, Stack, Text } from '@mantine/core';
 import { useInterval } from '@mantine/hooks';
 import { useEffect } from 'react';
 
-import { StylishText } from '@lib/components/items/StylishText';
-import { ModelType } from '@lib/enums/ModelType';
+import { StylishText } from '@lib/components';
+import { ModelType } from '@lib/core';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 

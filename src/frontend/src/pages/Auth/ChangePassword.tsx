@@ -1,4 +1,4 @@
-import { StylishText } from '@lib/components/items/StylishText';
+import { StylishText } from '@lib/components';
 import { Trans, t } from '@lingui/macro';
 import {
   Button,

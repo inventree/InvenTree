@@ -5,13 +5,14 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
-import { ProgressBar } from '@lib/components/items/ProgressBar';
-import type {
-  TableColumn,
-  TableColumnProps
-} from '@lib/components/tables/Column';
-import { ProjectCodeHoverCard } from '@lib/components/tables/TableHoverCard';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ProgressBar } from '@lib/components';
+import {
+  type TableColumn,
+  type TableColumnProps,
+  TableHoverCard
+} from '@lib/tables';
+
+import type { ModelType } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
 import { YesNoButton } from '../components/buttons/YesNoButton';
@@ -165,6 +166,25 @@ export function LineItemsProgressColumn(): TableColumn {
       />
     )
   };
+}
+
+/**
+ * Custom hovercard for displaying projectcode detail in a table
+ */
+function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
+  return projectCode ? (
+    <TableHoverCard
+      value={projectCode?.code}
+      title={t`Project Code`}
+      extra={
+        projectCode && (
+          <Text key='project-code'>{projectCode?.description}</Text>
+        )
+      }
+    />
+  ) : (
+    '-'
+  );
 }
 
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {

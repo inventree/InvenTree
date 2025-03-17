@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import type { TableColumn } from '@lib/components/tables/Column';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';

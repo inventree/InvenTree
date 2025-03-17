@@ -1,7 +1,7 @@
 import { Loader } from '@mantine/core';
 import { useMemo, useState } from 'react';
 
-import type { ModelType } from '@lib/enums/ModelType';
+import type { ModelType } from '@lib/core';
 import { api } from '../../App';
 import { RenderInstance } from './Instance';
 
