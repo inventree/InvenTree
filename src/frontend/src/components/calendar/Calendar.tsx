@@ -153,7 +153,7 @@ export default function Calendar({
                   variant='transparent'
                   aria-label='calendar-select-filters'
                 >
-                  <Tooltip label={t`Calendar Filters`}>
+                  <Tooltip label={t`Calendar Filters`} position='top-end'>
                     <IconFilter
                       onClick={() => setFiltersVisible(!filtersVisible)}
                     />
@@ -162,8 +162,11 @@ export default function Calendar({
               </Indicator>
             )}
             {enableDownload && (
-              <ActionIcon variant='transparent' aria-label='table-export-data'>
-                <Tooltip label={t`Download data`} position='bottom'>
+              <ActionIcon
+                variant='transparent'
+                aria-label='calendar-export-data'
+              >
+                <Tooltip label={t`Download data`} position='top-end'>
                   <IconDownload onClick={state.exportModal.open} />
                 </Tooltip>
               </ActionIcon>

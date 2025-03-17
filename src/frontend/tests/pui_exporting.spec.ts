@@ -114,4 +114,7 @@ test('Exporting - BOM', async ({ page }) => {
     .getByRole('link', { name: /InvenTree_BomItem_.*\.tsv/ })
     .first()
     .waitFor();
+
+  // Required because we downloaded a file
+  await page.context().close();
 });
