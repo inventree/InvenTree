@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
+  activateCalendarView,
   clearTableFilters,
   getRowFromCell,
   loadTab,
@@ -88,6 +89,21 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .getByLabel('Build Details')
     .getByText('Making a high level assembly')
     .waitFor();
+});
+
+test('Build Order - Calendar', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'manufacturing/index/buildorders');
+  await activateCalendarView(page);
+
+  // Check "part category" filter
+  await page.getByLabel('calendar-select-filters').click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByPlaceholder('Select filter').fill('category');
+  await page.getByRole('option', { name: 'Category', exact: true }).click();
+  await page.getByLabel('related-field-filter-category').click();
+  await page.getByText('Part category, level 1').waitFor();
 });
 
 test('Build Order - Edit', async ({ page }) => {

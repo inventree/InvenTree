@@ -1,12 +1,32 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 320
+INVENTREE_API_VERSION = 325
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v324 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/9244
+    - Adds the option for superusers to list all user tokens
+    - Make list endpoints sortable, filterable and searchable
+
+v324 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9320
+    - Adds BulkUpdate support for the SalesOrderAllocation model
+    - Adds BulkUpdate support for the PartCategory model
+    - Adds BulkUpdate support for the StockLocation model
+
+v323 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9313
+    - Adds BulkUpdate support to the Part API endpoint
+    - Remove legacy API endpoint to set part category for multiple parts
+
+v322 - 2025-03-16 : https://github.com/inventree/InvenTree/pull/8933
+    - Add min_date and max_date query filters for orders, for use in calendar views
+
+v321 - 2025-03-06 : https://github.com/inventree/InvenTree/pull/9236
+    - Adds conditionally-returned fields to the schema to match API behavior
+    - Removes required flag for nullable read-only fields to match API behavior
 
 v320 - 2025-03-05 : https://github.com/inventree/InvenTree/pull/9243
     - Link fields are now up to 2000 chars long

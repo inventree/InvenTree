@@ -38,6 +38,8 @@ test('Plugins - Settings', async ({ page, request }) => {
     .fill(originalValue == '999' ? '1000' : '999');
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  await page.waitForTimeout(500);
+
   // Change it back
   await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
   await page.getByLabel('number-field-value').fill(originalValue);

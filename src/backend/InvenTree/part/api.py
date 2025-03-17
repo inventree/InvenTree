@@ -20,7 +20,7 @@ import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
 from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -226,7 +226,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -1239,7 +1239,7 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
+class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
@@ -1405,13 +1405,6 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
         'tags__name',
         'tags__slug',
     ]
-
-
-class PartChangeCategory(CreateAPI):
-    """API endpoint to change the location of multiple parts in bulk."""
-
-    serializer_class = part_serializers.PartSetCategorySerializer
-    queryset = Part.objects.none()
 
 
 class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
@@ -2230,11 +2223,6 @@ part_api_urls = [
             # Part detail endpoint
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),
-    ),
-    path(
-        'change_category/',
-        PartChangeCategory.as_view(),
-        name='api-part-change-category',
     ),
     path('', PartList.as_view(), name='api-part-list'),
 ]
