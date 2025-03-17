@@ -55,7 +55,7 @@ ignore = [
     "D417",
     # - RUF032 - decimal-from-float-literal
     "RUF032",
-    "RUF45",
+    "RUF045",
 
     # TODO These should be followed up and fixed
     # - B904 Within an `except` clause, raise exceptions
