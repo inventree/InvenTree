@@ -72,6 +72,8 @@ def extract_column_names(data_file) -> list:
     headers = []
 
     for idx, header in enumerate(data.headers):
+        header = header.strip()
+
         if header:
             headers.append(header)
         else:

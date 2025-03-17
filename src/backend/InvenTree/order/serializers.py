@@ -933,7 +933,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         """Perform the actual database transaction to receive purchase order items."""
         data = self.validated_data
 
-        request = self.context['request']
+        request = self.context.get('request')
         order = self.context['order']
 
         items = data['items']
@@ -956,7 +956,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                         item['line_item'],
                         loc,
                         item['quantity'],
-                        request.user,
+                        request.user if request else None,
                         status=item['status'],
                         barcode=item.get('barcode', ''),
                         batch_code=item.get('batch_code', ''),
@@ -1416,8 +1416,8 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
         data = self.validated_data
 
-        request = self.context['request']
-        user = request.user
+        request = self.context.get('request')
+        user = request.user if request else None
 
         # Extract shipping date (defaults to today's date)
         now = current_date()
@@ -1554,10 +1554,10 @@ class SalesOrderCompleteSerializer(OrderAdjustSerializer):
 
     def save(self):
         """Save the serializer to complete the SalesOrder."""
-        request = self.context['request']
+        request = self.context.get('request')
         data = self.validated_data
 
-        user = getattr(request, 'user', None)
+        user = request.user if request else None
 
         self.order.ship_order(
             user, allow_incomplete_lines=str2bool(data.get('accept_incomplete', False))
@@ -2002,7 +2002,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     def save(self):
         """Saving this serializer marks the returned items as received."""
         order = self.context['order']
-        request = self.context['request']
+        request = self.context.get('request')
 
         data = self.validated_data
         items = data['items']
@@ -2015,7 +2015,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
                 order.receive_line_item(
                     line_item,
                     location,
-                    request.user,
+                    request.user if request else None,
                     note=data.get('note', ''),
                     status=item.get('status', None),
                 )

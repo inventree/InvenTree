@@ -207,8 +207,10 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
         """Complete the provided rows."""
         rows = self.validated_data['rows']
 
+        request = self.context.get('request', None)
+
         for row in rows:
-            row.validate(commit=True)
+            row.validate(commit=True, request=request)
 
         if session := self.context.get('session', None):
             session.check_complete()
