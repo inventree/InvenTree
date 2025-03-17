@@ -19,9 +19,9 @@ import type React from 'react';
 import { Suspense, useState } from 'react';
 
 import { IconX } from '@tabler/icons-react';
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
 /**

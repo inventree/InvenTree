@@ -2,9 +2,9 @@ import { t } from '@lingui/macro';
 import { Accordion, Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
 import { StylishText } from '../../../../components/items/StylishText';
 import { useTable } from '../../../../hooks/UseTable';
-import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';

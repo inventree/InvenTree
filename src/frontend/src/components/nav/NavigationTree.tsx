@@ -21,11 +21,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../../lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
-import type { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';

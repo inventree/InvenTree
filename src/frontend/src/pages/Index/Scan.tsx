@@ -19,6 +19,8 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hideNotification, showNotification } from '@mantine/notifications';
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../../lib/enums/ModelType';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
@@ -29,8 +31,6 @@ import {
   notYetImplemented,
   showApiErrorMessage
 } from '../../functions/notifications';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 

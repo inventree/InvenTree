@@ -5,6 +5,7 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
+import type { ModelType } from '../../lib/enums/ModelType';
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
@@ -13,7 +14,6 @@ import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
-import type { ModelType } from '../lib/enums/ModelType';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';

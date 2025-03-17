@@ -2,9 +2,9 @@ import { create } from 'zustand';
 
 import { t } from '@lingui/macro';
 import { hideNotification, showNotification } from '@mantine/notifications';
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { api } from '../App';
 import { generateUrl } from '../functions/urls';
-import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl } from './ApiState';
 
 type IconPackage = {

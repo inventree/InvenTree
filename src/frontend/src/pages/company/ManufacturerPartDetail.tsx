@@ -8,6 +8,9 @@ import {
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../../lib/enums/ModelType';
+import { UserRoles } from '../../../lib/enums/Roles';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -35,9 +38,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../lib/enums/ModelType';
-import { UserRoles } from '../../lib/enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';

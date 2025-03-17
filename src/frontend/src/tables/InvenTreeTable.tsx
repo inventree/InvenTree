@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { hideNotification, showNotification } from '@mantine/notifications';
+import type { ModelType } from '../../lib/enums/ModelType';
 import { Boundary } from '../components/Boundary';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
@@ -22,7 +23,6 @@ import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
 import type { TableState } from '../hooks/UseTable';
-import type { ModelType } from '../lib/enums/ModelType';
 import { useLocalState } from '../states/LocalState';
 import type { TableColumn } from './Column';
 import type { TableFilter } from './Filter';

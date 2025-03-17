@@ -3,9 +3,9 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
+import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { formatCurrency } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../../states/ApiState';
 import type { TableColumn } from '../../../tables/Column';
 import { DateColumn } from '../../../tables/ColumnRenderers';

@@ -31,4 +31,4 @@ dist-ssr
 /coverage/
 
 # library component directory
-!src/lib
+!lib/

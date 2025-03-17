@@ -10,6 +10,9 @@ import {
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../../lib/enums/ModelType';
+import { UserRoles } from '../../../lib/enums/Roles';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -34,9 +37,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../lib/enums/ModelType';
-import { UserRoles } from '../../lib/enums/Roles';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';

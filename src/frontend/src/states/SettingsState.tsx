@@ -3,9 +3,9 @@
  */
 import { create, createStore } from 'zustand';
 
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { api } from '../App';
 import { isTrue } from '../functions/conversion';
-import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { type PathParams, apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 import type { Setting, SettingsLookup } from './states';

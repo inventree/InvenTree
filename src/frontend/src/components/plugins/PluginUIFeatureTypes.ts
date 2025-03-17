@@ -1,5 +1,5 @@
+import type { ModelType } from '../../../lib/enums/ModelType';
 import type { InvenTreeIconType } from '../../functions/icons';
-import type { ModelType } from '../../lib/enums/ModelType';
 import type { TemplateI } from '../../tables/settings/TemplateTable';
 import type { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
 import type { InvenTreeContext } from './PluginContext';

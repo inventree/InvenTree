@@ -21,12 +21,12 @@ import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
 import { showNotification } from '@mantine/notifications';
+import type { UserRoles } from '../../../lib/enums/Roles';
 import { api } from '../../App';
 import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';
-import type { UserRoles } from '../../lib/enums/Roles';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';

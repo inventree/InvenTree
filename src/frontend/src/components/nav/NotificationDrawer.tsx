@@ -18,11 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../../lib/enums/ModelType';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../lib/enums/ModelType';
 import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';

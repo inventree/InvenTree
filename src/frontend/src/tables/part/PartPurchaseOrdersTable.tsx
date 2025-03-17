@@ -2,11 +2,11 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../../lib/enums/ModelType';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';

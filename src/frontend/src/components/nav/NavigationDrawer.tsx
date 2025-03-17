@@ -10,10 +10,10 @@ import {
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { ModelType } from '../../../lib/enums/ModelType';
+import { UserRoles } from '../../../lib/enums/Roles';
 import { AboutLinks, DocumentationLinks } from '../../defaults/links';
 import useInstanceName from '../../hooks/UseInstanceName';
-import { ModelType } from '../../lib/enums/ModelType';
-import { UserRoles } from '../../lib/enums/Roles';
 import * as classes from '../../main.css';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';

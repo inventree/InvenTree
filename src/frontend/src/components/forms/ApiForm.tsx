@@ -23,6 +23,8 @@ import {
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
+import type { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../../lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
 import {
   type NestedDict,
@@ -37,8 +39,6 @@ import {
 } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import type { TableState } from '../../hooks/UseTable';
-import type { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
-import type { ModelType } from '../../lib/enums/ModelType';
 import type { PathParams } from '../../states/ApiState';
 import { Boundary } from '../Boundary';
 import {

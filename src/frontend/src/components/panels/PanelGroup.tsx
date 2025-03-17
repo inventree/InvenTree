@@ -28,11 +28,11 @@ import {
   useParams
 } from 'react-router-dom';
 
+import type { ModelType } from '../../../lib/enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
-import type { ModelType } from '../../lib/enums/ModelType';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';

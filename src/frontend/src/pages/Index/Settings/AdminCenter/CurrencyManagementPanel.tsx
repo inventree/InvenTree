@@ -4,13 +4,13 @@ import { showNotification } from '@mantine/notifications';
 import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
 import { api } from '../../../../App';
 import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useTable } from '../../../../hooks/UseTable';
-import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 

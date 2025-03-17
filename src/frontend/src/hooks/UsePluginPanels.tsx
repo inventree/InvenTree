@@ -1,6 +1,8 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import type { ModelType } from '../../lib/enums/ModelType';
 import { api } from '../App';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
@@ -13,8 +15,6 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
-import type { ModelType } from '../lib/enums/ModelType';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 

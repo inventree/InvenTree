@@ -3,11 +3,11 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid, Stack } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
+import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
+import { ModelType } from '../../../../lib/enums/ModelType';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
-import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { ModelType } from '../../../lib/enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
 import type { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';

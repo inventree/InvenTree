@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { api } from '../App';
 import type { DashboardWidgetProps } from '../components/dashboard/DashboardWidget';
 import DashboardWidgetLibrary from '../components/dashboard/DashboardWidgetLibrary';
@@ -11,7 +12,6 @@ import {
 } from '../components/plugins/PluginUIFeature';
 import RemoteComponent from '../components/plugins/RemoteComponent';
 import { identifierString } from '../functions/conversion';
-import { ApiEndpoints } from '../lib/enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { useUserState } from '../states/UserState';

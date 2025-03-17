@@ -10,9 +10,9 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
+import type { ModelType } from '../../../lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
-import type { ModelType } from '../../lib/enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import {
   type SettingsStateProps,

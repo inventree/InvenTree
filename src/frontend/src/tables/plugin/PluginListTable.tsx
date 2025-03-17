@@ -13,6 +13,7 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
@@ -25,7 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
