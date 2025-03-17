@@ -5,12 +5,15 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import {
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -120,10 +123,38 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
+  const setParent = useBulkEditApiFormModal({
+    url: ApiEndpoints.category_list,
+    items: table.selectedIds,
+    title: t`Set Parent Category`,
+    fields: {
+      parent: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const tableActions = useMemo(() => {
     const can_add = user.hasAddRole(UserRoles.part_category);
+    const can_edit = user.hasChangeRole(UserRoles.part_category);
 
     return [
+      <ActionDropdown
+        tooltip={t`Category Actions`}
+        icon={<InvenTreeIcon icon='category' />}
+        disabled={!table.hasSelectedRecords}
+        actions={[
+          {
+            name: t`Set Parent`,
+            icon: <InvenTreeIcon icon='category' />,
+            tooltip: t`Set parent category for the selected items`,
+            hidden: !can_edit,
+            disabled: !table.hasSelectedRecords,
+            onClick: () => {
+              setParent.open();
+            }
+          }
+        ]}
+      />,
       <AddItemButton
         key='add-part-category'
         tooltip={t`Add Part Category`}
@@ -131,7 +162,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         hidden={!can_add}
       />
     ];
-  }, [user]);
+  }, [user, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -154,12 +185,14 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     <>
       {newCategory.modal}
       {editCategory.modal}
+      {setParent.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.category_list)}
         tableState={table}
         columns={tableColumns}
         props={{
           enableDownload: true,
+          enableSelection: true,
           params: {
             parent: parentId,
             top_level: parentId === undefined ? true : undefined

@@ -21,7 +21,7 @@ import common.settings
 import company.models
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
@@ -1178,7 +1178,7 @@ class SalesOrderAllocationMixin:
         return queryset
 
 
-class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
+class SalesOrderAllocationList(SalesOrderAllocationMixin, BulkUpdateMixin, ListAPI):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter

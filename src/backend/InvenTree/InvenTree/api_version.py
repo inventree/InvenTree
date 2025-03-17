@@ -1,17 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 324
+INVENTREE_API_VERSION = 325
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v324 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9096
+v325 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/9096
     - Overhaul the data-export API functionality
     - Allow customization of data exporting via plugins
     - Consolidate LabelOutput and ReportOutput API endpoints into single DataOutput endpoint
+
+v324 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9320
+    - Adds BulkUpdate support for the SalesOrderAllocation model
+    - Adds BulkUpdate support for the PartCategory model
+    - Adds BulkUpdate support for the StockLocation model
 
 v323 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9313
     - Adds BulkUpdate support to the Part API endpoint
