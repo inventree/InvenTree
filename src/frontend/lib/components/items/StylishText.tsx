@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core';
+import { Text, useMantineTheme } from '@mantine/core';
 
 export function StylishText({
   children,
@@ -7,8 +7,10 @@ export function StylishText({
   children: JSX.Element | string;
   size?: string;
 }>) {
+  const theme = useMantineTheme();
+
   return (
-    <Text size={size} variant='gradient'>
+    <Text size={size} className={classes.signText} c={theme.primaryColor}>
       {children}
     </Text>
   );
