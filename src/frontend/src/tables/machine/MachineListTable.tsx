@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -48,7 +49,6 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';

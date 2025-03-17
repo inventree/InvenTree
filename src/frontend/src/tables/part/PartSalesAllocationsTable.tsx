@@ -4,6 +4,8 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import RowExpansionIcon from '../../../lib/components/tables/RowExpansionIcon';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -11,7 +13,6 @@ import { ProgressBar } from '../../components/items/ProgressBar';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DescriptionColumn,
   ProjectCodeColumn,
@@ -19,7 +20,6 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowViewAction } from '../RowActions';
-import RowExpansionIcon from '../RowExpansionIcon';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
 
 export default function PartSalesAllocationsTable({

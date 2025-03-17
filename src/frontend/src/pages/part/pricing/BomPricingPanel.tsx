@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
+import type { TableColumn } from '../../../../lib/components/tables/Column';
 import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../../lib/enums/ModelType';
 import { CHART_COLORS } from '../../../components/charts/colors';
@@ -22,7 +23,6 @@ import {
 } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import type { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';

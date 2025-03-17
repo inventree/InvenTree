@@ -12,6 +12,8 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
@@ -34,7 +36,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
@@ -44,7 +45,6 @@ import {
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {

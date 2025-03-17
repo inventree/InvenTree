@@ -3,10 +3,7 @@ import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import {
-  InvenTreeIcon,
-  type InvenTreeIconType
-} from '../../lib/components/icons/icons';
+import { InvenTreeIcon, type InvenTreeIconType } from '../icons/icons';
 
 /*
  * A custom hovercard element for displaying extra information in a table cell.

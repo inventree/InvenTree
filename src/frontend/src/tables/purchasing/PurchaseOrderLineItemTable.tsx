@@ -4,6 +4,8 @@ import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -25,7 +27,6 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   CurrencyColumn,
   LinkColumn,
@@ -42,7 +43,6 @@ import {
   RowDuplicateAction,
   RowEditAction
 } from '../RowActions';
-import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Display a table of purchase order line items, for a specific order

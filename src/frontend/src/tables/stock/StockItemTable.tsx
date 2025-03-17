@@ -3,6 +3,8 @@ import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
 import { InvenTreeIcon } from '../../../lib/components/icons/icons';
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -27,7 +29,6 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DateColumn,
   DescriptionColumn,
@@ -37,7 +38,6 @@ import {
 } from '../ColumnRenderers';
 import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the stock item table

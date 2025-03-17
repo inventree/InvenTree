@@ -5,6 +5,11 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
+import type {
+  TableColumn,
+  TableColumnProps
+} from '../../lib/components/tables/Column';
+import { ProjectCodeHoverCard } from '../../lib/components/tables/TableHoverCard';
 import type { ModelType } from '../../lib/enums/ModelType';
 import { resolveItem } from '../../lib/functions/conversion';
 import { YesNoButton } from '../components/buttons/YesNoButton';
@@ -15,8 +20,6 @@ import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import { cancelEvent } from '../functions/events';
 import { useGlobalSettingsState } from '../states/SettingsState';
-import type { TableColumn, TableColumnProps } from './Column';
-import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
 export function PartColumn({

@@ -60,7 +60,8 @@ export default defineConfig({
       entry: {
         components: resolve(__dirname, 'lib/components.ts'),
         core: resolve(__dirname, 'lib/core.ts'),
-        functions: resolve(__dirname, 'lib/functions.ts')
+        functions: resolve(__dirname, 'lib/functions.ts'),
+        tables: resolve(__dirname, 'lib/tables.ts')
       },
       name: 'InvenTree',
       formats: ['es']

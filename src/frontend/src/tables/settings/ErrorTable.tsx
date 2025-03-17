@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { CopyButton } from '../../../lib/components/buttons/CopyButton';
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
@@ -11,7 +12,6 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 

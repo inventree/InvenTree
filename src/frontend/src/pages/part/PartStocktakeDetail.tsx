@@ -11,6 +11,7 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 
 import dayjs from 'dayjs';
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { UserRoles } from '../../../lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -27,7 +28,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 

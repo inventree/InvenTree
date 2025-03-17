@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
@@ -23,11 +25,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 // Render an individual parameter cell
 function ParameterCell({

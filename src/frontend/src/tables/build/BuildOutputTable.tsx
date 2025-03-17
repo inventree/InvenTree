@@ -20,6 +20,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import { InvenTreeIcon } from '../../../lib/components/icons/icons';
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
@@ -41,11 +43,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
-import { TableHoverCard } from '../TableHoverCard';
 import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {

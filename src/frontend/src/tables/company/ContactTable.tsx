@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -17,7 +18,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 

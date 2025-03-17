@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
@@ -13,7 +14,6 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';

@@ -14,6 +14,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
@@ -28,7 +29,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import type { RowAction } from '../RowActions';
 

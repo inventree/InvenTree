@@ -2,6 +2,8 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -16,7 +18,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
@@ -27,7 +28,6 @@ import {
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Construct a table listing supplier parts

@@ -21,16 +21,16 @@ import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../../lib/components/Boundary';
 import { ActionButton } from '../../lib/components/buttons/ActionButton';
 import { ButtonMenu } from '../../lib/components/buttons/ButtonMenu';
+import { TableColumnSelect } from '../../lib/components/tables/ColumnSelect';
+import { TableSearchInput } from '../../lib/components/tables/Search';
 import { useApi } from '../../lib/contexts/ApiContext';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
-import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
 import type { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 import type { InvenTreeTableProps } from './InvenTreeTable';
-import { TableSearchInput } from './Search';
 
 /**
  * Render a composite header for an InvenTree table

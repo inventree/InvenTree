@@ -3,6 +3,8 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { UserRoles } from '../../../lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -18,11 +20,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a table listing parameters for a given part

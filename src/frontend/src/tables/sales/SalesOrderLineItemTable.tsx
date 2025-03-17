@@ -12,6 +12,9 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import RowExpansionIcon from '../../../lib/components/tables/RowExpansionIcon';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -33,7 +36,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -44,8 +46,6 @@ import {
   RowEditAction,
   RowViewAction
 } from '../RowActions';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
 import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({

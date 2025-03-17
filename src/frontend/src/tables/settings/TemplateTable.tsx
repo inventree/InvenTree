@@ -5,6 +5,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { GetIcon } from '../../../lib/components/icons/icons';
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import type { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
 import { identifierString } from '../../../lib/functions/conversion';
@@ -41,7 +42,6 @@ import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn, DateColumn } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';

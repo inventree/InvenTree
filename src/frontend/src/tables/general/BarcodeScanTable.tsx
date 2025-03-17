@@ -3,11 +3,11 @@ import { IconTrash } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { RenderInstance } from '../../components/render/Instance';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowViewAction } from '../RowActions';
 

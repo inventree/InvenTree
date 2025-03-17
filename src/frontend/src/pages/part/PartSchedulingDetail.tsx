@@ -13,16 +13,16 @@ import { type ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import dayjs from 'dayjs';
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { formatDate } from '../../defaults/formatters';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../../tables/Column';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { TableHoverCard } from '../../tables/TableHoverCard';
 
 /*
  * Render a tooltip for the chart, with correct date information

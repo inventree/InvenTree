@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import type { TableColumn } from '../../../lib/components/tables/Column';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { cancelEvent } from '../../functions/events';
@@ -20,7 +21,6 @@ import {
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../../tables/Column';
 import type { TableFilter } from '../../tables/Filter';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import {

@@ -4,6 +4,8 @@ import { IconLock } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { TableColumn } from '../../../lib/components/tables/Column';
+import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -18,7 +20,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -28,7 +29,6 @@ import {
   RowEditAction,
   RowViewAction
 } from '../RowActions';
-import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartTestTemplateTable({
   partId,
