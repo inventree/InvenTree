@@ -44,6 +44,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
         See SimpleMetadata.determine_actions for more information.
         """
+        from InvenTree.api import BulkUpdateMixin
+
         actions = {}
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
@@ -54,7 +56,9 @@ class InvenTreeMetadata(SimpleMetadata):
                     view.check_permissions(view.request)
                 # Test object permissions
                 if method == 'PUT' and hasattr(view, 'get_object'):
-                    view.get_object()
+                    if not issubclass(view.__class__, BulkUpdateMixin):
+                        # Bypass the get_object method for the BulkUpdateMixin
+                        view.get_object()
             except (exceptions.APIException, PermissionDenied, Http404):
                 pass
             else:
