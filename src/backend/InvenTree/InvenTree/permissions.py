@@ -1,7 +1,10 @@
 """Permission set for InvenTree."""
 
 from functools import wraps
+from typing import Optional
 
+from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
+from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import permissions
 
 import users.models
@@ -94,12 +97,96 @@ class RolePermission(permissions.BasePermission):
         return users.models.RuleSet.check_table_permission(user, table, permission)
 
 
-class IsSuperuser(permissions.IsAdminUser):
+def map_scope(
+    roles: Optional[list[str]] = None, only_read=False, read_name='read'
+) -> dict:
+    """Map the required scopes to the current view."""
+
+    def scope_name(tables, action):
+        if only_read:
+            return [[read_name]]
+        if tables:
+            return [[action, table] for table in tables]
+        return [[action]]
+
+    return {
+        'GET': scope_name(roles, 'view'),
+        'POST': scope_name(roles, 'add'),
+        'PUT': scope_name(roles, 'change'),
+        'PATCH': scope_name(roles, 'change'),
+        'DELETE': scope_name(roles, 'delete'),
+        'OPTIONS': [['read']],
+    }
+
+
+# Precalculate the roles mapping
+roles = users.models.RuleSet.get_ruleset_models()
+precalculated_roles = {}
+for role, tables in roles.items():
+    for table in tables:
+        if table not in precalculated_roles:
+            precalculated_roles[table] = []
+        precalculated_roles[table].append(role)
+
+
+class CombinedPermissionMixin:
+    """Mixin that combines the permissions of normal classes and token classes."""
+
+    def has_permission(self, request, view):
+        """Check if the user has the required scopes or was authenticated another way."""
+        is_authenticated = permissions.IsAuthenticated().has_permission(request, view)
+        oauth2authenticated = False
+        if is_authenticated:
+            oauth2authenticated = isinstance(
+                request.successful_authenticator, OAuth2Authentication
+            )
+
+        return (is_authenticated and not oauth2authenticated) or super().has_permission(
+            request, view
+        )
+
+
+class InvenTreeTokenMatchesOASRequirements(
+    CombinedPermissionMixin, TokenMatchesOASRequirements
+):
+    """Permission that discovers the required scopes from the OpenAPI schema."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        if hasattr(view, 'required_alternate_scopes'):
+            return view.required_alternate_scopes
+        try:
+            # Extract the model name associated with this request
+            model = get_model_for_view(view)
+
+            if model is None:
+                return map_scope(only_read=True)
+
+            return map_scope(
+                roles=precalculated_roles.get(
+                    f'{model._meta.app_label}_{model._meta.model_name}', []
+                )
+            )
+        except AttributeError:
+            # We will assume that if the serializer class does *not* have a Meta,
+            # then we don't need a permission
+            return map_scope(only_read=True)
+        except Exception:
+            return map_scope(only_read=True)
+
+
+class IsSuperuserOrSuperScope(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
+):
     """Allows access only to superuser users."""
 
     def has_permission(self, request, view):
         """Check if the user is a superuser."""
         return bool(request.user and request.user.is_superuser)
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True, read_name='superuser')
 
 
 class IsSuperuserOrReadOnly(permissions.IsAdminUser):
@@ -122,6 +209,38 @@ class IsStaffOrReadOnly(permissions.IsAdminUser):
             (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
         )
+
+
+class IsAuthenticatedOrReadScope(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAuthenticated
+):
+    """Allows access only to authenticated users or read scope tokens."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
+
+
+class IsAdminOrAdminScope(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
+):
+    """Allows access only to admin users or admin scope tokens."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True, read_name='admin')
+
+
+class AllowAnyOrReadScope(TokenMatchesOASRequirements, permissions.AllowAny):
+    """Allows access to any user or read scope tokens."""
+
+    def has_permission(self, request, view):
+        """Anyone is allowed."""
+        return True
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
 
 
 def auth_exempt(view_func):

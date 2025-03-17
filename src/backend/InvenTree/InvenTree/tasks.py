@@ -705,3 +705,13 @@ def email_user(user_id: int, subject: str, message: str) -> None:
         return
 
     user.email_user(subject=subject, message=message)
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def run_oauth_maintenance():
+    """Run the OAuth maintenance task(s)."""
+    from oauth2_provider.models import clear_expired
+
+    logger.info('Starting OAuth maintenance task')
+    clear_expired()
+    logger.info('Completed OAuth maintenance task')
