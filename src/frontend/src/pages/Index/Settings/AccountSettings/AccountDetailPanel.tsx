@@ -2,8 +2,8 @@ import { Trans, t } from '@lingui/macro';
 import { Badge, Group, Stack, Table, Title } from '@mantine/core';
 import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
-
 import { useNavigate } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
 import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
@@ -15,10 +15,9 @@ import { useUserState } from '../../../../states/UserState';
 export function AccountDetailPanel() {
   const navigate = useNavigate();
 
-  const [user, fetchUserState] = useUserState((state) => [
-    state.user,
-    state.fetchUserState
-  ]);
+  const [user, fetchUserState] = useUserState(
+    useShallow((state) => [state.user, state.fetchUserState])
+  );
 
   const userFields: ApiFormFieldSet = useMemo(() => {
     return {

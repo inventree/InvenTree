@@ -21,6 +21,9 @@ import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
 
+import type { JSX } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+
 type AboutLookupRef = {
   ref: string;
   title: JSX.Element;
@@ -30,14 +33,14 @@ type AboutLookupRef = {
 
 export function AboutInvenTreeModal({
   context,
-  id
+  id,
+  innerProps
 }: Readonly<
   ContextModalProps<{
     modalBody: string;
   }>
 >) {
-  const [user] = useUserState((state) => [state.user]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [user] = useUserState(useShallow((state) => [state.user]));
 
   if (!user?.is_staff)
     return (
@@ -45,7 +48,18 @@ export function AboutInvenTreeModal({
         <Trans>This information is only available for staff users</Trans>
       </Text>
     );
+  return <AboutContent context={context} id={id} innerProps={innerProps} />;
+}
 
+const AboutContent = ({
+  context,
+  id
+}: Readonly<
+  ContextModalProps<{
+    modalBody: string;
+  }>
+>) => {
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const { isLoading, data } = useQuery({
     queryKey: ['version'],
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
@@ -184,7 +198,7 @@ export function AboutInvenTreeModal({
       </Group>
     </Stack>
   );
-}
+};
 
 function renderVersionBadge(data: any) {
   const badgeType = () => {
