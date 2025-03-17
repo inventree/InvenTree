@@ -18,7 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { Boundary } from '../../../lib/components/Boundary';
-import { StylishText } from '../items/StylishText';
+import { StylishText } from '../../../lib/components/items/StylishText';
 
 /**
  * Progress stepper displayed at the top of the wizard drawer.

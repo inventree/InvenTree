@@ -19,8 +19,8 @@ import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IconCheck } from '@tabler/icons-react';
+import { StylishText } from '../../lib/components/items/StylishText';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import { StylishText } from '../components/items/StylishText';
 import type { FilterSetState } from '../hooks/UseFilterSet';
 import {
   type TableFilter,

@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
+import { ProgressBar } from '../../../lib/components/items/ProgressBar';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
@@ -22,7 +23,6 @@ import {
 } from '../../states/SettingsState';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
-import { ProgressBar } from '../items/ProgressBar';
 
 /**
  * Hook to track the progress of a printing operation

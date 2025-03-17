@@ -35,6 +35,10 @@ import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../../../lib/components/Boundary';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
+import {
+  ModelInformationDict,
+  getModelInfo
+} from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
 import { api } from '../../App';
 import { cancelEvent } from '../../functions/events';
@@ -43,7 +47,6 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict, getModelInfo } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {

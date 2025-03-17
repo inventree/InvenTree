@@ -14,12 +14,12 @@ import { IconMailCheck } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
+import { StylishText } from '../../../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { api } from '../../../App';
 import { formatDate } from '../../../defaults/formatters';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
-import { StylishText } from '../../items/StylishText';
 
 /**
  * Render a link to an external news item

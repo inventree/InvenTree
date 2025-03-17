@@ -29,9 +29,9 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
+import { StylishText } from '../../../../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
 import { api } from '../../../../App';
-import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useTable } from '../../../../hooks/UseTable';

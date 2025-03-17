@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import { ProgressBar } from '../../../lib/components/items/ProgressBar';
 import type { TableColumn } from '../../../lib/components/tables/Column';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
@@ -30,7 +31,6 @@ import {
 } from '../../tables/RowActions';
 import { YesNoButton } from '../buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
-import { ProgressBar } from '../items/ProgressBar';
 import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({

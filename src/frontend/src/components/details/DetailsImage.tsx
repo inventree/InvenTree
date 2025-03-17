@@ -23,6 +23,7 @@ import { useMemo, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import { InvenTreeIcon } from '../../../lib/components/icons/icons';
+import { StylishText } from '../../../lib/components/items/StylishText';
 import type { UserRoles } from '../../../lib/enums/Roles';
 import { api } from '../../App';
 import { cancelEvent } from '../../functions/events';
@@ -33,7 +34,6 @@ import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
 import { ApiImage } from '../images/ApiImage';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Props for detail image

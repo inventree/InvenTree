@@ -14,12 +14,12 @@ import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { CopyButton } from '../../../lib/components/buttons/CopyButton';
+import { StylishText } from '../../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { api } from '../../App';
 import { generateUrl } from '../../functions/urls';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { StylishText } from '../items/StylishText';
 
 type AboutLookupRef = {
   ref: string;

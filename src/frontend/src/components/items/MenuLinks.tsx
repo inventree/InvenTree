@@ -15,8 +15,8 @@ import {
   InvenTreeIcon,
   type InvenTreeIconType
 } from '../../../lib/components/icons/icons';
+import { StylishText } from '../../../lib/components/items/StylishText';
 import { navigateToLink } from '../../functions/navigation';
-import { StylishText } from './StylishText';
 
 export interface MenuLinkItem {
   id: string;

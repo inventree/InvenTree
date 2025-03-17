@@ -19,6 +19,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '../../../lib/components/Boundary';
+import { StylishText } from '../../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
 import { ModelInformationDict } from '../../../lib/enums/ModelType';
@@ -28,7 +29,6 @@ import { getDetailUrl } from '../../functions/urls';
 import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Render a single notification entry in the drawer

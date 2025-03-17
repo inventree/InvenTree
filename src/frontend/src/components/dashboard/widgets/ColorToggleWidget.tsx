@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 import { Group } from '@mantine/core';
 
+import { StylishText } from '../../../../lib/components/items/StylishText';
 import { ColorToggle } from '../../items/ColorToggle';
-import { StylishText } from '../../items/StylishText';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 function ColorToggleWidget(title: string) {

@@ -1,7 +1,5 @@
 import { Text } from '@mantine/core';
 
-import * as classes from '../../main.css';
-
 export function StylishText({
   children,
   size = 'md'
@@ -10,7 +8,7 @@ export function StylishText({
   size?: string;
 }>) {
   return (
-    <Text size={size} className={classes.signText} variant='gradient'>
+    <Text size={size} variant='gradient'>
       {children}
     </Text>
   );

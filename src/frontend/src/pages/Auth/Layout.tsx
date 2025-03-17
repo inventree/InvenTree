@@ -10,8 +10,8 @@ import {
   Stack
 } from '@mantine/core';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { StylishText } from '../../../lib/components/items/StylishText';
 import SplashScreen from '../../components/SplashScreen';
-import { StylishText } from '../../components/items/StylishText';
 import { doLogout } from '../../functions/auth';
 
 export default function Layout() {

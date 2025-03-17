@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ProgressBar } from '../../lib/components/items/ProgressBar';
 import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -18,7 +19,6 @@ import type {
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';

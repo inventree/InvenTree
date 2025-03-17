@@ -21,10 +21,10 @@ import {
 import { type ReactNode, useMemo } from 'react';
 
 import { InvenTreeIcon } from '../../../lib/components/icons/icons';
+import { StylishText } from '../../../lib/components/items/StylishText';
 import type { ModelType } from '../../../lib/enums/ModelType';
 import { identifierString } from '../../../lib/functions/conversion';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
-import { StylishText } from './StylishText';
 
 export type ActionDropdownItem = {
   icon?: ReactNode;

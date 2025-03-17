@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 
 import { Accordion } from '@mantine/core';
+import { StylishText } from '../../../../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../../../lib/enums/ModelType';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
-import { StylishText } from '../../../../components/items/StylishText';
 import {
   TemplateOutputTable,
   TemplateTable

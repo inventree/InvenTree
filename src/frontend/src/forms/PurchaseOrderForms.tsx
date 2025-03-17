@@ -28,6 +28,8 @@ import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { ActionButton } from '../../lib/components/buttons/ActionButton';
 import { InvenTreeIcon } from '../../lib/components/icons/icons';
+import { ProgressBar } from '../../lib/components/items/ProgressBar';
+import { StylishText } from '../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -41,8 +43,6 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { ProgressBar } from '../components/items/ProgressBar';
-import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {

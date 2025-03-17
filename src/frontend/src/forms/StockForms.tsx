@@ -16,6 +16,7 @@ import { Suspense, useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { ActionButton } from '../../lib/components/buttons/ActionButton';
 import { InvenTreeIcon } from '../../lib/components/icons/icons';
+import { StylishText } from '../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../lib/enums/ModelType';
 import { api } from '../App';
@@ -31,7 +32,6 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import {
   type ApiFormModalProps,

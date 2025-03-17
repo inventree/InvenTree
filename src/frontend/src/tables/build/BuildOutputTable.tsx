@@ -20,6 +20,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import { InvenTreeIcon } from '../../../lib/components/icons/icons';
+import { ProgressBar } from '../../../lib/components/items/ProgressBar';
+import { StylishText } from '../../../lib/components/items/StylishText';
 import type { TableColumn } from '../../../lib/components/tables/Column';
 import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { useApi } from '../../../lib/contexts/ApiContext';
@@ -27,8 +29,6 @@ import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
-import { StylishText } from '../../components/items/StylishText';
 import {
   useBuildOrderOutputFields,
   useCancelBuildOutputsForm,
