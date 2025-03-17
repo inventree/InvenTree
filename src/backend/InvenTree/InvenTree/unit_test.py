@@ -553,6 +553,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         Returns:
             A file object containing the exported dataset
         """
+        # Ensure that the plugin registry is up-to-date
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
         download = kwargs.pop('download', True)
         expected_code = kwargs.pop('expected_code', 200)
 
