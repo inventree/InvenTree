@@ -29,3 +29,6 @@ dist-ssr
 /playwright/.cache/
 /.nyc_output/
 /coverage/
+
+# library component directory
+!src/lib
