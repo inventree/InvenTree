@@ -275,11 +275,6 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         self.assertEqual(self.print_labels.call_args.args[0], self.machine.machine)
         self.assertEqual(self.print_labels.call_args.args[1], template)
 
-        # TODO re-activate test
-        # self.assertQuerySetEqual(
-        #    self.print_labels.call_args.args[2], parts, transform=lambda x: x
-        # )
-
         self.assertIn('printing_options', self.print_labels.call_args.kwargs)
         self.assertEqual(
             self.print_labels.call_args.kwargs['printing_options'],

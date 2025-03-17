@@ -155,7 +155,7 @@ export default function ReturnOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
-            currency: order?.order_currency ?? order?.customer_detail?.currency
+            currency: order?.order_currency || order?.customer_detail?.currency
           });
         }
       }
@@ -344,14 +344,20 @@ export default function ReturnOrderDetail() {
     }
   });
 
+  const duplicateReturnOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
     fields: duplicateReturnOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicateReturnOrderInitialData,
     modelType: ModelType.returnorder,
     follow: true
   });
@@ -489,6 +495,9 @@ export default function ReturnOrderDetail() {
             badges={orderBadges}
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            lastCrumb={[
+              { name: order.reference, url: `/sales/return-order/${order.pk}` }
+            ]}
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />

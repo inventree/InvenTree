@@ -90,7 +90,8 @@ export function RelatedPartTable({
       part_1: {
         hidden: true
       },
-      part_2: {}
+      part_2: {},
+      note: {}
     };
   }, []);
 

@@ -11,61 +11,9 @@
 {% trans 'Site is in Maintenance' %}
 {% endblock page_title %}
 
-{% block body_class %}login-screen{% endblock body_class %}
-
 {% block body %}
-
-    <div class='container-fluid'>
-        <div class='notification-area' id='alerts'>
-            <!-- Div for displayed alerts -->
-        </div>
-    </div>
-
-    <div class='main body-wrapper login-screen d-flex'>
-
-        <div class='login-container'>
-        <div class="row">
-            <div class='container-fluid'>
-
-                <div class='clearfix content-heading login-header d-flex flex-wrap'>
-                    <img class="pull-left" alt='{% trans "Image" %}' src="{% inventree_logo %}" width="60" height="60"/>
-                    {% include "spacer.html" %}
-                    <span class='float-right'><h3>{% block body_title %}{% trans 'Site is in Maintenance' %}{% endblock body_title %}</h3></span>
-                </div>
-            </div>
-                <div class='container-fluid'>
-                    <hr>
-                    {% block content %}
-                    {% trans 'The site is currently in maintenance and should be up again soon!' %}
-                    {% endblock content %}
-                </div>
-        </div>
-        </div>
-
-        {% block extra_body %}
-        {% endblock extra_body %}
-    </div>
+<h3>{% block body_title %}{% trans 'Site is in Maintenance' %}{% endblock body_title %}</h3>
+{% block content %}
+{% trans 'The site is currently in maintenance and should be up again soon!' %}
+{% endblock content %}
 {% endblock body %}
-
-{% block js_base %}
-<script type='text/javascript'>
-$(document).ready(function () {
-    // notifications
-    {% if messages %}
-    {% for message in messages %}
-    showAlertOrCache(
-        '{{ message }}',
-        true,
-        {
-            style: 'info',
-        }
-    );
-    {% endfor %}
-    {% endif %}
-
-    inventreeDocReady();
-});
-</script>
-{% endblock js_base %}
-</body>
-</html>

@@ -171,6 +171,7 @@ class StockLocation(
 
     custom_icon = models.CharField(
         blank=True,
+        null=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
@@ -442,7 +443,7 @@ class StockItem(
 
     tags = TaggableManager(blank=True)
 
-    # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    # A Query filter which will be reused in multiple places to determine if a StockItem is actually "in stock"
     # See also: StockItem.in_stock() method
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
@@ -934,7 +935,10 @@ class StockItem(
     serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
-        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     batch = models.CharField(
@@ -1278,13 +1282,7 @@ class StockItem(
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
-        # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
-        # TODO - In future, once the "build" is working better, check this too
-
-        if self.allocations.count() > 0:
-            return True
-
-        return self.sales_order_allocations.count() > 0
+        return self.allocation_count() > 0
 
     def build_allocation_count(self, **kwargs):
         """Return the total quantity allocated to builds, with optional filters."""
@@ -1468,8 +1466,6 @@ class StockItem(
         # If the stock item is not installed in anything, ignore
         if self.belongs_to is None:
             return False
-
-        # TODO - Are there any other checks that need to be performed at this stage?
 
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
@@ -2403,9 +2399,6 @@ class StockItem(
         """Remove all test results."""
         # All test results
         results = self.test_results.all()
-
-        # TODO - Perhaps some filtering options supplied by kwargs?
-
         results.delete()
 
     def getTestResults(self, template=None, test=None, result=None, user=None):

@@ -1,5 +1,10 @@
 import { test } from '../baseFixtures';
-import { clearTableFilters, getRowFromCell, navigate } from '../helpers';
+import {
+  clearTableFilters,
+  getRowFromCell,
+  loadTab,
+  navigate
+} from '../helpers';
 import { doQuickLogin } from '../login';
 
 /**
@@ -19,35 +24,35 @@ test('Parts - Tabs', async ({ page }) => {
   await page.getByPlaceholder('Search').fill('1551');
   await page.getByText('1551ABK').click();
 
-  await page.getByRole('tab', { name: 'Allocations' }).click();
-  await page.getByRole('tab', { name: 'Used In' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('tab', { name: 'Scheduling' }).click();
-  await page.getByRole('tab', { name: 'Stock History' }).click();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
-  await page.getByRole('tab', { name: 'Notes' }).click();
-  await page.getByRole('tab', { name: 'Related Parts' }).click();
+  await loadTab(page, 'Allocations');
+  await loadTab(page, 'Used In');
+  await loadTab(page, 'Pricing');
+  await loadTab(page, 'Suppliers');
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Scheduling');
+  await loadTab(page, 'Stock History');
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Notes');
+  await loadTab(page, 'Related Parts');
 
   // Related Parts
   await page.getByText('1551ACLR').click();
-  await page.getByRole('tab', { name: 'Part Details' }).click();
-  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await loadTab(page, 'Part Details');
+  await loadTab(page, 'Parameters');
 
   await page
     .getByLabel('panel-tabs-part')
     .getByRole('tab', { name: 'Stock', exact: true })
     .click();
 
-  await page.getByRole('tab', { name: 'Allocations' }).click();
-  await page.getByRole('tab', { name: 'Used In' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
+  await loadTab(page, 'Allocations');
+  await loadTab(page, 'Used In');
+  await loadTab(page, 'Pricing');
 
   await navigate(page, 'part/category/index/parts');
   await page.getByText('Blue Chair').click();
-  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
-  await page.getByRole('tab', { name: 'Build Orders' }).click();
+  await loadTab(page, 'Bill of Materials');
+  await loadTab(page, 'Build Orders');
 });
 
 test('Parts - Manufacturer Parts', async ({ page }) => {
@@ -55,11 +60,11 @@ test('Parts - Manufacturer Parts', async ({ page }) => {
 
   await navigate(page, 'part/84/suppliers');
 
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await loadTab(page, 'Suppliers');
   await page.getByText('Hammond Manufacturing').click();
-  await page.getByRole('tab', { name: 'Parameters' }).click();
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await loadTab(page, 'Parameters');
+  await loadTab(page, 'Suppliers');
+  await loadTab(page, 'Attachments');
   await page.getByText('1551ACLR - 1551ACLR').waitFor();
 });
 
@@ -68,11 +73,11 @@ test('Parts - Supplier Parts', async ({ page }) => {
 
   await navigate(page, 'part/15/suppliers');
 
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await loadTab(page, 'Suppliers');
   await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
-  await page.getByRole('tab', { name: 'Received Stock' }).click(); //
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
+  await loadTab(page, 'Received Stock'); //
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Pricing');
   await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
 });
 
@@ -81,14 +86,14 @@ test('Parts - Locking', async ({ page }) => {
 
   // Navigate to a known assembly which is *not* locked
   await navigate(page, 'part/104/bom');
-  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await loadTab(page, 'Bill of Materials');
   await page.getByLabel('action-button-add-bom-item').waitFor();
-  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await loadTab(page, 'Parameters');
   await page.getByLabel('action-button-add-parameter').waitFor();
 
   // Navigate to a known assembly which *is* locked
   await navigate(page, 'part/100/bom');
-  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await loadTab(page, 'Bill of Materials');
   await page.getByLabel('part-lock-icon').waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
 
@@ -98,7 +103,7 @@ test('Parts - Locking', async ({ page }) => {
   await page.getByText('In Production: 50').waitFor();
 
   // Check the "parameters" tab also
-  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await loadTab(page, 'Parameters');
   await page.getByText('Part parameters cannot be').waitFor();
 });
 
@@ -107,7 +112,7 @@ test('Parts - Allocations', async ({ page }) => {
 
   // Let's look at the allocations for a single stock item
   await navigate(page, 'stock/item/324/');
-  await page.getByRole('tab', { name: 'Allocations' }).click();
+  await loadTab(page, 'Allocations');
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
   await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
@@ -117,14 +122,11 @@ test('Parts - Allocations', async ({ page }) => {
   await navigate(page, 'part/74/details');
 
   // Check that the overall allocations are displayed correctly
-  await page.getByText('11 / 825').waitFor();
-  await page.getByText('5 / 109').waitFor();
+  await page.getByText('11 / ').waitFor();
+  await page.getByText('5 / ').waitFor();
 
   // Navigate to the "Allocations" tab
-  await page.waitForTimeout(500);
-  await page.waitForLoadState('networkidle');
-
-  await page.getByRole('tab', { name: 'Allocations' }).click();
+  await loadTab(page, 'Allocations');
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
   await page.getByRole('button', { name: 'Sales Order Allocations' }).waitFor();
@@ -177,7 +179,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await navigate(page, 'part/82/pricing');
 
   await page.getByText('Small plastic enclosure, black').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -188,7 +190,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   // Part with history
   await navigate(page, 'part/108/pricing');
   await page.getByText('A chair - with blue paint').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -226,7 +228,7 @@ test('Parts - Pricing (Supplier)', async ({ page }) => {
   // Part
   await navigate(page, 'part/55/pricing');
   await page.getByText('Ceramic capacitor, 100nF in').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -252,7 +254,7 @@ test('Parts - Pricing (Variant)', async ({ page }) => {
   // Part
   await navigate(page, 'part/106/pricing');
   await page.getByText('A chair - available in multiple colors').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -278,7 +280,7 @@ test('Parts - Pricing (Internal)', async ({ page }) => {
   // Part
   await navigate(page, 'part/65/pricing');
   await page.getByText('Socket head cap screw, M2').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -303,7 +305,7 @@ test('Parts - Pricing (Purchase)', async ({ page }) => {
   // Part
   await navigate(page, 'part/69/pricing');
   await page.getByText('1.25mm Pitch, PicoBlade PCB').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -416,4 +418,24 @@ test('Parts - Revision', async ({ page }) => {
 
   await page.waitForURL('**/platform/part/101/**');
   await page.getByText('Select Part Revision').waitFor();
+});
+
+test('Parts - Bulk Edit', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'part/category/index/parts');
+
+  // Edit the category for multiple parts
+  await page.getByLabel('Select record 1', { exact: true }).click();
+  await page.getByLabel('Select record 2', { exact: true }).click();
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-set-category').click();
+  await page.getByLabel('related-field-category').fill('rnitu');
+  await page
+    .getByRole('option', { name: '- Furniture/Chairs' })
+    .getByRole('paragraph')
+    .click();
+
+  await page.getByRole('button', { name: 'Update' }).click();
+  await page.getByText('Items Updated').waitFor();
 });

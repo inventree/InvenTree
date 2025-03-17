@@ -86,11 +86,7 @@ class LabelPrintingMixin:
         pdf_data = kwargs.get('pdf_data')
 
         if not pdf_data:
-            pdf_data = (
-                self.render_to_pdf(label, instance, request, **kwargs)
-                .get_document()
-                .write_pdf()
-            )
+            pdf_data = self.render_to_pdf(label, instance, request, **kwargs)
 
         pdf2image_kwargs = {
             'dpi': kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300)),
@@ -152,14 +148,12 @@ class LabelPrintingMixin:
         for item in items:
             context = label.get_context(item, request)
             filename = label.generate_filename(context)
-            pdf_file = self.render_to_pdf(label, item, request, **kwargs)
-            pdf_data = pdf_file.get_document().write_pdf()
+            pdf_data = self.render_to_pdf(label, item, request, **kwargs)
             png_file = self.render_to_png(
                 label, item, request, pdf_data=pdf_data, **kwargs
             )
 
             print_args = {
-                'pdf_file': pdf_file,
                 'pdf_data': pdf_data,
                 'png_file': png_file,
                 'filename': filename,
@@ -179,9 +173,6 @@ class LabelPrintingMixin:
             else:
                 # Offload the print task to the background worker
 
-                # Exclude the 'pdf_file' object - cannot be pickled
-                print_args.pop('pdf_file', None)
-
                 # Exclude the 'context' object - cannot be pickled
                 print_args.pop('context', None)
 
@@ -193,12 +184,12 @@ class LabelPrintingMixin:
                 )
 
             # Update the progress of the print job
-            output.progress += int(100 / N)
+            output.progress += 1
             output.save()
 
         # Mark the output as complete
         output.complete = True
-        output.progress = 100
+        output.progress = N
 
         # Add in the generated file (if applicable)
         output.output = self.get_generated_file(**print_args)
@@ -216,7 +207,6 @@ class LabelPrintingMixin:
         """Print a single label (blocking).
 
         kwargs:
-            pdf_file: The PDF file object of the rendered label (WeasyTemplateResponse object)
             pdf_data: Raw PDF data of the rendered label
             filename: The filename of this PDF label
             label_instance: The instance of the label model which triggered the print_label() method

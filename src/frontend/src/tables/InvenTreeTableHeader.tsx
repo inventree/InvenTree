@@ -9,13 +9,15 @@ import {
 } from '@mantine/core';
 import {
   IconBarcode,
+  IconExclamationCircle,
   IconFilter,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
@@ -63,8 +65,8 @@ export default function InvenTreeTableHeader({
     };
 
     // Add in active filters
-    if (tableState.activeFilters) {
-      tableState.activeFilters.forEach((filter) => {
+    if (tableState.filterSet.activeFilters) {
+      tableState.filterSet.activeFilters.forEach((filter) => {
         queryParams[filter.name] = filter.value;
       });
     }
@@ -112,6 +114,17 @@ export default function InvenTreeTableHeader({
         hidden: true
       }
     },
+    successMessage: t`Items deleted`,
+    onFormError: (response) => {
+      showNotification({
+        id: 'bulk-delete-error',
+        title: t`Error`,
+        message: t`Failed to delete items`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000
+      });
+    },
     onFormSuccess: () => {
       tableState.clearSelectedRecords();
       tableState.refreshTable();
@@ -122,6 +135,18 @@ export default function InvenTreeTableHeader({
     }
   });
 
+  const hasCustomSearch = useMemo(() => {
+    return tableState.queryFilters.has('search');
+  }, [tableState.queryFilters]);
+
+  const hasCustomFilters = useMemo(() => {
+    if (hasCustomSearch) {
+      return tableState.queryFilters.size > 1;
+    } else {
+      return tableState.queryFilters.size > 0;
+    }
+  }, [hasCustomSearch, tableState.queryFilters]);
+
   return (
     <>
       {deleteRecords.modal}
@@ -129,13 +154,13 @@ export default function InvenTreeTableHeader({
         <Boundary label={`InvenTreeTableFilterDrawer-${tableState.tableKey}`}>
           <FilterSelectDrawer
             availableFilters={filters}
-            tableState={tableState}
+            filterSet={tableState.filterSet}
             opened={filtersVisible}
             onClose={() => setFiltersVisible(false)}
           />
         </Boundary>
       )}
-      {tableState.queryFilters.size > 0 && (
+      {(hasCustomFilters || hasCustomSearch) && (
         <Alert
           color='yellow'
           withCloseButton
@@ -143,7 +168,6 @@ export default function InvenTreeTableHeader({
           onClose={() => tableState.clearQueryFilters()}
         />
       )}
-
       <Group justify='apart' grow wrap='nowrap'>
         <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
           <PrintingActions
@@ -180,6 +204,7 @@ export default function InvenTreeTableHeader({
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
             <TableSearchInput
+              disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
           )}
@@ -204,10 +229,11 @@ export default function InvenTreeTableHeader({
           {tableProps.enableFilters && filters.length > 0 && (
             <Indicator
               size='xs'
-              label={tableState.activeFilters?.length ?? 0}
-              disabled={tableState.activeFilters?.length == 0}
+              label={tableState.filterSet.activeFilters?.length ?? 0}
+              disabled={tableState.filterSet.activeFilters?.length == 0}
             >
               <ActionIcon
+                disabled={hasCustomFilters}
                 variant='transparent'
                 aria-label='table-select-filters'
               >

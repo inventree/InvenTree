@@ -1,16 +1,65 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 310
+INVENTREE_API_VERSION = 324
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v310 - 2025-02-08 : https://github.com/inventree/InvenTree/pull/8191
+v324 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
+
+v323 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9313
+    - Adds BulkUpdate support to the Part API endpoint
+    - Remove legacy API endpoint to set part category for multiple parts
+
+v322 - 2025-03-16 : https://github.com/inventree/InvenTree/pull/8933
+    - Add min_date and max_date query filters for orders, for use in calendar views
+
+v321 - 2025-03-06 : https://github.com/inventree/InvenTree/pull/9236
+    - Adds conditionally-returned fields to the schema to match API behavior
+    - Removes required flag for nullable read-only fields to match API behavior
+
+v320 - 2025-03-05 : https://github.com/inventree/InvenTree/pull/9243
+    - Link fields are now up to 2000 chars long
+
+v319 - 2025-03-04 : https://github.com/inventree/InvenTree/pull/9199
+    - Add detail API endpoint for the LabelOutput model
+    - Add detail API endpoint for the ReportOutput model
+
+v318 - 2025-02-25 : https://github.com/inventree/InvenTree/pull/9116
+    - Adds user profile API endpoints
+
+v317 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/9143
+    - Default 'overdue' field to False in Build serializer
+    - Add allow_null to various fields in Build, Settings, Order, Part, and Stock serializers
+    - Add type hints to Users model to properly type fields
+
+v316 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/9185
+    - Allow 'icon' field to be nullified in the PartCategory API
+    - Allow 'custom_icon' field to be nullified in the StockLocation API
+
+v315 - 2025-02-22 : https://github.com/inventree/InvenTree/pull/9150
+    - Remove outdated 'url' field from some API endpoints
+
+v314 - 2025-02-17 : https://github.com/inventree/InvenTree/pull/6293
+    - Removes a considerable amount of old auth endpoints
+    - Introduces allauth-provided auth endpoints
+
+v313 - 2025-02-17 : https://github.com/inventree/InvenTree/pull/9087
+    - Adds instance id optionally to the info view endpoint
+
+v312 - 2025-02-15 : https://github.com/inventree/InvenTree/pull/9079
+    - Remove old API endpoints associated with legacy BOM import functionality
+
+v311 - 2025-02-14 : https://github.com/inventree/InvenTree/pull/9076
+    - Adds "model_filters" attribute to settings API
+
+v310 - 2025-02-14 : https://github.com/inventree/InvenTree/pull/9077
+    - Adds 'is_variant' filter to the Part list API
 
 v309 - 2025-02-02 : https://github.com/inventree/InvenTree/pull/9008
     - Bug fixes for the "Part" serializer
@@ -62,7 +111,7 @@ v297 - 2024-12-29 : https://github.com/inventree/InvenTree/pull/8438
     - Adjustments to the CustomUserState API endpoints and serializers
 
 v296 - 2024-12-25 : https://github.com/inventree/InvenTree/pull/8732
-    - Adjust default "part_detail" behaviour for StockItem API endpoints
+    - Adjust default "part_detail" behavior for StockItem API endpoints
 
 v295 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8746
     - Improve API documentation for build APIs
@@ -214,7 +263,7 @@ v252 - 2024-09-13 : https://github.com/inventree/InvenTree/pull/8040
     - Add endpoint for listing all known units
 
 v251 - 2024-09-06 : https://github.com/inventree/InvenTree/pull/8018
-    - Adds "attach_to_model" field to the ReporTemplate model
+    - Adds "attach_to_model" field to the ReportTemplate model
 
 v250 - 2024-09-04 : https://github.com/inventree/InvenTree/pull/8069
     - Fixes 'revision' field definition in Part serializer
@@ -355,7 +404,7 @@ v211 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/6911
     - Adds API endpoints for managing data import and export
 
 v210 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7518
-    - Adds translateable text to User API fields
+    - Adds translatable text to User API fields
 
 v209 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7514
     - Add "top_level" filter to PartCategory API endpoint
@@ -477,7 +526,7 @@ v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
     - Stock quantities represented in the BuildLine API endpoint are now filtered by Build.source_location
 
 v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
-    - Adds "subcategoies" count to PartCategoryTree serializer
+    - Adds "subcategories" count to PartCategoryTree serializer
     - Adds "sublocations" count to StockLocationTree serializer
 
 v176 - 2024-02-26 : https://github.com/inventree/InvenTree/pull/6535
@@ -567,7 +616,7 @@ v153 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5956
     - Adds override_min and override_max fields to part pricing API
 
 v152 -> 2023-11-20 : https://github.com/inventree/InvenTree/pull/5949
-    - Adds barcode support for manufacturerpart model
+    - Adds barcode support for ManufacturerPart model
     - Adds API endpoint for adding parts to purchase order using barcode scan
 
 v151 -> 2023-11-13 : https://github.com/inventree/InvenTree/pull/5906
@@ -1082,7 +1131,7 @@ v8  -> 2021-07-19
 
 v7  -> 2021-07-03
     - Introduced the concept of "API forms" in https://github.com/inventree/InvenTree/pull/1716
-    - API OPTIONS endpoints provide comprehensive field metedata
+    - API OPTIONS endpoints provide comprehensive field metadata
     - Multiple new API endpoints added for database models
 
 v6  -> 2021-06-23

@@ -212,6 +212,7 @@ export default function StockDetail() {
         name: 'supplier_part',
         label: t`Supplier Part`,
         type: 'link',
+        model_field: 'SKU',
         model: ModelType.supplierpart,
         hidden: !stockitem.supplier_part
       },
@@ -916,6 +917,12 @@ export default function StockDetail() {
           breadcrumbs={
             user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
           }
+          lastCrumb={[
+            {
+              name: stockitem.name,
+              url: `/stock/item/${stockitem.pk}/`
+            }
+          ]}
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}
