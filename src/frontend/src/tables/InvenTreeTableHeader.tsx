@@ -18,9 +18,9 @@ import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { showNotification } from '@mantine/notifications';
-import { Boundary } from '../../lib/components/Boundary';
 import { ActionButton } from '../../lib/components/buttons/ActionButton';
 import { ButtonMenu } from '../../lib/components/buttons/ButtonMenu';
+import { Boundary } from '../../lib/components/items/Boundary';
 import { TableColumnSelect } from '../../lib/components/tables/ColumnSelect';
 import { TableSearchInput } from '../../lib/components/tables/Search';
 import { useApi } from '../../lib/contexts/ApiContext';

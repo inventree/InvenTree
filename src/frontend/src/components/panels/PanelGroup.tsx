@@ -28,7 +28,7 @@ import {
   useParams
 } from 'react-router-dom';
 
-import { Boundary } from '../../../lib/components/Boundary';
+import { Boundary } from '../../../lib/components/items/Boundary';
 import { StylishText } from '../../../lib/components/items/StylishText';
 import type { ModelType } from '../../../lib/enums/ModelType';
 import { identifierString } from '../../../lib/functions/conversion';

@@ -17,7 +17,7 @@ import {
   IconCircleCheck
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo } from 'react';
-import { Boundary } from '../../../lib/components/Boundary';
+import { Boundary } from '../../../lib/components/items/Boundary';
 import { StylishText } from '../../../lib/components/items/StylishText';
 
 /**

@@ -24,8 +24,8 @@ import {
   IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
-import { Boundary } from '../../../lib/components/Boundary';
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import { Boundary } from '../../../lib/components/items/Boundary';
 import { StylishText } from '../../../lib/components/items/StylishText';
 import { TableSearchInput } from '../../../lib/components/tables/Search';
 import type { CalendarState } from '../../hooks/UseCalendar';

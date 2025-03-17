@@ -23,7 +23,7 @@ import {
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-import { Boundary } from '../../../lib/components/Boundary';
+import { Boundary } from '../../../lib/components/items/Boundary';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import type { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';

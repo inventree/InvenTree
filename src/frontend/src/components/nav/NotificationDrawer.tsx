@@ -18,7 +18,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Boundary } from '../../../lib/components/Boundary';
+import { Boundary } from '../../../lib/components/items/Boundary';
 import { StylishText } from '../../../lib/components/items/StylishText';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';

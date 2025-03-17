@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { Boundary } from '../../lib/components/Boundary';
+import { Boundary } from '../../lib/components/items/Boundary';
 import type { TableColumn } from '../../lib/components/tables/Column';
 import { useApi } from '../../lib/contexts/ApiContext';
 import type { ModelType } from '../../lib/enums/ModelType';

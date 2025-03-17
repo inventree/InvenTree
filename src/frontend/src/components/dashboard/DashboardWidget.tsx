@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Box, Group, Overlay, Paper, Tooltip } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 
-import { Boundary } from '../../../lib/components/Boundary';
+import { Boundary } from '../../../lib/components/items/Boundary';
 
 /**
  * Dashboard widget properties.
