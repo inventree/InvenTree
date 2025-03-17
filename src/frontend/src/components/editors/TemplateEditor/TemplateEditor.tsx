@@ -26,13 +26,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { TablerIconType } from '../../../../lib/components/icons/icons';
 import { ModelType } from '../../../../lib/enums/ModelType';
+import { ModelInformationDict } from '../../../../lib/enums/ModelType';
 import { api } from '../../../App';
 import { apiUrl } from '../../../states/ApiState';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { Boundary } from '../../Boundary';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
-import { ModelInformationDict } from '../../render/ModelType';
 
 type EditorProps = {
   template: TemplateI;

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
 import { ModelType } from '../../../lib/enums/ModelType';
+import { ModelInformationDict } from '../../../lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
 import { navigateToLink } from '../../functions/navigation';
 import { shortenString } from '../../functions/tables';
@@ -24,7 +25,6 @@ import {
   RenderProjectCode,
   RenderSelectionList
 } from './Generic';
-import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,

@@ -4,13 +4,13 @@ import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
+import { ModelInformationDict } from '../../../lib/enums/ModelType';
 import { api } from '../../App';
 import { extractErrorMessage } from '../../functions/api';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
-import { ModelInformationDict } from '../render/ModelType';
 import { BarcodeInput } from './BarcodeInput';
 
 export default function BarcodeScanDialog({

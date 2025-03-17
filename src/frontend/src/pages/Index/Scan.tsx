@@ -21,12 +21,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
+import { ModelInformationDict } from '../../../lib/enums/ModelType';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
-import { ModelInformationDict } from '../../components/render/ModelType';
 import {
   notYetImplemented,
   showApiErrorMessage

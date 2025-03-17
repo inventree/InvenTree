@@ -9,9 +9,9 @@ import SimpleMDE from 'react-simplemde-editor';
 
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
+import { ModelInformationDict } from '../../../lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
 import { apiUrl } from '../../states/ApiState';
-import { ModelInformationDict } from '../render/ModelType';
 
 /*
  * A text editor component for editing notes against a model type and instance.

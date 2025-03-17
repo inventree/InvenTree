@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ModelType } from '../../../lib/enums/ModelType';
+import { ModelInformationDict } from '../../../lib/enums/ModelType';
 import type { UserRoles } from '../../../lib/enums/Roles';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
@@ -30,7 +31,6 @@ import {
   ResponsibleFilter,
   type TableFilter
 } from '../../tables/Filter';
-import { ModelInformationDict } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 

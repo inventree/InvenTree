@@ -9,12 +9,12 @@ import {
   type InvenTreeIconType
 } from '../../../../lib/components/icons/icons';
 import type { ModelType } from '../../../../lib/enums/ModelType';
+import { ModelInformationDict } from '../../../../lib/enums/ModelType';
 import { useApi } from '../../../contexts/ApiContext';
 import { navigateToLink } from '../../../functions/navigation';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
-import { ModelInformationDict } from '../../render/ModelType';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**

@@ -1,5 +1,5 @@
 import type { ModelType } from '../../lib/enums/ModelType';
-import { ModelInformationDict } from '../components/render/ModelType';
+import { ModelInformationDict } from '../../lib/enums/ModelType';
 import { base_url } from '../main';
 import { useLocalState } from '../states/LocalState';
 
