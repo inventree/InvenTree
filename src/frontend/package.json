@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc --p ./tsconfig-build.json && vite build",
+        "build": "tsc && vite build --emptyOutDir",
+        "library": "tsc --p ./tsconfig-build.json && vite --config vite.lib.config.ts build",
         "preview": "vite preview",
         "extract": "lingui extract",
         "compile": "lingui compile --typescript"

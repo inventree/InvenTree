@@ -1,3 +1,6 @@
+// This config file is used to build the common InvenTree UI library components,
+// which are distributed via NPM - to facilitate plugin development
+
 import { resolve } from 'node:path';
 import { defineConfig, mergeConfig } from 'vite';
 
@@ -8,6 +11,7 @@ export default mergeConfig(
   defineConfig({
     build: {
       manifest: true,
+      outDir: 'dist',
       sourcemap: true,
       rollupOptions: {
         external: ['React']

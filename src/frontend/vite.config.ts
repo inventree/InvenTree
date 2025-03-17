@@ -52,8 +52,8 @@ export default defineConfig({
   base: '',
   build: {
     manifest: true,
-    outDir: '../../src/backend/InvenTree/web/static/web',
-    sourcemap: is_coverage
+    sourcemap: true,
+    outDir: '../../src/backend/InvenTree/web/static/web'
   },
   server: {
     proxy: {
