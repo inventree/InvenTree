@@ -88,7 +88,7 @@ export function useCreateApiFormModal(props: ApiFormModalProps) {
         props.successMessage === null
           ? null
           : (props.successMessage ?? t`Item Created`),
-      method: 'POST'
+      method: props.method ?? 'POST'
     }),
     [props]
   );
@@ -114,6 +114,41 @@ export function useEditApiFormModal(props: ApiFormModalProps) {
   );
 
   return useApiFormModal(editProps);
+}
+
+interface BulkEditApiFormModalProps extends ApiFormModalProps {
+  items: number[];
+}
+
+export function useBulkEditApiFormModal({
+  items,
+  ...props
+}: BulkEditApiFormModalProps) {
+  const bulkEditProps = useMemo<ApiFormModalProps>(
+    () => ({
+      ...props,
+      method: 'PATCH',
+      submitText: props.submitText ?? t`Update`,
+      successMessage:
+        props.successMessage === null
+          ? null
+          : (props.successMessage ?? t`Items Updated`),
+      preFormContent: props.preFormContent ?? (
+        <Alert color={'blue'}>{t`Update multiple items`}</Alert>
+      ),
+      fields: {
+        ...props.fields,
+        items: {
+          hidden: true,
+          field_type: 'number',
+          value: items
+        }
+      }
+    }),
+    [props, items]
+  );
+
+  return useApiFormModal(bulkEditProps);
 }
 
 /**
