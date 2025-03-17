@@ -16,17 +16,13 @@ import {
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
-
-import { useQuery } from '@tanstack/react-query';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
-import { extractAvailableFields } from '../functions/forms';
-import useDataOutput from '../hooks/UseDataOutput';
-import { useCreateApiFormModal, useDeleteApiFormModal } from '../hooks/UseForm';
+import useDataExport from '../hooks/UseDataExport';
+import { useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
 import { TableColumnSelect } from './ColumnSelect';
 import type { TableFilter } from './Filter';
@@ -59,30 +55,138 @@ export default function InvenTreeTableHeader({
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  // Selected plugin to use for data export
-  const [pluginKey, setPluginKey] = useState<string>('inventree-exporter');
+  // // Selected plugin to use for data export
+  // const [pluginKey, setPluginKey] = useState<string>('inventree-exporter');
 
-  // Construct the URL for the export request
-  const exportParams = useMemo(() => {
-    const queryParams: Record<string, any> = {
-      export: true
-    };
+  // // Construct the URL for the export request
+  // const exportParams = useMemo(() => {
+  //   const queryParams: Record<string, any> = {
+  //     export: true
+  //   };
 
-    if (!!pluginKey) {
-      queryParams.export_plugin = pluginKey;
-    }
+  //   if (!!pluginKey) {
+  //     queryParams.export_plugin = pluginKey;
+  //   }
+
+  //   // Add in any additional parameters which have a defined value
+  //   for (const [key, value] of Object.entries(tableProps.params ?? {})) {
+  //     if (value != undefined) {
+  //       queryParams[key] = value;
+  //     }
+  //   }
+
+  //   // Add in active filters
+  //   if (tableState.filterSet.activeFilters) {
+  //     tableState.filterSet.activeFilters.forEach((filter) => {
+  //       queryParams[filter.name] = filter.value;
+  //     });
+  //   }
+
+  //   // Allow overriding of query parameters
+  //   if (tableState.queryFilters) {
+  //     for (const [key, value] of tableState.queryFilters) {
+  //       if (value != undefined) {
+  //         queryParams[key] = value;
+  //       }
+  //     }
+  //   }
+
+  //   // Add custom search term
+  //   if (tableState.searchTerm) {
+  //     queryParams.search = tableState.searchTerm;
+  //   }
+
+  //   return queryParams;
+  // }, [
+  //   pluginKey,
+  //   tableUrl,
+  //   tableProps.params,
+  //   tableState.filterSet,
+  //   tableState.queryFilters,
+  //   tableState.searchTerm
+  // ]);
+
+  // const [exportId, setExportId] = useState<number | undefined>(undefined);
+
+  // const exportProgress = useDataOutput({
+  //   title: t`Exporting Data`,
+  //   id: exportId
+  // });
+
+  // // Fetch available export fields via OPTIONS request
+  // const extraExportFields = useQuery({
+  //   enabled: !!tableUrl && tableProps.enableDownload,
+  //   queryKey: ['exportFields', pluginKey, tableUrl, exportParams],
+  //   gcTime: 500,
+  //   queryFn: () =>
+  //     api
+  //       .options(tableUrl ?? '', {
+  //         params: exportParams
+  //       })
+  //       .then((response: any) => {
+  //         return extractAvailableFields(response, 'GET') || {};
+  //       })
+  //       .catch(() => {
+  //         return {};
+  //       })
+  // });
+
+  // const exportFields: ApiFormFieldSet = useMemo(() => {
+  //   const extraFields: ApiFormFieldSet = extraExportFields.data || {};
+
+  //   const fields: ApiFormFieldSet = {
+  //     export_format: {},
+  //     export_plugin: {},
+  //     ...extraFields
+  //   };
+
+  //   fields.export_format = {
+  //     ...fields.export_format,
+  //     required: true
+  //   };
+
+  //   fields.export_plugin = {
+  //     ...fields.export_plugin,
+  //     required: true,
+  //     onValueChange: (value: string) => {
+  //       if (!!value) {
+  //         setPluginKey(value);
+  //       }
+  //     }
+  //   };
+
+  //   return fields;
+  // }, [extraExportFields.data, setPluginKey]);
+
+  // const exportModal = useCreateApiFormModal({
+  //   url: tableUrl ?? '',
+  //   queryParams: new URLSearchParams(exportParams),
+  //   title: t`Export Data`,
+  //   method: 'GET',
+  //   fields: exportFields,
+  //   submitText: t`Export`,
+  //   successMessage: null,
+  //   onFormSuccess: (response: any) => {
+  //     setExportId(response.pk);
+  //     setPluginKey('inventree-exporter');
+  //   }
+  // });
+
+  // Construct export filters
+  const exportFilters = useMemo(() => {
+    const filters: Record<string, any> = {};
 
     // Add in any additional parameters which have a defined value
     for (const [key, value] of Object.entries(tableProps.params ?? {})) {
       if (value != undefined) {
-        queryParams[key] = value;
+        filters[key] = value;
       }
     }
 
     // Add in active filters
     if (tableState.filterSet.activeFilters) {
       tableState.filterSet.activeFilters.forEach((filter) => {
-        queryParams[filter.name] = filter.value;
+        filters[filter.name] = filter.value;
       });
     }
 
@@ -90,90 +194,17 @@ export default function InvenTreeTableHeader({
     if (tableState.queryFilters) {
       for (const [key, value] of tableState.queryFilters) {
         if (value != undefined) {
-          queryParams[key] = value;
+          filters[key] = value;
         }
       }
     }
+  }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
 
-    // Add custom search term
-    if (tableState.searchTerm) {
-      queryParams.search = tableState.searchTerm;
-    }
-
-    return queryParams;
-  }, [
-    pluginKey,
-    tableUrl,
-    tableProps.params,
-    tableState.filterSet,
-    tableState.queryFilters,
-    tableState.searchTerm
-  ]);
-
-  const [exportId, setExportId] = useState<number | undefined>(undefined);
-
-  const exportProgress = useDataOutput({
-    title: t`Exporting Data`,
-    id: exportId
-  });
-
-  // Fetch available export fields via OPTIONS request
-  const extraExportFields = useQuery({
-    enabled: !!tableUrl && tableProps.enableDownload,
-    queryKey: ['exportFields', pluginKey, tableUrl, exportParams],
-    gcTime: 500,
-    queryFn: () =>
-      api
-        .options(tableUrl ?? '', {
-          params: exportParams
-        })
-        .then((response: any) => {
-          return extractAvailableFields(response, 'GET') || {};
-        })
-        .catch(() => {
-          return {};
-        })
-  });
-
-  const exportFields: ApiFormFieldSet = useMemo(() => {
-    const extraFields: ApiFormFieldSet = extraExportFields.data || {};
-
-    const fields: ApiFormFieldSet = {
-      export_format: {},
-      export_plugin: {},
-      ...extraFields
-    };
-
-    fields.export_format = {
-      ...fields.export_format,
-      required: true
-    };
-
-    fields.export_plugin = {
-      ...fields.export_plugin,
-      required: true,
-      onValueChange: (value: string) => {
-        if (!!value) {
-          setPluginKey(value);
-        }
-      }
-    };
-
-    return fields;
-  }, [extraExportFields.data, setPluginKey]);
-
-  const exportModal = useCreateApiFormModal({
+  const exportModal = useDataExport({
     url: tableUrl ?? '',
-    queryParams: new URLSearchParams(exportParams),
-    title: t`Export Data`,
-    method: 'GET',
-    fields: exportFields,
-    submitText: t`Export`,
-    successMessage: null,
-    onFormSuccess: (response: any) => {
-      setExportId(response.pk);
-      setPluginKey('inventree-exporter');
-    }
+    enabled: !!tableUrl && tableProps?.enableDownload != false,
+    filters: exportFilters,
+    searchTerm: tableState.searchTerm
   });
 
   const deleteRecords = useDeleteApiFormModal({

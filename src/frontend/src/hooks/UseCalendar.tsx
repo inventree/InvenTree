@@ -7,7 +7,9 @@ import { api } from '../App';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import { showApiErrorMessage } from '../functions/notifications';
 import { apiUrl } from '../states/ApiState';
+import useDataExport from './UseDataExport';
 import { type FilterSetState, useFilterSet } from './UseFilterSet';
+import type { UseModalReturn } from './UseModal';
 
 /*
  * Type definition for representing the state of a calendar:
@@ -44,6 +46,7 @@ export type CalendarState = {
   currentMonth: () => void;
   selectMonth: (date: DateValue) => void;
   query: UseQueryResult;
+  exportModal: UseModalReturn;
   data: any;
 };
 
@@ -69,7 +72,7 @@ export default function useCalendar({
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   // Generate a set of API query filters
-  const queryFilters = useMemo(() => {
+  const queryFilters: Record<string, any> = useMemo(() => {
     // Expand date range by one month, to ensure we capture all events
 
     let params = {
@@ -144,6 +147,13 @@ export default function useCalendar({
     [ref]
   );
 
+  // Modal for exporting data from the calendar
+  const exportModal = useDataExport({
+    url: apiUrl(endpoint),
+    enabled: true,
+    filters: queryFilters
+  });
+
   return {
     name,
     filterSet,
@@ -160,6 +170,7 @@ export default function useCalendar({
     setStartDate,
     endDate,
     setEndDate,
+    exportModal,
     query: query,
     data: query.data
   };
