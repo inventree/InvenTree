@@ -8,6 +8,10 @@ INVENTREE_API_VERSION = 323
 
 INVENTREE_API_TEXT = """
 
+v324 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9318
+    - Currency string is no longer restricted to a hardcoded enum
+    - Customizable status keys are no longer hardcoded enum values
+
 v323 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9313
     - Adds BulkUpdate support to the Part API endpoint
     - Remove legacy API endpoint to set part category for multiple parts
