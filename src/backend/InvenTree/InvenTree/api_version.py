@@ -13,7 +13,7 @@ v326 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/9096
     - Allow customization of data exporting via plugins
     - Consolidate LabelOutput and ReportOutput API endpoints into single DataOutput endpoint
 
-v324 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/9244
+v325 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/9244
     - Adds the option for superusers to list all user tokens
     - Make list endpoints sortable, filterable and searchable
 
