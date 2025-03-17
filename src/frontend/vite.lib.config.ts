@@ -1,0 +1,27 @@
+import { resolve } from 'node:path';
+import { defineConfig, mergeConfig } from 'vite';
+
+import mainConfig from './vite.config';
+
+export default mergeConfig(
+  mainConfig,
+  defineConfig({
+    build: {
+      manifest: true,
+      sourcemap: true,
+      rollupOptions: {
+        external: ['React']
+      },
+      lib: {
+        entry: {
+          components: resolve(__dirname, 'lib/components.ts'),
+          core: resolve(__dirname, 'lib/core.ts'),
+          functions: resolve(__dirname, 'lib/functions.ts'),
+          tables: resolve(__dirname, 'lib/tables.ts')
+        },
+        name: 'InvenTree',
+        formats: ['es']
+      }
+    }
+  })
+);

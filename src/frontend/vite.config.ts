@@ -1,5 +1,5 @@
 import { platform, release } from 'node:os';
-import { resolve } from 'node:path';
+
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
@@ -52,36 +52,8 @@ export default defineConfig({
   base: '',
   build: {
     manifest: true,
-    // outDir: '../../src/backend/InvenTree/web/static/web',
-    // TODO: outDir should be set to the correct path,
-    // TODO: depending on whether we are building library or UI?
-    sourcemap: true, // is_coverage,
-    lib: {
-      entry: {
-        components: resolve(__dirname, 'lib/components.ts'),
-        core: resolve(__dirname, 'lib/core.ts'),
-        functions: resolve(__dirname, 'lib/functions.ts'),
-        tables: resolve(__dirname, 'lib/tables.ts')
-      },
-      name: 'InvenTree',
-      formats: ['es']
-    },
-    rollupOptions: {
-      // TODO: This should be updated for all extrenal deps
-      external: ['React'],
-      output: {
-        globals: {
-          // TODO: This should be updated for all extrenal deps
-          // TODO: Mantine
-          // TODO: lingui
-          // TODO: react-router
-          // TODO: tanstack-query
-          // TODO: tabler icons
-          // TODO: ... etc ...
-          React: 'React'
-        }
-      }
-    }
+    outDir: '../../src/backend/InvenTree/web/static/web',
+    sourcemap: is_coverage
   },
   server: {
     proxy: {
