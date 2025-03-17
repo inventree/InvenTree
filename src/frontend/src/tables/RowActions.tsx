@@ -12,7 +12,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import type { ModelType } from '../../lib/enums/ModelType';
-import { cancelEvent } from '../functions/events';
+import { cancelEvent } from '../../lib/functions/events';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
 

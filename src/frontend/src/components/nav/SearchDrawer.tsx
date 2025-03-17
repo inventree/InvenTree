@@ -40,8 +40,8 @@ import {
   getModelInfo
 } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
+import { cancelEvent } from '../../../lib/functions/events';
 import { api } from '../../App';
-import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';

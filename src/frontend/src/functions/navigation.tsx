@@ -1,5 +1,5 @@
+import { cancelEvent } from '../../lib/functions/events';
 import { base_url } from '../main';
-import { cancelEvent } from './events';
 
 /*
  * Navigate to a provided link.

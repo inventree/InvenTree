@@ -13,12 +13,12 @@ import type {
 import { ProjectCodeHoverCard } from '../../lib/components/tables/TableHoverCard';
 import type { ModelType } from '../../lib/enums/ModelType';
 import { resolveItem } from '../../lib/functions/conversion';
+import { cancelEvent } from '../../lib/functions/events';
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import { cancelEvent } from '../functions/events';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 // Render a Part instance within a table

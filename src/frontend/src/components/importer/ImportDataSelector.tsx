@@ -14,7 +14,7 @@ import { ProgressBar } from '../../../lib/components/items/ProgressBar';
 import type { TableColumn } from '../../../lib/components/tables/Column';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { cancelEvent } from '../../functions/events';
+import { cancelEvent } from '../../../lib/functions/events';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
