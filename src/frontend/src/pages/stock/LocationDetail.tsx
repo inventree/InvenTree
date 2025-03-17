@@ -3,6 +3,7 @@ import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -33,7 +34,6 @@ import {
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {

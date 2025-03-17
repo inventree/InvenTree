@@ -17,11 +17,14 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CopyButton } from '../../../lib/components/buttons/CopyButton';
+import {
+  InvenTreeIcon,
+  type InvenTreeIconType
+} from '../../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';

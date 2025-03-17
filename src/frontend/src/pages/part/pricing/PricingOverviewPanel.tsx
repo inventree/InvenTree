@@ -24,6 +24,7 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
+import { InvenTreeIcon } from '../../../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../../../lib/enums/ApiEndpoints';
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
@@ -33,7 +34,6 @@ import {
   OptionsActionDropdown
 } from '../../../components/items/ActionDropdown';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
-import { InvenTreeIcon } from '../../../functions/icons';
 import { useEditApiFormModal } from '../../../hooks/UseForm';
 import { apiUrl } from '../../../states/ApiState';
 import { useGlobalSettingsState } from '../../../states/SettingsState';

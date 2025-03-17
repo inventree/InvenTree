@@ -11,7 +11,10 @@ import {
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
+import {
+  InvenTreeIcon,
+  type InvenTreeIconType
+} from '../../../lib/components/icons/icons';
 import { navigateToLink } from '../../functions/navigation';
 import { StylishText } from './StylishText';
 

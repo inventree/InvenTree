@@ -58,8 +58,8 @@ export default defineConfig({
     sourcemap: true, // is_coverage,
     lib: {
       entry: {
-        buttons: resolve(__dirname, 'lib/buttons.ts'),
-        enums: resolve(__dirname, 'lib/enums.ts'),
+        components: resolve(__dirname, 'lib/components.ts'),
+        core: resolve(__dirname, 'lib/core.ts'),
         functions: resolve(__dirname, 'lib/functions.ts')
       },
       name: 'InvenTree',
@@ -72,6 +72,7 @@ export default defineConfig({
         globals: {
           // TODO: This should be updated for all extrenal deps
           // TODO: Mantine
+          // TODO: lingui
           // TODO: react-router
           // TODO: tanstack-query
           // TODO: tabler icons

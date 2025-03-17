@@ -27,6 +27,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { ActionButton } from '../../lib/components/buttons/ActionButton';
+import { InvenTreeIcon } from '../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -43,7 +44,6 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
-import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,

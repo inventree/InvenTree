@@ -4,6 +4,7 @@ import { IconFileCode } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { GetIcon } from '../../../lib/components/icons/icons';
 import type { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import type { ModelType } from '../../../lib/enums/ModelType';
 import { identifierString } from '../../../lib/functions/conversion';
@@ -28,7 +29,6 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import { GetIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
 import {

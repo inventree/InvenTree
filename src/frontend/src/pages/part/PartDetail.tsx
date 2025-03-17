@@ -33,6 +33,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
+import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -72,7 +73,6 @@ import {
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,

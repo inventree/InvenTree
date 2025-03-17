@@ -8,7 +8,7 @@ import {
   Tooltip
 } from '@mantine/core';
 
-import { InvenTreeIcon } from '../../../src/functions/icons';
+import { InvenTreeIcon } from '../icons/icons';
 
 export function CopyButton({
   value,

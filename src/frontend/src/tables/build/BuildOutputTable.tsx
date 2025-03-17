@@ -19,6 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -33,7 +34,6 @@ import {
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import { useStockFields } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import {
   useCreateApiFormModal,
   useEditApiFormModal

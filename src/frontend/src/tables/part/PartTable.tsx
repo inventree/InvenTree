@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
 import { IconShoppingCart } from '@tabler/icons-react';
+import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -11,7 +12,6 @@ import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import {
   useBulkEditApiFormModal,
   useCreateApiFormModal

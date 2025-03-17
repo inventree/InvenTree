@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
+import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -21,7 +22,6 @@ import {
   useStockFields,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';

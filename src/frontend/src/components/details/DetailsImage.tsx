@@ -22,10 +22,10 @@ import { useMemo, useState } from 'react';
 
 import { showNotification } from '@mantine/notifications';
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import type { UserRoles } from '../../../lib/enums/Roles';
 import { api } from '../../App';
 import { cancelEvent } from '../../functions/events';
-import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsState';
