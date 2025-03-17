@@ -55,7 +55,9 @@ export default defineConfig({
     outDir: '../../src/backend/InvenTree/web/static/web',
     sourcemap: is_coverage,
     lib: {
-      entry: resolve(__dirname, 'lib/main.ts'),
+      entry: {
+        enums: resolve(__dirname, 'lib/enums.js')
+      },
       formats: ['es']
     }
   },
