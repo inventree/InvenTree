@@ -14,9 +14,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { CopyButton } from '../../../lib/components/buttons/CopyButton';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { UserRoles } from '../../../lib/enums/Roles';
-import { CopyButton } from '../../components/buttons/CopyButton';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { StylishText } from '../../components/items/StylishText';
 import { RenderUser } from '../../components/render/User';

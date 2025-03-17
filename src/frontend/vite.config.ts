@@ -58,9 +58,9 @@ export default defineConfig({
     sourcemap: true, // is_coverage,
     lib: {
       entry: {
-        buttons: resolve(__dirname, 'lib/buttons.js'),
-        enums: resolve(__dirname, 'lib/enums.js'),
-        functions: resolve(__dirname, 'lib/functions.js')
+        buttons: resolve(__dirname, 'lib/buttons.ts'),
+        enums: resolve(__dirname, 'lib/enums.ts'),
+        functions: resolve(__dirname, 'lib/functions.ts')
       },
       name: 'InvenTree',
       formats: ['es']
@@ -74,6 +74,7 @@ export default defineConfig({
           // TODO: Mantine
           // TODO: react-router
           // TODO: tanstack-query
+          // TODO: tabler icons
           // TODO: ... etc ...
           React: 'React'
         }
