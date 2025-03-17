@@ -10,8 +10,8 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
+import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
-import { useApi } from '../../contexts/ApiContext';
 import { cancelEvent } from '../../functions/events';
 import {
   useDeleteApiFormModal,

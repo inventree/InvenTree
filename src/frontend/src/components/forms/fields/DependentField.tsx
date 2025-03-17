@@ -5,7 +5,7 @@ import {
   useFormContext
 } from 'react-hook-form';
 
-import { useApi } from '../../../contexts/ApiContext';
+import { useApi } from '../../../../lib/contexts/ApiContext';
 import {
   constructField,
   extractAvailableFields

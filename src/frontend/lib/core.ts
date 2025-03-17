@@ -1,5 +1,6 @@
 // Global enumerations for the InvenTree UI
 
+import { ApiProvider } from './contexts/ApiContext';
 import { ApiEndpoints } from './enums/ApiEndpoints';
 import {
   ModelInformationDict,
@@ -10,6 +11,7 @@ import { UserPermissions, UserRoles } from './enums/Roles';
 
 export {
   ApiEndpoints,
+  ApiProvider,
   getModelInfo,
   ModelInformationDict,
   ModelType,
