@@ -5,6 +5,7 @@ import { type ReactNode, useMemo } from 'react';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
@@ -22,7 +23,6 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 
 /**

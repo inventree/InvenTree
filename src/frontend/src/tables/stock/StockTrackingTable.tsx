@@ -4,6 +4,7 @@ import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { RenderBuildOrder } from '../../components/render/Build';
@@ -23,7 +24,7 @@ import { RenderUser } from '../../components/render/User';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
-import { type TableFilter, UserFilter } from '../Filter';
+import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 type StockTrackingEntry = {

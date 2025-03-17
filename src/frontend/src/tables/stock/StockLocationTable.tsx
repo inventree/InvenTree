@@ -17,7 +17,8 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
+
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 

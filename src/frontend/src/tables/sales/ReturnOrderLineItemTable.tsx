@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -30,7 +31,7 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, type TableFilter } from '../Filter';
+import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 

@@ -13,6 +13,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -30,7 +31,6 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import type { GroupDetailI } from './GroupTable';

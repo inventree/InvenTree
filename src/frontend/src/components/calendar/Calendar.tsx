@@ -27,11 +27,11 @@ import { useCallback, useState } from 'react';
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import { Boundary } from '../../../lib/components/items/Boundary';
 import { StylishText } from '../../../lib/components/items/StylishText';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { TableSearchInput } from '../../../lib/components/tables/Search';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { DownloadAction } from '../../tables/DownloadAction';
-import type { TableFilter } from '../../tables/Filter';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {

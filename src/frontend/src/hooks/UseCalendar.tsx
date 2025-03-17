@@ -4,10 +4,13 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { ApiEndpoints } from '../../lib/enums/ApiEndpoints';
+import {
+  type FilterSetState,
+  useFilterSet
+} from '../../lib/hooks/UseFilterSet';
 import { api } from '../App';
 import { showApiErrorMessage } from '../functions/notifications';
 import { apiUrl } from '../states/ApiState';
-import { type FilterSetState, useFilterSet } from './UseFilterSet';
 
 /*
  * Type definition for representing the state of a calendar:

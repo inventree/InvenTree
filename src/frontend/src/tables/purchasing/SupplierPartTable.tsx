@@ -3,6 +3,7 @@ import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
@@ -25,7 +26,6 @@ import {
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 

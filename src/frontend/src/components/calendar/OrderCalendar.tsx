@@ -14,6 +14,7 @@ import {
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import type { ModelType } from '../../../lib/enums/ModelType';
 import { ModelInformationDict } from '../../../lib/enums/ModelType';
 import type { UserRoles } from '../../../lib/enums/Roles';
@@ -28,8 +29,7 @@ import {
   HasProjectCodeFilter,
   OrderStatusFilter,
   ProjectCodeFilter,
-  ResponsibleFilter,
-  type TableFilter
+  ResponsibleFilter
 } from '../../tables/Filter';
 import { StatusRenderer } from '../render/StatusRenderer';
 import Calendar from './Calendar';

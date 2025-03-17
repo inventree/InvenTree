@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import { ProgressBar } from '../../../lib/components/items/ProgressBar';
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import RowExpansionIcon from '../../../lib/components/tables/RowExpansionIcon';
 import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
@@ -37,7 +38,6 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,

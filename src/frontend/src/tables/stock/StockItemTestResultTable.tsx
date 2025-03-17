@@ -11,6 +11,7 @@ import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { UserRoles } from '../../../lib/enums/Roles';
@@ -31,7 +32,6 @@ import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,

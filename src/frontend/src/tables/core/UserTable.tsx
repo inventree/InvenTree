@@ -1,12 +1,12 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import {} from '../../hooks/UseFilter';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { BooleanColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function UserTable() {

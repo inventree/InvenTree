@@ -4,6 +4,7 @@ import { IconCalendar, IconTable, IconTools } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { useLocalStorage } from '@mantine/hooks';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { UserRoles } from '../../../lib/enums/Roles';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
@@ -13,7 +14,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useUserState } from '../../states/UserState';
-import { PartCategoryFilter, type TableFilter } from '../../tables/Filter';
+import { PartCategoryFilter } from '../../tables/Filter';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
 function BuildOrderCalendar() {

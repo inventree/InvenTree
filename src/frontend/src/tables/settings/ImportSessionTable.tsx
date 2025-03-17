@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ProgressBar } from '../../../lib/components/items/ProgressBar';
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -18,7 +19,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions, type TableFilter, UserFilter } from '../Filter';
+import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 

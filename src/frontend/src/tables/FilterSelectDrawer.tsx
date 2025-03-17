@@ -20,14 +20,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IconCheck } from '@tabler/icons-react';
 import { StylishText } from '../../lib/components/items/StylishText';
-import { StandaloneField } from '../components/forms/StandaloneField';
-import type { FilterSetState } from '../hooks/UseFilterSet';
 import {
   type TableFilter,
   type TableFilterChoice,
-  type TableFilterType,
+  getFilterType,
   getTableFilterOptions
-} from './Filter';
+} from '../../lib/components/tables/Filter';
+import type { FilterSetState } from '../../lib/hooks/UseFilterSet';
+import { StandaloneField } from '../components/forms/StandaloneField';
 
 /*
  * Render a single table filter item
@@ -194,19 +194,6 @@ function FilterAddGroup({
 
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
-
-  // Determine the filter "type" - if it is not supplied
-  const getFilterType = (filter: TableFilter): TableFilterType => {
-    if (filter.type) {
-      return filter.type;
-    } else if (filter.apiUrl && filter.model) {
-      return 'api';
-    } else if (filter.choices || filter.choiceFunction) {
-      return 'choice';
-    } else {
-      return 'boolean';
-    }
-  };
 
   // Extract filter definition
   const filterProps: TableFilter | undefined = useMemo(() => {

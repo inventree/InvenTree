@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { Boundary } from '../../lib/components/items/Boundary';
 import type { TableColumn } from '../../lib/components/tables/Column';
+import type { TableFilter } from '../../lib/components/tables/Filter';
 import { useApi } from '../../lib/contexts/ApiContext';
 import type { ModelType } from '../../lib/enums/ModelType';
 import { resolveItem } from '../../lib/functions/conversion';
@@ -25,7 +26,6 @@ import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
 import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
-import type { TableFilter } from './Filter';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 

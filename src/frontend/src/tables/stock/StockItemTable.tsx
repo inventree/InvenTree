@@ -4,6 +4,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 
 import { InvenTreeIcon } from '../../../lib/components/icons/icons';
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
 import { ModelType } from '../../../lib/enums/ModelType';
@@ -36,7 +37,7 @@ import {
   PartColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, type TableFilter } from '../Filter';
+import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**

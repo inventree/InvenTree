@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../lib/components/buttons/ActionButton';
 import type { TableColumn } from '../../../lib/components/tables/Column';
+import type { TableFilter } from '../../../lib/components/tables/Filter';
 import { TableHoverCard } from '../../../lib/components/tables/TableHoverCard';
 import { useApi } from '../../../lib/contexts/ApiContext';
 import { ApiEndpoints } from '../../../lib/enums/ApiEndpoints';
@@ -42,7 +43,6 @@ import {
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
