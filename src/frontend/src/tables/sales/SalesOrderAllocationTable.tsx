@@ -282,11 +282,13 @@ export default function SalesOrderAllocationTable({
           setShipment.open();
         }}
         disabled={nonShippedAllocationIds.length == 0}
-        hidden={!allowEdit || !user.hasChangeRole(UserRoles.sales_order)}
+        hidden={
+          !orderId || !allowEdit || !user.hasChangeRole(UserRoles.sales_order)
+        }
         // TODO: Hide if order is already shipped
       />
     ];
-  }, [allowEdit, nonShippedAllocationIds, user]);
+  }, [allowEdit, nonShippedAllocationIds, orderId, user]);
 
   return (
     <>
