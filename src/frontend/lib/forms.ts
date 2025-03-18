@@ -6,3 +6,5 @@ export type {
   ApiFormFieldType,
   ApiFormFieldSet
 } from './forms/FormField';
+
+export { ChoiceField } from './forms/ChoiceField';
