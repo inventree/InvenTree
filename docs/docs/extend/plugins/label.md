@@ -148,7 +148,6 @@ class MyLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         Send the label to the printer
 
         kwargs:
-            pdf_file: The PDF file object of the rendered label (WeasyTemplateResponse object)
             pdf_data: Raw PDF data of the rendered label
             filename: The filename of this PDF label
             label_instance: The instance of the label model which triggered the print_label() method

@@ -19,9 +19,9 @@ from rest_framework.response import Response
 import common.models
 import common.settings
 import company.models
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
@@ -57,7 +57,7 @@ class GeneralExtraLineList(DataExportViewMixin):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -213,6 +213,44 @@ class OrderFilter(rest_filters.FilterSet):
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
     )
 
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include orders *after* a specified date.
+
+        This is used in combination with filter_max_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__gte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__gte=value, start_date__isnull=True)
+        q3 = Q(start_date__gte=value)
+        q4 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include orders *before* a specified date.
+
+        This is used in combination with filter_min_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__lte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__lte=value, start_date__isnull=True)
+        q3 = Q(start_date__lte=value)
+        q4 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
 
 class LineItemFilter(rest_filters.FilterSet):
     """Base class for custom API filters for order line item list(s)."""
@@ -298,7 +336,7 @@ class PurchaseOrderMixin:
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -323,23 +361,6 @@ class PurchaseOrderList(
     """
 
     filterset_class = PurchaseOrderFilter
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering."""
-        # Perform basic filtering
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.PurchaseOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
@@ -573,7 +594,7 @@ class PurchaseOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def perform_update(self, serializer):
         """Override the perform_update method to auto-update pricing if required."""
@@ -765,7 +786,7 @@ class SalesOrderMixin:
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -790,21 +811,6 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-
-    def filter_queryset(self, queryset):
-        """Perform custom filtering operations on the SalesOrder queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.SalesOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -936,7 +942,7 @@ class SalesOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1172,7 +1178,7 @@ class SalesOrderAllocationMixin:
         return queryset
 
 
-class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
+class SalesOrderAllocationList(SalesOrderAllocationMixin, BulkUpdateMixin, ListAPI):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
@@ -1215,7 +1221,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
@@ -1379,7 +1385,7 @@ class ReturnOrderMixin:
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1530,7 +1536,7 @@ class ReturnOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""

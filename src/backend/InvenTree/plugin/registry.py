@@ -90,8 +90,14 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug, active=None):
-        """Lookup plugin by slug (unique key)."""
+    def get_plugin(self, slug, active=None, with_mixin=None):
+        """Lookup plugin by slug (unique key).
+
+        Arguments:
+            slug {str}: The slug (unique key) of the plugin
+            active {bool, None}: Filter by 'active' status of plugin. Defaults to None.
+            with_mixin {str, None}: Filter by mixin. Defaults to None.
+        """
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -102,6 +108,9 @@ class PluginsRegistry:
         plg = self.plugins[slug]
 
         if active is not None and active != plg.is_active():
+            return None
+
+        if with_mixin is not None and not plg.mixin_enabled(with_mixin):
             return None
 
         return plg
@@ -191,7 +200,9 @@ class PluginsRegistry:
         return plugin_func(*args, **kwargs)
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=True, builtin=None):
+    def with_mixin(
+        self, mixin: str, active: bool = True, builtin: Optional[bool] = None
+    ) -> list:
         """Returns reference to all plugins that have a specified mixin enabled.
 
         Args:
@@ -201,6 +212,8 @@ class PluginsRegistry:
         """
         # Check if the registry needs to be loaded
         self.check_reload()
+
+        mixin = str(mixin).lower().strip()
 
         result = []
 
@@ -841,7 +854,7 @@ class PluginsRegistry:
 
         Returns True if the registry has changed and was reloaded.
         """
-        if settings.TESTING:
+        if settings.TESTING and not settings.PLUGIN_TESTING_RELOAD:
             # Skip if running during unit testing
             return False
 

@@ -8,6 +8,8 @@ from typing import Literal, TypedDict
 import structlog
 from rest_framework.request import Request
 
+from plugin import PluginMixinEnum
+
 logger = structlog.get_logger('inventree')
 
 
@@ -79,7 +81,7 @@ class UserInterfaceMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('ui', True, __class__)  # type: ignore
+        self.add_mixin(PluginMixinEnum.USER_INTERFACE, True, __class__)  # type: ignore
 
     def get_ui_features(
         self, feature_type: FeatureType, context: dict, request: Request, **kwargs
