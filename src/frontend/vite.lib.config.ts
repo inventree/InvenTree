@@ -14,7 +14,14 @@ export default mergeConfig(
       outDir: 'dist',
       sourcemap: true,
       rollupOptions: {
-        external: ['React']
+        external: ['React', 'react-dom', 'mantine'],
+        output: {
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+            mantine: 'Mantine'
+          }
+        }
       },
       lib: {
         entry: {

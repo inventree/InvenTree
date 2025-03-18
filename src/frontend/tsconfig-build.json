@@ -1,4 +1,7 @@
 {
     "extends": "./tsconfig.json",
-    "include": ["lib"]
+    "compilerOptions": {
+        "moduleResolution": "bundler",
+    },
+    "include": ["lib"],
 }

@@ -1,7 +1,19 @@
 {
-    "name": "inventreeui",
-    "private": true,
+    "name": "inventree-ui",
+    "private": false,
     "version": "0.1.0",
+    "description": "UI components for the InvenTree project",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/inventree/inventree"
+    },
+    "author": {
+        "name": "InvenTree",
+        "email": "support@inventree.org",
+        "url": "https://inventree.org",
+        "organization": "InvenTree"
+    },
     "type": "module",
     "scripts": {
         "dev": "vite",
