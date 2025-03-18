@@ -1,5 +1,7 @@
 """Plugin mixin class for ReportContextMixin."""
 
+from plugin import PluginMixinEnum
+
 
 class ReportMixin:
     """Mixin which provides additional context to generated reports.
@@ -20,7 +22,7 @@ class ReportMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('report', True, __class__)
+        self.add_mixin(PluginMixinEnum.REPORT, True, __class__)
 
     def add_report_context(self, report_instance, model_instance, request, context):
         """Add extra context to the provided report instance.

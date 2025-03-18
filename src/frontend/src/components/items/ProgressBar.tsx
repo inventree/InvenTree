@@ -6,6 +6,7 @@ export type ProgressBarProps = {
   maximum?: number;
   label?: string;
   progressLabel?: boolean;
+  animated?: boolean;
   size?: string;
 };
 
@@ -37,6 +38,7 @@ export function ProgressBar(props: Readonly<ProgressBarProps>) {
         color={progress < 100 ? 'orange' : progress > 100 ? 'blue' : 'green'}
         size={props.size ?? 'md'}
         radius='sm'
+        animated={props.animated}
       />
     </Stack>
   );
