@@ -297,7 +297,7 @@ export function PurchaseOrderLineItemTable({
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
 
-  const editPurchaseOrderFields = usePurchaseOrderLineItemFields({
+  const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
     supplierId: supplierId
@@ -307,7 +307,7 @@ export function PurchaseOrderLineItemTable({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Edit Line Item`,
-    fields: editPurchaseOrderFields,
+    fields: editLineItemFields,
     table: table
   });
 

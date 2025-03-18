@@ -916,13 +916,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'purchase_price': unit_purchase_price,
             }
 
-            if build_order := self.build_order:
+            if build_order := line.build_order:
                 # Receiving items against an "external" build order
 
                 if not build_order.external:
                     raise ValidationError(
                         'Cannot receive items against an internal build order'
                     )
+
+                if not location and build_order.destination:
+                    # Override with the build order destination (if not specified)
+                    data['location'] = location = build_order.destination
 
                 if build_order.active:
                     # An 'active' build order marks the items as "in production"
