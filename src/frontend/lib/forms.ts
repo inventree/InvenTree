@@ -9,3 +9,4 @@ export type {
 
 export { ChoiceField } from './forms/ChoiceField';
 export { DateField } from './forms/DateField';
+export { TextField } from './forms/TextField';

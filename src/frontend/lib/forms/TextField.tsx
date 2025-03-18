@@ -9,7 +9,7 @@ import type { FieldValues, UseControllerReturn } from 'react-hook-form';
  * used for rendering text input fields in forms.
  * Uses a debounced value to prevent excessive re-renders.
  */
-export default function TextField({
+export function TextField({
   controller,
   fieldName,
   definition,
