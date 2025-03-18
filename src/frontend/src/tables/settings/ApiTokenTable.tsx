@@ -1,6 +1,7 @@
 import { CopyButton, StylishText } from '@lib/components';
 import type { TableFilter } from '@lib/components/tables/Filter';
 import { ApiEndpoints } from '@lib/core';
+import type { RowAction } from '@lib/tables';
 import { Trans, t } from '@lingui/macro';
 import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -12,7 +13,6 @@ import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import type { RowAction } from '../../tables/RowActions';
 import { BooleanColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';

@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import type { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
@@ -19,11 +19,7 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../../tables/RowActions';
+import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({

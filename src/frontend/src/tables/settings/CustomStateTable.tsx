@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type {
@@ -24,7 +24,6 @@ import { useGlobalStatusState } from '../../states/StatusState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction

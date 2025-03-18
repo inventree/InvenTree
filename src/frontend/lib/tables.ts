@@ -16,3 +16,9 @@ export { TableSearchInput } from './components/tables/Search';
 export { TableHoverCard } from './components/tables/TableHoverCard';
 export type { RowAction, RowViewProps } from './components/tables/RowAction';
 export { RowActions } from './components/tables/RowAction';
+
+export {
+  TABLE_PAGE_SIZE_DEFAULT,
+  TABLE_PAGE_SIZE_OPTIONS
+} from './components/tables/TableProps';
+export type { InvenTreeTableProps } from './components/tables/TableProps';

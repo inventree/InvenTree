@@ -19,13 +19,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
 import { InfoItem } from '../../components/items/InfoItem';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
 export interface MachineTypeI {

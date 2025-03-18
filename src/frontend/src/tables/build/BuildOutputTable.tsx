@@ -26,7 +26,7 @@ import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
@@ -45,7 +45,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
+import { RowEditAction, RowViewAction } from '../RowActions';
 import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { CopyButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -13,7 +13,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
+import { RowDeleteAction } from '../RowActions';
 
 function ErrorDetail({ errorId }: Readonly<{ errorId?: number }>) {
   const { id } = useParams();

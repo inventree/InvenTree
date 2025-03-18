@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -23,12 +23,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
+import { RowDeleteAction, RowEditAction, RowViewAction } from '../RowActions';
 
 export default function PartTestTemplateTable({
   partId,

@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { ProgressBar } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
@@ -21,7 +21,7 @@ import { apiUrl } from '../../states/ApiState';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
+import { RowDeleteAction } from '../RowActions';
 
 export default function ImportSessionTable() {
   const table = useTable('importsession');

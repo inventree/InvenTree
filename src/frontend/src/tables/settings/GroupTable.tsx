@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
@@ -28,7 +28,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export interface GroupDetailI {
   pk: number;

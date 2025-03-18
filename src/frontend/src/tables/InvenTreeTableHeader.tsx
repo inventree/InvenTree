@@ -22,7 +22,7 @@ import { ActionButton } from '@lib/components';
 import { ButtonMenu } from '@lib/components';
 import { Boundary } from '@lib/components';
 import { TableColumnSelect } from '@lib/tables';
-import type { TableFilter } from '@lib/tables';
+import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
 import { showNotification } from '@mantine/notifications';
 import { PrintingActions } from '../components/buttons/PrintingActions';
@@ -30,7 +30,6 @@ import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import type { InvenTreeTableProps } from './InvenTreeTable';
 
 /**
  * Render a composite header for an InvenTree table

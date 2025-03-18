@@ -14,7 +14,7 @@ import { ProgressBar } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import { cancelEvent } from '@lib/functions/events';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import {
   useDeleteApiFormModal,
@@ -24,11 +24,7 @@ import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../tables/RowActions';
+import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { RenderRemoteInstance } from '../render/Instance';
 

@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
@@ -23,7 +23,7 @@ import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeIcon } from '@lib/components';
 import type { TableFilter } from '@lib/tables';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
+import { RowEditAction } from '../RowActions';
 
 /**
  * Stock location table

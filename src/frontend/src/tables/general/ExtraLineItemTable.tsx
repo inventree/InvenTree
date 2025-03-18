@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import type { ApiEndpoints } from '@lib/core';
 import type { UserRoles } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
@@ -18,7 +18,6 @@ import { useUserState } from '../../states/UserState';
 import { LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
