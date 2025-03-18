@@ -41,7 +41,7 @@
         "pseudo-LOCALE"],
     "catalogs": [{
         "path": "src/locales/{locale}/messages",
-        "include": ["src"],
+        "include": ["src", "lib"],
         "exclude": ["**/node_modules/**"]
     }],
     "format": "po",
