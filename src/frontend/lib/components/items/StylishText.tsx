@@ -10,7 +10,7 @@ export function StylishText({
   const theme = useMantineTheme();
 
   return (
-    <Text size={size} className={classes.signText} c={theme.primaryColor}>
+    <Text size={size} c={theme.primaryColor}>
       {children}
     </Text>
   );
