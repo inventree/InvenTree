@@ -5,7 +5,7 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
-import { ProgressBar } from '@lib/components';
+import { ProgressBar, YesNoButton } from '@lib/components';
 import {
   type TableColumn,
   type TableColumnProps,
@@ -15,7 +15,7 @@ import {
 import type { ModelType } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
-import { YesNoButton } from '../components/buttons/YesNoButton';
+
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';

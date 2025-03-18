@@ -17,7 +17,7 @@ import { ActionButton } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import type { TableColumn } from '@lib/tables';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import { YesNoButton } from '../../../lib/components/buttons/YesNoButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';

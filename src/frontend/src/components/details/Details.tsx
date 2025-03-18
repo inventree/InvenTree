@@ -16,7 +16,7 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { CopyButton } from '@lib/components';
+import { CopyButton, YesNoButton } from '@lib/components';
 import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { StylishText } from '@lib/components';
@@ -29,7 +29,6 @@ import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
-import { YesNoButton } from '../buttons/YesNoButton';
 import { StatusRenderer } from '../render/StatusRenderer';
 
 export type DetailsField = {

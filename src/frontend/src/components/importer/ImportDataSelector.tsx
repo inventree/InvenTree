@@ -9,7 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { ActionButton } from '@lib/components';
+import { ActionButton, YesNoButton } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
@@ -29,7 +29,6 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '../../tables/RowActions';
-import { YesNoButton } from '../buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { RenderRemoteInstance } from '../render/Instance';
 

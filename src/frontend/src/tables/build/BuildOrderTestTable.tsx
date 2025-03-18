@@ -15,7 +15,7 @@ import { ApiEndpoints } from '@lib/core';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { PassFailButton } from '../../components/buttons/YesNoButton';
+import { PassFailButton } from '../../../lib/components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';

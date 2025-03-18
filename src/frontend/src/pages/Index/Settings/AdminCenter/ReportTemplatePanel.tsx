@@ -1,6 +1,6 @@
+import { YesNoButton } from '@lib/components';
 import { ApiEndpoints, ModelType } from '@lib/core';
 import { t } from '@lingui/macro';
-import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
 function ReportTemplateTable() {

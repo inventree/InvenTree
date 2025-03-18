@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { ActionButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { useNavigate } from 'react-router-dom';
-import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
+import { YesNoUndefinedButton } from '../../../../../lib/components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';

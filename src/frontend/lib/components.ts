@@ -14,3 +14,8 @@ export type {
   InvenTreeIconProps,
   TablerIconType
 } from './components/icons/icons';
+
+export {
+  PassFailButton,
+  YesNoButton
+} from './components/buttons/YesNoButton';
