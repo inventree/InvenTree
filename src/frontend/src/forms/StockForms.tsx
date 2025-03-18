@@ -26,7 +26,7 @@ import type {
 import dayjs from 'dayjs';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
+import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps

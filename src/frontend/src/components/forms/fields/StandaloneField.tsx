@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import type { ApiFormFieldType } from '@lib/forms';
-import { ApiFormField } from './fields/ApiFormField';
+import { ApiFormField } from './ApiFormField';
 
 export function StandaloneField({
   fieldDefinition,

@@ -18,7 +18,7 @@ import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldType } from '@lib/forms';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
-import { StandaloneField } from '../forms/StandaloneField';
+import { StandaloneField } from '../forms/fields/StandaloneField';
 
 function ImporterColumn({
   column,

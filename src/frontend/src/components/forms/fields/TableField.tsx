@@ -8,7 +8,7 @@ import { InvenTreeIcon } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { ApiFormFieldType } from '@lib/forms';
 import { identifierString } from '@lib/functions/conversion';
-import { StandaloneField } from '../StandaloneField';
+import { StandaloneField } from './StandaloneField';
 
 export interface TableFieldRowProps {
   item: any;

@@ -12,7 +12,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
+import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';

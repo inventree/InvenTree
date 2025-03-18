@@ -17,7 +17,7 @@ import type {
   ApiFormFieldType
 } from '@lib/forms';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
+import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';

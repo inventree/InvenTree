@@ -32,7 +32,7 @@ import { api } from '../../../App';
 import { apiUrl } from '../../../states/ApiState';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
-import { StandaloneField } from '../../forms/StandaloneField';
+import { StandaloneField } from '../../forms/fields/StandaloneField';
 
 type EditorProps = {
   template: TemplateI;

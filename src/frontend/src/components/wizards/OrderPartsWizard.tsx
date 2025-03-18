@@ -16,7 +16,7 @@ import useWizard from '../../hooks/UseWizard';
 import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
-import { StandaloneField } from '../forms/StandaloneField';
+import { StandaloneField } from '../forms/fields/StandaloneField';
 import Expand from '../items/Expand';
 
 /**

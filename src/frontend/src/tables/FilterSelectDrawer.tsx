@@ -27,7 +27,7 @@ import {
   getTableFilterOptions
 } from '@lib/tables';
 import { IconCheck } from '@tabler/icons-react';
-import { StandaloneField } from '../components/forms/StandaloneField';
+import { StandaloneField } from '../components/forms/fields/StandaloneField';
 
 /*
  * Render a single table filter item

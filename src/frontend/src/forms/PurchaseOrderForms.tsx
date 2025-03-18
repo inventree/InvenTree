@@ -34,7 +34,7 @@ import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
+import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
