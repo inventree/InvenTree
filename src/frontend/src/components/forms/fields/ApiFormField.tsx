@@ -5,9 +5,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
-import { ChoiceField } from '@lib/forms';
+import { ChoiceField, DateField } from '@lib/forms';
 import { isTrue } from '@lib/functions/conversion';
-import DateField from './DateField';
 import { DependentField } from './DependentField';
 import IconField from './IconField';
 import { NestedObjectField } from './NestedObjectField';

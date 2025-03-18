@@ -7,7 +7,7 @@ import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 dayjs.extend(customParseFormat);
 
-export default function DateField({
+export function DateField({
   controller,
   definition
 }: Readonly<{

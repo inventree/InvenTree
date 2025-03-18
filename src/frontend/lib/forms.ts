@@ -8,3 +8,4 @@ export type {
 } from './forms/FormField';
 
 export { ChoiceField } from './forms/ChoiceField';
+export { DateField } from './forms/DateField';
