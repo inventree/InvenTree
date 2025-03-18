@@ -29,6 +29,7 @@ import order.validators
 import report.mixins
 import stock.models
 import users.models as UserModels
+from build.status_codes import BuildStatus
 from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
@@ -901,20 +902,52 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 serialize = False
                 serials = [None]
 
+            # Construct dataset for receiving items
+            data = {
+                'part': line.part.part,
+                'supplier_part': line.part,
+                'location': location,
+                'quantity': 1 if serialize else stock_quantity,
+                'purchase_order': self,
+                'status': status,
+                'batch': batch_code,
+                'expiry_date': expiry_date,
+                'packaging': packaging,
+                'purchase_price': unit_purchase_price,
+            }
+
+            if build_order := self.build_order:
+                # Receiving items against an "external" build order
+
+                if not build_order.external:
+                    raise ValidationError(
+                        'Cannot receive items against an internal build order'
+                    )
+
+                if build_order.active:
+                    # An 'active' build order marks the items as "in production"
+                    data['build'] = build_order
+                    data['is_building'] = True
+                elif build_order.status == BuildStatus.COMPLETE:
+                    # A 'completed' build order marks the items as "completed"
+                    data['build'] = build_order
+                    data['is_building'] = False
+
+                    # Increase the 'completed' quantity for the build order
+                    build_order.completed += stock_quantity
+                    build_order.save()
+
+                elif build_order.status == BuildStatus.CANCELLED:
+                    # A 'cancelled' build order is ignored
+                    pass
+                else:
+                    # Un-handled state - raise an error
+                    raise ValidationError(
+                        "Cannot receive items against a build order in state '{build_order.status}'"
+                    )
+
             for sn in serials:
-                item = stock.models.StockItem(
-                    part=line.part.part,
-                    supplier_part=line.part,
-                    location=location,
-                    quantity=1 if serialize else stock_quantity,
-                    purchase_order=self,
-                    status=status,
-                    batch=batch_code,
-                    expiry_date=expiry_date,
-                    packaging=packaging,
-                    serial=sn,
-                    purchase_price=unit_purchase_price,
-                )
+                item = stock.models.StockItem(serial=sn, **data)
 
                 # Assign the provided barcode
                 if barcode:
