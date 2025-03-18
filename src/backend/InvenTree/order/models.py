@@ -192,7 +192,7 @@ class Order(
 
     Instances of this class:
 
-    - PuchaseOrder
+    - PurchaseOrder
     - SalesOrder
 
     Attributes:
@@ -471,7 +471,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     @classmethod
     def get_status_class(cls):
-        """Return the PurchasOrderStatus class."""
+        """Return the PurchaseOrderStatus class."""
         return PurchaseOrderStatusGroups
 
     @classmethod
@@ -819,7 +819,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             status: The StockStatus to assign to the item (default: StockStatus.OK)
 
         Keyword Arguments:
-            barch_code: Optional batch code for the new StockItem
+            batch_code: Optional batch code for the new StockItem
             serials: Optional list of serial numbers to assign to the new StockItem(s)
             notes: Optional notes field for the StockItem
             packaging: Optional packaging field for the StockItem
@@ -2400,7 +2400,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     @transaction.atomic
     def hold_order(self):
-        """Attempt to tranasition to ON_HOLD status."""
+        """Attempt to transition to ON_HOLD status."""
         return self.handle_transition(
             self.status, ReturnOrderStatus.ON_HOLD.value, self, self._action_hold
         )
