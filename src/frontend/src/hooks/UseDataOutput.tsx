@@ -1,11 +1,11 @@
+import { ProgressBar } from '@lib/components';
+import { useApi } from '@lib/contexts/ApiContext';
+import { ApiEndpoints } from '@lib/core';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { ProgressBar } from '../components/items/ProgressBar';
-import { useApi } from '../contexts/ApiContext';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { generateUrl } from '../functions/urls';
 import { apiUrl } from '../states/ApiState';
 

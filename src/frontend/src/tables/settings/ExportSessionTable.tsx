@@ -1,11 +1,11 @@
+import { ApiEndpoints } from '@lib/core';
+import type { TableColumn } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
