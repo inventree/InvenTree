@@ -43,7 +43,7 @@ import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DateColumn } from '../ColumnRenderers';
+import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -396,81 +396,6 @@ export function TemplateTable({
           tableFilters: tableFilters,
           tableActions: tableActions,
           onRowClick: (record) => openDetailDrawer(record.pk)
-        }}
-      />
-    </>
-  );
-}
-
-export function TemplateOutputTable({
-  endpoint,
-  withPlugins = false
-}: {
-  endpoint: ApiEndpoints;
-  withPlugins?: boolean;
-}) {
-  const table = useTable(`${endpoint}-output`);
-
-  const tableColumns: TableColumn[] = useMemo(() => {
-    return [
-      {
-        accessor: 'output',
-        sortable: false,
-        switchable: false,
-        title: t`Report Output`,
-        noWrap: true,
-        noContext: true,
-        render: (record: any) => {
-          if (record.output) {
-            return <AttachmentLink attachment={record.output} />;
-          } else {
-            return '-';
-          }
-        }
-      },
-      {
-        accessor: 'template_detail.name',
-        sortable: false,
-        switchable: false,
-        title: t`Template`
-      },
-      {
-        accessor: 'model_type',
-        sortable: true,
-        switchable: false,
-        title: t`Model Type`
-      },
-      DateColumn({
-        accessor: 'created',
-        title: t`Creation Date`,
-        switchable: false,
-        sortable: true
-      }),
-      {
-        accessor: 'plugin',
-        title: t`Plugin`,
-        hidden: !withPlugins
-      },
-      {
-        accessor: 'user_detail.username',
-        sortable: true,
-        ordering: 'user',
-        title: t`Created By`
-      }
-    ];
-  }, [withPlugins]);
-
-  return (
-    <>
-      <InvenTreeTable
-        url={apiUrl(endpoint)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          enableSearch: false,
-          enableColumnSwitching: false,
-          enableSelection: true,
-          enableBulkDelete: true
         }}
       />
     </>

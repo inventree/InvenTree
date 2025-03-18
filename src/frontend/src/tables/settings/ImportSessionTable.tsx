@@ -23,7 +23,7 @@ import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 
-export default function ImportSesssionTable() {
+export default function ImportSessionTable() {
   const table = useTable('importsession');
 
   const [opened, setOpened] = useState<boolean>(false);
@@ -72,6 +72,7 @@ export default function ImportSesssionTable() {
       {
         accessor: 'user',
         sortable: false,
+        title: t`User`,
         render: (record: any) => RenderUser({ instance: record.user_detail })
       },
       {

@@ -1,14 +1,7 @@
+import { ApiEndpoints, ModelType } from '@lib/core';
 import { t } from '@lingui/macro';
-
-import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
-import { Accordion } from '@mantine/core';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
-import {
-  TemplateOutputTable,
-  TemplateTable
-} from '../../../../tables/settings/TemplateTable';
+import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
 function ReportTemplateTable() {
   return (
@@ -40,24 +33,5 @@ function ReportTemplateTable() {
 }
 
 export default function ReportTemplatePanel() {
-  return (
-    <Accordion defaultValue={['templates']} multiple>
-      <Accordion.Item value='templates'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`Report Templates`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <ReportTemplateTable />
-        </Accordion.Panel>
-      </Accordion.Item>
-      <Accordion.Item value='outputs'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`Generated Reports`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <TemplateOutputTable endpoint={ApiEndpoints.report_output} />
-        </Accordion.Panel>
-      </Accordion.Item>
-    </Accordion>
-  );
+  return <ReportTemplateTable />;
 }

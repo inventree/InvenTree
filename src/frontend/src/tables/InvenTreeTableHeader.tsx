@@ -9,6 +9,7 @@ import {
 } from '@mantine/core';
 import {
   IconBarcode,
+  IconDownload,
   IconExclamationCircle,
   IconFilter,
   IconRefresh,
@@ -20,15 +21,14 @@ import { Fragment } from 'react/jsx-runtime';
 import { ActionButton } from '@lib/components';
 import { ButtonMenu } from '@lib/components';
 import { Boundary } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import { TableColumnSelect } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
 import { showNotification } from '@mantine/notifications';
 import { PrintingActions } from '../components/buttons/PrintingActions';
+import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
-import { DownloadAction } from './DownloadAction';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 import type { InvenTreeTableProps } from './InvenTreeTable';
 
@@ -52,48 +52,43 @@ export default function InvenTreeTableHeader({
   filters: TableFilter[];
   toggleColumn: (column: string) => void;
 }>) {
-  const api = useApi();
-
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  const downloadData = (fileFormat: string) => {
-    // Download entire dataset (no pagination)
+  // Construct export filters
+  const exportFilters = useMemo(() => {
+    const filters: Record<string, any> = {};
 
-    const queryParams = {
-      ...tableProps.params
-    };
+    // Add in any additional parameters which have a defined value
+    for (const [key, value] of Object.entries(tableProps.params ?? {})) {
+      if (value != undefined) {
+        filters[key] = value;
+      }
+    }
 
     // Add in active filters
     if (tableState.filterSet.activeFilters) {
       tableState.filterSet.activeFilters.forEach((filter) => {
-        queryParams[filter.name] = filter.value;
+        filters[filter.name] = filter.value;
       });
     }
 
     // Allow overriding of query parameters
     if (tableState.queryFilters) {
       for (const [key, value] of tableState.queryFilters) {
-        queryParams[key] = value;
+        if (value != undefined) {
+          filters[key] = value;
+        }
       }
     }
+  }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
 
-    // Add custom search term
-    if (tableState.searchTerm) {
-      queryParams.search = tableState.searchTerm;
-    }
-
-    // Specify file format
-    queryParams.export = fileFormat;
-
-    const downloadUrl = api.getUri({
-      url: tableUrl,
-      params: queryParams
-    });
-
-    // Download file in a new window (to force download)
-    window.open(downloadUrl, '_blank');
-  };
+  const exportModal = useDataExport({
+    url: tableUrl ?? '',
+    enabled: !!tableUrl && tableProps?.enableDownload != false,
+    filters: exportFilters,
+    searchTerm: tableState.searchTerm
+  });
 
   const deleteRecords = useDeleteApiFormModal({
     url: tableUrl ?? '',
@@ -149,6 +144,7 @@ export default function InvenTreeTableHeader({
 
   return (
     <>
+      {exportModal.modal}
       {deleteRecords.modal}
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
         <Boundary label={`InvenTreeTableFilterDrawer-${tableState.tableKey}`}>
@@ -245,11 +241,12 @@ export default function InvenTreeTableHeader({
               </ActionIcon>
             </Indicator>
           )}
-          {tableProps.enableDownload && (
-            <DownloadAction
-              key='download-action'
-              downloadCallback={downloadData}
-            />
+          {tableUrl && tableProps.enableDownload && (
+            <ActionIcon variant='transparent' aria-label='table-export-data'>
+              <Tooltip label={t`Download data`} position='bottom'>
+                <IconDownload onClick={exportModal.open} />
+              </Tooltip>
+            </ActionIcon>
           )}
         </Group>
       </Group>

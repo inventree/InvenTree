@@ -12,8 +12,8 @@ from taggit.serializers import TagListSerializerField
 import company.filters
 import part.filters
 import part.serializers as part_serializers
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
