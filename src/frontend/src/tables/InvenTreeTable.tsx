@@ -17,7 +17,7 @@ import { useApi } from '@lib/contexts/ApiContext';
 import type { ModelType } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
-import type { TableColumn } from '@lib/tables';
+import { type RowAction, RowActions, type TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
@@ -27,7 +27,6 @@ import { getDetailUrl } from '../functions/urls';
 import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
-import { type RowAction, RowActions } from './RowActions';
 
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];

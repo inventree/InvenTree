@@ -16,9 +16,9 @@ import { ProgressBar } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import type { TableColumn } from '@lib/tables';
+import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { RowExpansionIcon } from '@lib/tables';
+import { RowActions, RowExpansionIcon } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
@@ -36,13 +36,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
+import { RowDeleteAction, RowEditAction, RowViewAction } from '../RowActions';
 
 /**
  * Render a sub-table of allocated stock against a particular build line.
