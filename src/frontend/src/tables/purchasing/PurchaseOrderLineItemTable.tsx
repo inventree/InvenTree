@@ -5,13 +5,13 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components';
 import { ProgressBar } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderStockLocation } from '../../components/render/Stock';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';

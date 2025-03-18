@@ -27,6 +27,7 @@ import { Boundary } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
 import {
   type NestedDict,
   constructField,
@@ -41,11 +42,7 @@ import {
 import { getDetailUrl } from '../../functions/urls';
 import type { TableState } from '../../hooks/UseTable';
 import type { PathParams } from '../../states/ApiState';
-import {
-  ApiFormField,
-  type ApiFormFieldSet,
-  type ApiFormFieldType
-} from './fields/ApiFormField';
+import { ApiFormField } from './fields/ApiFormField';
 
 export interface ApiFormAction {
   text: string;

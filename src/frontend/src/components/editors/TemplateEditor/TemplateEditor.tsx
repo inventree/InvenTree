@@ -361,7 +361,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                   model: template.model_type,
                   value: previewItem,
                   filters: templateFilters,
-                  onValueChange: (value) => setPreviewItem(value)
+                  onValueChange: (value: any) => setPreviewItem(value)
                 }}
               />
             </div>

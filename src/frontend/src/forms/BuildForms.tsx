@@ -14,12 +14,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { ProgressBar } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps

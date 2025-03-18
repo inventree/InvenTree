@@ -16,9 +16,9 @@ import {
 import Select from 'react-select';
 
 import { useApi } from '@lib/contexts/ApiContext';
+import type { ApiFormFieldType } from '@lib/forms';
 import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
-import type { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type

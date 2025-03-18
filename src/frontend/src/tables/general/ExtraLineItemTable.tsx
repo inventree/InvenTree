@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { ApiEndpoints } from '@lib/core';
 import type { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {

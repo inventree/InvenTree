@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 

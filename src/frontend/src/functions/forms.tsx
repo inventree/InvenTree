@@ -1,10 +1,7 @@
 import type { AxiosResponse } from 'axios';
 
 import type { ApiEndpoints } from '@lib/core';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
 import { type PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 

@@ -15,10 +15,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
+import type { ApiFormFieldType } from '@lib/forms';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
 import { StandaloneField } from '../forms/StandaloneField';
-import type { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
 function ImporterColumn({
   column,

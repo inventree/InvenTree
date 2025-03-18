@@ -1,4 +1,5 @@
 import { CopyButton, StylishText } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { TableFilter } from '@lib/components/tables/Filter';
 import { ApiEndpoints } from '@lib/core';
 import type { RowAction } from '@lib/tables';
@@ -8,7 +9,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';

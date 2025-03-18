@@ -22,13 +22,13 @@ import { ActionButton } from '@lib/components';
 import { InvenTreeIcon } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { StylishText } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   useBuildOrderOutputFields,
   useCancelBuildOutputsForm,

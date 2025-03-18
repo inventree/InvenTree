@@ -26,9 +26,9 @@ import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { InvenTreeIcon } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import {
   EditItemAction,
   OptionsActionDropdown

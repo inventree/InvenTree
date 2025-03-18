@@ -5,12 +5,13 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { GetIcon } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
 import { identifierString } from '@lib/functions/conversion';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   CodeEditor,
   PdfPreview,
@@ -20,7 +21,6 @@ import type {
   Editor,
   PreviewArea
 } from '../../components/editors/TemplateEditor/TemplateEditor';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {

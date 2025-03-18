@@ -3,6 +3,8 @@ export {
   type ActionButtonProps
 } from './components/buttons/ActionButton';
 
+export { AddItemButton } from './components/buttons/AddItemButton';
+
 export { Boundary } from './components/items/Boundary';
 export { ButtonMenu } from './components/buttons/ButtonMenu';
 export { CopyButton } from './components/buttons/CopyButton';

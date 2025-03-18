@@ -1,6 +1,8 @@
 import { ActionButton } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
 import { t } from '@lingui/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
@@ -13,10 +15,8 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
 import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
-import { AddItemButton } from '../buttons/AddItemButton';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import Expand from '../items/Expand';
 
 /**
@@ -153,7 +153,7 @@ function SelectPartsStep({
                   model: ModelType.supplierpart,
                   required: true,
                   value: record.supplier_part?.pk,
-                  onValueChange: (value, instance) => {
+                  onValueChange: (value: number, instance: any) => {
                     onSelectSupplierPart(record.part.pk, instance);
                   },
                   filters: {
@@ -195,7 +195,7 @@ function SelectPartsStep({
                     supplier: record.supplier_part?.supplier,
                     outstanding: true
                   },
-                  onValueChange: (value, instance) => {
+                  onValueChange: (value: number, instance: any) => {
                     onSelectPurchaseOrder(record.part.pk, instance);
                   }
                 }}

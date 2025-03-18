@@ -30,14 +30,11 @@ import { ProgressBar } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -449,7 +446,7 @@ function LineItemFormRow({
             fieldDefinition={{
               field_type: 'number',
               value: props.item.quantity,
-              onValueChange: (value) =>
+              onValueChange: (value: number) =>
                 props.changeFn(props.idx, 'quantity', value)
             }}
             error={props.rowErrors?.quantity?.message}
@@ -544,7 +541,7 @@ function LineItemFormRow({
                   filters: {
                     structural: false
                   },
-                  onValueChange: (value) => {
+                  onValueChange: (value: number) => {
                     props.changeFn(props.idx, 'location', value);
                   },
                   description: locationDescription,

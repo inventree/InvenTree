@@ -4,13 +4,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { YesNoButton } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import dayjs from 'dayjs';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields

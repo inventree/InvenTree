@@ -1,4 +1,4 @@
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '@lib/forms';
 
 /**
  * Field set for BomItem form

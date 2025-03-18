@@ -14,10 +14,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components';
+import { YesNoButton } from '@lib/components/buttons/YesNoButton';
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { YesNoButton } from '../../../lib/components/buttons/YesNoButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';

@@ -10,13 +10,13 @@ import {
   useState
 } from 'react';
 
+import { PassFailButton } from '@lib/components/buttons/YesNoButton';
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { PassFailButton } from '../../../lib/components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';

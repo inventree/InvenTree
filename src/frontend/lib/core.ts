@@ -8,3 +8,4 @@ export {
   getModelInfo
 } from './enums/ModelType';
 export { UserPermissions, UserRoles } from './enums/Roles';
+export type { PluginInterface } from './enums/PluginInterface';

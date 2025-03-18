@@ -2,11 +2,11 @@ import { t } from '@lingui/macro';
 import { Badge } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface

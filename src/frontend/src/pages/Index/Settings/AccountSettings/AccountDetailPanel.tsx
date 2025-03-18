@@ -4,10 +4,10 @@ import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { ActionButton } from '@lib/components';
+import { YesNoUndefinedButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
 import { useNavigate } from 'react-router-dom';
-import { YesNoUndefinedButton } from '../../../../../lib/components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';

@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
 import { t } from '@lingui/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +14,6 @@ import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({

@@ -20,6 +20,7 @@ export default mergeConfig(
         entry: {
           components: resolve(__dirname, 'lib/components.ts'),
           core: resolve(__dirname, 'lib/core.ts'),
+          forms: resolve(__dirname, 'lib/forms.ts'),
           functions: resolve(__dirname, 'lib/functions.ts'),
           hooks: resolve(__dirname, 'lib/hooks.ts'),
           tables: resolve(__dirname, 'lib/tables.ts')

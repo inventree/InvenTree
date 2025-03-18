@@ -13,6 +13,7 @@ import { ActionButton, YesNoButton } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
 import { cancelEvent } from '@lib/functions/events';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
@@ -25,7 +26,6 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({

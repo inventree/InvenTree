@@ -16,12 +16,12 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { CopyButton } from '@lib/components';
 import { StylishText } from '@lib/components';
+import { PassFailButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { shortenString } from '@lib/functions';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { PassFailButton } from '../../../lib/components/buttons/YesNoButton';
 import { RenderUser } from '../../components/render/User';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';

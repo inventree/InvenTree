@@ -1,3 +1,4 @@
+import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
 import {
   IconAt,
   IconCurrencyDollar,
@@ -9,11 +10,6 @@ import {
   IconPhone
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
 
 /**
  * Field set for SupplierPart instance
