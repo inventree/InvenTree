@@ -12,6 +12,7 @@ import { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderStockLocation } from '../../components/render/Stock';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
@@ -25,7 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {

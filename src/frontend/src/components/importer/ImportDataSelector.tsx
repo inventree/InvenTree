@@ -11,18 +11,18 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton, YesNoButton } from '@lib/components';
 import { ProgressBar } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { cancelEvent } from '@lib/functions/events';
+import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';

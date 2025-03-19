@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
 import { StylishText } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
 import { navigateToLink } from '../../../functions/navigation';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';

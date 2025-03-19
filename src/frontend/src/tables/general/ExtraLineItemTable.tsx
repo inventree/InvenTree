@@ -5,6 +5,7 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { ApiEndpoints } from '@lib/core';
 import type { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
@@ -12,7 +13,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { LinkColumn, NoteColumn } from '../ColumnRenderers';

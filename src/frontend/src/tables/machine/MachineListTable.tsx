@@ -22,9 +22,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { StylishText, YesNoButton } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import {
   DeleteItemAction,
   EditItemAction,
@@ -46,7 +47,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

@@ -13,9 +13,9 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldType } from '@lib/forms';
+import { useApi } from '@lib/hooks/UseApi';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
 import { StandaloneField } from '../forms/fields/StandaloneField';

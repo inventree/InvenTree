@@ -7,12 +7,12 @@ import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { LinkColumn } from '../ColumnRenderers';

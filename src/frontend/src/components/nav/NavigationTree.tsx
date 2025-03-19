@@ -22,9 +22,9 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';

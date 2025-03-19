@@ -5,8 +5,8 @@ import { type ReactNode, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import type { TableColumn } from '@lib/tables';
+import { useTable } from '../../../../lib/hooks/UseTable';
 import { formatCurrency } from '../../../defaults/formatters';
-import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { DateColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';

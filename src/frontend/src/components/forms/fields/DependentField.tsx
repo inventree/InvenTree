@@ -5,8 +5,8 @@ import {
   useFormContext
 } from 'react-hook-form';
 
-import { useApi } from '@lib/contexts/ApiContext';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
+import { useApi } from '@lib/hooks/UseApi';
 import {
   constructField,
   extractAvailableFields

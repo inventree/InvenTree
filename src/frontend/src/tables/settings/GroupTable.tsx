@@ -16,6 +16,7 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
@@ -24,7 +25,6 @@ import {
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';

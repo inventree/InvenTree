@@ -15,9 +15,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components';
 import { YesNoButton } from '@lib/components/buttons/YesNoButton';
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
@@ -26,7 +27,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';

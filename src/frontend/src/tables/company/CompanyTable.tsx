@@ -8,6 +8,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { RowAction, TableFilter } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { companyFields } from '../../forms/CompanyForms';
 import { navigateToLink } from '../../functions/navigation';
@@ -15,7 +16,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';

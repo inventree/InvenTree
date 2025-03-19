@@ -25,10 +25,10 @@ import { TableColumnSelect } from '@lib/tables';
 import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
 import { showNotification } from '@mantine/notifications';
+import type { TableState } from '../../lib/hooks/UseTable';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import type { TableState } from '../hooks/UseTable';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**

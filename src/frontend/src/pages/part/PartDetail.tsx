@@ -34,11 +34,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { InvenTreeIcon } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { useApi } from '@lib/hooks/UseApi';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {

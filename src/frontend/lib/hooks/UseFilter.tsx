@@ -5,8 +5,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { useApi } from '@lib/contexts/ApiContext';
 import { resolveItem } from '@lib/functions/conversion';
+import { useApi } from '@lib/hooks/UseApi';
 import type { TableFilterChoice } from '@lib/tables';
 
 type UseFilterProps = {

@@ -16,10 +16,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { InvenTreeIcon } from '@lib/components';
 import { StylishText } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {

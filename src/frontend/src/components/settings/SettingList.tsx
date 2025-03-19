@@ -10,8 +10,8 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
-import { useApi } from '@lib/contexts/ApiContext';
 import type { ModelType } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import {

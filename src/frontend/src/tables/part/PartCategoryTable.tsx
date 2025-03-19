@@ -10,6 +10,7 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { partCategoryFields } from '../../forms/PartForms';
@@ -18,7 +19,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { DescriptionColumn } from '../ColumnRenderers';

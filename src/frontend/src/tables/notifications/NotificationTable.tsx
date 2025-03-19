@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
-import type { TableState } from '../../hooks/UseTable';
+import type { TableState } from '../../../lib/hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { InvenTreeTable } from '../InvenTreeTable';
 

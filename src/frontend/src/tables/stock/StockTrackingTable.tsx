@@ -7,6 +7,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { RenderBuildOrder } from '../../components/render/Build';
 import { RenderCompany } from '../../components/render/Company';
 import {
@@ -21,7 +22,6 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';

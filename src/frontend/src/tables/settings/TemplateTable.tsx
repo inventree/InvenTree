@@ -12,6 +12,8 @@ import type { ApiFormFieldSet } from '@lib/forms';
 import { identifierString } from '@lib/functions/conversion';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useFilters } from '../../../lib/hooks/UseFilter';
+import { useTable } from '../../../lib/hooks/UseTable';
 import {
   CodeEditor,
   PdfPreview,
@@ -32,7 +34,6 @@ import type {
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
 import { notYetImplemented } from '../../functions/notifications';
-import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -40,7 +41,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn } from '../ColumnRenderers';

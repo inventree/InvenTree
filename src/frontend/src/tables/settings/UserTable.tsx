@@ -17,6 +17,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import {
   DetailDrawer,
@@ -27,7 +28,6 @@ import {
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn } from '../ColumnRenderers';

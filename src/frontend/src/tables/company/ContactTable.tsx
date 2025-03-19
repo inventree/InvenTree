@@ -8,6 +8,7 @@ import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { useNavigate } from 'react-router-dom';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { RenderInlineModel } from '../../components/render/Instance';
 import { getDetailUrl } from '../../functions/urls';
 import {
@@ -15,7 +16,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';

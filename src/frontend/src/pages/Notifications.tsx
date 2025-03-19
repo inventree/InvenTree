@@ -11,11 +11,11 @@ import {
 import { useCallback, useMemo } from 'react';
 
 import { ActionButton } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
+import { useTable } from '../../lib/hooks/UseTable';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
-import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
 import { NotificationTable } from '../tables/notifications/NotificationTable';
 

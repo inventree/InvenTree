@@ -2,9 +2,9 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { useApi } from '@lib/hooks/UseApi';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 

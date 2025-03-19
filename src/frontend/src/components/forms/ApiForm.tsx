@@ -24,10 +24,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
-import { useApi } from '@lib/contexts/ApiContext';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
+import { useApi } from '@lib/hooks/UseApi';
+import type { TableState } from '../../../lib/hooks/UseTable';
 import {
   type NestedDict,
   constructField,
@@ -40,7 +41,6 @@ import {
   showTimeoutNotification
 } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
-import type { TableState } from '../../hooks/UseTable';
 import type { PathParams } from '../../states/ApiState';
 import { ApiFormField } from './fields/ApiFormField';
 

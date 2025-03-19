@@ -11,6 +11,7 @@ import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { IconShoppingCart } from '@tabler/icons-react';
+import { useTable } from '../../../lib/hooks/UseTable';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -19,7 +20,6 @@ import {
   useBulkEditApiFormModal,
   useCreateApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';

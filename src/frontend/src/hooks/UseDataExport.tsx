@@ -1,5 +1,5 @@
-import { useApi } from '@lib/contexts/ApiContext';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { useApi } from '@lib/hooks/UseApi';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';

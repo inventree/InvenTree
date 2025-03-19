@@ -14,6 +14,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { TableColumn } from '@lib/tables';
+import { useTable } from '../../../../lib/hooks/UseTable';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
@@ -21,7 +22,6 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../../defaults/formatters';
-import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';

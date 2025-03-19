@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import type { TableColumn } from '@lib/tables';
+import { useTable } from '../../../../lib/hooks/UseTable';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import {

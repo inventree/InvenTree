@@ -23,12 +23,13 @@ import { InvenTreeIcon } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import { useApi } from '@lib/contexts/ApiContext';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { useTable } from '../../../lib/hooks/UseTable';
 import {
   useBuildOrderOutputFields,
   useCancelBuildOutputsForm,
@@ -40,7 +41,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
