@@ -53,20 +53,20 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'name',
             'package_name',
             'active',
-            'mandatory',
             'meta',
             'mixins',
             'is_builtin',
             'is_sample',
             'is_installed',
             'is_package',
+            'is_mandatory',
         ]
 
         read_only_fields = ['key', 'is_builtin', 'is_sample', 'is_installed']
 
     meta = serializers.DictField(read_only=True)
     mixins = serializers.DictField(read_only=True)
-    mandatory = serializers.BooleanField(read_only=True)
+    is_mandatory = serializers.BooleanField(read_only=True)
 
 
 class PluginAdminDetailSerializer(serializers.ModelSerializer):

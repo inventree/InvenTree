@@ -14,7 +14,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
@@ -29,6 +28,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
+import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import type { RowAction } from '../RowActions';
 
@@ -89,12 +89,21 @@ export default function PluginListTable() {
           );
         }
       },
-      {
+      BooleanColumn({
         accessor: 'active',
         sortable: true,
-        title: t`Active`,
-        render: (record: any) => <YesNoButton value={record.active} />
-      },
+        title: t`Active`
+      }),
+      BooleanColumn({
+        accessor: 'is_builtin',
+        sortable: true,
+        title: t`Builtin`
+      }),
+      BooleanColumn({
+        accessor: 'is_mandatory',
+        sortable: true,
+        title: t`Mandatory`
+      }),
       {
         accessor: 'meta.description',
         title: t`Description`,
@@ -164,7 +173,7 @@ export default function PluginListTable() {
 
       return [
         {
-          hidden: record.is_builtin != false || record.active != true,
+          hidden: record.is_mandatory != false || record.active != true,
           title: t`Deactivate`,
           color: 'red',
           icon: <IconCircleX />,
@@ -176,7 +185,7 @@ export default function PluginListTable() {
         },
         {
           hidden:
-            record.is_builtin != false ||
+            record.is_mandatory != false ||
             !record.is_installed ||
             record.active != false,
           title: t`Activate`,
@@ -207,6 +216,7 @@ export default function PluginListTable() {
             !user.isSuperuser() ||
             record.active ||
             record.is_builtin ||
+            record.is_mandatory ||
             record.is_sample ||
             !record.is_installed ||
             !record.is_package,
@@ -225,6 +235,7 @@ export default function PluginListTable() {
           hidden:
             record.active ||
             record.is_builtin ||
+            record.is_mandatory ||
             record.is_sample ||
             record.is_installed ||
             !user.isSuperuser(),
@@ -403,6 +414,11 @@ export default function PluginListTable() {
             {
               name: 'builtin',
               label: t`Builtin`,
+              type: 'boolean'
+            },
+            {
+              name: 'mandatory',
+              label: t`Mandatory`,
               type: 'boolean'
             },
             {

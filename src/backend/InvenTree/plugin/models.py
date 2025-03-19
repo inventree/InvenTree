@@ -68,11 +68,6 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         default=False, verbose_name=_('Active'), help_text=_('Is the plugin active')
     )
 
-    @property
-    def mandatory(self) -> bool:
-        """Return True if this plugin is mandatory."""
-        return self.key in registry.DEFAULT_BUILTIN_PLUGINS
-
     def __str__(self) -> str:
         """Nice name for printing."""
         name = f'{self.name} - {self.key}'
@@ -152,7 +147,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         super().save(force_insert, force_update, *args, **kwargs)
 
-        if self.mandatory():
+        if self.is_mandatory():
             # Force active if mandatory plugin
             self.active = True
 
@@ -185,6 +180,11 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             return False
 
         return self.plugin.check_is_builtin()
+
+    @admin.display(boolean=True, description=_('Mandatory Plugin'))
+    def is_mandatory(self) -> bool:
+        """Return True if this plugin is mandatory."""
+        return self.key in registry.MANDATORY_PLUGINS
 
     @admin.display(boolean=True, description=_('Package Plugin'))
     def is_package(self) -> bool:

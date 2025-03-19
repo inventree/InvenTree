@@ -56,7 +56,7 @@ class PluginsRegistry:
     # This list of plugins are *always* enabled, and are loaded by default
     # This is because they provide core functionality to the InvenTree system
     # Other 'builtin' plugins are automatically loaded, but can be disabled by the user
-    DEFAULT_BUILTIN_PLUGINS = [
+    MANDATORY_PLUGINS = [
         'inventreebarcode',
         'bom-exporter',
         'inventree-exporter',
@@ -534,7 +534,7 @@ class PluginsRegistry:
             package_name = getattr(plugin, 'package_name', None)
 
         # Auto-enable default builtin plugins
-        if builtin and plg_db and plg_db.mandatory:
+        if builtin and plg_db and plg_db.is_mandatory():
             if not plg_db.active:
                 plg_db.active = True
                 plg_db.save()
