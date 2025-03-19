@@ -4,7 +4,7 @@ import { vars } from '../../theme';
 export const selectedPanelTab = style({
   selectors: {
     '&[data-active]': {
-      background: vars.colors.blue.light
+      background: vars.colors.primaryColors.light
     }
   }
 });

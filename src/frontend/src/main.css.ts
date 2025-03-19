@@ -113,7 +113,7 @@ export const tab = style({
 
   selectors: {
     '&[data-active]': {
-      backgroundColor: vars.colors.blue.light
+      backgroundColor: vars.colors.primaryColors.light
     }
   }
 });
