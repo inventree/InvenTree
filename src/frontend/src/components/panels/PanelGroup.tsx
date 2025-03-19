@@ -37,7 +37,7 @@ import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 import type { PanelType } from '../panels/Panel';
-import * as classes from "./PanelGroup.css";
+import * as classes from './PanelGroup.css';
 
 /**
  * Set of properties which define a panel group:

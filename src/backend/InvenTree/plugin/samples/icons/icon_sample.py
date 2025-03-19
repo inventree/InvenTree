@@ -1,8 +1,8 @@
 """Sample icon pack plugin to add custom icons."""
 
-from django.templatetags.static import static
+# from django.templatetags.static import static
 
-from common.icons import IconPack
+# from common.icons import IconPack
 from plugin.base.icons.mixins import IconPackMixin
 from plugin.plugin import InvenTreePlugin
 
