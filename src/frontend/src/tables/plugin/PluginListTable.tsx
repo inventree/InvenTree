@@ -96,12 +96,12 @@ export default function PluginListTable() {
       }),
       BooleanColumn({
         accessor: 'is_builtin',
-        sortable: true,
+        sortable: false,
         title: t`Builtin`
       }),
       BooleanColumn({
         accessor: 'is_mandatory',
-        sortable: true,
+        sortable: false,
         title: t`Mandatory`
       }),
       {

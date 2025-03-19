@@ -96,9 +96,9 @@ class PluginFilter(rest_filters.FilterSet):
     def filter_mandatory(self, queryset, name, value):
         """Filter by 'mandatory' flag."""
         if str2bool(value):
-            return queryset.filter(key__in=[registry.MANDATORY_PLUGINS])
+            return queryset.filter(key__in=registry.MANDATORY_PLUGINS)
         else:
-            return queryset.exclude(key__in=[registry.MANDATORY_PLUGINS])
+            return queryset.exclude(key__in=registry.MANDATORY_PLUGINS)
 
     sample = rest_filters.BooleanFilter(
         field_name='sample', label=_('Sample'), method='filter_sample'
