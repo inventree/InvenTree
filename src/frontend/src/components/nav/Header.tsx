@@ -19,7 +19,10 @@ import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
@@ -161,6 +164,12 @@ function NavTabs() {
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
   const navTabs = getNavTabs(user);
+  const userSettings = useUserSettingsState();
+
+  const withIcons: boolean = useMemo(
+    () => userSettings.isSet('ICONS_IN_NAVBAR', false),
+    [userSettings]
+  );
 
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
@@ -170,11 +179,14 @@ function NavTabs() {
         return;
       }
 
+      // TODO: Hide icons if user does not wish to display them!
+
       _tabs.push(
         <Tabs.Tab
           value={tab.name}
           key={tab.name}
           leftSection={
+            withIcons &&
             tab.icon && (
               <ActionIcon variant='transparent'>{tab.icon}</ActionIcon>
             )
@@ -189,7 +201,7 @@ function NavTabs() {
     });
 
     return _tabs;
-  }, [navTabs, user]);
+  }, [navTabs, user, withIcons]);
 
   return (
     <Tabs
