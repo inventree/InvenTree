@@ -618,7 +618,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
-          flags: pui
+          flags: web
       - name: Upload bundler info
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

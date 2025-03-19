@@ -1,4 +1,4 @@
-"""Tests for PUI backend stuff."""
+"""Tests for web backend functionality."""
 
 import json
 import os
