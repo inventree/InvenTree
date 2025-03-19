@@ -408,8 +408,9 @@ def get_frontend_settings(debug=True):
 
     # Set the base URL
     if 'base_url' not in frontend_settings:
-        frontend_settings['base_url'] = get_setting(
-            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web'
+        frontend_settings['base_url'] = (
+            get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web')
+            or 'web'
         )
 
     # Set the server list
