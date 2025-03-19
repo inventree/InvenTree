@@ -1039,7 +1039,7 @@ def inheritors(
 
 
 def pui_url(subpath: str) -> str:
-    """Return the URL for a PUI subpath."""
+    """Return the URL for a web subpath."""
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'
