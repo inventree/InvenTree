@@ -1,7 +1,7 @@
 import { cancelEvent } from '../functions/events';
 
 export const getBaseUrl = (): string => {
-  return window.INVENTREE_SETTINGS.base_url || 'platform';
+  return window.INVENTREE_SETTINGS.base_url || 'web';
 };
 
 /*

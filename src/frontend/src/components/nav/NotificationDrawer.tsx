@@ -67,7 +67,7 @@ function NotificationEntry({
         >
           <Stack gap={2}>
             <Anchor
-              href={link ? `/${base_url}${link}` : '#'}
+              href={link ? `/${getBaseUrl()}${link}` : '#'}
               underline='hover'
               target='_blank'
               onClick={(event: any) => {

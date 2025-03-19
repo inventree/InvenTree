@@ -22,7 +22,7 @@ export default function DesktopAppView() {
   return (
     <ApiProvider client={queryClient} api={api}>
       <ThemeContext>
-        <BrowserRouter basename={base_url}>{routes}</BrowserRouter>
+        <BrowserRouter basename={getBaseUrl()}>{routes}</BrowserRouter>
       </ThemeContext>
     </ApiProvider>
   );
