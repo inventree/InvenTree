@@ -109,6 +109,12 @@ export const tab = style({
   ':hover': {
     [vars.lightSelector]: { backgroundColor: vars.colors.gray[1] },
     [vars.darkSelector]: { backgroundColor: vars.colors.dark[5] }
+  },
+
+  selectors: {
+    '&[data-active]': {
+      backgroundColor: vars.colors.blue.light
+    }
   }
 });
 

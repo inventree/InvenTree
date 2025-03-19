@@ -168,6 +168,7 @@ export default function NavigationTree({
           <Anchor
             onClick={(event: any) => follow(payload.node, event)}
             aria-label={`nav-tree-item-${payload.node.value}`}
+            c="var(--mantine-color-text)"
           >
             {payload.node.label}
           </Anchor>
