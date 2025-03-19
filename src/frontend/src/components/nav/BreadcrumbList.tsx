@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { identifierString } from '@lib/functions/conversion';
-import { navigateToLink } from '../../functions/navigation';
+import { navigateToLink } from '../../../lib/functions/navigation';
 
 export type Breadcrumb = {
   icon?: React.ReactNode;

@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
 import { StylishText } from '@lib/components';
-import { navigateToLink } from '../../functions/navigation';
+import { navigateToLink } from '../../../lib/functions/navigation';
 
 export interface MenuLinkItem {
   id: string;

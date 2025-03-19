@@ -25,10 +25,9 @@ import { ModelType } from '@lib/core';
 import { getModelInfo } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { getBaseUrl, navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { formatDate } from '../../defaults/formatters';
-import { navigateToLink } from '../../functions/navigation';
-import { base_url } from '../../main';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { StatusRenderer } from '../render/StatusRenderer';
 
@@ -95,6 +94,8 @@ type FieldProps = {
 };
 
 function HoverNameBadge(data: any, type: BadgeType) {
+  const base_url = getBaseUrl();
+
   function lines(data: any) {
     switch (type) {
       case 'owner':

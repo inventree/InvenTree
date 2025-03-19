@@ -20,8 +20,8 @@ import {
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { navigateToLink } from '../../../lib/functions/navigation';
 import { api } from '../../App';
-import { navigateToLink } from '../../functions/navigation';
 import useCalendar from '../../hooks/UseCalendar';
 import { useUserState } from '../../states/UserState';
 import {

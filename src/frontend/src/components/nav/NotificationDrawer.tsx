@@ -25,9 +25,8 @@ import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { getBaseUrl, navigateToLink } from '@lib/functions';
 import { api } from '../../App';
-import { navigateToLink } from '../../functions/navigation';
-import { base_url } from '../../main';
 import { useUserState } from '../../states/UserState';
 
 /**
@@ -41,6 +40,7 @@ function NotificationEntry({
   onRead: () => void;
 }>) {
   const navigate = useNavigate();
+  const base_url = getBaseUrl();
 
   let link = notification.target?.link;
 

@@ -12,11 +12,10 @@ import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Boundary } from '@lib/components';
-import { ModelType } from '@lib/core';
+import { ModelType, type Setting } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { api } from '../../App';
-import type { Setting } from '../../states/states';
 import { vars } from '../../theme';
 import { RenderInstance } from '../render/Instance';
 

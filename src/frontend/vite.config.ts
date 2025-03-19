@@ -38,7 +38,7 @@ export default defineConfig({
       }
     }),
     istanbul({
-      include: 'src/*',
+      include: ['src/*', 'lib/*'],
       exclude: ['node_modules', 'test/'],
       extension: ['.js', '.ts', '.tsx'],
       requireEnv: true

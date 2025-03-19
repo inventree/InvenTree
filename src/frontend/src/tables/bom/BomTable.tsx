@@ -21,13 +21,13 @@ import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { navigateToLink } from '../../../lib/functions/navigation';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { bomItemFields } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
-import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
 import {
   useApiFormModal,

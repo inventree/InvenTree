@@ -18,9 +18,9 @@ import { getDetailUrl } from '@lib/functions';
 import type { TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import dayjs from 'dayjs';
+import { navigateToLink } from '../../../lib/functions/navigation';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { formatDate } from '../../defaults/formatters';
-import { navigateToLink } from '../../functions/navigation';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 

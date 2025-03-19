@@ -7,7 +7,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
-import { apiUrl } from '@lib/functions';
+import { apiUrl, getBaseUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { useTable } from '../../../lib/hooks/UseTable';
@@ -18,7 +18,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { base_url } from '../../main';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
@@ -31,6 +30,8 @@ export function calculateSupplierPartUnitPrice(record: any) {
 }
 
 export function SupplierPriceBreakColumns(): TableColumn[] {
+  const base_url = getBaseUrl();
+
   return [
     {
       accessor: 'supplier',

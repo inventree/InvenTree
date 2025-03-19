@@ -10,4 +10,21 @@ export {
 export { UserPermissions, UserRoles } from './enums/Roles';
 export type { PluginInterface } from './enums/PluginInterface';
 
+export type {
+  Host,
+  HostList,
+  UserProps,
+  UserTheme,
+  PluginProps,
+  UiSizeType
+} from './types/Base';
+
 export type { PathParams } from './types/Api';
+
+export type {
+  Setting,
+  SettingChoice,
+  SettingsLookup,
+  SettingTyp,
+  SettingType
+} from './types/Settings';

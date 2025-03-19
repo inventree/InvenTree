@@ -1,3 +1,4 @@
+import type { HostList } from '@lib/core';
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
@@ -11,8 +12,6 @@ import {
 import { useForm } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
 import { IconSquarePlus, IconTrash } from '@tabler/icons-react';
-
-import type { HostList } from '../../states/states';
 
 export function HostOptionsForm({
   data,

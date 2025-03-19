@@ -8,7 +8,7 @@ import {
   IconEdit,
   IconTrash
 } from '@tabler/icons-react';
-import { navigateToLink } from '../functions/navigation';
+import { navigateToLink } from '../../lib/functions/navigation';
 
 // Component for viewing a row in a table
 export function RowViewAction(props: RowViewProps): RowAction {

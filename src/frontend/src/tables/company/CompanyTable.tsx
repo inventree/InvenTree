@@ -9,10 +9,10 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import type { RowAction, TableFilter } from '@lib/tables';
+import { navigateToLink } from '../../../lib/functions/navigation';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { companyFields } from '../../forms/CompanyForms';
-import { navigateToLink } from '../../functions/navigation';
 import {
   useCreateApiFormModal,
   useEditApiFormModal

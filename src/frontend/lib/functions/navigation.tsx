@@ -1,5 +1,8 @@
-import { cancelEvent } from '@lib/functions/events';
-import { base_url } from '../main';
+import { cancelEvent } from '../functions/events';
+
+export const getBaseUrl = (): string => {
+  return window.INVENTREE_SETTINGS.base_url || 'platform';
+};
 
 /*
  * Navigate to a provided link.
@@ -11,7 +14,7 @@ export const navigateToLink = (link: string, navigate: any, event: any) => {
 
   if (event?.ctrlKey || event?.shiftKey) {
     // Open the link in a new tab
-    const url = `/${base_url}${link}`;
+    const url = `/${getBaseUrl()}${link}`;
     window.open(url, '_blank');
   } else {
     // Navigate internally

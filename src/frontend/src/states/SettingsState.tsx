@@ -3,12 +3,16 @@
  */
 import { create, createStore } from 'zustand';
 
-import { ApiEndpoints, type PathParams } from '@lib/core';
+import {
+  ApiEndpoints,
+  type PathParams,
+  type Setting,
+  type SettingsLookup
+} from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { isTrue } from '@lib/functions/conversion';
 import { api } from '../App';
 import { useUserState } from './UserState';
-import type { Setting, SettingsLookup } from './states';
 
 export interface SettingsStateProps {
   settings: Setting[];

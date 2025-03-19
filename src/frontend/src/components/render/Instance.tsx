@@ -8,7 +8,7 @@ import { ModelInformationDict } from '@lib/core';
 import { shortenString } from '@lib/functions';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { navigateToLink } from '../../functions/navigation';
+import { navigateToLink } from '../../../lib/functions/navigation';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {

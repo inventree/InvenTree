@@ -16,7 +16,7 @@ export function followRedirect(navigate: NavigateFunction, redirect: any) {
   let url = redirect?.redirectUrl ?? '/home';
 
   if (redirect?.queryParams) {
-    // Construct and appand query parameters
+    // Construct and append query parameters
     url = `${url}?${new URLSearchParams(redirect.queryParams).toString()}`;
   }
 

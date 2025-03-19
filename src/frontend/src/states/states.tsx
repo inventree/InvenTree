@@ -1,3 +1,4 @@
+import type { PluginProps } from '@lib/core';
 import type { NavigateFunction } from 'react-router-dom';
 import { setApiDefaults } from '../App';
 import { useServerApiState } from './ApiState';
@@ -5,45 +6,6 @@ import { useIconState } from './IconState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
 import { useUserState } from './UserState';
-
-export interface Host {
-  host: string;
-  name: string;
-}
-
-export interface HostList {
-  [key: string]: Host;
-}
-
-// Type interface fully defining the current user
-export interface UserProps {
-  pk: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  is_staff?: boolean;
-  is_superuser?: boolean;
-  roles?: Record<string, string[]>;
-  permissions?: Record<string, string[]>;
-  groups: any[] | null;
-  profile: Profile;
-}
-
-interface Profile {
-  language: string;
-  theme: any;
-  widgets: any;
-  displayname: string | null;
-  position: string | null;
-  status: string | null;
-  location: string | null;
-  active: boolean;
-  contact: string | null;
-  type: string;
-  organisation: string | null;
-  primary_group: number | null;
-}
 
 // Type interface fully defining the current server
 export interface ServerAPIProps {
@@ -123,60 +85,12 @@ export interface Provider {
   client_id: string;
 }
 
-// Type interface defining a single 'setting' object
-export interface Setting {
-  pk: number;
-  key: string;
-  value: string;
-  name: string;
-  description: string;
-  type: SettingType;
-  units: string;
-  choices: SettingChoice[];
-  model_name: string | null;
-  model_filters: Record<string, any> | null;
-  api_url: string | null;
-  typ: SettingTyp;
-  plugin?: string;
-  method?: string;
-  required?: boolean;
-}
-
-export interface SettingChoice {
-  value: string;
-  display_name: string;
-}
-
-export enum SettingTyp {
-  InvenTree = 'inventree',
-  Plugin = 'plugin',
-  User = 'user',
-  Notification = 'notification'
-}
-
-export enum SettingType {
-  Boolean = 'boolean',
-  Integer = 'integer',
-  String = 'string',
-  Choice = 'choice',
-  Model = 'related field'
-}
-
-export interface PluginProps {
-  name: string;
-  slug: string;
-  version: null | string;
-}
-
 // Errors
 export type ErrorResponse = {
   data: any;
   status: number;
   statusText: string;
   message?: string;
-};
-export type SettingsLookup = {
-  [key: string]: string;
 };
 
 /*

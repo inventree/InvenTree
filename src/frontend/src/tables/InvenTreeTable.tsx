@@ -26,8 +26,8 @@ import {
 } from '@lib/tables';
 import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
+import { navigateToLink } from '../../lib/functions/navigation';
 import type { TableState } from '../../lib/hooks/UseTable';
-import { navigateToLink } from '../functions/navigation';
 import { useLocalState } from '../states/LocalState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
