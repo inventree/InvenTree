@@ -11,8 +11,7 @@ import {
   List,
   LoadingOverlay,
   Stack,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconRefresh } from '@tabler/icons-react';
@@ -248,9 +247,8 @@ function MachineDrawer({
         <Group justify='space-between'>
           <Group>
             {machine && <MachineStatusIndicator machine={machine} />}
-            <Title order={4}>{machine?.name}</Title>
+            <StylishText size='md'>{machine?.name ?? t`Machine`}</StylishText>
           </Group>
-
           <Group>
             {machine?.restart_required && (
               <Badge color='red'>

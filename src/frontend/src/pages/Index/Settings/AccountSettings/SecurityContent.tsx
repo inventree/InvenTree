@@ -15,7 +15,6 @@ import {
   Table,
   Text,
   TextInput,
-  Title,
   Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -467,14 +466,14 @@ function MfaSection() {
           title={t`Recovery Codes`}
           centered
         >
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Unused Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.unused_codes?.join('\n')}</Code>
 
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Used Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.used_codes?.join('\n')}</Code>
         </Modal>
       </SimpleGrid>

@@ -112,11 +112,6 @@ export const tab = style({
   }
 });
 
-export const signText = style({
-  fontSize: 'xl',
-  fontWeight: 700
-});
-
 export const error = style({
   backgroundColor: vars.colors.gray[0],
   color: vars.colors.red[6]
