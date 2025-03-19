@@ -13,7 +13,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { navTabs as mainNavTabs } from '../../defaults/links';
+import { getNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
@@ -160,11 +160,12 @@ function NavTabs() {
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
+  const navTabs = getNavTabs(user);
 
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    mainNavTabs.forEach((tab) => {
+    navTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
@@ -173,17 +174,22 @@ function NavTabs() {
         <Tabs.Tab
           value={tab.name}
           key={tab.name}
+          leftSection={
+            tab.icon && (
+              <ActionIcon variant='transparent'>{tab.icon}</ActionIcon>
+            )
+          }
           onClick={(event: any) =>
             navigateToLink(`/${tab.name}`, navigate, event)
           }
         >
-          {tab.text}
+          {tab.title}
         </Tabs.Tab>
       );
     });
 
     return _tabs;
-  }, [mainNavTabs, user]);
+  }, [navTabs, user]);
 
   return (
     <Tabs
