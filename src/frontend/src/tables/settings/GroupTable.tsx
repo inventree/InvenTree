@@ -6,8 +6,7 @@ import {
   Pill,
   PillGroup,
   Stack,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +20,7 @@ import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
+import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   useCreateApiFormModal,
@@ -112,9 +112,9 @@ export function GroupDrawer({
         id={`group-detail-drawer-${id}`}
       />
       <Group justify='space-between'>
-        <Title order={5}>
+        <StylishText size='md'>
           <Trans>Permission set</Trans>
-        </Title>
+        </StylishText>
         <AdminButton model={ModelType.group} id={instance.pk} />
       </Group>
       <Group>{permissionsAccordion}</Group>

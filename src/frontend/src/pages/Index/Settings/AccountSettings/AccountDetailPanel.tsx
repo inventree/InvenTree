@@ -1,9 +1,9 @@
 import { Trans, t } from '@lingui/macro';
-import { Badge, Group, Stack, Table, Title } from '@mantine/core';
+import { Badge, Group, Stack, Table } from '@mantine/core';
 import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ActionButton } from '@lib/components';
+import { ActionButton, StylishText } from '@lib/components';
 import { YesNoUndefinedButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
@@ -98,9 +98,9 @@ export function AccountDetailPanel() {
       {editProfile.modal}
       <Stack gap='xs'>
         <Group justify='space-between'>
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Account Details</Trans>
-          </Title>
+          </StylishText>
           <ActionDropdown
             tooltip={t`Account Actions`}
             icon={<IconUser />}
@@ -125,9 +125,9 @@ export function AccountDetailPanel() {
         {renderDetailTable(accountDetailFields)}
 
         <Group justify='space-between'>
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Profile Details</Trans>
-          </Title>
+          </StylishText>
           <ActionButton
             text={t`Edit Profile`}
             icon={<IconEdit />}

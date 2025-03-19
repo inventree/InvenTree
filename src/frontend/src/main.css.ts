@@ -109,12 +109,13 @@ export const tab = style({
   ':hover': {
     [vars.lightSelector]: { backgroundColor: vars.colors.gray[1] },
     [vars.darkSelector]: { backgroundColor: vars.colors.dark[5] }
-  }
-});
+  },
 
-export const signText = style({
-  fontSize: 'xl',
-  fontWeight: 700
+  selectors: {
+    '&[data-active]': {
+      backgroundColor: vars.colors.primaryColors.light
+    }
+  }
 });
 
 export const error = style({

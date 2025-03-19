@@ -6,6 +6,7 @@ import type { To } from 'react-router-dom';
 
 import type { UiSizeType } from '@lib/core';
 import { useLocalState } from '../../states/LocalState';
+import { StylishText } from '../items/StylishText';
 import * as classes from './DetailDrawer.css';
 
 /**
@@ -66,9 +67,7 @@ function DetailDrawerComponent({
               <IconChevronLeft />
             </ActionIcon>
           )}
-          <Text size='xl' fw={600} variant='gradient'>
-            {title}
-          </Text>
+          <StylishText size='xl'>{title}</StylishText>
         </Group>
       }
     >

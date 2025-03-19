@@ -11,7 +11,6 @@ import {
   Select,
   Slider,
   Table,
-  Title,
   useMantineTheme
 } from '@mantine/core';
 import { IconRestore } from '@tabler/icons-react';
@@ -19,6 +18,7 @@ import { useState } from 'react';
 
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
+import { StylishText } from '../../../../components/items/StylishText';
 import { SizeMarks } from '../../../../defaults/defaults';
 import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';
@@ -57,9 +57,9 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
 
   return (
     <Container w='100%' mih={height} p={0}>
-      <Title order={3}>
+      <StylishText size='lg'>
         <Trans>Display Settings</Trans>
-      </Title>
+      </StylishText>
       <Table>
         <Table.Tbody>
           <Table.Tr>
