@@ -10,14 +10,8 @@ import {
 import { useMemo } from 'react';
 import { useLocalState } from '../../states/LocalState';
 
-// A stylish text component that uses the primary color of the theme
-export function StylishText({
-  children,
-  size
-}: Readonly<{
-  children: JSX.Element | string;
-  size?: MantineSize;
-}>) {
+// Hook that memoizes the gradient color based on the primary color of the theme
+const useThematicGradient = () => {
   const { usertheme } = useLocalState();
   const theme = useMantineTheme();
   const colorScheme = useMantineColorScheme();
@@ -36,6 +30,21 @@ export function StylishText({
 
     return secondary;
   }, [usertheme, colorScheme, primary]);
+
+  return useMemo(() => {
+    return { primary, secondary };
+  }, [primary, secondary]);
+};
+
+// A stylish text component that uses the primary color of the theme
+export function StylishText({
+  children,
+  size
+}: Readonly<{
+  children: JSX.Element | string;
+  size?: MantineSize;
+}>) {
+  const { primary, secondary } = useThematicGradient();
 
   return (
     <Text
