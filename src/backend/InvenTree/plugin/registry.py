@@ -53,6 +53,21 @@ class PluginsRegistry:
 
     DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
 
+    # This list of plugins are *always* enabled, and are loaded by default
+    # This is because they provide core functionality to the InvenTree system
+    # Other 'builtin' plugins are automatically loaded, but can be disabled by the user
+    DEFAULT_BUILTIN_PLUGINS = [
+        'inventreebarcode',
+        'bom-exporter',
+        'inventree-exporter',
+        'inventreecorenotificationsplugin',
+        'inventreecurrencyexchange',
+        'inventreecorenotificationsplugin',
+        'inventreelabel',
+        'inventreelabelmachine',
+        'inventreelabelsheet',
+    ]
+
     def __init__(self) -> None:
         """Initialize registry.
 
@@ -518,10 +533,11 @@ class PluginsRegistry:
         if getattr(plugin, 'is_package', False):
             package_name = getattr(plugin, 'package_name', None)
 
-        # Auto-enable builtin plugins
+        # Auto-enable default builtin plugins
         if builtin and plg_db and not plg_db.active:
-            plg_db.active = True
-            plg_db.save()
+            if plg_key in self.DEFAULT_BUILTIN_PLUGINS:
+                plg_db.active = True
+                plg_db.save()
 
         # Save the package_name attribute to the plugin
         if plg_db.package_name != package_name:

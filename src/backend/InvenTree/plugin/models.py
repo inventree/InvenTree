@@ -13,8 +13,9 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 import InvenTree.models
 import plugin.staticfiles
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePlugin
 from plugin.events import PluginEvents, trigger_event
+from plugin.registry import registry
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
@@ -148,7 +149,8 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         if self.is_builtin():
             # Force active if builtin
-            self.active = True
+            if self.key in registry.DEFAULT_BUILTIN_PLUGINS:
+                self.active = True
 
         if not no_reload and self.active != self.__org_active:
             if settings.PLUGIN_TESTING:
