@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
-import type { ModelType } from '../../enums/ModelType';
+
+import type { ModelType } from '../enums/ModelType';
 
 /**
  * Interface for the table filter choice

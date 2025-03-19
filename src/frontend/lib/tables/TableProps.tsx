@@ -1,8 +1,9 @@
-import type { ModelType } from '@lib/core';
 import type {
   DataTableCellClickHandler,
   DataTableRowExpansionProps
 } from 'mantine-datatable';
+
+import type { ModelType } from '../enums/ModelType';
 import type { TableFilter } from './Filter';
 import type { RowAction } from './RowAction';
 

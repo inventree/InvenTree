@@ -1,8 +1,11 @@
-import type { ApiEndpoints, ModelType, PathParams } from '@lib/core';
-import type { ApiFormFieldSet } from '@lib/forms';
-import type { TableState } from '@lib/hooks/UseTable';
 import type { DefaultMantineColor } from '@mantine/core';
 import type { FieldValues } from 'react-hook-form';
+
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import type { ModelType } from '../enums/ModelType';
+import type { TableState } from '../hooks/UseTable';
+import type { PathParams } from '../types/Api';
+import type { ApiFormFieldSet } from './FormField';
 
 export interface ApiFormAction {
   text: string;

@@ -1,6 +1,7 @@
 import { useLocalStorage } from '@mantine/hooks';
 import { useCallback } from 'react';
-import type { TableFilter } from '../components/tables/Filter';
+
+import type { TableFilter } from '../tables/Filter';
 
 /*
  * Type definition for representing the state of a group of filters.

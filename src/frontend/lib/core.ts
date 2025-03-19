@@ -10,4 +10,4 @@ export {
 export { UserPermissions, UserRoles } from './enums/Roles';
 export type { PluginInterface } from './enums/PluginInterface';
 
-export type PathParams = Record<string, string | number>;
+export type { PathParams } from './types/Api';

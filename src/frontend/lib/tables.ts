@@ -1,24 +1,24 @@
-import RowExpansionIcon from './components/tables/RowExpansionIcon';
+import RowExpansionIcon from './tables/RowExpansionIcon';
 export { RowExpansionIcon };
 
-export type { TableColumn, TableColumnProps } from './components/tables/Column';
-export { TableColumnSelect } from './components/tables/ColumnSelect';
+export type { TableColumn, TableColumnProps } from './tables/Column';
+export { TableColumnSelect } from './tables/ColumnSelect';
 export type {
   TableFilterChoice,
   TableFilterType,
   TableFilter
-} from './components/tables/Filter';
+} from './tables/Filter';
 export {
   getFilterType,
   getTableFilterOptions
-} from './components/tables/Filter';
-export { TableSearchInput } from './components/tables/Search';
-export { TableHoverCard } from './components/tables/TableHoverCard';
-export type { RowAction, RowViewProps } from './components/tables/RowAction';
-export { RowActions } from './components/tables/RowAction';
+} from './tables/Filter';
+export { TableSearchInput } from './tables/Search';
+export { TableHoverCard } from './tables/TableHoverCard';
+export type { RowAction, RowViewProps } from './tables/RowAction';
+export { RowActions } from './tables/RowAction';
 
 export {
   TABLE_PAGE_SIZE_DEFAULT,
   TABLE_PAGE_SIZE_OPTIONS
-} from './components/tables/TableProps';
-export type { InvenTreeTableProps } from './components/tables/TableProps';
+} from './tables/TableProps';
+export type { InvenTreeTableProps } from './tables/TableProps';

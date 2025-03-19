@@ -1,9 +1,7 @@
-import {
-  type ApiEndpoints,
-  ModelInformationDict,
-  type ModelType,
-  type PathParams
-} from '@lib/core';
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import type { ModelType } from '../enums/ModelType';
+import { ModelInformationDict } from '../enums/ModelType';
+import type { PathParams } from '../types/Api';
 
 /**
  * Construct an API URL with an endpoint and (optional) pk value

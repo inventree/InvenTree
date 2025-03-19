@@ -9,6 +9,7 @@ import mainConfig from './vite.config';
 export default mergeConfig(
   mainConfig,
   defineConfig({
+    resolve: {},
     build: {
       manifest: true,
       outDir: 'dist',

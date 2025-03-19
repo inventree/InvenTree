@@ -1,8 +1,9 @@
-import type { ModelType } from '@lib/core';
 import type { MantineStyleProp } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { ReactNode } from 'react';
 import type { FieldValues } from 'react-hook-form';
+
+import type { ModelType } from '../enums/ModelType';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 

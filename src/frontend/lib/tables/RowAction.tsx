@@ -1,10 +1,11 @@
-import type { ModelType } from '@lib/core';
-import { cancelEvent } from '@lib/functions';
 import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { IconDots } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
+
+import type { ModelType } from '../enums/ModelType';
+import { cancelEvent } from '../functions/events';
 
 // Type definition for a table row action
 export type RowAction = {

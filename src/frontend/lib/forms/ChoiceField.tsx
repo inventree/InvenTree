@@ -1,8 +1,9 @@
-import type { ApiFormFieldType } from '@lib/forms';
 import { Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useCallback, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
+
+import type { ApiFormFieldType } from './FormField';
 
 /**
  * Render a 'select' field for selecting from a list of choices
