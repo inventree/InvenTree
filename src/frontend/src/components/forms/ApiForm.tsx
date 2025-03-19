@@ -26,21 +26,19 @@ import { Boundary } from '@lib/components';
 import type {
   ApiFormFieldSet,
   ApiFormFieldType,
-  ApiFormProps
+  ApiFormProps,
+  NestedDict
 } from '@lib/forms';
-import { useApi } from '@lib/hooks/UseApi';
+import { getDetailUrl } from '@lib/functions';
 import {
-  type NestedDict,
   constructField,
   constructFormUrl,
   extractAvailableFields,
-  mapFields
-} from '../../functions/forms';
-import {
   invalidResponse,
+  mapFields,
   showTimeoutNotification
-} from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
+} from '@lib/functions';
+import { useApi } from '@lib/hooks/UseApi';
 import { ApiFormField } from './fields/ApiFormField';
 
 export function OptionsApiForm({

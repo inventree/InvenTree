@@ -1,5 +1,5 @@
 import { ApiEndpoints } from '@lib/core';
-import { apiUrl } from '@lib/functions';
+import { apiUrl, showLoginNotification } from '@lib/functions';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
@@ -10,7 +10,6 @@ import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { type Provider, fetchGlobalStates } from '../states/states';
-import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
 export function followRedirect(navigate: NavigateFunction, redirect: any) {

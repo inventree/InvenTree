@@ -3,13 +3,13 @@ import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
 import { t } from '@lingui/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { extractErrorMessage } from '../../functions/api';
-import { getDetailUrl } from '../../functions/urls';
 import { useUserState } from '../../states/UserState';
 import { BarcodeInput } from './BarcodeInput';
 

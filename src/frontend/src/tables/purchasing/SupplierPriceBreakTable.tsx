@@ -8,16 +8,17 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { base_url } from '../../main';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
@@ -64,6 +65,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
             href={getDetailUrl(
               ModelType.supplierpart,
               record.part_detail.pk,
+              base_url,
               true
             )}
           >

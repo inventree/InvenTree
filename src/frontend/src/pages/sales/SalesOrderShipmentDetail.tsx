@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { getDetailUrl } from '@lib/functions';
 import dayjs from 'dayjs';
 import { useInstance } from '../../../lib/hooks/UseInstance';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
@@ -35,7 +36,6 @@ import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
 } from '../../forms/SalesOrderForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

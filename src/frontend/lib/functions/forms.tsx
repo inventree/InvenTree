@@ -1,9 +1,7 @@
-import type { AxiosResponse } from 'axios';
-
 import type { ApiEndpoints, PathParams } from '@lib/core';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
-import { apiUrl } from '@lib/functions';
-import { invalidResponse, permissionDenied } from './notifications';
+import { apiUrl, invalidResponse, permissionDenied } from '@lib/functions';
+import type { AxiosResponse } from 'axios';
 
 /**
  * Construct an API url from the provided ApiFormProps object
@@ -21,6 +19,50 @@ export function constructFormUrl(
   }
 
   return formUrl;
+}
+
+/*
+ * Build a complete field definition based on the provided data
+ */
+export function constructField({
+  field,
+  definition
+}: {
+  field: ApiFormFieldType;
+  definition?: ApiFormFieldType;
+}) {
+  const def = {
+    ...definition,
+    ...field
+  };
+
+  switch (def.field_type) {
+    case 'nested object':
+      def.children = {};
+      for (const k of Object.keys(field.children ?? {})) {
+        def.children[k] = constructField({
+          field: field.children?.[k] ?? {},
+          definition: definition?.children?.[k] ?? {}
+        });
+      }
+      break;
+    case 'dependent field':
+      if (!definition?.child) break;
+
+      def.child = constructField({
+        // use the raw definition here as field, since a dependent field cannot be influenced by the frontend
+        field: definition.child ?? {}
+      });
+      break;
+    default:
+      break;
+  }
+
+  // Clear out the 'read_only' attribute
+  def.disabled = def.disabled ?? def.read_only ?? false;
+  delete def['read_only'];
+
+  return def;
 }
 
 /**
@@ -104,6 +146,7 @@ export function extractAvailableFields(
 }
 
 export type NestedDict = { [key: string]: string | number | NestedDict };
+
 export function mapFields(
   fields: ApiFormFieldSet,
   fieldFunction: (path: string, value: ApiFormFieldType, key: string) => any,
@@ -125,48 +168,4 @@ export function mapFields(
   }
 
   return res;
-}
-
-/*
- * Build a complete field definition based on the provided data
- */
-export function constructField({
-  field,
-  definition
-}: {
-  field: ApiFormFieldType;
-  definition?: ApiFormFieldType;
-}) {
-  const def = {
-    ...definition,
-    ...field
-  };
-
-  switch (def.field_type) {
-    case 'nested object':
-      def.children = {};
-      for (const k of Object.keys(field.children ?? {})) {
-        def.children[k] = constructField({
-          field: field.children?.[k] ?? {},
-          definition: definition?.children?.[k] ?? {}
-        });
-      }
-      break;
-    case 'dependent field':
-      if (!definition?.child) break;
-
-      def.child = constructField({
-        // use the raw definition here as field, since a dependent field cannot be influenced by the frontend
-        field: definition.child ?? {}
-      });
-      break;
-    default:
-      break;
-  }
-
-  // Clear out the 'read_only' attribute
-  def.disabled = def.disabled ?? def.read_only ?? false;
-  delete def['read_only'];
-
-  return def;
 }

@@ -52,7 +52,6 @@ export default defineConfig({
   base: '',
   resolve: {
     alias: {
-      '@': '/src',
       '@lib': '/lib'
     }
   },

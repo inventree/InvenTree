@@ -14,13 +14,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
 import type { TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import dayjs from 'dayjs';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { formatDate } from '../../defaults/formatters';
 import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 

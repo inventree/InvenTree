@@ -39,6 +39,7 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { useInstance } from '../../../lib/hooks/UseInstance';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -75,7 +76,6 @@ import {
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

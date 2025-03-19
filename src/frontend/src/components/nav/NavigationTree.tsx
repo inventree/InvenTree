@@ -25,9 +25,9 @@ import { StylishText } from '@lib/components';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
 import { ApiIcon } from '../items/ApiIcon';
 
 /*

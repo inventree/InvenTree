@@ -24,10 +24,11 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { getModelInfo } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { formatDate } from '../../defaults/formatters';
 import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
+import { base_url } from '../../main';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { StatusRenderer } from '../render/StatusRenderer';
 
@@ -100,7 +101,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
         return [
           `${data.label}: ${data.name}`,
           data.name,
-          getDetailUrl(data.owner_model, data.pk, true),
+          getDetailUrl(data.owner_model, data.pk, base_url, true),
           undefined,
           undefined
         ];
@@ -108,7 +109,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
         return [
           `${data.first_name} ${data.last_name}`,
           data.username,
-          getDetailUrl(ModelType.user, data.pk, true),
+          getDetailUrl(ModelType.user, data.pk, base_url, true),
           data?.image,
           <>
             {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
@@ -120,7 +121,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
         return [
           data.name,
           data.name,
-          getDetailUrl(ModelType.group, data.pk, true),
+          getDetailUrl(ModelType.group, data.pk, base_url, true),
           data?.image,
           undefined
         ];

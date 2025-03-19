@@ -7,6 +7,7 @@ import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import type { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
 import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -21,7 +22,6 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
 import { useUserState } from '../../states/UserState';
 import {

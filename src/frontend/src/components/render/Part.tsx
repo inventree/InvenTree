@@ -3,7 +3,7 @@ import { Badge } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/core';
-import { getDetailUrl } from '../../functions/urls';
+import { getDetailUrl } from '@lib/functions';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 

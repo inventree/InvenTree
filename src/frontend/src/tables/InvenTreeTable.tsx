@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { getDetailUrl } from '@lib/functions';
+import { extractAvailableFields, mapFields } from '@lib/functions';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
 import { useApi } from '@lib/hooks/UseApi';
@@ -25,9 +27,7 @@ import {
 import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import type { TableState } from '../../lib/hooks/UseTable';
-import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
-import { getDetailUrl } from '../functions/urls';
 import { useLocalState } from '../states/LocalState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
