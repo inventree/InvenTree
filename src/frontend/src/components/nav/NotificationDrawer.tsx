@@ -23,11 +23,11 @@ import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { base_url } from '../../main';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 /**

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import { useInstance } from '../../hooks/UseInstance';
+import { useInstance } from '../../../lib/hooks/UseInstance';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import BomPricingPanel from './pricing/BomPricingPanel';

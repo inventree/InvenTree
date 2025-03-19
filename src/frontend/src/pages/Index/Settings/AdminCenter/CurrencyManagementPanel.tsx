@@ -6,12 +6,12 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { useTable } from '../../../../../lib/hooks/UseTable';
 import { api } from '../../../../App';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { showApiErrorMessage } from '../../../../functions/notifications';
-import { apiUrl } from '../../../../states/ApiState';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 
 /*

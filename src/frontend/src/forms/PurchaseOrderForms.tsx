@@ -31,6 +31,7 @@ import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -46,7 +47,6 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance

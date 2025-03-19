@@ -13,6 +13,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { TableColumn } from '@lib/tables';
 import { useTable } from '../../../../lib/hooks/UseTable';
 import { CHART_COLORS } from '../../../components/charts/colors';
@@ -22,7 +23,6 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../../defaults/formatters';
-import { apiUrl } from '../../../states/ApiState';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';

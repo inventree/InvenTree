@@ -3,10 +3,10 @@
  */
 import { create, createStore } from 'zustand';
 
-import { ApiEndpoints } from '@lib/core';
+import { ApiEndpoints, type PathParams } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { isTrue } from '@lib/functions/conversion';
 import { api } from '../App';
-import { type PathParams, apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 import type { Setting, SettingsLookup } from './states';
 

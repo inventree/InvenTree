@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { useTable } from '../../../lib/hooks/UseTable';
@@ -22,7 +23,6 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { apiUrl } from '../../states/ApiState';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';

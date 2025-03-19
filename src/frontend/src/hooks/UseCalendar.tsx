@@ -1,5 +1,6 @@
 import type FullCalendar from '@fullcalendar/react';
 import type { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { type FilterSetState, useFilterSet } from '@lib/hooks/UseFilterSet';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -7,7 +8,6 @@ import dayjs from 'dayjs';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { api } from '../App';
 import { showApiErrorMessage } from '../functions/notifications';
-import { apiUrl } from '../states/ApiState';
 import useDataExport from './UseDataExport';
 import type { UseModalReturn } from './UseModal';
 

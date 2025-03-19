@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import {
@@ -24,7 +25,7 @@ import {
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
 

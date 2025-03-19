@@ -10,6 +10,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
 import { useApi } from '@lib/hooks/UseApi';
 import type { TableColumn } from '@lib/tables';
@@ -24,7 +25,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

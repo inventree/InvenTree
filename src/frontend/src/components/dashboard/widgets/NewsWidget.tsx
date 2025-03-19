@@ -16,9 +16,9 @@ import { useCallback, useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { api } from '../../../App';
 import { formatDate } from '../../../defaults/formatters';
-import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 
 /**

@@ -3,10 +3,10 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { api } from '../App';
 import type { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
-import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 
 export type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;

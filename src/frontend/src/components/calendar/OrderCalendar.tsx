@@ -6,6 +6,7 @@ import type {
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import type { UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -22,7 +23,6 @@ import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   AssignedToMeFilter,

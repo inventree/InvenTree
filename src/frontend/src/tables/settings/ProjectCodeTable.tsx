@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { projectCodeFields } from '../../forms/CommonForms';
@@ -12,7 +13,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { DescriptionColumn, ResponsibleColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

@@ -15,8 +15,8 @@ import { useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { api } from '../../../../App';
-import { apiUrl } from '../../../../states/ApiState';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';
 import { MachineTypeListTable } from '../../../../tables/machine/MachineTypeTable';
 

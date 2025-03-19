@@ -16,11 +16,11 @@ import type {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 

@@ -1,5 +1,6 @@
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { Trans, t } from '@lingui/macro';
 import {
   Accordion,
@@ -32,7 +33,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { api } from '../../../../App';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { apiUrl, useServerApiState } from '../../../../states/ApiState';
+import { useServerApiState } from '../../../../states/ApiState';
 import type { AuthConfig, Provider } from '../../../../states/states';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';

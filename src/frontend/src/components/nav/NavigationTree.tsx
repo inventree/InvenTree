@@ -24,10 +24,10 @@ import { useNavigate } from 'react-router-dom';
 import { StylishText } from '@lib/components';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
 import { ApiIcon } from '../items/ApiIcon';
 
 /*

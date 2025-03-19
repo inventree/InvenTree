@@ -8,10 +8,10 @@ import { ProgressBar } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { TableColumn } from '@lib/tables';
 import { RowExpansionIcon } from '@lib/tables';
 import { useTable } from '../../../lib/hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,

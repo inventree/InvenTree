@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { api } from '../App';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
@@ -15,7 +16,6 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**

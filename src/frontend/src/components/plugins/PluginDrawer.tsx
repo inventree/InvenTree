@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
-import { useInstance } from '../../hooks/UseInstance';
+import { useInstance } from '../../../lib/hooks/UseInstance';
 import { InfoItem } from '../items/InfoItem';
 import { PluginSettingList } from '../settings/SettingList';
 import type { PluginInterface } from './PluginInterface';

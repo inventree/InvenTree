@@ -9,10 +9,12 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { useFilters } from '../../../lib/hooks/UseFilter';
+import { useInstance } from '../../../lib/hooks/UseInstance';
 import { useTable } from '../../../lib/hooks/UseTable';
 import {
   CodeEditor,
@@ -39,9 +41,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

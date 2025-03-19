@@ -5,12 +5,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { CopyButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useInstance } from '../../../lib/hooks/UseInstance';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction } from '../RowActions';

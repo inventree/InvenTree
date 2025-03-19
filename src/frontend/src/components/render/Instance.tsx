@@ -6,9 +6,9 @@ import { type ReactNode, useCallback } from 'react';
 import { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { shortenString } from '@lib/functions';
+import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { navigateToLink } from '../../functions/navigation';
-import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {

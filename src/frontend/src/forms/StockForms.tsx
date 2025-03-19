@@ -23,6 +23,7 @@ import type {
   ApiFormFieldChoice,
   ApiFormFieldSet
 } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
 import dayjs from 'dayjs';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -43,7 +44,6 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 

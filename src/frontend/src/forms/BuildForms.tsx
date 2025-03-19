@@ -15,6 +15,7 @@ import { ProgressBar } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import {
@@ -25,7 +26,6 @@ import { StatusRenderer } from '../components/render/StatusRenderer';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 

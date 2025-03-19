@@ -19,8 +19,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CopyButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { api } from '../../App';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import type { QrCodeType } from '../items/ActionDropdown';
 

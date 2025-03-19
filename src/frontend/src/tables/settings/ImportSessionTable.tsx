@@ -5,6 +5,7 @@ import { ProgressBar } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { useFilters } from '../../../lib/hooks/UseFilter';
@@ -17,7 +18,6 @@ import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';

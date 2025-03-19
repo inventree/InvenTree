@@ -3,9 +3,9 @@ import { create } from 'zustand';
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { UserPermissions, type UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
-import { apiUrl } from './ApiState';
 import type { UserProps } from './states';
 
 export interface UserStateProps {

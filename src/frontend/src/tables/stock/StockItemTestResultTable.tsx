@@ -15,6 +15,7 @@ import { PassFailButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { type RowAction, RowActions, type TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
@@ -28,7 +29,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';

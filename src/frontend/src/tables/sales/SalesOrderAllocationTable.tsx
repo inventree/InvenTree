@@ -2,6 +2,7 @@ import { ActionButton } from '@lib/components';
 import { UserRoles } from '@lib/core';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
@@ -15,7 +16,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   LocationColumn,

@@ -12,11 +12,11 @@ import { useCallback, useMemo } from 'react';
 
 import { ActionButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { useTable } from '../../lib/hooks/UseTable';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
-import { apiUrl } from '../states/ApiState';
 import { NotificationTable } from '../tables/notifications/NotificationTable';
 
 export default function NotificationsPage() {

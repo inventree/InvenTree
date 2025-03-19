@@ -2,12 +2,12 @@ import { t } from '@lingui/macro';
 
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import type { TableFilter, TableFilterChoice } from '@lib/tables';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
 

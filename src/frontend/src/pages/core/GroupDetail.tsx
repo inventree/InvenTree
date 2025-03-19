@@ -5,6 +5,7 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { useInstance } from '../../../lib/hooks/UseInstance';
 import {
   type DetailsField,
   DetailsTable
@@ -16,7 +17,6 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
 
 /**
  * Detail page for a single group

@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '@lib/components';
 import { YesNoButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { useTable } from '../../../lib/hooks/UseTable';
@@ -27,7 +28,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 
