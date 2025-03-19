@@ -16,7 +16,7 @@ export function StylishText({
   size
 }: Readonly<{
   children: JSX.Element | string;
-  size: MantineSize;
+  size?: MantineSize;
 }>) {
   const { usertheme } = useLocalState();
   const theme = useMantineTheme();
