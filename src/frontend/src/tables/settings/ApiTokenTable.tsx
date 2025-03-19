@@ -1,8 +1,7 @@
-import { CopyButton, StylishText } from '@lib/components';
-import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import type { TableFilter } from '@lib/components/tables/Filter';
+import { AddItemButton, CopyButton, StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import type { TableFilter } from '@lib/tables';
 import type { RowAction } from '@lib/tables';
 import { Trans, t } from '@lingui/macro';
 import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
