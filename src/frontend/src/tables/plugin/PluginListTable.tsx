@@ -261,7 +261,7 @@ export default function PluginListTable() {
     pathParams: { key: selectedPluginKey },
     preFormContent: activateModalContent,
     fetchInitialData: false,
-    method: 'POST',
+    method: 'PATCH',
     successMessage: activate
       ? t`The plugin was activated`
       : t`The plugin was deactivated`,
