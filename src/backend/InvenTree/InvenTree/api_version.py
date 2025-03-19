@@ -1,14 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 325
+INVENTREE_API_VERSION = 326
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v324 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/9244
+v326 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/9096
+    - Overhaul the data-export API functionality
+    - Allow customization of data exporting via plugins
+    - Consolidate LabelOutput and ReportOutput API endpoints into single DataOutput endpoint
+
+v325 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/9244
     - Adds the option for superusers to list all user tokens
     - Make list endpoints sortable, filterable and searchable
 

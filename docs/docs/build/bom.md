@@ -119,7 +119,7 @@ Select a part in the list and click on "Add Substitute" button to confirm.
 
 ### Validate BOM
 
-After [adding BOM items manually](#add-bom-item) or [uploading a BOM file](./bom_import.md), you should see the following view:
+After [adding BOM items manually](#add-bom-item) or uploading a BOM file, you should see the following view:
 {% with id="bom_invalid", url="build/bom_invalid.png", description="Invalid BOM View" %}
 {% include 'img.html' %}
 {% endwith %}
