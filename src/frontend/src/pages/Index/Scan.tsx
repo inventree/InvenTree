@@ -22,16 +22,13 @@ import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
-import { apiUrl } from '@lib/functions';
+import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import PageTitle from '../../components/nav/PageTitle';
-import {
-  notYetImplemented,
-  showApiErrorMessage
-} from '../../functions/notifications';
+import { notYetImplemented } from '../../functions/notifications';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {

@@ -10,11 +10,11 @@ import {
   IconServerSpark
 } from '@tabler/icons-react';
 
+import { EditButton } from '../../../lib/components/buttons/EditButton';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import type { HostList } from '../../states/states';
-import { EditButton } from '../buttons/EditButton';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({

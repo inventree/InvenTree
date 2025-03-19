@@ -1,6 +1,6 @@
 import { AddItemButton, CopyButton, StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
-import { apiUrl } from '@lib/functions';
+import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import type { TableFilter } from '@lib/tables';
 import type { RowAction } from '@lib/tables';
 import { Trans, t } from '@lingui/macro';
@@ -10,7 +10,6 @@ import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useTable } from '../../../lib/hooks/UseTable';
 import { api } from '../../App';
-import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { BooleanColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';

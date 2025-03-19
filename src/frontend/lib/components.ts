@@ -4,6 +4,7 @@ export {
 } from './components/buttons/ActionButton';
 
 export { AddItemButton } from './components/buttons/AddItemButton';
+export { EditButton } from './components/buttons/EditButton';
 
 export { Boundary } from './components/items/Boundary';
 export { ButtonMenu } from './components/buttons/ButtonMenu';
