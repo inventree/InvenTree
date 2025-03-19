@@ -183,6 +183,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'ICONS_IN_NAVBAR': {
+        'name': _('Navigation Icons'),
+        'description': _('Display icons in the navigation bar'),
+        'default': False,
+        'validator': bool,
+    },
     'DATE_DISPLAY_FORMAT': {
         'name': _('Date Format'),
         'description': _('Preferred format for displaying dates'),
