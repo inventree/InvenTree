@@ -53,6 +53,7 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'name',
             'package_name',
             'active',
+            'mandatory',
             'meta',
             'mixins',
             'is_builtin',
@@ -65,6 +66,7 @@ class PluginConfigSerializer(serializers.ModelSerializer):
 
     meta = serializers.DictField(read_only=True)
     mixins = serializers.DictField(read_only=True)
+    mandatory = serializers.BooleanField(read_only=True)
 
 
 class PluginAdminDetailSerializer(serializers.ModelSerializer):
