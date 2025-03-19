@@ -4,7 +4,7 @@ import type React from 'react';
 import { useCallback } from 'react';
 
 import { StylishText } from '@lib/components';
-import type { UiSizeType } from '../defaults/formatters';
+import type { UiSizeType } from '@lib/core';
 
 export interface UseModalProps {
   title: string;

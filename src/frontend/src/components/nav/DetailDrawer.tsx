@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
 
-import type { UiSizeType } from '../../defaults/formatters';
+import type { UiSizeType } from '@lib/core';
 import { useLocalState } from '../../states/LocalState';
 import * as classes from './DetailDrawer.css';
 

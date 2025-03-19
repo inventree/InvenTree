@@ -3,9 +3,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { ApiEndpoints, type HostList } from '@lib/core';
+import type { UiSizeType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { api } from '../App';
-import type { UiSizeType } from '../defaults/formatters';
 import { useUserState } from './UserState';
 
 interface Theme {
