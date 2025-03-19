@@ -1,6 +1,7 @@
 import { AddItemButton, CopyButton, StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import type { TableFilter } from '@lib/tables';
 import type { RowAction } from '@lib/tables';
 import { Trans, t } from '@lingui/macro';
@@ -8,7 +9,6 @@ import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { api } from '../../App';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { BooleanColumn } from '../ColumnRenderers';

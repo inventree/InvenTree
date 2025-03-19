@@ -1,4 +1,5 @@
 import { getDetailUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
 import type { RowAction, RowViewProps } from '@lib/tables';
 import { t } from '@lingui/macro';
 import {
@@ -8,7 +9,6 @@ import {
   IconEdit,
   IconTrash
 } from '@tabler/icons-react';
-import { navigateToLink } from '../../lib/functions/navigation';
 
 // Component for viewing a row in a table
 export function RowViewAction(props: RowViewProps): RowAction {

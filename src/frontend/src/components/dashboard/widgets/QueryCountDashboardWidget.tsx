@@ -9,8 +9,8 @@ import { StylishText } from '@lib/components';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { navigateToLink } from '../../../../lib/functions/navigation';
 import { useUserState } from '../../../states/UserState';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 

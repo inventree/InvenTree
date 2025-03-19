@@ -11,11 +11,10 @@ import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
+import { useFilters, useInstance } from '@lib/hooks';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useFilters } from '../../../lib/hooks/UseFilter';
-import { useInstance } from '../../../lib/hooks/UseInstance';
-import { useTable } from '../../../lib/hooks/UseTable';
 import {
   CodeEditor,
   PdfPreview,

@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import type { TableState } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
-import type { TableState } from '../../../lib/hooks/UseTable';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function NotificationTable({

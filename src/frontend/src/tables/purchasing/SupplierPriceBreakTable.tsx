@@ -9,8 +9,8 @@ import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl, getBaseUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
 import {

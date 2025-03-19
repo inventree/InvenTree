@@ -1,10 +1,10 @@
 import { ActionButton } from '@lib/components';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { IconTrash } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTable } from '../../../lib/hooks/UseTable';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { RenderInstance } from '../../components/render/Instance';
 import { useUserState } from '../../states/UserState';

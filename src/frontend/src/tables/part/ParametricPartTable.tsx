@@ -12,13 +12,13 @@ import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
+import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { navigateToLink } from '../../../lib/functions/navigation';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
 import {

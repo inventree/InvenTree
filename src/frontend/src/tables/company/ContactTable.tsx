@@ -8,9 +8,9 @@ import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { useNavigate } from 'react-router-dom';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { RenderInlineModel } from '../../components/render/Instance';
 import {
   useCreateApiFormModal,

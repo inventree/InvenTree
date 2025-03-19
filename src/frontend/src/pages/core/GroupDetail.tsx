@@ -1,11 +1,11 @@
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { useInstance } from '@lib/hooks';
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useInstance } from '../../../lib/hooks/UseInstance';
 import {
   type DetailsField,
   DetailsTable

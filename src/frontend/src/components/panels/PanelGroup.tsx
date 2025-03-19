@@ -31,9 +31,9 @@ import {
 import { Boundary } from '@lib/components';
 import { StylishText } from '@lib/components';
 import type { ModelType } from '@lib/core';
+import { navigateToLink } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
-import { navigateToLink } from '../../../lib/functions/navigation';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import type { PanelType } from '../panels/Panel';

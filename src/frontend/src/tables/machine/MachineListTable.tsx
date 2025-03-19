@@ -24,9 +24,9 @@ import { StylishText, YesNoButton } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
-import { useTable } from '../../../lib/hooks/UseTable';
 import {
   DeleteItemAction,
   EditItemAction,

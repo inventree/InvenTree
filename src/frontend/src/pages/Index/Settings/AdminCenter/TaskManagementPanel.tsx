@@ -4,7 +4,7 @@ import { lazy } from 'react';
 
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
-import { useInstance } from '../../../../../lib/hooks/UseInstance';
+import { useInstance } from '@lib/hooks';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { Loadable } from '../../../../functions/loading';
 import FailedTasksTable from '../../../../tables/settings/FailedTasksTable';

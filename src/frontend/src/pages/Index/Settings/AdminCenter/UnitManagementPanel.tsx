@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { useTable } from '../../../../../lib/hooks/UseTable';
+import { useTable } from '@lib/hooks';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';

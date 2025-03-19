@@ -15,8 +15,10 @@ import { Boundary } from '@lib/components';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { getDetailUrl } from '@lib/functions';
 import { extractAvailableFields, mapFields } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
+import type { TableState } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import {
   RowActions,
@@ -26,8 +28,6 @@ import {
 } from '@lib/tables';
 import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { navigateToLink } from '../../lib/functions/navigation';
-import type { TableState } from '../../lib/hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 

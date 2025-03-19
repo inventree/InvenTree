@@ -15,10 +15,10 @@ import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
+import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useTable } from '../../../lib/hooks/UseTable';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal

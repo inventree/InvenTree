@@ -26,8 +26,8 @@ import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { navigateToLink } from '../../../lib/functions/navigation';
 import { ApiIcon } from '../items/ApiIcon';
 
 /*

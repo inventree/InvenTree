@@ -3,12 +3,12 @@ import { UserRoles } from '@lib/core';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {

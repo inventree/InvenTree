@@ -16,10 +16,10 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useInstance } from '../../../lib/hooks/UseInstance';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import {
   DetailDrawer,

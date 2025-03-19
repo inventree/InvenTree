@@ -10,8 +10,8 @@ import {
   IconServerSpark
 } from '@tabler/icons-react';
 
+import { EditButton } from '@lib/components';
 import type { HostList } from '@lib/core';
-import { EditButton } from '../../../lib/components/buttons/EditButton';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';

@@ -15,10 +15,10 @@ import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { formatFileSize } from '../../defaults/formatters';
 import {

@@ -14,7 +14,7 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
-import { useInstance } from '../../../lib/hooks/UseInstance';
+import { useInstance } from '@lib/hooks';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,

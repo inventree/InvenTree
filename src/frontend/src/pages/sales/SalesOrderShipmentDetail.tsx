@@ -8,8 +8,8 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { getDetailUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
 import dayjs from 'dayjs';
-import { useInstance } from '../../../lib/hooks/UseInstance';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {

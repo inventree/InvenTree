@@ -10,8 +10,8 @@ import { IconMenu2 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { navigateToLink } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
-import { navigateToLink } from '../../../lib/functions/navigation';
 
 export type Breadcrumb = {
   icon?: React.ReactNode;

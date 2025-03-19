@@ -7,10 +7,10 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { useTable } from '../../../lib/hooks/UseTable';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {

@@ -6,9 +6,9 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useTable } from '../../../lib/hooks/UseTable';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface

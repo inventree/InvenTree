@@ -7,7 +7,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
-import { useTable } from '../../../../../lib/hooks/UseTable';
+import { useTable } from '@lib/hooks';
 import { api } from '../../../../App';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
