@@ -89,7 +89,7 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
-export const base_url = window.INVENTREE_SETTINGS.base_url || 'platform';
+export const base_url = window.INVENTREE_SETTINGS.base_url || 'web';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

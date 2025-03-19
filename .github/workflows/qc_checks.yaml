@@ -549,7 +549,7 @@ jobs:
           invoke migrate
 
   platform_ui:
-    name: Tests - Platform UI
+    name: Tests - Web UI
     runs-on: ubuntu-20.04
     timeout-minutes: 60
     needs: ["pre-commit", "paths-filter"]
@@ -628,7 +628,7 @@ jobs:
           yarn run build
 
   platform_ui_build:
-    name: Build - UI Platform
+    name: Build - Web UI
     runs-on: ubuntu-20.04
     timeout-minutes: 60
 

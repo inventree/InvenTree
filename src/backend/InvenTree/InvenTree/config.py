@@ -7,7 +7,6 @@ import os
 import random
 import shutil
 import string
-import warnings
 from pathlib import Path
 
 logger = logging.getLogger('inventree')
@@ -401,51 +400,32 @@ def get_custom_file(
 
 
 def get_frontend_settings(debug=True):
-    """Return a dictionary of settings for the frontend interface.
-
-    Note that the new config settings use the 'FRONTEND' key,
-    whereas the legacy key was 'PUI' (platform UI) which is now deprecated
-    """
-    # Legacy settings
-    pui_settings = get_setting(
-        'INVENTREE_PUI_SETTINGS', 'pui_settings', {}, typecast=dict
-    )
-
-    if len(pui_settings) > 0:
-        warnings.warn(
-            "The 'INVENTREE_PUI_SETTINGS' key is deprecated. Please use 'INVENTREE_FRONTEND_SETTINGS' instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
+    """Return a dictionary of settings for the frontend interface."""
     # New settings
     frontend_settings = get_setting(
         'INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict
     )
 
-    # Merge settings
-    settings = {**pui_settings, **frontend_settings}
-
     # Set the base URL
-    if 'base_url' not in settings:
-        settings['base_url'] = get_setting(
-            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
+    if 'base_url' not in frontend_settings:
+        frontend_settings['base_url'] = get_setting(
+            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web'
         )
 
     # Set the server list
-    settings['server_list'] = settings.get('server_list', [])
+    frontend_settings['server_list'] = frontend_settings.get('server_list', [])
 
     # Set the debug flag
-    settings['debug'] = debug
+    frontend_settings['debug'] = debug
 
-    if 'environment' not in settings:
-        settings['environment'] = 'development' if debug else 'production'
+    if 'environment' not in frontend_settings:
+        frontend_settings['environment'] = 'development' if debug else 'production'
 
-    if (debug and 'show_server_selector' not in settings) or len(
-        settings['server_list']
+    if (debug and 'show_server_selector' not in frontend_settings) or len(
+        frontend_settings['server_list']
     ) == 0:
         # In debug mode, show server selector by default
         # If no servers are specified, show server selector
-        settings['show_server_selector'] = True
+        frontend_settings['show_server_selector'] = True
 
-    return settings
+    return frontend_settings
