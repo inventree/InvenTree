@@ -1,7 +1,11 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { api } from '../App';
+import { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState } from '@lib/states';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
 import {
@@ -13,10 +17,6 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { ModelType } from '../enums/ModelType';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
  * @param model - The model type for the plugin (e.g. 'part' / 'purchaseorder')
@@ -53,6 +53,7 @@ export function usePluginPanels({
   model?: ModelType | string;
   id?: string | number | null;
 }): PluginPanelSet {
+  const api = useApi();
   const globalSettings = useGlobalSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(

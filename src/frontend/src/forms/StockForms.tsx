@@ -13,26 +13,29 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 
-import dayjs from 'dayjs';
-import { api } from '../App';
-import { ActionButton } from '../components/buttons/ActionButton';
-import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
+import { ActionButton } from '@lib/components';
+import { InvenTreeIcon } from '@lib/components';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
   ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState } from '@lib/states';
+import type { AxiosInstance } from 'axios';
+import dayjs from 'dayjs';
+import RemoveRowButton from '../components/buttons/RemoveRowButton';
+import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { InvenTreeIcon } from '../functions/icons';
 import {
   type ApiFormModalProps,
   useCreateApiFormModal,
@@ -43,8 +46,6 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 
 /**
@@ -343,6 +344,7 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }>) {
+  const api = useApi();
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
@@ -396,6 +398,7 @@ function StockItemDefaultMove({
 }
 
 function moveToDefault(
+  api: AxiosInstance,
   stockItem: any,
   value: StockItemQuantity,
   refresh: () => void
@@ -466,6 +469,8 @@ function StockOperationsRow({
   merge?: boolean;
   record?: any;
 }) {
+  const api = useApi();
+
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
     return (
       StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
@@ -579,7 +584,12 @@ function StockOperationsRow({
             {transfer && (
               <ActionButton
                 onClick={() =>
-                  moveToDefault(record, props.item.quantity, removeAndRefresh)
+                  moveToDefault(
+                    api,
+                    record,
+                    props.item.quantity,
+                    removeAndRefresh
+                  )
                 }
                 icon={<InvenTreeIcon icon='default_location' />}
                 tooltip={t`Move to default location`}
@@ -1036,6 +1046,8 @@ function stockOperationModal({
     location_detail: true,
     cascade: false
   };
+
+  const api = useApi();
 
   const params = useMemo(() => {
     const query_params: any = {

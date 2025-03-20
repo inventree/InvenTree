@@ -1,3 +1,6 @@
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { useInstance } from '@lib/hooks';
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -13,10 +16,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
 
 /**
  * Detail page for a single group

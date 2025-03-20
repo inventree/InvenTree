@@ -1,12 +1,13 @@
 import { Trans } from '@lingui/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { api } from '../../../../App';
+import { useApi } from '@lib/hooks';
 import type { PreviewAreaComponent } from '../TemplateEditor';
 
 export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
   (props, ref) => {
     const [pdfUrl, setPdfUrl] = useState('');
+    const api = useApi();
 
     useImperativeHandle(ref, () => ({
       updatePreview: async (

@@ -3,27 +3,23 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../../components/buttons/AddItemButton';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import type { ApiEndpoints } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
-import type { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../../hooks/UseForm';
-import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
-import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../../tables/RowActions';
+import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({

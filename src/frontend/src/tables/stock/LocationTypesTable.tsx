@@ -1,22 +1,22 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AddItemButton } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function LocationTypesTable() {
   const table = useTable('location-types');

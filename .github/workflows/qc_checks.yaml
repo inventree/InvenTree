@@ -592,6 +592,8 @@ jobs:
           update: true
           apt-dependency: postgresql-client libpq-dev
           pip-dependency: psycopg2
+      - name: Build Library Components
+        run: cd src/frontend && yarn library
       - name: Set up test data
         run: invoke dev.setup-test -iv
       - name: Rebuild thumbnails

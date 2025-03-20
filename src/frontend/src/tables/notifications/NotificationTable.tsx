@@ -1,12 +1,11 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { TableState } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
+import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import type { TableState } from '@lib/hooks';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../InvenTreeTable';
-import type { RowAction } from '../RowActions';
 
 export function NotificationTable({
   params,

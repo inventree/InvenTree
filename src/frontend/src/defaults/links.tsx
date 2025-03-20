@@ -1,6 +1,10 @@
 import { Trans, t } from '@lingui/macro';
 import { openContextModal } from '@mantine/modals';
 
+import { StylishText } from '@lib/components';
+import { UserRoles } from '@lib/core';
+import type { UserStateProps } from '@lib/states';
+import type { SettingsStateProps } from '@lib/states';
 import {
   IconBox,
   IconBuildingFactory2,
@@ -11,10 +15,6 @@ import {
 } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
-import { StylishText } from '../components/items/StylishText';
-import { UserRoles } from '../enums/Roles';
-import type { SettingsStateProps } from '../states/SettingsState';
-import type { UserStateProps } from '../states/UserState';
 
 type NavTab = {
   name: string;
@@ -68,12 +68,14 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
   });
 }
 
+const DOCS: string = 'https://docs.inventree.org';
+
 export const docLinks = {
-  app: 'https://docs.inventree.org/app/',
-  getting_started: 'https://docs.inventree.org/en/latest/start/intro/',
-  api: 'https://docs.inventree.org/en/latest/api/api/',
-  developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
-  faq: 'https://docs.inventree.org/en/latest/faq/',
+  app: `${DOCS}/app/`,
+  getting_started: `${DOCS}/en/latest/start/intro/`,
+  api: `${DOCS}/en/latest/api/api/`,
+  developer: `${DOCS}/en/latest/develop/contributing/`,
+  faq: `${DOCS}/en/latest/faq/`,
   github: 'https://github.com/inventree/inventree'
 };
 

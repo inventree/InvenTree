@@ -2,10 +2,10 @@ import { t } from '@lingui/macro';
 import { Accordion, Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { useTable } from '../../../../hooks/UseTable';
-import { apiUrl } from '../../../../states/ApiState';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';

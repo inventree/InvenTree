@@ -31,19 +31,19 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { ModelInformationDict, getModelInfo } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { cancelEvent } from '@lib/functions/events';
+import { useApi } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import { useUserSettingsState } from '@lib/states';
 import { showNotification } from '@mantine/notifications';
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
-import { apiUrl } from '../../states/ApiState';
-import { useUserSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict, getModelInfo } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -191,6 +191,7 @@ export function SearchDrawer({
   const [searchRegex, setSearchRegex] = useState<boolean>(false);
   const [searchWhole, setSearchWhole] = useState<boolean>(false);
 
+  const api = useApi();
   const user = useUserState();
   const userSettings = useUserSettingsState();
 

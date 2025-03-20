@@ -18,19 +18,18 @@ import {
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import { ActionButton } from '@lib/components';
+import { ButtonMenu } from '@lib/components';
+import { Boundary } from '@lib/components';
+import type { TableState } from '@lib/hooks';
+import { TableColumnSelect } from '@lib/tables';
+import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
+import { TableSearchInput } from '@lib/tables';
 import { showNotification } from '@mantine/notifications';
-import { Boundary } from '../components/Boundary';
-import { ActionButton } from '../components/buttons/ActionButton';
-import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import type { TableState } from '../hooks/UseTable';
-import { TableColumnSelect } from './ColumnSelect';
-import type { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import type { InvenTreeTableProps } from './InvenTreeTable';
-import { TableSearchInput } from './Search';
 
 /**
  * Render a composite header for an InvenTree table

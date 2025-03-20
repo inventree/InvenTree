@@ -5,12 +5,12 @@ import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { StylishText } from '../../components/items/StylishText';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function FailedTasksTable({

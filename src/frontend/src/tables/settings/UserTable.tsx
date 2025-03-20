@@ -12,27 +12,27 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import {
   DetailDrawer,
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 import type { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {

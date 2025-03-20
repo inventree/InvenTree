@@ -2,25 +2,25 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl, getBaseUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function calculateSupplierPartUnitPrice(record: any) {
   const pack_quantity = record?.part_detail?.pack_quantity_native ?? 1;
@@ -30,6 +30,8 @@ export function calculateSupplierPartUnitPrice(record: any) {
 }
 
 export function SupplierPriceBreakColumns(): TableColumn[] {
+  const base_url = getBaseUrl();
+
   return [
     {
       accessor: 'supplier',
@@ -64,6 +66,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
             href={getDetailUrl(
               ModelType.supplierpart,
               record.part_detail.pk,
+              base_url,
               true
             )}
           >

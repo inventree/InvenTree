@@ -4,6 +4,12 @@ import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import { getDetailUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import dayjs from 'dayjs';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -27,21 +33,15 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
 } from '../../forms/SalesOrderForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 
 export default function SalesOrderShipmentDetail() {

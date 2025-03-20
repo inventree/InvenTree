@@ -3,6 +3,15 @@ import type {
   EventClickArg,
   EventContentArg
 } from '@fullcalendar/core';
+import type { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
+import type { UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
@@ -14,23 +23,14 @@ import {
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../App';
-import type { ModelType } from '../../enums/ModelType';
-import type { UserRoles } from '../../enums/Roles';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import {
   AssignedToMeFilter,
   HasProjectCodeFilter,
   OrderStatusFilter,
   ProjectCodeFilter,
-  ResponsibleFilter,
-  type TableFilter
+  ResponsibleFilter
 } from '../../tables/Filter';
-import { ModelInformationDict } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 
@@ -56,6 +56,7 @@ export default function OrderCalendar({
 }) {
   const navigate = useNavigate();
   const user = useUserState();
+  const api = useApi();
 
   // These filters apply to all order types
   const orderFilters: TableFilter[] = useMemo(() => {

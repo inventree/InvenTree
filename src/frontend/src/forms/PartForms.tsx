@@ -2,11 +2,11 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { useApi } from '../contexts/ApiContext';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { ApiEndpoints } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks/UseApi';
+import { useGlobalSettingsState } from '@lib/states';
 
 /**
  * Construct a set of fields for creating / editing a Part instance

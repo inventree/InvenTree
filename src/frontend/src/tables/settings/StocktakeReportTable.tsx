@@ -1,22 +1,22 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import { ApiEndpoints } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { generateStocktakeReportFields } from '../../forms/PartForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
+import { RowDeleteAction } from '../RowActions';
 
 export default function StocktakeReportTable() {
   const table = useTable('stocktake-report');

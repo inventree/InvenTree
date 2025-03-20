@@ -10,35 +10,30 @@ import { useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { PassFailButton } from '../../components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import { PassFailButton } from '@lib/components/buttons/YesNoButton';
+import { ApiEndpoints } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useApi } from '@lib/hooks/UseApi';
+import { useUserState } from '@lib/states';
+import { useGlobalSettingsState } from '@lib/states';
+import { type RowAction, RowActions, type TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
-import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import { useTestResultFields } from '../../forms/StockForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction
-} from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function StockItemTestResultTable({
   partId,

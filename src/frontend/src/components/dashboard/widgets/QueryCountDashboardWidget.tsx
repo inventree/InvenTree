@@ -4,17 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useApi } from '../../../contexts/ApiContext';
-import type { ModelType } from '../../../enums/ModelType';
-import {
-  InvenTreeIcon,
-  type InvenTreeIconType
-} from '../../../functions/icons';
-import { navigateToLink } from '../../../functions/navigation';
-import { apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
-import { StylishText } from '../../items/StylishText';
-import { ModelInformationDict } from '../../render/ModelType';
+import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
+import { StylishText } from '@lib/components';
+import type { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { useApi } from '@lib/hooks/UseApi';
+import { useUserState } from '@lib/states';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**

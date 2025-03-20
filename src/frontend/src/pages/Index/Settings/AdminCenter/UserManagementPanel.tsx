@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Accordion } from '@mantine/core';
 
-import { StylishText } from '../../../../components/items/StylishText';
+import { StylishText } from '@lib/components';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { GroupTable } from '../../../../tables/settings/GroupTable';

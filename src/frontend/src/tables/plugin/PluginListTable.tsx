@@ -13,24 +13,24 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../components/buttons/ActionButton';
+import { ActionButton } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useApi } from '@lib/hooks/UseApi';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
-import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
+import { useServerApiState } from '../../states/ApiState';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import type { RowAction } from '../RowActions';
 
 /**
  * Construct an indicator icon for a single plugin

@@ -1,3 +1,10 @@
+import { InvenTreeIcon } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import { getDetailUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import { t } from '@lingui/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
@@ -24,24 +31,17 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   type StockOperationProps,
   stockLocationFields,
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';

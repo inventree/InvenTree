@@ -14,6 +14,17 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { InvenTreeIcon } from '@lib/components';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useApi } from '@lib/hooks/UseApi';
+import { useUserState } from '@lib/states';
+import { useGlobalSettingsState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -31,7 +42,6 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -42,11 +52,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   type StockOperationProps,
   useAddStockItem,
@@ -57,17 +63,11 @@ import {
   useStockItemSerializeFields,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';

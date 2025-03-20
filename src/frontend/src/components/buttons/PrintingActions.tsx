@@ -1,19 +1,15 @@
+import { ApiEndpoints } from '@lib/core';
+import type { ModelType } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl, extractAvailableFields } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
 import { t } from '@lingui/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { extractAvailableFields } from '../../functions/forms';
 import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsState';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -29,6 +25,7 @@ export function PrintingActions({
   enableReports?: boolean;
   modelType?: ModelType;
 }) {
+  const api = useApi();
   const userSettings = useUserSettingsState();
   const globalSettings = useGlobalSettingsState();
 

@@ -3,17 +3,17 @@ import { Group, Loader, Stack, Table, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { CopyButton } from '../../components/buttons/CopyButton';
+import { CopyButton } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
+import { RowDeleteAction } from '../RowActions';
 
 function ErrorDetail({ errorId }: Readonly<{ errorId?: number }>) {
   const { id } = useParams();

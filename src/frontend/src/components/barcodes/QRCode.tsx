@@ -17,14 +17,12 @@ import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { CopyButton } from '../buttons/CopyButton';
+import { CopyButton } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { apiUrl, extractErrorMessage } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState } from '@lib/states';
 import type { QrCodeType } from '../items/ActionDropdown';
-
-import { extractErrorMessage } from '../../functions/api';
 import { BarcodeInput } from './BarcodeInput';
 
 type QRCodeProps = {
@@ -70,6 +68,8 @@ export const InvenTreeQRCode = ({
 }: InvenTreeQRCodeProps) => {
   const settings = useGlobalSettingsState();
   const [ecl, setEcl] = useState(eclProp);
+
+  const api = useApi();
 
   useEffect(() => {
     if (eclProp) setEcl(eclProp);
@@ -151,6 +151,7 @@ export const InvenTreeQRCode = ({
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [error, setError] = useState<string>('');
 
+  const api = useApi();
   const linkBarcode = useCallback((barcode: string) => {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
@@ -181,6 +182,8 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
 };
 
 export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
+  const api = useApi();
+
   function unlinkBarcode() {
     api
       .post(apiUrl(ApiEndpoints.barcode_unlink), {

@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { useInstance } from './UseInstance';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { useInstance } from '@lib/hooks';
 import useStatusCodes from './UseStatusCodes';
 
 /*

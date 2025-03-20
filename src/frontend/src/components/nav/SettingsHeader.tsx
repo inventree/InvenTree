@@ -3,8 +3,8 @@ import { Group, SegmentedControl, Stack, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useUserState } from '../../states/UserState';
-import { StylishText } from '../items/StylishText';
+import { StylishText } from '@lib/components';
+import { useUserState } from '@lib/states';
 
 interface SettingsHeaderInterface {
   label: string;

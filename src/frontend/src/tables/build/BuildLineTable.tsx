@@ -11,12 +11,19 @@ import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import { ActionButton } from '@lib/components';
+import { ProgressBar } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { RowActions, RowExpansionIcon } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   useAllocateStockToBuildForm,
   useBuildOrderFields
@@ -27,22 +34,9 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
+import { RowDeleteAction, RowEditAction, RowViewAction } from '../RowActions';
 
 /**
  * Render a sub-table of allocated stock against a particular build line.

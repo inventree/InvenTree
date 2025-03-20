@@ -8,15 +8,16 @@ import type { AxiosInstance } from 'axios';
 import { useMemo } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
-import type { QueryClient } from '@tanstack/react-query';
-import { api, queryClient } from '../../App';
-import { useLocalState } from '../../states/LocalState';
+import { queryClient } from '@lib/functions/api';
+import { useApi } from '@lib/hooks';
+import { useLocalState } from '@lib/states';
+import { type UserStateProps, useUserState } from '@lib/states';
 import {
   type SettingsStateProps,
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
-import { type UserStateProps, useUserState } from '../../states/UserState';
+} from '@lib/states';
+import type { QueryClient } from '@tanstack/react-query';
 
 /**
  * A set of properties which are passed to a plugin,
@@ -51,6 +52,7 @@ export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState((s) => [s.language, s.host]);
   const navigate = useNavigate();
   const user = useUserState();
+  const api = useApi();
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();

@@ -11,14 +11,13 @@ import {
 import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
-import { apiUrl } from '../../states/ApiState';
-import type { Setting } from '../../states/states';
+import { Boundary } from '@lib/components';
+import { ModelType, type Setting } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
 import { vars } from '../../theme';
-import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict } from '../render/ModelType';
 
 /**
  * Render a single setting value
@@ -32,6 +31,8 @@ function SettingValue({
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
 }>) {
+  const api = useApi();
+
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
     let value = setting.value;

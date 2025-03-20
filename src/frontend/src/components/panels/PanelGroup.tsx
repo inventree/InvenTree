@@ -28,14 +28,14 @@ import {
   useParams
 } from 'react-router-dom';
 
-import type { ModelType } from '../../enums/ModelType';
-import { identifierString } from '../../functions/conversion';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
+import { Boundary } from '@lib/components';
+import { StylishText } from '@lib/components';
+import type { ModelType } from '@lib/core';
+import { navigateToLink } from '@lib/functions';
+import { identifierString } from '@lib/functions/conversion';
+import { cancelEvent } from '@lib/functions/events';
+import { useLocalState } from '@lib/states';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
-import { useLocalState } from '../../states/LocalState';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
 import type { PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 

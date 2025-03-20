@@ -4,11 +4,11 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { identifierString } from '../../../functions/conversion';
-import { InvenTreeIcon } from '../../../functions/icons';
-import { AddItemButton } from '../../buttons/AddItemButton';
-import { StandaloneField } from '../StandaloneField';
-import type { ApiFormFieldType } from './ApiFormField';
+import { InvenTreeIcon } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import type { ApiFormFieldType } from '@lib/forms';
+import { identifierString } from '@lib/functions/conversion';
+import { StandaloneField } from './StandaloneField';
 
 export interface TableFieldRowProps {
   item: any;

@@ -24,15 +24,15 @@ import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { api } from '../../../App';
-import { ModelType } from '../../../enums/ModelType';
-import type { TablerIconType } from '../../../functions/icons';
-import { apiUrl } from '../../../states/ApiState';
+import type { TablerIconType } from '@lib/components';
+import { Boundary } from '@lib/components';
+import { ModelType } from '@lib/core';
+import { ModelInformationDict } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
-import { Boundary } from '../../Boundary';
 import { SplitButton } from '../../buttons/SplitButton';
-import { StandaloneField } from '../../forms/StandaloneField';
-import { ModelInformationDict } from '../../render/ModelType';
+import { StandaloneField } from '../../forms/fields/StandaloneField';
 
 type EditorProps = {
   template: TemplateI;
@@ -88,6 +88,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const { templateUrl, editors, previewAreas, template } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
+  const api = useApi();
 
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
 
@@ -361,7 +362,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                   model: template.model_type,
                   value: previewItem,
                   filters: templateFilters,
-                  onValueChange: (value) => setPreviewItem(value)
+                  onValueChange: (value: any) => setPreviewItem(value)
                 }}
               />
             </div>

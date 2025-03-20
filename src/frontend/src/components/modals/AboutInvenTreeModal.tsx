@@ -13,13 +13,13 @@ import {
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { generateUrl } from '../../functions/urls';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import { CopyButton } from '../buttons/CopyButton';
-import { StylishText } from '../items/StylishText';
+import { CopyButton } from '@lib/components';
+import { StylishText } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { apiUrl, generateUrl } from '@lib/functions';
+import { getApi } from '@lib/functions/api';
+import { useUserState } from '@lib/states';
+import { useServerApiState } from '../../states/ApiState';
 
 type AboutLookupRef = {
   ref: string;
@@ -36,6 +36,7 @@ export function AboutInvenTreeModal({
     modalBody: string;
   }>
 >) {
+  const api = getApi();
   const [user] = useUserState((state) => [state.user]);
   const [server] = useServerApiState((state) => [state.server]);
 

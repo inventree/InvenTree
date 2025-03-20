@@ -5,29 +5,29 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { YesNoButton } from '../../components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { useApi } from '../../contexts/ApiContext';
+import { YesNoButton } from '@lib/components';
+import { ApiEndpoints } from '@lib/core';
+import { ModelType } from '@lib/core';
+import { UserRoles } from '@lib/core';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { cancelEvent } from '@lib/functions/events';
+import { useTable } from '@lib/hooks';
+import { useApi } from '@lib/hooks/UseApi';
+import { useUserState } from '@lib/states';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import { formatDecimal } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartParameterFields } from '../../forms/PartForms';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 // Render an individual parameter cell
 function ParameterCell({

@@ -20,11 +20,11 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import type { ModelType } from '../../enums/ModelType';
-import { identifierString } from '../../functions/conversion';
-import { InvenTreeIcon } from '../../functions/icons';
+import { InvenTreeIcon } from '@lib/components';
+import { StylishText } from '@lib/components';
+import type { ModelType } from '@lib/core';
+import { identifierString } from '@lib/functions/conversion';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
-import { StylishText } from './StylishText';
 
 export type ActionDropdownItem = {
   icon?: ReactNode;

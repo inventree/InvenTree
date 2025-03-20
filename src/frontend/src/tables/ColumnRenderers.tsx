@@ -5,18 +5,22 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
-import { YesNoButton } from '../components/buttons/YesNoButton';
+import { ProgressBar, YesNoButton } from '@lib/components';
+import {
+  type TableColumn,
+  type TableColumnProps,
+  TableHoverCard
+} from '@lib/tables';
+
+import type { ModelType } from '@lib/core';
+import { resolveItem } from '@lib/functions/conversion';
+import { cancelEvent } from '@lib/functions/events';
+
+import { useGlobalSettingsState } from '@lib/states';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import type { ModelType } from '../enums/ModelType';
-import { resolveItem } from '../functions/conversion';
-import { cancelEvent } from '../functions/events';
-import { useGlobalSettingsState } from '../states/SettingsState';
-import type { TableColumn, TableColumnProps } from './Column';
-import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
 export function PartColumn({
@@ -162,6 +166,25 @@ export function LineItemsProgressColumn(): TableColumn {
       />
     )
   };
+}
+
+/**
+ * Custom hovercard for displaying projectcode detail in a table
+ */
+function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
+  return projectCode ? (
+    <TableHoverCard
+      value={projectCode?.code}
+      title={t`Project Code`}
+      extra={
+        projectCode && (
+          <Text key='project-code'>{projectCode?.description}</Text>
+        )
+      }
+    />
+  ) : (
+    '-'
+  );
 }
 
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {

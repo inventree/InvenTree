@@ -1,11 +1,24 @@
 {
-    "name": "inventreeui",
-    "private": true,
+    "name": "inventree-ui",
+    "private": false,
     "version": "0.1.0",
+    "description": "UI components for the InvenTree project",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/inventree/inventree"
+    },
+    "author": {
+        "name": "InvenTree",
+        "email": "support@inventree.org",
+        "url": "https://inventree.org",
+        "organization": "InvenTree"
+    },
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "tsc && vite build --emptyOutDir",
+        "library": "tsc --p ./tsconfig-build.json && vite --config vite.lib.config.ts build",
         "preview": "vite preview",
         "extract": "lingui extract",
         "compile": "lingui compile --typescript"
@@ -72,6 +85,7 @@
         "react-window": "1.8.10",
         "recharts": "^2.15.0",
         "styled-components": "^6.1.14",
+        "tsc-alias": "^1.8.11",
         "zustand": "^4.5.5"
     },
     "devDependencies": {

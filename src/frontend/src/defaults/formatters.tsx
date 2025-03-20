@@ -1,10 +1,6 @@
-import type { MantineSize } from '@mantine/core';
 import dayjs from 'dayjs';
 
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../states/SettingsState';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
 
 interface FormatDecmimalOptionsInterface {
   digits?: number;
@@ -175,5 +171,3 @@ export function formatDate(
     return date;
   }
 }
-
-export type UiSizeType = MantineSize | string | number;
