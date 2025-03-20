@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import type { ModelType } from '@lib/core';
+import { useGlobalStatusState } from '@lib/states';
 import { getStatusCodes } from '../components/render/StatusRenderer';
-import { useGlobalStatusState } from '../states/StatusState';
 
 /**
  * Hook to access status codes, which are enumerated by the backend.

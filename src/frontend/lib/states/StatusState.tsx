@@ -1,14 +1,12 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { ApiEndpoints } from '@lib/core';
-import type { StatusLookup } from '@lib/core';
-import { statusCodeList } from '@lib/core';
-import { apiUrl } from '@lib/functions';
-import { getApi } from '@lib/functions/api';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { type StatusLookup, statusCodeList } from '../enums/StatusCodes';
+import { apiUrl, getApi } from '../functions/api';
+import { useUserState } from './UserState';
 
-interface ServerStateProps {
+export interface ServerStateProps {
   status?: StatusLookup;
   setStatus: (newStatus: StatusLookup) => void;
   fetchStatus: () => void;

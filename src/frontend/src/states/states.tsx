@@ -3,9 +3,9 @@ import { setApiDefaults } from '@lib/functions/api';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
 import { useIconState } from '@lib/states';
+import { useGlobalStatusState } from '@lib/states';
 import type { NavigateFunction } from 'react-router-dom';
 import { useServerApiState } from './ApiState';
-import { useGlobalStatusState } from './StatusState';
 
 // Type interface fully defining the current server
 export interface ServerAPIProps {

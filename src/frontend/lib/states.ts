@@ -12,3 +12,7 @@ export {
 } from './states/SettingsState';
 
 export { useIconState } from './states/IconState';
+export {
+  type ServerStateProps,
+  useGlobalStatusState
+} from './states/StatusState';

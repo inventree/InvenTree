@@ -2,14 +2,15 @@ import { t } from '@lingui/macro';
 
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
-import { apiUrl } from '@lib/functions';
-import { useGlobalSettingsState } from '@lib/states';
-import type { TableFilter, TableFilterChoice } from '@lib/tables';
 import type {
   StatusCodeInterface,
-  StatusCodeListInterface
-} from '../components/render/StatusRenderer';
-import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
+  StatusCodeListInterface,
+  StatusLookup
+} from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { useGlobalSettingsState } from '@lib/states';
+import { useGlobalStatusState } from '@lib/states';
+import type { TableFilter, TableFilterChoice } from '@lib/tables';
 
 /*
  * Construct a table filter which allows filtering by status code

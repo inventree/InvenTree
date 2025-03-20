@@ -7,7 +7,7 @@ import type {
 } from '@lib/core';
 import { statusColorMap } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
-import { useGlobalStatusState } from '../../states/StatusState';
+import { useGlobalStatusState } from '@lib/states';
 
 interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;
