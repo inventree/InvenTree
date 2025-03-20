@@ -18,7 +18,7 @@ import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { useUserState } from '../../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import { formatDate } from '../../../defaults/formatters';
 
 /**

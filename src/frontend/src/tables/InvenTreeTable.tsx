@@ -20,6 +20,7 @@ import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
 import type { TableState } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
+import { useLocalState } from '@lib/states';
 import {
   RowActions,
   TABLE_PAGE_SIZE_DEFAULT,
@@ -28,7 +29,6 @@ import {
 } from '@lib/tables';
 import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { useLocalState } from '../../lib/states/LocalState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 /**

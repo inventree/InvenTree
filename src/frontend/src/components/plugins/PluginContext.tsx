@@ -10,12 +10,9 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { queryClient } from '@lib/functions/api';
 import { useApi } from '@lib/hooks';
+import { useLocalState } from '@lib/states';
+import { type UserStateProps, useUserState } from '@lib/states';
 import type { QueryClient } from '@tanstack/react-query';
-import { useLocalState } from '../../../lib/states/LocalState';
-import {
-  type UserStateProps,
-  useUserState
-} from '../../../lib/states/UserState';
 import {
   type SettingsStateProps,
   useGlobalSettingsState,

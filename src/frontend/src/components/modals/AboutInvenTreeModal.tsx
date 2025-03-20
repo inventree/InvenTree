@@ -16,10 +16,9 @@ import { useQuery } from '@tanstack/react-query';
 import { CopyButton } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
-import { apiUrl } from '@lib/functions';
+import { apiUrl, generateUrl } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
-import { useUserState } from '../../../lib/states/UserState';
-import { generateUrl } from '../../functions/urls';
+import { useUserState } from '@lib/states';
 import { useServerApiState } from '../../states/ApiState';
 
 type AboutLookupRef = {

@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
-import { useLocalState } from '../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { docLinks } from '../defaults/links';
 import { IS_DEV } from '../main';

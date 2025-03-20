@@ -16,7 +16,7 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';

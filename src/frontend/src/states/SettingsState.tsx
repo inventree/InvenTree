@@ -12,7 +12,7 @@ import {
 import { apiUrl } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
 import { isTrue } from '@lib/functions/conversion';
-import { useUserState } from '../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 
 export interface SettingsStateProps {
   settings: Setting[];

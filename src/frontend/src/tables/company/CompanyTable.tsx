@@ -10,8 +10,8 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import type { RowAction, TableFilter } from '@lib/tables';
-import { useUserState } from '../../../lib/states/UserState';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { companyFields } from '../../forms/CompanyForms';
 import {

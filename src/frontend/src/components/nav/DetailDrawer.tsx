@@ -6,7 +6,7 @@ import type { To } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
 import type { UiSizeType } from '@lib/core';
-import { useLocalState } from '../../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import * as classes from './DetailDrawer.css';
 
 /**

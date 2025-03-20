@@ -3,7 +3,7 @@ import { openContextModal } from '@mantine/modals';
 
 import { StylishText } from '@lib/components';
 import { UserRoles } from '@lib/core';
-import type { UserStateProps } from '../../lib/states/UserState';
+import type { UserStateProps } from '@lib/states';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
 import type { SettingsStateProps } from '../states/SettingsState';
 
@@ -24,12 +24,14 @@ export const navTabs = [
   { text: <Trans>Sales</Trans>, name: 'sales', role: UserRoles.sales_order }
 ];
 
+const DOCS: string = 'https://docs.inventree.org';
+
 export const docLinks = {
-  app: 'https://docs.inventree.org/app/',
-  getting_started: 'https://docs.inventree.org/en/latest/start/intro/',
-  api: 'https://docs.inventree.org/en/latest/api/api/',
-  developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
-  faq: 'https://docs.inventree.org/en/latest/faq/',
+  app: `${DOCS}/app/`,
+  getting_started: `${DOCS}/en/latest/start/intro/`,
+  api: `${DOCS}/en/latest/api/api/`,
+  developer: `${DOCS}/en/latest/develop/contributing/`,
+  faq: `${DOCS}/en/latest/faq/`,
   github: 'https://github.com/inventree/inventree'
 };
 

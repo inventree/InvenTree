@@ -13,9 +13,9 @@ import { apiUrl } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
 import { useFilters, useInstance } from '@lib/hooks';
 import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useUserState } from '../../../lib/states/UserState';
 import {
   CodeEditor,
   PdfPreview,

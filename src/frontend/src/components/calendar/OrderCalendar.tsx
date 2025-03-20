@@ -10,6 +10,7 @@ import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -22,7 +23,6 @@ import {
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUserState } from '../../../lib/states/UserState';
 import useCalendar from '../../hooks/UseCalendar';
 import {
   AssignedToMeFilter,

@@ -5,7 +5,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { type DashboardWidgetProps } from './DashboardWidget';

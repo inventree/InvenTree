@@ -1,11 +1,11 @@
 import { setApiDefaults } from '@lib/functions/api';
 import { followRedirect } from '@lib/functions/auth';
+import { useLocalState } from '@lib/states';
 import { Trans, t } from '@lingui/macro';
 import { Anchor, Divider, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useLocalState } from '../../../lib/states/LocalState';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';

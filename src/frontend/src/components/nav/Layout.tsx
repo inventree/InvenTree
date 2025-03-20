@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';
 import { Footer } from './Footer';

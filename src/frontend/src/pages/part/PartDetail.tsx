@@ -42,7 +42,7 @@ import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {

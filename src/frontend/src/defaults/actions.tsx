@@ -3,9 +3,9 @@ import type { SpotlightActionData } from '@mantine/spotlight';
 import { IconBarcode, IconLink, IconPointer } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
+import { useLocalState } from '@lib/states';
+import { useUserState } from '@lib/states';
 import { openContextModal } from '@mantine/modals';
-import { useLocalState } from '../../lib/states/LocalState';
-import { useUserState } from '../../lib/states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 
 export function openQrModal(navigate: NavigateFunction) {

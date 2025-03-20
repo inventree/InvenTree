@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ApiProvider } from '@lib/contexts/ApiContext';
 import { getBaseUrl } from '@lib/functions';
 import { getApi, queryClient } from '@lib/functions/api';
-import { useLocalState } from '../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { defaultHostList } from '../defaults/defaultHostList';
 import { routes } from '../router';

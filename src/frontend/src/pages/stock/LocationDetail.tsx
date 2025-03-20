@@ -4,12 +4,12 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import { t } from '@lingui/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUserState } from '../../../lib/states/UserState';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {

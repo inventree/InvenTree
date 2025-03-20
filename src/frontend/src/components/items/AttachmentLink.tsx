@@ -1,3 +1,4 @@
+import { generateUrl } from '@lib/functions';
 import { Anchor, Group } from '@mantine/core';
 import {
   IconFile,
@@ -10,7 +11,6 @@ import {
   IconPhoto
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-import { generateUrl } from '../../functions/urls';
 
 /**
  * Return an icon based on the provided filename

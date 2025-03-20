@@ -18,7 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { vars } from '../../theme';

@@ -27,7 +27,7 @@ import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { getBaseUrl, navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 
 /**
  * Render a single notification entry in the drawer

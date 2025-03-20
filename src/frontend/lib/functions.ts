@@ -20,4 +20,8 @@ export {
   mapFields
 } from './functions/forms';
 
-export { getBaseUrl, navigateToLink } from './functions/navigation';
+export {
+  generateUrl,
+  getBaseUrl,
+  navigateToLink
+} from './functions/navigation';

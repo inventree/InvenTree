@@ -1,4 +1,5 @@
 import { cancelEvent } from '../functions/events';
+import { useLocalState } from '../states/LocalState';
 
 export const getBaseUrl = (): string => {
   return window.INVENTREE_SETTINGS.base_url || 'web';
@@ -21,3 +22,26 @@ export const navigateToLink = (link: string, navigate: any, event: any) => {
     navigate(link);
   }
 };
+
+/**
+ * Returns the edit view URL for a given model type
+ */
+export function generateUrl(url: string | URL, base?: string): string {
+  const { host } = useLocalState.getState();
+
+  let newUrl: string | URL = url;
+
+  try {
+    if (base) {
+      newUrl = new URL(url, base).toString();
+    } else if (host) {
+      newUrl = new URL(url, host).toString();
+    } else {
+      newUrl = url.toString();
+    }
+  } catch (e: any) {
+    console.error(`ERR: generateURL failed. url='${url}', base='${base}'`);
+  }
+
+  return newUrl.toString();
+}

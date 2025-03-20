@@ -5,7 +5,7 @@ import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
-import { useUserState } from '../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import type { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
 

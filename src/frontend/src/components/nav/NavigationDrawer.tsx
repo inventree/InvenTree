@@ -13,7 +13,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { StylishText } from '@lib/components';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import { AboutLinks, DocumentationLinks } from '../../defaults/links';
 import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';

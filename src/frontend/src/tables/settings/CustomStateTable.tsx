@@ -7,9 +7,9 @@ import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useUserState } from '../../../lib/states/UserState';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface

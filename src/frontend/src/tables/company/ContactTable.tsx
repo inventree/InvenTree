@@ -9,9 +9,9 @@ import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { useNavigate } from 'react-router-dom';
-import { useUserState } from '../../../lib/states/UserState';
 import { RenderInlineModel } from '../../components/render/Instance';
 import {
   useCreateApiFormModal,

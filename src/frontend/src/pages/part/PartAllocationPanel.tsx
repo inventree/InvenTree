@@ -3,7 +3,7 @@ import { Accordion } from '@mantine/core';
 
 import { StylishText } from '@lib/components';
 import { UserRoles } from '@lib/core';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import PartBuildAllocationsTable from '../../tables/part/PartBuildAllocationsTable';
 import PartSalesAllocationsTable from '../../tables/part/PartSalesAllocationsTable';
 

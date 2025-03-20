@@ -3,7 +3,7 @@ import { useViewportSize } from '@mantine/hooks';
 import { lazy, useEffect } from 'react';
 
 import { setApiDefaults } from '@lib/functions/api';
-import { useLocalState } from '../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import { Loadable } from '../functions/loading';
 
 function checkMobile() {

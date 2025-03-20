@@ -9,8 +9,8 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import dayjs from 'dayjs';
-import { useUserState } from '../../../lib/states/UserState';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {

@@ -5,7 +5,7 @@ import { LoadingOverlay, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 
 import { getApi } from '@lib/functions/api';
-import { useLocalState } from '../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import { useServerApiState } from '../states/ApiState';
 import { fetchGlobalStates } from '../states/states';
 

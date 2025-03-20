@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 
 import { ApiEndpoints } from '@lib/core';
-import { apiUrl } from '@lib/functions';
+import { apiUrl, generateUrl } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
 import { t } from '@lingui/macro';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { generateUrl } from '../functions/urls';
 
 type IconPackage = {
   name: string;

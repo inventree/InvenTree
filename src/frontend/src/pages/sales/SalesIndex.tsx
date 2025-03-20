@@ -11,8 +11,8 @@ import { useMemo } from 'react';
 
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useUserState } from '@lib/states';
 import { useLocalStorage } from '@mantine/hooks';
-import { useUserState } from '../../../lib/states/UserState';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';

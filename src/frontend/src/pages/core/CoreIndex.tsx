@@ -3,7 +3,7 @@ import { Stack } from '@mantine/core';
 import { IconUser, IconUsersGroup } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';

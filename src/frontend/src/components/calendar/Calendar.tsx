@@ -7,6 +7,7 @@ import FullCalendar from '@fullcalendar/react';
 import { ActionButton } from '@lib/components';
 import { Boundary } from '@lib/components';
 import { StylishText } from '@lib/components';
+import { useLocalState } from '@lib/states';
 import type { TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
 import { t } from '@lingui/macro';
@@ -30,7 +31,6 @@ import {
   IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
-import { useLocalState } from '../../../lib/states/LocalState';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 

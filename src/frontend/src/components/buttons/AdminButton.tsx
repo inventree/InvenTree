@@ -5,8 +5,8 @@ import { useCallback, useMemo } from 'react';
 import { ActionButton } from '@lib/components';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
-import { useUserState } from '../../../lib/states/UserState';
-import { generateUrl } from '../../functions/urls';
+import { generateUrl } from '@lib/functions';
+import { useUserState } from '@lib/states';
 import { useServerApiState } from '../../states/ApiState';
 
 export type AdminButtonProps = {

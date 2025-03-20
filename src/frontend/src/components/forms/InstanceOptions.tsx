@@ -12,7 +12,7 @@ import {
 
 import { EditButton } from '@lib/components';
 import type { HostList } from '@lib/core';
-import { useLocalState } from '../../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { HostOptionsForm } from './HostOptionsForm';

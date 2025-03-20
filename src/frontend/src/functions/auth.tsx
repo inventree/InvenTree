@@ -1,21 +1,20 @@
 import { ApiEndpoints } from '@lib/core';
-import { apiUrl, showLoginNotification } from '@lib/functions';
+import { apiUrl, generateUrl, showLoginNotification } from '@lib/functions';
 import { getApi, setApiDefaults } from '@lib/functions/api';
 import {
   clearCsrfCookie,
   followRedirect,
   getCsrfCookie
 } from '@lib/functions/auth';
+import { useLocalState } from '@lib/states';
+import { useUserState } from '@lib/states';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
-import { useLocalState } from '../../lib/states/LocalState';
-import { useUserState } from '../../lib/states/UserState';
 import { useServerApiState } from '../states/ApiState';
 import { type Provider, fetchGlobalStates } from '../states/states';
-import { generateUrl } from './urls';
 
 /**
  * sends a request to the specified url from a form. this will change the window location.

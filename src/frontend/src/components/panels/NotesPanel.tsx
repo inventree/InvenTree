@@ -3,7 +3,7 @@ import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/core';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import NotesEditor from '../editors/NotesEditor';
 import type { PanelType } from './Panel';
 

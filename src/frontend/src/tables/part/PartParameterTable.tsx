@@ -10,9 +10,9 @@ import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { useUserState } from '../../../lib/states/UserState';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
 import {

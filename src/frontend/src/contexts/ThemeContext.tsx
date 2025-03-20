@@ -4,7 +4,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { ContextMenuProvider } from 'mantine-contextmenu';
 
-import { useLocalState } from '../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrModal } from '../components/modals/QrModal';

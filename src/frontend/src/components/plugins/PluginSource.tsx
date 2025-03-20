@@ -1,4 +1,4 @@
-import { generateUrl } from '../../functions/urls';
+import { generateUrl } from '@lib/functions';
 
 /*
  * Load an external plugin source from a URL.

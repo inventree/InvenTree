@@ -6,8 +6,8 @@
 import { Image, type ImageProps, Skeleton, Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { useLocalState } from '../../../lib/states/LocalState';
-import { generateUrl } from '../../functions/urls';
+import { generateUrl } from '@lib/functions';
+import { useLocalState } from '@lib/states/LocalState';
 
 interface ApiImageProps extends ImageProps {
   onClick?: (event: any) => void;

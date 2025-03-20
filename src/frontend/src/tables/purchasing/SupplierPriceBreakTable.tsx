@@ -10,8 +10,8 @@ import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl, getBaseUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { useUserState } from '../../../lib/states/UserState';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
 import {

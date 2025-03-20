@@ -1,7 +1,7 @@
 import { Select } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
-import { useLocalState } from '../../../lib/states/LocalState';
+import { useLocalState } from '@lib/states';
 import { getSupportedLanguages } from '../../contexts/LanguageContext';
 
 export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {

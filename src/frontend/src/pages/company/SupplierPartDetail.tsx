@@ -15,7 +15,7 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,

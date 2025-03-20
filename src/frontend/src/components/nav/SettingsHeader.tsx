@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
-import { useUserState } from '../../../lib/states/UserState';
+import { useUserState } from '@lib/states';
 
 interface SettingsHeaderInterface {
   label: string;

@@ -5,11 +5,11 @@ import { ModelInformationDict } from '@lib/core';
 import { apiUrl, extractErrorMessage } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { useUserState } from '@lib/states';
 import { t } from '@lingui/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
-import { useUserState } from '../../../lib/states/UserState';
 import { BarcodeInput } from './BarcodeInput';
 
 export default function BarcodeScanDialog({
