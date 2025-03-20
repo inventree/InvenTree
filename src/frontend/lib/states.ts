@@ -10,3 +10,5 @@ export {
   useGlobalSettingsState,
   useUserSettingsState
 } from './states/SettingsState';
+
+export { useIconState } from './states/IconState';
