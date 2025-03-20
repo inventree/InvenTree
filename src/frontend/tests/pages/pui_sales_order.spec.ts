@@ -13,10 +13,10 @@ test('Sales Orders - Tabs', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'sales/index/');
-  await page.waitForURL('**/platform/sales/**');
+  await page.waitForURL('**/web/sales/**');
 
   await loadTab(page, 'Sales Orders');
-  await page.waitForURL('**/platform/sales/index/salesorders');
+  await page.waitForURL('**/web/sales/index/salesorders');
   await loadTab(page, 'Return Orders');
 
   // Customers

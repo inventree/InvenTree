@@ -217,9 +217,11 @@ class ApiAccessTests(InvenTreeAPITestCase):
 
         actions = self.getActions(url)
 
-        self.assertEqual(len(actions), 2)
+        self.assertEqual(len(actions), 3)
+
         self.assertIn('POST', actions)
         self.assertIn('GET', actions)
+        self.assertIn('PUT', actions)  # Fancy bulk-update action
 
     def test_detail_endpoint_actions(self):
         """Tests for detail API endpoint actions."""
@@ -268,19 +270,19 @@ class BulkDeleteTests(InvenTreeAPITestCase):
         response = self.delete(url, {}, expected_code=400)
 
         self.assertIn(
-            'List of items or filters must be provided for bulk deletion',
+            'List of items or filters must be provided for bulk operation',
             str(response.data),
         )
 
         # DELETE with invalid 'items'
         response = self.delete(url, {'items': {'hello': 'world'}}, expected_code=400)
 
-        self.assertIn("'items' must be supplied as a list object", str(response.data))
+        self.assertIn('Items must be provided as a list', str(response.data))
 
         # DELETE with invalid 'filters'
         response = self.delete(url, {'filters': [1, 2, 3]}, expected_code=400)
 
-        self.assertIn("'filters' must be supplied as a dict object", str(response.data))
+        self.assertIn('Filters must be provided as a dict', str(response.data))
 
 
 class SearchTests(InvenTreeAPITestCase):

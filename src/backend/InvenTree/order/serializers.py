@@ -35,7 +35,6 @@ from company.serializers import (
     SupplierPartSerializer,
 )
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import (
     current_date,
@@ -44,6 +43,7 @@ from InvenTree.helpers import (
     normalize,
     str2bool,
 )
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,

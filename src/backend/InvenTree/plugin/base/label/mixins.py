@@ -9,12 +9,13 @@ import pdf2image
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from common.models import InvenTreeSetting
+from common.models import DataOutput, InvenTreeSetting
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
+from plugin import PluginMixinEnum
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
-from report.models import LabelTemplate, TemplateOutput
+from report.models import LabelTemplate
 
 
 class LabelPrintingMixin:
@@ -35,7 +36,7 @@ class LabelPrintingMixin:
     def __init__(self):  # pragma: no cover
         """Register mixin."""
         super().__init__()
-        self.add_mixin('labels', True, __class__)
+        self.add_mixin(PluginMixinEnum.LABELS, True, __class__)
 
     BLOCKING_PRINT = True
 
@@ -104,7 +105,7 @@ class LabelPrintingMixin:
     def print_labels(
         self,
         label: LabelTemplate,
-        output: TemplateOutput,
+        output: DataOutput,
         items: list,
         request: Request,
         **kwargs,
@@ -113,7 +114,7 @@ class LabelPrintingMixin:
 
         Arguments:
             label: The LabelTemplate object to use for printing
-            output: The TemplateOutput object used to store the results
+            output: The DataOutput object used to store the results
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
 
@@ -121,7 +122,7 @@ class LabelPrintingMixin:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Returns:
-            None. Output data should be stored in the provided TemplateOutput object
+            None. Output data should be stored in the provided DataOutput object
 
         Raises:
             ValidationError if there is an error during the print process
@@ -211,7 +212,7 @@ class LabelPrintingMixin:
             filename: The filename of this PDF label
             label_instance: The instance of the label model which triggered the print_label() method
             item_instance: The instance of the database model against which the label is printed
-            output: The TemplateOutput object used to store the results of the print job
+            output: The DataOutput object used to store the results of the print job
             user: The user who triggered this print job
             width: The expected width of the label (in mm)
             height: The expected height of the label (in mm)

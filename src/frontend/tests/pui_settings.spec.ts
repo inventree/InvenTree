@@ -39,7 +39,7 @@ test('Settings - Language / Color', async ({ page }) => {
   //   .click();
 
   await page.getByRole('tab', { name: 'Dashboard' }).click();
-  await page.waitForURL('**/platform/home');
+  await page.waitForURL('**/web/home');
 });
 
 test('Settings - User theme', async ({ page }) => {

@@ -22,7 +22,7 @@ flag_management:
       statuses:
         - type: project
           target: 40%
-    - name: pui
+    - name: web
       carryforward: true
       statuses:
         - type: project
