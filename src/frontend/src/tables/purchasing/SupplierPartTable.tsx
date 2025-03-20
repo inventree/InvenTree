@@ -11,6 +11,7 @@ import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
@@ -18,7 +19,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   DescriptionColumn,

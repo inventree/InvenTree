@@ -4,7 +4,9 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
-import { api } from '../App';
+
+import { useApi } from '@lib/hooks';
+import { useUserState } from '../../lib/states/UserState';
 import type { DashboardWidgetProps } from '../components/dashboard/DashboardWidget';
 import DashboardWidgetLibrary from '../components/dashboard/DashboardWidgetLibrary';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
@@ -14,7 +16,6 @@ import {
 } from '../components/plugins/PluginUIFeature';
 import RemoteComponent from '../components/plugins/RemoteComponent';
 import { useGlobalSettingsState } from '../states/SettingsState';
-import { useUserState } from '../states/UserState';
 
 interface DashboardLibraryProps {
   items: DashboardWidgetProps[];
@@ -28,6 +29,7 @@ interface DashboardLibraryProps {
  * - Loads plugin-defined dashboard items (via the API)
  */
 export function useDashboardItems(): DashboardLibraryProps {
+  const api = useApi();
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
 

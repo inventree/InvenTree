@@ -15,6 +15,7 @@ import { useFilters, useInstance } from '@lib/hooks';
 import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import {
   CodeEditor,
   PdfPreview,
@@ -41,7 +42,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { useUserState } from '../../states/UserState';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {

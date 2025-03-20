@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../App';
+import { useApi } from '@lib/hooks';
 
 /**
  * Hook for generating a placeholder text for a serial number input
@@ -24,6 +24,8 @@ export function useSerialNumberPlaceholder({
   key: string;
   enabled?: boolean;
 }): string | undefined {
+  const api = useApi();
+
   // Fetch serial number information (if available)
   const snQuery = useQuery({
     queryKey: ['serial-placeholder', key, partId],

@@ -1,27 +1,21 @@
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showLoginNotification } from '@lib/functions';
+import { getApi, setApiDefaults } from '@lib/functions/api';
+import {
+  clearCsrfCookie,
+  followRedirect,
+  getCsrfCookie
+} from '@lib/functions/auth';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
-import { api, setApiDefaults } from '../App';
+import { useLocalState } from '../../lib/states/LocalState';
+import { useUserState } from '../../lib/states/UserState';
 import { useServerApiState } from '../states/ApiState';
-import { useLocalState } from '../states/LocalState';
-import { useUserState } from '../states/UserState';
 import { type Provider, fetchGlobalStates } from '../states/states';
 import { generateUrl } from './urls';
-
-export function followRedirect(navigate: NavigateFunction, redirect: any) {
-  let url = redirect?.redirectUrl ?? '/home';
-
-  if (redirect?.queryParams) {
-    // Construct and append query parameters
-    url = `${url}?${new URLSearchParams(redirect.queryParams).toString()}`;
-  }
-
-  navigate(url);
-}
 
 /**
  * sends a request to the specified url from a form. this will change the window location.
@@ -65,6 +59,8 @@ export const doBasicLogin = async (
   password: string,
   navigate: NavigateFunction
 ) => {
+  // Note: We use getApi here instead of the useApi hook, as this function is called outside of the API context
+  const api = getApi();
   const { host } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
@@ -179,7 +175,7 @@ function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
-  const { language, setLanguage, usertheme, setTheme } =
+  const { language, setLanguage, userTheme, setTheme } =
     useLocalState.getState();
   if (user) {
     if (user.profile?.language && language != user.profile.language) {
@@ -194,14 +190,14 @@ function observeProfile() {
 
     if (user.profile?.theme) {
       // extract keys of usertheme and set them to the values of user.profile.theme
-      const newTheme = Object.keys(usertheme).map((key) => {
+      const newTheme = Object.keys(userTheme).map((key) => {
         return {
-          key: key as keyof typeof usertheme,
+          key: key as keyof typeof userTheme,
           value: user.profile.theme[key] as string
         };
       });
       const diff = newTheme.filter(
-        (item) => usertheme[item.key] !== item.value
+        (item) => userTheme[item.key] !== item.value
       );
       if (diff.length > 0) {
         showNotification({
@@ -216,6 +212,7 @@ function observeProfile() {
 }
 
 export async function ensureCsrf() {
+  const api = getApi();
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
     await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
@@ -226,6 +223,8 @@ export function handleReset(
   navigate: NavigateFunction,
   values: { email: string }
 ) {
+  const api = getApi();
+
   ensureCsrf();
   api.post(apiUrl(ApiEndpoints.user_reset), values).then((val) => {
     if (val.status === 200) {
@@ -338,26 +337,6 @@ export const checkLoginState = async (
   }
 };
 
-/*
- * Return the value of the CSRF cookie, if available
- */
-export function getCsrfCookie() {
-  const cookieValue = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('csrftoken='))
-    ?.split('=')[1];
-
-  return cookieValue;
-}
-
-/*
- * Clear out the CSRF and session cookies (force session logout)
- */
-export function clearCsrfCookie() {
-  document.cookie =
-    'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-}
-
 export async function ProviderLogin(
   provider: Provider,
   process: 'login' | 'connect' = 'login'
@@ -386,6 +365,7 @@ export function authApi(
   method: 'get' | 'patch' | 'post' | 'put' | 'delete' = 'get',
   data?: any
 ) {
+  const api = getApi();
   const requestConfig = config || {};
 
   // set method
@@ -436,6 +416,8 @@ export function handlePasswordReset(
   password: string,
   navigate: NavigateFunction
 ) {
+  const api = getApi();
+
   function success() {
     notifications.show({
       title: t`Password set`,
@@ -486,6 +468,8 @@ export function handleVerifyEmail(
   key: string | undefined,
   navigate: NavigateFunction
 ) {
+  const api = getApi();
+
   // Set password with call to backend
   api
     .post(apiUrl(ApiEndpoints.auth_email_verify), {
@@ -504,6 +488,7 @@ export function handleChangePassword(
   current: string,
   navigate: NavigateFunction
 ) {
+  const api = getApi();
   const { clearUserState } = useUserState.getState();
 
   function passwordError(values: any) {

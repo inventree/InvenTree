@@ -1,8 +1,12 @@
 import { t } from '@lingui/macro';
+import { QueryClient } from '@tanstack/react-query';
+import axios, { type AxiosInstance } from 'axios';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import type { ModelType } from '../enums/ModelType';
 import { ModelInformationDict } from '../enums/ModelType';
 import type { PathParams } from '../types/Api';
+
+import { useLocalState } from '../states/LocalState';
 
 /**
  * Construct an API URL with an endpoint and (optional) pk value
@@ -129,3 +133,42 @@ export function extractErrorMessage({
 
   return message;
 }
+
+/* Global API instance, used for all API requests.
+ * Note: This is not exposed directly to the plugin library,
+ * rather it is passed through using the useApi() hook
+ */
+
+const api = axios.create({});
+
+export function getApi(): AxiosInstance {
+  return api;
+}
+
+/*
+ * Setup default settings for the Axios API instance.
+ */
+export function setApiDefaults() {
+  const { host } = useLocalState.getState();
+
+  api.defaults.baseURL = host;
+  api.defaults.timeout = 5000;
+
+  api.defaults.withCredentials = true;
+  api.defaults.withXSRFToken = true;
+  api.defaults.xsrfCookieName = 'csrftoken';
+  api.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+  axios.defaults.withCredentials = true;
+  axios.defaults.withXSRFToken = true;
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken';
+}
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+});

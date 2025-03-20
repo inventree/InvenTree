@@ -10,6 +10,7 @@ import { UserRoles } from '@lib/core';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import dayjs from 'dayjs';
+import { useUserState } from '../../../lib/states/UserState';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -41,7 +42,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 
 export default function SalesOrderShipmentDetail() {

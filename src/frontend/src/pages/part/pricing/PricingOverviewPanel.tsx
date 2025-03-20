@@ -28,7 +28,7 @@ import { InvenTreeIcon } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
-import { api } from '../../../App';
+import { useApi } from '@lib/hooks';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
   EditItemAction,
@@ -61,6 +61,7 @@ export default function PricingOverviewPanel({
   pricingQuery: UseQueryResult;
   doNavigation: (panel: panelOptions) => void;
 }>): ReactNode {
+  const api = useApi();
   const globalSettings = useGlobalSettingsState();
 
   const refreshPricing = useCallback(() => {

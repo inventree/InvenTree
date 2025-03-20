@@ -1,10 +1,10 @@
 import { Trans } from '@lingui/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
+import { useLocalState } from '../../lib/states/LocalState';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { docLinks } from '../defaults/links';
 import { IS_DEV } from '../main';
-import { useLocalState } from '../states/LocalState';
 
 export default function MobileAppView() {
   const [setAllowMobile] = useLocalState((state) => [state.setAllowMobile]);

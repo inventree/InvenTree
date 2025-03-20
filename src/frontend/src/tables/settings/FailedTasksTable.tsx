@@ -10,7 +10,7 @@ import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
-import { useUserState } from '../../states/UserState';
+import { useUserState } from '../../../lib/states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function FailedTasksTable({

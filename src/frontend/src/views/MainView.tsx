@@ -2,9 +2,9 @@ import '@mantine/core/styles.css';
 import { useViewportSize } from '@mantine/hooks';
 import { lazy, useEffect } from 'react';
 
-import { setApiDefaults } from '../App';
+import { setApiDefaults } from '@lib/functions/api';
+import { useLocalState } from '../../lib/states/LocalState';
 import { Loadable } from '../functions/loading';
-import { useLocalState } from '../states/LocalState';
 
 function checkMobile() {
   const { height, width } = useViewportSize();

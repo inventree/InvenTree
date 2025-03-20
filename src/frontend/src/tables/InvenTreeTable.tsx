@@ -28,7 +28,7 @@ import {
 } from '@lib/tables';
 import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { useLocalState } from '../states/LocalState';
+import { useLocalState } from '../../lib/states/LocalState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 /**
@@ -52,7 +52,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableColumnNames,
     getTableSorting,
     setTableSorting,
-    usertheme
+    userTheme
   } = useLocalState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
@@ -642,7 +642,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               withColumnBorders
               striped
               highlightOnHover
-              loaderType={usertheme.loader}
+              loaderType={userTheme.loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}

@@ -31,6 +31,7 @@ export default mergeConfig(
           forms: resolve(__dirname, 'lib/forms.ts'),
           functions: resolve(__dirname, 'lib/functions.ts'),
           hooks: resolve(__dirname, 'lib/hooks.ts'),
+          states: resolve(__dirname, 'lib/states.ts'),
           tables: resolve(__dirname, 'lib/tables.ts')
         },
         name: 'InvenTree',

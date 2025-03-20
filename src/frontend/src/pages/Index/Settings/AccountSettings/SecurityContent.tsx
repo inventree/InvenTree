@@ -1,6 +1,7 @@
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getApi } from '@lib/functions/api';
 import { Trans, t } from '@lingui/macro';
 import {
   Accordion,
@@ -30,7 +31,6 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { api } from '../../../../App';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ApiState';
 import type { AuthConfig, Provider } from '../../../../states/states';
@@ -348,6 +348,7 @@ function MfaSection() {
     recoveryCodesOpen,
     { open: openRecoveryCodes, close: closeRecoveryCodes }
   ] = useDisclosure(false);
+  const api = getApi();
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['mfa-list'],
     queryFn: () =>

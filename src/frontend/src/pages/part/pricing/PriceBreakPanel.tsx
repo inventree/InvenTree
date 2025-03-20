@@ -10,6 +10,7 @@ import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useUserState } from '../../../../lib/states/UserState';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import {
@@ -17,7 +18,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../../hooks/UseForm';
-import { useUserState } from '../../../states/UserState';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';

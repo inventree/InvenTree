@@ -20,6 +20,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
@@ -29,7 +30,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useServerApiState } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**

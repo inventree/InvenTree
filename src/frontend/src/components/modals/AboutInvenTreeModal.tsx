@@ -17,10 +17,10 @@ import { CopyButton } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../../App';
+import { getApi } from '@lib/functions/api';
+import { useUserState } from '../../../lib/states/UserState';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 
 type AboutLookupRef = {
   ref: string;
@@ -37,6 +37,7 @@ export function AboutInvenTreeModal({
     modalBody: string;
   }>
 >) {
+  const api = getApi();
   const [user] = useUserState((state) => [state.user]);
   const [server] = useServerApiState((state) => [state.server]);
 

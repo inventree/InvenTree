@@ -3,10 +3,10 @@ import { Stack } from '@mantine/core';
 import { IconUser, IconUsersGroup } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useUserState } from '../../../lib/states/UserState';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { useUserState } from '../../states/UserState';
 import { ContactTable } from '../../tables/company/ContactTable';
 import { UserTable } from '../../tables/core/UserTable';
 import { GroupTable } from '../../tables/settings/GroupTable';

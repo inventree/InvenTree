@@ -9,11 +9,11 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableFilter } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import {
   CreatedByColumn,
   CreationDateColumn,

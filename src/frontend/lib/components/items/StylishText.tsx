@@ -9,15 +9,17 @@ import {
 } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { useLocalState } from '../../states/LocalState';
+
 // Hook that memoizes the gradient color based on the primary color of the theme
 const useThematicGradient = () => {
-  const { usertheme } = useLocalState();
+  const { userTheme } = useLocalState();
   const theme = useMantineTheme();
   const colorScheme = useMantineColorScheme();
 
   const primary = useMemo(() => {
-    return getThemeColor(usertheme.primaryColor, theme);
-  }, [usertheme.primaryColor, theme]);
+    return getThemeColor(userTheme.primaryColor, theme);
+  }, [userTheme.primaryColor, theme]);
 
   const secondary = useMemo(() => {
     let secondary = primary;
@@ -28,7 +30,7 @@ const useThematicGradient = () => {
     }
 
     return secondary;
-  }, [usertheme, colorScheme, primary]);
+  }, [userTheme, colorScheme, primary]);
 
   return useMemo(() => {
     return { primary, secondary };

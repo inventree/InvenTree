@@ -10,9 +10,9 @@ import {
   type SettingsLookup
 } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getApi } from '@lib/functions/api';
 import { isTrue } from '@lib/functions/conversion';
-import { api } from '../App';
-import { useUserState } from './UserState';
+import { useUserState } from '../../lib/states/UserState';
 
 export interface SettingsStateProps {
   settings: Setting[];
@@ -39,6 +39,8 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
       if (!isLoggedIn()) {
         return success;
       }
+
+      const api = getApi();
 
       await api
         .get(apiUrl(ApiEndpoints.settings_global_list))
@@ -79,6 +81,8 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
     if (!isLoggedIn()) {
       return success;
     }
+
+    const api = getApi();
 
     await api
       .get(apiUrl(ApiEndpoints.settings_user_list))
@@ -123,6 +127,8 @@ export const createPluginSettingsState = ({
     pathParams,
     fetchSettings: async () => {
       let success = true;
+
+      const api = getApi();
 
       await api
         .get(apiUrl(ApiEndpoints.plugin_setting_list, undefined, { plugin }))
@@ -171,6 +177,8 @@ export const createMachineSettingsState = ({
     pathParams,
     fetchSettings: async () => {
       let success = true;
+
+      const api = getApi();
 
       await api
         .get(apiUrl(ApiEndpoints.machine_setting_list, undefined, { machine }))

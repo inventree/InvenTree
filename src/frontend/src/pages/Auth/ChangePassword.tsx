@@ -11,8 +11,8 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
+import { useUserState } from '../../../lib/states/UserState';
 import { handleChangePassword } from '../../functions/auth';
-import { useUserState } from '../../states/UserState';
 import { Wrapper } from './Layout';
 
 export default function Set_Password() {

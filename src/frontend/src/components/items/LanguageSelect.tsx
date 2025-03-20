@@ -1,8 +1,8 @@
 import { Select } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
+import { useLocalState } from '../../../lib/states/LocalState';
 import { getSupportedLanguages } from '../../contexts/LanguageContext';
-import { useLocalState } from '../../states/LocalState';
 
 export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
   const [value, setValue] = useState<string | null>(null);

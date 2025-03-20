@@ -1,11 +1,10 @@
 import { create } from 'zustand';
-
-import { ApiEndpoints } from '@lib/core';
-import type { ModelType, UserProps } from '@lib/core';
-import { UserPermissions, type UserRoles } from '@lib/core';
-import { apiUrl } from '@lib/functions';
-import { api, setApiDefaults } from '../App';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import type { ModelType } from '../enums/ModelType';
+import { UserPermissions, type UserRoles } from '../enums/Roles';
+import { apiUrl, getApi, setApiDefaults } from '../functions/api';
 import { clearCsrfCookie } from '../functions/auth';
+import type { UserProps } from '../types/Base';
 
 export interface UserStateProps {
   user: UserProps | undefined;
@@ -77,7 +76,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return;
     }
 
-    await api
+    await getApi()
       .get(apiUrl(ApiEndpoints.auth_session))
       .then((response) => {
         if (response.status == 200 && response.data.meta.is_authenticated) {
@@ -102,7 +101,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     }
 
     // Fetch user data
-    await api
+    await getApi()
       .get(apiUrl(ApiEndpoints.user_me), {
         timeout: 2000
       })
@@ -132,7 +131,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     }
 
     // Fetch role data
-    await api
+    await getApi()
       .get(apiUrl(ApiEndpoints.user_roles))
       .then((response) => {
         if (response.status == 200) {

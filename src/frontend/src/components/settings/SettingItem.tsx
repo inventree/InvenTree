@@ -15,7 +15,7 @@ import { Boundary } from '@lib/components';
 import { ModelType, type Setting } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../../App';
+import { useApi } from '@lib/hooks';
 import { vars } from '../../theme';
 import { RenderInstance } from '../render/Instance';
 
@@ -31,6 +31,8 @@ function SettingValue({
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
 }>) {
+  const api = useApi();
+
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
     let value = setting.value;

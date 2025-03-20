@@ -10,12 +10,12 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import {
   useStockItemInstallFields,
   useStockItemUninstallFields
 } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 

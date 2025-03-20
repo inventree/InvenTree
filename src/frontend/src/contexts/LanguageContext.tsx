@@ -4,9 +4,9 @@ import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 
-import { api } from '../App';
+import { getApi } from '@lib/functions/api';
+import { useLocalState } from '../../lib/states/LocalState';
 import { useServerApiState } from '../states/ApiState';
-import { useLocalState } from '../states/LocalState';
 import { fetchGlobalStates } from '../states/states';
 
 export const defaultLocale = 'en';
@@ -104,6 +104,8 @@ export function LanguageContext({
         const new_locales = locales
           .map((locale) => locale?.replaceAll('_', '-').toLowerCase())
           .join(', ');
+
+        const api = getApi();
 
         if (new_locales == api.defaults.headers.common['Accept-Language']) {
           return;

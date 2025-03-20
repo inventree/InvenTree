@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../App';
+import { useApi } from '@lib/hooks';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
 import {
@@ -53,6 +53,7 @@ export function usePluginPanels({
   model?: ModelType | string;
   id?: string | number | null;
 }): PluginPanelSet {
+  const api = useApi();
   const globalSettings = useGlobalSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(

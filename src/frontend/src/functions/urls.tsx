@@ -1,4 +1,4 @@
-import { useLocalState } from '../states/LocalState';
+import { useLocalState } from '../../lib/states/LocalState';
 
 /**
  * Returns the edit view URL for a given model type

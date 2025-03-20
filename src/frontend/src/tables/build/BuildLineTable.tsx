@@ -22,6 +22,7 @@ import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowActions, RowExpansionIcon } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
@@ -33,7 +34,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useUserState } from '../../states/UserState';
 import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction, RowViewAction } from '../RowActions';

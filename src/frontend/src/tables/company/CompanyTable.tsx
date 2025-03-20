@@ -11,13 +11,13 @@ import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { RowAction, TableFilter } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowEditAction } from '../RowActions';

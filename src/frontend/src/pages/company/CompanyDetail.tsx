@@ -19,6 +19,7 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
+import { useUserState } from '../../../lib/states/UserState';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -44,7 +45,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';

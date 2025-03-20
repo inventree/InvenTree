@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
+import { useUserState } from '../../../lib/states/UserState';
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';
-import { useUserState } from '../../states/UserState';
 import { Footer } from './Footer';
 import { Header } from './Header';
 

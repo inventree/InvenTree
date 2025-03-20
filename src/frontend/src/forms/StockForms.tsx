@@ -24,8 +24,9 @@ import type {
   ApiFormFieldSet
 } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import type { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
-import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import {
@@ -343,6 +344,7 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }>) {
+  const api = useApi();
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
@@ -396,6 +398,7 @@ function StockItemDefaultMove({
 }
 
 function moveToDefault(
+  api: AxiosInstance,
   stockItem: any,
   value: StockItemQuantity,
   refresh: () => void
@@ -466,6 +469,8 @@ function StockOperationsRow({
   merge?: boolean;
   record?: any;
 }) {
+  const api = useApi();
+
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
     return (
       StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
@@ -579,7 +584,12 @@ function StockOperationsRow({
             {transfer && (
               <ActionButton
                 onClick={() =>
-                  moveToDefault(record, props.item.quantity, removeAndRefresh)
+                  moveToDefault(
+                    api,
+                    record,
+                    props.item.quantity,
+                    removeAndRefresh
+                  )
                 }
                 icon={<InvenTreeIcon icon='default_location' />}
                 tooltip={t`Move to default location`}
@@ -1036,6 +1046,8 @@ function stockOperationModal({
     location_detail: true,
     cascade: false
   };
+
+  const api = useApi();
 
   const params = useMemo(() => {
     const query_params: any = {

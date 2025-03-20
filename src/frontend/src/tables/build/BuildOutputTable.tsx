@@ -31,6 +31,7 @@ import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import {
   useBuildOrderOutputFields,
   useCancelBuildOutputsForm,
@@ -42,7 +43,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowEditAction, RowViewAction } from '../RowActions';

@@ -1,11 +1,11 @@
 import type { PluginProps } from '@lib/core';
+import { setApiDefaults } from '@lib/functions/api';
 import type { NavigateFunction } from 'react-router-dom';
-import { setApiDefaults } from '../App';
+import { useUserState } from '../../lib/states/UserState';
 import { useServerApiState } from './ApiState';
 import { useIconState } from './IconState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
-import { useUserState } from './UserState';
 
 // Type interface fully defining the current server
 export interface ServerAPIProps {

@@ -39,10 +39,10 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
+import { useApi } from '@lib/hooks';
 import { showNotification } from '@mantine/notifications';
-import { api } from '../../App';
+import { useUserState } from '../../../lib/states/UserState';
 import { useUserSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
 
 // Define type for handling individual search queries
@@ -191,6 +191,7 @@ export function SearchDrawer({
   const [searchRegex, setSearchRegex] = useState<boolean>(false);
   const [searchWhole, setSearchWhole] = useState<boolean>(false);
 
+  const api = useApi();
   const user = useUserState();
   const userSettings = useUserSettingsState();
 

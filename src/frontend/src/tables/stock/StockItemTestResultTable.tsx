@@ -20,6 +20,7 @@ import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import { type RowAction, RowActions, type TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
@@ -30,7 +31,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';

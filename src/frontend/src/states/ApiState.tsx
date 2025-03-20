@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../App';
+import { getApi } from '@lib/functions/api';
 import { emptyServerAPI } from '../defaults/defaults';
 import type { AuthConfig, AuthContext, ServerAPIProps } from './states';
 
@@ -33,6 +33,8 @@ export const useServerApiState = create<ServerApiStateProps>()(
       server: emptyServerAPI,
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
+        const api = getApi();
+
         // Fetch server data
         await api
           .get(apiUrl(ApiEndpoints.api_server_info))

@@ -2,7 +2,7 @@ import { Loader } from '@mantine/core';
 import { useMemo, useState } from 'react';
 
 import type { ModelType } from '@lib/core';
-import { api } from '../../App';
+import { useApi } from '@lib/hooks';
 import { RenderInstance } from './Instance';
 
 /**
@@ -18,6 +18,7 @@ export function InstanceFromUrl({
   model: ModelType;
   url: string;
 }>) {
+  const api = useApi();
   const [data, setData] = useState<any>(null);
   useMemo(
     () =>

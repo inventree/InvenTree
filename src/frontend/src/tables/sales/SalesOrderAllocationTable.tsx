@@ -9,6 +9,7 @@ import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import { useUserState } from '../../../lib/states/UserState';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
@@ -16,7 +17,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import {
   LocationColumn,
   PartColumn,

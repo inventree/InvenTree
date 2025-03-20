@@ -17,8 +17,8 @@ import {
 import { useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
+import { useUserState } from '../../../lib/states/UserState';
 import useInstanceName from '../../hooks/UseInstanceName';
-import { useUserState } from '../../states/UserState';
 
 /**
  * A menu for editing the dashboard layout

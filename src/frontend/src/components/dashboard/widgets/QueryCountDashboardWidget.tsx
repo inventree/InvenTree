@@ -11,7 +11,7 @@ import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { useUserState } from '../../../states/UserState';
+import { useUserState } from '../../../../lib/states/UserState';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**

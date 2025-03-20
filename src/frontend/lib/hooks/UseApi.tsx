@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 
+import type { AxiosInstance } from 'axios';
 import { ApiContext } from '../contexts/ApiContext';
 
-export const useApi = () => {
+export const useApi = (): AxiosInstance => {
   const context = useContext(ApiContext);
 
   if (!context) {

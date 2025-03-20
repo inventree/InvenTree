@@ -2,9 +2,9 @@ import { create } from 'zustand';
 
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { getApi } from '@lib/functions/api';
 import { t } from '@lingui/macro';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { api } from '../App';
 import { generateUrl } from '../functions/urls';
 
 type IconPackage = {
@@ -35,6 +35,8 @@ export const useIconState = create<IconState>()((set, get) => ({
   packagesMap: {},
   fetchIcons: async () => {
     if (get().hasLoaded) return;
+
+    const api = getApi();
 
     const packs = await api.get(apiUrl(ApiEndpoints.icons)).catch((_error) => {
       console.error('ERR: Could not fetch icon packages');

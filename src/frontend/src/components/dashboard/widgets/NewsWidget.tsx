@@ -17,9 +17,9 @@ import { useCallback, useMemo } from 'react';
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../../../App';
+import { useApi } from '@lib/hooks';
+import { useUserState } from '../../../../lib/states/UserState';
 import { formatDate } from '../../../defaults/formatters';
-import { useUserState } from '../../../states/UserState';
 
 /**
  * Render a link to an external news item
@@ -77,6 +77,7 @@ function NewsItem({
  */
 export default function NewsWidget() {
   const user = useUserState();
+  const api = useApi();
 
   const newsItems = useQuery({
     queryKey: ['news-items'],

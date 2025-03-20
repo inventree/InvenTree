@@ -23,6 +23,7 @@ import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowExpansionIcon } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
 import { useBuildOrderFields } from '../../forms/BuildForms';
@@ -36,7 +37,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {

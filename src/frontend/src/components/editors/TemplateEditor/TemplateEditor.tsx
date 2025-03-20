@@ -29,7 +29,7 @@ import { Boundary } from '@lib/components';
 import { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../../../App';
+import { useApi } from '@lib/hooks';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/fields/StandaloneField';
@@ -88,6 +88,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const { templateUrl, editors, previewAreas, template } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
+  const api = useApi();
 
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
 

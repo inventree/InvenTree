@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../../App';
+import { getApi } from '@lib/functions/api';
 
 export function LicenceView(entries: Readonly<any[]>) {
   return (
@@ -52,6 +52,8 @@ export function LicenceView(entries: Readonly<any[]>) {
 }
 
 export function LicenseModal() {
+  const api = getApi();
+
   const { data, isFetching, isError } = useQuery({
     queryKey: ['license'],
     refetchOnMount: true,

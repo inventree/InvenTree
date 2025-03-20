@@ -17,6 +17,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import dayjs from 'dayjs';
+import { useUserState } from '../../../lib/states/UserState';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
 import {
   generateStocktakeReportFields,
@@ -27,7 +28,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 

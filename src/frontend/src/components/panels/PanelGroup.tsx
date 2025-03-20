@@ -34,8 +34,8 @@ import type { ModelType } from '@lib/core';
 import { navigateToLink } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
+import { useLocalState } from '../../../lib/states/LocalState';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
-import { useLocalState } from '../../states/LocalState';
 import type { PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 

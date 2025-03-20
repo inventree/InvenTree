@@ -30,8 +30,8 @@ import {
   IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
+import { useLocalState } from '../../../lib/states/LocalState';
 import type { CalendarState } from '../../hooks/UseCalendar';
-import { useLocalState } from '../../states/LocalState';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {

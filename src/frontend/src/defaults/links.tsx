@@ -3,9 +3,9 @@ import { openContextModal } from '@mantine/modals';
 
 import { StylishText } from '@lib/components';
 import { UserRoles } from '@lib/core';
+import type { UserStateProps } from '../../lib/states/UserState';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
 import type { SettingsStateProps } from '../states/SettingsState';
-import type { UserStateProps } from '../states/UserState';
 
 export const navTabs = [
   { text: <Trans>Dashboard</Trans>, name: 'home' },

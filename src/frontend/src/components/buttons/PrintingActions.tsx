@@ -2,11 +2,11 @@ import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl, extractAvailableFields } from '@lib/functions';
+import { useApi } from '@lib/hooks';
 import { t } from '@lingui/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { api } from '../../App';
 import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import {
@@ -28,6 +28,7 @@ export function PrintingActions({
   enableReports?: boolean;
   modelType?: ModelType;
 }) {
+  const api = useApi();
   const userSettings = useUserSettingsState();
   const globalSettings = useGlobalSettingsState();
 

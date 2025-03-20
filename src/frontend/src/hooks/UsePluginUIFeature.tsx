@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../App';
+import { useApi } from '@lib/hooks';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import { findExternalPluginFunction } from '../components/plugins/PluginSource';
 import type {
@@ -22,6 +22,7 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
   featureType: UIFeatureT['featureType'];
   context: UIFeatureT['requestContext'];
 }) {
+  const api = useApi();
   const globalSettings = useGlobalSettingsState();
 
   const pluginUiFeaturesEnabled: boolean = useMemo(

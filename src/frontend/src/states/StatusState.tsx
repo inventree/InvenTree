@@ -4,10 +4,10 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../App';
+import { getApi } from '@lib/functions/api';
+import { useUserState } from '../../lib/states/UserState';
 import type { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
-import { useUserState } from './UserState';
 
 export type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
@@ -29,6 +29,8 @@ export const useGlobalStatusState = create<ServerStateProps>()(
         if (!isLoggedIn()) {
           return;
         }
+
+        const api = getApi();
 
         await api
           .get(apiUrl(ApiEndpoints.global_status))

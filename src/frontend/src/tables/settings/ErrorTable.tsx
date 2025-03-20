@@ -9,9 +9,9 @@ import { apiUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction } from '../RowActions';
 

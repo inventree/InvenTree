@@ -11,6 +11,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { formatCurrency } from '../../defaults/formatters';
 import {
   useReceiveReturnOrderLineItems,
@@ -22,7 +23,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   LinkColumn,

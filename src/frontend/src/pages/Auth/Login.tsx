@@ -1,20 +1,17 @@
+import { setApiDefaults } from '@lib/functions/api';
+import { followRedirect } from '@lib/functions/auth';
 import { Trans, t } from '@lingui/macro';
 import { Anchor, Divider, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { setApiDefaults } from '../../App';
+import { useLocalState } from '../../../lib/states/LocalState';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
-import {
-  checkLoginState,
-  doBasicLogin,
-  followRedirect
-} from '../../functions/auth';
+import { checkLoginState, doBasicLogin } from '../../functions/auth';
 import { useServerApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { Wrapper } from './Layout';
 
 export default function Login() {

@@ -12,7 +12,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import { RowExpansionIcon } from '@lib/tables';
-import { useUserState } from '../../states/UserState';
+import { useUserState } from '../../../lib/states/UserState';
 import {
   DescriptionColumn,
   ProjectCodeColumn,

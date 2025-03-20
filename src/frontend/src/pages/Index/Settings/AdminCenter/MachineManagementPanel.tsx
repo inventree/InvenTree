@@ -16,7 +16,7 @@ import { useMemo } from 'react';
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { api } from '../../../../App';
+import { useApi } from '@lib/hooks';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';
 import { MachineTypeListTable } from '../../../../tables/machine/MachineTypeTable';
 
@@ -25,6 +25,7 @@ interface MachineRegistryStatusI {
 }
 
 export default function MachineManagementPanel() {
+  const api = useApi();
   const { data: registryStatus, refetch } = useQuery<MachineRegistryStatusI>({
     queryKey: ['machine-registry-status'],
     queryFn: () =>

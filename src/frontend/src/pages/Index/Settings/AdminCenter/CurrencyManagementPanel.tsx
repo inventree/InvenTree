@@ -7,8 +7,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
-import { useTable } from '@lib/hooks';
-import { api } from '../../../../App';
+import { useApi, useTable } from '@lib/hooks';
+
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
@@ -19,6 +19,7 @@ import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 export function CurrencyTable({
   setInfo
 }: Readonly<{ setInfo: (info: any) => void }>) {
+  const api = useApi();
   const table = useTable('currency', 'currency');
   const columns = useMemo(() => {
     return [

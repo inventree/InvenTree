@@ -13,6 +13,7 @@ import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import dayjs from 'dayjs';
+import { useUserState } from '../../../lib/states/UserState';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
@@ -22,7 +23,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { DateColumn, LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowCancelAction, RowEditAction, RowViewAction } from '../RowActions';

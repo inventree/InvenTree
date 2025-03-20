@@ -26,11 +26,11 @@ import { StylishText } from '@lib/components';
 import type { UserRoles } from '@lib/core';
 import { showApiErrorMessage } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
+import { useApi } from '@lib/hooks';
 import { showNotification } from '@mantine/notifications';
-import { api } from '../../App';
+import { useUserState } from '../../../lib/states/UserState';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
 import { ApiImage } from '../images/ApiImage';
@@ -71,7 +71,7 @@ const backup_image = '/static/img/blank_image.png';
 /**
  * Modal used for removing/deleting the current image relation
  */
-const removeModal = (apiPath: string, setImage: (image: string) => void) =>
+const removeModal = (onConfirm: () => void) =>
   modals.openConfirmModal({
     title: <StylishText size='xl'>{t`Remove Image`}</StylishText>,
     children: (
@@ -80,10 +80,7 @@ const removeModal = (apiPath: string, setImage: (image: string) => void) =>
       </Text>
     ),
     labels: { confirm: t`Remove`, cancel: t`Cancel` },
-    onConfirm: async () => {
-      await api.patch(apiPath, { image: null });
-      setImage(backup_image);
-    }
+    onConfirm: onConfirm
   });
 
 /**
@@ -96,6 +93,7 @@ function UploadModal({
   apiPath: string;
   setImage: (image: string) => void;
 }>) {
+  const api = useApi();
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
@@ -279,6 +277,7 @@ function ImageActionButtons({
   setImage: (image: string) => void;
   downloadImage: () => void;
 }>) {
+  const api = useApi();
   const globalSettings = useGlobalSettingsState();
 
   return (
@@ -361,7 +360,11 @@ function ImageActionButtons({
               tooltipAlignment='top'
               onClick={(event: any) => {
                 cancelEvent(event);
-                removeModal(apiPath, setImage);
+                removeModal(async () =>
+                  api
+                    .patch(apiPath, { image: null })
+                    .then(() => setImage(backup_image))
+                );
               }}
             />
           )}

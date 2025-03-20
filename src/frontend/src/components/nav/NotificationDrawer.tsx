@@ -26,8 +26,8 @@ import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { getBaseUrl, navigateToLink } from '@lib/functions';
-import { api } from '../../App';
-import { useUserState } from '../../states/UserState';
+import { useApi } from '@lib/hooks';
+import { useUserState } from '../../../lib/states/UserState';
 
 /**
  * Render a single notification entry in the drawer
@@ -39,6 +39,7 @@ function NotificationEntry({
   notification: any;
   onRead: () => void;
 }>) {
+  const api = useApi();
   const navigate = useNavigate();
   const base_url = getBaseUrl();
 
@@ -67,7 +68,7 @@ function NotificationEntry({
         >
           <Stack gap={2}>
             <Anchor
-              href={link ? `/${getBaseUrl()}${link}` : '#'}
+              href={link ? `/${base_url}${link}` : '#'}
               underline='hover'
               target='_blank'
               onClick={(event: any) => {
@@ -107,7 +108,7 @@ export function NotificationDrawer({
   onClose: () => void;
 }>) {
   const { isLoggedIn } = useUserState();
-
+  const api = useApi();
   const navigate = useNavigate();
 
   const notificationQuery = useQuery({

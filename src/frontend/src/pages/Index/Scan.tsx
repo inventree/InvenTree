@@ -23,8 +23,8 @@ import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
+import { useApi } from '@lib/hooks';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import PageTitle from '../../components/nav/PageTitle';
@@ -33,6 +33,7 @@ import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {
   const [history, historyHandlers] = useListState<BarcodeScanItem>([]);
+  const api = useApi();
 
   const [historyStorage, setHistoryStorage] = useLocalStorage<
     BarcodeScanItem[]

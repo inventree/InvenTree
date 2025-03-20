@@ -23,6 +23,7 @@ import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
+import { useUserState } from '../../../lib/states/UserState';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -67,7 +68,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';

@@ -10,12 +10,12 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useUserState } from '../../../../lib/states/UserState';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
-import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';
 import { AccountContent } from './AccountSettings/UserPanel';
 

@@ -8,9 +8,9 @@ import { YesNoUndefinedButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { useNavigate } from 'react-router-dom';
+import { useUserState } from '../../../../../lib/states/UserState';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
-import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import { Badge, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { useUserState } from '../../../lib/states/UserState';
 import {
   type DetailsField,
   DetailsTable
@@ -18,7 +19,6 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 
 /**
  * Detail page for a single user

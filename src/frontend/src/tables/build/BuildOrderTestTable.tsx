@@ -19,11 +19,11 @@ import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { useUserState } from '../../../lib/states/UserState';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import { LocationColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 

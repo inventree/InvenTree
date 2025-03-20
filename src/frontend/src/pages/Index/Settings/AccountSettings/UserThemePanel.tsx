@@ -16,12 +16,12 @@ import {
 import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { StylishText } from '@lib/components';
+import { useLocalState } from '../../../../../lib/states/LocalState';
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
-import { StylishText } from '../../../../components/items/StylishText';
 import { SizeMarks } from '../../../../defaults/defaults';
 import { IS_DEV } from '../../../../main';
-import { useLocalState } from '../../../../states/LocalState';
 
 function getLkp(color: string) {
   return { [DEFAULT_THEME.colors[color][6]]: color };
@@ -34,7 +34,7 @@ const LOOKUP = Object.assign(
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
   const [usertheme, setTheme, setLanguage] = useLocalState((state) => [
-    state.usertheme,
+    state.userTheme,
     state.setTheme,
     state.setLanguage
   ]);

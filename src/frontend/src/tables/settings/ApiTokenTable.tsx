@@ -1,7 +1,7 @@
 import { AddItemButton, CopyButton, StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
-import { useTable } from '@lib/hooks';
+import { useApi, useTable } from '@lib/hooks';
 import type { TableFilter } from '@lib/tables';
 import type { RowAction } from '@lib/tables';
 import { Trans, t } from '@lingui/macro';
@@ -9,7 +9,6 @@ import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { api } from '../../App';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { BooleanColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
@@ -18,6 +17,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function ApiTokenTable({
   only_myself = true
 }: Readonly<{ only_myself: boolean }>) {
+  const api = useApi();
   const [token, setToken] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
 

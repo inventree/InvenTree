@@ -15,13 +15,13 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
-import { api } from '../../App';
+import { useApi } from '@lib/hooks';
+import { useLocalState } from '../../../lib/states/LocalState';
+import { useUserState } from '../../../lib/states/UserState';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
 import { MainMenu } from './MainMenu';
@@ -48,6 +48,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
+  const api = useApi();
   const { isLoggedIn } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();

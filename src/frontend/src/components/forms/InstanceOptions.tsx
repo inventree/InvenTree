@@ -12,9 +12,9 @@ import {
 
 import { EditButton } from '@lib/components';
 import type { HostList } from '@lib/core';
+import { useLocalState } from '../../../lib/states/LocalState';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({

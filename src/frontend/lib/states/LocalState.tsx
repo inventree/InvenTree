@@ -2,13 +2,12 @@ import type { DataTableSortStatus } from 'mantine-datatable';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { ApiEndpoints, type HostList } from '@lib/core';
-import type { UiSizeType } from '@lib/core';
-import { apiUrl } from '@lib/functions';
-import { api } from '../App';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl, getApi } from '../functions/api';
+import type { HostList, UiSizeType } from '../types/Base';
 import { useUserState } from './UserState';
 
-interface Theme {
+export interface UserTheme {
   primaryColor: string;
   whiteColor: string;
   blackColor: string;
@@ -16,7 +15,7 @@ interface Theme {
   loader: string;
 }
 
-interface LocalStateProps {
+export interface LocalStateProps {
   autoupdate: boolean;
   toggleAutoupdate: () => void;
   host: string;
@@ -26,11 +25,10 @@ interface LocalStateProps {
   setHostList: (newHostList: HostList) => void;
   language: string;
   setLanguage: (newLanguage: string, noPatch?: boolean) => void;
-  // theme
-  usertheme: Theme;
+  userTheme: UserTheme;
   setTheme: (
     newValues: {
-      key: keyof Theme;
+      key: keyof UserTheme;
       value: string;
     }[],
     noPatch?: boolean
@@ -74,8 +72,7 @@ export const useLocalState = create<LocalStateProps>()(
         set({ language: newLanguage });
         if (!noPatch) patchUser('language', newLanguage);
       },
-      //theme
-      usertheme: {
+      userTheme: {
         primaryColor: 'indigo',
         whiteColor: '#fff',
         blackColor: '#000',
@@ -83,12 +80,11 @@ export const useLocalState = create<LocalStateProps>()(
         loader: 'oval'
       },
       setTheme: (newValues, noPatch = false) => {
-        const newTheme = { ...get().usertheme };
+        const newTheme = { ...get().userTheme };
         newValues.forEach((val) => {
           newTheme[val.key] = val.value;
         });
-        // console.log('setting theme, changed val',newValues.map(a => a.key).join(','), newTheme);
-        set({ usertheme: newTheme });
+        set({ userTheme: newTheme });
         if (!noPatch) patchUser('theme', newTheme);
       },
       // panels
@@ -156,12 +152,12 @@ export const useLocalState = create<LocalStateProps>()(
 );
 
 /*
-pushes changes in user profile to backend
-*/
+ * Pushes changes in user profile to backend
+ */
 function patchUser(key: 'language' | 'theme', val: any) {
   const uid = useUserState.getState().userId();
   if (uid) {
-    api.patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });
+    getApi().patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });
   } else {
     console.log('user not logged in, not patching');
   }
