@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 326
+INVENTREE_API_VERSION = 327
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v327 - 2025-03-20 : https://github.com/inventree/InvenTree/pull/9339
+    - Adds "is_mandatory" field to the Plugin API
+    - Adds ability to filter by "mandatory" status in the Plugin API
 
 v326 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/9096
     - Overhaul the data-export API functionality

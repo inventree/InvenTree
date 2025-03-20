@@ -18,10 +18,13 @@ import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { useLocalState } from '@lib/states';
 import { useUserState } from '@lib/states';
-import { navTabs as mainNavTabs } from '../../defaults/links';
+import { getNavTabs } from '../../defaults/links';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
 import { MainMenu } from './MainMenu';
@@ -162,30 +165,45 @@ function NavTabs() {
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
+  const navTabs = getNavTabs(user);
+  const userSettings = useUserSettingsState();
+
+  const withIcons: boolean = useMemo(
+    () => userSettings.isSet('ICONS_IN_NAVBAR', false),
+    [userSettings]
+  );
 
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    mainNavTabs.forEach((tab) => {
+    navTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
+
+      // TODO: Hide icons if user does not wish to display them!
 
       _tabs.push(
         <Tabs.Tab
           value={tab.name}
           key={tab.name}
+          leftSection={
+            withIcons &&
+            tab.icon && (
+              <ActionIcon variant='transparent'>{tab.icon}</ActionIcon>
+            )
+          }
           onClick={(event: any) =>
             navigateToLink(`/${tab.name}`, navigate, event)
           }
         >
-          {tab.text}
+          {tab.title}
         </Tabs.Tab>
       );
     });
 
     return _tabs;
-  }, [mainNavTabs, user]);
+  }, [navTabs, user, withIcons]);
 
   return (
     <Tabs

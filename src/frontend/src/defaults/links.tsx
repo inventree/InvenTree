@@ -4,25 +4,69 @@ import { openContextModal } from '@mantine/modals';
 import { StylishText } from '@lib/components';
 import { UserRoles } from '@lib/core';
 import type { UserStateProps } from '@lib/states';
+import {
+  IconBox,
+  IconBuildingFactory2,
+  IconDashboard,
+  IconPackages,
+  IconShoppingCart,
+  IconTruckDelivery
+} from '@tabler/icons-react';
+import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
 import type { SettingsStateProps } from '../states/SettingsState';
 
-export const navTabs = [
-  { text: <Trans>Dashboard</Trans>, name: 'home' },
-  { text: <Trans>Parts</Trans>, name: 'part', role: UserRoles.part },
-  { text: <Trans>Stock</Trans>, name: 'stock', role: UserRoles.stock },
-  {
-    text: <Trans>Manufacturing</Trans>,
-    name: 'manufacturing',
-    role: UserRoles.build
-  },
-  {
-    text: <Trans>Purchasing</Trans>,
-    name: 'purchasing',
-    role: UserRoles.purchase_order
-  },
-  { text: <Trans>Sales</Trans>, name: 'sales', role: UserRoles.sales_order }
-];
+type NavTab = {
+  name: string;
+  title: string;
+  icon: ReactNode;
+  role?: UserRoles;
+};
+
+export function getNavTabs(user: UserStateProps): NavTab[] {
+  const navTabs: NavTab[] = [
+    {
+      name: 'home',
+      title: t`Dashboard`,
+      icon: <IconDashboard />
+    },
+    {
+      name: 'part',
+      title: t`Parts`,
+      icon: <IconBox />,
+      role: UserRoles.part
+    },
+    {
+      name: 'stock',
+      title: t`Stock`,
+      icon: <IconPackages />,
+      role: UserRoles.stock
+    },
+    {
+      name: 'manufacturing',
+      title: t`Manufacturing`,
+      icon: <IconBuildingFactory2 />,
+      role: UserRoles.build
+    },
+    {
+      name: 'purchasing',
+      title: t`Purchasing`,
+      icon: <IconShoppingCart />,
+      role: UserRoles.purchase_order
+    },
+    {
+      name: 'sales',
+      title: t`Sales`,
+      icon: <IconTruckDelivery />,
+      role: UserRoles.sales_order
+    }
+  ];
+
+  return navTabs.filter((tab) => {
+    if (!tab.role) return true;
+    return user.hasViewRole(tab.role);
+  });
+}
 
 const DOCS: string = 'https://docs.inventree.org';
 
