@@ -8,6 +8,13 @@ export {
   getModelInfo
 } from './enums/ModelType';
 export { UserPermissions, UserRoles } from './enums/Roles';
+export {
+  statusCodeList,
+  statusColorMap,
+  type StatusCodeInterface,
+  type StatusCodeListInterface,
+  type StatusLookup
+} from './enums/StatusCodes';
 export type { PluginInterface } from './enums/PluginInterface';
 
 export type {

@@ -1,23 +1,13 @@
 import { Badge, Center, type MantineSize } from '@mantine/core';
 
-import type { ModelType } from '@lib/core';
+import type {
+  ModelType,
+  StatusCodeInterface,
+  StatusCodeListInterface
+} from '@lib/core';
+import { statusColorMap } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
-import { statusColorMap } from '../../defaults/backendMappings';
 import { useGlobalStatusState } from '../../states/StatusState';
-
-export interface StatusCodeInterface {
-  key: number;
-  label: string;
-  name: string;
-  color: string;
-}
-
-export interface StatusCodeListInterface {
-  status_class: string;
-  values: {
-    [key: string]: StatusCodeInterface;
-  };
-}
 
 interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;

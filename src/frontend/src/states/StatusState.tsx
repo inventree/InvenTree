@@ -2,14 +2,11 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { ApiEndpoints } from '@lib/core';
-import type { ModelType } from '@lib/core';
+import type { StatusLookup } from '@lib/core';
+import { statusCodeList } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
 import { useUserState } from '@lib/states';
-import type { StatusCodeListInterface } from '../components/render/StatusRenderer';
-import { statusCodeList } from '../defaults/backendMappings';
-
-export type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
 interface ServerStateProps {
   status?: StatusLookup;

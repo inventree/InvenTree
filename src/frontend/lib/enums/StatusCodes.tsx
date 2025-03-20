@@ -1,6 +1,4 @@
-import { ModelType } from '@lib/core';
-
-/* Lookup tables for mapping backend responses to internal types */
+import { ModelType } from './ModelType';
 
 /**
  * List of status codes which are used in the backend
@@ -30,3 +28,19 @@ export const statusColorMap: { [key: string]: string } = {
   secondary: 'gray',
   default: 'gray'
 };
+
+export interface StatusCodeInterface {
+  key: number;
+  label: string;
+  name: string;
+  color: string;
+}
+
+export interface StatusCodeListInterface {
+  status_class: string;
+  values: {
+    [key: string]: StatusCodeInterface;
+  };
+}
+
+export type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
