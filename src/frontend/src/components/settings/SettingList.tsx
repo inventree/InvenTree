@@ -109,7 +109,7 @@ export function SettingList({
         .then(() => {
           notifications.hide('setting');
           notifications.show({
-            title: t`Setting updated`,
+            title: t`Setting Updated`,
             message: t`Setting ${setting.key} updated successfully`,
             color: 'green',
             id: 'setting'
