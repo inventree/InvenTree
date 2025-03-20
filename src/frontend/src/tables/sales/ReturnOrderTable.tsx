@@ -6,11 +6,11 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableFilter } from '@lib/tables';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { formatCurrency } from '../../defaults/formatters';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import {

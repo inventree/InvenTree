@@ -15,6 +15,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
@@ -42,7 +43,6 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { formatCurrency } from '../../defaults/formatters';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import {
   useCreateApiFormModal,

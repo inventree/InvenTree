@@ -1,4 +1,4 @@
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency } from '@lib/functions';
 
 /*
  * Render a chart label for a currency graph

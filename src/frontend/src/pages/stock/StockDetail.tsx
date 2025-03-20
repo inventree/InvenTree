@@ -21,6 +21,7 @@ import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import { useUserState } from '@lib/states';
@@ -52,7 +53,6 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency } from '../../defaults/formatters';
 import {
   type StockOperationProps,
   useAddStockItem,

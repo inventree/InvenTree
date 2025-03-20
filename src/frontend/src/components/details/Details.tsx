@@ -26,9 +26,9 @@ import { getModelInfo } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { getBaseUrl, navigateToLink } from '@lib/functions';
+import { formatDate } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { useGlobalSettingsState } from '@lib/states';
-import { formatDate } from '../../defaults/formatters';
 import { StatusRenderer } from '../render/StatusRenderer';
 
 export type DetailsField = {

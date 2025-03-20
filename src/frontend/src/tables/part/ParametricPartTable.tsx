@@ -13,6 +13,7 @@ import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
+import { formatDecimal } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
@@ -20,7 +21,6 @@ import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
 import {
   useCreateApiFormModal,

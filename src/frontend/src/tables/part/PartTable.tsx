@@ -8,6 +8,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { formatPriceRange } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
@@ -16,7 +17,6 @@ import { TableHoverCard } from '@lib/tables';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import {
   useBulkEditApiFormModal,

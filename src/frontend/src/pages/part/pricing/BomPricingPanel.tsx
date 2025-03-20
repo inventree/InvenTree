@@ -14,15 +14,15 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
-import { useTable } from '@lib/hooks';
-import type { TableColumn } from '@lib/tables';
-import { CHART_COLORS } from '../../../components/charts/colors';
-import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
   formatCurrency,
   formatDecimal,
   formatPriceRange
-} from '../../../defaults/formatters';
+} from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import type { TableColumn } from '@lib/tables';
+import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';

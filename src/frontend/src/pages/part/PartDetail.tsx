@@ -40,6 +40,7 @@ import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
+import { formatPriceRange } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import { useUserState } from '@lib/states';
@@ -71,7 +72,6 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,

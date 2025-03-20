@@ -16,11 +16,11 @@ import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
+import { formatDate } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import dayjs from 'dayjs';
-import { formatDate } from '../../defaults/formatters';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 

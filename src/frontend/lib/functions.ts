@@ -14,6 +14,14 @@ export {
 } from './functions/notifications';
 
 export {
+  formatDecimal,
+  formatCurrency,
+  formatPriceRange,
+  formatFileSize,
+  formatDate
+} from './functions/formatting';
+
+export {
   constructField,
   constructFormUrl,
   extractAvailableFields,

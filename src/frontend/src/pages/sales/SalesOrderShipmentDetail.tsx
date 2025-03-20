@@ -8,6 +8,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { getDetailUrl } from '@lib/functions';
+import { formatDate } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import dayjs from 'dayjs';
@@ -32,7 +33,6 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { formatDate } from '../../defaults/formatters';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields

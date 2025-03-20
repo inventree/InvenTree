@@ -5,10 +5,10 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { formatDecimal } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { formatDecimal } from '../../defaults/formatters';
 import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 

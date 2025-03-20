@@ -5,10 +5,10 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { ApiEndpoints } from '@lib/core';
 import type { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,

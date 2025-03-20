@@ -8,6 +8,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
+import { formatCurrency, formatPriceRange } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
@@ -16,7 +17,6 @@ import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
 import {
   type StockOperationProps,
   useAddStockItem,

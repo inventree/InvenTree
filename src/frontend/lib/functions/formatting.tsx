@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 
-import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsState';
 
 interface FormatDecmimalOptionsInterface {
   digits?: number;

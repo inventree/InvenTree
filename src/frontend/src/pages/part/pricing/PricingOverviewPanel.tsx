@@ -28,6 +28,7 @@ import { InvenTreeIcon } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
+import { formatCurrency, formatDate } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { useGlobalSettingsState } from '@lib/states';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
@@ -35,7 +36,6 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../../components/items/ActionDropdown';
-import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { useEditApiFormModal } from '../../../hooks/UseForm';
 import { panelOptions } from '../PartPricingPanel';
 
