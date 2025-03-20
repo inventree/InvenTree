@@ -13,14 +13,14 @@ import { useStore } from 'zustand';
 import type { ModelType, Setting } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
   type SettingsStateProps,
   createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '@lib/states/SettingsState';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { SettingItem } from './SettingItem';
 
 /**

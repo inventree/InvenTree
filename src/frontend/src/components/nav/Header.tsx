@@ -18,13 +18,10 @@ import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { useLocalState } from '@lib/states';
 import { useUserState } from '@lib/states';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
 import { getNavTabs } from '../../defaults/links';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
 import { MainMenu } from './MainMenu';

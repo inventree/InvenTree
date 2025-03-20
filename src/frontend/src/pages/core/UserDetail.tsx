@@ -2,6 +2,7 @@ import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { useInstance } from '@lib/hooks';
 import { useUserState } from '@lib/states';
+import { useGlobalSettingsState } from '@lib/states';
 import { t } from '@lingui/macro';
 import { Badge, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -18,7 +19,6 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
-import { useGlobalSettingsState } from '../../states/SettingsState';
 
 /**
  * Detail page for a single user

@@ -3,16 +3,13 @@
  */
 import { create, createStore } from 'zustand';
 
-import {
-  ApiEndpoints,
-  type PathParams,
-  type Setting,
-  type SettingsLookup
-} from '@lib/core';
-import { apiUrl } from '@lib/functions';
-import { getApi } from '@lib/functions/api';
-import { isTrue } from '@lib/functions/conversion';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import type { PathParams } from '../types/Api';
+import type { Setting, SettingsLookup } from '../types/Settings';
+
+import { apiUrl, getApi } from '../functions/api';
+import { isTrue } from '../functions/conversion';
+import { useUserState } from './UserState';
 
 export interface SettingsStateProps {
   settings: Setting[];
@@ -212,8 +209,8 @@ export const createMachineSettingsState = ({
 };
 
 /*
-  return a lookup dictionary for the value of the provided Setting list
-*/
+ * Return a lookup dictionary for the value of the provided Setting list
+ */
 function generate_lookup(data: Setting[]) {
   const lookup_dir: SettingsLookup = {};
   for (const setting of data) {

@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState } from '@lib/states';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import { findExternalPluginFunction } from '../components/plugins/PluginSource';
 import type {
@@ -11,7 +12,6 @@ import type {
   PluginUIFeatureAPIResponse,
   PluginUIFuncWithoutInvenTreeContextType
 } from '../components/plugins/PluginUIFeatureTypes';
-import { useGlobalSettingsState } from '../states/SettingsState';
 
 export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
   enabled = true,

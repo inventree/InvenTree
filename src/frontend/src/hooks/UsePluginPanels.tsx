@@ -5,6 +5,7 @@ import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState } from '@lib/states';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
 import {
@@ -16,7 +17,6 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
  * @param model - The model type for the plugin (e.g. 'part' / 'purchaseorder')

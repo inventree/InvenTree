@@ -4,6 +4,7 @@ import { openContextModal } from '@mantine/modals';
 import { StylishText } from '@lib/components';
 import { UserRoles } from '@lib/core';
 import type { UserStateProps } from '@lib/states';
+import type { SettingsStateProps } from '@lib/states';
 import {
   IconBox,
   IconBuildingFactory2,
@@ -14,7 +15,6 @@ import {
 } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
-import type { SettingsStateProps } from '../states/SettingsState';
 
 type NavTab = {
   name: string;

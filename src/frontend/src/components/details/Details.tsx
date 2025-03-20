@@ -27,8 +27,8 @@ import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { getBaseUrl, navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
+import { useGlobalSettingsState } from '@lib/states';
 import { formatDate } from '../../defaults/formatters';
-import { useGlobalSettingsState } from '../../states/SettingsState';
 import { StatusRenderer } from '../render/StatusRenderer';
 
 export type DetailsField = {

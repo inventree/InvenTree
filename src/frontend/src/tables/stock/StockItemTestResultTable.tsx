@@ -19,6 +19,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import { useUserState } from '@lib/states';
+import { useGlobalSettingsState } from '@lib/states';
 import { type RowAction, RowActions, type TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
@@ -30,7 +31,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useGlobalSettingsState } from '../../states/SettingsState';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';

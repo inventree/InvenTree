@@ -25,6 +25,7 @@ import type {
 } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState } from '@lib/states';
 import type { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -45,7 +46,6 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 
 /**

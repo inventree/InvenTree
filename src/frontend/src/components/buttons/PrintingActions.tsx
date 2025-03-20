@@ -3,16 +3,13 @@ import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl, extractAvailableFields } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
 import { t } from '@lingui/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsState';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({

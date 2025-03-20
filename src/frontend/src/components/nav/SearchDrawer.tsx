@@ -41,8 +41,8 @@ import { navigateToLink } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
 import { useApi } from '@lib/hooks';
 import { useUserState } from '@lib/states';
+import { useUserSettingsState } from '@lib/states';
 import { showNotification } from '@mantine/notifications';
-import { useUserSettingsState } from '../../states/SettingsState';
 import { RenderInstance } from '../render/Instance';
 
 // Define type for handling individual search queries

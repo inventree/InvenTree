@@ -16,11 +16,11 @@ import type { ModelType } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
 
+import { useGlobalSettingsState } from '@lib/states';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import { useGlobalSettingsState } from '../states/SettingsState';
 
 // Render a Part instance within a table
 export function PartColumn({

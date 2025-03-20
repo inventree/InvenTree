@@ -21,7 +21,7 @@ import { CopyButton } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl, extractErrorMessage } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '@lib/states';
 import type { QrCodeType } from '../items/ActionDropdown';
 import { BarcodeInput } from './BarcodeInput';
 

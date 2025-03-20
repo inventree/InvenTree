@@ -12,12 +12,12 @@ import { queryClient } from '@lib/functions/api';
 import { useApi } from '@lib/hooks';
 import { useLocalState } from '@lib/states';
 import { type UserStateProps, useUserState } from '@lib/states';
-import type { QueryClient } from '@tanstack/react-query';
 import {
   type SettingsStateProps,
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '@lib/states';
+import type { QueryClient } from '@tanstack/react-query';
 
 /**
  * A set of properties which are passed to a plugin,

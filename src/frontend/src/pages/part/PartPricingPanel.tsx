@@ -6,7 +6,7 @@ import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import { useInstance } from '@lib/hooks';
 import { useUserState } from '@lib/states';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '@lib/states';
 import BomPricingPanel from './pricing/BomPricingPanel';
 import PriceBreakPanel from './pricing/PriceBreakPanel';
 import PricingOverviewPanel from './pricing/PricingOverviewPanel';

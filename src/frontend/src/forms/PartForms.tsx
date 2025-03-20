@@ -6,7 +6,7 @@ import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '@lib/states';
 
 /**
  * Construct a set of fields for creating / editing a Part instance

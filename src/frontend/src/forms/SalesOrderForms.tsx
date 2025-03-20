@@ -17,11 +17,11 @@ import type {
   ApiFormFieldType
 } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
+import { useGlobalSettingsState } from '@lib/states';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({

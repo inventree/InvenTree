@@ -43,6 +43,7 @@ import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import { useUserState } from '@lib/states';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -82,10 +83,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
