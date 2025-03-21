@@ -107,7 +107,7 @@ test('Settings - Admin', async ({ page }) => {
   // System Settings
   await page.locator('label').filter({ hasText: 'System Settings' }).click();
   await page.getByText('Base URL', { exact: true }).waitFor();
-  await loadTab(page, 'Login');
+  await loadTab(page, 'Authentication');
   await loadTab(page, 'Barcodes');
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Pricing');
