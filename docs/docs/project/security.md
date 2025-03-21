@@ -5,7 +5,9 @@ To that end, we have implemented a number of security measures over the years, w
 
 ## Organisational measures
 
-The InvenTree project is managed by a small team of developers, who are responsible for the ongoing development and maintenance of the software. Two geographically distributed users have administrative access to the InvenTree codebase. Merges are only done by one of these two users, the maintainer Oliver. Read the Project [Governance](governance.md) document for more information.
+The InvenTree project is managed by a small team of developers, who are responsible for the ongoing development and maintenance of the software. Two geographically distributed users have administrative access to the InvenTree codebase. Merges are only done by one of these two users, the maintainer Oliver.
+Read the Project [Governance](governance.md) document for more information.
+
 InvenTree is open-source, and we welcome contributions from the community. However, all contributions are reviewed and scrutinised before being merged into the codebase.
 
 We provide a written [Security Policy]({{ sourcefile("SECURITY.md") }}) in our main repo to ensure that all security issues are handled in a timely manner.
