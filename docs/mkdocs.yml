@@ -88,7 +88,7 @@ nav:
     - Release Notes: releases/release_notes.md
     - Project:
       - Governance: project/governance.md
-      - Security: project/security.md
+      - Project Security: project/security.md
     - Security: security.md
   - Install:
     - Introduction: start/intro.md
