@@ -25,9 +25,9 @@ from build.models import Build
 from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -356,7 +356,7 @@ class StockLocationMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint."""
@@ -365,7 +365,9 @@ class StockLocationMixin:
         return queryset
 
 
-class StockLocationList(DataExportViewMixin, StockLocationMixin, ListCreateAPI):
+class StockLocationList(
+    DataExportViewMixin, BulkUpdateMixin, StockLocationMixin, ListCreateAPI
+):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -950,7 +952,7 @@ class StockApiMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
@@ -1251,7 +1253,7 @@ class StockItemTestResultMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
@@ -1392,7 +1394,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_delta_model_map(self) -> dict:
         """Return a mapping of delta models to their respective models and serializers.
@@ -1495,7 +1497,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
     ordering_fields = ['date']
 
-    search_fields = ['title', 'notes']
+    search_fields = ['notes']
 
 
 stock_api_urls = [

@@ -1,4 +1,4 @@
-import { base_url } from '../main';
+import { getBaseUrl } from '../main';
 import { cancelEvent } from './events';
 
 /*
@@ -11,7 +11,7 @@ export const navigateToLink = (link: string, navigate: any, event: any) => {
 
   if (event?.ctrlKey || event?.shiftKey) {
     // Open the link in a new tab
-    const url = `/${base_url}${link}`;
+    const url = `/${getBaseUrl()}${link}`;
     window.open(url, '_blank');
   } else {
     // Navigate internally

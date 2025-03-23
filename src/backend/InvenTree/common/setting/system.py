@@ -110,9 +110,9 @@ def reload_plugin_registry(setting):
 def barcode_plugins() -> list:
     """Return a list of plugin choices which can be used for barcode generation."""
     try:
-        from plugin import registry
+        from plugin import PluginMixinEnum, registry
 
-        plugins = registry.with_mixin('barcode', active=True)
+        plugins = registry.with_mixin(PluginMixinEnum.BARCODE, active=True)
     except Exception:  # pragma: no cover
         plugins = []
 
@@ -1072,6 +1072,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Display Users full names'),
         'description': _('Display Users full names instead of usernames'),
         'default': False,
+        'validator': bool,
+    },
+    'DISPLAY_PROFILE_INFO': {
+        'name': _('Display User Profiles'),
+        'description': _('Display Users Profiles on their profile page'),
+        'default': True,
         'validator': bool,
     },
     'TEST_STATION_DATA': {

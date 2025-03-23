@@ -134,7 +134,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableColumnNames,
     getTableSorting,
     setTableSorting,
-    loader
+    usertheme
   } = useLocalState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
@@ -359,8 +359,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
       };
 
       // Add custom filters
-      if (tableState.activeFilters) {
-        tableState.activeFilters.forEach((flt) => {
+      if (tableState.filterSet.activeFilters) {
+        tableState.filterSet.activeFilters.forEach((flt) => {
           queryParams[flt.name] = flt.value;
         });
       }
@@ -401,7 +401,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     [
       tableProps.params,
       tableProps.enablePagination,
-      tableState.activeFilters,
+      tableState.filterSet.activeFilters,
       tableState.queryFilters,
       tableState.searchTerm,
       tableState.pageSize,
@@ -524,7 +524,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       sortStatus.columnAccessor,
       sortStatus.direction,
       tableState.tableKey,
-      tableState.activeFilters,
+      tableState.filterSet.activeFilters,
       tableState.searchTerm
     ],
     enabled: !!url && !tableData,
@@ -629,7 +629,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     }
   };
 
-  // pagination refresth table if pageSize changes
+  // pagination refresh table if pageSize changes
   function updatePageSize(newData: number) {
     tableState.setPageSize(newData);
     tableState.setPage(1);
@@ -711,7 +711,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               withColumnBorders
               striped
               highlightOnHover
-              loaderType={loader}
+              loaderType={usertheme.loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}

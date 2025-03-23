@@ -11,10 +11,11 @@ import weasyprint
 from rest_framework import serializers
 
 import report.helpers
+from common.models import DataOutput
 from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
-from report.models import LabelOutput, LabelTemplate
+from report.models import LabelTemplate
 
 logger = structlog.get_logger('inventree')
 
@@ -76,7 +77,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
     PrintingOptionsSerializer = LabelPrintingOptionsSerializer
 
     def print_labels(
-        self, label: LabelTemplate, output: LabelOutput, items: list, request, **kwargs
+        self, label: LabelTemplate, output: DataOutput, items: list, request, **kwargs
     ):
         """Handle printing of the provided labels.
 
@@ -136,6 +137,10 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
             idx += n_cells
 
+            # Update printing progress
+            output.progress += 1
+            output.save()
+
         if len(pages) == 0:
             raise ValidationError(_('No labels were generated'))
 
@@ -152,7 +157,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
             output.output = ContentFile(document, 'labels.pdf')
 
-        output.progress = 100
+        output.progress = n_labels
         output.complete = True
         output.save()
 

@@ -2,6 +2,7 @@
 
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
+from django.urls import reverse
 
 import structlog
 from rest_framework import exceptions, serializers
@@ -43,6 +44,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
         See SimpleMetadata.determine_actions for more information.
         """
+        from InvenTree.api import BulkUpdateMixin
+
         actions = {}
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
@@ -53,7 +56,9 @@ class InvenTreeMetadata(SimpleMetadata):
                     view.check_permissions(view.request)
                 # Test object permissions
                 if method == 'PUT' and hasattr(view, 'get_object'):
-                    view.get_object()
+                    if not issubclass(view.__class__, BulkUpdateMixin):
+                        # Bypass the get_object method for the BulkUpdateMixin
+                        view.get_object()
             except (exceptions.APIException, PermissionDenied, Http404):
                 pass
             else:
@@ -401,9 +406,11 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Special case for special models
                 if field_info['model'] == 'user':
-                    field_info['api_url'] = '/api/user/'
+                    field_info['api_url'] = (reverse('api-user-list'),)
+                elif field_info['model'] == 'group':
+                    field_info['api_url'] = reverse('api-group-list')
                 elif field_info['model'] == 'contenttype':
-                    field_info['api_url'] = '/api/contenttype/'
+                    field_info['api_url'] = reverse('api-contenttype-list')
                 elif hasattr(model, 'get_api_url'):
                     field_info['api_url'] = model.get_api_url()
                 else:

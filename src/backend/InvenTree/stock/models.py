@@ -530,12 +530,12 @@ class StockItem(
 
         This function hooks into the plugin system to allow for custom serial number conversion.
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         # First, let any plugins convert this serial number to an integer value
         # If a non-null value is returned (by any plugin) we will use that
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 serial_int = plugin.convert_serial_to_int(serial)
             except Exception:
@@ -721,9 +721,9 @@ class StockItem(
         - Validation is performed by custom plugins.
         - By default, no validation checks are performed
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
@@ -935,7 +935,10 @@ class StockItem(
     serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
-        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     batch = models.CharField(

@@ -28,7 +28,13 @@ export function TableSearchInput({
       onChange={(event) => setValue(event.target.value)}
       rightSection={
         value.length > 0 ? (
-          <CloseButton size='xs' onClick={() => setValue('')} />
+          <CloseButton
+            size='xs'
+            onClick={() => {
+              setValue('');
+              searchCallback('');
+            }}
+          />
         ) : null
       }
     />

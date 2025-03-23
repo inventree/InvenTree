@@ -10,7 +10,7 @@ test('Quick Command', async ({ page }) => {
   await page.getByPlaceholder('Search...').fill('Dashboard');
   await page.getByPlaceholder('Search...').press('Tab');
   await page.getByPlaceholder('Search...').press('Enter');
-  await page.waitForURL('**/platform/home');
+  await page.waitForURL('**/web/home');
 });
 
 test('Quick Command - No Keys', async ({ page }) => {
@@ -23,7 +23,7 @@ test('Quick Command - No Keys', async ({ page }) => {
     .click();
 
   await page.getByText('InvenTree Demo Server - ').waitFor();
-  await page.waitForURL('**/platform/home');
+  await page.waitForURL('**/web/home');
 
   // Use navigation menu
   await page.getByLabel('open-spotlight').click();
@@ -55,7 +55,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
   await page.getByRole('button', { name: 'Close' }).click();
 
-  await page.waitForURL('**/platform/home');
+  await page.waitForURL('**/web/home');
 
   // use license info
   await page.getByLabel('open-spotlight').click();
