@@ -16,9 +16,9 @@ import type { ModelType } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
 
+import { Thumbnail } from '@lib/components';
 import { formatCurrency, formatDate } from '@lib/functions';
 import { useGlobalSettingsState } from '@lib/states';
-import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 

@@ -22,3 +22,6 @@ export {
   PassFailButton,
   YesNoButton
 } from './components/buttons/YesNoButton';
+
+export { ApiImage } from './components/images/ApiImage';
+export { Thumbnail } from './components/images/Thumbnail';

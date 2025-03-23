@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Thumbnail } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
@@ -12,7 +13,6 @@ import { navigateToLink } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableFilter } from '@lib/tables';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,

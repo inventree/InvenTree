@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Anchor, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { Thumbnail } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
@@ -13,7 +14,6 @@ import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

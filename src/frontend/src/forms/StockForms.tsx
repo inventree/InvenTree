@@ -16,6 +16,7 @@ import { Suspense, useEffect, useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components';
 import { InvenTreeIcon } from '@lib/components';
 import { StylishText } from '@lib/components';
+import { Thumbnail } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type {
@@ -34,7 +35,6 @@ import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import {
   type ApiFormModalProps,

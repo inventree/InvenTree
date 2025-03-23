@@ -3,13 +3,13 @@ import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
+import { Thumbnail } from '@lib/components';
 import { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { shortenString } from '@lib/functions';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
   RenderAddress,

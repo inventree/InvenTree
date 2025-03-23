@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { Thumbnail } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
@@ -16,7 +17,6 @@ import { useGlobalSettingsState } from '@lib/states';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/fields/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { StatusFilterOptions } from '../tables/Filter';
 

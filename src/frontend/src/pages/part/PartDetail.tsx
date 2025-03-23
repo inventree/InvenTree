@@ -34,6 +34,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { InvenTreeIcon } from '@lib/components';
+import { Thumbnail } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
@@ -54,7 +55,6 @@ import {
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
   BarcodeActionDropdown,

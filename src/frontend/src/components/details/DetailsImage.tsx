@@ -23,6 +23,7 @@ import { useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components';
 import { InvenTreeIcon } from '@lib/components';
 import { StylishText } from '@lib/components';
+import { ApiImage } from '@lib/components';
 import type { UserRoles } from '@lib/core';
 import { showApiErrorMessage } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
@@ -33,7 +34,6 @@ import { showNotification } from '@mantine/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
-import { ApiImage } from '../images/ApiImage';
 
 /**
  * Props for detail image

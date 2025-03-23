@@ -18,11 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { Suspense, useState } from 'react';
 
+import { Thumbnail } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { IconX } from '@tabler/icons-react';
-import { Thumbnail } from '../../components/images/Thumbnail';
 
 /**
  * Input props to table
