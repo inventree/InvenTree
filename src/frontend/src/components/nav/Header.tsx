@@ -4,7 +4,8 @@ import {
   Group,
   Indicator,
   Tabs,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
@@ -12,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
+import { t } from '@lingui/macro';
 import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -125,13 +127,15 @@ export function Header() {
             </Text>
           )}
           <Group>
-            <ActionIcon
-              onClick={openSearchDrawer}
-              variant='transparent'
-              aria-label='open-search'
-            >
-              <IconSearch />
-            </ActionIcon>
+            <Tooltip position='bottom-end' label={t`Search`}>
+              <ActionIcon
+                onClick={openSearchDrawer}
+                variant='transparent'
+                aria-label='open-search'
+              >
+                <IconSearch />
+              </ActionIcon>
+            </Tooltip>
             <SpotlightButton />
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
             <Indicator
@@ -142,13 +146,15 @@ export function Header() {
               disabled={notificationCount <= 0}
               inline
             >
-              <ActionIcon
-                onClick={openNotificationDrawer}
-                variant='transparent'
-                aria-label='open-notifications'
-              >
-                <IconBell />
-              </ActionIcon>
+              <Tooltip position='bottom-end' label={t`Notifications`}>
+                <ActionIcon
+                  onClick={openNotificationDrawer}
+                  variant='transparent'
+                  aria-label='open-notifications'
+                >
+                  <IconBell />
+                </ActionIcon>
+              </Tooltip>
             </Indicator>
             <MainMenu />
           </Group>
