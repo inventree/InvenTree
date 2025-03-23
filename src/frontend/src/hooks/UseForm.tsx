@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import type { UiSizeType } from '@lib/core';
 import type { ApiFormProps } from '@lib/forms';
+import { useModal } from '@lib/hooks';
 import { OptionsApiForm } from '../components/forms/ApiForm';
-import { useModal } from './UseModal';
 
 /**
  * @param title : The title to display in the modal header

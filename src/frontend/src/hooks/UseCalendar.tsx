@@ -2,13 +2,13 @@ import type FullCalendar from '@fullcalendar/react';
 import type { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import type { UseModalReturn } from '@lib/hooks';
 import { type FilterSetState, useFilterSet } from '@lib/hooks/UseFilterSet';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useDataExport from './UseDataExport';
-import type { UseModalReturn } from './UseModal';
 
 /*
  * Type definition for representing the state of a calendar:
