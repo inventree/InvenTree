@@ -17,6 +17,7 @@ export type {
   InvenTreeIconProps,
   TablerIconType
 } from './components/icons/icons';
+export { ApiIcon } from './components/icons/ApiIcon';
 
 export {
   PassFailButton,

@@ -1,4 +1,4 @@
-import { useIconState } from '@lib/states';
+import { useIconState } from '../../states/IconState';
 import * as classes from './ApiIcon.css';
 
 type ApiIconProps = {

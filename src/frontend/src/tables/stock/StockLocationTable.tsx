@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiIcon } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
@@ -11,7 +12,6 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
-import { ApiIcon } from '../../components/items/ApiIcon';
 import { stockLocationFields } from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,

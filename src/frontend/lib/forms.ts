@@ -13,4 +13,5 @@ export type { NestedDict } from './functions/forms';
 
 export { ChoiceField } from './forms/ChoiceField';
 export { DateField } from './forms/DateField';
+export { IconField } from './forms/IconField';
 export { TextField } from './forms/TextField';

@@ -20,11 +20,11 @@ import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
+import { ApiIcon } from '@lib/components';
 import type { ApiFormFieldType } from '@lib/forms';
 import { useIconState } from '@lib/states';
-import { ApiIcon } from '../../items/ApiIcon';
 
-export default function IconField({
+export function IconField({
   controller,
   definition
 }: Readonly<{

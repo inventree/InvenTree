@@ -1,12 +1,12 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { ApiIcon } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { useGlobalSettingsState } from '@lib/states';
-import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
 import {
   type InvenTreeContext,
