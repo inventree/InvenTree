@@ -179,8 +179,6 @@ function NavTabs() {
         return;
       }
 
-      // TODO: Hide icons if user does not wish to display them!
-
       _tabs.push(
         <Tabs.Tab
           value={tab.name}
