@@ -3,6 +3,7 @@
 
 import { resolve } from 'node:path';
 import { defineConfig, mergeConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
 import mainConfig from './vite.config';
 
@@ -17,6 +18,8 @@ export default mergeConfig(
       rollupOptions: {
         external: ['React', 'react-dom', 'mantine'],
         output: {
+          preserveModules: true,
+          preserveModulesRoot: 'lib',
           globals: {
             react: 'React',
             'react-dom': 'ReactDOM',
@@ -26,17 +29,24 @@ export default mergeConfig(
       },
       lib: {
         entry: {
-          components: resolve(__dirname, 'lib/components.ts'),
-          core: resolve(__dirname, 'lib/core.ts'),
-          forms: resolve(__dirname, 'lib/forms.ts'),
-          functions: resolve(__dirname, 'lib/functions.ts'),
-          hooks: resolve(__dirname, 'lib/hooks.ts'),
-          states: resolve(__dirname, 'lib/states.ts'),
-          tables: resolve(__dirname, 'lib/tables.ts')
+          index: resolve(__dirname, 'lib/index.ts'),
+          components: resolve(__dirname, 'lib/components/index.ts'),
+          forms: resolve(__dirname, 'lib/forms/index.ts'),
+          functions: resolve(__dirname, 'lib/functions/index.ts'),
+          hooks: resolve(__dirname, 'lib/hooks/index.ts'),
+          tables: resolve(__dirname, 'lib/tables/index.ts')
         },
         name: 'InvenTree',
         formats: ['es']
       }
-    }
+    },
+    plugins: [
+      dts({
+        entryRoot: 'lib',
+        outDir: 'dist',
+        insertTypesEntry: true, // Ensures `dist/index.d.ts` is generated
+        exclude: ['src/**/*']
+      })
+    ]
   })
 );

@@ -1,9 +1,37 @@
 {
     "name": "inventree-ui",
     "private": false,
-    "version": "0.1.0",
     "description": "UI components for the InvenTree project",
     "license": "MIT",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./components": {
+            "import": "./dist/components/index.js",
+            "types": "./dist/components/index.d.ts"
+        },
+        "./forms": {
+            "import": "./dist/forms/index.js",
+            "types": "./dist/forms/index.d.ts"
+        },
+        "./functions": {
+            "import": "./dist/functions/index.js",
+            "types": "./dist/functions/index.d.ts"
+        },
+        "./hooks": {
+            "import": "./dist/hooks/index.js",
+            "types": "./dist/hooks/index.d.ts"
+        },
+        "./tables": {
+            "import": "./dist/tables/index.js",
+            "types": "./dist/tables/index.d.ts"
+        }
+    },
+    "version": "0.1.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/inventree/inventree"
@@ -18,7 +46,7 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build --emptyOutDir",
-        "library": "tsc --p ./tsconfig-build.json && vite --config vite.lib.config.ts build",
+        "library": "tsc --p ./tsconfig.lib.json && vite --config vite.lib.config.ts build",
         "preview": "vite preview",
         "extract": "lingui extract",
         "compile": "lingui compile --typescript"
@@ -111,6 +139,7 @@
         "typescript": "^5.7.3",
         "vite": "^6.0.9",
         "vite-plugin-babel-macros": "^1.0.6",
+        "vite-plugin-dts": "^4.5.3",
         "vite-plugin-istanbul": "^6.0.2"
     }
 }

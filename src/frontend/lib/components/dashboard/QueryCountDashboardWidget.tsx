@@ -8,7 +8,7 @@ import { ModelInformationDict, type ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../functions/api';
 import { navigateToLink } from '../../functions/navigation';
 import { useApi } from '../../hooks/UseApi';
-import { useUserState } from '../../states';
+import { useUserState } from '../../states/UserState';
 import { InvenTreeIcon, type InvenTreeIconType } from '../icons/icons';
 import { StylishText } from '../items/StylishText';
 import type { DashboardWidgetProps } from './DashboardWidget';
