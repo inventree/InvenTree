@@ -79,7 +79,7 @@ nav:
       - Physical Units: concepts/units.md
       - Custom States: concepts/custom_states.md
       - Pricing: concepts/pricing.md
-      - Thread Model: concepts/thread_model.md
+      - Threat Model: concepts/threat_model.md
     - Development:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
