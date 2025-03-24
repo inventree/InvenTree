@@ -22,24 +22,23 @@ import {
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-import { Boundary } from '@lib/components';
+import { Boundary } from '../components/items/Boundary';
 import {
-  ApiFormField,
-  type ApiFormFieldSet,
-  type ApiFormFieldType,
-  type ApiFormProps,
-  type NestedDict
-} from '@lib/forms';
-import { getDetailUrl } from '@lib/functions';
-import {
+  type NestedDict,
   constructField,
   constructFormUrl,
   extractAvailableFields,
+  mapFields
+} from '../functions/forms';
+import { getDetailUrl } from '../functions/navigation';
+import {
   invalidResponse,
-  mapFields,
   showTimeoutNotification
-} from '@lib/functions';
-import { useApi } from '@lib/hooks/UseApi';
+} from '../functions/notifications';
+import { useApi } from '../hooks/UseApi';
+import { ApiFormField } from './ApiFormField';
+import type { ApiFormFieldSet, ApiFormFieldType } from './FormField';
+import type { ApiFormProps } from './FormProps';
 
 export function OptionsApiForm({
   props: _props,

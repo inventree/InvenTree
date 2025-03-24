@@ -11,6 +11,7 @@ import React, {
 import { useStore } from 'zustand';
 
 import type { ModelType, Setting } from '@lib/core';
+import { useEditApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import {
@@ -20,7 +21,6 @@ import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '@lib/states/SettingsState';
-import { useEditApiFormModal } from '../../hooks/UseForm';
 import { SettingItem } from './SettingItem';
 
 /**

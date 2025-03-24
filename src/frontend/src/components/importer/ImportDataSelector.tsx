@@ -14,16 +14,13 @@ import { ProgressBar } from '@lib/components';
 import { RenderRemoteInstance } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import {
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';

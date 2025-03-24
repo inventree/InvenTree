@@ -1,6 +1,7 @@
 import { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { useCreateApiFormModal } from '@lib/forms';
 import { apiUrl, extractAvailableFields } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { useDataOutput } from '@lib/hooks';
@@ -9,7 +10,6 @@ import { t } from '@lingui/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({

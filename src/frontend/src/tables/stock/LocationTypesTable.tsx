@@ -6,15 +6,15 @@ import { ApiIcon } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
-import { apiUrl } from '@lib/functions';
-import { useTable } from '@lib/hooks';
-import { useUserState } from '@lib/states';
-import type { RowAction, TableColumn } from '@lib/tables';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useUserState } from '@lib/states';
+import type { RowAction, TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 

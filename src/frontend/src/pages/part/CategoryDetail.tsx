@@ -14,6 +14,7 @@ import { ApiIcon } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/forms';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useUserState } from '@lib/states';
@@ -34,10 +35,6 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { partCategoryFields } from '../../forms/PartForms';
-import {
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import { PartListTable } from '../../tables/part/PartTable';

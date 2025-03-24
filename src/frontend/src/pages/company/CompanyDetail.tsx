@@ -17,6 +17,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useUserState } from '@lib/states';
@@ -41,10 +42,6 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { companyFields } from '../../forms/CompanyForms';
-import {
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';

@@ -15,21 +15,18 @@ import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { EditApiForm } from '@lib/forms';
+import { useCreateApiFormModal, useDeleteApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { EditApiForm } from '../../components/forms/ApiForm';
 import {
   DetailDrawer,
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal
-} from '../../hooks/UseForm';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';

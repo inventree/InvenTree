@@ -13,6 +13,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { formatDate, formatPriceRange } from '@lib/functions';
 import { useTable } from '@lib/hooks';
@@ -23,11 +28,6 @@ import {
   generateStocktakeReportFields,
   partStocktakeFields
 } from '../../forms/PartForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 

@@ -7,6 +7,11 @@ import { ApiEndpoints } from '@lib/core';
 import { UserRoles } from '@lib/core';
 import type { StatusCodeInterface, StatusCodeListInterface } from '@lib/core';
 import { statusColorMap } from '@lib/core';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
@@ -14,11 +19,6 @@ import { useGlobalStatusState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { useCustomStateFields } from '../../forms/CommonForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,

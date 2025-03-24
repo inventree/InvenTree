@@ -3,10 +3,10 @@ import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
-import type { UiSizeType } from '@lib/core';
-import type { ApiFormProps } from '@lib/forms';
-import { useModal } from '@lib/hooks';
-import { OptionsApiForm } from '../components/forms/ApiForm';
+import { OptionsApiForm } from '../forms/ApiForm';
+import type { ApiFormProps } from '../forms/FormProps';
+import type { UiSizeType } from '../types/Base';
+import { useModal } from './UseModal';
 
 /**
  * @param title : The title to display in the modal header

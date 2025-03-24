@@ -7,6 +7,7 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useBulkEditApiFormModal, useCreateApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { formatPriceRange } from '@lib/functions';
 import { useTable } from '@lib/hooks';
@@ -18,10 +19,6 @@ import { IconShoppingCart } from '@tabler/icons-react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { usePartFields } from '../../forms/PartForms';
-import {
-  useBulkEditApiFormModal,
-  useCreateApiFormModal
-} from '../../hooks/UseForm';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 

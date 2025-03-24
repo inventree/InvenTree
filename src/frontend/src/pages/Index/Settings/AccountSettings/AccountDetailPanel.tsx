@@ -7,10 +7,10 @@ import { ActionButton, StylishText } from '@lib/components';
 import { YesNoUndefinedButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { useEditApiFormModal } from '@lib/forms';
 import { useUserState } from '@lib/states';
 import { useNavigate } from 'react-router-dom';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
-import { useEditApiFormModal } from '../../../../hooks/UseForm';
 
 export function AccountDetailPanel() {
   const navigate = useNavigate();

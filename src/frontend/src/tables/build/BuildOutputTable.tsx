@@ -26,6 +26,7 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useCreateApiFormModal, useEditApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
@@ -39,10 +40,6 @@ import {
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import { useStockFields } from '../../forms/StockForms';
-import {
-  useCreateApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowEditAction, RowViewAction } from '../RowActions';

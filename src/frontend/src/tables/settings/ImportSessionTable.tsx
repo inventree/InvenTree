@@ -6,6 +6,7 @@ import { RenderUser } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import { useCreateApiFormModal, useDeleteApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useFilters, useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
@@ -13,10 +14,6 @@ import type { TableFilter } from '@lib/tables';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal
-} from '../../hooks/UseForm';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';

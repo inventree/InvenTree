@@ -7,6 +7,7 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
+import { useCreateApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { formatCurrency, formatPriceRange } from '@lib/functions';
 import { useTable } from '@lib/hooks';
@@ -29,7 +30,6 @@ import {
   useStockFields,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
 import {
   DateColumn,
   DescriptionColumn,

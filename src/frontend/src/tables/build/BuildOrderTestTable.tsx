@@ -14,6 +14,7 @@ import { RenderUser } from '@lib/components';
 import { PassFailButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { useCreateApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { formatDate } from '@lib/functions';
 import { useTable } from '@lib/hooks';
@@ -23,7 +24,6 @@ import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { useTestResultFields } from '../../forms/StockForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { LocationColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 

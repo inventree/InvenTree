@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
+import {} from '@lib/forms';
 import { useInstance } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
@@ -18,7 +19,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import {} from '../../hooks/UseForm';
 
 /**
  * Detail page for a single user

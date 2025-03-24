@@ -9,6 +9,11 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import type { ApiEndpoints } from '@lib/core';
 import type { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
 import { useFilters, useInstance } from '@lib/hooks';
@@ -36,11 +41,6 @@ import type {
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
 import { notYetImplemented } from '../../functions/notifications';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

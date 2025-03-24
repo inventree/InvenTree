@@ -26,13 +26,13 @@ import { StylishText } from '@lib/components';
 import { ApiImage } from '@lib/components';
 import type { UserRoles } from '@lib/core';
 import { themeVars } from '@lib/core';
+import { useEditApiFormModal } from '@lib/forms';
 import { showApiErrorMessage } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
 import { useApi } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
 import { showNotification } from '@mantine/notifications';
-import { useEditApiFormModal } from '../../hooks/UseForm';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 
 /**
