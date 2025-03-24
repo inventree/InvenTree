@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
 
 import { StylishText } from '@lib/components';
+import type { DashboardWidgetProps } from '../../../../lib/components/dashboard/DashboardWidget';
 import { LanguageSelect } from '../../items/LanguageSelect';
-import type { DashboardWidgetProps } from '../DashboardWidget';
 
 function LanguageSelectWidget(title: string) {
   return (

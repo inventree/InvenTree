@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Box, Group, Overlay, Paper, Tooltip } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 
-import { Boundary } from '@lib/components';
+import { Boundary } from '../items/Boundary';
 
 /**
  * Dashboard widget properties.
@@ -25,7 +25,7 @@ export interface DashboardWidgetProps {
 /**
  * Wrapper for a dashboard widget.
  */
-export default function DashboardWidget({
+export function DashboardWidget({
   item,
   editing,
   removing,

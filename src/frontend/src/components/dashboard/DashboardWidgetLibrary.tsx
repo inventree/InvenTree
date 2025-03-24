@@ -1,13 +1,13 @@
 import { t } from '@lingui/macro';
 
+import type { DashboardWidgetProps } from '@lib/components';
 import { ModelType } from '@lib/core';
 import { useGlobalSettingsState } from '@lib/states';
-import type { DashboardWidgetProps } from './DashboardWidget';
+import QueryCountDashboardWidget from '../../../lib/components/dashboard/QueryCountDashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import NewsWidget from './widgets/NewsWidget';
-import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 
 /**
  *

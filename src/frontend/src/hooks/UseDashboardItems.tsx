@@ -8,7 +8,7 @@ import { identifierString } from '@lib/functions/conversion';
 import { useApi } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
-import type { DashboardWidgetProps } from '../components/dashboard/DashboardWidget';
+import type { DashboardWidgetProps } from '../../lib/components/dashboard/DashboardWidget';
 import DashboardWidgetLibrary from '../components/dashboard/DashboardWidgetLibrary';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import {

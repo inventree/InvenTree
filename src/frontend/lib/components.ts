@@ -96,3 +96,8 @@ export {
   ActionDropdown,
   OptionsActionDropdown
 } from './components/items/ActionDropdown';
+
+export {
+  type DashboardWidgetProps,
+  DashboardWidget
+} from './components/dashboard/DashboardWidget';
