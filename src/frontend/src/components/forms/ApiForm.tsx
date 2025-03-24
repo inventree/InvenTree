@@ -23,11 +23,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType,
-  ApiFormProps,
-  NestedDict
+import {
+  ApiFormField,
+  type ApiFormFieldSet,
+  type ApiFormFieldType,
+  type ApiFormProps,
+  type NestedDict
 } from '@lib/forms';
 import { getDetailUrl } from '@lib/functions';
 import {
@@ -39,7 +40,6 @@ import {
   showTimeoutNotification
 } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { ApiFormField } from './fields/ApiFormField';
 
 export function OptionsApiForm({
   props: _props,

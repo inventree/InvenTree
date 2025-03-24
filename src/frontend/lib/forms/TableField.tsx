@@ -4,10 +4,10 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { InvenTreeIcon } from '@lib/components';
-import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import type { ApiFormFieldType } from '@lib/forms';
-import { identifierString } from '@lib/functions/conversion';
+import { AddItemButton } from '../components/buttons/AddItemButton';
+import { InvenTreeIcon } from '../components/icons/icons';
+import { identifierString } from '../functions/conversion';
+import type { ApiFormFieldType } from './FormField';
 import { StandaloneField } from './StandaloneField';
 
 export interface TableFieldRowProps {
@@ -19,7 +19,7 @@ export interface TableFieldRowProps {
   removeFn: (idx: number) => void;
 }
 
-function TableFieldRow({
+export function TableFieldRow({
   item,
   idx,
   errors,

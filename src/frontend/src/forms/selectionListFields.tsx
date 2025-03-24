@@ -3,9 +3,9 @@ import { Table } from '@mantine/core';
 import { useMemo } from 'react';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
+import { StandaloneField } from '@lib/forms';
+import type { TableFieldRowProps } from '@lib/forms';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/fields/StandaloneField';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 
 function BuildAllocateLineRow({
   props

@@ -4,13 +4,16 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
-import { ChoiceField, DateField, IconField, TextField } from '@lib/forms';
-import { isTrue } from '@lib/functions/conversion';
+import { isTrue } from '../functions/conversion';
+import { ChoiceField } from './ChoiceField';
+import { DateField } from './DateField';
 import { DependentField } from './DependentField';
+import type { ApiFormFieldSet, ApiFormFieldType } from './FormField';
+import { IconField } from './IconField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
+import { TextField } from './TextField';
 
 /**
  * Render an individual form field

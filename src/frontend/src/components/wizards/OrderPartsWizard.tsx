@@ -3,6 +3,7 @@ import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
+import { StandaloneField } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { t } from '@lingui/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
@@ -16,7 +17,6 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
 import { PartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
-import { StandaloneField } from '../forms/fields/StandaloneField';
 import Expand from '../items/Expand';
 
 /**

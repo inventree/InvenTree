@@ -15,10 +15,10 @@ import {
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { RenderInstance } from '@lib/components';
-import { themeVars } from '@lib/core';
-import type { ApiFormFieldType } from '@lib/forms';
-import { useApi } from '@lib/hooks/UseApi';
+import { RenderInstance } from '../components/render/Instance';
+import { useApi } from '../hooks/UseApi';
+import { themeVars } from '../types/Theme';
+import type { ApiFormFieldType } from './FormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type

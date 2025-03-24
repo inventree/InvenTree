@@ -1,7 +1,7 @@
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
 import { Accordion, Divider, Stack, Text } from '@mantine/core';
 import type { Control, FieldValues } from 'react-hook-form';
 import { ApiFormField } from './ApiFormField';
+import type { ApiFormFieldSet, ApiFormFieldType } from './FormField';
 
 export function NestedObjectField({
   control,

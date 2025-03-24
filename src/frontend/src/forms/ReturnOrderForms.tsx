@@ -12,11 +12,11 @@ import { Thumbnail } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
+import { StandaloneField } from '@lib/forms';
+import type { TableFieldRowProps } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useGlobalSettingsState } from '@lib/states';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/fields/StandaloneField';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { StatusFilterOptions } from '../tables/Filter';
 

@@ -28,11 +28,11 @@ import type { TablerIconType } from '@lib/components';
 import { Boundary } from '@lib/components';
 import { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
+import { StandaloneField } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
-import { StandaloneField } from '../../forms/fields/StandaloneField';
 
 type EditorProps = {
   template: TemplateI;

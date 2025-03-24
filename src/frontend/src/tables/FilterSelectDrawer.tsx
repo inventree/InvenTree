@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '@lib/components';
+import { StandaloneField } from '@lib/forms';
 import type { FilterSetState } from '@lib/hooks/UseFilterSet';
 import {
   type TableFilter,
@@ -27,7 +28,6 @@ import {
   getTableFilterOptions
 } from '@lib/tables';
 import { IconCheck } from '@tabler/icons-react';
-import { StandaloneField } from '../components/forms/fields/StandaloneField';
 
 /*
  * Render a single table filter item
