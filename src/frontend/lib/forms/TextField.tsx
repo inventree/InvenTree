@@ -53,7 +53,7 @@ export function TextField({
       {...definition}
       ref={field.ref}
       id={fieldId}
-      aria-label={`text-field-${field.name}`}
+      aria-label={`text-field-${fieldName}`}
       type={definition.field_type}
       value={rawText || ''}
       error={definition.error ?? error?.message}

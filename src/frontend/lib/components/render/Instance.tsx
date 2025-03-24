@@ -168,7 +168,7 @@ export function RenderInlineModel({
   prefix,
   suffix,
   image,
-  labels,
+  // labels,
   url,
   navigate,
   showSecondary = true,
@@ -180,7 +180,7 @@ export function RenderInlineModel({
   prefix?: ReactNode;
   suffix?: ReactNode;
   image?: string;
-  labels?: string[];
+  // labels?: string[];
   url?: string;
   navigate?: any;
   tooltip?: string;

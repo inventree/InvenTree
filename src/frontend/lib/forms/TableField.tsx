@@ -110,17 +110,6 @@ export function TableField({
     field.onChange(val);
   };
 
-  const fieldDefinition = useMemo(() => {
-    return {
-      ...definition,
-      modelRenderer: undefined,
-      onValueChange: undefined,
-      adjustFilters: undefined,
-      read_only: undefined,
-      addRow: undefined
-    };
-  }, [definition]);
-
   // Extract errors associated with the current row
   const rowErrors: any = useCallback(
     (idx: number) => {
@@ -135,7 +124,7 @@ export function TableField({
     <Table
       highlightOnHover
       striped
-      aria-label={`table-field-${field.name}`}
+      aria-label={`table-field-${fieldName}`}
       style={{ width: '100%' }}
     >
       <Table.Thead>
