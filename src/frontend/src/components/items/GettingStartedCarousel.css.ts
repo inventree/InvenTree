@@ -1,7 +1,7 @@
 import { rem } from '@mantine/core';
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '../../theme';
+import { themeVars } from '@lib/core';
 
 export const card = style({
   height: rem(170),
@@ -18,13 +18,13 @@ export const title = style({
   lineHeight: 1.2,
   fontSize: rem(32),
   marginTop: 0,
-  [vars.lightSelector]: { color: vars.colors.dark[5] },
-  [vars.darkSelector]: { color: vars.colors.white[0] }
+  [themeVars.lightSelector]: { color: themeVars.colors.dark[5] },
+  [themeVars.darkSelector]: { color: themeVars.colors.white[0] }
 });
 
 export const category = style({
   opacity: 0.7,
   fontWeight: 700,
-  [vars.lightSelector]: { color: vars.colors.dark[5] },
-  [vars.darkSelector]: { color: vars.colors.white[0] }
+  [themeVars.lightSelector]: { color: themeVars.colors.dark[5] },
+  [themeVars.darkSelector]: { color: themeVars.colors.white[0] }
 });

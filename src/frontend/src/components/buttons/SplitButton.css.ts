@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '../../theme';
+import { themeVars } from '@lib/core';
 
 export const button = style({
   borderTopRightRadius: 0,
@@ -15,5 +15,5 @@ export const icon = style({
   borderTopLeftRadius: 0,
   borderBottomLeftRadius: 0,
   border: 0,
-  borderLeft: `1px solid ${vars.colors.primaryShade}`
+  borderLeft: `1px solid ${themeVars.colors.primaryShade}`
 });

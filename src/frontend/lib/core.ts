@@ -35,3 +35,8 @@ export type {
   SettingTyp,
   SettingType
 } from './types/Settings';
+
+export {
+  theme,
+  themeVars
+} from './types/Theme';

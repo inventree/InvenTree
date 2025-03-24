@@ -1,8 +1,8 @@
 import { Center, Loader, MantineProvider, Stack } from '@mantine/core';
 import { Suspense } from 'react';
 
+import { theme } from '../../lib/types/Theme';
 import { colorSchema } from '../contexts/colorSchema';
-import { theme } from '../theme';
 
 function LoadingFallback() {
   return (

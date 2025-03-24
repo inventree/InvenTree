@@ -15,9 +15,9 @@ import { Boundary } from '@lib/components';
 import { RenderInstance } from '@lib/components';
 import { ModelType, type Setting } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
+import { themeVars } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { vars } from '../../theme';
 
 /**
  * Render a single setting value
@@ -155,7 +155,9 @@ export function SettingItem({
   const style: Record<string, string> = { paddingLeft: '8px' };
   if (shaded) {
     style['backgroundColor'] =
-      colorScheme === 'light' ? vars.colors.gray[1] : vars.colors.gray[9];
+      colorScheme === 'light'
+        ? themeVars.colors.gray[1]
+        : themeVars.colors.gray[9];
   }
 
   return (

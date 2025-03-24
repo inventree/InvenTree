@@ -25,6 +25,7 @@ import { InvenTreeIcon } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { ApiImage } from '@lib/components';
 import type { UserRoles } from '@lib/core';
+import { themeVars } from '@lib/core';
 import { showApiErrorMessage } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
 import { useApi } from '@lib/hooks';
@@ -33,7 +34,6 @@ import { useGlobalSettingsState } from '@lib/states';
 import { showNotification } from '@mantine/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
-import { vars } from '../../theme';
 
 /**
  * Props for detail image
@@ -183,8 +183,8 @@ function UploadModal({
   const { colorScheme } = useMantineColorScheme();
 
   const primaryColor =
-    vars.colors.primaryColors[colorScheme === 'dark' ? 4 : 6];
-  const redColor = vars.colors.red[colorScheme === 'dark' ? 4 : 6];
+    themeVars.colors.primaryColors[colorScheme === 'dark' ? 4 : 6];
+  const redColor = themeVars.colors.red[colorScheme === 'dark' ? 4 : 6];
 
   return (
     <Paper style={{ height: '220px' }}>

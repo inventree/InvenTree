@@ -18,10 +18,10 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { themeVars } from '@lib/core';
 import { useUserState } from '@lib/states';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
-import { vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
@@ -41,7 +41,11 @@ export function MainMenu() {
                 {username()}
               </Text>
             ) : (
-              <Skeleton height={20} width={40} radius={vars.radiusDefault} />
+              <Skeleton
+                height={20}
+                width={40}
+                radius={themeVars.radiusDefault}
+              />
             )}
             <IconChevronDown />
           </Group>
@@ -71,7 +75,9 @@ export function MainMenu() {
           onClick={toggleColorScheme}
           leftSection={colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />}
           c={
-            colorScheme === 'dark' ? vars.colors.yellow[4] : vars.colors.blue[6]
+            colorScheme === 'dark'
+              ? themeVars.colors.yellow[4]
+              : themeVars.colors.blue[6]
           }
         >
           <Trans>Change Color Mode</Trans>
