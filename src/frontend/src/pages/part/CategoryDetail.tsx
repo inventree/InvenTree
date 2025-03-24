@@ -342,7 +342,9 @@ export default function CategoryDetail() {
             }}
             actions={categoryActions}
             editAction={editCategory.open}
-            editEnabled={user.hasChangePermission(ModelType.partcategory)}
+            editEnabled={
+              !!category?.pk && user.hasChangePermission(ModelType.partcategory)
+            }
           />
           <PanelGroup
             pageKey='partcategory'
