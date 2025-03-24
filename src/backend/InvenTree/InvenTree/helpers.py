@@ -384,9 +384,14 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def GetExportFormats():
+def GetExportOptions() -> list:
+    """Return a set of allowable import / export file formats."""
+    return [['csv', 'CSV'], ['xlsx', 'Excel'], ['tsv', 'TSV']]
+
+
+def GetExportFormats() -> list:
     """Return a list of allowable file formats for importing or exporting tabular data."""
-    return ['csv', 'xlsx', 'tsv', 'json']
+    return [opt[0] for opt in GetExportOptions()]
 
 
 def DownloadFile(
@@ -437,14 +442,14 @@ def increment_serial_number(serial, part=None):
         incremented value, or None if incrementing could not be performed.
     """
     from InvenTree.exceptions import log_error
-    from plugin.registry import registry
+    from plugin import PluginMixinEnum, registry
 
     # Ensure we start with a string value
     if serial is not None:
         serial = str(serial).strip()
 
     # First, let any plugins attempt to increment the serial number
-    for plugin in registry.with_mixin('validation'):
+    for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
         try:
             if not hasattr(plugin, 'increment_serial_number'):
                 continue
@@ -1034,7 +1039,7 @@ def inheritors(
 
 
 def pui_url(subpath: str) -> str:
-    """Return the URL for a PUI subpath."""
+    """Return the URL for a web subpath."""
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'

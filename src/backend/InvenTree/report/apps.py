@@ -32,9 +32,11 @@ class ReportConfig(AppConfig):
         for name, log_manager in logging.root.manager.loggerDict.items():
             if name.lower().startswith(('fonttools', 'weasyprint')):
                 if hasattr(log_manager, 'setLevel'):
-                    log_manager.setLevel(logging.WARNING)
+                    log_manager.setLevel(logging.ERROR)
 
         super().ready()
+
+        self.cleanup()
 
         # skip loading if plugin registry is not loaded or we run in a background thread
         if (
@@ -61,6 +63,15 @@ class ReportConfig(AppConfig):
                 )
 
         set_maintenance_mode(False)
+
+    def cleanup(self):
+        """Cleanup old label and report outputs."""
+        try:
+            from report.tasks import cleanup_old_report_outputs
+
+            cleanup_old_report_outputs()
+        except Exception:
+            pass
 
     def file_from_template(self, dir_name: str, file_name: str) -> ContentFile:
         """Construct a new ContentFile from a template file."""

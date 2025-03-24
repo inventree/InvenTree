@@ -11,6 +11,7 @@ from django.contrib import admin
 import structlog
 
 from InvenTree.config import get_plugin_dir
+from plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 
@@ -26,7 +27,7 @@ class AppMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('app', 'has_app', __class__)
+        self.add_mixin(PluginMixinEnum.APP, 'has_app', __class__)
 
     @classmethod
     def _activate_mixin(

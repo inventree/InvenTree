@@ -33,8 +33,8 @@ class AllUserRequire2FAMiddleware(MiddlewareMixin):
         'api-token',
         # web platform urls
         'password_reset_confirm',
-        'platform',
-        'platform-wildcard',
+        'web',
+        'web-wildcard',
         'web-assets',
     ]
     app_names = ['headless']

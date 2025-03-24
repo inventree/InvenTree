@@ -73,7 +73,7 @@ You can now set breakpoints and vscode will automatically pause execution if tha
 
 !!! info "React Frontend development"
 
-The React frontend requires additional steps to run. Refer to [Platform UI / React](./react-frontend.md)
+The React frontend requires additional steps to run. Refer to [Web UI / React](./react-frontend.md)
 
 ### Plugin development
 

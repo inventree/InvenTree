@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
-from plugin.registry import registry
+from plugin import PluginMixinEnum, registry
 
 
 class UserInterfaceMixinTests(InvenTreeAPITestCase):
@@ -30,7 +30,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         plugin = registry.get_plugin('sampleui')
         self.assertTrue(plugin.is_active())
 
-        plugins = registry.with_mixin('ui')
+        plugins = registry.with_mixin(PluginMixinEnum.USER_INTERFACE)
         self.assertGreater(len(plugins), 0)
 
     def test_ui_dashboard_items(self):
