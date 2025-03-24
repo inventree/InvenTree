@@ -1,10 +1,10 @@
 import type FullCalendar from '@fullcalendar/react';
-import type { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import type { UseModalReturn } from '@lib/hooks';
 import useDataExport from '@lib/hooks/UseDataExport';
 import { type FilterSetState, useFilterSet } from '@lib/hooks/UseFilterSet';
+import type { ApiEndpoints } from '@lib/index';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';

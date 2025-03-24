@@ -19,11 +19,11 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
-import type { ModelType } from '@lib/core';
-import { ModelInformationDict } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';

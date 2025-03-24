@@ -3,10 +3,10 @@ import { IconUserStar } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { ActionButton } from '@lib/components';
-import type { ModelType } from '@lib/core';
-import { ModelInformationDict } from '@lib/core';
 import { generateUrl } from '@lib/functions';
-import { useUserState } from '@lib/states';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { useServerApiState } from '../../states/ApiState';
 
 export type AdminButtonProps = {

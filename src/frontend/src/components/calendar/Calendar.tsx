@@ -7,7 +7,7 @@ import FullCalendar from '@fullcalendar/react';
 import { ActionButton } from '@lib/components';
 import { Boundary } from '@lib/components';
 import { StylishText } from '@lib/components';
-import { useLocalState } from '@lib/states';
+import { useLocalState } from '@lib/index';
 import type { TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
 import { FilterSelectDrawer } from '@lib/tables';

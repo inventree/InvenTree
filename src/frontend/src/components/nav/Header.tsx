@@ -19,13 +19,13 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { useLocalState } from '@lib/states';
-import { useUserState } from '@lib/states';
-import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useLocalState } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/index';
 import { t } from '@lingui/macro';
 import { getNavTabs } from '../../defaults/links';
 import * as classes from '../../main.css';

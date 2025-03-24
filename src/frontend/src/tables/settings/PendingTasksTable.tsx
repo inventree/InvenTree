@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 import type { TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 

@@ -12,15 +12,15 @@ import {
   TableHoverCard
 } from '@lib/tables';
 
-import type { ModelType } from '@lib/core';
 import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
+import type { ModelType } from '@lib/index';
 
 import { Thumbnail } from '@lib/components';
 import { TableStatusRenderer } from '@lib/components';
 import { RenderOwner, RenderUser } from '@lib/components';
 import { formatCurrency, formatDate } from '@lib/functions';
-import { useGlobalSettingsState } from '@lib/states';
+import { useGlobalSettingsState } from '@lib/index';
 
 // Render a Part instance within a table
 export function PartColumn({

@@ -1,7 +1,7 @@
 import { rem } from '@mantine/core';
 import { style } from '@vanilla-extract/css';
 
-import { themeVars } from '@lib/core';
+import { themeVars } from '@lib/index';
 
 export const card = style({
   height: rem(170),

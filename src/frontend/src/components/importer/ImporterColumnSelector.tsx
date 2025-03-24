@@ -13,11 +13,11 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldType } from '@lib/forms';
 import { StandaloneField } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
+import { ApiEndpoints } from '@lib/index';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 
 function ImporterColumn({

@@ -1,8 +1,8 @@
 import { AddItemButton, CopyButton, StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { useCreateApiFormModal } from '@lib/forms';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import { useApi, useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import type { TableFilter } from '@lib/tables';
 import type { RowAction } from '@lib/tables';
 import { Trans, t } from '@lingui/macro';

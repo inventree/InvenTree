@@ -1,4 +1,3 @@
-import { ApiEndpoints } from '@lib/core';
 import { generateUrl, showLoginNotification } from '@lib/functions';
 import { apiUrl } from '@lib/functions';
 import { getApi, setApiDefaults } from '@lib/functions/api';
@@ -7,8 +6,9 @@ import {
   followRedirect,
   getCsrfCookie
 } from '@lib/functions/auth';
-import { useLocalState } from '@lib/states';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useLocalState } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';

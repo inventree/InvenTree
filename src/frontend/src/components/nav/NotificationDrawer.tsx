@@ -20,14 +20,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
-import type { ModelType } from '@lib/core';
-import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { getBaseUrl, navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
+import { useUserState } from '@lib/index';
 
 /**
  * Render a single notification entry in the drawer

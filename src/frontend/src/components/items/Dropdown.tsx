@@ -17,7 +17,7 @@ import {
   InvenTreeIcon
 } from '@lib/components';
 import { StylishText } from '@lib/components';
-import type { ModelType } from '@lib/core';
+import type { ModelType } from '@lib/index';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
 
 // Dropdown menu for barcode actions

@@ -23,12 +23,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
 import { ApiIcon } from '@lib/components';
-import type { ApiEndpoints } from '@lib/core';
-import type { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
+import type { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
 
 /*
  * A generic navigation tree component.

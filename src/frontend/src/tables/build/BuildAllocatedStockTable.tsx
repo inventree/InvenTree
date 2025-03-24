@@ -1,13 +1,13 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
-import { UserRoles } from '@lib/core';
 import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';

@@ -5,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { Thumbnail } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
-import { UserRoles } from '@lib/core';
 import { useCreateApiFormModal, useEditApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { useTable } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
 import type { RowAction, TableFilter } from '@lib/tables';
 import { RowEditAction } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';

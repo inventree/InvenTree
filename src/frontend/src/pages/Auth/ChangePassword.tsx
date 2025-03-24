@@ -1,5 +1,5 @@
 import { StylishText } from '@lib/components';
-import { useUserState } from '@lib/states';
+import { useUserState } from '@lib/index';
 import { Trans, t } from '@lingui/macro';
 import {
   Button,

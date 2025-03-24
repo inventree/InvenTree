@@ -4,7 +4,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { lazy } from 'react';
 
 import { StylishText } from '@lib/components';
-import { useUserState } from '@lib/states';
+import { useUserState } from '@lib/index';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useServerApiState } from '../../../../states/ApiState';

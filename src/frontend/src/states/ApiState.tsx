@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
+import { ApiEndpoints } from '@lib/index';
 import { emptyServerAPI } from '../defaults/defaults';
 import type { AuthConfig, AuthContext, ServerAPIProps } from './states';
 

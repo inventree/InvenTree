@@ -18,9 +18,9 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { InfoItem } from '../../components/items/InfoItem';

@@ -4,12 +4,12 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { CopyButton } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { useDeleteApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useTable } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';

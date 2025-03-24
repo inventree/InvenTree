@@ -18,8 +18,8 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { themeVars } from '@lib/core';
-import { useUserState } from '@lib/states';
+import { themeVars } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 

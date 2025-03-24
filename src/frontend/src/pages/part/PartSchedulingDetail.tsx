@@ -12,12 +12,12 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { formatDate } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import type { TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import dayjs from 'dayjs';

@@ -26,11 +26,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { TablerIconType } from '@lib/components';
 import { Boundary } from '@lib/components';
-import { ModelType } from '@lib/core';
-import { ModelInformationDict } from '@lib/core';
 import { StandaloneField } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
 

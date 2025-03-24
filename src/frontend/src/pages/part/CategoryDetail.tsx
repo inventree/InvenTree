@@ -11,13 +11,13 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ApiIcon, OptionsActionDropdown } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
-import { UserRoles } from '@lib/core';
 import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/forms';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,

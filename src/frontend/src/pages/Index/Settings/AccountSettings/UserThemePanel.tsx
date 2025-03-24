@@ -17,7 +17,7 @@ import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { StylishText } from '@lib/components';
-import { useLocalState } from '@lib/states';
+import { useLocalState } from '@lib/index';
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
 import { SizeMarks } from '../../../../defaults/defaults';

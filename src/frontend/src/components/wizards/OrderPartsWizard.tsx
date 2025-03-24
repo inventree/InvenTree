@@ -1,11 +1,11 @@
 import { ActionButton } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { StandaloneField } from '@lib/forms';
 import { useCreateApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
 import { t } from '@lingui/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';

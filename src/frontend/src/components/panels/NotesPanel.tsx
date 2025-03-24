@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
 
-import type { ModelType } from '@lib/core';
-import { useUserState } from '@lib/states';
+import type { ModelType } from '@lib/index';
+import { useUserState } from '@lib/index';
 import NotesEditor from '../editors/NotesEditor';
 import type { PanelType } from './Panel';
 

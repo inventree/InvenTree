@@ -1,4 +1,4 @@
-import { ApiEndpoints, ModelType } from '@lib/core';
+import { ApiEndpoints, ModelType } from '@lib/index';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
 function LabelTemplateTable() {

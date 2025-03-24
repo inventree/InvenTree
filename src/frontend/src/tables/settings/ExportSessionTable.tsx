@@ -1,7 +1,7 @@
 import { RenderUser } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import type { TableColumn } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';

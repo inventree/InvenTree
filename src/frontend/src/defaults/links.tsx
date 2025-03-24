@@ -2,9 +2,9 @@ import { Trans, t } from '@lingui/macro';
 import { openContextModal } from '@mantine/modals';
 
 import { StylishText } from '@lib/components';
-import { UserRoles } from '@lib/core';
-import type { UserStateProps } from '@lib/states';
-import type { SettingsStateProps } from '@lib/states';
+import { UserRoles } from '@lib/index';
+import type { UserStateProps } from '@lib/index';
+import type { SettingsStateProps } from '@lib/index';
 import {
   IconBox,
   IconBuildingFactory2,

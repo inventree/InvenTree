@@ -2,9 +2,9 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 
 export type GeneratorState = {
   query: Record<string, any>;

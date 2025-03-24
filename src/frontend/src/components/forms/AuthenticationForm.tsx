@@ -14,11 +14,11 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showLoginNotification } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
 import { followRedirect } from '@lib/functions/auth';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { showNotification } from '@mantine/notifications';
 import { doBasicLogin, doSimpleLogin, ensureCsrf } from '../../functions/auth';
 import { useServerApiState } from '../../states/ApiState';

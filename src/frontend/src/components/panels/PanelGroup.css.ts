@@ -1,4 +1,4 @@
-import { themeVars } from '@lib/core';
+import { themeVars } from '@lib/index';
 import { style } from '@vanilla-extract/css';
 
 export const selectedPanelTab = style({

@@ -1,9 +1,9 @@
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
 import {} from '@lib/forms';
 import { useInstance } from '@lib/hooks';
-import { useUserState } from '@lib/states';
-import { useGlobalSettingsState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import { t } from '@lingui/macro';
 import { Badge, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';

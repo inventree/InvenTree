@@ -1,4 +1,4 @@
-import type { HostList } from '@lib/core';
+import type { HostList } from '@lib/index';
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,

@@ -14,7 +14,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -23,7 +22,8 @@ import {
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';

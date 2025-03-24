@@ -15,10 +15,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CopyButton, QRCode, type QRCodeProps } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl, extractErrorMessage } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { useGlobalSettingsState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import type { QrCodeType } from '../items/Dropdown';
 import { BarcodeInput } from './BarcodeInput';
 

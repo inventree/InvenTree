@@ -17,7 +17,7 @@ import {
 import { useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
-import { useUserState } from '@lib/states';
+import { useUserState } from '@lib/index';
 import useInstanceName from '../../hooks/UseInstanceName';
 
 /**

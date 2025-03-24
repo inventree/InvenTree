@@ -3,9 +3,9 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import type { TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../../../../lib/tables/InvenTreeTable';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';

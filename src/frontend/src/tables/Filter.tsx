@@ -1,15 +1,15 @@
 import { t } from '@lingui/macro';
 
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
+import { apiUrl } from '@lib/functions';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface,
   StatusLookup
-} from '@lib/core';
-import { apiUrl } from '@lib/functions';
-import { useGlobalSettingsState } from '@lib/states';
-import { useGlobalStatusState } from '@lib/states';
+} from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
+import { useGlobalStatusState } from '@lib/index';
 import type { TableFilter, TableFilterChoice } from '@lib/tables';
 
 /*

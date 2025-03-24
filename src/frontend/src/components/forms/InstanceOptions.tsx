@@ -11,8 +11,8 @@ import {
 } from '@tabler/icons-react';
 
 import { EditButton } from '@lib/components';
-import type { HostList } from '@lib/core';
-import { useLocalState } from '@lib/states';
+import type { HostList } from '@lib/index';
+import { useLocalState } from '@lib/index';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { HostOptionsForm } from './HostOptionsForm';

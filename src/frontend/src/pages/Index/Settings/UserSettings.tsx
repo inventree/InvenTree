@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { useUserState } from '@lib/states';
+import { useUserState } from '@lib/index';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';

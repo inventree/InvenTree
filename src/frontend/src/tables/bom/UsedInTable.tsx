@@ -2,11 +2,11 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { formatDecimal } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';

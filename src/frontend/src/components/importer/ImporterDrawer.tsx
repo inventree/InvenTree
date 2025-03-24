@@ -17,8 +17,8 @@ import { IconCheck } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
-import { ModelType } from '@lib/core';
 import { useStatusCodes } from '@lib/hooks';
+import { ModelType } from '@lib/index';
 import { useImportSession } from '../../hooks/UseImportSession';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';

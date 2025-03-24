@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import type { TableState } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 

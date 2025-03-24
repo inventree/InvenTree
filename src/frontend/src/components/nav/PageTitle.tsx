@@ -1,4 +1,4 @@
-import { useGlobalSettingsState } from '@lib/states';
+import { useGlobalSettingsState } from '@lib/index';
 import { useEffect, useMemo } from 'react';
 
 /**

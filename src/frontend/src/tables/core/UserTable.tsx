@@ -1,7 +1,7 @@
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
 import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';

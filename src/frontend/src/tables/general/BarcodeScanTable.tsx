@@ -1,7 +1,7 @@
 import { ActionButton } from '@lib/components';
 import { RenderInstance } from '@lib/components';
 import { useTable } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { useUserState } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowViewAction } from '@lib/tables';
 import { t } from '@lingui/macro';

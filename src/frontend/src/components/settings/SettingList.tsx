@@ -10,10 +10,10 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
-import type { ModelType, Setting } from '@lib/core';
 import { useEditApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
+import type { ModelType, Setting } from '@lib/index';
 import {
   type SettingsStateProps,
   createMachineSettingsState,

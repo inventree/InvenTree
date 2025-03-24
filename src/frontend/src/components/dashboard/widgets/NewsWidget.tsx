@@ -15,11 +15,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { formatDate } from '@lib/functions';
 import { useApi } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 
 /**
  * Render a link to an external news item

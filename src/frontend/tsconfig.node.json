@@ -3,6 +3,7 @@
     "composite": true,
     "module": "ESNext",
     "target": "ES2023",
+    "lib": ["ES2023"],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true
   },

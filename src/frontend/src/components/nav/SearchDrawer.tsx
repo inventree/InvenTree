@@ -33,16 +33,16 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
 import { RenderInstance } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
-import { ModelInformationDict, getModelInfo } from '@lib/core';
-import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { navigateToLink } from '@lib/functions';
 import { cancelEvent } from '@lib/functions/events';
 import { useApi } from '@lib/hooks';
-import { useUserState } from '@lib/states';
-import { useUserSettingsState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { ModelInformationDict, getModelInfo } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useUserSettingsState } from '@lib/index';
 import { showNotification } from '@mantine/notifications';
 
 // Define type for handling individual search queries

@@ -13,14 +13,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
 import { EditApiForm } from '@lib/forms';
 import { useCreateApiFormModal, useDeleteApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
 import { useTable } from '@lib/hooks';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { useUserState } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';

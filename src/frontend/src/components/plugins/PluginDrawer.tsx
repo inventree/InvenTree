@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { InfoItem } from '../items/InfoItem';
 import { PluginSettingList } from '../settings/SettingList';
 import type { PluginInterface } from './PluginInterface';

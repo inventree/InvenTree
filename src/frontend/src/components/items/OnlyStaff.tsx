@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 
-import { useUserState } from '@lib/states';
+import { useUserState } from '@lib/index';
 
 export const OnlyStaff = ({ children }: { children: any }) => {
   const [user] = useUserState((state) => [state.user]);

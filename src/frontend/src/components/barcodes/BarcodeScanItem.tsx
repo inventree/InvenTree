@@ -1,4 +1,4 @@
-import type { ModelType } from '@lib/core';
+import type { ModelType } from '@lib/index';
 
 /**
  * Interface defining a single barcode scan item

@@ -3,9 +3,9 @@ import { Accordion, Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { InvenTreeTable } from '../../../../../lib/tables/InvenTreeTable';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';

@@ -14,9 +14,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';
 import { MachineTypeListTable } from '../../../../tables/machine/MachineTypeTable';
 

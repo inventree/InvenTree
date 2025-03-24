@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useGlobalSettingsState } from '@lib/states';
+import { useGlobalSettingsState } from '@lib/index';
 
 /**
  * Simple hook for returning the "instance name" of the Server

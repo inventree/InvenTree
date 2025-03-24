@@ -30,11 +30,11 @@ import {
 
 import { Boundary } from '@lib/components';
 import { StylishText } from '@lib/components';
-import type { ModelType } from '@lib/core';
 import { navigateToLink } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
-import { useLocalState } from '@lib/states';
+import type { ModelType } from '@lib/index';
+import { useLocalState } from '@lib/index';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import type { PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';

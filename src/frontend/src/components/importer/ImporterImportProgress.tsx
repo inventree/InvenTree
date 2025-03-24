@@ -4,8 +4,8 @@ import { useInterval } from '@mantine/hooks';
 import { useEffect } from 'react';
 
 import { StylishText } from '@lib/components';
-import { ModelType } from '@lib/core';
 import { useStatusCodes } from '@lib/hooks';
+import { ModelType } from '@lib/index';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 
 export default function ImporterImportProgress({

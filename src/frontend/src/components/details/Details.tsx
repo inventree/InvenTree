@@ -21,15 +21,15 @@ import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { StatusRenderer } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
-import { getModelInfo } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { getBaseUrl, navigateToLink } from '@lib/functions';
 import { formatDate } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
-import { useGlobalSettingsState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { getModelInfo } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 
 export type DetailsField = {
   hidden?: boolean;

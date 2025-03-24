@@ -1,6 +1,6 @@
 import { StylishText } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl, getApi } from '@lib/functions/api';
+import { ApiEndpoints } from '@lib/index';
 import { Trans, t } from '@lingui/macro';
 import {
   Accordion,

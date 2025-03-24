@@ -13,9 +13,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getApi } from '@lib/functions/api';
+import { ApiEndpoints } from '@lib/index';
 
 export function LicenceView(entries: Readonly<any[]>) {
   return (

@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { identifierString } from '@lib/functions/conversion';
+import { ApiEndpoints } from '@lib/index';
 
 import { useApi } from '@lib/hooks';
-import { useUserState } from '@lib/states';
-import { useGlobalSettingsState } from '@lib/states';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import type { DashboardWidgetProps } from '../../lib/components/dashboard/DashboardWidget';
 import DashboardWidgetLibrary from '../components/dashboard/DashboardWidgetLibrary';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';

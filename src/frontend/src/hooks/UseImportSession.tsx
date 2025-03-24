@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react';
 
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
 import { useInstance } from '@lib/hooks';
 import { useStatusCodes } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
 
 /*
  * Custom hook for managing the state of a data import session

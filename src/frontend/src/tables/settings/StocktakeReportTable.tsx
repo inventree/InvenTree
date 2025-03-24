@@ -3,11 +3,11 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { RenderUser } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { useCreateApiFormModal, useDeleteApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';

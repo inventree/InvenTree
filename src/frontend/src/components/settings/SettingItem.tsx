@@ -13,11 +13,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Boundary } from '@lib/components';
 import { RenderInstance } from '@lib/components';
-import { ModelType, type Setting } from '@lib/core';
-import { ModelInformationDict } from '@lib/core';
-import { themeVars } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { ModelType, type Setting } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
+import { themeVars } from '@lib/index';
 
 /**
  * Render a single setting value

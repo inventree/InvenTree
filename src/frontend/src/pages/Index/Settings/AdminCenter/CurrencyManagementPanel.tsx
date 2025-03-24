@@ -5,9 +5,9 @@ import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import { useApi, useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 
 import { InvenTreeTable } from '../../../../../lib/tables/InvenTreeTable';
 import { FactCollection } from '../../../../components/settings/FactCollection';

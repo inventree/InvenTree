@@ -6,10 +6,10 @@ import { useMemo } from 'react';
 import { ActionButton, StylishText } from '@lib/components';
 import { ActionDropdown } from '@lib/components';
 import { YesNoUndefinedButton } from '@lib/components/buttons/YesNoButton';
-import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { useEditApiFormModal } from '@lib/forms';
-import { useUserState } from '@lib/states';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { useNavigate } from 'react-router-dom';
 
 export function AccountDetailPanel() {

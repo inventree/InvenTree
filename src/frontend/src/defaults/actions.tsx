@@ -3,8 +3,8 @@ import type { SpotlightActionData } from '@mantine/spotlight';
 import { IconBarcode, IconLink, IconPointer } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
-import { useLocalState } from '@lib/states';
-import { useUserState } from '@lib/states';
+import { useLocalState } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { openContextModal } from '@mantine/modals';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 

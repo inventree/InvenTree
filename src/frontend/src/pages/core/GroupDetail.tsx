@@ -1,7 +1,7 @@
-import { ApiEndpoints } from '@lib/core';
-import { ModelType } from '@lib/core';
 import {} from '@lib/forms';
 import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';

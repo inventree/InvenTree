@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
 import { DashboardWidget, type DashboardWidgetProps } from '@lib/components';
-import { useUserState } from '@lib/states';
+import { useUserState } from '@lib/index';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';

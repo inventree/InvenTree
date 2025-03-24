@@ -1,9 +1,9 @@
-import type { PluginProps } from '@lib/core';
 import { setApiDefaults } from '@lib/functions/api';
-import { useUserState } from '@lib/states';
-import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
-import { useIconState } from '@lib/states';
-import { useGlobalStatusState } from '@lib/states';
+import type { PluginProps } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/index';
+import { useIconState } from '@lib/index';
+import { useGlobalStatusState } from '@lib/index';
 import type { NavigateFunction } from 'react-router-dom';
 import { useServerApiState } from './ApiState';
 

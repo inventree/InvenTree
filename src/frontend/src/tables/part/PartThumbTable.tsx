@@ -19,9 +19,9 @@ import type React from 'react';
 import { Suspense, useState } from 'react';
 
 import { Thumbnail } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { IconX } from '@tabler/icons-react';
 
 /**

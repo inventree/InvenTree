@@ -26,7 +26,6 @@ import {
 } from '@lib/components';
 import { StatusRenderer, TableStatusRenderer } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
-import { ApiEndpoints } from '@lib/core';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -35,6 +34,7 @@ import {
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
+import { ApiEndpoints } from '@lib/index';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
