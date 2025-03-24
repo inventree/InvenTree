@@ -79,16 +79,43 @@ export function Header() {
   const alerts: AlertInfo[] = useMemo(() => {
     const _alerts: AlertInfo[] = [];
 
+    if (server?.debug_mode) {
+      _alerts.push({
+        key: 'debug',
+        title: t`Debug Mode`,
+        message: t`The server is running in debug mode.`
+      });
+    }
+
     if (server?.worker_running == false) {
       _alerts.push({
         key: 'worker',
         title: t`Background Worker`,
-        message: t`The background worker process is not running. Contact your system administrator.`
+        message: t`The background worker process is not running.`
+      });
+    }
+
+    if (globalSettings.isSet('SERVER_RESTART_REQUIRED')) {
+      _alerts.push({
+        key: 'restart',
+        title: t`Server Restart`,
+        message: t`The server requires a restart to apply changes.`
+      });
+    }
+
+    const n_migrations =
+      Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
+
+    if (n_migrations > 0) {
+      _alerts.push({
+        key: 'migrations',
+        title: t`Database Migrations`,
+        message: t`There are pending database migrations.`
       });
     }
 
     return _alerts.filter((alert) => !dismissed.includes(alert.key));
-  }, [server, dismissed]);
+  }, [server, dismissed, globalSettings]);
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
