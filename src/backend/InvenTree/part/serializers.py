@@ -33,8 +33,8 @@ import part.tasks
 import stock.models
 import users.models
 from build.status_codes import BuildStatusGroups
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.tasks import offload_task
 from users.serializers import UserSerializer
@@ -463,57 +463,6 @@ class PartParameterSerializer(
     template_detail = PartParameterTemplateSerializer(
         source='template', many=False, read_only=True, allow_null=True
     )
-
-
-class PartSetCategorySerializer(serializers.Serializer):
-    """Serializer for changing PartCategory for multiple Part objects."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['parts', 'category']
-
-    parts = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        many=True,
-        required=True,
-        allow_null=False,
-        label=_('Parts'),
-    )
-
-    def validate_parts(self, parts):
-        """Validate the selected parts."""
-        if len(parts) == 0:
-            raise serializers.ValidationError(_('No parts selected'))
-
-        return parts
-
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=PartCategory.objects.filter(structural=False),
-        many=False,
-        required=True,
-        allow_null=False,
-        label=_('Category'),
-        help_text=_('Select category'),
-    )
-
-    @transaction.atomic
-    def save(self):
-        """Save the serializer to change the location of the selected parts."""
-        data = self.validated_data
-        parts = data['parts']
-        category = data['category']
-
-        parts_to_save = []
-
-        for p in parts:
-            if p.category == category:
-                continue
-
-            p.category = category
-            parts_to_save.append(p)
-
-        Part.objects.bulk_update(parts_to_save, ['category'])
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -1576,6 +1525,8 @@ class BomItemSerializer(
     """Serializer for BomItem object."""
 
     import_exclude_fields = ['validated', 'substitutes']
+
+    export_exclude_fields = ['substitutes']
 
     export_child_fields = [
         'sub_part_detail.name',
