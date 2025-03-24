@@ -18,6 +18,7 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { formatCurrency } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
+import { useStatusCodes } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -48,7 +49,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import useStatusCodes from '../../hooks/UseStatusCodes';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';

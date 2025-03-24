@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 
 import { StylishText } from '@lib/components';
 import { ModelType } from '@lib/core';
+import { useStatusCodes } from '@lib/hooks';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import useStatusCodes from '../../hooks/UseStatusCodes';
 
 export default function ImporterImportProgress({
   session

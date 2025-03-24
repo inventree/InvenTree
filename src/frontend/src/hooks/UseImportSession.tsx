@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { useInstance } from '@lib/hooks';
-import useStatusCodes from './UseStatusCodes';
+import { useStatusCodes } from '@lib/hooks';
 
 /*
  * Custom hook for managing the state of a data import session

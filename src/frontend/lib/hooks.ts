@@ -10,3 +10,5 @@ export {
   type UseModalReturn,
   useModal
 } from './hooks/UseModal';
+
+export { useStatusCodes } from './hooks/UseStatusCodes';

@@ -18,8 +18,8 @@ import { type ReactNode, useMemo } from 'react';
 
 import { StylishText } from '@lib/components';
 import { ModelType } from '@lib/core';
+import { useStatusCodes } from '@lib/hooks';
 import { useImportSession } from '../../hooks/UseImportSession';
-import useStatusCodes from '../../hooks/UseStatusCodes';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
 import ImporterImportProgress from './ImporterImportProgress';

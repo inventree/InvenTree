@@ -10,6 +10,7 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { useStatusCodes } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
@@ -22,7 +23,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import useStatusCodes from '../../hooks/UseStatusCodes';
 import {
   DateColumn,
   LinkColumn,

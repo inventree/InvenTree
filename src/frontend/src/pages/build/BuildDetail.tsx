@@ -20,6 +20,7 @@ import { UserRoles } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { getDetailUrl } from '@lib/functions';
 import { useInstance } from '@lib/hooks';
+import { useStatusCodes } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
@@ -49,7 +50,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import useStatusCodes from '../../hooks/UseStatusCodes';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
