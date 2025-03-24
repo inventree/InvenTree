@@ -45,7 +45,7 @@ export default mergeConfig(
         entryRoot: 'lib',
         outDir: 'dist',
         insertTypesEntry: true, // Ensures `dist/index.d.ts` is generated
-        exclude: ['src/**/*']
+        exclude: ['node_modules/**/*', 'src/**/*']
       })
     ]
   })

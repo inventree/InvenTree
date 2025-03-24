@@ -1,37 +1,19 @@
 {
     "name": "inventree-ui",
     "private": false,
-    "description": "UI components for the InvenTree project",
     "license": "MIT",
+    "version": "0.1.0",
+    "description": "UI components for the InvenTree project",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts"
-        },
-        "./components": {
-            "import": "./dist/components/index.js",
-            "types": "./dist/components/index.d.ts"
-        },
-        "./forms": {
-            "import": "./dist/forms/index.js",
-            "types": "./dist/forms/index.d.ts"
-        },
-        "./functions": {
-            "import": "./dist/functions/index.js",
-            "types": "./dist/functions/index.d.ts"
-        },
-        "./hooks": {
-            "import": "./dist/hooks/index.js",
-            "types": "./dist/hooks/index.d.ts"
-        },
-        "./tables": {
-            "import": "./dist/tables/index.js",
-            "types": "./dist/tables/index.d.ts"
-        }
+        ".": "./dist/index.js",
+        "./components": "./dist/components/index.js",
+        "./forms": "./lib/forms/index.js",
+        "./functions": "./lib/functions/index.js",
+        "./hooks": "./lib/hooks/index.js",
+        "./tables": "./lib/tables/index.js"
     },
-    "version": "0.1.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/inventree/inventree"

@@ -9,5 +9,5 @@
         "paths": {},
     },
     "include": ["lib"],
-    "exclude": ["src"]
+    "exclude": ["node_modules", "src"]
 }
