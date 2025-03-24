@@ -204,7 +204,6 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'sample-nav-item',
                 'title': 'Sample Nav Item',
                 'icon': 'ti:menu',
-                'source': self.plugin_static_file('sample_navigation.js'),
                 'options': {'url': '/sample/page/'},
             }
         ]
