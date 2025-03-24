@@ -1,7 +1,6 @@
 import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
-import { apiUrl } from '@lib/functions';
-import { getApi } from '@lib/functions/api';
+import { apiUrl, getApi } from '@lib/functions/api';
 import { Trans, t } from '@lingui/macro';
 import {
   Accordion,
@@ -33,7 +32,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ApiState';
-import type { AuthConfig, Provider } from '../../../../states/states';
+import type {} from '../../../../states/states';
+import {
+  type AuthConfig,
+  FlowEnum,
+  type Provider
+} from '../../../../states/states';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
@@ -662,13 +666,13 @@ async function runActionWithFallback(
     if (err.status == 401) {
       if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_reauthenticate'
+          (flow: any) => flow.id == FlowEnum.MfaReauthenticate
         )
       ) {
         return ResultType.mfareauth;
       } else if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'reauthenticate'
+          (flow: any) => flow.id == FlowEnum.Reauthenticate
         )
       ) {
         return ResultType.reauth;

@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/core';
-import { apiUrl, generateUrl, showLoginNotification } from '@lib/functions';
+import { generateUrl, showLoginNotification } from '@lib/functions';
+import { apiUrl } from '@lib/functions';
 import { getApi, setApiDefaults } from '@lib/functions/api';
 import {
   clearCsrfCookie,
@@ -14,7 +15,8 @@ import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { useServerApiState } from '../states/ApiState';
-import { type Provider, fetchGlobalStates } from '../states/states';
+import {} from '../states/states';
+import { FlowEnum, type Provider, fetchGlobalStates } from '../states/states';
 
 /**
  * sends a request to the specified url from a form. this will change the window location.
@@ -99,7 +101,7 @@ export const doBasicLogin = async (
       if (err?.response?.status == 401) {
         setAuthContext(err.response.data?.data);
         const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_authenticate'
+          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
           success = true;

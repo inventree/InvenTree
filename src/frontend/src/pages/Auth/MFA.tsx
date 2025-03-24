@@ -13,7 +13,7 @@ export default function Mfa() {
   const [loginError, setLoginError] = useState<string | undefined>(undefined);
 
   return (
-    <Wrapper titleText={t`Multi-Factor Login`} logOff>
+    <Wrapper titleText={t`Multi-Factor Authentication`} logOff>
       <TextInput
         required
         label={t`TOTP Code`}

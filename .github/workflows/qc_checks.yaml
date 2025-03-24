@@ -38,6 +38,7 @@ jobs:
       api: ${{ steps.filter.outputs.api }}
       force: ${{ steps.force.outputs.force }}
       cicd: ${{ steps.filter.outputs.cicd }}
+      requirements: ${{ steps.filter.outputs.requirements }}
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
@@ -62,6 +63,11 @@ jobs:
               - 'src/frontend/**'
             cicd:
               - '.github/workflows/**'
+            requirements:
+              - 'src/backend/requirements.txt'
+              - 'src/backend/requirements-dev.txt'
+              - 'docs/requirements.txt'
+              - 'contrib/dev_reqs/requirements.txt'
       - name: Is CI being forced?
         run: echo "force=true" >> $GITHUB_OUTPUT
         id: force
@@ -73,7 +79,7 @@ jobs:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2

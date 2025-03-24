@@ -64,8 +64,8 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'login',
-        label: t`Login`,
+        name: 'authentication',
+        label: t`Authentication`,
         icon: <IconFingerprint />,
         content: (
           <GlobalSettingList

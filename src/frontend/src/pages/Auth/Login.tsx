@@ -2,7 +2,7 @@ import { setApiDefaults } from '@lib/functions/api';
 import { followRedirect } from '@lib/functions/auth';
 import { useLocalState } from '@lib/states';
 import { Trans, t } from '@lingui/macro';
-import { Anchor, Divider, Loader, Text } from '@mantine/core';
+import { Anchor, Divider, Group, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -94,7 +94,12 @@ export default function Login() {
         <>
           <Wrapper titleText={t`Login`} smallPadding>
             {isLoggingIn ? (
-              <Loader />
+              <>
+                <Group justify='center'>
+                  <Loader />
+                </Group>
+                <Trans>Logging you in</Trans>
+              </>
             ) : (
               <>
                 <AuthenticationForm />
