@@ -185,6 +185,10 @@ This will export database records to the file `data.json` in your mounted volume
 
 ## Further Configuration
 
+### Check your security posture
+
+It is recommended to check the [threat modelling inputs](../concepts/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
+
 ### Custom Domain
 
 By default, the InvenTree server is accessible at [http://inventree.localhost](http://inventree.localhost). If you wish to use a custom domain, you can edit the `.env` environment file to specify the domain name.
