@@ -19,6 +19,7 @@ import { useStatusCodes } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import {
   useReceiveReturnOrderLineItems,
   useReturnOrderLineItemFields
@@ -33,7 +34,6 @@ import {
 } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,

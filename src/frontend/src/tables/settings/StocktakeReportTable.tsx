@@ -9,11 +9,11 @@ import { useCreateApiFormModal, useDeleteApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { RowDeleteAction } from '@lib/tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { generateStocktakeReportFields } from '../../forms/PartForms';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction } from '../RowActions';
 
 export default function StocktakeReportTable() {
   const table = useTable('stocktake-report');

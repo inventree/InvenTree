@@ -10,6 +10,7 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import {
   LocationColumn,
   PartColumn,
@@ -17,7 +18,6 @@ import {
   StatusColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Render a table of allocated stock for a build.

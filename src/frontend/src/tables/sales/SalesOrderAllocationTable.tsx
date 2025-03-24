@@ -13,6 +13,7 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
@@ -24,7 +25,6 @@ import {
   StatusColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderAllocationTable({
   partId,

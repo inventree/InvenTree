@@ -22,6 +22,11 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/tables';
+import {
   CodeEditor,
   PdfPreview,
   TemplateEditor
@@ -44,11 +49,6 @@ import { notYetImplemented } from '../../functions/notifications';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
 
 export type TemplateI = {
   pk: number;

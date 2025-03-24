@@ -29,6 +29,7 @@ import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowActions, RowExpansionIcon } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { RowDeleteAction, RowEditAction, RowViewAction } from '@lib/tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
@@ -36,7 +37,6 @@ import {
 } from '../../forms/BuildForms';
 import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction, RowViewAction } from '../RowActions';
 
 /**
  * Render a sub-table of allocated stock against a particular build line.

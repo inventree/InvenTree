@@ -14,14 +14,14 @@ import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { extraLineItemFields } from '../../forms/CommonForms';
-import { LinkColumn, NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
-} from '../RowActions';
+} from '@lib/tables';
+import { extraLineItemFields } from '../../forms/CommonForms';
+import { LinkColumn, NoteColumn } from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
   endpoint,

@@ -23,13 +23,13 @@ import { formatDate, formatPriceRange } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import dayjs from 'dayjs';
 import {
   generateStocktakeReportFields,
   partStocktakeFields
 } from '../../forms/PartForms';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 
 /*
  * Render a tooltip for the chart, with correct date information

@@ -22,6 +22,11 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/tables';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
@@ -37,11 +42,6 @@ import {
   TargetDateColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
 
 /*
  * Display a table of purchase order line items, for a specific order

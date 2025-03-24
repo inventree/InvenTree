@@ -18,6 +18,7 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { RowCancelAction, RowEditAction, RowViewAction } from '@lib/tables';
 import dayjs from 'dayjs';
 import {
   useSalesOrderShipmentCompleteFields,
@@ -25,7 +26,6 @@ import {
 } from '../../forms/SalesOrderForms';
 import { DateColumn, LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowCancelAction, RowEditAction, RowViewAction } from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId

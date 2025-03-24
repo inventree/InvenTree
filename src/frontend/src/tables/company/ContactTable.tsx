@@ -17,9 +17,9 @@ import { getDetailUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import { useNavigate } from 'react-router-dom';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function ContactTable({
   companyId,

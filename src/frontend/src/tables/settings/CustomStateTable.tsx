@@ -18,13 +18,13 @@ import { useUserState } from '@lib/states';
 import { useGlobalStatusState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { useCustomStateFields } from '../../forms/CommonForms';
-import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
-} from '../RowActions';
+} from '@lib/tables';
+import { useCustomStateFields } from '../../forms/CommonForms';
+import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of custom states

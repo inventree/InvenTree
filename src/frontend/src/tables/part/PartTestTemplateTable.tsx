@@ -21,9 +21,9 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { RowDeleteAction, RowEditAction, RowViewAction } from '@lib/tables';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction, RowViewAction } from '../RowActions';
 
 export default function PartTestTemplateTable({
   partId,

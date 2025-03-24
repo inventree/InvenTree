@@ -23,13 +23,13 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import {
   DetailDrawer,
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
 import type { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {

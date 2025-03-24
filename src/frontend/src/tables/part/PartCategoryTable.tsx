@@ -19,11 +19,11 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { RowEditAction } from '@lib/tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { partCategoryFields } from '../../forms/PartForms';
 import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
 
 /**
  * PartCategoryTable - Displays a table of part categories

@@ -3,13 +3,13 @@ import { RenderInstance } from '@lib/components';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { RowViewAction } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { IconTrash } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowViewAction } from '../RowActions';
 
 /**
  * A table for showing barcode scan history data on the scan index page

@@ -13,13 +13,13 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import { RowExpansionIcon } from '@lib/tables';
+import { RowViewAction } from '@lib/tables';
 import {
   DescriptionColumn,
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowViewAction } from '../RowActions';
 import { BuildLineSubTable } from '../build/BuildLineTable';
 
 /**

@@ -22,3 +22,11 @@ export {
   TABLE_PAGE_SIZE_OPTIONS
 } from './tables/TableProps';
 export type { InvenTreeTableProps } from './tables/TableProps';
+
+export {
+  RowViewAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowDeleteAction,
+  RowCancelAction
+} from './tables/RowActions';

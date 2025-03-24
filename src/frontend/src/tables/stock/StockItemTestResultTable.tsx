@@ -29,11 +29,11 @@ import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
 import { type RowAction, RowActions, type TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { useTestResultFields } from '../../forms/StockForms';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function StockItemTestResultTable({
   partId,

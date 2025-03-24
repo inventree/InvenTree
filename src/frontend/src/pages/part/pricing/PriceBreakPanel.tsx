@@ -17,9 +17,9 @@ import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
