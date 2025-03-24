@@ -20,12 +20,12 @@ import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowCancelAction, RowEditAction, RowViewAction } from '@lib/tables';
 import dayjs from 'dayjs';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
 } from '../../forms/SalesOrderForms';
 import { DateColumn, LinkColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
   orderId

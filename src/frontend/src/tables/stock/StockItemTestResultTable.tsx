@@ -30,10 +30,10 @@ import { useGlobalSettingsState } from '@lib/states';
 import { type RowAction, RowActions, type TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { useTestResultFields } from '../../forms/StockForms';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function StockItemTestResultTable({
   partId,

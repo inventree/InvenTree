@@ -36,6 +36,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   DeleteItemAction,
   EditItemAction
@@ -48,7 +49,6 @@ import {
 } from '../../components/nav/DetailDrawer';
 import { MachineSettingList } from '../../components/settings/SettingList';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';
 
 interface MachineI {

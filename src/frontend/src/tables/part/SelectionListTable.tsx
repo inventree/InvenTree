@@ -14,9 +14,9 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { selectionListFields } from '../../forms/selectionListFields';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of selectionlist items

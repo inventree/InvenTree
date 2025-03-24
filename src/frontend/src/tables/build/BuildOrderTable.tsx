@@ -12,6 +12,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableFilter } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   CreationDateColumn,
@@ -45,7 +46,6 @@ import {
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Construct a table of build orders, according to the provided parameters

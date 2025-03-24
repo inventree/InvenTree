@@ -19,9 +19,9 @@ import {
   RowDuplicateAction,
   RowEditAction
 } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import { LinkColumn, NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
   endpoint,

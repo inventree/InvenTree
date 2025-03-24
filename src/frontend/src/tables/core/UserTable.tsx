@@ -5,8 +5,8 @@ import { useTable } from '@lib/hooks';
 import type { TableFilter } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export function UserTable() {
   const table = useTable('users-index');

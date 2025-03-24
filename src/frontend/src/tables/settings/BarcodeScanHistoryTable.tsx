@@ -29,8 +29,8 @@ import { useGlobalSettingsState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Render detail information for a particular barcode scan result.

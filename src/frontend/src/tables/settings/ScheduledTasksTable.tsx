@@ -7,7 +7,7 @@ import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 
 export default function ScheduledTasksTable() {
   const table = useTable('tasks-scheduled');

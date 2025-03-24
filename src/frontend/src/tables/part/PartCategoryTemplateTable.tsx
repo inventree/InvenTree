@@ -17,7 +17,7 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 
 export default function PartCategoryTemplateTable() {
   const table = useTable('part-category-parameter-templates');

@@ -13,6 +13,7 @@ import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableFilter } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import {
   CreatedByColumn,
@@ -47,7 +48,6 @@ import {
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({
   partId,

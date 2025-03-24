@@ -11,13 +11,13 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   LocationColumn,
   PartColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Render a table of allocated stock for a build.

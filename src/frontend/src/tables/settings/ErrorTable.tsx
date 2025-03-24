@@ -12,8 +12,8 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 function ErrorDetail({ errorId }: Readonly<{ errorId?: number }>) {
   const { id } = useParams();

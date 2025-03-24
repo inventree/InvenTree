@@ -5,9 +5,9 @@ import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DateColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExportSessionTable() {
   const table = useTable('exportsession');

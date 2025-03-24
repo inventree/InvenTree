@@ -21,9 +21,9 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 type StockTrackingEntry = {
   label: string;

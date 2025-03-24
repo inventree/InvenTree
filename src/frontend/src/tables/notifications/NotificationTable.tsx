@@ -5,7 +5,7 @@ import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import type { TableState } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 
 export function NotificationTable({
   params,

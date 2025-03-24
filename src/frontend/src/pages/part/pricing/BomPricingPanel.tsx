@@ -21,10 +21,10 @@ import {
 } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../../lib/tables/InvenTreeTable';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';
 
 /*

@@ -11,7 +11,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 
 export default function FailedTasksTable({
   onRecordsUpdated

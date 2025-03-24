@@ -30,13 +30,13 @@ import type { TableFilter } from '@lib/tables';
 import { RowActions, RowExpansionIcon } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { RowDeleteAction, RowEditAction, RowViewAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
   useBuildOrderFields
 } from '../../forms/BuildForms';
 import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Render a sub-table of allocated stock against a particular build line.

@@ -20,9 +20,9 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { usePartParameterFields } from '../../forms/PartForms';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Construct a table listing parameters for a given part

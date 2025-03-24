@@ -10,9 +10,9 @@ import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { BooleanColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ApiTokenTable({
   only_myself = true

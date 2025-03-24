@@ -17,10 +17,10 @@ import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { IconShoppingCart } from '@tabler/icons-react';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { usePartFields } from '../../forms/PartForms';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Construct a list of columns for the part table

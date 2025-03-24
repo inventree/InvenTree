@@ -19,7 +19,7 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import { useNavigate } from 'react-router-dom';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 
 export function ContactTable({
   companyId,

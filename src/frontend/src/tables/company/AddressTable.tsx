@@ -16,8 +16,8 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { LinkColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export function AddressTable({
   companyId,

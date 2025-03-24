@@ -27,8 +27,8 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Define set of columns to display for the attachment table

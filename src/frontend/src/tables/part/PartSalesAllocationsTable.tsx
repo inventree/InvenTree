@@ -14,12 +14,12 @@ import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import { RowExpansionIcon } from '@lib/tables';
 import { RowViewAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   DescriptionColumn,
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
 
 export default function PartSalesAllocationsTable({

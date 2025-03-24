@@ -34,6 +34,7 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { RowEditAction, RowViewAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   useBuildOrderOutputFields,
   useCancelBuildOutputsForm,
@@ -42,7 +43,6 @@ import {
 } from '../../forms/BuildForms';
 import { useStockFields } from '../../forms/StockForms';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {

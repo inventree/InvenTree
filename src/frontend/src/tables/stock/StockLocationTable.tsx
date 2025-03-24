@@ -23,7 +23,7 @@ import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeIcon } from '@lib/components';
 import type { TableFilter } from '@lib/tables';
 import { RowEditAction } from '@lib/tables';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 
 /**
  * Stock location table

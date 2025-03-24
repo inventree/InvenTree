@@ -32,3 +32,5 @@ export {
 } from './tables/RowActions';
 
 export { FilterSelectDrawer } from './tables/FilterSelectDrawer';
+
+export { InvenTreeTable } from './tables/InvenTreeTable';

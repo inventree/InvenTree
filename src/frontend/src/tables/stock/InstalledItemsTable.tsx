@@ -12,12 +12,12 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   useStockItemInstallFields,
   useStockItemUninstallFields
 } from '../../forms/StockForms';
 import { PartColumn, StatusColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function InstalledItemsTable({
   stockItem

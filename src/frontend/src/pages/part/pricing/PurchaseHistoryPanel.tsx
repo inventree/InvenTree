@@ -8,7 +8,7 @@ import { apiUrl } from '@lib/functions';
 import { formatCurrency, formatDate } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
+import { InvenTreeTable } from '../../../../lib/tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({

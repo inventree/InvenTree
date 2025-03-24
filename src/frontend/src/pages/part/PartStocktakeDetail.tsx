@@ -25,11 +25,11 @@ import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import dayjs from 'dayjs';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   generateStocktakeReportFields,
   partStocktakeFields
 } from '../../forms/PartForms';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
 
 /*
  * Render a tooltip for the chart, with correct date information

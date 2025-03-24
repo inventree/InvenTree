@@ -17,6 +17,7 @@ import { useGlobalSettingsState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   type StockOperationProps,
@@ -38,7 +39,6 @@ import {
   StatusColumn
 } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Construct a list of columns for the stock item table

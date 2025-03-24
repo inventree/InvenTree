@@ -33,6 +33,7 @@ import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { bomItemFields } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
@@ -43,7 +44,6 @@ import {
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {

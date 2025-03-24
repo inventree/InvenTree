@@ -23,8 +23,8 @@ import {
   RowDuplicateAction,
   RowEditAction
 } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { useCustomStateFields } from '../../forms/CommonForms';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of custom states

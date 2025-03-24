@@ -18,8 +18,8 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Construct a table listing related parts for a given part

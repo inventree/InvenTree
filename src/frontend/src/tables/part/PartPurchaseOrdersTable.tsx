@@ -11,9 +11,9 @@ import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function PartPurchaseOrdersTable({
   partId

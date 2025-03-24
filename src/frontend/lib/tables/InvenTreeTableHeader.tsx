@@ -7,6 +7,7 @@ import {
   Space,
   Tooltip
 } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import {
   IconBarcode,
   IconDownload,
@@ -17,19 +18,18 @@ import {
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
-
-import { ActionButton } from '@lib/components';
-import { ButtonMenu } from '@lib/components';
-import { Boundary } from '@lib/components';
-import { PrintingActions } from '@lib/components/items/PrintingActions';
-import { useDeleteApiFormModal } from '@lib/forms';
-import type { TableState } from '@lib/hooks';
-import useDataExport from '@lib/hooks/UseDataExport';
-import { TableColumnSelect } from '@lib/tables';
-import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
-import { TableSearchInput } from '@lib/tables';
-import { FilterSelectDrawer } from '@lib/tables';
-import { showNotification } from '@mantine/notifications';
+import { ActionButton } from '../components/buttons/ActionButton';
+import { ButtonMenu } from '../components/buttons/ButtonMenu';
+import { Boundary } from '../components/items/Boundary';
+import { PrintingActions } from '../components/items/PrintingActions';
+import useDataExport from '../hooks/UseDataExport';
+import { useDeleteApiFormModal } from '../hooks/UseForm';
+import type { TableState } from '../hooks/UseTable';
+import { TableColumnSelect } from './ColumnSelect';
+import type { TableFilter } from './Filter';
+import { FilterSelectDrawer } from './FilterSelectDrawer';
+import { TableSearchInput } from './Search';
+import type { InvenTreeTableProps } from './TableProps';
 
 /**
  * Render a composite header for an InvenTree table

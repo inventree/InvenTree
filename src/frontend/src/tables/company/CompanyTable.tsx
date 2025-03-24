@@ -15,9 +15,9 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableFilter } from '@lib/tables';
 import { RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { companyFields } from '../../forms/CompanyForms';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * A table which displays a list of company records,

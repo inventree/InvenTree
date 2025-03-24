@@ -21,8 +21,8 @@ import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import dayjs from 'dayjs';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
 
 /*
  * Render a tooltip for the chart, with correct date information

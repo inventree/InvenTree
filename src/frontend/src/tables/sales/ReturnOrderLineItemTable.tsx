@@ -20,6 +20,7 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   useReceiveReturnOrderLineItems,
   useReturnOrderLineItemFields
@@ -33,7 +34,6 @@ import {
   StatusColumn
 } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ReturnOrderLineItemTable({
   orderId,

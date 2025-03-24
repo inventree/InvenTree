@@ -17,6 +17,7 @@ import { RowDeleteAction, RowEditAction } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
   LocationColumn,
@@ -24,7 +25,6 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderAllocationTable({
   partId,

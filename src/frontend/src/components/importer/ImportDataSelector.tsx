@@ -22,8 +22,8 @@ import { useApi } from '@lib/hooks/UseApi';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
 
 function ImporterDataCell({
   session,

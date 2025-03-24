@@ -8,8 +8,8 @@ import { apiUrl } from '@lib/functions';
 import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../../lib/tables/InvenTreeTable';
 import { DateColumn } from '../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function SaleHistoryPanel({

@@ -27,6 +27,7 @@ import {
   RowDuplicateAction,
   RowEditAction
 } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
@@ -41,7 +42,6 @@ import {
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Display a table of purchase order line items, for a specific order

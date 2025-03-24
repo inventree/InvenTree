@@ -12,12 +12,12 @@ import { useFilters, useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ImportSessionTable() {
   const table = useTable('importsession');

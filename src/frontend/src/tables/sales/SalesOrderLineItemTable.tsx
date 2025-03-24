@@ -36,6 +36,7 @@ import {
   RowEditAction,
   RowViewAction
 } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
@@ -44,7 +45,6 @@ import {
   useSalesOrderLineItemFields
 } from '../../forms/SalesOrderForms';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({

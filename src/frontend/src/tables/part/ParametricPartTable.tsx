@@ -22,9 +22,9 @@ import { useUserState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { usePartParameterFields } from '../../forms/PartForms';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 // Render an individual parameter cell
 function ParameterCell({

@@ -11,25 +11,25 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Boundary } from '@lib/components';
-import type { ApiFormFieldSet } from '@lib/forms';
-import { getDetailUrl } from '@lib/functions';
-import { extractAvailableFields, mapFields } from '@lib/functions';
-import { navigateToLink } from '@lib/functions';
-import { resolveItem } from '@lib/functions/conversion';
-import { cancelEvent } from '@lib/functions/events';
-import type { TableState } from '@lib/hooks';
-import { useApi } from '@lib/hooks/UseApi';
-import { useLocalState } from '@lib/states';
-import {
-  RowActions,
-  TABLE_PAGE_SIZE_DEFAULT,
-  TABLE_PAGE_SIZE_OPTIONS,
-  type TableColumn
-} from '@lib/tables';
-import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
+import { Boundary } from '../components/items/Boundary';
+import type { ApiFormFieldSet } from '../forms/FormField';
+import { resolveItem } from '../functions/conversion';
+import { cancelEvent } from '../functions/events';
+import { extractAvailableFields, mapFields } from '../functions/forms';
+import { getDetailUrl, navigateToLink } from '../functions/navigation';
+import { useApi } from '../hooks/UseApi';
+import type { TableState } from '../hooks/UseTable';
+import { useLocalState } from '../states/LocalState';
+import type { TableColumn } from './Column';
+import type { TableFilter } from './Filter';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
+import { RowActions } from './RowAction';
+import {
+  type InvenTreeTableProps,
+  TABLE_PAGE_SIZE_DEFAULT,
+  TABLE_PAGE_SIZE_OPTIONS
+} from './TableProps';
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality

@@ -26,6 +26,7 @@ import {
   RowDuplicateAction,
   RowEditAction
 } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   CodeEditor,
   PdfPreview,
@@ -48,7 +49,6 @@ import type {
 import { notYetImplemented } from '../../functions/notifications';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export type TemplateI = {
   pk: number;

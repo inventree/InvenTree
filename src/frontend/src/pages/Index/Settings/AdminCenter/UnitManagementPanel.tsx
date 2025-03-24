@@ -6,8 +6,8 @@ import { StylishText } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
+import { InvenTreeTable } from '../../../../../lib/tables/InvenTreeTable';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';
 
 function AllUnitTable() {

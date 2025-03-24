@@ -9,9 +9,9 @@ import { ApiEndpoints } from '@lib/core';
 import { apiUrl, showApiErrorMessage } from '@lib/functions';
 import { useApi, useTable } from '@lib/hooks';
 
+import { InvenTreeTable } from '../../../../../lib/tables/InvenTreeTable';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
-import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 
 /*
  * Table for displaying available currencies

@@ -12,6 +12,7 @@ import { formatCurrency } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { TableFilter } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
   CompletionDateColumn,
@@ -46,7 +47,6 @@ import {
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({
   partId,

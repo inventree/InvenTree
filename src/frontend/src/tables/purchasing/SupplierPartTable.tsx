@@ -19,6 +19,7 @@ import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   BooleanColumn,
@@ -27,7 +28,6 @@ import {
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Construct a table listing supplier parts

@@ -25,12 +25,12 @@ import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
 import { useServerApiState } from '../../states/ApiState';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Construct an indicator icon for a single plugin

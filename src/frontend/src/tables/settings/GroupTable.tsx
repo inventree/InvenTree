@@ -23,9 +23,9 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import AdminButton from '../../components/buttons/AdminButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export interface GroupDetailI {
   pk: number;
