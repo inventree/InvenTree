@@ -37,6 +37,14 @@ export default function StarredToggleButton({
           color: 'blue'
         });
         successFunction();
+      })
+      .catch((error) => {
+        showNotification({
+          title: 'Error',
+          message: error.message,
+          autoClose: 5000,
+          color: 'red'
+        });
       });
   }
 
