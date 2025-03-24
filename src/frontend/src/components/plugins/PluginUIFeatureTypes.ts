@@ -79,11 +79,6 @@ export type NavigationUIFeature = {
   requestContext: {};
   responseOptions: PluginUIFeature;
   featureContext: {
-    ref: HTMLDivElement;
-    registerHandlers: (handlers: {
-      setCode: (code: string) => void;
-      getCode: () => string;
-    }) => void;
   };
   featureReturnType: undefined;
 };
