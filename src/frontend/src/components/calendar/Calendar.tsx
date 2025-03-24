@@ -10,6 +10,7 @@ import { StylishText } from '@lib/components';
 import { useLocalState } from '@lib/states';
 import type { TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
+import { FilterSelectDrawer } from '@lib/tables';
 import { t } from '@lingui/macro';
 import {
   ActionIcon,
@@ -32,7 +33,6 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 import type { CalendarState } from '../../hooks/UseCalendar';
-import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;

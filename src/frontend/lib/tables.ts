@@ -30,3 +30,5 @@ export {
   RowDeleteAction,
   RowCancelAction
 } from './tables/RowActions';
+
+export { FilterSelectDrawer } from './tables/FilterSelectDrawer';

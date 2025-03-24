@@ -27,9 +27,9 @@ import useDataExport from '@lib/hooks/UseDataExport';
 import { TableColumnSelect } from '@lib/tables';
 import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
+import { FilterSelectDrawer } from '@lib/tables';
 import { showNotification } from '@mantine/notifications';
 import { PrintingActions } from '../components/buttons/PrintingActions';
-import { FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**
  * Render a composite header for an InvenTree table
