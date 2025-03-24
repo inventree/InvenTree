@@ -78,7 +78,6 @@ export type NavigationUIFeature = {
   featureType: 'navigation';
   requestContext: {};
   responseOptions: PluginUIFeature;
-  featureContext: {
-  };
+  featureContext: {};
   featureReturnType: undefined;
 };
