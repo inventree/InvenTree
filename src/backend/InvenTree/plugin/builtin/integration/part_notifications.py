@@ -17,17 +17,6 @@ from plugin.mixins import EventMixin, SettingsMixin
 logger = structlog.get_logger('inventree')
 
 
-class PlgMixin:
-    """Mixin to access plugin easier.
-
-    This needs to be spit out to reference the class. Perks of python.
-    """
-
-    def get_plugin(self):
-        """Return plugin reference."""
-        return PartNotificationsPlugin
-
-
 class PartNotificationsPlugin(SettingsMixin, EventMixin, InvenTreePlugin):
     """Core notification methods for InvenTree."""
 
