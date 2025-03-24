@@ -10,8 +10,9 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { StylishText } from '@lib/components';
+import { OptionsActionDropdown, StylishText } from '@lib/components';
 import { StatusRenderer } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
@@ -24,7 +25,6 @@ import { useUserState } from '@lib/states';
 import { useGlobalSettingsState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -36,9 +36,8 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  HoldItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';

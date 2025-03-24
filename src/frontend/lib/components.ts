@@ -85,3 +85,14 @@ export {
   RenderInstance,
   RenderRemoteInstance
 } from './components/render/Instance';
+
+export {
+  type QRCodeProps,
+  QRCode
+} from './components/items/QrCode';
+
+export {
+  type ActionDropdownItem,
+  ActionDropdown,
+  OptionsActionDropdown
+} from './components/items/ActionDropdown';

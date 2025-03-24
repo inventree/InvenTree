@@ -1,5 +1,10 @@
-import { InvenTreeIcon } from '@lib/components';
+import {
+  ActionDropdown,
+  InvenTreeIcon,
+  OptionsActionDropdown
+} from '@lib/components';
 import { ApiIcon } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
@@ -13,19 +18,16 @@ import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminButton from '../../components/buttons/AdminButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
-  EditItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  EditItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';

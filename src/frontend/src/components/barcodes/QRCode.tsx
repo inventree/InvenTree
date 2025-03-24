@@ -6,54 +6,21 @@ import {
   Code,
   Divider,
   Group,
-  Image,
   Select,
-  Skeleton,
   Stack,
   Text
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
-import QR from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CopyButton } from '@lib/components';
+import { CopyButton, QRCode, type QRCodeProps } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl, extractErrorMessage } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { useGlobalSettingsState } from '@lib/states';
-import type { QrCodeType } from '../items/ActionDropdown';
+import type { QrCodeType } from '../items/Dropdown';
 import { BarcodeInput } from './BarcodeInput';
-
-type QRCodeProps = {
-  ecl?: 'L' | 'M' | 'Q' | 'H';
-  margin?: number;
-  data?: string;
-};
-
-export const QRCode = ({ data, ecl = 'Q', margin = 1 }: QRCodeProps) => {
-  const [qrCode, setQRCode] = useState<string>();
-
-  useEffect(() => {
-    if (!data) return setQRCode(undefined);
-
-    QR.toString(data, { errorCorrectionLevel: ecl, type: 'svg', margin }).then(
-      (svg) => {
-        setQRCode(`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`);
-      }
-    );
-  }, [data, ecl]);
-
-  return (
-    <Box>
-      {qrCode ? (
-        <Image src={qrCode} alt='QR Code' />
-      ) : (
-        <Skeleton height={500} />
-      )}
-    </Box>
-  );
-};
 
 type InvenTreeQRCodeProps = {
   mdl_prop: QrCodeType;

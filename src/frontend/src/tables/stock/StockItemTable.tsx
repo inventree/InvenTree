@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
 import { InvenTreeIcon } from '@lib/components';
+import { ActionDropdown } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
@@ -16,7 +17,6 @@ import { useGlobalSettingsState } from '@lib/states';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   type StockOperationProps,

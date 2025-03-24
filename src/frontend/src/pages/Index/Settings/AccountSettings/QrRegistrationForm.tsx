@@ -1,6 +1,6 @@
+import { QRCode } from '@lib/components';
 import { Trans, t } from '@lingui/macro';
 import { Divider, Text, TextInput } from '@mantine/core';
-import { QRCode } from '../../../../components/barcodes/QRCode';
 
 export function QrRegistrationForm({
   url,

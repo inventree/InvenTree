@@ -33,9 +33,14 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import { InvenTreeIcon } from '@lib/components';
+import {
+  ActionDropdown,
+  InvenTreeIcon,
+  OptionsActionDropdown
+} from '@lib/components';
 import { Thumbnail } from '@lib/components';
 import { RenderPart } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
@@ -53,7 +58,6 @@ import { useApi } from '@lib/hooks/UseApi';
 import { useUserState } from '@lib/states';
 import { useGlobalSettingsState, useUserSettingsState } from '@lib/states';
 import AdminButton from '../../components/buttons/AdminButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -62,13 +66,11 @@ import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  EditItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';

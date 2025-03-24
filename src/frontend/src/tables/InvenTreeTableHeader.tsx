@@ -21,6 +21,7 @@ import { Fragment } from 'react/jsx-runtime';
 import { ActionButton } from '@lib/components';
 import { ButtonMenu } from '@lib/components';
 import { Boundary } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
 import { useDeleteApiFormModal } from '@lib/forms';
 import type { TableState } from '@lib/hooks';
 import useDataExport from '@lib/hooks/UseDataExport';
@@ -29,7 +30,6 @@ import type { InvenTreeTableProps, TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
 import { FilterSelectDrawer } from '@lib/tables';
 import { showNotification } from '@mantine/notifications';
-import { PrintingActions } from '../components/buttons/PrintingActions';
 
 /**
  * Render a composite header for an InvenTree table

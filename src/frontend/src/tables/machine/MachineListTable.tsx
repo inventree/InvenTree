@@ -19,7 +19,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StylishText, YesNoButton } from '@lib/components';
+import {
+  OptionsActionDropdown,
+  StylishText,
+  YesNoButton
+} from '@lib/components';
 import { StatusRenderer, TableStatusRenderer } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
@@ -34,9 +38,8 @@ import { useApi } from '@lib/hooks/UseApi';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
 import {
   DeleteItemAction,
-  EditItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  EditItemAction
+} from '../../components/items/Dropdown';
 import { InfoItem } from '../../components/items/InfoItem';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
 import {
