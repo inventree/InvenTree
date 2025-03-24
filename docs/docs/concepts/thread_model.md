@@ -26,3 +26,7 @@ Deploying InvenTree to production requires to knowledge of the security assumpti
 3. Malicious file uploads. Attachments are served (by default) under the same domain as the backend - this can lead to XSS attacks.
 
 There are various checks to gate against common attack vectors but above vectors are explicitly not addressed as they require organisational policies and procedures to mitigate.
+
+## Secure Development Cycle
+
+The InvenTree project is developed following best practices. Read more in the [project security guide](../project/security.md).
