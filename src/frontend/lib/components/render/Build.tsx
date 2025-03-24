@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 
-import { ModelType } from '@lib/core';
-import { getDetailUrl } from '@lib/functions';
+import { ModelType } from '../../enums/ModelType';
+import { getDetailUrl } from '../../functions/navigation';
+
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 

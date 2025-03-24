@@ -16,6 +16,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { InvenTreeIcon } from '@lib/components';
 import { StylishText } from '@lib/components';
+import { StatusRenderer } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
@@ -51,7 +52,6 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
-import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   type StockOperationProps,

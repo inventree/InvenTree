@@ -1,13 +1,12 @@
 import { Badge, Center, type MantineSize } from '@mantine/core';
-
-import type {
-  ModelType,
-  StatusCodeInterface,
-  StatusCodeListInterface
-} from '@lib/core';
-import { statusColorMap } from '@lib/core';
-import { resolveItem } from '@lib/functions/conversion';
-import { useGlobalStatusState } from '@lib/states';
+import type { ModelType } from '../../enums/ModelType';
+import {
+  type StatusCodeInterface,
+  type StatusCodeListInterface,
+  statusColorMap
+} from '../../enums/StatusCodes';
+import { resolveItem } from '../../functions/conversion';
+import { useGlobalStatusState } from '../../states/StatusState';
 
 interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;

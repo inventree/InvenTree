@@ -32,6 +32,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components';
+import { RenderInstance } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { ModelInformationDict, getModelInfo } from '@lib/core';
@@ -43,7 +44,6 @@ import { useApi } from '@lib/hooks';
 import { useUserState } from '@lib/states';
 import { useUserSettingsState } from '@lib/states';
 import { showNotification } from '@mantine/notifications';
-import { RenderInstance } from '../render/Instance';
 
 // Define type for handling individual search queries
 type SearchQuery = {

@@ -2,9 +2,9 @@ import { t } from '@lingui/macro';
 import { Badge } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ApiIcon } from '@lib/components';
-import { ModelType } from '@lib/core';
-import { getDetailUrl } from '@lib/functions';
+import { ModelType } from '../../enums/ModelType';
+import { getDetailUrl } from '../../functions/navigation';
+import { ApiIcon } from '../icons/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**

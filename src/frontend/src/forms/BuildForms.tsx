@@ -12,6 +12,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import { ProgressBar } from '@lib/components';
+import { StatusRenderer } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/forms';
@@ -23,7 +24,6 @@ import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { StatusRenderer } from '../components/render/StatusRenderer';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';

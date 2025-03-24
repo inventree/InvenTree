@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { RenderUser } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
@@ -8,7 +9,6 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { RenderUser } from '../../components/render/User';
 import { generateStocktakeReportFields } from '../../forms/PartForms';
 import {
   useCreateApiFormModal,

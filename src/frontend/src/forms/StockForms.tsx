@@ -17,6 +17,7 @@ import { ActionButton } from '@lib/components';
 import { InvenTreeIcon } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { Thumbnail } from '@lib/components';
+import { StatusRenderer } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type {
@@ -35,7 +36,6 @@ import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { StatusRenderer } from '../components/render/StatusRenderer';
 import {
   type ApiFormModalProps,
   useCreateApiFormModal,

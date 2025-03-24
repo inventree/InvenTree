@@ -12,12 +12,12 @@ import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Boundary } from '@lib/components';
+import { RenderInstance } from '@lib/components';
 import { ModelType, type Setting } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { vars } from '../../theme';
-import { RenderInstance } from '../render/Instance';
 
 /**
  * Render a single setting value

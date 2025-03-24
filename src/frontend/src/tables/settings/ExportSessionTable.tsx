@@ -1,3 +1,4 @@
+import { RenderUser } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
@@ -5,7 +6,6 @@ import type { TableColumn } from '@lib/tables';
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { RenderUser } from '../../components/render/User';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 

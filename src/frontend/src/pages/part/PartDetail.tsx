@@ -35,6 +35,7 @@ import Select from 'react-select';
 
 import { InvenTreeIcon } from '@lib/components';
 import { Thumbnail } from '@lib/components';
+import { RenderPart } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
@@ -70,7 +71,6 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { usePartFields } from '../../forms/PartForms';
 import {

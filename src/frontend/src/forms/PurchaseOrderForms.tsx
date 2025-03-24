@@ -29,6 +29,7 @@ import { InvenTreeIcon } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { StylishText } from '@lib/components';
 import { Thumbnail } from '@lib/components';
+import { getStatusCodeOptions } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
@@ -42,7 +43,6 @@ import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,

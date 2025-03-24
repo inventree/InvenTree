@@ -3,26 +3,24 @@ import { Table, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  RenderBuildOrder,
+  RenderCompany,
+  RenderPart,
+  RenderPurchaseOrder,
+  RenderReturnOrder,
+  RenderSalesOrder,
+  RenderStockItem,
+  RenderStockLocation,
+  RenderUser,
+  StatusRenderer
+} from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import type { TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
-import { RenderBuildOrder } from '../../components/render/Build';
-import { RenderCompany } from '../../components/render/Company';
-import {
-  RenderPurchaseOrder,
-  RenderReturnOrder,
-  RenderSalesOrder
-} from '../../components/render/Order';
-import { RenderPart } from '../../components/render/Part';
-import { StatusRenderer } from '../../components/render/StatusRenderer';
-import {
-  RenderStockItem,
-  RenderStockLocation
-} from '../../components/render/Stock';
-import { RenderUser } from '../../components/render/User';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';

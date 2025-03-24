@@ -20,6 +20,7 @@ import { CopyButton, YesNoButton } from '@lib/components';
 import { InvenTreeIcon, type InvenTreeIconType } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { StylishText } from '@lib/components';
+import { StatusRenderer } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { getModelInfo } from '@lib/core';
@@ -29,7 +30,6 @@ import { getBaseUrl, navigateToLink } from '@lib/functions';
 import { formatDate } from '@lib/functions';
 import { useApi } from '@lib/hooks/UseApi';
 import { useGlobalSettingsState } from '@lib/states';
-import { StatusRenderer } from '../render/StatusRenderer';
 
 export type DetailsField = {
   hidden?: boolean;

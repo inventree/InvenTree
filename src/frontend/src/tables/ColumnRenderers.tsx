@@ -17,10 +17,10 @@ import { resolveItem } from '@lib/functions/conversion';
 import { cancelEvent } from '@lib/functions/events';
 
 import { Thumbnail } from '@lib/components';
+import { TableStatusRenderer } from '@lib/components';
+import { RenderOwner, RenderUser } from '@lib/components';
 import { formatCurrency, formatDate } from '@lib/functions';
 import { useGlobalSettingsState } from '@lib/states';
-import { TableStatusRenderer } from '../components/render/StatusRenderer';
-import { RenderOwner, RenderUser } from '../components/render/User';
 
 // Render a Part instance within a table
 export function PartColumn({

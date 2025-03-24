@@ -3,6 +3,7 @@ import type {
   EventClickArg,
   EventContentArg
 } from '@fullcalendar/core';
+import { StatusRenderer } from '@lib/components';
 import type { ModelType } from '@lib/core';
 import { ModelInformationDict } from '@lib/core';
 import type { UserRoles } from '@lib/core';
@@ -31,7 +32,6 @@ import {
   ProjectCodeFilter,
   ResponsibleFilter
 } from '../../tables/Filter';
-import { StatusRenderer } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 
 /**

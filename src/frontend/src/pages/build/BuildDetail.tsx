@@ -13,6 +13,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { StatusRenderer } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import { ModelType } from '@lib/core';
 import { UserRoles } from '@lib/core';
@@ -43,7 +44,6 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,

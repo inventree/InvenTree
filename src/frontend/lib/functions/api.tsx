@@ -2,8 +2,6 @@ import { t } from '@lingui/macro';
 import { QueryClient } from '@tanstack/react-query';
 import axios, { type AxiosInstance } from 'axios';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { ModelType } from '../enums/ModelType';
-import { ModelInformationDict } from '../enums/ModelType';
 import type { PathParams } from '../types/Api';
 
 import { useLocalState } from '../states/LocalState';
@@ -40,38 +38,6 @@ export function apiUrl(
   }
 
   return _url;
-}
-
-/**
- * Returns the detail view URL for a given model type.
- * This is the URL for viewier the details of a single object in the UI
- */
-export function getDetailUrl(
-  model: ModelType,
-  pk: number | string,
-  base_url?: string,
-  absolute?: boolean
-): string {
-  const modelInfo = ModelInformationDict[model];
-
-  if (pk === undefined || pk === null) {
-    return '';
-  }
-
-  if (!!pk && modelInfo && modelInfo.url_detail) {
-    const url = modelInfo.url_detail.replace(':pk', pk.toString());
-    const base = base_url;
-
-    if (absolute && base) {
-      return `/${base}${url}`;
-    } else {
-      return url;
-    }
-  }
-
-  // Fallback to console error
-  console.error(`No detail URL found for model ${model} <${pk}>`);
-  return '';
 }
 
 /**

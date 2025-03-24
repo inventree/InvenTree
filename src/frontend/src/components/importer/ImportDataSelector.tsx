@@ -11,6 +11,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton, YesNoButton } from '@lib/components';
 import { ProgressBar } from '@lib/components';
+import { RenderRemoteInstance } from '@lib/components';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
@@ -26,7 +27,6 @@ import {
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
-import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({
   session,

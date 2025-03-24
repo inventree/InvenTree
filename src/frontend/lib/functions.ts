@@ -1,6 +1,6 @@
 // Various helper functions
 
-export { apiUrl, getDetailUrl, extractErrorMessage } from './functions/api';
+export { apiUrl, extractErrorMessage } from './functions/api';
 export { cancelEvent } from './functions/events';
 export { identifierString, isTrue } from './functions/conversion';
 export { shortenString } from './functions/conversion';
@@ -31,5 +31,6 @@ export {
 export {
   generateUrl,
   getBaseUrl,
+  getDetailUrl,
   navigateToLink
 } from './functions/navigation';

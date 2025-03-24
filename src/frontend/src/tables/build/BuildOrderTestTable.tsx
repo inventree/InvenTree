@@ -10,6 +10,7 @@ import {
   useState
 } from 'react';
 
+import { RenderUser } from '@lib/components';
 import { PassFailButton } from '@lib/components/buttons/YesNoButton';
 import { ApiEndpoints } from '@lib/core';
 import type { ApiFormFieldSet } from '@lib/forms';
@@ -21,7 +22,6 @@ import { useUserState } from '@lib/states';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { TableHoverCard } from '@lib/tables';
-import { RenderUser } from '../../components/render/User';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { LocationColumn } from '../ColumnRenderers';
