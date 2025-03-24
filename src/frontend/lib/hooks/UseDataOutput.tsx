@@ -1,17 +1,19 @@
-import { ProgressBar } from '@lib/components';
-import { ApiEndpoints } from '@lib/core';
-import { apiUrl, generateUrl } from '@lib/functions';
-import { useApi } from '@lib/hooks/UseApi';
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
+import { ProgressBar } from '../components/items/ProgressBar';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl } from '../functions/api';
+import { generateUrl } from '../functions/navigation';
+import { useApi } from '../hooks/UseApi';
+
 /**
  * Hook for monitoring a data output process running on the server
  */
-export default function useDataOutput({
+export function useDataOutput({
   title,
   id
 }: {

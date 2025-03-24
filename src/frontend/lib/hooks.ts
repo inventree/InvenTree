@@ -11,4 +11,5 @@ export {
   useModal
 } from './hooks/UseModal';
 
+export { useDataOutput } from './hooks/UseDataOutput';
 export { useStatusCodes } from './hooks/UseStatusCodes';
