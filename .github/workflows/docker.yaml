@@ -170,11 +170,11 @@ jobs:
           images: |
             inventree/inventree
             ghcr.io/${{ github.repository }}
-      - uses: depot/setup-action@v1
+      - uses: depot/setup-action@b0b1ea4f69e92ebf5dea3f8713a1b0c37b2126a5 # pin@v1
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: depot/build-push-action@v1
+        uses: depot/build-push-action@636daae76684e38c301daa0c5eca1c095b24e780 # pin@v1
         with:
           project: jczzbjkk68
           context: .
