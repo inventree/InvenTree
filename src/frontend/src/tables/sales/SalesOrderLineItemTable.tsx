@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconHash,
@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -209,6 +210,8 @@ export default function SalesOrderLineItemTable({
 
   const [selectedLineId, setSelectedLineId] = useState<number>(0);
 
+  const [selectedSupplierPart, setSelectedSupplierPart] = useState<any>(null);
+
   const [initialData, setInitialData] = useState({});
 
   const createLineFields = useSalesOrderLineItemFields({
@@ -258,6 +261,11 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_allocate_serials,
     pk: orderId,
     title: t`Allocate Serial Numbers`,
+    preFormContent: selectedSupplierPart ? (
+      <Paper withBorder p='sm'>
+        <RenderPart instance={selectedSupplierPart} />
+      </Paper>
+    ) : undefined,
     initialData: initialData,
     fields: allocateSerialFields,
     table: table
@@ -383,6 +391,7 @@ export default function SalesOrderLineItemTable({
           color: 'green',
           onClick: () => {
             setSelectedLineId(record.pk);
+            setSelectedSupplierPart(record?.part_detail ?? null);
             setInitialData({
               quantity: record.quantity - record.allocated
             });

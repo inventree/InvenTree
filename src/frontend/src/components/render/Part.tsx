@@ -31,11 +31,11 @@ export function RenderPart(
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 
-  const badge = (
+  const badge = !!stock ? (
     <Badge size='xs' color={badgeColor}>
       {badgeText}
     </Badge>
-  );
+  ) : null;
 
   return (
     <RenderInlineModel
