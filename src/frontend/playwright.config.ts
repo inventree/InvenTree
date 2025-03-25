@@ -8,6 +8,7 @@ export default defineConfig({
   retries: 0,
   workers: process.env.CI ? 3 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
+  captureGitInfo: { commit: true, diff: true },
 
   /* Configure projects for major browsers */
   projects: [
