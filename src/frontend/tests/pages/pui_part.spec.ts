@@ -418,7 +418,7 @@ test('Parts - Revision', async ({ page }) => {
     .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
     .click();
 
-  await page.waitForURL('**/platform/part/101/**');
+  await page.waitForURL('**/web/part/101/**');
   await page.getByText('Select Part Revision').waitFor();
 });
 

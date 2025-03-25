@@ -28,8 +28,8 @@ import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from users.serializers import UserSerializer

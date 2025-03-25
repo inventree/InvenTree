@@ -21,13 +21,13 @@ import {
   IconCalendarMonth,
   IconChevronLeft,
   IconChevronRight,
+  IconDownload,
   IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
-import { DownloadAction } from '../../tables/DownloadAction';
 import type { TableFilter } from '../../tables/Filter';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 import { TableSearchInput } from '../../tables/Search';
@@ -36,7 +36,6 @@ import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
-  downloadData?: (fileFormat: string) => void;
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSearch?: boolean;
@@ -46,7 +45,6 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
 }
 
 export default function Calendar({
-  downloadData,
   enableDownload,
   enableFilters = false,
   enableSearch,
@@ -89,6 +87,7 @@ export default function Calendar({
 
   return (
     <>
+      {state.exportModal.modal}
       {enableFilters && filters && (filters?.length ?? 0) > 0 && (
         <Boundary label={`InvenTreeCalendarFilterDrawer-${state.name}`}>
           <FilterSelectDrawer
@@ -155,7 +154,7 @@ export default function Calendar({
                   variant='transparent'
                   aria-label='calendar-select-filters'
                 >
-                  <Tooltip label={t`Calendar Filters`}>
+                  <Tooltip label={t`Calendar Filters`} position='top-end'>
                     <IconFilter
                       onClick={() => setFiltersVisible(!filtersVisible)}
                     />
@@ -164,10 +163,14 @@ export default function Calendar({
               </Indicator>
             )}
             {enableDownload && (
-              <DownloadAction
-                key='download-action'
-                downloadCallback={downloadData}
-              />
+              <ActionIcon
+                variant='transparent'
+                aria-label='calendar-export-data'
+              >
+                <Tooltip label={t`Download data`} position='top-end'>
+                  <IconDownload onClick={state.exportModal.open} />
+                </Tooltip>
+              </ActionIcon>
             )}
           </Group>
         </Group>

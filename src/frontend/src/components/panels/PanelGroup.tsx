@@ -38,6 +38,7 @@ import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 import type { PanelType } from '../panels/Panel';
+import * as classes from './PanelGroup.css';
 
 /**
  * Set of properties which define a panel group:
@@ -162,6 +163,7 @@ function BasePanelGroup({
           orientation='vertical'
           keepMounted={false}
           aria-label={`panel-group-${pageKey}`}
+          classNames={{ tab: classes.selectedPanelTab }}
         >
           <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
             {allPanels.map(

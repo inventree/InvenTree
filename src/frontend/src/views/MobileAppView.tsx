@@ -26,7 +26,7 @@ export default function MobileAppView() {
             </Title>
             <Text>
               <Trans>
-                Platform UI is optimized for Tablets and Desktops, you can use
+                InvenTree UI is optimized for Tablets and Desktops, you can use
                 the official app for a mobile experience.
               </Trans>
             </Text>

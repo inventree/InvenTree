@@ -14,9 +14,16 @@ import { invalidResponse, permissionDenied } from './notifications';
 export function constructFormUrl(
   url: ApiEndpoints | string,
   pk?: string | number,
-  pathParams?: PathParams
+  pathParams?: PathParams,
+  queryParams?: URLSearchParams
 ): string {
-  return apiUrl(url, pk, pathParams);
+  let formUrl = apiUrl(url, pk, pathParams);
+
+  if (queryParams) {
+    formUrl += `?${queryParams.toString()}`;
+  }
+
+  return formUrl;
 }
 
 /**

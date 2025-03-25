@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from allauth.account.models import EmailAddress
 from rest_framework.authtoken.models import Token as AuthToken
 
 import InvenTree.cache
@@ -42,6 +43,25 @@ def user_model_str(self):
 
 User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
+
+
+if settings.LDAP_AUTH:
+    from django_auth_ldap.backend import populate_user
+
+    @receiver(populate_user)
+    def create_email_address(user, **kwargs):
+        """If a django user is from LDAP and has an email attached to it, create an allauth email address for them automatically.
+
+        https://django-auth-ldap.readthedocs.io/en/latest/users.html#populating-users
+        https://django-auth-ldap.readthedocs.io/en/latest/reference.html#django_auth_ldap.backend.populate_user
+        """
+        # User must exist in the database before we can create their EmailAddress. By their recommendation,
+        # we can just call .save() now
+        user.save()
+
+        # if they got an email address from LDAP, create it now and make it the primary
+        if user.email:
+            EmailAddress.objects.create(user=user, email=user.email, primary=True)
 
 
 def default_token():
@@ -222,10 +242,8 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
-                'report_labeloutput',
                 'report_labeltemplate',
                 'report_reportasset',
-                'report_reportoutput',
                 'report_reportsnippet',
                 'report_reporttemplate',
                 'account_emailaddress',
@@ -336,6 +354,7 @@ class RuleSet(models.Model):
             # Models which currently do not require permissions
             'common_attachment',
             'common_customunit',
+            'common_dataoutput',
             'common_inventreesetting',
             'common_inventreeusersetting',
             'common_notificationentry',

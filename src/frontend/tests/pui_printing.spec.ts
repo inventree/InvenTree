@@ -12,7 +12,7 @@ test('Label Printing', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   await loadTab(page, 'Stock Items');
 
@@ -44,7 +44,7 @@ test('Label Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.getByText('Printing completed successfully').first().waitFor();
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 
@@ -57,7 +57,7 @@ test('Report Printing', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   // Navigate to a specific PurchaseOrder
   await page.getByRole('tab', { name: 'Purchasing' }).click();
@@ -80,7 +80,7 @@ test('Report Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.getByText('Printing completed successfully').first().waitFor();
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 

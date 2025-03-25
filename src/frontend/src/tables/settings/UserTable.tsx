@@ -251,7 +251,7 @@ export function UserTable() {
   // Table Actions - Add New User
   const newUser = useCreateApiFormModal({
     url: ApiEndpoints.user_list,
-    title: t`Add user`,
+    title: t`Add User`,
     fields: {
       username: {},
       email: {},

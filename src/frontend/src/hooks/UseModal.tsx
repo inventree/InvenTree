@@ -15,7 +15,14 @@ export interface UseModalProps {
   closeOnClickOutside?: boolean;
 }
 
-export function useModal(props: UseModalProps) {
+export interface UseModalReturn {
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+  modal: React.ReactElement;
+}
+
+export function useModal(props: UseModalProps): UseModalReturn {
   const onOpen = useCallback(() => {
     props.onOpen?.();
   }, [props.onOpen]);
