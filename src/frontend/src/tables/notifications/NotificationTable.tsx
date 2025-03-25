@@ -52,6 +52,7 @@ export function NotificationTable({
         rowActions: actions,
         tableActions: tableActions,
         enableSelection: true,
+        enableBulkDelete: true,
         params: params
       }}
     />

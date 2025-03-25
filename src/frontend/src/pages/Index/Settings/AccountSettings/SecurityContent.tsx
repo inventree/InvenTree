@@ -15,7 +15,6 @@ import {
   Table,
   Text,
   TextInput,
-  Title,
   Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -23,23 +22,22 @@ import { hideNotification, showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconAt,
-  IconCircleX,
   IconExclamationCircle,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { showApiErrorMessage } from '../../../../functions/notifications';
-import { useTable } from '../../../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
-import type { AuthConfig, Provider } from '../../../../states/states';
-import { BooleanColumn } from '../../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
-import type { RowAction } from '../../../../tables/RowActions';
+import {
+  type AuthConfig,
+  FlowEnum,
+  type Provider
+} from '../../../../states/states';
+import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
@@ -91,7 +89,7 @@ export function SecurityContent() {
             <StylishText size='lg'>{t`Access Tokens`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <TokenSection />
+            <ApiTokenTable only_myself />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
@@ -261,7 +259,9 @@ function ProviderSection({
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['provider-list'],
     queryFn: () =>
-      authApi(apiUrl(ApiEndpoints.auth_providers)).then((res) => res.data.data)
+      authApi(apiUrl(ApiEndpoints.auth_providers))
+        .then((res) => res?.data?.data ?? [])
+        .catch(() => [])
   });
 
   const availableProviders = useMemo(() => {
@@ -356,7 +356,8 @@ function MfaSection() {
     queryFn: () =>
       api
         .get(apiUrl(ApiEndpoints.auth_authenticators))
-        .then((res) => res.data.data)
+        .then((res) => res?.data?.data ?? [])
+        .catch(() => [])
   });
 
   function showRecoveryCodes(codes: Recoverycodes) {
@@ -466,14 +467,14 @@ function MfaSection() {
           title={t`Recovery Codes`}
           centered
         >
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Unused Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.unused_codes?.join('\n')}</Code>
 
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Used Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.used_codes?.join('\n')}</Code>
         </Modal>
       </SimpleGrid>
@@ -660,13 +661,13 @@ async function runActionWithFallback(
     if (err.status == 401) {
       if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_reauthenticate'
+          (flow: any) => flow.id == FlowEnum.MfaReauthenticate
         )
       ) {
         return ResultType.mfareauth;
       } else if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'reauthenticate'
+          (flow: any) => flow.id == FlowEnum.Reauthenticate
         )
       ) {
         return ResultType.reauth;
@@ -708,73 +709,4 @@ async function runActionWithFallback(
         setAuthContext(err.response.data?.data);
       });
   }
-}
-
-function TokenSection() {
-  const table = useTable('api-tokens', 'id');
-
-  const tableColumns = useMemo(() => {
-    return [
-      {
-        accessor: 'name'
-      },
-      BooleanColumn({
-        accessor: 'active'
-      }),
-      {
-        accessor: 'token'
-      },
-      {
-        accessor: 'last_seen'
-      },
-      {
-        accessor: 'expiry'
-      }
-    ];
-  }, []);
-
-  const rowActions = useCallback((record: any): RowAction[] => {
-    return [
-      {
-        title: t`Revoke`,
-        color: 'red',
-        hidden: !record.active || record.in_use,
-        icon: <IconCircleX />,
-        onClick: () => {
-          revokeToken(record.id);
-        }
-      }
-    ];
-  }, []);
-
-  const revokeToken = async (id: string) => {
-    api
-      .delete(apiUrl(ApiEndpoints.user_tokens, id))
-      .then(() => {
-        table.refreshTable();
-      })
-      .catch((error) => {
-        showApiErrorMessage({
-          error: error,
-          title: t`Error revoking token`
-        });
-      });
-  };
-
-  return (
-    <InvenTreeTable
-      tableState={table}
-      url={apiUrl(ApiEndpoints.user_tokens)}
-      columns={tableColumns}
-      props={{
-        rowActions: rowActions,
-        enableSearch: false,
-        enableColumnSwitching: false
-      }}
-    />
-  );
-}
-
-export function parseDate(date: number) {
-  return date == null ? 'Never' : new Date(date * 1000).toLocaleString();
 }

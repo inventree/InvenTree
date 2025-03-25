@@ -11,6 +11,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
   type DetailsField,
   DetailsTable
@@ -227,6 +228,14 @@ export default function CategoryDetail() {
         model={ModelType.partcategory}
         id={category.pk}
       />,
+      <StarredToggleButton
+        key='starred_change'
+        instance={category}
+        model={ModelType.partcategory}
+        successFunction={() => {
+          refreshInstance();
+        }}
+      />,
       <OptionsActionDropdown
         key='category-actions'
         tooltip={t`Category Actions`}
@@ -244,7 +253,7 @@ export default function CategoryDetail() {
         ]}
       />
     ];
-  }, [id, user, category.pk]);
+  }, [id, user, category.pk, category.starred]);
 
   const panels: PanelType[] = useMemo(
     () => [
@@ -342,7 +351,9 @@ export default function CategoryDetail() {
             }}
             actions={categoryActions}
             editAction={editCategory.open}
-            editEnabled={user.hasChangePermission(ModelType.partcategory)}
+            editEnabled={
+              !!category?.pk && user.hasChangePermission(ModelType.partcategory)
+            }
           />
           <PanelGroup
             pageKey='partcategory'

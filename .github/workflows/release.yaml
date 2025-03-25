@@ -69,7 +69,7 @@ jobs:
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
         id: attest
-        uses: actions/attest-build-provenance@520d128f165991a6c774bcb264f323e3d70747f4 # pin@v1
+        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # pin@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 

@@ -115,7 +115,9 @@ export function useStockFields({
 
           if (expiry_days && expiry_days > 0) {
             // Adjust the expiry date based on the part default expiry
-            setExpiryDate(dayjs().add(expiry_days, 'days').toISOString());
+            setExpiryDate(
+              dayjs().add(expiry_days, 'days').format('YYYY-MM-DD')
+            );
           }
         }
       },
@@ -383,7 +385,7 @@ function StockItemDefaultMove({
         />
       </Flex>
       <Flex direction='column' gap='sm' align='center'>
-        <Text>{stockItem.location_detail.pathstring}</Text>
+        <Text>{stockItem.location_detail?.pathstring ?? '-'}</Text>
         <InvenTreeIcon icon='arrow_down' />
         <Suspense fallback={<Skeleton width='150px' />}>
           <Text>{data?.pathstring}</Text>

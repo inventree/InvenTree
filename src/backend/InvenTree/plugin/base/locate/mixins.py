@@ -2,6 +2,7 @@
 
 import structlog
 
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
 
 logger = structlog.get_logger('inventree')
@@ -31,7 +32,7 @@ class LocateMixin:
     def __init__(self):
         """Register the mixin."""
         super().__init__()
-        self.add_mixin('locate', True, __class__)
+        self.add_mixin(PluginMixinEnum.LOCATE, True, __class__)
 
     def locate_stock_item(self, item_pk):
         """Attempt to locate a particular StockItem.

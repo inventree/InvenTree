@@ -8,7 +8,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
-import { type Provider, fetchGlobalStates } from '../states/states';
+import { FlowEnum, type Provider, fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -66,7 +66,8 @@ export const doBasicLogin = async (
   navigate: NavigateFunction
 ) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+  const { clearUserState, setAuthenticated, fetchUserState } =
+    useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
@@ -94,7 +95,7 @@ export const doBasicLogin = async (
     .then((response) => {
       setAuthContext(response.data?.data);
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
-        setToken(response.data.meta.access_token);
+        setAuthenticated(true);
         loginDone = true;
         success = true;
       }
@@ -103,7 +104,7 @@ export const doBasicLogin = async (
       if (err?.response?.status == 401) {
         setAuthContext(err.response.data?.data);
         const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_authenticate'
+          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
           success = true;
@@ -123,6 +124,7 @@ export const doBasicLogin = async (
     await fetchUserState();
     // see if mfa registration is required
     await fetchGlobalStates(navigate);
+    observeProfile();
   } else if (!success) {
     clearUserState();
   }
@@ -175,10 +177,50 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
+function observeProfile() {
+  // overwrite language and theme info in session with profile info
+
+  const user = useUserState.getState().getUser();
+  const { language, setLanguage, usertheme, setTheme } =
+    useLocalState.getState();
+  if (user) {
+    if (user.profile?.language && language != user.profile.language) {
+      showNotification({
+        title: t`Language changed`,
+        message: t`Your active language has been changed to the one set in your profile`,
+        color: 'blue',
+        icon: 'language'
+      });
+      setLanguage(user.profile.language, true);
+    }
+
+    if (user.profile?.theme) {
+      // extract keys of usertheme and set them to the values of user.profile.theme
+      const newTheme = Object.keys(usertheme).map((key) => {
+        return {
+          key: key as keyof typeof usertheme,
+          value: user.profile.theme[key] as string
+        };
+      });
+      const diff = newTheme.filter(
+        (item) => usertheme[item.key] !== item.value
+      );
+      if (diff.length > 0) {
+        showNotification({
+          title: t`Theme changed`,
+          message: t`Your active theme has been changed to the one set in your profile`,
+          color: 'blue'
+        });
+        setTheme(newTheme);
+      }
+    }
+  }
+}
+
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
-    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {});
+    await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
   }
 }
 
@@ -212,16 +254,21 @@ export function handleMfaLogin(
   values: { code: string },
   setError: (message: string | undefined) => void
 ) {
-  const { setToken } = useUserState.getState();
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
+
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
   })
     .then((response) => {
       setError(undefined);
       setAuthContext(response.data?.data);
-      setToken(response.data.meta.access_token);
-      followRedirect(navigate, location?.state);
+      setAuthenticated();
+
+      fetchUserState().finally(() => {
+        observeProfile();
+        followRedirect(navigate, location?.state);
+      });
     })
     .catch((err) => {
       if (err?.response?.status == 409) {
@@ -270,16 +317,10 @@ export const checkLoginState = async (
       message: t`Successfully logged in`
     });
 
+    observeProfile();
+
     fetchGlobalStates(navigate);
-
     followRedirect(navigate, redirect);
-  };
-
-  // Callback function when login fails
-  const loginFailure = () => {
-    if (!no_redirect) {
-      navigate('/login', { state: redirect });
-    }
   };
 
   if (isLoggedIn()) {
@@ -294,8 +335,8 @@ export const checkLoginState = async (
 
   if (isLoggedIn()) {
     loginSuccess();
-  } else {
-    loginFailure();
+  } else if (!no_redirect) {
+    navigate('/login', { state: redirect });
   }
 };
 

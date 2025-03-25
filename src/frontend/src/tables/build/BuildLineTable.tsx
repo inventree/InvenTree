@@ -593,7 +593,6 @@ export default function BuildLineTable({
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
           hidden: !canOrder,
-          disabled: !table.hasSelectedRecords,
           color: 'blue',
           onClick: () => {
             setPartsToOrder([record.part_detail]);

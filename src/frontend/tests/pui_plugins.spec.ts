@@ -1,6 +1,11 @@
 import test from 'playwright/test';
 
-import { clearTableFilters, loadTab, navigate } from './helpers.js';
+import {
+  clearTableFilters,
+  clickOnRowMenu,
+  loadTab,
+  navigate
+} from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
@@ -38,6 +43,8 @@ test('Plugins - Settings', async ({ page, request }) => {
     .fill(originalValue == '999' ? '1000' : '999');
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  await page.waitForTimeout(500);
+
   // Change it back
   await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
   await page.getByLabel('number-field-value').fill(originalValue);
@@ -47,6 +54,29 @@ test('Plugins - Settings', async ({ page, request }) => {
   await page.getByLabel('edit-setting-SELECT_COMPANY').click();
   await page.getByLabel('related-field-value').fill('mouser');
   await page.getByText('Mouser Electronics').click();
+});
+
+// Test base plugin functionality
+test('Plugins - Functionality', async ({ page, request }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+
+  // Navigate and select the plugin
+  await navigate(page, 'settings/admin/plugin/');
+  await clearTableFilters(page);
+  await page.getByPlaceholder('Search').fill('sample');
+
+  // Activate the plugin
+  const cell = await page.getByText('Sample API Caller', { exact: true });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Activate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('The plugin was activated').waitFor();
+
+  // Deactivate the plugin again
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Deactivate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('The plugin was deactivated').waitFor();
 });
 
 test('Plugins - Panels', async ({ page, request }) => {

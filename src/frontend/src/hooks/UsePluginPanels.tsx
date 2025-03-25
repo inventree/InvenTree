@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { api } from '../App';
@@ -35,6 +35,13 @@ export type PluginPanelContext = InvenTreeContext & {
  */
 export type PluginPanelType = PanelType & {
   pluginName: string;
+  isLoading: boolean;
+};
+
+export type PluginPanelSet = {
+  panels: PluginPanelType[];
+  query: UseQueryResult;
+  isLoading: boolean;
 };
 
 export function usePluginPanels({
@@ -45,7 +52,7 @@ export function usePluginPanels({
   instance?: any;
   model?: ModelType | string;
   id?: string | number | null;
-}): PluginPanelType[] {
+}): PluginPanelSet {
   const globalSettings = useGlobalSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(
@@ -54,7 +61,7 @@ export function usePluginPanels({
   );
 
   // API query to fetch initial information on available plugin panels
-  const { data: pluginData } = useQuery({
+  const pluginQuery = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
     queryKey: ['custom-plugin-panels', model, id],
     queryFn: async () => {
@@ -95,7 +102,7 @@ export function usePluginPanels({
 
   const pluginPanels: PluginPanelType[] = useMemo(() => {
     return (
-      pluginData?.map((props: PluginUIFeature) => {
+      pluginQuery?.data?.map((props: PluginUIFeature) => {
         const iconName: string = props?.icon || 'ti:plug:outline';
 
         const pluginContext: any = {
@@ -117,7 +124,15 @@ export function usePluginPanels({
         };
       }) ?? []
     );
-  }, [pluginData, contextData]);
+  }, [pluginQuery.data, contextData]);
 
-  return pluginPanels;
+  const panelSet: PluginPanelSet = useMemo(() => {
+    return {
+      panels: pluginPanels,
+      isLoading: pluginQuery.isLoading || pluginQuery.isFetching,
+      query: pluginQuery
+    };
+  }, [pluginPanels, pluginQuery]);
+
+  return panelSet;
 }

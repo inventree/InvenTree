@@ -416,6 +416,26 @@ test('Parts - Revision', async ({ page }) => {
     .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
     .click();
 
-  await page.waitForURL('**/platform/part/101/**');
+  await page.waitForURL('**/web/part/101/**');
   await page.getByText('Select Part Revision').waitFor();
+});
+
+test('Parts - Bulk Edit', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'part/category/index/parts');
+
+  // Edit the category for multiple parts
+  await page.getByLabel('Select record 1', { exact: true }).click();
+  await page.getByLabel('Select record 2', { exact: true }).click();
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-set-category').click();
+  await page.getByLabel('related-field-category').fill('rnitu');
+  await page
+    .getByRole('option', { name: '- Furniture/Chairs' })
+    .getByRole('paragraph')
+    .click();
+
+  await page.getByRole('button', { name: 'Update' }).click();
+  await page.getByText('Items Updated').waitFor();
 });

@@ -2,7 +2,7 @@
 
 from typing import cast
 
-from django.http import JsonResponse
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -12,7 +12,7 @@ from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin import InvenTreePlugin
-from plugin.machine import registry
+from plugin.machine import call_machine_function, registry
 from plugin.mixins import LabelPrintingMixin
 from report.models import LabelTemplate
 
@@ -78,31 +78,44 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             'printing_options': kwargs['printing_options'].get('driver_options', {}),
         }
 
-        # save the current used printer as last used printer
-        # only the last ten used printers are saved so that this list doesn't grow infinitely
-        last_used_printers = get_last_used_printers(request.user)
-        machine_pk = str(machine.pk)
-        if machine_pk in last_used_printers:
-            last_used_printers.remove(machine_pk)
-        last_used_printers.insert(0, machine_pk)
-        InvenTreeUserSetting.set_setting(
-            'LAST_USED_PRINTING_MACHINES',
-            ','.join(last_used_printers[:10]),
-            user=request.user,
-        )
+        if output:
+            user = output.user
+        elif request:
+            user = request.user
+        else:
+            user = None
 
-        # execute the print job
-        if driver.USE_BACKGROUND_WORKER is False:
-            return driver.print_labels(machine, label, items, **print_kwargs)
+        # Save the current used printer as last used printer
+        # Only the last ten used printers are saved so that this list doesn't grow infinitely
+        if user and user.is_authenticated:
+            last_used_printers = get_last_used_printers(user)
+            machine_pk = str(machine.pk)
+            if machine_pk in last_used_printers:
+                last_used_printers.remove(machine_pk)
+            last_used_printers.insert(0, machine_pk)
+            InvenTreeUserSetting.set_setting(
+                'LAST_USED_PRINTING_MACHINES',
+                ','.join(last_used_printers[:10]),
+                user=user,
+            )
 
         offload_task(
-            driver.print_labels, machine, label, items, group='plugin', **print_kwargs
+            call_machine_function,
+            machine.pk,
+            'print_labels',
+            label,
+            items,
+            output=output,
+            force_sync=settings.TESTING or driver.USE_BACKGROUND_WORKER,
+            group='plugin',
+            **print_kwargs,
         )
 
-        return JsonResponse({
-            'success': True,
-            'message': f'{len(items)} labels printed',
-        })
+        # Inform the user that the process has been offloaded to the printer
+        if output:
+            output.output = None
+            output.complete = True
+            output.save()
 
     class PrintingOptionsSerializer(serializers.Serializer):
         """Printing options serializer that adds a machine select and the machines options."""
