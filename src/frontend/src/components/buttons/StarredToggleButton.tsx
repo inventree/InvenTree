@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
+import type { JSX } from 'react';
 import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
