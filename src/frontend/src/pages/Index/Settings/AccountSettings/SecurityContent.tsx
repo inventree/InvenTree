@@ -710,3 +710,6 @@ async function runActionWithFallback(
       });
   }
 }
+
+export const parseDate = (date: number) =>
+  date == null ? 'Never' : new Date(date * 1000).toLocaleString();
