@@ -16,13 +16,9 @@ export default mergeConfig(
       outDir: 'dist',
       sourcemap: true,
       rollupOptions: {
-        external: ['react'],
         output: {
           preserveModules: true,
-          preserveModulesRoot: 'lib',
-          globals: {
-            react: 'react'
-          }
+          preserveModulesRoot: 'lib'
         }
       },
       lib: {
