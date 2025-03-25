@@ -3,7 +3,7 @@ import type {
   EventClickArg,
   EventContentArg
 } from '@fullcalendar/core';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import {

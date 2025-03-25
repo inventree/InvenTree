@@ -14,7 +14,7 @@ import {
   IconLogin
 } from '@tabler/icons-react';
 
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ProviderLogin } from '../../functions/auth';
 import type { Provider } from '../../states/states';
 

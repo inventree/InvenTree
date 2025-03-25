@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Accordion,
   Badge,
@@ -19,6 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Trans } from '@lingui/react/macro';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
@@ -230,7 +231,7 @@ function MachineDrawer({
     url: ApiEndpoints.machine_list,
     pk: machinePk,
     preFormContent: (
-      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
+      <Text>{t`Are you sure you want to remove the machine "${machine?.name ?? 'unknown'}"?`}</Text>
     ),
     onFormSuccess: () => {
       refreshTable();

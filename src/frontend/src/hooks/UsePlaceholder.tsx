@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 

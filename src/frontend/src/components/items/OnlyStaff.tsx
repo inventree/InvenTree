@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { useShallow } from 'zustand/react/shallow';
 import { useUserState } from '../../states/UserState';

@@ -19,7 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
