@@ -4,15 +4,24 @@
     "license": "MIT",
     "version": "0.1.0",
     "description": "UI components for the InvenTree project",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "typesVersions": {
+        "*": {
+            "components": ["./dist/components/index.d.ts"],
+            "forms": ["./dist/forms/index.d.ts"],
+            "functions": ["./dist/functions/index.d.ts"],
+            "hooks": ["./dist/hooks/index.d.ts"],
+            "tables": ["./dist/tables/index.d.ts"]
+        }
+    },
     "exports": {
         ".": "./dist/index.js",
-        "./components": "./dist/components/index.js",
-        "./forms": "./lib/forms/index.js",
-        "./functions": "./lib/functions/index.js",
-        "./hooks": "./lib/hooks/index.js",
-        "./tables": "./lib/tables/index.js"
+        "./components": "./dist/components.js",
+        "./forms": "./dist/forms.js",
+        "./functions": "./dist/functions.js",
+        "./hooks": "./dist/hooks.js",
+        "./tables": "./dist/tables.js"
     },
     "repository": {
         "type": "git",

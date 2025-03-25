@@ -18,8 +18,13 @@ export default mergeConfig(
       rollupOptions: {
         output: {
           preserveModules: true,
-          preserveModulesRoot: 'lib'
-        }
+          preserveModulesRoot: 'lib',
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM'
+          }
+        },
+        external: ['react', 'react-dom']
       },
       lib: {
         entry: {
