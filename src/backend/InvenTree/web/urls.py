@@ -16,8 +16,8 @@ urlpatterns = [
                 spa_view,
                 name='password_reset_confirm',
             ),
-            re_path('.*', spa_view, name='platform-wildcard'),
+            re_path('.*', spa_view, name='web-wildcard'),
         ]),
     ),
-    path(settings.FRONTEND_URL_BASE, spa_view, name='platform'),
+    path(settings.FRONTEND_URL_BASE, spa_view, name='web'),
 ]

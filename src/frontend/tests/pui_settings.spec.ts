@@ -39,7 +39,7 @@ test('Settings - Language / Color', async ({ page }) => {
   //   .click();
 
   await page.getByRole('tab', { name: 'Dashboard' }).click();
-  await page.waitForURL('**/platform/home');
+  await page.waitForURL('**/web/home');
 });
 
 test('Settings - User theme', async ({ page }) => {
@@ -107,7 +107,7 @@ test('Settings - Admin', async ({ page }) => {
   // System Settings
   await page.locator('label').filter({ hasText: 'System Settings' }).click();
   await page.getByText('Base URL', { exact: true }).waitFor();
-  await loadTab(page, 'Login');
+  await loadTab(page, 'Authentication');
   await loadTab(page, 'Barcodes');
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Pricing');

@@ -273,7 +273,7 @@ class GetAuthToken(GenericAPIView):
 
             data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
 
-            # Ensure that the users session is logged in (PUI -> CUI login)
+            # Ensure that the users session is logged in
             if not get_user(request).is_authenticated:
                 login(
                     request, user, backend='django.contrib.auth.backends.ModelBackend'

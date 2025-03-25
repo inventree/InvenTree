@@ -79,12 +79,16 @@ nav:
       - Physical Units: concepts/units.md
       - Custom States: concepts/custom_states.md
       - Pricing: concepts/pricing.md
+      - Threat Model: concepts/threat_model.md
     - Development:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
+    - Project:
+      - Governance: project/governance.md
+      - Project Security: project/security.md
     - Security: security.md
   - Install:
     - Introduction: start/intro.md

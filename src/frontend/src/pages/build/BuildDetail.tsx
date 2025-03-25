@@ -103,6 +103,14 @@ export default function BuildDetail() {
         copy: true
       },
       {
+        type: 'string',
+        name: 'part_detail.revision',
+        icon: 'revision',
+        label: t`Revision`,
+        hidden: !build.part_detail?.revision,
+        copy: true
+      },
+      {
         type: 'status',
         name: 'status',
         label: t`Status`,
