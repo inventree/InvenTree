@@ -120,7 +120,6 @@
         "nyc": "^17.1.0",
         "rollup": "^4.37.0",
         "rollup-plugin-license": "^3.5.3",
-        "rollup-plugin-node-externals": "^8.0.0",
         "typescript": "^5.7.3",
         "vite": "^5.4.15",
         "vite-plugin-babel-macros": "^1.0.6",

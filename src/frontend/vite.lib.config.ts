@@ -2,7 +2,6 @@
 // which are distributed via NPM - to facilitate plugin development
 
 import { resolve } from 'node:path';
-import { nodeExternals } from 'rollup-plugin-node-externals';
 import { defineConfig, mergeConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
@@ -17,14 +16,12 @@ export default mergeConfig(
       outDir: 'dist',
       sourcemap: true,
       rollupOptions: {
-        external: ['React', 'react-dom', 'mantine'],
+        external: ['react'],
         output: {
           preserveModules: true,
           preserveModulesRoot: 'lib',
           globals: {
-            react: 'React',
-            'react-dom': 'ReactDOM',
-            mantine: 'Mantine'
+            react: 'react'
           }
         }
       },
@@ -47,8 +44,7 @@ export default mergeConfig(
         outDir: 'dist',
         insertTypesEntry: true, // Ensures `dist/index.d.ts` is generated
         exclude: ['node_modules/**/*', 'src/**/*']
-      }),
-      nodeExternals({})
+      })
     ]
   })
 );
