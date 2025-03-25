@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon } from '@mantine/core';
 import { forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';

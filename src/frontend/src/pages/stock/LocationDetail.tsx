@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';

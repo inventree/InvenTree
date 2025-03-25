@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useDocumentTitle } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useRouteError } from 'react-router-dom';
