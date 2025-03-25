@@ -61,5 +61,5 @@ class PluginUIFeatureSerializer(serializers.Serializer):
     context = serializers.DictField(label=_('Feature Context'), default=None)
 
     source = serializers.CharField(
-        label=_('Feature Source (javascript)'), required=True, allow_blank=False
+        label=_('Feature Source (javascript)'), required=False, allow_blank=True
     )
