@@ -19,6 +19,7 @@ import { ModelType } from '@lib/index';
 import { UserRoles } from '@lib/index';
 import { useUserState } from '@lib/index';
 import AdminButton from '../../components/buttons/AdminButton';
+import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
   type DetailsField,
   DetailsTable
@@ -223,6 +224,14 @@ export default function CategoryDetail() {
         model={ModelType.partcategory}
         id={category.pk}
       />,
+      <StarredToggleButton
+        key='starred_change'
+        instance={category}
+        model={ModelType.partcategory}
+        successFunction={() => {
+          refreshInstance();
+        }}
+      />,
       <OptionsActionDropdown
         key='category-actions'
         tooltip={t`Category Actions`}
@@ -240,7 +249,7 @@ export default function CategoryDetail() {
         ]}
       />
     ];
-  }, [id, user, category.pk]);
+  }, [id, user, category.pk, category.starred]);
 
   const panels: PanelType[] = useMemo(
     () => [
