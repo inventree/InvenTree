@@ -33,6 +33,9 @@ RUN apt update && apt install -y \
 RUN apt install -y \
    yarn nodejs npm
 
+# Update to the latest stable node version
+RUN nmv install --lts
+
 RUN yarn config set network-timeout 600000 -g
 
 ENTRYPOINT ["/bin/bash", "./init.sh"]
