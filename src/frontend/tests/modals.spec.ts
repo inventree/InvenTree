@@ -14,7 +14,7 @@ test('Modals - Admin', async ({ page }) => {
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
   await page.getByRole('button', { name: 'Close' }).click();
 
-  await page.waitForURL('**/platform/home');
+  await page.waitForURL('**/web/home');
 
   // use license info
   await page.getByLabel('open-spotlight').click();

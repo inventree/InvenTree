@@ -1,6 +1,6 @@
 import { ModelInformationDict } from '../components/render/ModelType';
 import type { ModelType } from '../enums/ModelType';
-import { base_url } from '../main';
+import { getBaseUrl } from '../main';
 import { useLocalState } from '../states/LocalState';
 
 /**
@@ -19,7 +19,7 @@ export function getDetailUrl(
 
   if (!!pk && modelInfo && modelInfo.url_detail) {
     const url = modelInfo.url_detail.replace(':pk', pk.toString());
-    const base = base_url;
+    const base = getBaseUrl();
 
     if (absolute && base) {
       return `/${base}${url}`;

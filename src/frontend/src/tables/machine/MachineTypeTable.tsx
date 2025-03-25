@@ -85,9 +85,9 @@ function MachineTypeDrawer({
     <>
       <Stack>
         <Group wrap='nowrap'>
-          <Title order={4}>
+          <StylishText size='md'>
             {machineType ? machineType.name : machineTypeSlug}
-          </Title>
+          </StylishText>
         </Group>
 
         {!machineType && (

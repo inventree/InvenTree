@@ -97,6 +97,11 @@ test('Build Order - Calendar', async ({ page }) => {
   await navigate(page, 'manufacturing/index/buildorders');
   await activateCalendarView(page);
 
+  // Export calendar data
+  await page.getByLabel('calendar-export-data').click();
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await page.getByText('Process completed successfully').waitFor();
+
   // Check "part category" filter
   await page.getByLabel('calendar-select-filters').click();
   await page.getByRole('button', { name: 'Add Filter' }).click();
@@ -104,6 +109,9 @@ test('Build Order - Calendar', async ({ page }) => {
   await page.getByRole('option', { name: 'Category', exact: true }).click();
   await page.getByLabel('related-field-filter-category').click();
   await page.getByText('Part category, level 1').waitFor();
+
+  // Required because we downloaded a file
+  await page.context().close();
 });
 
 test('Build Order - Edit', async ({ page }) => {

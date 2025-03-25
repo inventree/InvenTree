@@ -15,7 +15,6 @@ import {
   Table,
   Text,
   TextInput,
-  Title,
   Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -33,7 +32,11 @@ import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
-import type { AuthConfig, Provider } from '../../../../states/states';
+import {
+  type AuthConfig,
+  FlowEnum,
+  type Provider
+} from '../../../../states/states';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
@@ -467,14 +470,14 @@ function MfaSection() {
           title={t`Recovery Codes`}
           centered
         >
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Unused Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.unused_codes?.join('\n')}</Code>
 
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Used Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.used_codes?.join('\n')}</Code>
         </Modal>
       </SimpleGrid>
@@ -661,13 +664,13 @@ async function runActionWithFallback(
     if (err.status == 401) {
       if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_reauthenticate'
+          (flow: any) => flow.id == FlowEnum.MfaReauthenticate
         )
       ) {
         return ResultType.mfareauth;
       } else if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'reauthenticate'
+          (flow: any) => flow.id == FlowEnum.Reauthenticate
         )
       ) {
         return ResultType.reauth;

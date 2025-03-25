@@ -1,25 +1,36 @@
 import {
   ActionIcon,
+  Alert,
   Container,
   Group,
   Indicator,
+  Menu,
   Tabs,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconBell, IconSearch } from '@tabler/icons-react';
+import {
+  IconBell,
+  IconExclamationCircle,
+  IconSearch
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
+import { t } from '@lingui/macro';
 import { api } from '../../App';
-import { navTabs as mainNavTabs } from '../../defaults/links';
+import { getNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
@@ -29,7 +40,15 @@ import { NavigationDrawer } from './NavigationDrawer';
 import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
+interface AlertInfo {
+  key: string;
+  title: string;
+  message: string;
+}
+
 export function Header() {
+  const user = useUserState();
+
   const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
     state.setNavigationOpen,
     state.navigationOpen
@@ -54,6 +73,49 @@ export function Header() {
   const navbar_message = useMemo(() => {
     return server.customize?.navbar_message;
   }, [server.customize]);
+
+  const [dismissed, setDismissed] = useState<string[]>([]);
+
+  const alerts: AlertInfo[] = useMemo(() => {
+    const _alerts: AlertInfo[] = [];
+
+    if (server?.debug_mode) {
+      _alerts.push({
+        key: 'debug',
+        title: t`Debug Mode`,
+        message: t`The server is running in debug mode.`
+      });
+    }
+
+    if (server?.worker_running == false) {
+      _alerts.push({
+        key: 'worker',
+        title: t`Background Worker`,
+        message: t`The background worker process is not running.`
+      });
+    }
+
+    if (globalSettings.isSet('SERVER_RESTART_REQUIRED')) {
+      _alerts.push({
+        key: 'restart',
+        title: t`Server Restart`,
+        message: t`The server requires a restart to apply changes.`
+      });
+    }
+
+    const n_migrations =
+      Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
+
+    if (n_migrations > 0) {
+      _alerts.push({
+        key: 'migrations',
+        title: t`Database Migrations`,
+        message: t`There are pending database migrations.`
+      });
+    }
+
+    return _alerts.filter((alert) => !dismissed.includes(alert.key));
+  }, [server, dismissed, globalSettings]);
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
@@ -122,13 +184,15 @@ export function Header() {
             </Text>
           )}
           <Group>
-            <ActionIcon
-              onClick={openSearchDrawer}
-              variant='transparent'
-              aria-label='open-search'
-            >
-              <IconSearch />
-            </ActionIcon>
+            <Tooltip position='bottom-end' label={t`Search`}>
+              <ActionIcon
+                onClick={openSearchDrawer}
+                variant='transparent'
+                aria-label='open-search'
+              >
+                <IconSearch />
+              </ActionIcon>
+            </Tooltip>
             <SpotlightButton />
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
             <Indicator
@@ -139,14 +203,45 @@ export function Header() {
               disabled={notificationCount <= 0}
               inline
             >
-              <ActionIcon
-                onClick={openNotificationDrawer}
-                variant='transparent'
-                aria-label='open-notifications'
-              >
-                <IconBell />
-              </ActionIcon>
+              <Tooltip position='bottom-end' label={t`Notifications`}>
+                <ActionIcon
+                  onClick={openNotificationDrawer}
+                  variant='transparent'
+                  aria-label='open-notifications'
+                >
+                  <IconBell />
+                </ActionIcon>
+              </Tooltip>
             </Indicator>
+            {user.isStaff() && alerts.length > 0 && (
+              <Menu withinPortal={true} position='bottom-end'>
+                <Menu.Target>
+                  <Tooltip position='bottom-end' label={t`Alerts`}>
+                    <ActionIcon
+                      variant='transparent'
+                      aria-label='open-alerts'
+                      color='red'
+                    >
+                      <IconExclamationCircle />
+                    </ActionIcon>
+                  </Tooltip>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  {alerts.map((alert) => (
+                    <Menu.Item key={`alert-item-${alert.key}`}>
+                      <Alert
+                        withCloseButton
+                        color='red'
+                        title={alert.title}
+                        onClose={() => setDismissed([...dismissed, alert.key])}
+                      >
+                        {alert.message}
+                      </Alert>
+                    </Menu.Item>
+                  ))}
+                </Menu.Dropdown>
+              </Menu>
+            )}
             <MainMenu />
           </Group>
         </Group>
@@ -160,11 +255,18 @@ function NavTabs() {
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
+  const navTabs = getNavTabs(user);
+  const userSettings = useUserSettingsState();
+
+  const withIcons: boolean = useMemo(
+    () => userSettings.isSet('ICONS_IN_NAVBAR', false),
+    [userSettings]
+  );
 
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    mainNavTabs.forEach((tab) => {
+    navTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
@@ -173,17 +275,23 @@ function NavTabs() {
         <Tabs.Tab
           value={tab.name}
           key={tab.name}
+          leftSection={
+            withIcons &&
+            tab.icon && (
+              <ActionIcon variant='transparent'>{tab.icon}</ActionIcon>
+            )
+          }
           onClick={(event: any) =>
             navigateToLink(`/${tab.name}`, navigate, event)
           }
         >
-          {tab.text}
+          {tab.title}
         </Tabs.Tab>
       );
     });
 
     return _tabs;
-  }, [mainNavTabs, user]);
+  }, [navTabs, user, withIcons]);
 
   return (
     <Tabs
