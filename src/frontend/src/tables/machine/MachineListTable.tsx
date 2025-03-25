@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Accordion,
   Badge,
@@ -36,6 +36,7 @@ import { useTable } from '@lib/hooks';
 import { useApi } from '@lib/hooks/UseApi';
 import { ApiEndpoints } from '@lib/index';
 import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
+import { Trans } from '@lingui/react/macro';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   DeleteItemAction,
@@ -229,7 +230,7 @@ function MachineDrawer({
     url: ApiEndpoints.machine_list,
     pk: machinePk,
     preFormContent: (
-      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
+      <Text>{t`Are you sure you want to remove the machine "${machine?.name ?? 'unknown'}"?`}</Text>
     ),
     onFormSuccess: () => {
       refreshTable();

@@ -1,7 +1,8 @@
 import { StylishText } from '@lib/components';
 import { apiUrl, getApi } from '@lib/functions/api';
 import { ApiEndpoints } from '@lib/index';
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Alert,

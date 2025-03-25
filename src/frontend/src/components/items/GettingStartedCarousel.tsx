@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Carousel } from '@mantine/carousel';
 import { Anchor, Button, Paper, Text } from '@mantine/core';
 

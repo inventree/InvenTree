@@ -235,5 +235,6 @@ export function UnknownRenderer({
 }: Readonly<{
   model: ModelType | undefined;
 }>): ReactNode {
-  return <Alert color='red' title={t`Unknown model: ${model}`} />;
+  const model_name = model ? model.toString() : 'undefined';
+  return <Alert color='red' title={t`Unknown model: ${model_name}`} />;
 }

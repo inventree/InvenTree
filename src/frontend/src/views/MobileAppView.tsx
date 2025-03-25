@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
 import { useLocalState } from '@lib/index';
