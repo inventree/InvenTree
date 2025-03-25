@@ -1326,7 +1326,7 @@
   resolved "https://registry.yarnpkg.com/@lingui/babel-plugin-extract-messages/-/babel-plugin-extract-messages-5.3.0.tgz#2d698267f2d771d09d69794f89b040b69991dab2"
   integrity sha512-cusecMVMT6oLUYiiw9lUtyna+v+B7u3HtbPDZTjGJXWGPSBtIUASL4c9dhvf5u6/BQyyiwZTsnC9vNMso+iRLQ==
 
-"@lingui/babel-plugin-lingui-macro@5.3.0":
+"@lingui/babel-plugin-lingui-macro@5.3.0", "@lingui/babel-plugin-lingui-macro@^5.3.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@lingui/babel-plugin-lingui-macro/-/babel-plugin-lingui-macro-5.3.0.tgz#8e95aed7ed74f6e2b5cd11e4d9b9663a4435d044"
   integrity sha512-vU8mGvZR4ope5l9Fq5gChFs+XyuscKmgVVVavkuns/w7K5ITNbFMjITTGNE6wUoOwYGabjIsc/eK/7clmK/KeA==
