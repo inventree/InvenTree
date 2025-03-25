@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useMemo, useState } from 'react';
 

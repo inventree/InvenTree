@@ -1,9 +1,9 @@
-import { t } from '@lingui/macro';
+import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { ContextMenuProvider } from 'mantine-contextmenu';
-
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrModal } from '../components/modals/QrModal';
@@ -37,7 +37,10 @@ export function ThemeContext({
       <ContextMenuProvider>
         <LanguageContext>
           <ModalsProvider
-            labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
+            labels={{
+              confirm: <Trans id={msg`Submit`.id} />,
+              cancel: <Trans id={msg`Cancel`.id} />
+            }}
             modals={{
               info: ServerInfoModal,
               about: AboutInvenTreeModal,
