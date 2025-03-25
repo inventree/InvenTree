@@ -9,6 +9,32 @@ Return Orders allow stock items (which have been sold or allocated to a customer
 !!! tip "An Order By Any Other Name"
     A Return Order may also be known as an [RMA](https://en.wikipedia.org/wiki/Return_merchandise_authorization)
 
+### View Return Orders
+
+To navigate to the Return Order display, select *Sales* from the main navigation menu, and *Return Orders* from the sidebar:
+
+{% with id="return_order_display", url="order/ro_display.png", description="Return Order Display" %}
+{% include "img.html" %}
+{% endwith %}
+
+The following view modes are available:
+
+#### Table View
+
+*Table View* provides a list of Return Orders, which can be filtered to display a subset of orders according to user supplied parameters.
+
+{% with id="purchase_order_list", url="order/po_list.png", description="Return Order List" %}
+{% include "img.html" %}
+{% endwith %}
+
+#### Calendar View
+
+*Calendar View* shows a calendar display with outstanding return orders, based on the various dates specified for each order.
+
+{% with id="return_order_calendar", url="order/ro_calendar.png", description="Return Order Calendar" %}
+{% include "img.html" %}
+{% endwith %}
+
 ### Enable Return Order Functionality
 
 By default, Return Order functionality is not enabled - it must be enabled by a *staff* user from the settings page:

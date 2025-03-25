@@ -6,7 +6,7 @@ import { doQuickLogin } from './login';
 test('Forms - Stock Item Validation', async ({ page }) => {
   await doQuickLogin(page, 'steven', 'wizardstaff');
   await navigate(page, 'stock/location/index/stock-items');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   // Create new stock item form
   await page.getByLabel('action-button-add-stock-item').click();

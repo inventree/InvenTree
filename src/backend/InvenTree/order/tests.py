@@ -43,7 +43,7 @@ class OrderTest(TestCase, ExchangeRateMixin):
         for pk in range(1, 8):
             order = PurchaseOrder.objects.get(pk=pk)
             self.assertEqual(
-                order.get_absolute_url(), f'/platform/purchasing/purchase-order/{pk}'
+                order.get_absolute_url(), f'/web/purchasing/purchase-order/{pk}'
             )
 
             self.assertEqual(order.reference, f'PO-{pk:04d}')

@@ -8,7 +8,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
-import { type Provider, fetchGlobalStates } from '../states/states';
+import { FlowEnum, type Provider, fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -66,7 +66,8 @@ export const doBasicLogin = async (
   navigate: NavigateFunction
 ) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+  const { clearUserState, setAuthenticated, fetchUserState } =
+    useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
@@ -94,7 +95,7 @@ export const doBasicLogin = async (
     .then((response) => {
       setAuthContext(response.data?.data);
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
-        setToken(response.data.meta.access_token);
+        setAuthenticated(true);
         loginDone = true;
         success = true;
       }
@@ -103,7 +104,7 @@ export const doBasicLogin = async (
       if (err?.response?.status == 401) {
         setAuthContext(err.response.data?.data);
         const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_authenticate'
+          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
           success = true;
@@ -217,7 +218,7 @@ function observeProfile() {
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
-    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {});
+    await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
   }
 }
 
@@ -251,7 +252,7 @@ export function handleMfaLogin(
   values: { code: string },
   setError: (message: string | undefined) => void
 ) {
-  const { setToken, fetchUserState } = useUserState.getState();
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
@@ -260,7 +261,7 @@ export function handleMfaLogin(
     .then((response) => {
       setError(undefined);
       setAuthContext(response.data?.data);
-      setToken(response.data.meta.access_token);
+      setAuthenticated();
 
       fetchUserState().finally(() => {
         observeProfile();

@@ -13,16 +13,16 @@ test('Stock - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   await loadTab(page, 'Location Details');
-  await page.waitForURL('**/platform/stock/location/index/details');
+  await page.waitForURL('**/web/stock/location/index/details');
 
   await loadTab(page, 'Stock Items');
   await page.getByText('1551ABK').first().click();
 
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
-  await page.waitForURL('**/platform/stock/**');
+  await page.waitForURL('**/web/stock/**');
   await loadTab(page, 'Stock Locations');
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
   await loadTab(page, 'Default Parts');
@@ -43,7 +43,7 @@ test('Stock - Location Tree', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
   await loadTab(page, 'Location Details');
 
   await page.getByLabel('nav-breadcrumb-action').click();
