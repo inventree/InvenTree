@@ -20,6 +20,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
 import { t } from '@lingui/core/macro';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -47,13 +48,10 @@ interface AlertInfo {
 }
 
 export function Header() {
-  const user = useUserState();
-
-  const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
-    state.setNavigationOpen,
-    state.navigationOpen
-  ]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [setNavigationOpen, navigationOpen] = useLocalState(
+    useShallow((state) => [state.setNavigationOpen, state.navigationOpen])
+  );
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [
@@ -66,7 +64,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
-  const { isLoggedIn } = useUserState();
+  const { isLoggedIn, isStaff } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
 
@@ -213,7 +211,7 @@ export function Header() {
                 </ActionIcon>
               </Tooltip>
             </Indicator>
-            {user.isStaff() && alerts.length > 0 && (
+            {isStaff() && alerts.length > 0 && (
               <Menu withinPortal={true} position='bottom-end'>
                 <Menu.Target>
                   <Tooltip position='bottom-end' label={t`Alerts`}>

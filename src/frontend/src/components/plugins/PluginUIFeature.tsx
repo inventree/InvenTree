@@ -62,12 +62,12 @@ export const getPluginTemplateEditor = (
   template: TemplateI
 ) =>
   forwardRef((props, ref) => {
-    const elRef = useRef<HTMLDivElement>();
+    const elRef = useRef<HTMLDivElement>(undefined);
     const [error, setError] = useState<string | undefined>(undefined);
 
-    const initialCodeRef = useRef<string>();
-    const setCodeRef = useRef<(code: string) => void>();
-    const getCodeRef = useRef<() => string>();
+    const initialCodeRef = useRef<string>(undefined);
+    const setCodeRef = useRef<(code: string) => void>(undefined);
+    const getCodeRef = useRef<() => string>(undefined);
 
     useImperativeHandle(ref, () => ({
       setCode: (code) => {
@@ -124,10 +124,10 @@ export const getPluginTemplatePreview = (
   template: TemplateI
 ) =>
   forwardRef((props, ref) => {
-    const elRef = useRef<HTMLDivElement>();
+    const elRef = useRef<HTMLDivElement>(undefined);
     const [error, setError] = useState<string | undefined>(undefined);
 
-    const updatePreviewRef = useRef<PreviewAreaRef['updatePreview']>();
+    const updatePreviewRef = useRef<PreviewAreaRef['updatePreview']>(undefined);
 
     useImperativeHandle(ref, () => ({
       updatePreview: (...args) => updatePreviewRef.current?.(...args)

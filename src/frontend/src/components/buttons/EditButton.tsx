@@ -1,6 +1,8 @@
 import { ActionIcon } from '@mantine/core';
 import { IconDeviceFloppy, IconEdit } from '@tabler/icons-react';
 
+import type { JSX } from 'react';
+
 export function EditButton({
   setEditing,
   editing,

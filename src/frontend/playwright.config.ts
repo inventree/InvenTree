@@ -5,18 +5,13 @@ export default defineConfig({
   fullyParallel: true,
   timeout: 90000,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: 0,
   workers: process.env.CI ? 3 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
+  captureGitInfo: { commit: true, diff: true },
 
   /* Configure projects for major browsers */
   projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome']
-      }
-    },
     {
       name: 'firefox',
       use: {
