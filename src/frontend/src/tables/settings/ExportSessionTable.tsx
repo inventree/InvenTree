@@ -3,7 +3,7 @@ import { apiUrl } from '@lib/functions';
 import { useTable } from '@lib/hooks';
 import { ApiEndpoints } from '@lib/index';
 import type { TableColumn } from '@lib/tables';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { AttachmentLink } from '../../components/items/AttachmentLink';

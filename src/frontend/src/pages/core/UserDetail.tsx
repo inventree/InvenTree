@@ -4,7 +4,7 @@ import { ApiEndpoints } from '@lib/index';
 import { ModelType } from '@lib/index';
 import { useUserState } from '@lib/index';
 import { useGlobalSettingsState } from '@lib/index';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';

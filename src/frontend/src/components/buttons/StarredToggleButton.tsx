@@ -2,7 +2,7 @@ import { ActionButton } from '@lib/components';
 import { apiUrl } from '@lib/functions';
 import { useApi } from '@lib/hooks';
 import { ApiEndpoints, ModelType } from '@lib/index';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
 

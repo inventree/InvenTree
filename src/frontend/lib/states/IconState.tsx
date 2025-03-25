@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { hideNotification, showNotification } from '@mantine/notifications';
 
 import { ApiEndpoints } from '../enums/ApiEndpoints';

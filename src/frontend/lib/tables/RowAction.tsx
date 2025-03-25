@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { IconDots } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';

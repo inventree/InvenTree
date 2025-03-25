@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import type { InvenTreeIconType } from '../components/icons/icons';
 import { ApiEndpoints } from './ApiEndpoints';
 

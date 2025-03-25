@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
 import type { DashboardWidgetProps } from '@lib/components';
 import { ModelType } from '@lib/index';

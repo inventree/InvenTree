@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Skeleton } from '@mantine/core';
 import { IconUnlink } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';

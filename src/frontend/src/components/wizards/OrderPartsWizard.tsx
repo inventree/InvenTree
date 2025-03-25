@@ -6,7 +6,7 @@ import { useCreateApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { ApiEndpoints } from '@lib/index';
 import { ModelType } from '@lib/index';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconShoppingCart } from '@tabler/icons-react';

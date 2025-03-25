@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Divider, Stack } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconReload } from '@tabler/icons-react';

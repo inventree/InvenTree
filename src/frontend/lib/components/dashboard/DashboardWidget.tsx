@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Box, Group, Overlay, Paper, Tooltip } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 

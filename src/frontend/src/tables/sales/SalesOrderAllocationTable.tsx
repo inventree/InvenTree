@@ -14,7 +14,7 @@ import { useUserState } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import type { TableFilter } from '@lib/tables';
 import { RowDeleteAction, RowEditAction } from '@lib/tables';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';

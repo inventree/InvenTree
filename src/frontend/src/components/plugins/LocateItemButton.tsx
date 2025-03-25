@@ -3,7 +3,7 @@ import type { ApiFormFieldSet } from '@lib/forms';
 import { useCreateApiFormModal } from '@lib/forms';
 import { apiUrl } from '@lib/functions';
 import { ApiEndpoints } from '@lib/index';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { IconRadar } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';

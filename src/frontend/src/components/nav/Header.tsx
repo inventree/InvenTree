@@ -26,7 +26,7 @@ import { ApiEndpoints } from '@lib/index';
 import { useLocalState } from '@lib/index';
 import { useUserState } from '@lib/index';
 import { useGlobalSettingsState, useUserSettingsState } from '@lib/index';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { getNavTabs } from '../../defaults/links';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';

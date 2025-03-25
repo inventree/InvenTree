@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
 import { apiUrl } from '@lib/functions';
 import { ApiEndpoints } from '@lib/index';

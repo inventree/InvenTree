@@ -9,7 +9,7 @@ import {
 import { ApiEndpoints } from '@lib/index';
 import { useLocalState } from '@lib/index';
 import { useUserState } from '@lib/index';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';

@@ -7,7 +7,7 @@ import {
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
 
 import { themeVars } from '@lib/index';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
 export function ColorToggle() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();

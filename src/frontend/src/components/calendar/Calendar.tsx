@@ -11,7 +11,7 @@ import { useLocalState } from '@lib/index';
 import type { TableFilter } from '@lib/tables';
 import { TableSearchInput } from '@lib/tables';
 import { FilterSelectDrawer } from '@lib/tables';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Box,

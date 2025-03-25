@@ -1,6 +1,6 @@
 import { Boundary } from '@lib/components';
 import { StylishText } from '@lib/components';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Card,

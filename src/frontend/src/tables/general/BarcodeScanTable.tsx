@@ -4,7 +4,7 @@ import { useTable } from '@lib/hooks';
 import { useUserState } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/tables';
 import { RowViewAction } from '@lib/tables';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { IconTrash } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';

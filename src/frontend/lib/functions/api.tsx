@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import axios, { type AxiosInstance } from 'axios';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';

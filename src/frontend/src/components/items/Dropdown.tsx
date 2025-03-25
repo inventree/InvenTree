@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {} from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {

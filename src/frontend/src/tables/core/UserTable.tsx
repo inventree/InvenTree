@@ -3,7 +3,7 @@ import { useTable } from '@lib/hooks';
 import { ApiEndpoints } from '@lib/index';
 import { ModelType } from '@lib/index';
 import type { TableFilter } from '@lib/tables';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { BooleanColumn } from '../ColumnRenderers';

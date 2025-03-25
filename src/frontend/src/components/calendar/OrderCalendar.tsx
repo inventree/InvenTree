@@ -13,7 +13,7 @@ import { ModelInformationDict } from '@lib/index';
 import type { UserRoles } from '@lib/index';
 import { useUserState } from '@lib/index';
 import type { TableFilter } from '@lib/tables';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import {

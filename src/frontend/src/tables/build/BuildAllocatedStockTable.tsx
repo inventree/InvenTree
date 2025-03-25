@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/forms';
