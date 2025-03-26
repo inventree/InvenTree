@@ -26,6 +26,7 @@ import { ApiEndpoints } from '@lib/index';
 import type { ModelType } from '@lib/index';
 import { ModelInformationDict } from '@lib/index';
 import { hideNotification, showNotification } from '@mantine/notifications';
+import dayjs from 'dayjs';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import PageTitle from '../../components/nav/PageTitle';
@@ -101,7 +102,7 @@ export default function Scan() {
                 id: randomId(),
                 barcode: barcode,
                 data: data,
-                timestamp: new Date(),
+                timestamp: dayjs().toDate(),
                 source: 'scan',
                 model: model_type as ModelType,
                 pk: data[model_type]?.pk
@@ -115,7 +116,7 @@ export default function Scan() {
               id: randomId(),
               barcode: barcode,
               data: data,
-              timestamp: new Date(),
+              timestamp: dayjs().toDate(),
               source: 'scan'
             });
           }
