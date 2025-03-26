@@ -57,9 +57,8 @@ def url_fetcher(url: str, timeout=10, ssl_context=None):
     media = config.get_media_dir().resolve().parent
     static = config.get_static_dir().resolve().parent
     if url.startswith(WE_BASE_URL):
-        u = unquote(urlparse(url).path)[
-            1:
-        ]  # .path always starts with a '/' character, which must be trimmed off.
+        # .path always starts with a '/' character, which must be trimmed off.
+        u = unquote(urlparse(url).path)[1:]
         if u.startswith('/media'):
             pth = media.joinpath(u).resolve()
             if media in pth.parents:
