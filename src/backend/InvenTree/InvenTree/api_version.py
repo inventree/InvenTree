@@ -8,7 +8,7 @@ INVENTREE_API_VERSION = 328
 
 INVENTREE_API_TEXT = """
 
-v328 - 2025-03-26 :
+v328 - 2025-03-26 : https://github.com/inventree/InvenTree/pull/9393
     - Adds 'search_notes' parameter to all searchable API endpoints
 
 v327 - 2025-03-20 : https://github.com/inventree/InvenTree/pull/9339
