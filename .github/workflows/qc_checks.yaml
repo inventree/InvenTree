@@ -86,7 +86,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # pin@v5.5.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -109,7 +109,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # pin@v5.5.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
