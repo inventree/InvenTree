@@ -6,7 +6,7 @@ export default defineConfig({
   timeout: 90000,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 3 : 0,
-  workers: process.env.CI ? 3 : undefined,
+  workers: 1, // process.env.CI ? 3 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
 
   /* Configure projects for major browsers */
