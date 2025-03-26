@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
+import { Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconHash,
@@ -11,7 +11,7 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '@lib/components';
+import { ActionButton, RenderPart } from '@lib/components';
 import { ProgressBar } from '@lib/components';
 import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import {
@@ -206,7 +206,9 @@ export default function SalesOrderLineItemTable({
     ];
   }, [table.isRowExpanded]);
 
-  const [selectedLine, setSelectedLine] = useState<number>(0);
+  const [selectedLineId, setSelectedLineId] = useState<number>(0);
+
+  const [selectedSupplierPart, setSelectedSupplierPart] = useState<any>(null);
 
   const [initialData, setInitialData] = useState({});
 
@@ -235,7 +237,7 @@ export default function SalesOrderLineItemTable({
 
   const editLine = useEditApiFormModal({
     url: ApiEndpoints.sales_order_line_list,
-    pk: selectedLine,
+    pk: selectedLineId,
     title: t`Edit Line Item`,
     fields: editLineFields,
     table: table
@@ -243,13 +245,13 @@ export default function SalesOrderLineItemTable({
 
   const deleteLine = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_line_list,
-    pk: selectedLine,
+    pk: selectedLineId,
     title: t`Delete Line Item`,
     table: table
   });
 
   const allocateSerialFields = useSalesOrderAllocateSerialsFields({
-    itemId: selectedLine,
+    itemId: selectedLineId,
     orderId: orderId
   });
 
@@ -257,6 +259,11 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_allocate_serials,
     pk: orderId,
     title: t`Allocate Serial Numbers`,
+    preFormContent: selectedSupplierPart ? (
+      <Paper withBorder p='sm'>
+        <RenderPart instance={selectedSupplierPart} />
+      </Paper>
+    ) : undefined,
     initialData: initialData,
     fields: allocateSerialFields,
     table: table
@@ -381,7 +388,8 @@ export default function SalesOrderLineItemTable({
           icon: <IconHash />,
           color: 'green',
           onClick: () => {
-            setSelectedLine(record.pk);
+            setSelectedLineId(record.pk);
+            setSelectedSupplierPart(record?.part_detail ?? null);
             setInitialData({
               quantity: record.quantity - record.allocated
             });
@@ -421,7 +429,7 @@ export default function SalesOrderLineItemTable({
         RowEditAction({
           hidden: !editable || !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
-            setSelectedLine(record.pk);
+            setSelectedLineId(record.pk);
             editLine.open();
           }
         }),
@@ -435,7 +443,7 @@ export default function SalesOrderLineItemTable({
         RowDeleteAction({
           hidden: !editable || !user.hasDeleteRole(UserRoles.sales_order),
           onClick: () => {
-            setSelectedLine(record.pk);
+            setSelectedLineId(record.pk);
             deleteLine.open();
           }
         })
