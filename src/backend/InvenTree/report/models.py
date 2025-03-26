@@ -32,7 +32,7 @@ from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
 
 try:
-    from weasyprint import HTML
+    from weasyprint import HTML, default_url_fetcher
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
     print("Unable to import 'weasyprint' module.")
@@ -41,6 +41,36 @@ except OSError as err:  # pragma: no cover
 
 
 logger = structlog.getLogger('inventree')
+
+from urllib.parse import unquote, urlparse
+
+from InvenTree import config
+
+WE_BASE_URL = 'http://localhost'
+
+
+def url_fetcher(url: str, timeout=10, ssl_context=None):
+    """Function to fetch files for Weasyprint.
+
+    Will resolve `/media` and `/static` requests to `MEDIA_ROOT` and `STATIC_ROOT` respectively.
+
+    All other requests will fall back to `weasyprint.default_url_fetcher`.
+    """
+    media = config.get_media_dir().resolve().parent
+    static = config.get_static_dir().resolve().parent
+    if url.startswith(WE_BASE_URL):
+        u = unquote(urlparse(url).path)[
+            1:
+        ]  # .path always starts with a '/' character, which must be trimmed off.
+        if u.startswith('/media'):
+            pth = media.joinpath(u).resolve()
+            if media in pth.parents:
+                return {'file_obj': open(pth, 'rb')}
+        elif u.startswith('/static'):
+            pth = static.joinpath(u).resolve()
+            if static in pth.parents:
+                return {'file_obj': open(pth, 'rb')}
+    return default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
 
 
 def rename_template(instance, filename):
@@ -198,7 +228,9 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             bytes: PDF data
         """
         html = self.render_as_string(instance, request, **kwargs)
-        pdf = HTML(string=html).write_pdf()
+        pdf = HTML(
+            string=html, url_fetcher=url_fetcher, base_url=WE_BASE_URL
+        ).write_pdf()
 
         return pdf
 
