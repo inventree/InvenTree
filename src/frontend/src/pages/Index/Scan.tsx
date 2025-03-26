@@ -118,7 +118,7 @@ export default function Scan() {
               id: randomId(),
               barcode: barcode,
               data: data,
-              timestamp: new Date(),
+              timestamp: dayjs().toDate(),
               source: 'scan'
             });
           }
