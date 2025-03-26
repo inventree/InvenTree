@@ -48,7 +48,7 @@ export default function DateField({
     let dv: Date | null = null;
 
     if (field.value) {
-      dv = new Date(field.value);
+      dv = dayjs(field.value).toDate();
     }
 
     // Ensure that the date is valid

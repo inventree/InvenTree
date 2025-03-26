@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Box, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useContextMenu } from 'mantine-contextmenu';
