@@ -3,6 +3,7 @@
 import io
 import os
 import sys
+from urllib.parse import unquote, urlparse
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -26,6 +27,7 @@ import report.helpers
 import report.validators
 from common.models import DataOutput
 from common.settings import get_global_setting
+from InvenTree import config
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
@@ -41,10 +43,6 @@ except OSError as err:  # pragma: no cover
 
 
 logger = structlog.getLogger('inventree')
-
-from urllib.parse import unquote, urlparse
-
-from InvenTree import config
 
 WE_BASE_URL = 'http://localhost'
 
