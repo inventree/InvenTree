@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';

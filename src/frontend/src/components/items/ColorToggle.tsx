@@ -6,7 +6,7 @@ import {
 } from '@mantine/core';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
 
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { vars } from '../../theme';
 
 export function ColorToggle() {

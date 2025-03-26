@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,

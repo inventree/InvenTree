@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ModelType } from '../../../../enums/ModelType';
