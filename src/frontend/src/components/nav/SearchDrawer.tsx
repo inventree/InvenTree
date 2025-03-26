@@ -405,7 +405,7 @@ export function SearchDrawer({
 
   // Search query manager
   const searchQuery = useQuery({
-    queryKey: ['search', searchText, searchRegex, searchWhole],
+    queryKey: ['search', searchText, searchRegex, searchWhole, searchNotes],
     queryFn: performSearch
   });
 
