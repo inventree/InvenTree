@@ -20,6 +20,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hideNotification, showNotification } from '@mantine/notifications';
+import dayjs from 'dayjs';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
@@ -103,7 +104,7 @@ export default function Scan() {
                 id: randomId(),
                 barcode: barcode,
                 data: data,
-                timestamp: new Date(),
+                timestamp: dayjs().toDate(),
                 source: 'scan',
                 model: model_type as ModelType,
                 pk: data[model_type]?.pk
