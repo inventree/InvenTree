@@ -20,6 +20,7 @@ import {
   type DetailsField,
   DetailsTable
 } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -123,6 +124,24 @@ export default function BuildDetail() {
         icon: 'status',
         hidden:
           !build.status_custom_key || build.status_custom_key == build.status
+      },
+      {
+        type: 'boolean',
+        name: 'external',
+        label: t`External`,
+        icon: 'manufacturers',
+        hidden: !build.external
+      },
+      {
+        type: 'text',
+        name: 'purchase_order',
+        label: t`Purchase Order`,
+        icon: 'purchase_orders',
+        copy: true,
+        hidden: !build.external,
+        value_formatter: () => {
+          return 'TODO: external PO';
+        }
       },
       {
         type: 'text',
@@ -531,6 +550,12 @@ export default function BuildDetail() {
             status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
+          />,
+          <DetailsBadge
+            label={t`External`}
+            color='blue'
+            key='external'
+            visible={build.external}
           />
         ];
   }, [build, instanceQuery]);
