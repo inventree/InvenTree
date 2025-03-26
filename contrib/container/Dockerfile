@@ -108,7 +108,7 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
 FROM prebuild AS frontend
 
 RUN apk add --no-cache --update nodejs npm yarn
-RUN nvm install -g n && n lts
+RUN npm install -g n && n lts
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
@@ -151,7 +151,7 @@ RUN pip install --require-hashes -r base_requirements.txt --no-cache
 # Install nodejs / npm / yarn
 
 RUN apk add --no-cache --update nodejs npm yarn
-RUN nvm install -g n && n lts
+RUN npm install -g n && n lts
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/
