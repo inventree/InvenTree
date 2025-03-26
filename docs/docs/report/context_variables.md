@@ -123,6 +123,9 @@ When printing a report or label against a [SalesOrder](../order/sales_order.md) 
 | order | The SalesOrder instance itself |
 | reference | The reference field of the SalesOrder |
 | title | The title (string representation) of the SalesOrder |
+| creation_date | The date when the order was created |
+| target_date | The given target date |
+| shipment_date | The date when the order was shipped to the customer |
 
 ::: order.models.Order.report_context
     options:
