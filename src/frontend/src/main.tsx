@@ -89,7 +89,8 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
-export const base_url = window.INVENTREE_SETTINGS.base_url || 'platform';
+export const getBaseUrl = (): string =>
+  window.INVENTREE_SETTINGS?.base_url || 'web';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -99,7 +100,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
 // Redirect to base url if on /
 if (window.location.pathname === '/') {
-  window.location.replace(`/${base_url}`);
+  window.location.replace(`/${getBaseUrl()}`);
 }
 
 window.React = React;

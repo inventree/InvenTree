@@ -22,6 +22,7 @@ test('Parts - Tabs', async ({ page }) => {
   // Select a particular part from the table
   await clearTableFilters(page);
   await page.getByPlaceholder('Search').fill('1551');
+  await page.waitForLoadState('networkidle');
   await page.getByText('1551ABK').click();
 
   await loadTab(page, 'Allocations');
@@ -416,7 +417,7 @@ test('Parts - Revision', async ({ page }) => {
     .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
     .click();
 
-  await page.waitForURL('**/platform/part/101/**');
+  await page.waitForURL('**/web/part/101/**');
   await page.getByText('Select Part Revision').waitFor();
 });
 

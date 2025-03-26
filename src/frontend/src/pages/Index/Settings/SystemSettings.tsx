@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBellCog,
@@ -64,8 +64,8 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'login',
-        label: t`Login`,
+        name: 'authentication',
+        label: t`Authentication`,
         icon: <IconFingerprint />,
         content: (
           <GlobalSettingList

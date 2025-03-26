@@ -1,12 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 325
+INVENTREE_API_VERSION = 327
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v327 - 2025-03-20 : https://github.com/inventree/InvenTree/pull/9339
+    - Adds "is_mandatory" field to the Plugin API
+    - Adds ability to filter by "mandatory" status in the Plugin API
+
+v326 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/9096
+    - Overhaul the data-export API functionality
+    - Allow customization of data exporting via plugins
+    - Consolidate LabelOutput and ReportOutput API endpoints into single DataOutput endpoint
 
 v325 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/9244
     - Adds the option for superusers to list all user tokens

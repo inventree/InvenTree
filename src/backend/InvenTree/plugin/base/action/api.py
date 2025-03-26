@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 import InvenTree.permissions
 from InvenTree.exceptions import log_error
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 
 
 class ActionPluginSerializer(serializers.Serializer):
@@ -33,7 +33,7 @@ class ActionPluginView(GenericAPIView):
         if action is None:
             return Response({'error': _('No action specified')})
 
-        action_plugins = registry.with_mixin('action')
+        action_plugins = registry.with_mixin(PluginMixinEnum.ACTION)
         for plugin in action_plugins:
             try:
                 if plugin.action_name() == action:

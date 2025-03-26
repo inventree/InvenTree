@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Button } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';

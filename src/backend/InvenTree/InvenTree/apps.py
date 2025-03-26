@@ -88,6 +88,8 @@ class InvenTreeConfig(AppConfig):
             'InvenTree.tasks.delete_expired_sessions',
             'stock.tasks.delete_old_stock_items',
             'label.tasks.cleanup_old_label_outputs',
+            'report.tasks.cleanup_old_report_outputs',
+            'data_exporter.tasks.cleanup_old_export_outputs',
         ]
 
         try:

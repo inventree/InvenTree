@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   Button,
@@ -80,6 +80,7 @@ export interface ApiFormProps {
   pk?: number | string;
   pk_field?: string;
   pathParams?: PathParams;
+  queryParams?: URLSearchParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
   focus?: string;
@@ -123,8 +124,14 @@ export function OptionsApiForm({
   const id = useId(pId);
 
   const url = useMemo(
-    () => constructFormUrl(props.url, props.pk, props.pathParams),
-    [props.url, props.pk, props.pathParams]
+    () =>
+      constructFormUrl(
+        props.url,
+        props.pk,
+        props.pathParams,
+        props.queryParams
+      ),
+    [props.url, props.pk, props.pathParams, props.queryParams]
   );
 
   const optionsQuery = useQuery({
@@ -252,7 +259,13 @@ export function ApiForm({
 
   // Cache URL
   const url = useMemo(
-    () => constructFormUrl(props.url, props.pk, props.pathParams),
+    () =>
+      constructFormUrl(
+        props.url,
+        props.pk,
+        props.pathParams,
+        props.queryParams
+      ),
     [props.url, props.pk, props.pathParams]
   );
 
@@ -445,6 +458,7 @@ export function ApiForm({
     return api({
       method: method,
       url: url,
+      params: method.toLowerCase() == 'get' ? jsonData : undefined,
       data: hasFiles ? formData : jsonData,
       timeout: timeout,
       headers: {

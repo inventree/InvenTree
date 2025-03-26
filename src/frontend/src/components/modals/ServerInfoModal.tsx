@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 

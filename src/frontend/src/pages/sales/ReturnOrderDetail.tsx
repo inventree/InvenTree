@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
@@ -171,14 +171,28 @@ export default function ReturnOrderDetail() {
         hidden: !order.link
       },
       {
-        type: 'link',
-        model: ModelType.contact,
-        link: false,
-        name: 'contact',
+        type: 'text',
+        name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.email',
+        label: t`Contact Email`,
+        icon: 'email',
+        copy: true,
+        hidden: !order.contact_detail?.email
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.phone',
+        label: t`Contact Phone`,
+        icon: 'phone',
+        copy: true,
+        hidden: !order.contact_detail?.phone
       },
       {
         type: 'text',

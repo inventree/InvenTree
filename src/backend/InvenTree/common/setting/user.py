@@ -4,13 +4,13 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from common.setting.type import InvenTreeSettingsKeyType
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 
 
 def label_printer_options():
     """Build a list of available label printer options."""
     printers = []
-    label_printer_plugins = registry.with_mixin('labels')
+    label_printer_plugins = registry.with_mixin(PluginMixinEnum.LABELS)
     if label_printer_plugins:
         printers.extend([
             (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
@@ -180,6 +180,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STICKY_HEADER': {
         'name': _('Fixed Navbar'),
         'description': _('The navbar position is fixed to the top of the screen'),
+        'default': False,
+        'validator': bool,
+    },
+    'ICONS_IN_NAVBAR': {
+        'name': _('Navigation Icons'),
+        'description': _('Display icons in the navigation bar'),
         'default': False,
         'validator': bool,
     },

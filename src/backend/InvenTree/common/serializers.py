@@ -15,10 +15,10 @@ from taggit.serializers import TagListSerializerField
 import common.models as common_models
 import common.validators
 import generic.states.custom
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -757,7 +757,7 @@ class SelectionListSerializer(InvenTreeModelSerializer):
     def update(self, instance, validated_data):
         """Update an existing selection list. Save the choices separately."""
         inst_mapping = {inst.id: inst for inst in instance.entries.all()}
-        exsising_ids = {a.get('id') for a in self._choices_validated}
+        existing_ids = {a.get('id') for a in self._choices_validated}
 
         # Perform creations and updates.
         ret = []
@@ -772,7 +772,7 @@ class SelectionListSerializer(InvenTreeModelSerializer):
                 ret.append(SelectionEntrySerializer().update(inst, data))
 
         # Perform deletions.
-        for entry_id in inst_mapping.keys() - exsising_ids:
+        for entry_id in inst_mapping.keys() - existing_ids:
             inst_mapping[entry_id].delete()
 
         return super().update(instance, validated_data)
@@ -783,3 +783,32 @@ class SelectionListSerializer(InvenTreeModelSerializer):
         if self.instance and self.instance.locked:
             raise serializers.ValidationError({'locked': _('Selection list is locked')})
         return ret
+
+
+class DataOutputSerializer(InvenTreeModelSerializer):
+    """Serializer for the DataOutput model."""
+
+    class Meta:
+        """Meta options for DataOutputSerializer."""
+
+        model = common_models.DataOutput
+        fields = [
+            'pk',
+            'created',
+            'user',
+            'user_detail',
+            'total',
+            'progress',
+            'complete',
+            'output_type',
+            'template_name',
+            'plugin',
+            'output',
+            'errors',
+        ]
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    output = InvenTreeAttachmentSerializerField(
+        required=False, allow_null=True, read_only=True
+    )

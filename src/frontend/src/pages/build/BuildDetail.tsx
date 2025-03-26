@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconChecklist,
@@ -99,6 +99,14 @@ export default function BuildDetail() {
         icon: 'part',
         label: t`IPN`,
         hidden: !build.part_detail?.IPN,
+        copy: true
+      },
+      {
+        type: 'string',
+        name: 'part_detail.revision',
+        icon: 'revision',
+        label: t`Revision`,
+        hidden: !build.part_detail?.revision,
         copy: true
       },
       {

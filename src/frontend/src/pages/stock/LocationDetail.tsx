@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
@@ -382,7 +382,10 @@ export default function Stock() {
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
             editAction={editLocation.open}
-            editEnabled={user.hasChangePermission(ModelType.stocklocation)}
+            editEnabled={
+              !!location?.pk &&
+              user.hasChangePermission(ModelType.stocklocation)
+            }
             breadcrumbs={breadcrumbs}
             lastCrumb={[
               {

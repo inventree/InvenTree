@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Center, Container, Loader, Stack, Text } from '@mantine/core';
 import { useInterval } from '@mantine/hooks';
 import { useEffect } from 'react';

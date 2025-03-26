@@ -12,7 +12,7 @@ from rest_framework.response import Response
 import common.models
 import common.serializers
 import InvenTree.permissions
-from importer.mixins import DataExportViewMixin
+from data_exporter.mixins import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.permissions import IsStaffOrReadOnly

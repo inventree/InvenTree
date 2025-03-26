@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
@@ -8,7 +8,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
-import { type Provider, fetchGlobalStates } from '../states/states';
+import { FlowEnum, type Provider, fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -104,7 +104,7 @@ export const doBasicLogin = async (
       if (err?.response?.status == 401) {
         setAuthContext(err.response.data?.data);
         const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_authenticate'
+          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
           success = true;
