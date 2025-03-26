@@ -108,7 +108,7 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
 FROM prebuild AS frontend
 
 RUN apk add --no-cache --update nodejs npm yarn
-RUN npm install -g
+RUN npm install -g n
 RUN n lts
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
