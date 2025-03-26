@@ -64,6 +64,7 @@ test('Plugins - Functionality', async ({ page, request }) => {
   await navigate(page, 'settings/admin/plugin/');
   await clearTableFilters(page);
   await page.getByPlaceholder('Search').fill('sample');
+  await page.waitForLoadState('networkidle');
 
   // Activate the plugin
   const cell = await page.getByText('Sample API Caller', { exact: true });
