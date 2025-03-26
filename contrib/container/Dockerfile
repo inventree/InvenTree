@@ -152,7 +152,7 @@ RUN pip install --require-hashes -r base_requirements.txt --no-cache
 # Install nodejs / npm / yarn
 
 RUN apk add --no-cache --update nodejs npm yarn bash
-RUN npm install -g n --ignore-scripts
+RUN npm install -g --ignore-scripts n
 RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
 
