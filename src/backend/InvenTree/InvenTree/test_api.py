@@ -297,6 +297,7 @@ class SearchTests(InvenTreeAPITestCase):
         'stock',
         'order',
         'sales_order',
+        'build',
     ]
     roles = ['build.view', 'part.view']
 
@@ -352,6 +353,69 @@ class SearchTests(InvenTreeAPITestCase):
 
         self.assertNotIn('stockitem', response.data)
         self.assertNotIn('build', response.data)
+
+    def test_search_filters(self):
+        """Test that the regex, whole word, and notes filters are handled correctly."""
+        SEARCH_TERM = 'some note'
+        RE_SEARCH_TERM = 'some (.*) note'
+
+        response = self.post(
+            reverse('api-search'),
+            {'search': SEARCH_TERM, 'part': {}, 'build': {}},
+            expected_code=200,
+        )
+        # No build or part results
+        self.assertEqual(response.data['build']['count'], 0)
+        self.assertEqual(response.data['build']['count'], 0)
+
+        # add the search_notes param
+        response = self.post(
+            reverse('api-search'),
+            {'search': SEARCH_TERM, 'search_notes': True, 'part': {}, 'build': {}},
+            expected_code=200,
+        )
+        # now should have some build results
+        self.assertEqual(response.data['build']['count'], 4)
+
+        # use the regex term
+        response = self.post(
+            reverse('api-search'),
+            {'search': RE_SEARCH_TERM, 'search_notes': True, 'part': {}, 'build': {}},
+            expected_code=200,
+        )
+        # No results again
+        self.assertEqual(response.data['build']['count'], 0)
+
+        # add the regex_search param
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': RE_SEARCH_TERM,
+                'search_notes': True,
+                'search_regex': True,
+                'part': {},
+                'build': {},
+            },
+            expected_code=200,
+        )
+        # we get our results back!
+        self.assertEqual(response.data['build']['count'], 4)
+
+        # add the search_whole param
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': RE_SEARCH_TERM,
+                'search_notes': True,
+                'search_regex': True,
+                'search_whole': True,
+                'part': {},
+                'build': {},
+            },
+            expected_code=200,
+        )
+        # No results again
+        self.assertEqual(response.data['build']['count'], 0)
 
     def test_permissions(self):
         """Test that users with insufficient permissions are handled correctly."""
