@@ -250,7 +250,6 @@ class RuleSet(models.Model):
                 'oauth2_provider_refreshtoken',
                 #'oauth2_provider_code',
                 # Report / label stuff
-                'report_labeloutput',
                 'report_labeltemplate',
                 'report_reportasset',
                 'report_reportsnippet',
