@@ -86,6 +86,9 @@ When printing a report or label against a [Build Order](../build/build.md) objec
 | quantity | The total quantity of the part being assembled |
 | reference | The reference field of the BuildOrder |
 | title | The title field of the BuildOrder |
+| build.creation_date | The date when the build was created |
+| build.target_date | The given target date of the build order |
+| build.completion_date | The date when the build was completed |
 
 ::: build.models.Build.report_context
     options:
@@ -123,9 +126,9 @@ When printing a report or label against a [SalesOrder](../order/sales_order.md) 
 | order | The SalesOrder instance itself |
 | reference | The reference field of the SalesOrder |
 | title | The title (string representation) of the SalesOrder |
-| creation_date | The date when the order was created |
-| target_date | The given target date |
-| shipment_date | The date when the order was shipped to the customer |
+| order.creation_date | The date when the order was created |
+| order.target_date | The given target date |
+| order.shipment_date | The date when the order was shipped to the customer |
 
 ::: order.models.Order.report_context
     options:
@@ -144,6 +147,9 @@ When printing a report or label against a [ReturnOrder](../order/return_order.md
 | order | The ReturnOrder instance itself |
 | reference | The reference field of the ReturnOrder |
 | title | The title (string representation) of the ReturnOrder |
+| order.creation_date | The date when the order was created |
+| order.target_date | The given target date |
+| order.issue_date | The date when the return order was issued |
 
 ### Purchase Order
 
@@ -158,6 +164,10 @@ When printing a report or label against a [PurchaseOrder](../order/purchase_orde
 | reference | The reference field of the PurchaseOrder |
 | supplier | The supplier object associated with the PurchaseOrder |
 | title | The title (string representation) of the PurchaseOrder |
+| order.creation_date | The date when the order was created |
+| order.target_date | The given target date |
+| order.issue_date | The date then the order was issued |
+| order.complete_date | The date then the order was received and completed |
 
 ### Stock Item
 
@@ -410,36 +420,6 @@ Each part object has access to a lot of context variables about the part. The fo
 | price_breaks | Return the associated price breaks in the correct order |
 | has_price_breaks | Whether this [SupplierPart](./context_variables.md#supplierpart) has price breaks |
 | manufacturer_string | Format a MPN string for this [SupplierPart](./context_variables.md#supplierpart). Concatenates manufacture name and part number. |
-
-
-### Orders
-
-#### Purchase Order
-
-!!! note "TODO"
-    This section is incomplete
-
-#### SalesOrder
-
-A [Sales Order](../order/sales_order.md) object has the following context variables available.
-
-| Variable | Description |
-|----------|-------------|
-| customer | An object with information about the customer |
-| description | The order description |
-| lines | The lines in the Sales Order |
-| reference | The reference number |
-
-#### Return Order
-
-A [Return Order](../order/return_order.md) object has the following context variables available.
-
-| Variable | Description |
-| --- | --- |
-| customer | An object with information about the customer |
-| description | The order description |
-| lines | The lines in the Sales Order |
-| reference | The reference number |
 
 ### User
 
