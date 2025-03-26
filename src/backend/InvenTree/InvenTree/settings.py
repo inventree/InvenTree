@@ -28,6 +28,7 @@ from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
+from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
 
@@ -527,28 +528,7 @@ TEMPLATES = [
 
 OAUTH2_PROVIDER = {
     # default scopes
-    'SCOPES': {
-        'read': 'Read scope',
-        'write': 'Write scope',
-        # user roles
-        'superuser': 'Role Superuser',
-        # inventree roles
-        'admin': 'Role Admin',
-        'part_category': 'Role Part Categories',
-        'part': 'Role Parts',
-        'stocktake': 'Role Stocktake',
-        'stock_location': 'Role Stock Locations',
-        'stock': 'Role Stock Items',
-        'build': 'Role Build Orders',
-        'purchase_order': 'Role Purchase Orders',
-        'sales_order': 'Role Sales Orders',
-        'return_order': 'Role Return Orders',
-        # inventree methods
-        'view': 'Method GET',
-        'create': 'Method POST',
-        'change': 'Method PUT / PATCH',
-        'delete': 'Method DELETE',
-    }
+    'SCOPES': oauth2_scopes
 }
 
 REST_FRAMEWORK = {
