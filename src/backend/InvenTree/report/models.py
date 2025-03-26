@@ -54,17 +54,17 @@ def url_fetcher(url: str, timeout=10, ssl_context=None):
 
     All other requests will fall back to `weasyprint.default_url_fetcher`.
     """
-    media = config.get_media_dir().resolve().parent
-    static = config.get_static_dir().resolve().parent
+    media = config.get_media_dir().resolve()
+    static = config.get_static_dir().resolve()
     if url.startswith(WE_BASE_URL):
         # .path always starts with a '/' character, which must be trimmed off.
         u = unquote(urlparse(url).path)[1:]
         if u.startswith('/media'):
-            pth = media.joinpath(u).resolve()
+            pth = media.parent.joinpath(u).resolve()
             if media in pth.parents:
                 return {'file_obj': open(pth, 'rb')}
         elif u.startswith('/static'):
-            pth = static.joinpath(u).resolve()
+            pth = static.parent.joinpath(u).resolve()
             if static in pth.parents:
                 return {'file_obj': open(pth, 'rb')}
     return default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
