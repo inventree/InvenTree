@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
@@ -13,7 +14,7 @@ export default function Mfa() {
   const [loginError, setLoginError] = useState<string | undefined>(undefined);
 
   return (
-    <Wrapper titleText={t`Multi-Factor Login`} logOff>
+    <Wrapper titleText={t`Multi-Factor Authentication`} logOff>
       <TextInput
         required
         label={t`TOTP Code`}

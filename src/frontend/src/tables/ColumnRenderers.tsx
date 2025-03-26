@@ -1,7 +1,7 @@
+import { t } from '@lingui/core/macro';
 /**
  * Common rendering functions for table column data.
  */
-import { t } from '@lingui/macro';
 import { Anchor, Center, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 

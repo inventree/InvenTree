@@ -169,12 +169,12 @@ def content_excludes(
     allow_plugins: bool = True,
     allow_sso: bool = True,
 ):
-    """Returns a list of content types to exclude from import/export.
+    """Returns a list of content types to exclude from import / export.
 
     Arguments:
-        allow_tokens (bool): Allow tokens to be exported/importe
-        allow_plugins (bool): Allow plugin information to be exported/imported
-        allow_sso (bool): Allow SSO tokens to be exported/imported
+        allow_tokens (bool): Allow tokens to be exported / imported
+        allow_plugins (bool): Allow plugin information to be exported / imported
+        allow_sso (bool): Allow SSO tokens to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -186,13 +186,12 @@ def content_excludes(
         'django_q.ormq',
         'exchange.rate',
         'exchange.exchangebackend',
+        'common.dataoutput',
         'common.notificationentry',
         'common.notificationmessage',
         'importer.dataimportsession',
         'importer.dataimportcolumnmap',
         'importer.dataimportrow',
-        'report.labeloutput',
-        'report.reportoutput',
     ]
 
     # Optionally exclude user auth data

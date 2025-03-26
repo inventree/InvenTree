@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Alert,
   List,
@@ -250,7 +251,7 @@ export function UserTable() {
   // Table Actions - Add New User
   const newUser = useCreateApiFormModal({
     url: ApiEndpoints.user_list,
-    title: t`Add user`,
+    title: t`Add User`,
     fields: {
       username: {},
       email: {},

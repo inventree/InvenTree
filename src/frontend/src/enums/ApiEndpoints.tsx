@@ -67,6 +67,9 @@ export enum ApiEndpoints {
   barcode_unlink = 'barcode/unlink/',
   barcode_generate = 'barcode/generate/',
 
+  // Data output endpoints
+  data_output = 'data-output/',
+
   // Data import endpoints
   import_session_list = 'importer/session/',
   import_session_accept_fields = 'importer/session/:id/accept_fields/',
@@ -192,10 +195,8 @@ export enum ApiEndpoints {
   // Template API endpoints
   label_list = 'label/template/',
   label_print = 'label/print/',
-  label_output = 'label/output/',
   report_list = 'report/template/',
   report_print = 'report/print/',
-  report_output = 'report/output/',
   report_snippet = 'report/snippet/',
   report_asset = 'report/asset/',
 

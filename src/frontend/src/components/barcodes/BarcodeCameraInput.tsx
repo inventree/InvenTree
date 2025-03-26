@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Container, Group, Select, Stack } from '@mantine/core';
 import { useDocumentVisibility, useLocalStorage } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';

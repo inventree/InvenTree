@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Group,
@@ -6,8 +7,7 @@ import {
   Pill,
   PillGroup,
   Stack,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
+import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -112,9 +113,9 @@ export function GroupDrawer({
         id={`group-detail-drawer-${id}`}
       />
       <Group justify='space-between'>
-        <Title order={5}>
+        <StylishText size='md'>
           <Trans>Permission set</Trans>
-        </Title>
+        </StylishText>
         <AdminButton model={ModelType.group} id={instance.pk} />
       </Group>
       <Group>{permissionsAccordion}</Group>

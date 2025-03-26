@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
@@ -108,7 +108,7 @@ export function useEditApiFormModal(props: ApiFormModalProps) {
         props.successMessage === null
           ? null
           : (props.successMessage ?? t`Item Updated`),
-      method: 'PATCH'
+      method: props.method ?? 'PATCH'
     }),
     [props]
   );
@@ -158,7 +158,7 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
   const deleteProps = useMemo<ApiFormModalProps>(
     () => ({
       ...props,
-      method: 'DELETE',
+      method: props.method ?? 'DELETE',
       submitText: t`Delete`,
       submitColor: 'red',
       successMessage:

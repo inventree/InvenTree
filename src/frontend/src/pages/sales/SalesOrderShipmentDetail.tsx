@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -213,6 +213,7 @@ export default function SalesOrderShipmentDetail() {
         icon: <IconBookmark />,
         content: (
           <SalesOrderAllocationTable
+            orderId={shipment.order}
             shipmentId={shipment.pk}
             showPartInfo
             allowEdit={isPending}

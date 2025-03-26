@@ -16,8 +16,8 @@ import common.models
 import part.models as part_models
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter
 from InvenTree.helpers import isNull, str2bool
@@ -388,7 +388,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         kwargs['part_detail'] = part_detail
         kwargs['create'] = True
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class BuildDetail(BuildMixin, RetrieveUpdateDestroyAPI):
@@ -537,7 +537,7 @@ class BuildLineEndpoint:
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_source_build(self) -> Build:
         """Return the source Build object for the BuildLine queryset.
@@ -853,7 +853,7 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         """Override the queryset method, to perform custom prefetch."""

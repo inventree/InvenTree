@@ -486,7 +486,13 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         )
 
     def download_file(
-        self, url, data, expected_code=None, expected_fn=None, decode=True, **kwargs
+        self,
+        url,
+        data=None,
+        expected_code=None,
+        expected_fn=None,
+        decode=True,
+        **kwargs,
     ):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
@@ -502,9 +508,11 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
-        result = re.search(r'attachment; filename="([\w\d\-.]+)"', disposition)
+        result = re.search(
+            r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
+        )
 
-        fn = result.groups()[0]
+        fn = result.groups()[1]
 
         if expected_fn is not None:
             self.assertRegex(fn, expected_fn)
@@ -523,6 +531,72 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         file.seek(0)
 
         return file
+
+    def export_data(
+        self,
+        url,
+        params=None,
+        export_format='csv',
+        export_plugin='inventree-exporter',
+        **kwargs,
+    ):
+        """Perform a data export operation against the provided URL.
+
+        Uses the 'data_exporter' functionality to override the POST response.
+
+        Arguments:
+            url: URL to perform the export operation against
+            params: Dictionary of parameters to pass to the export operation
+            export_format: Export format (default = 'csv')
+            export_plugin: Export plugin (default = 'inventree-exporter')
+
+        Returns:
+            A file object containing the exported dataset
+        """
+        # Ensure that the plugin registry is up-to-date
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+        download = kwargs.pop('download', True)
+        expected_code = kwargs.pop('expected_code', 200)
+
+        if not params:
+            params = {}
+
+        params = {
+            **params,
+            'export': True,
+            'export_format': export_format,
+            'export_plugin': export_plugin,
+        }
+
+        # Add in any other export specific kwargs
+        for key, value in kwargs.items():
+            if key.startswith('export_'):
+                params[key] = value
+
+        # Append URL params
+        url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
+
+        response = self.client.get(url, data=None, format='json')
+        self.check_response(url, response, expected_code=expected_code)
+
+        # Check that the response is of the correct type
+        data = response.data
+
+        if expected_code != 200:
+            # Response failed
+            return response.data
+
+        self.assertEqual(data['plugin'], export_plugin)
+        self.assertTrue(data['complete'])
+        filename = data.get('output')
+        self.assertIsNotNone(filename)
+
+        if download:
+            return self.download_file(filename, **kwargs)
+
+        else:
+            return response.data
 
     def process_csv(
         self,

@@ -38,6 +38,7 @@ jobs:
       api: ${{ steps.filter.outputs.api }}
       force: ${{ steps.force.outputs.force }}
       cicd: ${{ steps.filter.outputs.cicd }}
+      requirements: ${{ steps.filter.outputs.requirements }}
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
@@ -62,6 +63,11 @@ jobs:
               - 'src/frontend/**'
             cicd:
               - '.github/workflows/**'
+            requirements:
+              - 'src/backend/requirements.txt'
+              - 'src/backend/requirements-dev.txt'
+              - 'docs/requirements.txt'
+              - 'contrib/dev_reqs/requirements.txt'
       - name: Is CI being forced?
         run: echo "force=true" >> $GITHUB_OUTPUT
         id: force
@@ -71,16 +77,16 @@ jobs:
 
   pre-commit:
     name: Style [pre-commit]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # pin@v5.5.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -93,7 +99,7 @@ jobs:
 
   mkdocs:
     name: Style [Documentation]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: paths-filter
 
@@ -103,7 +109,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # pin@v5.5.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -121,7 +127,7 @@ jobs:
 
   schema:
     name: Tests - API Schema Documentation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
@@ -149,7 +155,7 @@ jobs:
       - name: Export API Documentation
         run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -199,24 +205,24 @@ jobs:
       - name: Extract settings / tags
         run: invoke int.export-definitions --basedir src/backend/InvenTree
       - name: Upload settings
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_settings.json
           path: src/backend/InvenTree/inventree_settings.json
       - name: Upload tags
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_tags.yml
           path: src/backend/InvenTree/inventree_tags.yml
       - name: Upload filters
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_filters.yml
           path: src/backend/InvenTree/inventree_filters.yml
 
   schema-push:
     name: Push new schema
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: [paths-filter, schema]
     if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
     env:
@@ -232,7 +238,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # pin@v4.1.9
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # pin@v4.2.1
         with:
           path: artifact
           merge-multiple: true
@@ -256,7 +262,7 @@ jobs:
 
   python:
     name: Tests - inventree-python
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -301,7 +307,7 @@ jobs:
 
   coverage:
     name: Tests - DB [SQLite] + Coverage ${{ matrix.python_version }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -347,7 +353,7 @@ jobs:
 
   postgres:
     name: Tests - DB [PostgreSQL]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
@@ -395,7 +401,7 @@ jobs:
 
   mysql:
     name: Tests - DB [MySQL]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -549,8 +555,8 @@ jobs:
           invoke migrate
 
   platform_ui:
-    name: Tests - Platform UI
-    runs-on: ubuntu-20.04
+    name: Tests - Web UI
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -603,7 +609,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -618,7 +624,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
-          flags: pui
+          flags: web
       - name: Upload bundler info
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -628,8 +634,8 @@ jobs:
           yarn run build
 
   platform_ui_build:
-    name: Build - UI Platform
-    runs-on: ubuntu-20.04
+    name: Build - Web UI
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
 
     steps:
@@ -650,7 +656,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # pin@v4.6.1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
@@ -658,7 +664,7 @@ jobs:
 
   zizmor:
     name: Security [Zizmor]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
 
@@ -675,7 +681,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@6bb031afdd8eb862ea3fc1848194185e076637e5 # pin@v3
+        uses: github/codeql-action/upload-sarif@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

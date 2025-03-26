@@ -1,16 +1,34 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 324
+INVENTREE_API_VERSION = 328
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v324 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/8191
+v328 - 2025-03-31 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
+
+v327 - 2025-03-20 : https://github.com/inventree/InvenTree/pull/9339
+    - Adds "is_mandatory" field to the Plugin API
+    - Adds ability to filter by "mandatory" status in the Plugin API
+
+v326 - 2025-03-18 : https://github.com/inventree/InvenTree/pull/9096
+    - Overhaul the data-export API functionality
+    - Allow customization of data exporting via plugins
+    - Consolidate LabelOutput and ReportOutput API endpoints into single DataOutput endpoint
+
+v325 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/9244
+    - Adds the option for superusers to list all user tokens
+    - Make list endpoints sortable, filterable and searchable
+
+v324 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9320
+    - Adds BulkUpdate support for the SalesOrderAllocation model
+    - Adds BulkUpdate support for the PartCategory model
+    - Adds BulkUpdate support for the StockLocation model
 
 v323 - 2025-03-17 : https://github.com/inventree/InvenTree/pull/9313
     - Adds BulkUpdate support to the Part API endpoint

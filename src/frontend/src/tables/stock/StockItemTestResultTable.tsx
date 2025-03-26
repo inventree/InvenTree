@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
