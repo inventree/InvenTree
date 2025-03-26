@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';

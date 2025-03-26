@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, HoverCard, Paper, Space, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {

@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Anchor, Divider, Group, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Drawer, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { hideNotification, showNotification } from '@mantine/notifications';
