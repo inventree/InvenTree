@@ -14,12 +14,12 @@ import { IconMailCheck } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../../../App';
-import { formatDate } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
-import { StylishText } from '../../items/StylishText';
+import { StylishText } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { formatDate } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 
 /**
  * Render a link to an external news item
@@ -77,6 +77,7 @@ function NewsItem({
  */
 export default function NewsWidget() {
   const user = useUserState();
+  const api = useApi();
 
   const newsItems = useQuery({
     queryKey: ['news-items'],

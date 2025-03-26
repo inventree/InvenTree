@@ -1,23 +1,23 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { YesNoButton } from '@lib/components';
+import { AddItemButton } from '@lib/components';
+import type { ApiFormFieldSet } from '@lib/forms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { LinkColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function AddressTable({
   companyId,

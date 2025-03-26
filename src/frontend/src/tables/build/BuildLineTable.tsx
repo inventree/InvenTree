@@ -11,38 +11,32 @@ import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
-import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import {
-  useAllocateStockToBuildForm,
-  useBuildOrderFields
-} from '../../forms/BuildForms';
+import { ActionButton } from '@lib/components';
+import { ProgressBar } from '@lib/components';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useStatusCodes } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { RowActions, RowExpansionIcon } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
+import { RowDeleteAction, RowEditAction, RowViewAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
+  useAllocateStockToBuildForm,
+  useBuildOrderFields
+} from '../../forms/BuildForms';
+import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
 
 /**
  * Render a sub-table of allocated stock against a particular build line.

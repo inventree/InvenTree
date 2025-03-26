@@ -1,26 +1,24 @@
+import { AddItemButton, CopyButton, StylishText } from '@lib/components';
+import { useCreateApiFormModal } from '@lib/forms';
+import { apiUrl, showApiErrorMessage } from '@lib/functions';
+import { useApi, useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { TableFilter } from '@lib/tables';
+import type { RowAction } from '@lib/tables';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { api } from '../../App';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { CopyButton } from '../../components/buttons/CopyButton';
-import { StylishText } from '../../components/items/StylishText';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { showApiErrorMessage } from '../../functions/notifications';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { RowAction } from '../../tables/RowActions';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { BooleanColumn } from '../ColumnRenderers';
-import { type TableFilter, UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { UserFilter } from '../Filter';
 
 export function ApiTokenTable({
   only_myself = true
 }: Readonly<{ only_myself: boolean }>) {
+  const api = useApi();
   const [token, setToken] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
 

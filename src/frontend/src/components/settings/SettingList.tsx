@@ -11,18 +11,17 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
-import { useApi } from '../../contexts/ApiContext';
-import type { ModelType } from '../../enums/ModelType';
-import { useEditApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
+import { useEditApiFormModal } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks/UseApi';
+import type { ModelType, Setting } from '@lib/index';
 import {
   type SettingsStateProps,
   createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
-import type { Setting } from '../../states/states';
+} from '@lib/states/SettingsState';
 import { SettingItem } from './SettingItem';
 
 /**
@@ -111,7 +110,7 @@ export function SettingList({
         .then(() => {
           notifications.hide('setting');
           notifications.show({
-            title: t`Setting updated`,
+            title: t`Setting Updated`,
             message: t`Setting ${setting.key} updated successfully`,
             color: 'green',
             id: 'setting'

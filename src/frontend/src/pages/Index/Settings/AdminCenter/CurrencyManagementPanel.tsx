@@ -4,15 +4,14 @@ import { showNotification } from '@mantine/notifications';
 import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
-import { api } from '../../../../App';
-import { ActionButton } from '../../../../components/buttons/ActionButton';
+import { ActionButton } from '@lib/components';
+import { apiUrl, showApiErrorMessage } from '@lib/functions';
+import { useApi, useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+
+import { InvenTreeTable } from '../../../../../lib/tables/InvenTreeTable';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { showApiErrorMessage } from '../../../../functions/notifications';
-import { useTable } from '../../../../hooks/UseTable';
-import { apiUrl } from '../../../../states/ApiState';
-import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 
 /*
  * Table for displaying available currencies
@@ -20,6 +19,7 @@ import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 export function CurrencyTable({
   setInfo
 }: Readonly<{ setInfo: (info: any) => void }>) {
+  const api = useApi();
   const table = useTable('currency', 'currency');
   const columns = useMemo(() => {
     return [

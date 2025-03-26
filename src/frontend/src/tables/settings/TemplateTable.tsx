@@ -5,7 +5,29 @@ import { IconFileCode } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { GetIcon } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import type { ApiFormFieldSet } from '@lib/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { identifierString } from '@lib/functions/conversion';
+import { useFilters, useInstance } from '@lib/hooks';
+import { useTable } from '@lib/hooks';
+import type { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   CodeEditor,
   PdfPreview,
@@ -15,7 +37,6 @@ import type {
   Editor,
   PreviewArea
 } from '../../components/editors/TemplateEditor/TemplateEditor';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
@@ -26,32 +47,9 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { identifierString } from '../../functions/conversion';
-import { GetIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
-import { useFilters } from '../../hooks/UseFilter';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
 
 export type TemplateI = {
   pk: number;

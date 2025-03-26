@@ -18,15 +18,15 @@ import { IconExclamationCircle, IconRefresh } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { StylishText } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { InfoItem } from '../../components/items/InfoItem';
-import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
 export interface MachineTypeI {

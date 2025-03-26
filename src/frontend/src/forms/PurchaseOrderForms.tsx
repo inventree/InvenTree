@@ -24,33 +24,27 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components';
+import { InvenTreeIcon } from '@lib/components';
+import { ProgressBar } from '@lib/components';
+import { StylishText } from '@lib/components';
+import { Thumbnail } from '@lib/components';
+import { getStatusCodeOptions } from '@lib/components';
+import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/forms';
+import { StandaloneField } from '@lib/forms';
+import { TableFieldExtraRow, type TableFieldRowProps } from '@lib/forms';
+import { useCreateApiFormModal } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
-import {
-  TableFieldExtraRow,
-  type TableFieldRowProps
-} from '../components/forms/fields/TableField';
-import { Thumbnail } from '../components/images/Thumbnail';
-import { ProgressBar } from '../components/items/ProgressBar';
-import { StylishText } from '../components/items/StylishText';
-import { getStatusCodeOptions } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { InvenTreeIcon } from '../functions/icons';
-import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -449,7 +443,7 @@ function LineItemFormRow({
             fieldDefinition={{
               field_type: 'number',
               value: props.item.quantity,
-              onValueChange: (value) =>
+              onValueChange: (value: number) =>
                 props.changeFn(props.idx, 'quantity', value)
             }}
             error={props.rowErrors?.quantity?.message}
@@ -544,7 +538,7 @@ function LineItemFormRow({
                   filters: {
                     structural: false
                   },
-                  onValueChange: (value) => {
+                  onValueChange: (value: number) => {
                     props.changeFn(props.idx, 'location', value);
                   },
                   description: locationDescription,

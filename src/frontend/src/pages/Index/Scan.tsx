@@ -19,25 +19,23 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { StylishText } from '@lib/components';
+import { apiUrl, showApiErrorMessage } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
-import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
-import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
-import { ModelInformationDict } from '../../components/render/ModelType';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import {
-  notYetImplemented,
-  showApiErrorMessage
-} from '../../functions/notifications';
-import { apiUrl } from '../../states/ApiState';
+import { notYetImplemented } from '../../functions/notifications';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {
   const [history, historyHandlers] = useListState<BarcodeScanItem>([]);
+  const api = useApi();
 
   const [historyStorage, setHistoryStorage] = useLocalStorage<
     BarcodeScanItem[]

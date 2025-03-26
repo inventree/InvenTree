@@ -3,12 +3,12 @@ import { BarChart } from '@mantine/charts';
 import { Group, SimpleGrid, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
-import { formatCurrency, formatDate } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
-import type { TableColumn } from '../../../tables/Column';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
+import { apiUrl } from '@lib/functions';
+import { formatCurrency, formatDate } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../../lib/tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({

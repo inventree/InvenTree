@@ -2,11 +2,11 @@ import { t } from '@lingui/core/macro';
 import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
 import { lazy } from 'react';
 
-import { StylishText } from '../../../../components/items/StylishText';
+import { StylishText } from '@lib/components';
+import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { FactCollection } from '../../../../components/settings/FactCollection';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { Loadable } from '../../../../functions/loading';
-import { useInstance } from '../../../../hooks/UseInstance';
 import FailedTasksTable from '../../../../tables/settings/FailedTasksTable';
 import PendingTasksTable from '../../../../tables/settings/PendingTasksTable';
 

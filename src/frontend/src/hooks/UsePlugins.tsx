@@ -1,7 +1,7 @@
+import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { useCallback } from 'react';
 import type { PluginInterface } from '../components/plugins/PluginInterface';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { useInstance } from './UseInstance';
 
 export interface UsePluginResult {
   plugins: PluginInterface[];

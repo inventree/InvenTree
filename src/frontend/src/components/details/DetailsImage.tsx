@@ -21,20 +21,20 @@ import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components';
+import { InvenTreeIcon } from '@lib/components';
+import { StylishText } from '@lib/components';
+import { ApiImage } from '@lib/components';
+import { useEditApiFormModal } from '@lib/forms';
+import { showApiErrorMessage } from '@lib/functions';
+import { cancelEvent } from '@lib/functions/events';
+import { useApi } from '@lib/hooks';
+import type { UserRoles } from '@lib/index';
+import { themeVars } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import { showNotification } from '@mantine/notifications';
-import { api } from '../../App';
-import type { UserRoles } from '../../enums/Roles';
-import { cancelEvent } from '../../functions/events';
-import { InvenTreeIcon } from '../../functions/icons';
-import { showApiErrorMessage } from '../../functions/notifications';
-import { useEditApiFormModal } from '../../hooks/UseForm';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
-import { vars } from '../../theme';
-import { ActionButton } from '../buttons/ActionButton';
-import { ApiImage } from '../images/ApiImage';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Props for detail image
@@ -72,7 +72,7 @@ const backup_image = '/static/img/blank_image.png';
 /**
  * Modal used for removing/deleting the current image relation
  */
-const removeModal = (apiPath: string, setImage: (image: string) => void) =>
+const removeModal = (onConfirm: () => void) =>
   modals.openConfirmModal({
     title: <StylishText size='xl'>{t`Remove Image`}</StylishText>,
     children: (
@@ -81,10 +81,7 @@ const removeModal = (apiPath: string, setImage: (image: string) => void) =>
       </Text>
     ),
     labels: { confirm: t`Remove`, cancel: t`Cancel` },
-    onConfirm: async () => {
-      await api.patch(apiPath, { image: null });
-      setImage(backup_image);
-    }
+    onConfirm: onConfirm
   });
 
 /**
@@ -97,6 +94,7 @@ function UploadModal({
   apiPath: string;
   setImage: (image: string) => void;
 }>) {
+  const api = useApi();
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
@@ -186,8 +184,8 @@ function UploadModal({
   const { colorScheme } = useMantineColorScheme();
 
   const primaryColor =
-    vars.colors.primaryColors[colorScheme === 'dark' ? 4 : 6];
-  const redColor = vars.colors.red[colorScheme === 'dark' ? 4 : 6];
+    themeVars.colors.primaryColors[colorScheme === 'dark' ? 4 : 6];
+  const redColor = themeVars.colors.red[colorScheme === 'dark' ? 4 : 6];
 
   return (
     <Paper style={{ height: '220px' }}>
@@ -280,6 +278,7 @@ function ImageActionButtons({
   setImage: (image: string) => void;
   downloadImage: () => void;
 }>) {
+  const api = useApi();
   const globalSettings = useGlobalSettingsState();
 
   return (
@@ -362,7 +361,11 @@ function ImageActionButtons({
               tooltipAlignment='top'
               onClick={(event: any) => {
                 cancelEvent(event);
-                removeModal(apiPath, setImage);
+                removeModal(async () =>
+                  api
+                    .patch(apiPath, { image: null })
+                    .then(() => setImage(backup_image))
+                );
               }}
             />
           )}

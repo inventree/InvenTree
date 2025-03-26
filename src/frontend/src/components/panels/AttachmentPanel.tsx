@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Skeleton } from '@mantine/core';
 import { IconPaperclip } from '@tabler/icons-react';
 
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/index';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import type { PanelType } from './Panel';
 

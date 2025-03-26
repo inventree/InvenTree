@@ -10,6 +10,14 @@ import {
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiIcon, OptionsActionDropdown } from '@lib/components';
+import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/forms';
+import { getDetailUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
 import AdminButton from '../../components/buttons/AdminButton';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
@@ -19,26 +27,14 @@ import {
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
-  EditItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
-import { ApiIcon } from '../../components/items/ApiIcon';
+  EditItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
-import { getDetailUrl } from '../../functions/urls';
-import {
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import { PartListTable } from '../../tables/part/PartTable';

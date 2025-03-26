@@ -1,3 +1,6 @@
+import { StylishText } from '@lib/components';
+import { apiUrl, getApi } from '@lib/functions/api';
+import { ApiEndpoints } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -28,11 +31,9 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { api } from '../../../../App';
-import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { apiUrl, useServerApiState } from '../../../../states/ApiState';
+import { useServerApiState } from '../../../../states/ApiState';
+import type {} from '../../../../states/states';
 import {
   type AuthConfig,
   FlowEnum,
@@ -352,6 +353,7 @@ function MfaSection() {
     recoveryCodesOpen,
     { open: openRecoveryCodes, close: closeRecoveryCodes }
   ] = useDisclosure(false);
+  const api = getApi();
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['mfa-list'],
     queryFn: () =>

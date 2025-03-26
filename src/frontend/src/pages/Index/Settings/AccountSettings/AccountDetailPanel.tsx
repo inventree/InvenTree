@@ -4,15 +4,14 @@ import { Badge, Group, Stack, Table } from '@mantine/core';
 import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { ActionButton, StylishText } from '@lib/components';
+import { ActionDropdown } from '@lib/components';
+import { YesNoUndefinedButton } from '@lib/components/buttons/YesNoButton';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { useEditApiFormModal } from '@lib/forms';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { useNavigate } from 'react-router-dom';
-import { ActionButton } from '../../../../components/buttons/ActionButton';
-import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
-import { ActionDropdown } from '../../../../components/items/ActionDropdown';
-import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { useEditApiFormModal } from '../../../../hooks/UseForm';
-import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
   const navigate = useNavigate();

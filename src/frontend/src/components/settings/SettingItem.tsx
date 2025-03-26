@@ -11,14 +11,13 @@ import {
 import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
-import { apiUrl } from '../../states/ApiState';
-import type { Setting } from '../../states/states';
-import { vars } from '../../theme';
-import { Boundary } from '../Boundary';
-import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict } from '../render/ModelType';
+import { Boundary } from '@lib/components';
+import { RenderInstance } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ModelType, type Setting } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
+import { themeVars } from '@lib/index';
 
 /**
  * Render a single setting value
@@ -32,6 +31,8 @@ function SettingValue({
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
 }>) {
+  const api = useApi();
+
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
     let value = setting.value;
@@ -154,7 +155,9 @@ export function SettingItem({
   const style: Record<string, string> = { paddingLeft: '8px' };
   if (shaded) {
     style['backgroundColor'] =
-      colorScheme === 'light' ? vars.colors.gray[1] : vars.colors.gray[9];
+      colorScheme === 'light'
+        ? themeVars.colors.gray[1]
+        : themeVars.colors.gray[9];
   }
 
   return (

@@ -15,18 +15,14 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { apiUrl, showLoginNotification } from '@lib/functions';
+import { getApi } from '@lib/functions/api';
+import { followRedirect } from '@lib/functions/auth';
+import { ApiEndpoints } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { showNotification } from '@mantine/notifications';
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import {
-  doBasicLogin,
-  doSimpleLogin,
-  ensureCsrf,
-  followRedirect
-} from '../../functions/auth';
-import { showLoginNotification } from '../../functions/notifications';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
+import { doBasicLogin, doSimpleLogin, ensureCsrf } from '../../functions/auth';
+import { useServerApiState } from '../../states/ApiState';
 import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
@@ -204,6 +200,10 @@ export function RegistrationForm() {
       password2: '' as string | undefined
     }
   });
+
+  // Here we cannot use the getApi hook, as this is a protected route
+  const api = getApi();
+
   const navigate = useNavigate();
   const [auth_config, registration_enabled, sso_registration] =
     useServerApiState((state) => [

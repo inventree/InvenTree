@@ -12,17 +12,17 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { formatDate } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import dayjs from 'dayjs';
-import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../../tables/Column';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { TableHoverCard } from '../../tables/TableHoverCard';
 
 /*
  * Render a tooltip for the chart, with correct date information

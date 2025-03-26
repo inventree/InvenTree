@@ -4,10 +4,10 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { useInstance } from '../../hooks/UseInstance';
+import { StylishText } from '@lib/components';
+import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { InfoItem } from '../items/InfoItem';
-import { StylishText } from '../items/StylishText';
 import { PluginSettingList } from '../settings/SettingList';
 import type { PluginInterface } from './PluginInterface';
 import PluginSettingsPanel from './PluginSettingsPanel';

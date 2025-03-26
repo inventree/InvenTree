@@ -1,31 +1,30 @@
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
-
-import { IconTruckDelivery } from '@tabler/icons-react';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
+import { ActionButton } from '@lib/components';
 import {
   useBulkEditApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { formatDate } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { UserRoles } from '@lib/index';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { t } from '@lingui/core/macro';
+import { IconTruckDelivery } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
+import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
   LocationColumn,
   PartColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderAllocationTable({
   partId,

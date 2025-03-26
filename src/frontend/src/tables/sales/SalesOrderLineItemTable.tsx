@@ -11,42 +11,40 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
-import { RenderPart } from '../../components/render/Part';
+import { ActionButton, RenderPart } from '@lib/components';
+import { ProgressBar } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { RowExpansionIcon } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useAllocateToSalesOrderForm,
   useSalesOrderAllocateSerialsFields,
   useSalesOrderLineItemFields
 } from '../../forms/SalesOrderForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
 import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({

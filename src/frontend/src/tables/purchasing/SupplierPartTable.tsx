@@ -2,21 +2,25 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { useSupplierPartFields } from '../../forms/CompanyForms';
+import { Thumbnail } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
+import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   BooleanColumn,
   DescriptionColumn,
@@ -24,10 +28,6 @@ import {
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Construct a table listing supplier parts

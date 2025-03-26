@@ -2,11 +2,11 @@ import { t } from '@lingui/core/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useMemo, useState } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
-import { useInstance } from '../../hooks/UseInstance';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
+import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import BomPricingPanel from './pricing/BomPricingPanel';
 import PriceBreakPanel from './pricing/PriceBreakPanel';
 import PricingOverviewPanel from './pricing/PricingOverviewPanel';

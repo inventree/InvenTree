@@ -2,9 +2,9 @@ import { t } from '@lingui/core/macro';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 
 /**
  * Hook for generating a placeholder text for a serial number input
@@ -24,6 +24,8 @@ export function useSerialNumberPlaceholder({
   key: string;
   enabled?: boolean;
 }): string | undefined {
+  const api = useApi();
+
   // Fetch serial number information (if available)
   const snQuery = useQuery({
     queryKey: ['serial-placeholder', key, partId],

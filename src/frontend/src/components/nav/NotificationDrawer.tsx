@@ -18,17 +18,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
-import { getBaseUrl } from '../../main';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
-import { ModelInformationDict } from '../render/ModelType';
+import { Boundary } from '@lib/components';
+import { StylishText } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { getBaseUrl, navigateToLink } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
+import { useUserState } from '@lib/index';
 
 /**
  * Render a single notification entry in the drawer
@@ -40,7 +39,9 @@ function NotificationEntry({
   notification: any;
   onRead: () => void;
 }>) {
+  const api = useApi();
   const navigate = useNavigate();
+  const base_url = getBaseUrl();
 
   let link = notification.target?.link;
 
@@ -67,7 +68,7 @@ function NotificationEntry({
         >
           <Stack gap={2}>
             <Anchor
-              href={link ? `/${getBaseUrl()}${link}` : '#'}
+              href={link ? `/${base_url}${link}` : '#'}
               underline='hover'
               target='_blank'
               onClick={(event: any) => {
@@ -107,7 +108,7 @@ export function NotificationDrawer({
   onClose: () => void;
 }>) {
   const { isLoggedIn } = useUserState();
-
+  const api = useApi();
   const navigate = useNavigate();
 
   const notificationQuery = useQuery({

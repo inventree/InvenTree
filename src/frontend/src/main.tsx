@@ -12,23 +12,10 @@ import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import type { HostList } from './states/states';
+import { getBaseUrl } from '@lib/functions';
 import MainView from './views/MainView';
 
 // define settings
-declare global {
-  interface Window {
-    INVENTREE_SETTINGS: {
-      server_list: HostList;
-      default_server: string;
-      show_server_selector: boolean;
-      base_url: string;
-      sentry_dsn?: string;
-      environment?: string;
-    };
-    React: typeof React;
-  }
-}
 
 export const IS_DEV = import.meta.env.DEV;
 export const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
@@ -88,9 +75,6 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
     environment: window.INVENTREE_SETTINGS.environment || 'default'
   });
 }
-
-export const getBaseUrl = (): string =>
-  window.INVENTREE_SETTINGS?.base_url || 'web';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

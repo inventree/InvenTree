@@ -19,11 +19,11 @@ import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { Suspense, useState } from 'react';
 
+import { Thumbnail } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { IconX } from '@tabler/icons-react';
-import { api } from '../../App';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 
 /**
  * Input props to table
@@ -96,35 +96,12 @@ function PartThumbComponent({
 }
 
 /**
- * Changes a part's image to the supplied URL and updates the DOM accordingly
- */
-async function setNewImage(
-  image: string | null,
-  pk: string,
-  setImage: (image: string) => void
-) {
-  // No need to do anything if no image is selected
-  if (image === null) {
-    return;
-  }
-
-  const response = await api.patch(apiUrl(ApiEndpoints.part_list, pk), {
-    existing_image: image
-  });
-
-  // Update image component and close modal if update was successful
-  if (response.data.image.includes(image)) {
-    setImage(response.data.image);
-    modals.closeAll();
-  }
-}
-
-/**
  * Renders a "table" of thumbnails
  */
 export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
   const limit = 24;
 
+  const api = useApi();
   const [thumbImage, setThumbImage] = useState<string | null>(null);
   const [filterInput, setFilterInput] = useState<string>('');
 
@@ -219,7 +196,20 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
           </Group>
           <Button
             disabled={!thumbImage}
-            onClick={() => setNewImage(thumbImage, pk, setImage)}
+            onClick={() => {
+              if (!!thumbImage) {
+                api
+                  .patch(apiUrl(ApiEndpoints.part_list, pk), {
+                    existing_image: thumbImage
+                  })
+                  .then((response) => {
+                    if (response.data.image.includes(thumbImage)) {
+                      setImage(response.data.image);
+                      modals.closeAll();
+                    }
+                  });
+              }
+            }}
           >
             <Trans>Select</Trans>
           </Button>

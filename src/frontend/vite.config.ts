@@ -1,4 +1,5 @@
 import { platform, release } from 'node:os';
+
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
@@ -37,7 +38,7 @@ export default defineConfig({
       }
     }),
     istanbul({
-      include: 'src/*',
+      include: ['src/*', 'lib/*'],
       exclude: ['node_modules', 'test/'],
       extension: ['.js', '.ts', '.tsx'],
       requireEnv: true
@@ -49,10 +50,15 @@ export default defineConfig({
     })
   ],
   base: '',
+  resolve: {
+    alias: {
+      '@lib': '/lib'
+    }
+  },
   build: {
     manifest: true,
-    outDir: '../../src/backend/InvenTree/web/static/web',
-    sourcemap: is_coverage
+    sourcemap: true,
+    outDir: '../../src/backend/InvenTree/web/static/web'
   },
   server: {
     proxy: {

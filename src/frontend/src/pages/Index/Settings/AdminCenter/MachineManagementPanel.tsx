@@ -13,10 +13,10 @@ import { IconInfoCircle, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { api } from '../../../../App';
-import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { apiUrl } from '../../../../states/ApiState';
+import { StylishText } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';
 import { MachineTypeListTable } from '../../../../tables/machine/MachineTypeTable';
 
@@ -25,6 +25,7 @@ interface MachineRegistryStatusI {
 }
 
 export default function MachineManagementPanel() {
+  const api = useApi();
   const { data: registryStatus, refetch } = useQuery<MachineRegistryStatusI>({
     queryKey: ['machine-registry-status'],
     queryFn: () =>

@@ -1,22 +1,22 @@
+import { ActionButton } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import type { ApiFormFieldSet } from '@lib/forms';
+import { StandaloneField } from '@lib/forms';
+import { useCreateApiFormModal } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
-import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
-import { ActionButton } from '../buttons/ActionButton';
-import { AddItemButton } from '../buttons/AddItemButton';
 import RemoveRowButton from '../buttons/RemoveRowButton';
-import { StandaloneField } from '../forms/StandaloneField';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import Expand from '../items/Expand';
 
 /**
@@ -153,7 +153,7 @@ function SelectPartsStep({
                   model: ModelType.supplierpart,
                   required: true,
                   value: record.supplier_part?.pk,
-                  onValueChange: (value, instance) => {
+                  onValueChange: (value: number, instance: any) => {
                     onSelectSupplierPart(record.part.pk, instance);
                   },
                   filters: {
@@ -195,7 +195,7 @@ function SelectPartsStep({
                     supplier: record.supplier_part?.supplier,
                     outstanding: true
                   },
-                  onValueChange: (value, instance) => {
+                  onValueChange: (value: number, instance: any) => {
                     onSelectPurchaseOrder(record.part.pk, instance);
                   }
                 }}

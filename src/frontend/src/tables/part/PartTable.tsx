@@ -2,28 +2,25 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
+import { InvenTreeIcon } from '@lib/components';
+import { ActionDropdown } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import { useBulkEditApiFormModal, useCreateApiFormModal } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { formatPriceRange } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ActionDropdown } from '../../components/items/ActionDropdown';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
-import { InvenTreeIcon } from '../../functions/icons';
-import {
-  useBulkEditApiFormModal,
-  useCreateApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the part table

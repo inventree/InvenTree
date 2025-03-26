@@ -2,17 +2,18 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { ProgressBar } from '../../components/items/ProgressBar';
-import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
+import { ProgressBar } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { TableHoverCard } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions, type TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
+import { StatusFilterOptions } from '../Filter';
 
 export default function PartPurchaseOrdersTable({
   partId

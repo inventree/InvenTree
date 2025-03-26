@@ -1,6 +1,6 @@
+import { generateUrl } from '@lib/functions';
 import { BackgroundImage } from '@mantine/core';
 import { useEffect } from 'react';
-import { generateUrl } from '../functions/urls';
 import { useServerApiState } from '../states/ApiState';
 
 /**

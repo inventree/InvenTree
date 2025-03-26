@@ -3,28 +3,27 @@ import { Table, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { RenderBuildOrder } from '../../components/render/Build';
-import { RenderCompany } from '../../components/render/Company';
 import {
+  RenderBuildOrder,
+  RenderCompany,
+  RenderPart,
   RenderPurchaseOrder,
   RenderReturnOrder,
-  RenderSalesOrder
-} from '../../components/render/Order';
-import { RenderPart } from '../../components/render/Part';
-import { StatusRenderer } from '../../components/render/StatusRenderer';
-import {
+  RenderSalesOrder,
   RenderStockItem,
-  RenderStockLocation
-} from '../../components/render/Stock';
-import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
+  RenderStockLocation,
+  RenderUser,
+  StatusRenderer
+} from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
-import { type TableFilter, UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { UserFilter } from '../Filter';
 
 type StockTrackingEntry = {
   label: string;

@@ -2,33 +2,29 @@ import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import type {
-  StatusCodeInterface,
-  StatusCodeListInterface
-} from '../../components/render/StatusRenderer';
-import { statusColorMap } from '../../defaults/backendMappings';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
-import { useCustomStateFields } from '../../forms/CommonForms';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalStatusState } from '../../states/StatusState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import type { StatusCodeInterface, StatusCodeListInterface } from '@lib/index';
+import { statusColorMap } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalStatusState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
 import {
-  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
-} from '../RowActions';
+} from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
+import { useCustomStateFields } from '../../forms/CommonForms';
 
 /**
  * Table for displaying list of custom states

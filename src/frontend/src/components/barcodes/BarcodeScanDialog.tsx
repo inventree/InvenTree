@@ -1,16 +1,15 @@
+import { StylishText } from '@lib/components';
+import { apiUrl, extractErrorMessage } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { extractErrorMessage } from '../../functions/api';
-import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import { StylishText } from '../items/StylishText';
-import { ModelInformationDict } from '../render/ModelType';
 import { BarcodeInput } from './BarcodeInput';
 
 export default function BarcodeScanDialog({
@@ -45,6 +44,7 @@ export function ScanInputHandler({
   const [error, setError] = useState<string>('');
   const [processing, setProcessing] = useState<boolean>(false);
   const user = useUserState();
+  const api = useApi();
 
   const onScan = useCallback((barcode: string) => {
     if (!barcode || barcode.length === 0) {

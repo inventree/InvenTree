@@ -19,38 +19,37 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  OptionsActionDropdown,
+  StylishText,
+  YesNoButton
+} from '@lib/components';
+import { StatusRenderer, TableStatusRenderer } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useApi } from '@lib/hooks/UseApi';
+import { ApiEndpoints } from '@lib/index';
+import type { InvenTreeTableProps, TableColumn } from '@lib/tables';
 import { Trans } from '@lingui/react/macro';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
   DeleteItemAction,
-  EditItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  EditItemAction
+} from '../../components/items/Dropdown';
 import { InfoItem } from '../../components/items/InfoItem';
-import { StylishText } from '../../components/items/StylishText';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
 import {
   DetailDrawer,
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
-import {
-  StatusRenderer,
-  TableStatusRenderer
-} from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
-import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';
 
 interface MachineI {

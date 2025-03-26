@@ -2,15 +2,15 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { formatDecimal } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
+import { apiUrl } from '@lib/functions';
+import { formatDecimal } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * For a given part, render a table showing all the assemblies the part is used in

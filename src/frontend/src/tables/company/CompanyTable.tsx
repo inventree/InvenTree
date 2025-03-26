@@ -3,24 +3,21 @@ import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import { Thumbnail } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
+import { useCreateApiFormModal, useEditApiFormModal } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableFilter } from '@lib/tables';
+import { RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import { companyFields } from '../../forms/CompanyForms';
-import { navigateToLink } from '../../functions/navigation';
-import {
-  useCreateApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * A table which displays a list of company records,
