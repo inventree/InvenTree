@@ -11,12 +11,13 @@ import istanbul from 'vite-plugin-istanbul';
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
 
 // Detect if code coverage is enabled (runs in GitHub CI)
-const IS_COVERAGE = process.env.VITE_COVERAGE === 'true';
+const IS_COVERAGE = !!process.env.VITE_COVERAGE_BUILD;
 
 if (IS_IN_WSL) {
   console.log('WSL detected: using polling for file system events');
 }
 
+// Output directory for the built files
 const OUTPUT_DIR = '../../src/backend/InvenTree/web/static/web';
 
 // https://vitejs.dev/config/
