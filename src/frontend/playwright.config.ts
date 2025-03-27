@@ -13,7 +13,7 @@ console.log(`  - CI Mode: ${IS_CI}`);
 console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
 console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
-const MAX_WORKERS: number = 3;
+const MAX_WORKERS: number = 1;
 const MAX_RETRIES: number = 5;
 
 /* We optionally spin-up services based on the testing mode:
@@ -68,7 +68,7 @@ const webServer: TestConfigWebServer = {
     INVENTREE_COOKIE_SAMESITE: 'Lax',
     INVENTREE_LOGIN_ATTEMPTS: '100'
   },
-  url: 'http://127.0.0.1:8000/api/',
+  url: 'http://localhost:8000/api/',
   reuseExistingServer: IS_CI,
   stdout: 'pipe',
   stderr: 'pipe',
