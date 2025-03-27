@@ -46,21 +46,18 @@ const devServer: TestConfigWebServer = {
   timeout: 120 * 1000
 };
 
-// Command to spin-up the backend server
-const WEB_SERVER_CMD: string = 'invoke dev.server -a 127.0.0.1:8000';
-
-// In production mode, we want a stronger webserver to handle multiple requests
-const GUNICORN_CMD: string =
-  'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi';
-
 const WEB_BUILD_CMD: string =
   'yarn run extract && yarn run compile && yarn run build';
 
+// Command to spin-up the backend server
+// In production mode, we want a stronger webserver to handle multiple requests
+const WEB_SERVER_CMD: string = IS_PRODUCTION
+  ? `${WEB_BUILD_CMD} && gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi`
+  : 'invoke dev.server -a 127.0.0.1:8000';
+
 const webServer: TestConfigWebServer = {
   // If running in production mode, we need to build the frontend first
-  command: IS_PRODUCTION
-    ? `${WEB_BUILD_CMD} && ${GUNICORN_CMD}`
-    : WEB_SERVER_CMD,
+  command: WEB_SERVER_CMD,
   env: {
     INVENTREE_DEBUG: 'True',
     INVENTREE_PLUGINS_ENABLED: 'True',
