@@ -32,6 +32,8 @@ export const doQuickLogin = async (
   password = password ?? user.password;
   url = url ?? baseUrl;
 
+  // TODO: Cache the login state locally - and share between tests
+
   await navigate(page, `${url}/login?login=${username}&password=${password}`);
   await page.waitForURL('**/web/home');
 

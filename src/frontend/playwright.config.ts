@@ -13,7 +13,8 @@ console.log(`  - CI Mode: ${IS_CI}`);
 console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
 console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
-const MAX_WORKERS: number = 5;
+// TODO: Increase maximum worker count once we have solved task parallelism issues
+const MAX_WORKERS: number = 1;
 const MAX_RETRIES: number = 5;
 
 /* We optionally spin-up services based on the testing mode:
@@ -47,13 +48,18 @@ const devServer: TestConfigWebServer = {
 
 // Command to spin-up the backend server
 const WEB_SERVER_CMD: string = 'invoke dev.server -a 127.0.0.1:8000';
+
+// In production mode, we want a stronger webserver to handle multiple requests
+const GUNICORN_CMD: string =
+  'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi';
+
 const WEB_BUILD_CMD: string =
   'yarn run extract && yarn run compile && yarn run build';
 
 const webServer: TestConfigWebServer = {
   // If running in production mode, we need to build the frontend first
   command: IS_PRODUCTION
-    ? `${WEB_BUILD_CMD} && ${WEB_SERVER_CMD}`
+    ? `${WEB_BUILD_CMD} && ${GUNICORN_CMD}`
     : WEB_SERVER_CMD,
   env: {
     INVENTREE_DEBUG: 'True',
