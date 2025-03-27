@@ -1,6 +1,6 @@
 import { expect } from './baseFixtures.js';
 import { baseUrl, logoutUrl, user } from './defaults';
-import { navigate } from './helpers.js';
+import { navigate, waitForUrl } from './helpers.js';
 
 /*
  * Perform form based login operation from the "login" URL
@@ -11,11 +11,11 @@ export const doLogin = async (page, username?: string, password?: string) => {
 
   await navigate(page, logoutUrl);
   await expect(page).toHaveTitle(/^InvenTree.*$/);
-  await page.waitForURL('**/web/login');
+  await waitForUrl(page, '**/web/login');
   await page.getByLabel('username').fill(username);
   await page.getByLabel('password').fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/web/home');
+  await waitForUrl(page, '**/web/home');
   await page.waitForTimeout(250);
 };
 
@@ -45,5 +45,5 @@ export const doQuickLogin = async (
 
 export const doLogout = async (page) => {
   await navigate(page, 'logout');
-  await page.waitForURL('**/web/login');
+  await waitForUrl(page, '**/web/login');
 };

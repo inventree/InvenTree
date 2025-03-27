@@ -109,6 +109,7 @@ export default defineConfig({
   webServer: serverList,
   use: {
     baseURL: IS_PRODUCTION ? 'http://localhost:8000' : 'http://localhost:5173',
-    trace: 'on-first-retry'
+    trace: IS_PRODUCTION ? 'off' : 'on-first-retry',
+    headless: IS_PRODUCTION ? true : undefined
   }
 });
