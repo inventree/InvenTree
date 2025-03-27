@@ -13,8 +13,7 @@ console.log(`  - CI Mode: ${IS_CI}`);
 console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
 console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
-// TODO: Increase maximum worker count once we have solved task parallelism issues
-const MAX_WORKERS: number = 1;
+const MAX_WORKERS: number = 3;
 const MAX_RETRIES: number = 5;
 
 /* We optionally spin-up services based on the testing mode:
