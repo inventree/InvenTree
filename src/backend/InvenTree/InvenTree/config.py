@@ -422,8 +422,6 @@ def get_frontend_settings(debug=True):
     if api_host:
         frontend_settings['api_host'] = api_host
 
-    frontend_settings['api_host'] = 'http://api.localhost:8765'
-
     # Set the server list
     frontend_settings['server_list'] = frontend_settings.get('server_list', [])
 

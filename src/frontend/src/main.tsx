@@ -22,7 +22,8 @@ declare global {
       server_list: HostList;
       default_server: string;
       show_server_selector: boolean;
-      base_url: string;
+      base_url?: string;
+      api_host?: string;
       sentry_dsn?: string;
       environment?: string;
     };
@@ -36,6 +37,7 @@ export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
 
 // Filter out any settings that are not defined
 const loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
+
 Object.keys(loaded_vals).forEach((key) => {
   if (loaded_vals[key] === undefined) {
     delete loaded_vals[key];
