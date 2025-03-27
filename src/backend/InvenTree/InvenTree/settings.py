@@ -1405,6 +1405,7 @@ FLAGS = {
     'NEXT_GEN': [
         {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
+    'OIDC': [{'condition': 'parameter', 'value': 'oidc='}],
 }
 
 # Get custom flags from environment/yaml

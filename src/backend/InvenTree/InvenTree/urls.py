@@ -12,6 +12,7 @@ from django.views.generic.base import RedirectView
 
 from allauth.headless.urls import Client, build_urlpatterns
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+from flags.urls import flagged_path
 from oauth2_provider import urls as oauth2_urls
 from sesame.views import LoginView
 
@@ -127,7 +128,7 @@ backendpatterns = [
     path('auth/', auth_request),  # Used for proxies to check if user is authenticated
     path('accounts/', include('allauth.urls')),
     # OAuth2
-    path('o/', include(oauth2_urls)),
+    flagged_path('OIDC', 'o/', include(oauth2_urls)),
     path(
         'accounts/login/',
         RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
