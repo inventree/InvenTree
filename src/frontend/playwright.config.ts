@@ -14,7 +14,7 @@ console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
 console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
 const MAX_WORKERS: number = 1;
-const MAX_RETRIES: number = 5;
+const MAX_RETRIES: number = 1;
 
 /* We optionally spin-up services based on the testing mode:
  *
