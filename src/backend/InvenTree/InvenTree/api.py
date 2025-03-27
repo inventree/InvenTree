@@ -566,6 +566,7 @@ class APISearchViewSerializer(serializers.Serializer):
     search = serializers.CharField()
     search_regex = serializers.BooleanField(default=False, required=False)
     search_whole = serializers.BooleanField(default=False, required=False)
+    search_notes = serializers.BooleanField(default=False, required=False)
     limit = serializers.IntegerField(default=1, required=False)
     offset = serializers.IntegerField(default=0, required=False)
 
@@ -627,6 +628,7 @@ class APISearchView(GenericAPIView):
             'search': '',
             'search_regex': False,
             'search_whole': False,
+            'search_notes': False,
             'limit': 1,
             'offset': 0,
         }

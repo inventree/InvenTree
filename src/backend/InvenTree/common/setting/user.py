@@ -165,6 +165,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SEARCH_NOTES': {
+        'name': _('Search Notes'),
+        'description': _(
+            "Search queries return results for matches from the item's notes"
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PART_SHOW_QUANTITY_IN_FORMS': {
         'name': _('Show Quantity in Forms'),
         'description': _('Display available part quantity in some forms'),
