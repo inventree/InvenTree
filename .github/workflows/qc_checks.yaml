@@ -554,7 +554,7 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-  platform_ui:
+  web_ui:
     name: Tests - Web UI
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -633,7 +633,7 @@ jobs:
           yarn install
           yarn run build
 
-  platform_ui_build:
+  web_ui_build:
     name: Build - Web UI
     runs-on: ubuntu-24.04
     timeout-minutes: 60
