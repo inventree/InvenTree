@@ -605,15 +605,12 @@ jobs:
         run: |
           invoke int.frontend-compile
           cd src/frontend && npx playwright install --with-deps
-      - name: Set Environment Variables
-        run: |
-          if [[ "${github.event_name }}" == "pull_request" ]]; then
-            echo "VITE_PRODUCTION_BUILD=true" >> $GITHUB_ENV
-            echo "Running playwright tests in production mode"
-          else
-            echo "VITE_COVERAGE_BUILD=true" >> $GITHUB_ENV
-            echo "Running playwright tests in coverage mode"
-          fi
+      - name: Set Production Mode
+        if: github.event_name =!= 'pull_request'
+        run: echo "VITE_PRODUCTION_BUILD=true" >> $GITHUB_ENV
+      - name: Set Coverage Mode
+        if: github.event_name != 'pull_request'
+        run: echo "VITE_COVERAGE_BUILD=true" >> $GITHUB_ENV
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
