@@ -15,6 +15,15 @@ from users.oauth2_scopes import (
     get_granular_scope,
 )
 
+ACTION_MAP = {
+    'GET': 'view',
+    'POST': 'add',
+    'PUT': 'change',
+    'PATCH': 'change',
+    'DELETE': 'delete',
+    'OPTIONS': DEFAULT_READ,
+}
+
 
 def get_model_for_view(view):
     """Attempt to introspect the 'model' type for an API view."""
@@ -61,14 +70,7 @@ class RolePermission(permissions.BasePermission):
             return True
 
         # Map the request method to a permission type
-        rolemap = {
-            'GET': 'view',
-            'OPTIONS': 'view',
-            'POST': 'add',
-            'PUT': 'change',
-            'PATCH': 'change',
-            'DELETE': 'delete',
-        }
+        rolemap = {**ACTION_MAP, 'OPTIONS': 'view'}
 
         # let the view define a custom rolemap
         if hasattr(view, 'rolemap'):
@@ -101,16 +103,6 @@ class RolePermission(permissions.BasePermission):
             return True
 
         return users.models.RuleSet.check_table_permission(user, table, permission)
-
-
-ACTION_MAP = {
-    'GET': 'view',
-    'POST': 'add',
-    'PUT': 'change',
-    'PATCH': 'change',
-    'DELETE': 'delete',
-    'OPTIONS': DEFAULT_READ,
-}
 
 
 def map_scope(
@@ -162,7 +154,7 @@ for role, tables in roles.items():
         precalculated_roles[table].append(role)
 
 
-class CombinedPermissionMixin:
+class OASTokenMatcher(TokenMatchesOASRequirements):
     """Mixin that combines the permissions of normal classes and token classes."""
 
     def has_permission(self, request, view):
@@ -179,9 +171,7 @@ class CombinedPermissionMixin:
         )
 
 
-class InvenTreeTokenMatchesOASRequirements(
-    CombinedPermissionMixin, TokenMatchesOASRequirements
-):
+class InvenTreeTokenMatchesOASRequirements(OASTokenMatcher):
     """Permission that discovers the required scopes from the OpenAPI schema."""
 
     def get_required_alternate_scopes(self, request, view):
@@ -208,9 +198,7 @@ class InvenTreeTokenMatchesOASRequirements(
             return map_scope(only_read=True)
 
 
-class IsSuperuserOrSuperScope(
-    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
-):
+class IsSuperuserOrSuperScope(OASTokenMatcher, permissions.IsAdminUser):
     """Allows access only to superuser users."""
 
     def has_permission(self, request, view):
@@ -222,9 +210,7 @@ class IsSuperuserOrSuperScope(
         return map_scope(only_read=True, read_name=DEFAULT_SUPERUSER)
 
 
-class IsSuperuserOrReadOnlyOrScope(
-    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
-):
+class IsSuperuserOrReadOnlyOrScope(OASTokenMatcher, permissions.IsAdminUser):
     """Allow read-only access to any user, but write access is restricted to superuser users."""
 
     def has_permission(self, request, view):
@@ -254,9 +240,7 @@ class IsStaffOrReadOnly(permissions.IsAdminUser):
         )
 
 
-class IsAuthenticatedOrReadScope(
-    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAuthenticated
-):
+class IsAuthenticatedOrReadScope(OASTokenMatcher, permissions.IsAuthenticated):
     """Allows access only to authenticated users or read scope tokens."""
 
     def get_required_alternate_scopes(self, request, view):
@@ -264,9 +248,7 @@ class IsAuthenticatedOrReadScope(
         return map_scope(only_read=True)
 
 
-class IsAdminOrAdminScope(
-    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
-):
+class IsAdminOrAdminScope(OASTokenMatcher, permissions.IsAdminUser):
     """Allows access only to admin users or admin scope tokens."""
 
     def get_required_alternate_scopes(self, request, view):
@@ -296,9 +278,7 @@ def auth_exempt(view_func):
     return wraps(view_func)(wrapped_view)
 
 
-class UserSettingsPermissionsOrScope(
-    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.BasePermission
-):
+class UserSettingsPermissionsOrScope(OASTokenMatcher, permissions.BasePermission):
     """Special permission class to determine if the user can view / edit a particular setting."""
 
     def has_object_permission(self, request, view, obj):
@@ -315,9 +295,7 @@ class UserSettingsPermissionsOrScope(
         return map_scope(only_read=True)
 
 
-class GlobalSettingsPermissions(
-    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.BasePermission
-):
+class GlobalSettingsPermissions(OASTokenMatcher, permissions.BasePermission):
     """Special permission class to determine if the user is "staff"."""
 
     def has_permission(self, request, view):
