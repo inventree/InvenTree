@@ -40,15 +40,13 @@ export const doCachedLogin = async (
   const fn = path.resolve(`./playwright/auth/${username}.json`);
 
   if (fs.existsSync(fn)) {
-    // await page.context().storageState({ path: fn });
-    // await page.context().useStorageState({ path: fn });
     const page = await browser.newPage({
       storageState: fn
     });
-    // page.context = page.browser.newContext({ storageState: fn });
     console.log(`Using cached login state for ${username}`);
     await navigate(page, '/login/');
-    await page.waitForURL('**/web/home');
+    await page.waitForURL('**/web/home**');
+    await page.waitForLoadState('load');
     return page;
   }
 
@@ -68,7 +66,7 @@ export const doCachedLogin = async (
 
   // Wait for the dashboard to load
   await page.getByText('No widgets selected').waitFor();
-  await page.waitForTimeout(250);
+  await page.waitForLoadState('load');
 
   // Cache the login state
   await page.context().storageState({ path: fn });
