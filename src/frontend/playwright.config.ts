@@ -24,10 +24,11 @@ const MAX_RETRIES: number = 5;
  * - This allows playwright to monitor the code for changes
  * - WORKERS = 1 (to avoid conflicts with HMR)
  *
- * CI Mode (PR):
+ * CI Mode (Production):
  * - In CI (GitHub actions), we run "vite build" to generate a production build
  * - This build is then served by a local server for testing
  * - This allows the tests to run much faster and with parallel workers
+ * - Run a Gunicorn multi-threaded web server to handle multiple requests
  * - WORKERS = MAX_WORKERS (to speed up the tests)
  *
  * CI Mode (Coverage):
@@ -113,6 +114,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: serverList,
+  globalSetup: './playwright/global-setup.ts',
   use: {
     baseURL: IS_PRODUCTION ? 'http://localhost:8000' : 'http://localhost:5173',
     headless: IS_PRODUCTION ? true : undefined
