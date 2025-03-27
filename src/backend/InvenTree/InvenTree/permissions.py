@@ -237,12 +237,12 @@ class IsAuthenticatedOrReadScope(OASTokenMatcher, permissions.IsAuthenticated):
         return map_scope(only_read=True)
 
 
-class IsStaffOrReadOnlyScope(permissions.IsAdminUser, IsAuthenticatedOrReadScope):
-    """Allows read-only access to any user, but write access is restricted to staff users."""
+class IsStaffOrReadOnlyScope(OASTokenMatcher, permissions.IsAuthenticated):
+    """Allows read-only access to any authenticated user, but write access is restricted to staff users."""
 
     def has_permission(self, request, view):
-        """Check if the user is a superuser."""
-        return bool(
+        """Check if the user is a staff."""
+        return bool(permissions.IsAuthenticated().has_permission(request, view)) and (
             (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
         )
