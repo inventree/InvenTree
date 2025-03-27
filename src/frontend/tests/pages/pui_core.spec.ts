@@ -1,9 +1,9 @@
 import { test } from '../baseFixtures.js';
 import { loadTab, navigate } from '../helpers.js';
-import { doQuickLogin } from '../login.js';
+import { doCachedLogin } from '../login.js';
 
-test('Core User/Group/Contact', async ({ page }) => {
-  await doQuickLogin(page);
+test('Core User/Group/Contact', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   // groups
   await navigate(page, '/core');

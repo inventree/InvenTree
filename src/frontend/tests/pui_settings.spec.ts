@@ -1,14 +1,14 @@
 import { expect, test } from './baseFixtures.js';
 import { apiUrl } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
-import { doQuickLogin } from './login.js';
+import { doCachedLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
 /**
  * Adjust language and color settings
  */
-test('Settings - Language / Color', async ({ page }) => {
-  await doQuickLogin(page);
+test('Settings - Language / Color', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
@@ -30,8 +30,14 @@ test('Settings - Language / Color', async ({ page }) => {
   await page.waitForURL('**/web/home');
 });
 
-test('Settings - User theme', async ({ page }) => {
-  await doQuickLogin(page);
+test('Settings - User theme', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits'
+  });
+
+  await page.waitForLoadState('networkidle');
+
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Account settings' }).click();
 
@@ -72,9 +78,12 @@ test('Settings - User theme', async ({ page }) => {
   await page.getByLabel('#228be6').click();
 });
 
-test('Settings - Admin', async ({ page }) => {
+test('Settings - Admin', async ({ browser }) => {
   // Note here we login with admin access
-  await doQuickLogin(page, 'admin', 'inventree');
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
@@ -169,9 +178,12 @@ test('Settings - Admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
-test('Settings - Admin - Barcode History', async ({ page, request }) => {
+test('Settings - Admin - Barcode History', async ({ browser, request }) => {
   // Login with admin credentials
-  await doQuickLogin(page, 'admin', 'inventree');
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that the "save scans" setting is enabled
   await setSettingState({
@@ -206,11 +218,14 @@ test('Settings - Admin - Barcode History', async ({ page, request }) => {
   });
 });
 
-test('Settings - Admin - Unauthorized', async ({ page }) => {
+test('Settings - Admin - Unauthorized', async ({ browser }) => {
   // Try to access "admin" page with a non-staff user
-  await doQuickLogin(page, 'allaccess', 'nolimits');
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/admin/'
+  });
 
-  await navigate(page, 'settings/admin/');
   await page.waitForURL('**/settings/admin/**');
 
   // Should get a permission denied message
@@ -237,9 +252,12 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
 });
 
 // Test for user auth configuration
-test('Settings - Auth - Email', async ({ page }) => {
-  await doQuickLogin(page, 'allaccess', 'nolimits');
-  await navigate(page, 'settings/user/');
+test('Settings - Auth - Email', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/user/'
+  });
 
   await loadTab(page, 'Security');
 
@@ -254,9 +272,8 @@ test('Settings - Auth - Email', async ({ page }) => {
   await page.getByRole('button', { name: 'Remove' }).click();
 
   await page.getByText('Currently no email addresses are registered').waitFor();
-
-  await page.waitForTimeout(2500);
 });
+
 async function testColorPicker(page, ref: string) {
   const element = page.getByLabel(ref);
   await element.click();

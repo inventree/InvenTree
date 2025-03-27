@@ -23,18 +23,29 @@ export const doLogin = async (page, username?: string, password?: string) => {
   await page.waitForTimeout(250);
 };
 
+export interface CachedLoginOptions {
+  username?: string;
+  password?: string;
+  url?: string;
+}
+
 /*
  * Perform a quick login based on passing URL parameters
  */
 export const doCachedLogin = async (
   browser: Browser,
-  username?: string,
-  password?: string,
-  url?: string
+  options?: CachedLoginOptions
 ): Promise<Page> => {
-  username = username ?? user.username;
-  password = password ?? user.password;
-  url = url ?? baseUrl;
+  const username = options?.username ?? user.username;
+  const password = options?.password ?? user.password;
+  const url = options?.url ?? baseUrl;
+
+  // FAIL if any of the following usernames are provided
+  // This is to prevent tests from running with the wrong user
+  // Some usernames are reserved for specific tests
+  if (['noaccess', 'ian', 'susan', 'reader'].includes(username)) {
+    throw new Error(`Cannot run tests with reserved username: ${username}`);
+  }
 
   // Cache the login state locally - and share between tests
   const fn = path.resolve(`./playwright/auth/${username}.json`);
@@ -44,8 +55,8 @@ export const doCachedLogin = async (
       storageState: fn
     });
     console.log(`Using cached login state for ${username}`);
-    await navigate(page, '/login/');
-    await page.waitForURL('**/web/home**');
+    await navigate(page, url);
+    await page.waitForURL('**/web/**');
     await page.waitForLoadState('load');
     return page;
   }
@@ -54,15 +65,16 @@ export const doCachedLogin = async (
   const page = await browser.newPage();
 
   // Ensure we are logged out first
-  await doLogout(page);
+  // await doLogout(page);
 
   console.log(`No cache found - logging in for ${username}`);
 
-  await navigate(page, `${url}/login?login=${username}&password=${password}`);
-  await page.waitForURL('**/web/home');
-
+  await doLogin(page, username, password);
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
   await page.getByText(/InvenTree Demo Server -/).waitFor();
+  await page.waitForURL('**/web/**');
+  // await navigate(page, `/login?login=${username}&password=${password}`);
+  // awaiit
 
   // Wait for the dashboard to load
   await page.getByText('No widgets selected').waitFor();
@@ -71,6 +83,7 @@ export const doCachedLogin = async (
   // Cache the login state
   await page.context().storageState({ path: fn });
 
+  await navigate(page, url);
   return page;
 };
 
