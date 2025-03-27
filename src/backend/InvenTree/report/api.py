@@ -29,10 +29,7 @@ class TemplatePermissionMixin:
     """Permission mixin for report and label templates."""
 
     # Read only for non-staff users
-    permission_classes = [
-        InvenTree.permissions.IsAuthenticatedOrReadScope,
-        InvenTree.permissions.IsStaffOrReadOnly,
-    ]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
 class ReportFilterBase(rest_filters.FilterSet):

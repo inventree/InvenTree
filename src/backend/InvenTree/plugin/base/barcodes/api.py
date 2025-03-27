@@ -767,10 +767,7 @@ class BarcodeScanResultMixin:
 
     queryset = common.models.BarcodeScanResult.objects.all()
     serializer_class = barcode_serializers.BarcodeScanResultSerializer
-    permission_classes = [
-        InvenTree.permissions.IsAuthenticatedOrReadScope,
-        InvenTree.permissions.IsStaffOrReadOnly,
-    ]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
     def get_queryset(self):
         """Return the queryset for the BarcodeScan API."""

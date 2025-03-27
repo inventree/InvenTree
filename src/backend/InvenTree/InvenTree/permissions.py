@@ -229,7 +229,15 @@ class IsSuperuserOrReadOnlyOrScope(OASTokenMatcher, permissions.IsAdminUser):
         )
 
 
-class IsStaffOrReadOnly(permissions.IsAdminUser):
+class IsAuthenticatedOrReadScope(OASTokenMatcher, permissions.IsAuthenticated):
+    """Allows access only to authenticated users or read scope tokens."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
+
+
+class IsStaffOrReadOnlyScope(permissions.IsAdminUser, IsAuthenticatedOrReadScope):
     """Allows read-only access to any user, but write access is restricted to staff users."""
 
     def has_permission(self, request, view):
@@ -238,14 +246,6 @@ class IsStaffOrReadOnly(permissions.IsAdminUser):
             (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
         )
-
-
-class IsAuthenticatedOrReadScope(OASTokenMatcher, permissions.IsAuthenticated):
-    """Allows access only to authenticated users or read scope tokens."""
-
-    def get_required_alternate_scopes(self, request, view):
-        """Return the required scopes for the current request."""
-        return map_scope(only_read=True)
 
 
 class IsAdminOrAdminScope(OASTokenMatcher, permissions.IsAdminUser):

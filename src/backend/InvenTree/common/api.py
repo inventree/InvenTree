@@ -48,7 +48,7 @@ from InvenTree.mixins import (
 from InvenTree.permissions import (
     IsAdminOrAdminScope,
     IsAuthenticatedOrReadScope,
-    IsStaffOrReadOnly,
+    IsStaffOrReadOnlyScope,
     IsSuperuserOrSuperScope,
 )
 from plugin.models import NotificationUserSetting
@@ -484,7 +484,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
@@ -497,7 +497,7 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
 
 class CustomUnitList(DataExportViewMixin, ListCreateAPI):
@@ -505,7 +505,7 @@ class CustomUnitList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
 
@@ -514,14 +514,14 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
 
 class AllUnitList(ListAPI):
     """List of all defined units."""
 
     serializer_class = common.serializers.AllUnitListResponseSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
     def get(self, request, *args, **kwargs):
         """Return a list of all available units."""

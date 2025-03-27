@@ -135,10 +135,7 @@ class CustomStateList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
     serializer_class = common.serializers.CustomStateSerializer
-    permission_classes = [
-        InvenTree.permissions.IsAuthenticatedOrReadScope,
-        InvenTree.permissions.IsStaffOrReadOnly,
-    ]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['key']
     search_fields = ['key', 'name', 'label', 'reference_status']
@@ -150,10 +147,7 @@ class CustomStateDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
     serializer_class = common.serializers.CustomStateSerializer
-    permission_classes = [
-        InvenTree.permissions.IsAuthenticatedOrReadScope,
-        InvenTree.permissions.IsStaffOrReadOnly,
-    ]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
 urlpattern = [
