@@ -223,3 +223,13 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
 
         # Set the setting back to True for subsequent tests
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_INTERFACE', True, change_user=None)
+
+    def test_ui_navigation_items(self):
+        """Test that the sample UI plugin provides custom navigation items."""
+        response = self.get(
+            reverse('api-plugin-ui-feature-list', kwargs={'feature': 'navigation'})
+        )
+        self.assertEqual(1, len(response.data))
+        self.assertEqual(response.data[0]['plugin_name'], 'sampleui')
+        self.assertEqual(response.data[0]['key'], 'sample-nav-item')
+        self.assertEqual(response.data[0]['title'], 'Sample Nav Item')
