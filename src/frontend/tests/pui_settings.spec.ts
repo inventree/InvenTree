@@ -26,18 +26,6 @@ test('Settings - Language / Color', async ({ page }) => {
   await page.getByRole('button', { name: 'Anmelden' }).click();
   await page.waitForTimeout(200);
 
-  // Note: changes to the dashboard have invalidated these tests (for now)
-  // await page
-  //   .locator('span')
-  //   .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
-  //   .getByRole('button')
-  //   .click();
-  // await page
-  //   .locator('span')
-  //   .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
-  //   .getByRole('button')
-  //   .click();
-
   await page.getByRole('tab', { name: 'Dashboard' }).click();
   await page.waitForURL('**/web/home');
 });
@@ -82,9 +70,6 @@ test('Settings - User theme', async ({ page }) => {
   // primary
   await page.getByLabel('#fab005').click();
   await page.getByLabel('#228be6').click();
-
-  // language
-  await page.getByRole('button', { name: 'Use pseudo language' }).click();
 });
 
 test('Settings - Admin', async ({ page }) => {

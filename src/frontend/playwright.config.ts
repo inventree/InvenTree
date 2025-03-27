@@ -6,7 +6,7 @@ const IS_CI = !!process.env.CI;
 const IS_COVERAGE = !!process.env.VITE_COVERAGE_BUILD;
 
 // If specified, tests will be run against the production build
-const IS_PRODUCTION = !!process.env.VITE_PRODUCTION_BUILD;
+const IS_PRODUCTION = true; // !!process.env.VITE_PRODUCTION_BUILD;
 
 console.log('Running Playwright tests:');
 console.log(`  - CI Mode: ${IS_CI}`);
@@ -47,11 +47,13 @@ const devServer: TestConfigWebServer = {
 
 // Command to spin-up the backend server
 const WEB_SERVER_CMD: string = 'invoke dev.server -a 127.0.0.1:8000';
+const WEB_BUILD_CMD: string =
+  'yarn run extract && yarn run compile && yarn run build';
 
 const webServer: TestConfigWebServer = {
   // If running in production mode, we need to build the frontend first
   command: IS_PRODUCTION
-    ? `yarn run build && ${WEB_SERVER_CMD}`
+    ? `${WEB_BUILD_CMD} && ${WEB_SERVER_CMD}`
     : WEB_SERVER_CMD,
   env: {
     INVENTREE_DEBUG: 'True',
