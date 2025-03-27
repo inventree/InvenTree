@@ -103,25 +103,52 @@ class RolePermission(permissions.BasePermission):
         return users.models.RuleSet.check_table_permission(user, table, permission)
 
 
-def map_scope(
-    roles: Optional[list[str]] = None, only_read=False, read_name=DEFAULT_READ
-) -> dict:
-    """Map the required scopes to the current view."""
+ACTION_MAP = {
+    'GET': 'view',
+    'POST': 'add',
+    'PUT': 'change',
+    'PATCH': 'change',
+    'DELETE': 'delete',
+    'OPTIONS': DEFAULT_READ,
+}
 
-    def scope_name(tables, action):
+
+def map_scope(
+    roles: Optional[list[str]] = None,
+    only_read=False,
+    read_name=DEFAULT_READ,
+    map_read: Optional[list[str]] = None,
+    map_read_name=DEFAULT_READ,
+) -> dict:
+    """Generate the required scopes for OAS permission views.
+
+    Args:
+        roles (Optional[list[str]]): A list of roles or tables to generate granular scopes for.
+        only_read (bool): If True, only the read scope will be returned for all actions.
+        read_name (str): The read scope name to use when `only_read` is True.
+        map_read (Optional[list[str]]): A list of HTTP methods that should map to the default read scope (use if some actions requirea differing role).
+        map_read_name (str): The read scope name to use for methods specified in `map_read` when `map_read` is specified.
+
+    Returns:
+        dict: A dictionary mapping HTTP methods to their corresponding scopes.
+              Each scope is represented as a list of lists of strings.
+    """
+
+    def scope_name(action):
         if only_read:
             return [[read_name]]
-        if tables:
-            return [[get_granular_scope(action, table) for table in tables]]
+        if roles:
+            return [[get_granular_scope(action, table) for table in roles]]
         return [[action]]
 
+    def get_scope(method, action):
+        if map_read and method in map_read:
+            return [[map_read_name]]
+        return scope_name(action)
+
     return {
-        'GET': scope_name(roles, 'view'),
-        'POST': scope_name(roles, 'add'),
-        'PUT': scope_name(roles, 'change'),
-        'PATCH': scope_name(roles, 'change'),
-        'DELETE': scope_name(roles, 'delete'),
-        'OPTIONS': [[DEFAULT_READ]],
+        method: get_scope(method, action) if method != 'OPTIONS' else [[DEFAULT_READ]]
+        for method, action in ACTION_MAP.items()
     }
 
 
@@ -195,7 +222,9 @@ class IsSuperuserOrSuperScope(
         return map_scope(only_read=True, read_name=DEFAULT_SUPERUSER)
 
 
-class IsSuperuserOrReadOnly(permissions.IsAdminUser):
+class IsSuperuserOrReadOnlyOrScope(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.IsAdminUser
+):
     """Allow read-only access to any user, but write access is restricted to superuser users."""
 
     def has_permission(self, request, view):
@@ -203,6 +232,14 @@ class IsSuperuserOrReadOnly(permissions.IsAdminUser):
         return bool(
             (request.user and request.user.is_superuser)
             or request.method in permissions.SAFE_METHODS
+        )
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(
+            only_read=True,
+            read_name=DEFAULT_SUPERUSER,
+            map_read=permissions.SAFE_METHODS,
         )
 
 
@@ -257,3 +294,47 @@ def auth_exempt(view_func):
 
     wrapped_view.auth_exempt = True
     return wraps(view_func)(wrapped_view)
+
+
+class UserSettingsPermissionsOrScope(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.BasePermission
+):
+    """Special permission class to determine if the user can view / edit a particular setting."""
+
+    def has_object_permission(self, request, view, obj):
+        """Check if the user that requested is also the object owner."""
+        try:
+            user = request.user
+        except AttributeError:  # pragma: no cover
+            return False
+
+        return user == obj.user
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
+
+
+class GlobalSettingsPermissions(
+    CombinedPermissionMixin, TokenMatchesOASRequirements, permissions.BasePermission
+):
+    """Special permission class to determine if the user is "staff"."""
+
+    def has_permission(self, request, view):
+        """Check that the requesting user is 'admin'."""
+        try:
+            user = request.user
+
+            if request.method in permissions.SAFE_METHODS:
+                return True
+            # Any other methods require staff access permissions
+            return user.is_staff
+
+        except AttributeError:  # pragma: no cover
+            return False
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(
+            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+        )

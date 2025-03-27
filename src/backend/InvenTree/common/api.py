@@ -20,7 +20,7 @@ from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from pint._typing import UnitLike
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -221,23 +221,6 @@ class GlobalSettingsList(SettingsList):
         return super().list(request, *args, **kwargs)
 
 
-class GlobalSettingsPermissions(permissions.BasePermission):
-    """Special permission class to determine if the user is "staff"."""
-
-    def has_permission(self, request, view):
-        """Check that the requesting user is 'admin'."""
-        try:
-            user = request.user
-
-            if request.method in ['GET', 'HEAD', 'OPTIONS']:
-                return True
-            # Any other methods require staff access permissions
-            return user.is_staff
-
-        except AttributeError:  # pragma: no cover
-            return False
-
-
 class GlobalSettingsDetail(RetrieveUpdateAPI):
     """Detail view for an individual "global setting" object.
 
@@ -259,7 +242,10 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
             key, cache=False, create=True
         )
 
-    permission_classes = [IsAuthenticatedOrReadScope, GlobalSettingsPermissions]
+    permission_classes = [
+        IsAuthenticatedOrReadScope,
+        InvenTree.permissions.GlobalSettingsPermissions,
+    ]
 
 
 class UserSettingsList(SettingsList):
@@ -294,19 +280,6 @@ class UserSettingsList(SettingsList):
         return queryset
 
 
-class UserSettingsPermissions(permissions.BasePermission):
-    """Special permission class to determine if the user can view / edit a particular setting."""
-
-    def has_object_permission(self, request, view, obj):
-        """Check if the user that requested is also the object owner."""
-        try:
-            user = request.user
-        except AttributeError:  # pragma: no cover
-            return False
-
-        return user == obj.user
-
-
 class UserSettingsDetail(RetrieveUpdateAPI):
     """Detail view for an individual "user setting" object.
 
@@ -331,7 +304,7 @@ class UserSettingsDetail(RetrieveUpdateAPI):
             key, user=self.request.user, cache=False, create=True
         )
 
-    permission_classes = [UserSettingsPermissions]
+    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
 
 
 class NotificationUserSettingsList(SettingsList):
@@ -360,7 +333,7 @@ class NotificationUserSettingsDetail(RetrieveUpdateAPI):
 
     queryset = NotificationUserSetting.objects.all()
     serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissions]
+    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
 
 
 class NotificationMessageMixin:
@@ -368,7 +341,7 @@ class NotificationMessageMixin:
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
-    permission_classes = [UserSettingsPermissions]
+    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
 
     def get_queryset(self):
         """Return prefetched queryset."""
@@ -860,22 +833,22 @@ class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
 
 
-class DataOutputEndpoint:
+class DataOutputEndpointMixin:
     """Mixin class for DataOutput endpoints."""
 
     queryset = common.models.DataOutput.objects.all()
     serializer_class = common.serializers.DataOutputSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
 
-class DataOutputList(DataOutputEndpoint, BulkDeleteMixin, ListAPI):
+class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
     """List view for DataOutput objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
 
 
-class DataOutputDetail(DataOutputEndpoint, RetrieveAPI):
+class DataOutputDetail(DataOutputEndpointMixin, RetrieveAPI):
     """Detail view for a DataOutput object."""
 
 

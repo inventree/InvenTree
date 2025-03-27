@@ -23,7 +23,6 @@ from InvenTree.exceptions import log_error
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
 from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
-from InvenTree.permissions import IsStaffOrReadOnly
 from plugin import PluginMixinEnum, registry
 from users.models import RuleSet
 
@@ -770,7 +769,7 @@ class BarcodeScanResultMixin:
     serializer_class = barcode_serializers.BarcodeScanResultSerializer
     permission_classes = [
         InvenTree.permissions.IsAuthenticatedOrReadScope,
-        IsStaffOrReadOnly,
+        InvenTree.permissions.IsStaffOrReadOnly,
     ]
 
     def get_queryset(self):

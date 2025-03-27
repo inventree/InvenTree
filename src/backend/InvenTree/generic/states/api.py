@@ -15,7 +15,6 @@ import InvenTree.permissions
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
-from InvenTree.permissions import IsStaffOrReadOnly
 from InvenTree.serializers import EmptySerializer
 
 from .serializers import GenericStateClassSerializer
@@ -138,7 +137,7 @@ class CustomStateList(DataExportViewMixin, ListCreateAPI):
     serializer_class = common.serializers.CustomStateSerializer
     permission_classes = [
         InvenTree.permissions.IsAuthenticatedOrReadScope,
-        IsStaffOrReadOnly,
+        InvenTree.permissions.IsStaffOrReadOnly,
     ]
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['key']
@@ -153,7 +152,7 @@ class CustomStateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = common.serializers.CustomStateSerializer
     permission_classes = [
         InvenTree.permissions.IsAuthenticatedOrReadScope,
-        IsStaffOrReadOnly,
+        InvenTree.permissions.IsStaffOrReadOnly,
     ]
 
 

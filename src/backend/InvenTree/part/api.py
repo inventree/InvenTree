@@ -41,7 +41,6 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     UpdateAPI,
 )
-from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from stock.models import StockLocation
@@ -1733,7 +1732,7 @@ class PartStocktakeReportGenerate(CreateAPI):
 
     permission_classes = [
         InvenTree.permissions.IsAuthenticatedOrReadScope,
-        RolePermission,
+        InvenTree.permissions.RolePermission,
     ]
 
     role_required = 'stocktake'

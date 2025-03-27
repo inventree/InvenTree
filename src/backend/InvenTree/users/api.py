@@ -159,7 +159,7 @@ class UserList(ListCreateAPI):
     serializer_class = UserCreateSerializer
     permission_classes = [
         InvenTree.permissions.IsAuthenticatedOrReadScope,
-        InvenTree.permissions.IsSuperuserOrReadOnly,
+        InvenTree.permissions.IsSuperuserOrReadOnlyOrScope,
     ]
     filter_backends = SEARCH_ORDER_FILTER
 
