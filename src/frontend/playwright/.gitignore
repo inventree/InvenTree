@@ -1,2 +1,3 @@
 # Ignore auth cache
-./auth/
+auth/
+*.json
