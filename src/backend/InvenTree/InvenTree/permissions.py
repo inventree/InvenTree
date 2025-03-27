@@ -8,6 +8,12 @@ from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authenti
 from rest_framework import permissions
 
 import users.models
+from users.oauth2_scopes import (
+    DEFAULT_READ,
+    DEFAULT_STAFF,
+    DEFAULT_SUPERUSER,
+    get_granular_scope,
+)
 
 
 def get_model_for_view(view):
@@ -98,7 +104,7 @@ class RolePermission(permissions.BasePermission):
 
 
 def map_scope(
-    roles: Optional[list[str]] = None, only_read=False, read_name='read'
+    roles: Optional[list[str]] = None, only_read=False, read_name=DEFAULT_READ
 ) -> dict:
     """Map the required scopes to the current view."""
 
@@ -106,7 +112,7 @@ def map_scope(
         if only_read:
             return [[read_name]]
         if tables:
-            return [[action, table] for table in tables]
+            return [[get_granular_scope(action, table) for table in tables]]
         return [[action]]
 
     return {
@@ -115,7 +121,7 @@ def map_scope(
         'PUT': scope_name(roles, 'change'),
         'PATCH': scope_name(roles, 'change'),
         'DELETE': scope_name(roles, 'delete'),
-        'OPTIONS': [['read']],
+        'OPTIONS': [[DEFAULT_READ]],
     }
 
 
@@ -186,7 +192,7 @@ class IsSuperuserOrSuperScope(
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
-        return map_scope(only_read=True, read_name='superuser')
+        return map_scope(only_read=True, read_name=DEFAULT_SUPERUSER)
 
 
 class IsSuperuserOrReadOnly(permissions.IsAdminUser):
@@ -228,7 +234,7 @@ class IsAdminOrAdminScope(
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
-        return map_scope(only_read=True, read_name='admin')
+        return map_scope(only_read=True, read_name=DEFAULT_STAFF)
 
 
 class AllowAnyOrReadScope(TokenMatchesOASRequirements, permissions.AllowAny):

@@ -8,6 +8,11 @@ from django.urls import reverse
 from common.settings import set_global_setting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner, RuleSet
+from users.oauth2_scopes import _roles
+
+G_RULESETS = RuleSet.get_ruleset_models()
+G_RULESETS_IG = RuleSet.get_ruleset_ignore()
+G_SCOPES = _roles.keys()
 
 
 class RuleSetModelTest(TestCase):
@@ -15,7 +20,7 @@ class RuleSetModelTest(TestCase):
 
     def test_ruleset_models(self):
         """Test that the role rulesets work as intended."""
-        keys = RuleSet.get_ruleset_models().keys()
+        keys = G_RULESETS.keys()
 
         # Check if there are any rulesets which do not have models defined
 
@@ -37,7 +42,7 @@ class RuleSetModelTest(TestCase):
                 print('-', e)
 
         # Check that each ruleset has models assigned
-        empty = [key for key in keys if len(RuleSet.get_ruleset_models()[key]) == 0]
+        empty = [key for key in keys if len(G_RULESETS[key]) == 0]
 
         if len(empty) > 0:  # pragma: no cover
             print(
@@ -65,8 +70,8 @@ class RuleSetModelTest(TestCase):
         assigned_models = set()
 
         # Now check that each defined model is a valid table name
-        for key in RuleSet.get_ruleset_models():
-            models = RuleSet.get_ruleset_models()[key]
+        for key in G_RULESETS:
+            models = G_RULESETS[key]
 
             for m in models:
                 assigned_models.add(m)
@@ -75,8 +80,7 @@ class RuleSetModelTest(TestCase):
 
         for model in available_tables:
             if (
-                model not in assigned_models
-                and model not in RuleSet.get_ruleset_ignore()
+                model not in assigned_models and model not in G_RULESETS_IG
             ):  # pragma: no cover
                 missing_models.add(model)
 
@@ -94,7 +98,7 @@ class RuleSetModelTest(TestCase):
         for model in assigned_models:
             defined_models.add(model)
 
-        for model in RuleSet.get_ruleset_ignore():
+        for model in G_RULESETS_IG:
             defined_models.add(model)
 
         for model in defined_models:  # pragma: no cover
@@ -111,6 +115,31 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(len(missing_models), 0, 'Search for WRONG RULESET')
         self.assertEqual(len(extra_models), 0, 'Search for WRONG RULESET')
 
+    def test_scope_names(self):
+        """Ensure that the rulesets map to scopes and vice versa."""
+        # Check that each scope has a corresponding ruleset
+        missing = [scope for scope in G_SCOPES if scope not in G_RULESETS]
+
+        if len(missing) > 0:
+            print(
+                'WRONG SCOPE: The following scopes do not have corresponding rulesets:'
+            )
+            for m in missing:
+                print('-', m)
+
+        # Check that each ruleset has a corresponding scope
+        extra = [scope for scope in G_RULESETS if scope not in G_SCOPES]
+
+        if len(extra) > 0:
+            print(
+                'WRONG SCOPE: The following rulesets do not have corresponding scopes:'
+            )
+            for m in extra:
+                print('-', m)
+
+        self.assertEqual(len(missing), 0, 'Search for WRONG SCOPE')
+        self.assertEqual(len(extra), 0, 'Search for WRONG SCOPE')
+
     def test_permission_assign(self):
         """Test that the permission assigning works!"""
         # Create a new group
@@ -124,7 +153,7 @@ class RuleSetModelTest(TestCase):
         # Check that all permissions have been assigned permissions?
         permission_set = set()
 
-        for models in RuleSet.get_ruleset_models().values():
+        for models in G_RULESETS.values():
             for model in models:
                 permission_set.add(model)
 
