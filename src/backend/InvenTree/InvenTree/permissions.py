@@ -247,6 +247,12 @@ class IsStaffOrReadOnlyScope(permissions.IsAdminUser, IsAuthenticatedOrReadScope
             or request.method in permissions.SAFE_METHODS
         )
 
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(
+            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+        )
+
 
 class IsAdminOrAdminScope(OASTokenMatcher, permissions.IsAdminUser):
     """Allows access only to admin users or admin scope tokens."""
