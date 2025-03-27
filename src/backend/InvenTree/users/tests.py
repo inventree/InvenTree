@@ -120,7 +120,7 @@ class RuleSetModelTest(TestCase):
         # Check that each scope has a corresponding ruleset
         missing = [scope for scope in G_SCOPES if scope not in G_RULESETS]
 
-        if len(missing) > 0:
+        if len(missing) > 0:  # pragma: no cover
             print(
                 'WRONG SCOPE: The following scopes do not have corresponding rulesets:'
             )
@@ -130,7 +130,7 @@ class RuleSetModelTest(TestCase):
         # Check that each ruleset has a corresponding scope
         extra = [scope for scope in G_RULESETS if scope not in G_SCOPES]
 
-        if len(extra) > 0:
+        if len(extra) > 0:  # pragma: no cover
             print(
                 'WRONG SCOPE: The following rulesets do not have corresponding scopes:'
             )
