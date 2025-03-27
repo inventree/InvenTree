@@ -90,8 +90,7 @@ export const navigate = async (page, url: string) => {
 };
 
 export const waitForUrl = async (page, url: string) => {
-  await page.waitForURL(url);
-  //await page.waitForURL(url, { waitUntil: 'commit' });
+  await page.waitForURL(url, { waitUntil: 'domcontentloaded' });
 };
 
 /**
