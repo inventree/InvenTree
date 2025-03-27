@@ -6,7 +6,7 @@ const IS_CI = !!process.env.CI;
 const IS_COVERAGE = !!process.env.VITE_COVERAGE_BUILD;
 
 // If specified, tests will be run against the production build
-const IS_PRODUCTION = true; // !!process.env.VITE_PRODUCTION_BUILD;
+const IS_PRODUCTION = !!process.env.VITE_PRODUCTION_BUILD;
 
 console.log('Running Playwright tests:');
 console.log(`  - CI Mode: ${IS_CI}`);
