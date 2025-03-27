@@ -1,6 +1,10 @@
+import type { Browser, Page } from '@playwright/test';
 import { expect } from './baseFixtures.js';
 import { baseUrl, logoutUrl, user } from './defaults';
 import { navigate } from './helpers.js';
+
+import fs from 'node:fs';
+import path from 'node:path';
 
 /*
  * Perform form based login operation from the "login" URL
@@ -22,17 +26,39 @@ export const doLogin = async (page, username?: string, password?: string) => {
 /*
  * Perform a quick login based on passing URL parameters
  */
-export const doQuickLogin = async (
-  page,
+export const doCachedLogin = async (
+  browser: Browser,
   username?: string,
   password?: string,
   url?: string
-) => {
+): Promise<Page> => {
   username = username ?? user.username;
   password = password ?? user.password;
   url = url ?? baseUrl;
 
-  // TODO: Cache the login state locally - and share between tests
+  // Cache the login state locally - and share between tests
+  const fn = path.resolve(`./playwright/auth/${username}.json`);
+
+  if (fs.existsSync(fn)) {
+    // await page.context().storageState({ path: fn });
+    // await page.context().useStorageState({ path: fn });
+    const page = await browser.newPage({
+      storageState: fn
+    });
+    // page.context = page.browser.newContext({ storageState: fn });
+    console.log(`Using cached login state for ${username}`);
+    await navigate(page, '/login/');
+    await page.waitForURL('**/web/home');
+    return page;
+  }
+
+  // Create a new blank page
+  const page = await browser.newPage();
+
+  // Ensure we are logged out first
+  await doLogout(page);
+
+  console.log(`No cache found - logging in for ${username}`);
 
   await navigate(page, `${url}/login?login=${username}&password=${password}`);
   await page.waitForURL('**/web/home');
@@ -43,6 +69,11 @@ export const doQuickLogin = async (
   // Wait for the dashboard to load
   await page.getByText('No widgets selected').waitFor();
   await page.waitForTimeout(250);
+
+  // Cache the login state
+  await page.context().storageState({ path: fn });
+
+  return page;
 };
 
 export const doLogout = async (page) => {
