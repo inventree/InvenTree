@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { logoutUrl, user } from './defaults.js';
-import { navigate, waitForUrl } from './helpers.js';
+import { navigate } from './helpers.js';
 import { doLogin, doQuickLogin } from './login.js';
 
 test('Login - Basic Test', async ({ page }) => {
@@ -13,7 +13,7 @@ test('Login - Basic Test', async ({ page }) => {
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
 
-  await waitForUrl(page, '**/web/login');
+  await page.waitForURL('**/web/login');
   await page.getByLabel('username');
 });
 
@@ -33,7 +33,7 @@ test('Login - Quick Test', async ({ page }) => {
 
   // Logout (via URL)
   await navigate(page, 'logout');
-  await waitForUrl(page, '**/web/login');
+  await page.waitForURL('**/web/login');
   await page.getByLabel('username');
 });
 
@@ -51,7 +51,7 @@ test('Login - Failures', async ({ page }) => {
   // Navigate to the 'login' page
   await navigate(page, logoutUrl);
   await expect(page).toHaveTitle(/^InvenTree.*$/);
-  await waitForUrl(page, '**/web/login');
+  await page.waitForURL('**/web/login');
 
   // Attempt login with invalid credentials
   await page.getByLabel('login-username').fill('invalid user');
