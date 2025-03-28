@@ -1,7 +1,8 @@
-import type { FullConfig } from '@playwright/test';
+import { type FullConfig, chromium } from '@playwright/test';
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { doCachedLogin } from '../tests/login';
 
 async function globalSetup(config: FullConfig) {
   const authDir = path.resolve('./playwright/auth');
@@ -16,6 +17,29 @@ async function globalSetup(config: FullConfig) {
       }
     });
   }
+
+  // Perform login for each user
+  const browser = await chromium.launch();
+
+  await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
+
+  await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits'
+  });
+
+  await doCachedLogin(browser, {
+    username: 'reader',
+    password: 'readonly'
+  });
+
+  await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff'
+  });
 }
 
 export default globalSetup;

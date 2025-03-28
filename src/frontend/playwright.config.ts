@@ -13,7 +13,7 @@ console.log(`  - CI Mode: ${IS_CI}`);
 console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
 console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
-const MAX_WORKERS: number = 5;
+const MAX_WORKERS: number = 2;
 const MAX_RETRIES: number = 3;
 
 /* We optionally spin-up services based on the testing mode:
@@ -95,27 +95,16 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'auth',
-      use: {
-        ...devices['Desktop Chrome']
-      },
-      testMatch: './tests/auth/*.ts'
-    },
-    {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      },
-      dependencies: ['auth'],
-      testIgnore: './tests/auth/*.ts'
+      }
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      },
-      dependencies: ['auth'],
-      testIgnore: './tests/auth/*.ts'
+      }
     }
   ],
 

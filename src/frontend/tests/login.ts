@@ -29,6 +29,10 @@ export interface CachedLoginOptions {
   url?: string;
 }
 
+// Set of users allowed to do cached login
+// This is to prevent tests from running with the wrong user
+const ALLOWED_USERS: string[] = ['admin', 'allaccess', 'reader', 'steven'];
+
 /*
  * Perform a quick login based on passing URL parameters
  */
@@ -41,9 +45,7 @@ export const doCachedLogin = async (
   const url = options?.url ?? baseUrl;
 
   // FAIL if an unsupported username is provided
-  // This is to prevent tests from running with the wrong user
-  // Some usernames are reserved for specific tests
-  if (!['admin', 'allaccess'].includes(username)) {
+  if (!ALLOWED_USERS.includes(username)) {
     throw new Error(`Invalid username provided to doCachedLogin: ${username}`);
   }
 
