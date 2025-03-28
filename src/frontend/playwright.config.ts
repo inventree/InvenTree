@@ -13,7 +13,7 @@ console.log(`  - CI Mode: ${IS_CI}`);
 console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
 console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
-const MAX_WORKERS: number = 2;
+const MAX_WORKERS: number = 3;
 const MAX_RETRIES: number = 3;
 
 /* We optionally spin-up services based on the testing mode:
