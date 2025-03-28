@@ -7,12 +7,11 @@ import {
   openFilterDrawer,
   setTableChoiceFilter
 } from '../helpers.js';
-import { doQuickLogin } from '../login.js';
+import { doCachedLogin } from '../login.js';
 
-test('Stock - Basic Tests', async ({ page }) => {
-  await doQuickLogin(page);
+test('Stock - Basic Tests', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
-  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/web/stock/location/**');
 
   await loadTab(page, 'Location Details');
@@ -39,10 +38,9 @@ test('Stock - Basic Tests', async ({ page }) => {
   await loadTab(page, 'Installed Items');
 });
 
-test('Stock - Location Tree', async ({ page }) => {
-  await doQuickLogin(page);
+test('Stock - Location Tree', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
-  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/web/stock/location/**');
   await loadTab(page, 'Location Details');
 
@@ -56,10 +54,13 @@ test('Stock - Location Tree', async ({ page }) => {
   await page.getByRole('cell', { name: 'Factory' }).first().waitFor();
 });
 
-test('Stock - Filters', async ({ page }) => {
-  await doQuickLogin(page, 'steven', 'wizardstaff');
+test('Stock - Filters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: '/stock/location/index/'
+  });
 
-  await navigate(page, 'stock/location/index/');
   await loadTab(page, 'Stock Items');
 
   await openFilterDrawer(page);
@@ -101,8 +102,8 @@ test('Stock - Filters', async ({ page }) => {
   await clearTableFilters(page);
 });
 
-test('Stock - Serial Numbers', async ({ page }) => {
-  await doQuickLogin(page);
+test('Stock - Serial Numbers', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   // Use the "global search" functionality to find a part we are interested in
   // This is to exercise the search functionality and ensure it is working as expected
@@ -167,10 +168,8 @@ test('Stock - Serial Numbers', async ({ page }) => {
 /**
  * Test various 'actions' on the stock detail page
  */
-test('Stock - Stock Actions', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'stock/item/1225/details');
+test('Stock - Stock Actions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/item/1225/details' });
 
   // Helper function to launch a stock action
   const launchStockAction = async (action: string) => {
@@ -231,11 +230,9 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByLabel('action-menu-stock-operations-return').click();
 });
 
-test('Stock - Tracking', async ({ page }) => {
-  await doQuickLogin(page);
+test('Stock - Tracking', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/item/176/details' });
 
-  // Navigate to the "stock item" page
-  await navigate(page, 'stock/item/176/details/');
   await page.getByRole('link', { name: 'Widget Assembly # 2' }).waitFor();
 
   // Navigate to the "stock tracking" tab

@@ -21,6 +21,7 @@ interface LocalStateProps {
   autoupdate: boolean;
   toggleAutoupdate: () => void;
   host: string;
+  getHost: () => string;
   setHost: (newHost: string, newHostKey: string) => void;
   hostKey: string;
   hostList: HostList;
@@ -65,6 +66,28 @@ export const useLocalState = create<LocalStateProps>()(
       toggleAutoupdate: () =>
         set((state) => ({ autoupdate: !state.autoupdate })),
       host: '',
+      getHost: () => {
+        // Retrieve and validate the API host
+        const state = get();
+
+        let host = state.host;
+
+        // If the server provides an override for the host, use that
+        if (window.INVENTREE_SETTINGS?.api_host) {
+          host = window.INVENTREE_SETTINGS.api_host;
+        }
+
+        // If no host is provided, use the first host in the list
+        if (!host && Object.keys(state.hostList).length) {
+          host = Object.values(state.hostList)[0].host;
+        }
+
+        // If no host is provided, fallback to using the current URL (default)
+        if (!host) {
+          host = window.location.origin;
+        }
+        return host;
+      },
       setHost: (newHost, newHostKey) =>
         set({ host: newHost, hostKey: newHostKey }),
       hostKey: '',

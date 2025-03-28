@@ -1,6 +1,5 @@
 import { test } from '../baseFixtures';
-import { navigate } from '../helpers';
-import { doQuickLogin } from '../login';
+import { doCachedLogin } from '../login';
 
 const scan = async (page, barcode) => {
   await page.getByLabel('barcode-input-scanner').click();
@@ -8,8 +7,8 @@ const scan = async (page, barcode) => {
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
 };
 
-test('Scanning - Dialog', async ({ page }) => {
-  await doQuickLogin(page);
+test('Scanning - Dialog', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await scan(page, '{"part": 15}');
@@ -19,8 +18,8 @@ test('Scanning - Dialog', async ({ page }) => {
   await page.getByText('Required:').waitFor();
 });
 
-test('Scanning - Basic', async ({ page }) => {
-  await doQuickLogin(page);
+test('Scanning - Basic', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   // Navigate to the 'scan' page
   await page.getByLabel('navigation-menu').click();
@@ -40,9 +39,8 @@ test('Scanning - Basic', async ({ page }) => {
   await page.getByText('No match found for barcode').waitFor();
 });
 
-test('Scanning - Part', async ({ page }) => {
-  await doQuickLogin(page);
-  await navigate(page, 'scan/');
+test('Scanning - Part', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
 
   await scan(page, '{"part": 1}');
 
@@ -51,9 +49,8 @@ test('Scanning - Part', async ({ page }) => {
   await page.getByRole('cell', { name: 'part', exact: true }).waitFor();
 });
 
-test('Scanning - Stockitem', async ({ page }) => {
-  await doQuickLogin(page);
-  await navigate(page, 'scan/');
+test('Scanning - Stockitem', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"stockitem": 408}');
 
   await page.getByText('1551ABK').waitFor();
@@ -61,9 +58,9 @@ test('Scanning - Stockitem', async ({ page }) => {
   await page.getByRole('cell', { name: 'Quantity: 100' }).waitFor();
 });
 
-test('Scanning - StockLocation', async ({ page }) => {
-  await doQuickLogin(page);
-  await navigate(page, 'scan/');
+test('Scanning - StockLocation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
+
   await scan(page, '{"stocklocation": 3}');
 
   // stocklocation: 3
@@ -74,20 +71,17 @@ test('Scanning - StockLocation', async ({ page }) => {
     .waitFor();
 });
 
-test('Scanning - SupplierPart', async ({ page }) => {
-  await doQuickLogin(page);
-  await navigate(page, 'scan/');
+test('Scanning - SupplierPart', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"supplierpart": 204}');
 
-  // supplierpart: 204
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
   await page.getByText('1551ABK').first().waitFor();
   await page.getByRole('cell', { name: 'supplierpart', exact: true }).waitFor();
 });
 
-test('Scanning - PurchaseOrder', async ({ page }) => {
-  await doQuickLogin(page);
-  await navigate(page, 'scan/');
+test('Scanning - PurchaseOrder', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"purchaseorder": 12}');
 
   // purchaseorder: 12
@@ -98,9 +92,9 @@ test('Scanning - PurchaseOrder', async ({ page }) => {
     .waitFor();
 });
 
-test('Scanning - SalesOrder', async ({ page }) => {
-  await doQuickLogin(page);
-  await navigate(page, 'scan/');
+test('Scanning - SalesOrder', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
+
   await scan(page, '{"salesorder": 6}');
 
   // salesorder: 6
@@ -109,9 +103,8 @@ test('Scanning - SalesOrder', async ({ page }) => {
   await page.getByRole('cell', { name: 'salesorder', exact: true }).waitFor();
 });
 
-test('Scanning - Build', async ({ page }) => {
-  await doQuickLogin(page);
-  await navigate(page, 'scan/');
+test('Scanning - Build', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"build": 8}');
 
   // build: 8
