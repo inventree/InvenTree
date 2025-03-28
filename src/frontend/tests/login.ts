@@ -1,6 +1,6 @@
 import type { Browser, Page } from '@playwright/test';
 import { expect } from './baseFixtures.js';
-import { baseUrl, logoutUrl, user } from './defaults';
+import { user } from './defaults';
 import { navigate } from './helpers.js';
 
 import fs from 'node:fs';
@@ -13,7 +13,8 @@ export const doLogin = async (page, username?: string, password?: string) => {
   username = username ?? user.username;
   password = password ?? user.password;
 
-  await navigate(page, logoutUrl);
+  await page.goto('http://localhost:8000/web/logout', { waituntil: 'load' });
+
   await expect(page).toHaveTitle(/^InvenTree.*$/);
   await page.waitForURL('**/web/login');
   await page.getByLabel('username').fill(username);
@@ -42,7 +43,7 @@ export const doCachedLogin = async (
 ): Promise<Page> => {
   const username = options?.username ?? user.username;
   const password = options?.password ?? user.password;
-  const url = options?.url ?? baseUrl;
+  const url = options?.url ?? '';
 
   // FAIL if an unsupported username is provided
   if (!ALLOWED_USERS.includes(username)) {
@@ -68,6 +69,9 @@ export const doCachedLogin = async (
 
   console.log(`No cache found - logging in for ${username}`);
 
+  // Ensure we start from the login page
+  await page.goto('http://localhost:8000/web/', { waitUntil: 'load' });
+
   await doLogin(page, username, password);
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
   await page.getByText(/InvenTree Demo Server -/).waitFor();
@@ -80,11 +84,14 @@ export const doCachedLogin = async (
   // Cache the login state
   await page.context().storageState({ path: fn });
 
-  await navigate(page, url);
+  if (url) {
+    await navigate(page, url);
+  }
+
   return page;
 };
 
 export const doLogout = async (page) => {
-  await navigate(page, 'logout');
+  await page.goto('http://localhost:8000/web/logout', { waitUntil: 'load' });
   await page.waitForURL('**/web/login');
 };

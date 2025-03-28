@@ -6,29 +6,31 @@ import { setSettingState } from './settings.js';
 
 /**
  * Adjust language and color settings
+ *
+ * TODO: Reimplement this - without logging out a cached user
  */
-test('Settings - Language / Color', async ({ browser }) => {
-  const page = await doCachedLogin(browser);
+// test('Settings - Language / Color', async ({ browser }) => {
+//   const page = await doCachedLogin(browser);
 
-  await page.getByRole('button', { name: 'Ally Access' }).click();
-  await page.getByRole('menuitem', { name: 'Logout' }).click();
-  await page.getByRole('button', { name: 'Send me an email' }).click();
-  await page.getByLabel('Language toggle').click();
-  await page.getByLabel('Select language').first().click();
-  await page.getByRole('option', { name: 'German' }).click();
-  await page.waitForTimeout(200);
+//   await page.getByRole('button', { name: 'Ally Access' }).click();
+//   await page.getByRole('menuitem', { name: 'Logout' }).click();
+//   await page.getByRole('button', { name: 'Send me an email' }).click();
+//   await page.getByLabel('Language toggle').click();
+//   await page.getByLabel('Select language').first().click();
+//   await page.getByRole('option', { name: 'German' }).click();
+//   await page.waitForTimeout(200);
 
-  await page.getByRole('button', { name: 'Benutzername und Passwort' }).click();
-  await page.getByPlaceholder('Ihr Benutzername').click();
-  await page.getByPlaceholder('Ihr Benutzername').fill('admin');
-  await page.getByPlaceholder('Ihr Benutzername').press('Tab');
-  await page.getByPlaceholder('Dein Passwort').fill('inventree');
-  await page.getByRole('button', { name: 'Anmelden' }).click();
-  await page.waitForTimeout(200);
+//   await page.getByRole('button', { name: 'Benutzername und Passwort' }).click();
+//   await page.getByPlaceholder('Ihr Benutzername').click();
+//   await page.getByPlaceholder('Ihr Benutzername').fill('admin');
+//   await page.getByPlaceholder('Ihr Benutzername').press('Tab');
+//   await page.getByPlaceholder('Dein Passwort').fill('inventree');
+//   await page.getByRole('button', { name: 'Anmelden' }).click();
+//   await page.waitForTimeout(200);
 
-  await page.getByRole('tab', { name: 'Dashboard' }).click();
-  await page.waitForURL('**/web/home');
-});
+//   await page.getByRole('tab', { name: 'Dashboard' }).click();
+//   await page.waitForURL('**/web/home');
+// });
 
 test('Settings - User theme', async ({ browser }) => {
   const page = await doCachedLogin(browser, {

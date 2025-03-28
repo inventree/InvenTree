@@ -80,9 +80,10 @@ test('Quick Command - No Keys', async ({ browser }) => {
 
   // Use navigation menu
   await page.getByLabel('open-spotlight').click();
-  await page
-    .getByRole('button', { name: 'Open Navigation Open the main' })
-    .click();
+
+  await page.waitForLoadState('networkidle');
+
+  await page.getByRole('button', { name: 'Open Navigation' }).click();
 
   await page.waitForTimeout(250);
 
