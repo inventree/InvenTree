@@ -112,7 +112,7 @@ export default defineConfig({
   webServer: serverList,
   globalSetup: './playwright/global-setup.ts',
   use: {
-    baseURL: IS_PRODUCTION ? 'http://localhost:8000' : 'http://localhost:5173'
-    // headless: IS_PRODUCTION ? true : undefined
+    baseURL: IS_PRODUCTION ? 'http://localhost:8000' : 'http://localhost:5173',
+    headless: IS_PRODUCTION ? true : undefined
   }
 });
