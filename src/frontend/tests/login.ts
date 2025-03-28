@@ -40,11 +40,11 @@ export const doCachedLogin = async (
   const password = options?.password ?? user.password;
   const url = options?.url ?? baseUrl;
 
-  // FAIL if any of the following usernames are provided
+  // FAIL if an unsupported username is provided
   // This is to prevent tests from running with the wrong user
   // Some usernames are reserved for specific tests
-  if (['noaccess', 'ian', 'susan', 'reader'].includes(username)) {
-    throw new Error(`Cannot run tests with reserved username: ${username}`);
+  if (!['admin', 'allaccess'].includes(username)) {
+    throw new Error(`Invalid username provided to doCachedLogin: ${username}`);
   }
 
   // Cache the login state locally - and share between tests
@@ -64,17 +64,12 @@ export const doCachedLogin = async (
   // Create a new blank page
   const page = await browser.newPage();
 
-  // Ensure we are logged out first
-  // await doLogout(page);
-
   console.log(`No cache found - logging in for ${username}`);
 
   await doLogin(page, username, password);
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
   await page.getByText(/InvenTree Demo Server -/).waitFor();
   await page.waitForURL('**/web/**');
-  // await navigate(page, `/login?login=${username}&password=${password}`);
-  // awaiit
 
   // Wait for the dashboard to load
   await page.getByText('No widgets selected').waitFor();

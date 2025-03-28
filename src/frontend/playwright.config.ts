@@ -13,8 +13,8 @@ console.log(`  - CI Mode: ${IS_CI}`);
 console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
 console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
-const MAX_WORKERS: number = 1;
-const MAX_RETRIES: number = 1;
+const MAX_WORKERS: number = 5;
+const MAX_RETRIES: number = 3;
 
 /* We optionally spin-up services based on the testing mode:
  *
@@ -85,7 +85,7 @@ serverList.push(webServer);
 
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  fullyParallel: false,
   timeout: 90000,
   forbidOnly: !!IS_CI,
   retries: IS_CI ? MAX_RETRIES : 0,
@@ -95,16 +95,27 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'auth',
+      use: {
+        ...devices['Desktop Chrome']
+      },
+      testMatch: './tests/auth/*.ts'
+    },
+    {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      }
+      },
+      dependencies: ['auth'],
+      testIgnore: './tests/auth/*.ts'
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      dependencies: ['auth'],
+      testIgnore: './tests/auth/*.ts'
     }
   ],
 
