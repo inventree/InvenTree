@@ -4,7 +4,7 @@ import datetime
 
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
@@ -395,12 +395,10 @@ user_urls = [
     path(
         'group/',
         include([
-            re_path(
-                r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
-            ),
+            path('<int:pk>/', GroupDetail.as_view(), name='api-group-detail'),
             path('', GroupList.as_view(), name='api-group-list'),
         ]),
     ),
-    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),
+    path('<int:pk>/', UserDetail.as_view(), name='api-user-detail'),
     path('', UserList.as_view(), name='api-user-list'),
 ]
