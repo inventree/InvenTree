@@ -553,7 +553,7 @@ class BulkDeleteMixin(BulkOperationMixin):
             for item in queryset:
                 item.delete()
 
-        return Response({'success': f'Deleted {n_deleted} items'}, status=204)
+        return Response({'success': f'Deleted {n_deleted} items'}, status=200)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):

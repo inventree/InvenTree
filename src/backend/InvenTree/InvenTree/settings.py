@@ -1427,6 +1427,7 @@ SPECTACULAR_SETTINGS = {
     'SCHEMA_PATH_PREFIX': '/api/',
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
+        'InvenTree.schema.postprocess_bulk_delete',
         'InvenTree.schema.postprocess_required_nullable',
     ],
 }
