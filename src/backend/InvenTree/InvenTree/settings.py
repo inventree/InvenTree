@@ -526,9 +526,18 @@ TEMPLATES = [
     }
 ]
 
+RSA_KEY_LOCATION = Path(
+    get_setting('OIDC_RSA_PRIVATE_KEY', 'rsa_key', Path(BASE_DIR, 'oidc.pem'))
+)
+if RSA_KEY_LOCATION.exists():
+    RSA_KEY = RSA_KEY_LOCATION.read_text()
 OAUTH2_PROVIDER = {
     # default scopes
-    'SCOPES': oauth2_scopes
+    'SCOPES': oauth2_scopes,
+    # OIDC
+    'OIDC_ENABLED': True,
+    'OIDC_RSA_PRIVATE_KEY': RSA_KEY,
+    'PKCE_REQUIRED': False,
 }
 
 REST_FRAMEWORK = {

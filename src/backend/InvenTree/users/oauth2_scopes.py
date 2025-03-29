@@ -42,6 +42,7 @@ DEFAULT_SUPERUSER = get_granular_scope('superuser', type='a')
 # This is actually used
 oauth2_scopes = {
     DEFAULT_READ: 'General Read scope',
+    'openid': 'OpenID Connect scope',
     # Admin scopes
     DEFAULT_STAFF: 'User Role Staff',
     DEFAULT_SUPERUSER: 'User Role Superuser',
