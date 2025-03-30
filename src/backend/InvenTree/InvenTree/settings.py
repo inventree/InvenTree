@@ -24,7 +24,12 @@ import structlog
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.config import (
+    get_boolean_setting,
+    get_custom_file,
+    get_oidc_private_key,
+    get_setting,
+)
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
@@ -526,17 +531,12 @@ TEMPLATES = [
     }
 ]
 
-RSA_KEY_LOCATION = Path(
-    get_setting('OIDC_RSA_PRIVATE_KEY', 'rsa_key', Path(BASE_DIR, 'oidc.pem'))
-)
-if RSA_KEY_LOCATION.exists():
-    RSA_KEY = RSA_KEY_LOCATION.read_text()
 OAUTH2_PROVIDER = {
     # default scopes
     'SCOPES': oauth2_scopes,
     # OIDC
     'OIDC_ENABLED': True,
-    'OIDC_RSA_PRIVATE_KEY': RSA_KEY,
+    'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
     'PKCE_REQUIRED': False,
 }
 

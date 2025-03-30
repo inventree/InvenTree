@@ -9,6 +9,9 @@ import shutil
 import string
 from pathlib import Path
 
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
@@ -363,6 +366,49 @@ def get_secret_key():
     key_data = secret_key_file.read_text().strip()
 
     return key_data
+
+
+def get_oidc_private_key():
+    """Return the private key for OIDC authentication.
+
+    Following options are tested, in descending order of preference:
+    A) Check for environment variable INVENTREE_OIDC_PRIVATE_KEY or config yalue => Use raw key data
+    B) Check for environment variable INVENTREE_OIDC_PRIVATE_KEY_FILE  or config value => Load key data from file
+    C) Create "oidc.pem" if it does not exist
+    """
+    RSA_KEY = get_setting('INVENTREE_OIDC_PRIVATE_KEY', 'oidc_private_key')
+    if RSA_KEY:
+        logger.info('RSA_KEY loaded by INVENTREE_OIDC_PRIVATE_KEY')  # pragma: no cover
+        return RSA_KEY
+
+    # Look for private key file
+    key_loc = Path(
+        get_setting(
+            'INVENTREE_OIDC_PRIVATE_KEY_FILE',
+            'oidc_private_key_file',
+            get_base_dir().joinpath('oidc.pem'),
+        )
+    )
+    if key_loc.exists():
+        return key_loc.read_text()
+    else:
+        # Default location for private key file
+        logger.info("Generating oidc key file at '%s'", key_loc)
+        ensure_dir(key_loc.parent)
+
+        # Create a random key file
+        new_key = rsa.generate_private_key(public_exponent=65537, key_size=4096)
+        # Write our key to disk for safe keeping
+        with open(str(key_loc), 'wb') as f:
+            f.write(
+                new_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption(),
+                )
+            )
+        RSA_KEY = key_loc.read_text()
+    return RSA_KEY
 
 
 def get_custom_file(
