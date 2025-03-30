@@ -1,13 +1,16 @@
 import { test } from './baseFixtures.js';
-import { globalSearch, navigate } from './helpers.js';
-import { doQuickLogin } from './login.js';
+import { globalSearch } from './helpers.js';
+import { doCachedLogin } from './login.js';
 
 /**
  * Test for integration of django admin button
  */
-test('Admin Button', async ({ page }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
-  await navigate(page, 'company/1/details');
+test('Admin Button', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree',
+    url: 'company/1/details'
+  });
 
   // Click on the admin button
   await page.getByLabel(/action-button-open-in-admin/).click();
@@ -18,8 +21,11 @@ test('Admin Button', async ({ page }) => {
 });
 
 // Tests for the global search functionality
-test('Search', async ({ page }) => {
-  await doQuickLogin(page, 'steven', 'wizardstaff');
+test('Search', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff'
+  });
 
   await globalSearch(page, 'another customer');
 

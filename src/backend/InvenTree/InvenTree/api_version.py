@@ -1,15 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 328
+INVENTREE_API_VERSION = 330
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v328 - 2025-03-27 : https://github.com/inventree/InvenTree/pull/9333
+v330 - 2025-03-27 : https://github.com/inventree/InvenTree/pull/9333
     - Adds oAuth2 support for the API
+
+v329 - 2025-03-30 : https://github.com/inventree/InvenTree/pull/9399
+    - Convert url path regex-specified PKs to int
+
+v228 - 2025-03-29 : https://github.com/inventree/InvenTree/pull/9407
+    - Updates schema to include paging arguments
 
 v327 - 2025-03-20 : https://github.com/inventree/InvenTree/pull/9339
     - Adds "is_mandatory" field to the Plugin API
