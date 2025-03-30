@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -8,11 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
-import {
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -63,10 +58,6 @@ export function ReturnOrderTable({
   const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
   const user = useUserState();
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const responsibleFilters = useOwnerFilters();
-  const createdByFilters = useUserFilters();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OrderStatusFilter({ model: ModelType.returnorder }),
@@ -96,9 +87,9 @@ export function ReturnOrderTable({
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
       HasProjectCodeFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
-      ResponsibleFilter({ choices: responsibleFilters.choices }),
-      CreatedByFilter({ choices: createdByFilters.choices })
+      ProjectCodeFilter(),
+      ResponsibleFilter(),
+      CreatedByFilter()
     ];
 
     if (!!partId) {
@@ -111,12 +102,7 @@ export function ReturnOrderTable({
     }
 
     return filters;
-  }, [
-    partId,
-    projectCodeFilters.choices,
-    responsibleFilters.choices,
-    createdByFilters.choices
-  ]);
+  }, [partId]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -158,7 +144,7 @@ export function ReturnOrderTable({
         sortable: true,
         render: (record: any) => {
           return formatCurrency(record.total_price, {
-            currency: record.order_currency ?? record.customer_detail?.currency
+            currency: record.order_currency || record.customer_detail?.currency
           });
         }
       }

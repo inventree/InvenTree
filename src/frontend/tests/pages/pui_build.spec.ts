@@ -1,19 +1,22 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
+  activateCalendarView,
   clearTableFilters,
   getRowFromCell,
   loadTab,
   navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
-import { doQuickLogin } from '../login.ts';
+import { doCachedLogin } from '../login.ts';
 
-test('Build Order - Basic Tests', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Basic Tests', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  await page.getByRole('tab', { name: 'Manufacturing' }).click();
+  await page.waitForURL('**/manufacturing/index/**');
+
   await loadTab(page, 'Build Orders');
 
   await clearTableFilters(page);
@@ -90,8 +93,31 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .waitFor();
 });
 
-test('Build Order - Edit', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Calendar', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
+
+  await navigate(page, 'manufacturing/index/buildorders');
+  await activateCalendarView(page);
+
+  // Export calendar data
+  await page.getByLabel('calendar-export-data').click();
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await page.getByText('Process completed successfully').waitFor();
+
+  // Check "part category" filter
+  await page.getByLabel('calendar-select-filters').click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByPlaceholder('Select filter').fill('category');
+  await page.getByRole('option', { name: 'Category', exact: true }).click();
+  await page.getByLabel('related-field-filter-category').click();
+  await page.getByText('Part category, level 1').waitFor();
+
+  // Required because we downloaded a file
+  await page.context().close();
+});
+
+test('Build Order - Edit', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/22/');
 
@@ -117,8 +143,8 @@ test('Build Order - Edit', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Build Order - Build Outputs', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Build Outputs', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/index/');
   await loadTab(page, 'Build Orders');
@@ -193,8 +219,8 @@ test('Build Order - Build Outputs', async ({ page }) => {
   await page.getByText('Build outputs have been completed').waitFor();
 });
 
-test('Build Order - Allocation', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Allocation', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/1/line-items');
 
@@ -293,8 +319,8 @@ test('Build Order - Allocation', async ({ page }) => {
     .waitFor();
 });
 
-test('Build Order - Filters', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Filters', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/index/buildorders');
 
@@ -327,8 +353,8 @@ test('Build Order - Filters', async ({ page }) => {
   await page.getByText('Pending Approval').first().waitFor();
 });
 
-test('Build Order - Duplicate', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/24/details');
   await page.getByLabel('action-menu-build-order-').click();

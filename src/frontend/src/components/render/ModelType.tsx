@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
@@ -213,14 +213,14 @@ export const ModelInformationDict: ModelDict = {
   user: {
     label: () => t`User`,
     label_multiple: () => t`Users`,
-    url_detail: '/user/:pk/',
+    url_detail: '/core/user/:pk/',
     api_endpoint: ApiEndpoints.user_list,
     icon: 'user'
   },
   group: {
     label: () => t`Group`,
     label_multiple: () => t`Groups`,
-    url_detail: '/user/group-:pk',
+    url_detail: '/core/group/:pk/',
     api_endpoint: ApiEndpoints.group_list,
     admin_url: '/auth/group/',
     icon: 'group'

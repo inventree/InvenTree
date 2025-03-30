@@ -4,16 +4,16 @@ import datetime
 
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions, permissions
-from rest_framework.generics import DestroyAPIView
+from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 import InvenTree.helpers
 import InvenTree.permissions
@@ -25,18 +25,18 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.serializers import (
-    ExtendedUserSerializer,
-    MeUserSerializer,
-    UserCreateSerializer,
-)
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner
+from users.models import ApiToken, Owner, UserProfile
 from users.serializers import (
     ApiTokenSerializer,
+    ExtendedUserSerializer,
+    GetAuthTokenSerializer,
     GroupSerializer,
+    MeUserSerializer,
     OwnerSerializer,
     RoleSerializer,
+    UserCreateSerializer,
+    UserProfileSerializer,
 )
 
 logger = structlog.get_logger('inventree')
@@ -190,7 +190,8 @@ class GroupMixin:
             params.get('permission_detail', None)
         )
         kwargs['context'] = self.get_serializer_context()
-        return self.serializer_class(*args, **kwargs)
+
+        return super().get_serializer(*args, **kwargs)
 
 
 class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
@@ -215,12 +216,23 @@ class GroupList(GroupMixin, ListCreateAPI):
     ordering_fields = ['name']
 
 
-class GetAuthToken(APIView):
+class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = None
+    serializer_class = GetAuthTokenSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='name',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description='Name of the token',
+            )
+        ],
+        responses={200: OpenApiResponse(response=GetAuthTokenSerializer())},
+    )
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.
 
@@ -261,9 +273,11 @@ class GetAuthToken(APIView):
 
             data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
 
-            # Ensure that the users session is logged in (PUI -> CUI login)
+            # Ensure that the users session is logged in
             if not get_user(request).is_authenticated:
-                login(request, user)
+                login(
+                    request, user, backend='django.contrib.auth.backends.ModelBackend'
+                )
 
             return Response(data)
 
@@ -271,15 +285,67 @@ class GetAuthToken(APIView):
             raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
-class TokenListView(DestroyAPIView, ListAPI):
-    """List of registered tokens for current users."""
+class TokenMixin:
+    """Mixin for API token endpoints."""
 
     permission_classes = (IsAuthenticated,)
     serializer_class = ApiTokenSerializer
 
     def get_queryset(self):
         """Only return data for current user."""
+        if self.request.user.is_superuser and self.request.query_params.get(
+            'all_users', False
+        ):
+            return ApiToken.objects.all()
         return ApiToken.objects.filter(user=self.request.user)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='all_users',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Display tokens for all users (superuser only)',
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        """Details for a user token."""
+        return super().get(request, *args, **kwargs)
+
+
+class TokenListView(TokenMixin, ListCreateAPI):
+    """List of user tokens for current user."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name', 'key']
+    ordering_fields = [
+        'created',
+        'expiry',
+        'last_seen',
+        'user',
+        'name',
+        'revoked',
+        'revoked',
+    ]
+
+    filterset_fields = ['revoked', 'user']
+
+    def create(self, request, *args, **kwargs):
+        """Create token and show key to user."""
+        resp = super().create(request, *args, **kwargs)
+        resp.data['token'] = self.serializer_class.Meta.model.objects.get(
+            id=resp.data['id']
+        ).key
+        return resp
+
+    def get(self, request, *args, **kwargs):
+        """List of user tokens for current user."""
+        return super().get(request, *args, **kwargs)
+
+
+class TokenDetailView(TokenMixin, DestroyAPIView, RetrieveAPI):
+    """Details for a user token."""
 
     def perform_destroy(self, instance):
         """Revoke token."""
@@ -295,17 +361,30 @@ class LoginRedirect(RedirectView):
         return f'/{FRONTEND_URL_BASE}/logged-in/'
 
 
+class UserProfileDetail(RetrieveUpdateAPI):
+    """Detail endpoint for the user profile."""
+
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        """Return the profile of the current user."""
+        return self.request.user.profile
+
+
 user_urls = [
     path('roles/', RoleDetails.as_view(), name='api-user-roles'),
     path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
     path(
         'tokens/',
         include([
-            path('<int:pk>/', TokenListView.as_view(), name='api-token-detail'),
+            path('<int:pk>/', TokenDetailView.as_view(), name='api-token-detail'),
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
     path('me/', MeUserDetail.as_view(), name='api-user-me'),
+    path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
     path(
         'owner/',
         include([
@@ -316,12 +395,10 @@ user_urls = [
     path(
         'group/',
         include([
-            re_path(
-                r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
-            ),
+            path('<int:pk>/', GroupDetail.as_view(), name='api-group-detail'),
             path('', GroupList.as_view(), name='api-group-list'),
         ]),
     ),
-    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),
+    path('<int:pk>/', UserDetail.as_view(), name='api-user-detail'),
     path('', UserList.as_view(), name='api-user-list'),
 ]

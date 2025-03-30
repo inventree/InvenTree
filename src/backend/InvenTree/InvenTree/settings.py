@@ -250,14 +250,15 @@ INSTALLED_APPS = [
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
-    'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    'company.apps.CompanyConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
+    'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
     'web',
     'generic',
@@ -792,7 +793,7 @@ SENTRY_SAMPLE_RATE = float(
     get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
 )
 
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # OpenTelemetry tracing
@@ -1087,6 +1088,7 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://*localhost:4173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
@@ -1423,6 +1425,10 @@ SPECTACULAR_SETTINGS = {
     'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/',
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+        'InvenTree.schema.postprocess_required_nullable',
+    ],
 }
 
 if SITE_URL and not TESTING:

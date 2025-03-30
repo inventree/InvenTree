@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Accordion,
   Badge,
@@ -11,8 +11,7 @@ import {
   List,
   LoadingOverlay,
   Stack,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconRefresh } from '@tabler/icons-react';
@@ -20,6 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Trans } from '@lingui/react/macro';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
@@ -231,7 +231,7 @@ function MachineDrawer({
     url: ApiEndpoints.machine_list,
     pk: machinePk,
     preFormContent: (
-      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
+      <Text>{t`Are you sure you want to remove the machine "${machine?.name ?? 'unknown'}"?`}</Text>
     ),
     onFormSuccess: () => {
       refreshTable();
@@ -248,9 +248,8 @@ function MachineDrawer({
         <Group justify='space-between'>
           <Group>
             {machine && <MachineStatusIndicator machine={machine} />}
-            <Title order={4}>{machine?.name}</Title>
+            <StylishText size='md'>{machine?.name ?? t`Machine`}</StylishText>
           </Group>
-
           <Group>
             {machine?.restart_required && (
               <Badge color='red'>
@@ -514,7 +513,7 @@ export function MachineListTable({
   }, [machineDrivers, createFormMachineType]);
 
   const createMachineForm = useCreateApiFormModal({
-    title: t`Add machine`,
+    title: t`Add Machine`,
     url: ApiEndpoints.machine_list,
     fields: {
       name: {},

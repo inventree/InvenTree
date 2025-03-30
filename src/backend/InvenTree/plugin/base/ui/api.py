@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 import plugin.base.ui.serializers as UIPluginSerializers
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 
 
 class PluginUIFeatureList(APIView):
@@ -28,7 +28,9 @@ class PluginUIFeatureList(APIView):
 
         if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
             # Extract all plugins from the registry which provide custom ui features
-            for _plugin in registry.with_mixin('ui', active=True):
+            for _plugin in registry.with_mixin(
+                PluginMixinEnum.USER_INTERFACE, active=True
+            ):
                 # Allow plugins to fill this data out
 
                 try:

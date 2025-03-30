@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Alert, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
@@ -212,6 +212,7 @@ export default function StockDetail() {
         name: 'supplier_part',
         label: t`Supplier Part`,
         type: 'link',
+        model_field: 'SKU',
         model: ModelType.supplierpart,
         hidden: !stockitem.supplier_part
       },

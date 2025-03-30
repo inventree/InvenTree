@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Stack, Text } from '@mantine/core';
 import {
   IconArrowRight,
@@ -593,7 +593,6 @@ export default function BuildLineTable({
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
           hidden: !canOrder,
-          disabled: !table.hasSelectedRecords,
           color: 'blue',
           onClick: () => {
             setPartsToOrder([record.part_detail]);

@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   ActionIcon,
@@ -85,9 +86,9 @@ function MachineTypeDrawer({
     <>
       <Stack>
         <Group wrap='nowrap'>
-          <Title order={4}>
+          <StylishText size='md'>
             {machineType ? machineType.name : machineTypeSlug}
-          </Title>
+          </StylishText>
         </Group>
 
         {!machineType && (

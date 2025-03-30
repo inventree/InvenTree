@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Container,
   Drawer,
@@ -106,6 +106,18 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         link: '/sales/',
         hidden: !user.hasViewRole(UserRoles.sales_order),
         icon: 'sales_orders'
+      },
+      {
+        id: 'users',
+        title: t`Users`,
+        link: '/core/index/users',
+        icon: 'user'
+      },
+      {
+        id: 'groups',
+        title: t`Groups`,
+        link: '/core/index/groups',
+        icon: 'group'
       }
     ];
   }, [user]);

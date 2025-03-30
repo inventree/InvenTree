@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   Center,
@@ -35,6 +35,7 @@ import Select from 'react-select';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
+import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
   type DetailsField,
   DetailsTable
@@ -881,6 +882,14 @@ export default function PartDetail() {
   const partActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.part} id={part.pk} />,
+      <StarredToggleButton
+        key='starred_change'
+        instance={part}
+        model={ModelType.part}
+        successFunction={() => {
+          refreshInstance();
+        }}
+      />,
       <BarcodeActionDropdown
         model={ModelType.part}
         pk={part.pk}

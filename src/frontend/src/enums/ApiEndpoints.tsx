@@ -12,6 +12,7 @@ export enum ApiEndpoints {
   // User API endpoints
   user_list = 'user/',
   user_me = 'user/me/',
+  user_profile = 'user/profile/',
   user_roles = 'user/roles/',
   user_token = 'user/token/',
   user_tokens = 'user/tokens/',
@@ -65,6 +66,9 @@ export enum ApiEndpoints {
   barcode_link = 'barcode/link/',
   barcode_unlink = 'barcode/unlink/',
   barcode_generate = 'barcode/generate/',
+
+  // Data output endpoints
+  data_output = 'data-output/',
 
   // Data import endpoints
   import_session_list = 'importer/session/',
@@ -190,10 +194,8 @@ export enum ApiEndpoints {
   // Template API endpoints
   label_list = 'label/template/',
   label_print = 'label/print/',
-  label_output = 'label/output/',
   report_list = 'report/template/',
   report_print = 'report/print/',
-  report_output = 'report/output/',
   report_snippet = 'report/snippet/',
   report_asset = 'report/asset/',
 

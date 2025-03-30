@@ -6,6 +6,7 @@ from django.db.utils import OperationalError, ProgrammingError
 import structlog
 
 from common.settings import get_global_setting
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinImplementationError
 
 logger = structlog.get_logger('inventree')
@@ -54,7 +55,7 @@ class ScheduleMixin:
 
         self.scheduled_tasks = []
 
-        self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
+        self.add_mixin(PluginMixinEnum.SCHEDULE, 'has_scheduled_tasks', __class__)
 
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):

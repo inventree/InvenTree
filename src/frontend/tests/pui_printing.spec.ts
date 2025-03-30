@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
-import { loadTab, navigate } from './helpers.js';
-import { doQuickLogin } from './login.js';
+import { activateTableView, loadTab } from './helpers.js';
+import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
 /*
@@ -8,11 +8,10 @@ import { setPluginState } from './settings.js';
  * Select a number of stock items from the table,
  * and print labels against them
  */
-test('Label Printing', async ({ page }) => {
-  await doQuickLogin(page);
+test('Label Printing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
-  await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   await loadTab(page, 'Stock Items');
 
@@ -41,9 +40,7 @@ test('Label Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.locator('#form-success').waitFor();
-  await page.getByText('Label printing completed').waitFor();
-
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 
@@ -52,15 +49,15 @@ test('Label Printing', async ({ page }) => {
  * Navigate to a PurchaseOrder detail page,
  * and print a report against it.
  */
-test('Report Printing', async ({ page }) => {
-  await doQuickLogin(page);
+test('Report Printing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
-  await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   // Navigate to a specific PurchaseOrder
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await loadTab(page, 'Purchase Orders');
+  await activateTableView(page);
 
   await page.getByRole('cell', { name: 'PO0009' }).click();
 
@@ -75,18 +72,18 @@ test('Report Printing', async ({ page }) => {
   await page.waitForTimeout(100);
 
   // Submit the print form (should result in success)
-  await page.getByRole('button', { name: 'Generate', exact: true }).isEnabled();
-  await page.getByRole('button', { name: 'Generate', exact: true }).click();
+  await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.locator('#form-success').waitFor();
-  await page.getByText('Report printing completed').waitFor();
-
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 
-test('Report Editing', async ({ page, request }) => {
-  const [username, password] = ['admin', 'inventree'];
-  await doQuickLogin(page, username, password);
+test('Report Editing', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // activate the sample plugin for this test
   await setPluginState({

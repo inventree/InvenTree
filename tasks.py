@@ -169,12 +169,12 @@ def content_excludes(
     allow_plugins: bool = True,
     allow_sso: bool = True,
 ):
-    """Returns a list of content types to exclude from import/export.
+    """Returns a list of content types to exclude from import / export.
 
     Arguments:
-        allow_tokens (bool): Allow tokens to be exported/importe
-        allow_plugins (bool): Allow plugin information to be exported/imported
-        allow_sso (bool): Allow SSO tokens to be exported/imported
+        allow_tokens (bool): Allow tokens to be exported / imported
+        allow_plugins (bool): Allow plugin information to be exported / imported
+        allow_sso (bool): Allow SSO tokens to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -186,13 +186,12 @@ def content_excludes(
         'django_q.ormq',
         'exchange.rate',
         'exchange.exchangebackend',
+        'common.dataoutput',
         'common.notificationentry',
         'common.notificationmessage',
         'importer.dataimportsession',
         'importer.dataimportcolumnmap',
         'importer.dataimportrow',
-        'report.labeloutput',
-        'report.reportoutput',
     ]
 
     # Optionally exclude user auth data
@@ -1304,6 +1303,7 @@ def version(c):
         get_backup_dir,
         get_config_file,
         get_media_dir,
+        get_plugin_file,
         get_static_dir,
     )
 
@@ -1329,6 +1329,7 @@ Invoke Tool {invoke_path}
 Installation paths:
 Base        {localDir()}
 Config      {get_config_file()}
+Plugin File {get_plugin_file() or NOT_SPECIFIED}
 Media       {get_media_dir(error=False) or NOT_SPECIFIED}
 Static      {get_static_dir(error=False) or NOT_SPECIFIED}
 Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}

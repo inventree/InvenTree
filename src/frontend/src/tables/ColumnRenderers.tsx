@@ -1,7 +1,7 @@
 /**
  * Common rendering functions for table column data.
  */
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
@@ -66,11 +66,14 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
 
       if (!location) {
         return (
-          <Text style={{ fontStyle: 'italic' }}>{t`No location set`}</Text>
+          <Text
+            size='sm'
+            style={{ fontStyle: 'italic' }}
+          >{t`No location set`}</Text>
         );
       }
 
-      return <Text>{location.name}</Text>;
+      return <Text size='sm'>{location.name}</Text>;
     },
     ...props
   };

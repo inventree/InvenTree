@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -52,6 +52,7 @@ export function NotificationTable({
         rowActions: actions,
         tableActions: tableActions,
         enableSelection: true,
+        enableBulkDelete: true,
         params: params
       }}
     />

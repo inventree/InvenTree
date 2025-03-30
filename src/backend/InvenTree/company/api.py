@@ -1,13 +1,13 @@
 """Provides a JSON API for the Company app."""
 
 from django.db.models import Q
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 
 import part.models
-from importer.mixins import DataExportViewMixin
+from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
@@ -176,7 +176,7 @@ class ManufacturerPartList(DataExportViewMixin, ListCreateDestroyAPIView):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -245,7 +245,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -355,7 +355,7 @@ class SupplierPartMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class SupplierPartList(
@@ -467,7 +467,7 @@ class SupplierPriceBreakList(ListCreateAPI):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -511,8 +511,8 @@ manufacturer_part_api_urls = [
             ),
         ]),
     ),
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
@@ -533,8 +533,8 @@ manufacturer_part_api_urls = [
 
 
 supplier_part_api_urls = [
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
@@ -557,8 +557,8 @@ company_api_urls = [
     path(
         'price-break/',
         include([
-            re_path(
-                r'^(?P<pk>\d+)/?',
+            path(
+                '<int:pk>/',
                 SupplierPriceBreakDetail.as_view(),
                 name='api-part-supplier-price-detail',
             ),
@@ -569,8 +569,8 @@ company_api_urls = [
             ),
         ]),
     ),
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
@@ -584,8 +584,8 @@ company_api_urls = [
     path(
         'contact/',
         include([
-            re_path(
-                r'^(?P<pk>\d+)/?',
+            path(
+                '<int:pk>/',
                 include([
                     path(
                         'metadata/',
