@@ -1,8 +1,61 @@
 import { systemKey, test } from './baseFixtures.js';
-import { doQuickLogin } from './login.js';
+import { doCachedLogin } from './login.js';
 
-test('Quick Command', async ({ page }) => {
-  await doQuickLogin(page);
+test('Modals - Admin', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
+
+  // use server info
+  await page.getByLabel('open-spotlight').click();
+  await page
+    .getByRole('button', {
+      name: 'Server Information About this InvenTree instance'
+    })
+    .click();
+  await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  // use license info
+  await page.getByLabel('open-spotlight').click();
+  await page
+    .getByRole('button', {
+      name: 'License Information Licenses for dependencies of the service'
+    })
+    .click();
+  await page.getByText('License Information').first().waitFor();
+  await page.getByRole('tab', { name: 'backend Packages' }).click();
+  await page.getByRole('button', { name: 'Babel BSD License' }).click();
+  await page
+    .getByText('by the Babel Team, see AUTHORS for more information')
+    .waitFor();
+
+  await page.getByRole('tab', { name: 'frontend Packages' }).click();
+  await page.getByRole('button', { name: '@sentry/core MIT' }).click();
+  await page
+    .getByLabel('@sentry/coreMIT')
+    .getByText('Copyright (c) 2019')
+    .waitFor();
+
+  await page
+    .getByLabel('License Information')
+    .getByRole('button')
+    .first()
+    .click();
+
+  // use about
+  await page.getByLabel('open-spotlight').click();
+  await page
+    .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
+    .click();
+  await page.getByRole('cell', { name: 'InvenTree Version' }).click();
+});
+
+test('Quick Command', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
+
+  await page.waitForLoadState('networkidle');
 
   // Open Spotlight with Keyboard Shortcut and Search
   await page.locator('body').press(`${systemKey}+k`);
@@ -10,11 +63,12 @@ test('Quick Command', async ({ page }) => {
   await page.getByPlaceholder('Search...').fill('Dashboard');
   await page.getByPlaceholder('Search...').press('Tab');
   await page.getByPlaceholder('Search...').press('Enter');
-  await page.waitForURL('**/web/home');
 });
 
-test('Quick Command - No Keys', async ({ page }) => {
-  await doQuickLogin(page);
+test('Quick Command - No Keys', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
+
+  await page.waitForLoadState('networkidle');
 
   // Open Spotlight with Button
   await page.getByLabel('open-spotlight').click();
@@ -23,15 +77,15 @@ test('Quick Command - No Keys', async ({ page }) => {
     .click();
 
   await page.getByText('InvenTree Demo Server - ').waitFor();
-  await page.waitForURL('**/web/home');
 
   // Use navigation menu
   await page.getByLabel('open-spotlight').click();
-  await page
-    .getByRole('button', { name: 'Open Navigation Open the main' })
-    .click();
 
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
+
+  await page.getByRole('button', { name: 'Open Navigation' }).click();
+
+  await page.waitForTimeout(250);
 
   // assert the nav headers are visible
   await page.getByText('Navigation').waitFor();
@@ -54,8 +108,6 @@ test('Quick Command - No Keys', async ({ page }) => {
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
   await page.getByRole('button', { name: 'Close' }).click();
-
-  await page.waitForURL('**/web/home');
 
   // use license info
   await page.getByLabel('open-spotlight').click();

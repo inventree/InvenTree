@@ -1,9 +1,12 @@
 import { test } from '../baseFixtures';
 import { navigate } from '../helpers';
-import { doQuickLogin } from '../login';
+import { doCachedLogin } from '../login';
 
-test('PUI - Admin - Parameter', async ({ page }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('PUI - Admin - Parameter', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
   await page.getByRole('tab', { name: 'Part Parameters' }).click();
