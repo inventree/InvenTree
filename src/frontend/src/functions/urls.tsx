@@ -36,9 +36,11 @@ export function getDetailUrl(
  * Returns the edit view URL for a given model type
  */
 export function generateUrl(url: string | URL, base?: string): string {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
 
   let newUrl: string | URL = url;
+
+  const host: string = getHost();
 
   try {
     if (base) {
