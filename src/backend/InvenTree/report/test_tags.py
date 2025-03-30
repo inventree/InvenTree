@@ -3,6 +3,7 @@
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.utils.safestring import SafeString
@@ -174,8 +175,8 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Test might return one of two results, depending on test env
         # If INVENTREE_SITE_URL is not set in the CI environment, the link will be relative
         options = [
-            f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>',
-            f'<a href="/platform/part/{obj.pk}">test</a>',
+            f'<a href="http://localhost:8000/web/part/{obj.pk}">test</a>',
+            f'<a href="/web/part/{obj.pk}">test</a>',
         ]
 
         self.assertIn(link, options)
@@ -431,6 +432,16 @@ class BarcodeTagTest(TestCase):
         with self.assertRaises(ValueError):
             barcode_tags.qrcode('')
 
+    def test_clean_barcode(self):
+        """Test clean_barcode tag."""
+        self.assertEqual(barcode_tags.clean_barcode('hello world'), 'hello world')
+        self.assertEqual(barcode_tags.clean_barcode('`hello world`'), 'hello world')
+
+        with self.assertRaises(ValidationError):
+            self.assertEqual(
+                barcode_tags.clean_barcode('<b>hello world</b>'), 'hello world'
+            )
+
     def test_datamatrix(self):
         """Test the datamatrix generation tag."""
         # Test with default settings
@@ -451,3 +462,12 @@ class BarcodeTagTest(TestCase):
         # Test empty tag
         with self.assertRaises(ValueError):
             barcode_tags.datamatrix('')
+
+        # Failure cases with wrong args
+        datamatrix = barcode_tags.datamatrix(
+            'hello world', border='abc', fill_color='aaaaaaa', back_color='aaaaaaa'
+        )
+        self.assertEqual(
+            datamatrix,
+            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAAlElEQVR4nJ1TQQ7AIAgri///cncw6wroEseBgEFbCgZJnNsFICKOPAAIjeSM5T11IznK5f5WRMgnkhP9JfCcTC/MxFZ5hxLOgqrn3o/z/OqtsNpdSL31Iu9W4Dq8Sulu+q5Nuqa3XYOdnuidlICPpXhZVBruyzAKSZehT+yNlzvZQcq6JiW7Ni592swf/43kdlDfdgMk1eOtR7kWpAAAAABJRU5ErkJggg==',
+        )

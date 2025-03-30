@@ -55,6 +55,7 @@ ignore = [
     "D417",
     # - RUF032 - decimal-from-float-literal
     "RUF032",
+    "RUF045",
 
     # TODO These should be followed up and fixed
     # - B904 Within an `except` clause, raise exceptions
@@ -89,7 +90,7 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.uv.pip]
-python-version = "3.9"
+python-version = "3.9.2"
 no-strip-extras=true
 generate-hashes=true
 

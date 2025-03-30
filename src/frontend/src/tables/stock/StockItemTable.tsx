@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
@@ -537,6 +537,7 @@ export function StockItemTable({
       location: params.location
     },
     follow: true,
+    table: table,
     modelType: ModelType.stockitem
   });
 

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { Group, SimpleGrid, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
@@ -21,7 +21,7 @@ export default function PurchaseHistoryPanel({
   const calculateUnitPrice = useCallback((record: any) => {
     const pack_quantity =
       record?.supplier_part_detail?.pack_quantity_native ?? 1;
-    const unit_price = record.purchase_price / pack_quantity;
+    const unit_price = Number.parseFloat(record.purchase_price) / pack_quantity;
 
     return unit_price;
   }, []);
@@ -95,7 +95,7 @@ export default function PurchaseHistoryPanel({
     return table.records.map((record: any) => {
       return {
         quantity: record.quantity,
-        purchase_price: record.purchase_price,
+        purchase_price: Number.parseFloat(record.purchase_price),
         unit_price: calculateUnitPrice(record),
         name: record.order_detail.reference
       };

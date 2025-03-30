@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
 import type { ReactNode } from 'react';
 
@@ -18,24 +18,24 @@ export function RenderPart(
   let badgeText = '';
   let badgeColor = '';
 
-  const stock = instance.total_in_stock;
+  const stock: number | null = instance.total_in_stock ?? null;
 
   if (instance.active == false) {
     badgeColor = 'red';
     badgeText = t`Inactive`;
-  } else if (stock <= 0) {
+  } else if (stock != null && stock <= 0) {
     badgeColor = 'orange';
     badgeText = t`No stock`;
-  } else {
+  } else if (stock != null) {
     badgeText = `${t`Stock`}: ${stock}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 
-  const badge = (
+  const badge = !!badgeText ? (
     <Badge size='xs' color={badgeColor}>
       {badgeText}
     </Badge>
-  );
+  ) : null;
 
   return (
     <RenderInlineModel

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
@@ -49,13 +49,15 @@ export default function UserSettings() {
         content: (
           <UserSettingList
             keys={[
+              'ICONS_IN_NAVBAR',
               'STICKY_HEADER',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'PART_SHOW_QUANTITY_IN_FORMS',
               'DISPLAY_SCHEDULE_TAB',
               'DISPLAY_STOCKTAKE_TAB',
-              'TABLE_STRING_MAX_LENGTH'
+              'TABLE_STRING_MAX_LENGTH',
+              'ENABLE_LAST_BREADCRUMB'
             ]}
           />
         )

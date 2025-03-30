@@ -13,7 +13,7 @@ test('Login - Basic Test', async ({ page }) => {
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
 
-  await page.waitForURL('**/platform/login');
+  await page.waitForURL('**/web/login');
   await page.getByLabel('username');
 });
 
@@ -27,13 +27,13 @@ test('Login - Quick Test', async ({ page }) => {
 
   // Go to the dashboard
   await navigate(page, '');
-  await page.waitForURL('**/platform');
+  await page.waitForURL('**/web');
 
   await page.getByText('InvenTree Demo Server - ').waitFor();
 
   // Logout (via URL)
   await navigate(page, 'logout');
-  await page.waitForURL('**/platform/login');
+  await page.waitForURL('**/web/login');
   await page.getByLabel('username');
 });
 
@@ -51,7 +51,7 @@ test('Login - Failures', async ({ page }) => {
   // Navigate to the 'login' page
   await navigate(page, logoutUrl);
   await expect(page).toHaveTitle(/^InvenTree.*$/);
-  await page.waitForURL('**/platform/login');
+  await page.waitForURL('**/web/login');
 
   // Attempt login with invalid credentials
   await page.getByLabel('login-username').fill('invalid user');
@@ -83,10 +83,11 @@ test('Login - Change Password', async ({ page }) => {
 
   // Navigate to the 'change password' page
   await navigate(page, 'settings/user/account');
-  await page.getByLabel('action-menu-user-actions').click();
-  await page.getByLabel('action-menu-user-actions-change-password').click();
+  await page.getByLabel('action-menu-account-actions').click();
+  await page.getByLabel('action-menu-account-actions-change-password').click();
 
   // First attempt with some errors
+  await page.getByLabel('password', { exact: true }).fill('youshallnotpass');
   await page.getByLabel('input-password-1').fill('12345');
   await page.getByLabel('input-password-2').fill('54321');
   await page.getByRole('button', { name: 'Confirm' }).click();
@@ -104,10 +105,6 @@ test('Login - Change Password', async ({ page }) => {
 
   await page.getByText('Password Changed').waitFor();
   await page.getByText('The password was set successfully').waitFor();
-
-  // Should have redirected to the index page
-  await page.waitForURL('**/platform/home**');
-  await page.getByText('InvenTree Demo Server - Norman Nothington');
 
   await page.waitForTimeout(1000);
 });

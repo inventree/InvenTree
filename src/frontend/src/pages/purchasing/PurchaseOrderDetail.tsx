@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
@@ -94,14 +94,20 @@ export default function PurchaseOrderDetail() {
     }
   });
 
+  const duplicatePurchaseOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicatePurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
     fields: duplicatePurchaseOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicatePurchaseOrderInitialData,
     follow: true,
     modelType: ModelType.purchaseorder
   });
@@ -185,7 +191,7 @@ export default function PurchaseOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
-            currency: order?.order_currency ?? order?.supplier_detail?.currency
+            currency: order?.order_currency || order?.supplier_detail?.currency
           });
         }
       }
@@ -201,14 +207,28 @@ export default function PurchaseOrderDetail() {
         hidden: !order.link
       },
       {
-        type: 'link',
-        model: ModelType.contact,
-        link: false,
-        name: 'contact',
+        type: 'text',
+        name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.email',
+        label: t`Contact Email`,
+        icon: 'email',
+        copy: true,
+        hidden: !order.contact_detail?.email
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.phone',
+        label: t`Contact Phone`,
+        icon: 'phone',
+        copy: true,
+        hidden: !order.contact_detail?.phone
       },
       {
         type: 'text',
@@ -502,6 +522,12 @@ export default function PurchaseOrderDetail() {
             subtitle={order.description}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+            lastCrumb={[
+              {
+                name: order.reference,
+                url: `/purchasing/purchase-order/${order.pk}`
+              }
+            ]}
             actions={poActions}
             badges={orderBadges}
             editAction={editPurchaseOrder.open}

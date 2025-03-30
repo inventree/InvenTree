@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Flex, Table } from '@mantine/core';
 import {
   IconAddressBook,
@@ -234,7 +234,12 @@ export function useReceiveReturnOrderLineItems(
           />
         );
       },
-      headers: [t`Part`, t`Quantity`, t`Status`]
+      headers: [
+        { title: t`Part`, style: { minWidth: '250px' } },
+        { title: t`Quantity`, style: { minWidth: '250px' } },
+        { title: t`Status`, style: { minWidth: '250px' } },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     location: {
       filters: {

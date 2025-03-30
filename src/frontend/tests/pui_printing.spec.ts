@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { navigate } from './helpers.js';
+import { activateTableView, loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
@@ -12,9 +12,9 @@ test('Label Printing', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await loadTab(page, 'Stock Items');
 
   // Select some labels
   await page.getByLabel('Select record 1', { exact: true }).click();
@@ -41,9 +41,7 @@ test('Label Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.locator('#form-success').waitFor();
-  await page.getByText('Label printing completed').waitFor();
-
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 
@@ -56,11 +54,12 @@ test('Report Printing', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   // Navigate to a specific PurchaseOrder
   await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await loadTab(page, 'Purchase Orders');
+  await activateTableView(page);
 
   await page.getByRole('cell', { name: 'PO0009' }).click();
 
@@ -75,12 +74,10 @@ test('Report Printing', async ({ page }) => {
   await page.waitForTimeout(100);
 
   // Submit the print form (should result in success)
-  await page.getByRole('button', { name: 'Generate', exact: true }).isEnabled();
-  await page.getByRole('button', { name: 'Generate', exact: true }).click();
+  await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.locator('#form-success').waitFor();
-  await page.getByText('Report printing completed').waitFor();
-
+  await page.getByText('Process completed successfully').first().waitFor();
   await page.context().close();
 });
 
@@ -98,7 +95,7 @@ test('Report Editing', async ({ page, request }) => {
   // Navigate to the admin center
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
-  await page.getByRole('tab', { name: 'Label Templates' }).click();
+  await loadTab(page, 'Label Templates');
   await page
     .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
     .click();

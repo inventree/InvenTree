@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, {
@@ -62,9 +63,11 @@ export function SettingList({
     return 'string';
   }, [setting]);
 
+  const key: string = useMemo(() => setting?.key ?? '', [setting]);
+
   const editSettingModal = useEditApiFormModal({
     url: settingsState.endpoint,
-    pk: setting?.key,
+    pk: key,
     pathParams: settingsState.pathParams,
     title: t`Edit Setting`,
     fields: {
@@ -75,10 +78,11 @@ export function SettingList({
         description: setting?.description,
         api_url: setting?.api_url ?? '',
         model: (setting?.model_name?.split('.')[1] as ModelType) ?? null,
+        filters: setting?.model_filters || undefined,
         choices: setting?.choices ?? undefined
       }
     },
-    successMessage: t`Setting ${setting?.key} updated successfully`,
+    successMessage: t`Setting ${key} updated successfully`,
     onFormSuccess: () => {
       settingsState.fetchSettings();
       onChange?.();

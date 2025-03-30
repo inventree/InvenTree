@@ -1,11 +1,12 @@
-import { Trans, t } from '@lingui/macro';
-import { Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Stack } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileDownload,
   IconFileUpload,
   IconList,
   IconListDetails,
@@ -21,7 +22,6 @@ import {
 import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
-import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../../components/panels/Panel';
@@ -70,7 +70,11 @@ const BarcodeScanHistoryTable = Loadable(
   lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
 );
 
-const ImportSesssionTable = Loadable(
+const ExportSessionTable = Loadable(
+  lazy(() => import('../../../../tables/settings/ExportSessionTable'))
+);
+
+const ImportSessionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
 
@@ -115,7 +119,13 @@ export default function AdminCenter() {
         name: 'import',
         label: t`Data Import`,
         icon: <IconFileUpload />,
-        content: <ImportSesssionTable />
+        content: <ImportSessionTable />
+      },
+      {
+        name: 'export',
+        label: t`Data Export`,
+        icon: <IconFileDownload />,
+        content: <ExportSessionTable />
       },
       {
         name: 'barcode-history',
@@ -215,33 +225,6 @@ export default function AdminCenter() {
     ];
   }, []);
 
-  const QuickAction = () => (
-    <Stack gap={'xs'} ml={'sm'}>
-      <Title order={5}>
-        <Trans>Quick Actions</Trans>
-      </Title>
-      <SimpleGrid cols={3}>
-        <Paper shadow='xs' p='sm' withBorder>
-          <Text>
-            <Trans>Add a new user</Trans>
-          </Text>
-        </Paper>
-
-        <Paper shadow='xs' p='sm' withBorder>
-          <PlaceholderPill />
-        </Paper>
-
-        <Paper shadow='xs' p='sm' withBorder>
-          <PlaceholderPill />
-        </Paper>
-      </SimpleGrid>
-    </Stack>
-  );
-
-  if (!user.isLoggedIn()) {
-    return <Skeleton />;
-  }
-
   return (
     <>
       <PageTitle title={t`Admin Center`} />
@@ -252,7 +235,6 @@ export default function AdminCenter() {
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
           />
-          <QuickAction />
           <PanelGroup
             pageKey='admin-center'
             panels={adminCenterPanels}

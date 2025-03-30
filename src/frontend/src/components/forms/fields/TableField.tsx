@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
@@ -132,15 +133,21 @@ export function TableField({
   );
 
   return (
-    <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
+    <Table
+      highlightOnHover
+      striped
+      aria-label={`table-field-${field.name}`}
+      style={{ width: '100%' }}
+    >
       <Table.Thead>
         <Table.Tr>
           {definition.headers?.map((header, index) => {
             return (
               <Table.Th
-                key={`table-header-${identifierString(header)}-${index}`}
+                key={`table-header-${identifierString(header.title)}-${index}`}
+                style={header.style}
               >
-                {header}
+                {header.title}
               </Table.Th>
             );
           })}

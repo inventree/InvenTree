@@ -1,0 +1,79 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - stable
+    - refs/tags/*
+  paths:
+    include:
+    - src/backend
+
+pool:
+  vmImage: ubuntu-latest
+strategy:
+  matrix:
+    Python39:
+      PYTHON_VERSION: '3.9'
+  maxParallel: 3
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(PYTHON_VERSION)'
+    architecture: 'x64'
+
+- task: PythonScript@0
+  displayName: 'Export project path'
+  inputs:
+    scriptSource: 'inline'
+    script: |
+      """Search all subdirectories for `manage.py`."""
+      from glob import iglob
+      from os import path
+      # Python >= 3.5
+      manage_py = next(iglob(path.join('**', 'manage.py'), recursive=True), None)
+      if not manage_py:
+          raise SystemExit('Could not find a Django project')
+      project_location = path.dirname(path.abspath(manage_py))
+      print('Found Django project in', project_location)
+      print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+
+- script: |
+    python -m pip install --upgrade pip setuptools wheel uv
+    uv pip install --require-hashes -r src/backend/requirements.txt
+    uv pip install --require-hashes -r src/backend/requirements-dev.txt
+    sudo apt-get install poppler-utils
+    sudo apt-get install libpoppler-dev
+    uv pip install unittest-xml-reporting coverage invoke
+  displayName: 'Install prerequisites'
+  env:
+    UV_SYSTEM_PYTHON: 1
+
+- script: |
+    pushd '$(projectRoot)'
+    invoke update --uv
+    coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
+    coverage xml -i
+  displayName: 'Run tests'
+  env:
+    INVENTREE_DB_ENGINE: sqlite3
+    INVENTREE_DB_NAME: inventree
+    INVENTREE_MEDIA_ROOT: ./media
+    INVENTREE_STATIC_ROOT: ./static
+    INVENTREE_BACKUP_DIR: ./backup
+    INVENTREE_SITE_URL: http://localhost:8000
+    INVENTREE_PLUGINS_ENABLED: true
+    UV_SYSTEM_PYTHON: 1
+    INVENTREE_DEBUG: true
+    INVENTREE_LOG_LEVEL: INFO
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: "**/TEST-*.xml"
+    testRunTitle: 'Python $(PYTHON_VERSION)'
+  condition: succeededOrFailed()
+
+- task: PublishCodeCoverageResults@2
+  inputs:
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'

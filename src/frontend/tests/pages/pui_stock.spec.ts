@@ -2,6 +2,7 @@ import { test } from '../baseFixtures.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
+  loadTab,
   navigate,
   openFilterDrawer,
   setTableChoiceFilter
@@ -12,38 +13,38 @@ test('Stock - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
-  await page.getByRole('tab', { name: 'Location Details' }).click();
-  await page.waitForURL('**/platform/stock/location/index/details');
+  await loadTab(page, 'Location Details');
+  await page.waitForURL('**/web/stock/location/index/details');
 
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await loadTab(page, 'Stock Items');
   await page.getByText('1551ABK').first().click();
 
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
-  await page.waitForURL('**/platform/stock/**');
-  await page.getByRole('tab', { name: 'Stock Locations' }).click();
+  await page.waitForURL('**/web/stock/**');
+  await loadTab(page, 'Stock Locations');
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
-  await page.getByRole('tab', { name: 'Default Parts' }).click();
-  await page.getByRole('tab', { name: 'Stock Locations' }).click();
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
-  await page.getByRole('tab', { name: 'Location Details' }).click();
+  await loadTab(page, 'Default Parts');
+  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Stock Items');
+  await loadTab(page, 'Location Details');
 
   await navigate(page, 'stock/item/1194/details');
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
-  await page.getByRole('tab', { name: 'Stock Tracking' }).click();
-  await page.getByRole('tab', { name: 'Test Data' }).click();
+  await loadTab(page, 'Stock Tracking');
+  await loadTab(page, 'Test Data');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
-  await page.getByRole('tab', { name: 'Installed Items' }).click();
+  await loadTab(page, 'Installed Items');
 });
 
 test('Stock - Location Tree', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'stock/location/index/');
-  await page.waitForURL('**/platform/stock/location/**');
-  await page.getByRole('tab', { name: 'Location Details' }).click();
+  await page.waitForURL('**/web/stock/location/**');
+  await loadTab(page, 'Location Details');
 
   await page.getByLabel('nav-breadcrumb-action').click();
   await page.getByLabel('nav-tree-toggle-1}').click();
@@ -59,7 +60,7 @@ test('Stock - Filters', async ({ page }) => {
   await doQuickLogin(page, 'steven', 'wizardstaff');
 
   await navigate(page, 'stock/location/index/');
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await loadTab(page, 'Stock Items');
 
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
@@ -238,7 +239,7 @@ test('Stock - Tracking', async ({ page }) => {
   await page.getByRole('link', { name: 'Widget Assembly # 2' }).waitFor();
 
   // Navigate to the "stock tracking" tab
-  await page.getByRole('tab', { name: 'Stock Tracking' }).click();
+  await loadTab(page, 'Stock Tracking');
   await page.getByText('- - Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();

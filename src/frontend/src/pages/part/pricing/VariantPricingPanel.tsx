@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { SimpleGrid, Stack } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
@@ -63,8 +63,10 @@ export default function VariantPricingPanel({
       return {
         part: variant,
         name: variant.full_name,
-        pmin: variant.pricing_min ?? variant.pricing_max ?? 0,
-        pmax: variant.pricing_max ?? variant.pricing_min ?? 0
+        pmin: Number.parseFloat(
+          variant.pricing_min ?? variant.pricing_max ?? 0
+        ),
+        pmax: Number.parseFloat(variant.pricing_max ?? variant.pricing_min ?? 0)
       };
     });
 

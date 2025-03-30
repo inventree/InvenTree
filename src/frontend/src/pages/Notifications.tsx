@@ -1,6 +1,5 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import {
   IconBellCheck,
   IconBellExclamation,
@@ -37,26 +36,6 @@ export default function NotificationsPage() {
         readTable.refreshTable();
       })
       .catch((_error) => {});
-  }, []);
-
-  const deleteNotifications = useCallback(() => {
-    modals.openConfirmModal({
-      title: t`Delete Notifications`,
-      onConfirm: () => {
-        api
-          .delete(apiUrl(ApiEndpoints.notifications_list), {
-            data: {
-              filters: {
-                read: true
-              }
-            }
-          })
-          .then((_response) => {
-            readTable.refreshTable();
-          })
-          .catch((_error) => {});
-      }
-    });
   }, []);
 
   const notificationPanels = useMemo(() => {
@@ -139,14 +118,7 @@ export default function NotificationsPage() {
                 }
               }
             ]}
-            tableActions={[
-              <ActionButton
-                color='red'
-                icon={<IconTrash />}
-                tooltip={t`Delete notifications`}
-                onClick={deleteNotifications}
-              />
-            ]}
+            tableActions={[]}
           />
         )
       }

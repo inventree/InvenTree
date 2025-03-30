@@ -81,6 +81,7 @@ js_tmp/
 
 # Development files
 dev/
+dev-db/
 data/
 env/
 

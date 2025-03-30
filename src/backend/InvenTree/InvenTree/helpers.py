@@ -8,15 +8,14 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from pathlib import Path
-from typing import Optional, TypeVar, Union
+from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
-from django.core.files.storage import Storage, default_storage
+from django.core.files.storage import default_storage
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -235,22 +234,6 @@ def str2bool(text, test=True):
     return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
 
 
-def str2int(text, default=None):
-    """Convert a string to int if possible.
-
-    Args:
-        text: Int like string
-        default: Return value if str is no int like
-
-    Returns:
-        Converted int value
-    """
-    try:
-        return int(text)
-    except Exception:
-        return default
-
-
 def is_bool(text):
     """Determine if a string value 'looks' like a boolean."""
     return str2bool(text, True) or str2bool(text, False)
@@ -401,9 +384,14 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def GetExportFormats():
+def GetExportOptions() -> list:
+    """Return a set of allowable import / export file formats."""
+    return [['csv', 'CSV'], ['xlsx', 'Excel'], ['tsv', 'TSV']]
+
+
+def GetExportFormats() -> list:
     """Return a list of allowable file formats for importing or exporting tabular data."""
-    return ['csv', 'xlsx', 'tsv', 'json']
+    return [opt[0] for opt in GetExportOptions()]
 
 
 def DownloadFile(
@@ -454,14 +442,14 @@ def increment_serial_number(serial, part=None):
         incremented value, or None if incrementing could not be performed.
     """
     from InvenTree.exceptions import log_error
-    from plugin.registry import registry
+    from plugin import PluginMixinEnum, registry
 
     # Ensure we start with a string value
     if serial is not None:
         serial = str(serial).strip()
 
     # First, let any plugins attempt to increment the serial number
-    for plugin in registry.with_mixin('validation'):
+    for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
         try:
             if not hasattr(plugin, 'increment_serial_number'):
                 continue
@@ -902,16 +890,6 @@ def hash_barcode(barcode_data: str) -> str:
     return str(barcode_hash.hexdigest())
 
 
-def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
-    """Return the MD5 hash of a file."""
-    content = (
-        open(filename, 'rb').read()  # noqa: SIM115
-        if storage is None
-        else storage.open(str(filename), 'rb').read()
-    )
-    return hashlib.md5(content).hexdigest()
-
-
 def current_time(local=True):
     """Return the current date and time as a datetime object.
 
@@ -1060,13 +1038,8 @@ def inheritors(
     return subcls
 
 
-def is_ajax(request):
-    """Check if the current request is an AJAX request."""
-    return request.headers.get('x-requested-with') == 'XMLHttpRequest'
-
-
 def pui_url(subpath: str) -> str:
-    """Return the URL for a PUI subpath."""
+    """Return the URL for a web subpath."""
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'

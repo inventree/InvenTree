@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';

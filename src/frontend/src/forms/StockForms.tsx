@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Flex, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
@@ -115,7 +115,9 @@ export function useStockFields({
 
           if (expiry_days && expiry_days > 0) {
             // Adjust the expiry date based on the part default expiry
-            setExpiryDate(dayjs().add(expiry_days, 'days').toISOString());
+            setExpiryDate(
+              dayjs().add(expiry_days, 'days').format('YYYY-MM-DD')
+            );
           }
         }
       },
@@ -205,9 +207,6 @@ export function useStockFields({
       },
       delete_on_deplete: {}
     };
-
-    // TODO: Handle custom field management based on provided options
-    // TODO: refer to stock.py in original codebase
 
     // Remove the expiry date field if it is not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
@@ -386,7 +385,7 @@ function StockItemDefaultMove({
         />
       </Flex>
       <Flex direction='column' gap='sm' align='center'>
-        <Text>{stockItem.location_detail.pathstring}</Text>
+        <Text>{stockItem.location_detail?.pathstring ?? '-'}</Text>
         <InvenTreeIcon icon='arrow_down' />
         <Suspense fallback={<Skeleton width='150px' />}>
           <Text>{data?.pathstring}</Text>
@@ -549,6 +548,7 @@ function StockOperationsRow({
         <Table.Td>
           {record.location ? record.location_detail?.pathstring : '-'}
         </Table.Td>
+        <Table.Td>{record.batch ? record.batch : '-'}</Table.Td>
         <Table.Td>
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
@@ -697,7 +697,14 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`Stock`, t`Move`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`Stock` },
+        { title: t`Move`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     location: {
       filters: {
@@ -734,7 +741,14 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Remove`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Remove`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -766,7 +780,14 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Add`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Add`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -795,7 +816,14 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Count`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Count`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -826,7 +854,13 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     status: {},
     note: {}
@@ -862,7 +896,13 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Actions` }
+      ]
     },
     location: {
       default: items[0]?.part_detail.default_location,
@@ -904,7 +944,13 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     customer: {
       filters: {
@@ -942,7 +988,13 @@ function stockDeleteFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     }
   };
 

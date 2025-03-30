@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
@@ -279,6 +279,15 @@ export default function ManufacturerPartDetail() {
             title={t`ManufacturerPart`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
+            lastCrumb={[
+              {
+                name: manufacturerPart.MPN,
+                url: getDetailUrl(
+                  ModelType.manufacturerpart,
+                  manufacturerPart.pk
+                )
+              }
+            ]}
             actions={manufacturerPartActions}
             imageUrl={manufacturerPart?.part_detail?.thumbnail}
             editAction={editManufacturerPart.open}

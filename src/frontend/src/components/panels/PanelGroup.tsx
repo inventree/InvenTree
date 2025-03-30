@@ -1,6 +1,8 @@
 import {
   ActionIcon,
   Divider,
+  Group,
+  Loader,
   Paper,
   Stack,
   Tabs,
@@ -35,6 +37,7 @@ import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 import type { PanelType } from '../panels/Panel';
+import * as classes from './PanelGroup.css';
 
 /**
  * Set of properties which define a panel group:
@@ -78,7 +81,7 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
-  const pluginPanels = usePluginPanels({
+  const pluginPanelSet = usePluginPanels({
     model: model,
     instance: instance,
     id: id
@@ -89,7 +92,7 @@ function BasePanelGroup({
     const _panels = [...panels];
 
     // Add plugin panels
-    pluginPanels?.forEach((panel) => {
+    pluginPanelSet.panels?.forEach((panel) => {
       let panelKey = panel.name;
 
       // Check if panel with this name already exists
@@ -107,7 +110,7 @@ function BasePanelGroup({
     });
 
     return _panels;
-  }, [panels, pluginPanels]);
+  }, [panels, pluginPanelSet]);
 
   const activePanels = useMemo(
     () => allPanels.filter((panel) => !panel.hidden && !panel.disabled),
@@ -116,20 +119,20 @@ function BasePanelGroup({
 
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
-    (panel: string, event?: any) => {
+    (targetPanel: string, event?: any) => {
       if (event && (event?.ctrlKey || event?.shiftKey)) {
-        const url = `${location.pathname}/../${panel}`;
+        const url = `${location.pathname}/../${targetPanel}`;
         cancelEvent(event);
         navigateToLink(url, navigate, event);
       } else {
-        navigate(`../${panel}`);
+        navigate(`../${targetPanel}`);
       }
 
-      localState.setLastUsedPanel(pageKey)(panel);
+      localState.setLastUsedPanel(pageKey)(targetPanel);
 
       // Optionally call external callback hook
-      if (panel && onPanelChange) {
-        onPanelChange(panel);
+      if (targetPanel && onPanelChange) {
+        onPanelChange(targetPanel);
       }
     },
     [activePanels, navigate, location, onPanelChange]
@@ -159,6 +162,7 @@ function BasePanelGroup({
           orientation='vertical'
           keepMounted={false}
           aria-label={`panel-group-${pageKey}`}
+          classNames={{ tab: classes.selectedPanelTab }}
         >
           <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
             {allPanels.map(
@@ -188,20 +192,23 @@ function BasePanelGroup({
                 )
             )}
             {collapsible && (
-              <ActionIcon
-                style={{
-                  paddingLeft: '10px'
-                }}
-                onClick={() => setExpanded(!expanded)}
-                variant='transparent'
-                size='md'
-              >
-                {expanded ? (
-                  <IconLayoutSidebarLeftCollapse opacity={0.5} />
-                ) : (
-                  <IconLayoutSidebarRightCollapse opacity={0.5} />
-                )}
-              </ActionIcon>
+              <Group wrap='nowrap' gap='xs'>
+                <ActionIcon
+                  style={{
+                    paddingLeft: '10px'
+                  }}
+                  onClick={() => setExpanded(!expanded)}
+                  variant='transparent'
+                  size='md'
+                >
+                  {expanded ? (
+                    <IconLayoutSidebarLeftCollapse opacity={0.5} />
+                  ) : (
+                    <IconLayoutSidebarRightCollapse opacity={0.5} />
+                  )}
+                </ActionIcon>
+                {pluginPanelSet.isLoading && <Loader size='xs' />}
+              </Group>
             )}
           </Tabs.List>
           {allPanels.map(
@@ -222,7 +229,14 @@ function BasePanelGroup({
                   <Stack gap='md'>
                     {panel.showHeadline !== false && (
                       <>
-                        <StylishText size='xl'>{panel.label}</StylishText>
+                        <Group justify='space-between'>
+                          <StylishText size='xl'>{panel.label}</StylishText>
+                          {panel.controls && (
+                            <Group justify='right' wrap='nowrap'>
+                              {panel.controls}
+                            </Group>
+                          )}
+                        </Group>
                         <Divider />
                       </>
                     )}

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
 import {
   IconAddressBook,
@@ -262,7 +262,13 @@ export function useAllocateToSalesOrderForm({
       items: {
         field_type: 'table',
         value: [],
-        headers: [t`Part`, t`Allocated`, t`Stock Item`, t`Quantity`],
+        headers: [
+          { title: t`Part`, style: { minWidth: '200px' } },
+          { title: t`Allocated`, style: { minWidth: '200px' } },
+          { title: t`Stock Item`, style: { width: '100%' } },
+          { title: t`Quantity`, style: { minWidth: '200px' } },
+          { title: '', style: { width: '50px' } }
+        ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record =
             lineItems.find((item) => item.pk == row.item.line_item) ?? {};

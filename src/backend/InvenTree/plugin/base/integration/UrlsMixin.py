@@ -6,6 +6,7 @@ from django.urls import include, re_path
 import structlog
 
 from common.settings import get_global_setting
+from plugin import PluginMixinEnum
 from plugin.urls import PLUGIN_BASE
 
 logger = structlog.get_logger('inventree')
@@ -22,7 +23,7 @@ class UrlsMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('urls', 'has_urls', __class__)
+        self.add_mixin(PluginMixinEnum.URLS, 'has_urls', __class__)
         self.urls = self.setup_urls()
 
     @classmethod

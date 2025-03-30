@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Anchor, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -24,7 +24,7 @@ import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function calculateSupplierPartUnitPrice(record: any) {
   const pack_quantity = record?.part_detail?.pack_quantity_native ?? 1;
-  const unit_price = record.price / pack_quantity;
+  const unit_price = Number.parseFloat(record.price) / pack_quantity;
 
   return unit_price;
 }
@@ -111,9 +111,9 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
 }
 
 export default function SupplierPriceBreakTable({
-  supplierPartId
+  supplierPart
 }: Readonly<{
-  supplierPartId: number;
+  supplierPart: any;
 }>) {
   const table = useTable('supplierpricebreaks');
 
@@ -142,7 +142,8 @@ export default function SupplierPriceBreakTable({
     title: t`Add Price Break`,
     fields: supplierPriceBreakFields,
     initialData: {
-      part: supplierPartId
+      part: supplierPart.pk,
+      price_currency: supplierPart.supplier_detail.currency
     },
     table: table
   });
@@ -208,7 +209,7 @@ export default function SupplierPriceBreakTable({
         tableState={table}
         props={{
           params: {
-            part: supplierPartId,
+            part: supplierPart.pk,
             part_detail: true,
             supplier_detail: true
           },

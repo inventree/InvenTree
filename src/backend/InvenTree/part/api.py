@@ -11,7 +11,7 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import permissions, serializers, status
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -19,8 +19,8 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
-from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from data_exporter.mixins import DataExportViewMixin
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -68,6 +68,17 @@ class CategoryMixin:
 
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Add additional context based on query parameters."""
+        try:
+            params = self.request.query_params
+
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
+
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryDetail endpoint."""
@@ -226,7 +237,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -247,19 +258,6 @@ class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
 
 class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Add additional context based on query parameters."""
-        try:
-            params = self.request.query_params
-
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs.setdefault('context', self.get_serializer_context())
-
-        return self.serializer_class(*args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)."""
@@ -522,7 +520,10 @@ class PartThumbs(ListAPI):
 
         data = serializer.data
 
-        return Response(data)
+        if page is not None:
+            return self.get_paginated_response(data)
+        else:
+            return Response(data)
 
     filter_backends = [InvenTreeSearchFilter]
 
@@ -895,6 +896,14 @@ class PartFilter(rest_filters.FilterSet):
         model = Part
         fields = ['revision_of']
 
+    is_variant = rest_filters.BooleanFilter(
+        label=_('Is Variant'), method='filter_is_variant'
+    )
+
+    def filter_is_variant(self, queryset, name, value):
+        """Filter by whether the Part is a variant or not."""
+        return queryset.filter(variant_of__isnull=not str2bool(value))
+
     is_revision = rest_filters.BooleanFilter(
         label=_('Is Revision'), method='filter_is_revision'
     )
@@ -1218,7 +1227,7 @@ class PartMixin:
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_serializer_context(self):
         """Extend serializer context data."""
@@ -1228,7 +1237,7 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
+class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
@@ -1394,13 +1403,6 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
         'tags__name',
         'tags__slug',
     ]
-
-
-class PartChangeCategory(CreateAPI):
-    """API endpoint to change the location of multiple parts in bulk."""
-
-    serializer_class = part_serializers.PartSetCategorySerializer
-    queryset = Part.objects.none()
 
 
 class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
@@ -1596,7 +1598,7 @@ class PartParameterAPIMixin:
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class PartParameterFilter(rest_filters.FilterSet):
@@ -1857,7 +1859,7 @@ class BomMixin:
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the queryset object for this endpoint."""
@@ -1922,44 +1924,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
-
-
-class BomImportUpload(CreateAPI):
-    """API endpoint for uploading a complete Bill of Materials.
-
-    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
-    """
-
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.BomImportUploadSerializer
-
-    def create(self, request, *args, **kwargs):
-        """Custom create function to return the extracted data."""
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-
-        data = serializer.extract_data()
-
-        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class BomImportExtract(CreateAPI):
-    """API endpoint for extracting BOM data from a BOM file."""
-
-    queryset = Part.objects.none()
-    serializer_class = part_serializers.BomImportExtractSerializer
-
-
-class BomImportSubmit(CreateAPI):
-    """API endpoint for submitting BOM data from a BOM file."""
-
-    queryset = BomItem.objects.none()
-    serializer_class = part_serializers.BomImportSubmitSerializer
 
 
 class BomItemValidate(UpdateAPI):
@@ -2258,11 +2222,6 @@ part_api_urls = [
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),
     ),
-    path(
-        'change_category/',
-        PartChangeCategory.as_view(),
-        name='api-part-change-category',
-    ),
     path('', PartList.as_view(), name='api-part-list'),
 ]
 
@@ -2305,10 +2264,6 @@ bom_api_urls = [
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),
-    # API endpoint URLs for importing BOM data
-    path('import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
-    path('import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
-    path('import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
     # Catch-all
     path('', BomList.as_view(), name='api-bom-list'),
 ]

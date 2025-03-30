@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconChecklist,
@@ -102,6 +102,14 @@ export default function BuildDetail() {
         copy: true
       },
       {
+        type: 'string',
+        name: 'part_detail.revision',
+        icon: 'revision',
+        label: t`Revision`,
+        hidden: !build.part_detail?.revision,
+        copy: true
+      },
+      {
         type: 'status',
         name: 'status',
         label: t`Status`,
@@ -182,6 +190,40 @@ export default function BuildDetail() {
         hidden: !build.responsible
       },
       {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !build.project_code
+      },
+      {
+        type: 'link',
+        name: 'take_from',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Source Location`,
+        backup_value: t`Any location`
+      },
+      {
+        type: 'link',
+        name: 'destination',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Destination Location`,
+        hidden: !build.destination
+      },
+      {
+        type: 'text',
+        name: 'batch',
+        label: t`Batch Code`,
+        hidden: !build.batch,
+        copy: true
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
         type: 'date',
         name: 'creation_date',
         label: t`Created`,
@@ -212,40 +254,6 @@ export default function BuildDetail() {
         icon: 'calendar',
         copy: true,
         hidden: !build.completion_date
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !build.project_code
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'link',
-        name: 'take_from',
-        icon: 'location',
-        model: ModelType.stocklocation,
-        label: t`Source Location`,
-        backup_value: t`Any location`
-      },
-      {
-        type: 'link',
-        name: 'destination',
-        icon: 'location',
-        model: ModelType.stocklocation,
-        label: t`Destination Location`,
-        hidden: !build.destination
-      },
-      {
-        type: 'text',
-        name: 'batch',
-        label: t`Batch Code`,
-        hidden: !build.batch,
-        copy: true
       }
     ];
 
@@ -381,14 +389,20 @@ export default function BuildDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const duplicateBuildOrderInitialData = useMemo(() => {
+    const data = { ...build };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [build]);
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
     fields: buildOrderFields,
-    initialData: {
-      ...build,
-      reference: undefined
-    },
+    initialData: duplicateBuildOrderInitialData,
     follow: true,
     modelType: ModelType.build
   });
@@ -542,8 +556,8 @@ export default function BuildDetail() {
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
-            breadcrumbs={[
-              { name: t`Manufacturing`, url: '/manufacturing' },
+            breadcrumbs={[{ name: t`Manufacturing`, url: '/manufacturing' }]}
+            lastCrumb={[
               {
                 name: build.reference,
                 url: getDetailUrl(ModelType.build, build.pk)

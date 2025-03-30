@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -8,13 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { shortenString } from '../../functions/tables';
-import {
-  useFilters,
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -37,11 +30,13 @@ import {
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasProjectCodeFilter,
+  IssuedByFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
+  PartCategoryFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
   StartDateAfterFilter,
@@ -128,21 +123,6 @@ export function BuildOrderTable({
     ];
   }, [parentBuildId]);
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const ownerFilters = useOwnerFilters();
-  const userFilters = useUserFilters();
-
-  const categoryFilters = useFilters({
-    url: apiUrl(ApiEndpoints.category_list),
-    transform: (item) => ({
-      value: item.pk,
-      label: shortenString({
-        str: item.pathstring,
-        len: 50
-      })
-    })
-  });
-
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OutstandingFilter(),
@@ -171,21 +151,11 @@ export function BuildOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ProjectCodeFilter(),
       HasProjectCodeFilter(),
-      {
-        name: 'issued_by',
-        label: t`Issued By`,
-        description: t`Filter by user who issued this order`,
-        choices: userFilters.choices
-      },
-      ResponsibleFilter({ choices: ownerFilters.choices }),
-      {
-        name: 'category',
-        label: t`Category`,
-        description: t`Filter by part category`,
-        choices: categoryFilters.choices
-      }
+      IssuedByFilter(),
+      ResponsibleFilter(),
+      PartCategoryFilter()
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter
@@ -199,13 +169,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [
-    partId,
-    categoryFilters.choices,
-    projectCodeFilters.choices,
-    ownerFilters.choices,
-    userFilters.choices
-  ]);
+  }, [partId]);
 
   const user = useUserState();
 

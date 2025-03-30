@@ -3,14 +3,7 @@
 from django.contrib import admin
 
 from .helpers import report_model_options
-from .models import (
-    LabelOutput,
-    LabelTemplate,
-    ReportAsset,
-    ReportOutput,
-    ReportSnippet,
-    ReportTemplate,
-)
+from .models import LabelTemplate, ReportAsset, ReportSnippet, ReportTemplate
 
 
 @admin.register(LabelTemplate)
@@ -42,11 +35,3 @@ class ReportAssetAdmin(admin.ModelAdmin):
     """Admin class for the ReportAsset model."""
 
     list_display = ('id', 'asset', 'description')
-
-
-@admin.register(LabelOutput)
-@admin.register(ReportOutput)
-class TemplateOutputAdmin(admin.ModelAdmin):
-    """Admin class for the TemplateOutput model."""
-
-    list_display = ('id', 'output', 'progress', 'complete')

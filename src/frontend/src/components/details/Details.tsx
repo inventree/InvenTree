@@ -1,8 +1,10 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Anchor,
+  Avatar,
   Badge,
   Group,
+  HoverCard,
   Paper,
   Skeleton,
   Stack,
@@ -17,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
+import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
@@ -92,6 +94,68 @@ type FieldProps = {
   unit?: string | null;
 };
 
+function HoverNameBadge(data: any, type: BadgeType) {
+  function lines(data: any) {
+    switch (type) {
+      case 'owner':
+        return [
+          `${data.label}: ${data.name}`,
+          data.name,
+          getDetailUrl(data.owner_model, data.pk, true),
+          undefined,
+          undefined
+        ];
+      case 'user':
+        return [
+          `${data.first_name} ${data.last_name}`,
+          data.username,
+          getDetailUrl(ModelType.user, data.pk, true),
+          data?.image,
+          <>
+            {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
+            {data.is_staff && <Badge color='blue'>{t`Staff`}</Badge>}
+            {data.email && t`Email: ` + data.email}
+          </>
+        ];
+      case 'group':
+        return [
+          data.name,
+          data.name,
+          getDetailUrl(ModelType.group, data.pk, true),
+          data?.image,
+          undefined
+        ];
+      default:
+        return 'dd';
+    }
+  }
+  const line_data = lines(data);
+  return (
+    <HoverCard.Dropdown>
+      <Group>
+        <Avatar src={line_data[3]} radius='xl' />
+        <Stack gap={5}>
+          <Text size='sm' fw={700} style={{ lineHeight: 1 }}>
+            {line_data[0]}
+          </Text>
+          <Anchor
+            href={line_data[2]}
+            c='dimmed'
+            size='xs'
+            style={{ lineHeight: 1 }}
+          >
+            {line_data[1]}
+          </Anchor>
+        </Stack>
+      </Group>
+
+      <Text size='sm' mt='md'>
+        {line_data[4]}
+      </Text>
+    </HoverCard.Dropdown>
+  );
+}
+
 /**
  * Fetches user or group info from backend and formats into a badge.
  * Badge shows username, full name, or group name depending on server settings.
@@ -141,12 +205,16 @@ function NameBadge({
   });
 
   const settings = useGlobalSettingsState();
+  const nameComp = useMemo(() => {
+    if (!data) return <Skeleton height={12} radius='md' />;
+    return HoverNameBadge(data, type);
+  }, [data]);
 
   if (!data || data.isLoading || data.isFetching) {
     return <Skeleton height={12} radius='md' />;
   }
 
-  // Rendering a user's rame for the badge
+  // Rendering a user's name for the badge
   function _render_name() {
     if (!data || !data.pk) {
       return '';
@@ -170,7 +238,18 @@ function NameBadge({
         variant='filled'
         style={{ display: 'flex', alignItems: 'center' }}
       >
-        {data?.name ?? _render_name()}
+        <HoverCard
+          width={320}
+          shadow='md'
+          withArrow
+          openDelay={200}
+          closeDelay={400}
+        >
+          <HoverCard.Target>
+            <p>{data?.name ?? _render_name()}</p>
+          </HoverCard.Target>
+          {nameComp}
+        </HoverCard>
       </Badge>
       <InvenTreeIcon icon={type === 'user' ? type : data.label} />
     </Group>

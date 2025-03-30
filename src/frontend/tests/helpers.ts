@@ -37,6 +37,7 @@ export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
   await closeFilterDrawer(page);
+  await page.waitForLoadState('networkidle');
 };
 
 export const setTableChoiceFilter = async (page, filter, value) => {
@@ -65,6 +66,12 @@ export const getRowFromCell = async (cell) => {
   return cell.locator('xpath=ancestor::tr').first();
 };
 
+export const clickOnRowMenu = async (cell) => {
+  const row = await getRowFromCell(cell);
+
+  await row.getByLabel(/row-action-menu-/i).click();
+};
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
@@ -80,6 +87,30 @@ export const navigate = async (page, url: string) => {
   }
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('networkidle');
+};
+
+/**
+ * CLick on the 'tab' element with the provided name
+ */
+export const loadTab = async (page, tabName) => {
+  await page
+    .getByLabel(/panel-tabs-/)
+    .getByRole('tab', { name: tabName })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Activate "table" view in certain contexts
+export const activateTableView = async (page) => {
+  await page.getByLabel('segmented-icon-control-table').click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Activate "calendar" view in certain contexts
+export const activateCalendarView = async (page) => {
+  await page.getByLabel('segmented-icon-control-calendar').click();
+  await page.waitForLoadState('networkidle');
 };
 
 /**
@@ -90,4 +121,5 @@ export const globalSearch = async (page, query) => {
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
 };

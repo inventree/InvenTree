@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   Box,
@@ -14,6 +14,7 @@ import { IconCamera, IconScan } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useLocalStorage } from '@mantine/hooks';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { Boundary } from '../Boundary';
 import BarcodeCameraInput from './BarcodeCameraInput';
 import BarcodeKeyboardInput from './BarcodeKeyboardInput';
@@ -33,6 +34,8 @@ export function BarcodeInput({
   label = t`Barcode`,
   actionText = t`Scan`
 }: Readonly<BarcodeInputProps>) {
+  const globalSettings = useGlobalSettingsState();
+
   const [barcode, setBarcode] = useState<string>('');
 
   const [inputType, setInputType] = useLocalStorage<string | null>({
@@ -43,15 +46,16 @@ export function BarcodeInput({
   const scanningOptions: SegmentedControlItem[] = useMemo(() => {
     const options: SegmentedControlItem[] = [];
 
-    // TODO : Hide camera input optionally
-    options.push({
-      value: 'camera',
-      label: (
-        <Tooltip label={t`Camera Input`}>
-          <IconCamera size={20} aria-label='barcode-input-camera' />
-        </Tooltip>
-      )
-    });
+    if (globalSettings.isSet('BARCODE_WEBCAM_SUPPORT', true)) {
+      options.push({
+        value: 'camera',
+        label: (
+          <Tooltip label={t`Camera Input`}>
+            <IconCamera size={20} aria-label='barcode-input-camera' />
+          </Tooltip>
+        )
+      });
+    }
 
     options.push({
       value: 'scanner',
@@ -63,7 +67,7 @@ export function BarcodeInput({
     });
 
     return options;
-  }, []);
+  }, [globalSettings]);
 
   const onScanBarcode = useCallback(
     (barcode: string) => {

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -8,11 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import {
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -66,10 +61,6 @@ export function PurchaseOrderTable({
   const table = useTable('purchase-order');
   const user = useUserState();
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const responsibleFilters = useOwnerFilters();
-  const createdByFilters = useUserFilters();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       OrderStatusFilter({ model: ModelType.purchaseorder }),
@@ -98,16 +89,12 @@ export function PurchaseOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ProjectCodeFilter(),
       HasProjectCodeFilter(),
-      ResponsibleFilter({ choices: responsibleFilters.choices }),
-      CreatedByFilter({ choices: createdByFilters.choices })
+      ResponsibleFilter(),
+      CreatedByFilter()
     ];
-  }, [
-    projectCodeFilters.choices,
-    responsibleFilters.choices,
-    createdByFilters.choices
-  ]);
+  }, []);
 
   const tableColumns = useMemo(() => {
     return [
@@ -148,7 +135,7 @@ export function PurchaseOrderTable({
         sortable: true,
         render: (record: any) => {
           return formatCurrency(record.total_price, {
-            currency: record.order_currency ?? record.supplier_detail?.currency
+            currency: record.order_currency || record.supplier_detail?.currency
           });
         }
       },

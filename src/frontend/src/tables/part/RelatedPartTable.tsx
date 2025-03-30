@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -90,7 +90,8 @@ export function RelatedPartTable({
       part_1: {
         hidden: true
       },
-      part_2: {}
+      part_2: {},
+      note: {}
     };
   }, []);
 

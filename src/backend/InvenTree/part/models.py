@@ -62,7 +62,6 @@ from order import models as OrderModels
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
-    SalesOrderStatus,
     SalesOrderStatusGroups,
 )
 from stock import models as StockModels
@@ -129,6 +128,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     _icon = models.CharField(
         blank=True,
+        null=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
@@ -603,9 +603,9 @@ class Part(
 
         This function is exposed to any Validation plugins, and thus can be customized.
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             # Run the name through each custom validator
             # If the plugin returns 'True' we will skip any subsequent validation
 
@@ -625,9 +625,9 @@ class Part(
         - Validation is handled by custom plugins
         - By default, no validation checks are performed
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 result = plugin.validate_part_ipn(self.IPN, self)
 
@@ -724,10 +724,10 @@ class Part(
         serial = str(serial).strip()
 
         # First, throw the serial number against each of the loaded validation plugins
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         try:
-            for plugin in registry.with_mixin('validation'):
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
 
@@ -844,12 +844,12 @@ class Part(
         Returns:
             The latest serial number specified for this part, or None
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         if allow_plugins:
             # Check with plugin system
             # If any plugin returns a non-null result, that takes priority
-            for plugin in registry.with_mixin('validation'):
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
                 try:
                     result = plugin.get_latest_serial_number(self)
                     if result is not None:
@@ -1071,6 +1071,7 @@ class Part(
         null=True,
         verbose_name=_('Link'),
         help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     image = StdImageField(
@@ -2793,6 +2794,9 @@ class PartPricing(common.models.MetaMixin):
             for sub_part in bom_item.get_valid_parts_for_allocation():
                 # Check each part which *could* be used
 
+                if sub_part != bom_item.sub_part and not sub_part.active:
+                    continue
+
                 sub_part_pricing = sub_part.pricing
 
                 sub_part_min = self.convert(sub_part_pricing.overall_min)
@@ -3088,9 +3092,12 @@ class PartPricing(common.models.MetaMixin):
         min_sell_history = None
         max_sell_history = None
 
+        # Calculate sale price history too
+        parts = self.part.get_descendants(include_self=True)
+
         # Find all line items for shipped sales orders which reference this part
         line_items = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status=SalesOrderStatus.SHIPPED, part=self.part
+            order__status__in=SalesOrderStatusGroups.COMPLETE, part__in=parts
         )
 
         # Exclude line items which do not have associated pricing data
@@ -3369,7 +3376,7 @@ class PartStocktakeReport(models.Model):
         return os.path.basename(self.report.name)
 
     def get_absolute_url(self):
-        """Return the URL for the associaed report file for download."""
+        """Return the URL for the associated report file for download."""
         if self.report:
             return self.report.url
         return None
@@ -3915,9 +3922,9 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         self.calculate_numeric_value()
 
         # Run custom validation checks (via plugins)
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             # Note: The validate_part_parameter function may raise a ValidationError
             try:
                 result = plugin.validate_part_parameter(self, self.data)
@@ -4089,11 +4096,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class BomItem(
-    InvenTree.models.DataImportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -4112,23 +4115,6 @@ class BomItem(
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
-
-    # Fields available for bulk import
-    IMPORT_FIELDS = {
-        'quantity': {'required': True},
-        'reference': {},
-        'overage': {},
-        'allow_variants': {},
-        'inherited': {},
-        'optional': {},
-        'consumable': {},
-        'note': {},
-        'part': {'label': _('Part'), 'help_text': _('Part ID or part name')},
-        'part_id': {'label': _('Part ID'), 'help_text': _('Unique part ID value')},
-        'part_name': {'label': _('Part Name'), 'help_text': _('Part name')},
-        'part_ipn': {'label': _('Part IPN'), 'help_text': _('Part IPN value')},
-        'level': {'label': _('Level'), 'help_text': _('BOM level')},
-    }
 
     class Meta:
         """Metaclass providing extra model definition."""

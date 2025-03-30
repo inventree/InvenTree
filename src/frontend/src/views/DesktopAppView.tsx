@@ -5,7 +5,7 @@ import { api, queryClient } from '../App';
 import { ApiProvider } from '../contexts/ApiContext';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { defaultHostList } from '../defaults/defaultHostList';
-import { base_url } from '../main';
+import { getBaseUrl } from '../main';
 import { routes } from '../router';
 import { useLocalState } from '../states/LocalState';
 
@@ -21,7 +21,7 @@ export default function DesktopAppView() {
   return (
     <ApiProvider client={queryClient} api={api}>
       <ThemeContext>
-        <BrowserRouter basename={base_url}>{routes}</BrowserRouter>
+        <BrowserRouter basename={getBaseUrl()}>{routes}</BrowserRouter>
       </ThemeContext>
     </ApiProvider>
   );

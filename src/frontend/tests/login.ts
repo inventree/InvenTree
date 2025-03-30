@@ -11,11 +11,11 @@ export const doLogin = async (page, username?: string, password?: string) => {
 
   await navigate(page, logoutUrl);
   await expect(page).toHaveTitle(/^InvenTree.*$/);
-  await page.waitForURL('**/platform/login');
+  await page.waitForURL('**/web/login');
   await page.getByLabel('username').fill(username);
   await page.getByLabel('password').fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform/home');
+  await page.waitForURL('**/web/home');
   await page.waitForTimeout(250);
 };
 
@@ -32,10 +32,10 @@ export const doQuickLogin = async (
   password = password ?? user.password;
   url = url ?? baseUrl;
 
-  await navigate(page, `${url}/login/?login=${username}&password=${password}`);
-  await page.waitForURL('**/platform/home');
+  await navigate(page, `${url}/login?login=${username}&password=${password}`);
+  await page.waitForURL('**/web/home');
 
-  await page.getByLabel('navigation-menu').waitFor();
+  await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
   await page.getByText(/InvenTree Demo Server -/).waitFor();
 
   // Wait for the dashboard to load
@@ -45,5 +45,5 @@ export const doQuickLogin = async (
 
 export const doLogout = async (page) => {
   await navigate(page, 'logout');
-  await page.waitForURL('**/platform/login');
+  await page.waitForURL('**/web/login');
 };

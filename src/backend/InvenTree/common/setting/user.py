@@ -4,13 +4,13 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from common.setting.type import InvenTreeSettingsKeyType
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 
 
 def label_printer_options():
     """Build a list of available label printer options."""
     printers = []
-    label_printer_plugins = registry.with_mixin('labels')
+    label_printer_plugins = registry.with_mixin(PluginMixinEnum.LABELS)
     if label_printer_plugins:
         printers.extend([
             (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
@@ -183,6 +183,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'ICONS_IN_NAVBAR': {
+        'name': _('Navigation Icons'),
+        'description': _('Display icons in the navigation bar'),
+        'default': False,
+        'validator': bool,
+    },
     'DATE_DISPLAY_FORMAT': {
         'name': _('Date Format'),
         'description': _('Preferred format for displaying dates'),
@@ -216,6 +222,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Maximum length limit for strings displayed in table views'),
         'validator': [int, MinValueValidator(0)],
         'default': 100,
+    },
+    'ENABLE_LAST_BREADCRUMB': {
+        'name': _('Show Last Breadcrumb'),
+        'description': _('Show the current page in breadcrumbs'),
+        'default': False,
+        'validator': bool,
     },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),

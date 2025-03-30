@@ -1,8 +1,83 @@
 import test from 'playwright/test';
 
-import { navigate } from './helpers.js';
+import {
+  clearTableFilters,
+  clickOnRowMenu,
+  loadTab,
+  navigate
+} from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
+
+// Unit test for plugin settings
+test('Plugins - Settings', async ({ page, request }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+
+  // Ensure that the SampleIntegration plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'sample',
+    state: true
+  });
+
+  // Navigate and select the plugin
+  await navigate(page, 'settings/admin/plugin/');
+  await clearTableFilters(page);
+  await page.getByLabel('table-search-input').fill('integration');
+
+  await page
+    .getByRole('row', { name: 'SampleIntegrationPlugin' })
+    .getByRole('paragraph')
+    .click();
+  await page.getByRole('button', { name: 'Plugin Information' }).click();
+  await page
+    .getByLabel('Plugin Detail -')
+    .getByRole('button', { name: 'Plugin Settings' })
+    .waitFor();
+
+  // Edit numerical value
+  await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
+  const originalValue = await page.getByLabel('number-field-value').innerText();
+  await page
+    .getByLabel('number-field-value')
+    .fill(originalValue == '999' ? '1000' : '999');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.waitForTimeout(500);
+
+  // Change it back
+  await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
+  await page.getByLabel('number-field-value').fill(originalValue);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Select supplier
+  await page.getByLabel('edit-setting-SELECT_COMPANY').click();
+  await page.getByLabel('related-field-value').fill('mouser');
+  await page.getByText('Mouser Electronics').click();
+});
+
+// Test base plugin functionality
+test('Plugins - Functionality', async ({ page, request }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+
+  // Navigate and select the plugin
+  await navigate(page, 'settings/admin/plugin/');
+  await clearTableFilters(page);
+  await page.getByPlaceholder('Search').fill('sample');
+
+  // Activate the plugin
+  const cell = await page.getByText('Sample API Caller', { exact: true });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Activate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('The plugin was activated').waitFor();
+
+  // Deactivate the plugin again
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Deactivate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('The plugin was deactivated').waitFor();
+});
 
 test('Plugins - Panels', async ({ page, request }) => {
   await doQuickLogin(page, 'admin', 'inventree');
@@ -29,19 +104,18 @@ test('Plugins - Panels', async ({ page, request }) => {
   await navigate(page, 'part/69/');
 
   // Ensure basic part tab is available
-  await page.getByRole('tab', { name: 'Part Details' }).waitFor();
+  await loadTab(page, 'Part Details');
 
   // Allow time for the plugin panels to load (they are loaded asynchronously)
   await page.waitForTimeout(1000);
 
   // Check out each of the plugin panels
-
-  await page.getByRole('tab', { name: 'Broken Panel' }).click();
+  await loadTab(page, 'Broken Panel');
   await page.waitForTimeout(500);
 
   await page.getByText('Error occurred while loading plugin content').waitFor();
 
-  await page.getByRole('tab', { name: 'Dynamic Panel' }).click();
+  await loadTab(page, 'Dynamic Panel');
   await page.waitForTimeout(500);
 
   await page.getByText('Instance ID: 69');
@@ -49,7 +123,7 @@ test('Plugins - Panels', async ({ page, request }) => {
     .getByText('This panel has been dynamically rendered by the plugin system')
     .waitFor();
 
-  await page.getByRole('tab', { name: 'Part Panel', exact: true }).click();
+  await loadTab(page, 'Part Panel');
   await page.waitForTimeout(500);
   await page.getByText('This content has been rendered by a custom plugin');
 

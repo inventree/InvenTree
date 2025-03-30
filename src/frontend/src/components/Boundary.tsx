@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert } from '@mantine/core';
 import { ErrorBoundary, type FallbackRender } from '@sentry/react';
 import { IconExclamationCircle } from '@tabler/icons-react';
