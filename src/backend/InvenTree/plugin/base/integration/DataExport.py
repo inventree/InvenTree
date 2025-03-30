@@ -32,12 +32,22 @@ class DataExportMixin:
         super().__init__()
         self.add_mixin(PluginMixinEnum.EXPORTER, True, __class__)
 
-    def supports_export(self, model_class: type, user: User, *args, **kwargs) -> bool:
+    def supports_export(
+        self,
+        model_class: type,
+        user: User,
+        serializer_class=None,
+        view_class=None,
+        *args,
+        **kwargs,
+    ) -> bool:
         """Return True if this plugin supports exporting data for the given model.
 
         Args:
             model_class: The model class to check
             user: The user requesting the export
+            serializer_class: The serializer class to use for exporting the data
+            view_class: The view class to use for exporting the data
 
         Returns:
             True if the plugin supports exporting data for the given model
