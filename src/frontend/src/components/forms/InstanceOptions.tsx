@@ -1,17 +1,26 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { ActionIcon, Divider, Group, Select, Table, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Divider,
+  Group,
+  Select,
+  Table,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import {
   IconApi,
-  IconCheck,
+  IconCircleCheck,
+  IconEdit,
   IconInfoCircle,
   IconPlugConnected,
   IconServer,
   IconServerSpark
 } from '@tabler/icons-react';
 
-import { EditButton } from '@lib/components';
+import { ActionButton } from '@lib/components';
 import type { HostList } from '@lib/index';
 import { useLocalState } from '@lib/index';
 import { Wrapper } from '../../pages/Auth/Layout';
@@ -27,7 +36,7 @@ export function InstanceOptions({
   ChangeHost: (newHost: string | null) => void;
   setHostEdit: () => void;
 }>) {
-  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
+  const [hostListEdit, setHostListEdit] = useToggle([false, true] as const);
   const [setHost, setHostList, hostList] = useLocalState((state) => [
     state.setHost,
     state.setHostList,
@@ -48,27 +57,36 @@ export function InstanceOptions({
 
   return (
     <Wrapper titleText={t`Select Server`} smallPadding>
-      <Group gap='xs' wrap='nowrap'>
+      <Group gap='xs' justify='space-between' wrap='nowrap'>
         <Select
+          style={{ width: '100%' }}
           value={hostKey}
           onChange={ChangeHost}
           data={hostListData}
-          disabled={HostListEdit}
+          disabled={hostListEdit}
         />
-        <EditButton
-          setEditing={setHostListEdit}
-          editing={HostListEdit}
-          disabled={HostListEdit}
-        />
-        <EditButton
-          setEditing={setHostEdit}
-          editing={true}
-          disabled={HostListEdit}
-          saveIcon={<IconCheck />}
-        />
+        <Group gap='xs' wrap='nowrap'>
+          <Tooltip label={t`Edit host options`} position='top'>
+            <ActionButton
+              variant='transparent'
+              disabled={hostListEdit}
+              onClick={setHostListEdit}
+              icon={<IconEdit />}
+            />
+          </Tooltip>
+          <Tooltip label={t`Save host selection`} position='top'>
+            <ActionButton
+              variant='transparent'
+              onClick={setHostEdit}
+              disabled={hostListEdit}
+              icon={<IconCircleCheck />}
+              color='green'
+            />
+          </Tooltip>
+        </Group>
       </Group>
 
-      {HostListEdit ? (
+      {hostListEdit ? (
         <>
           <Divider my={'sm'} />
           <Text>

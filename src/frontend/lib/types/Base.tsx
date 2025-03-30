@@ -66,6 +66,7 @@ declare global {
       default_server: string;
       show_server_selector: boolean;
       base_url: string;
+      api_host?: string;
       sentry_dsn?: string;
       environment?: string;
     };

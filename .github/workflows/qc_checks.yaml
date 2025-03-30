@@ -554,7 +554,7 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-  platform_ui:
+  web_ui:
     name: Tests - Web UI
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -584,7 +584,6 @@ jobs:
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
-      VITE_COVERAGE: true
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
@@ -601,13 +600,19 @@ jobs:
       - name: Build Library Components
         run: cd src/frontend && yarn library
       - name: Set up test data
-        run: invoke dev.setup-test -iv
-      - name: Rebuild thumbnails
-        run: invoke int.rebuild-thumbnails
+        run: |
+          invoke dev.setup-test -iv
+          invoke int.rebuild-thumbnails
       - name: Install dependencies
-        run: invoke int.frontend-compile
-      - name: Install Playwright Browsers
-        run: cd src/frontend && npx playwright install --with-deps
+        run: |
+          invoke int.frontend-compile
+          cd src/frontend && npx playwright install --with-deps
+      - name: Set Production Mode
+        if: github.event_name == 'pull_request'
+        run: echo "VITE_PRODUCTION_BUILD=true" >> $GITHUB_ENV
+      - name: Set Coverage Mode
+        if: github.event_name != 'pull_request'
+        run: echo "VITE_COVERAGE_BUILD=true" >> $GITHUB_ENV
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
@@ -618,16 +623,17 @@ jobs:
           path: src/frontend/playwright-report/
           retention-days: 14
       - name: Report coverage
-        if: always()
+        if: github.event_name != 'pull_request'
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
-        if: always()
+        if: github.event_name != 'pull_request'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: web
       - name: Upload bundler info
+        if: github.event_name != 'pull_request'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
@@ -635,7 +641,7 @@ jobs:
           yarn install
           yarn run build
 
-  platform_ui_build:
+  web_ui_build:
     name: Build - Web UI
     runs-on: ubuntu-24.04
     timeout-minutes: 60

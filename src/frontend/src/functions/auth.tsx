@@ -62,7 +62,7 @@ export const doBasicLogin = async (
 ) => {
   // Note: We use getApi here instead of the useApi hook, as this function is called outside of the API context
   const api = getApi();
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
@@ -76,6 +76,8 @@ export const doBasicLogin = async (
 
   let loginDone = false;
   let success = false;
+
+  const host: string = getHost();
 
   // Attempt login with
   await api
@@ -153,7 +155,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 };
 
 export const doSimpleLogin = async (email: string) => {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const mail = await axios
     .post(
       apiUrl(ApiEndpoints.user_simple_login),
@@ -161,7 +163,7 @@ export const doSimpleLogin = async (email: string) => {
         email: email
       },
       {
-        baseURL: host,
+        baseURL: getHost(),
         timeout: 2000
       }
     )

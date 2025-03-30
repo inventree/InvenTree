@@ -4,7 +4,6 @@ export {
 } from './buttons/ActionButton';
 
 export { AddItemButton } from './buttons/AddItemButton';
-export { EditButton } from './buttons/EditButton';
 
 export { Boundary } from './items/Boundary';
 export { ButtonMenu } from './buttons/ButtonMenu';
