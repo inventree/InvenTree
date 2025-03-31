@@ -18,7 +18,11 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "RUF", "UP", "W"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "RUF", "UP", "W",
+#"DOC201", "DOC202", # enforce return docs
+"DOC402","DOC403", # enforce yield docs
+#"DOC501","DOC502", # enforce raise
+]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
