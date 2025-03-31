@@ -1,60 +1,54 @@
 """Schema processing functions for cleaning up generated schema."""
 
+from typing import Optional
 
-def postprocess_bulk_delete(result, generator, request, public):
-    """Add a request body to bulk DELETE endpoints.
+from drf_spectacular.openapi import AutoSchema
+from drf_spectacular.plumbing import ComponentRegistry
+from drf_spectacular.utils import _SchemaType
 
-    drf-spectacular doesn't support a body on DELETE endpoints because the semantics are not well-defined and OpenAPI
-    recommends against it. This allows us to generate a schema that follows existing behavior.
-    """
-    request_schema = {'schema': {'$ref': '#/components/schemas/BulkDeleteRequest'}}
-    request_body = {
-        'content': {
-            'application/json': request_schema,
-            'application/x-www-form-urlencoded': request_schema,
-            'multipart/form-data': request_schema,
-        },
-        'required': True,
-    }
 
-    # Update relevant operations to reference the bulk delete schema
-    target_operation_suffix = '_destroy'
-    paths = result.get('paths', {})
-    for path, operations in paths.items():
-        # Anything ending in a path parameter is not a bulk operation
-        if path.endswith('/{id}/'):
-            continue
+class ExtendedAutoSchema(AutoSchema):
+    """Extend drf-spectacular to allow customizing the schema to match the actual API behavior."""
 
-        delete_operation = operations.get('delete', {})
-        operation_id = delete_operation.get('operationId', '')
-        if operation_id.endswith(target_operation_suffix):
-            # change id to deconflict with single destroy operations
-            delete_operation['operationId'] = operation_id.replace(
-                target_operation_suffix, '_bulk_destroy'
-            )
-            delete_operation['requestBody'] = request_body
+    def get_operation_id(self) -> str:
+        """Custom path handling overrides, falling back to default behavior."""
+        result_id = super().get_operation_id()
 
-    # Add BulkDeleteRequest to schemas: because drf-spectacular strips requests from delete operations there's no way
-    # to attach a serializer to generate this automatically
-    schema_def = {
-        'type': 'object',
-        'description': 'Parameters for selecting items to bulk delete.',
-        'properties': {
-            'items': {
-                'type': 'array',
-                'items': {'type': 'integer'},
-                'description': 'A list of primary key values',
-            },
-            'filters': {
-                'type': 'object',
-                'additionalProperties': {'type': 'string'},
-                'description': 'A dictionary of filter values.',
-            },
-        },
-    }
-    result.get('components').get('schemas')['BulkDeleteRequest'] = schema_def
+        # rename bulk deletes to deconflict with single delete operation_id
+        if self.method == 'DELETE' and not (
+            self.path.endswith('/{id}/') or self.path.endswith('user/me/')
+        ):
+            action = self.method_mapping[self.method.lower()]
+            result_id = result_id.replace(action, 'bulk_' + action)
 
-    return result
+        return result_id
+
+    def get_operation(
+        self,
+        path: str,
+        path_regex: str,
+        path_prefix: str,
+        method: str,
+        registry: ComponentRegistry,
+    ) -> Optional[_SchemaType]:
+        """Custom operation handling, falling back to default behavior."""
+        operation = super().get_operation(
+            path, path_regex, path_prefix, method, registry
+        )
+        if operation is None:
+            return None
+
+        # drf-spectacular doesn't support a body on DELETE endpoints because the semantics are not well-defined and
+        # OpenAPI recommends against it. This allows us to generate a schema that follows existing behavior.
+        if '_bulk_destroy' in operation['operationId']:
+            original_method = self.method
+            self.method = 'PUT'
+            request_body = self._get_request_body()
+            request_body['required'] = True
+            operation['requestBody'] = request_body
+            self.method = original_method
+
+        return operation
 
 
 def postprocess_required_nullable(result, generator, request, public):
