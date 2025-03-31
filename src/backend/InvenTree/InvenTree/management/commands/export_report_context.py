@@ -8,7 +8,6 @@ without having to manually duplicate the information in multiple places.
 """
 
 import json
-from types import NoneType
 from typing import get_args, get_origin, get_type_hints
 
 import django.db.models
@@ -30,7 +29,7 @@ def get_type_str(type_obj):
 
         return f'{origin_str}[{", ".join(get_type_str(arg) for arg in get_args(type_obj))}]'
 
-    if type_obj is NoneType:
+    if type_obj is type(None):
         return 'None'
 
     if type_obj.__module__ == 'builtins':
