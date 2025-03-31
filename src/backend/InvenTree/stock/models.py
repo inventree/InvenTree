@@ -1578,6 +1578,7 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
+            commit (boolm optional): If True, save the entry to the database. Defaults to True.
 
         Returns:
             StockItemTracking: The created tracking entry

@@ -460,6 +460,7 @@ def format_number(
     """Render a number with optional formatting options.
 
     Arguments:
+        number: The number to be formatted
         decimal_places: Number of decimal places to render
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)

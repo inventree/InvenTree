@@ -23,6 +23,7 @@ select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
+# - D401 - Imperative docstrings
 
 ignore = [
     "PLE1205",
@@ -51,8 +52,6 @@ ignore = [
 	"N806",
 	# - N812 - lowercase imported as non-lowercase
 	"N812",
-    # - D417 Missing argument descriptions in the docstring
-    "D417",
     # - RUF032 - decimal-from-float-literal
     "RUF032",
     "RUF045",
@@ -67,6 +66,7 @@ ignore = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+ignore-var-parameters = true
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false

@@ -2,6 +2,7 @@
 
 import functools
 import re
+from datetime import datetime
 
 from django.db.models import Count, F, Q
 from django.urls import include, path, re_path
@@ -567,15 +568,21 @@ class PartScheduling(RetrieveAPI):
 
         schedule = []
 
-        def add_schedule_entry(date, quantity, title, instance, speculative_quantity=0):
+        def add_schedule_entry(
+            date: datetime,
+            quantity: float,
+            title: str,
+            instance,
+            speculative_quantity: float = 0,
+        ):
             """Add a new entry to the schedule list.
 
-            Arguments:
-                - date: The date of the scheduled event
-                - quantity: The quantity of stock to be added or removed
-                - title: The title of the scheduled event
-                - instance: The associated model instance (e.g. SalesOrder object)
-                - speculative_quantity: A speculative quantity to be added or removed
+            Args:
+                date (datetime): The date of the scheduled event.
+                quantity (float): The quantity of stock to be added or removed.
+                title (str): The title of the scheduled event.
+                instance (Model): The associated model instance (e.g., SalesOrder object).
+                speculative_quantity (float, optional): A speculative quantity to be added or removed. Defaults to 0.
             """
             schedule.append({
                 'date': date,
