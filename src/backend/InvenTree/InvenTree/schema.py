@@ -7,12 +7,12 @@ def postprocess_bulk_delete(result, generator, request, public):
     drf-spectacular doesn't support a body on DELETE endpoints because the semantics are not well-defined and OpenAPI
     recommends against it. This allows us to generate a schema that follows existing behavior.
     """
-    request = {'schema': {'$ref': '#/components/schemas/BulkDeleteRequest'}}
+    request_schema = {'schema': {'$ref': '#/components/schemas/BulkDeleteRequest'}}
     request_body = {
         'content': {
-            'application/json': request,
-            'application/x-www-form-urlencoded': request,
-            'multipart/form-data': request,
+            'application/json': request_schema,
+            'application/x-www-form-urlencoded': request_schema,
+            'multipart/form-data': request_schema,
         },
         'required': True,
     }
