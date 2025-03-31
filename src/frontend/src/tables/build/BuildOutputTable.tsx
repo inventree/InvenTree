@@ -6,10 +6,12 @@ import {
   Group,
   Paper,
   Space,
+  Stack,
   Text
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
+  IconBuildingFactory2,
   IconCircleCheck,
   IconCircleX,
   IconExclamationCircle
@@ -373,11 +375,11 @@ export default function BuildOutputTable({
       <AddItemButton
         key='add-build-output'
         tooltip={t`Add Build Output`}
-        hidden={!user.hasAddRole(UserRoles.build)}
+        hidden={build.external || !user.hasAddRole(UserRoles.build)}
         onClick={addBuildOutput.open}
       />
     ];
-  }, [user, table.selectedRecords, table.hasSelectedRecords]);
+  }, [build, user, table.selectedRecords, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -568,32 +570,43 @@ export default function BuildOutputTable({
         opened={drawerOpen}
         close={closeDrawer}
       />
-      <InvenTreeTable
-        tableState={table}
-        url={apiUrl(ApiEndpoints.stock_item_list)}
-        columns={tableColumns}
-        props={{
-          params: {
-            part_detail: true,
-            location_detail: true,
-            tests: true,
-            is_building: true,
-            build: buildId
-          },
-          enableLabels: true,
-          enableReports: true,
-          dataFormatter: formatRecords,
-          tableActions: tableActions,
-          rowActions: rowActions,
-          enableSelection: true,
-          onRowClick: (record: any) => {
-            if (hasTrackedItems && !!record.serial) {
-              setSelectedOutputs([record]);
-              openDrawer();
+      <Stack gap='xs'>
+        {build.external && (
+          <Alert
+            color='blue'
+            icon={<IconBuildingFactory2 />}
+            title={t`External Build`}
+          >
+            {t`This build order is fulfilled by an external purchase order`}
+          </Alert>
+        )}
+        <InvenTreeTable
+          tableState={table}
+          url={apiUrl(ApiEndpoints.stock_item_list)}
+          columns={tableColumns}
+          props={{
+            params: {
+              part_detail: true,
+              location_detail: true,
+              tests: true,
+              is_building: true,
+              build: buildId
+            },
+            enableLabels: true,
+            enableReports: true,
+            dataFormatter: formatRecords,
+            tableActions: tableActions,
+            rowActions: rowActions,
+            enableSelection: true,
+            onRowClick: (record: any) => {
+              if (hasTrackedItems && !!record.serial) {
+                setSelectedOutputs([record]);
+                openDrawer();
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      </Stack>
     </>
   );
 }

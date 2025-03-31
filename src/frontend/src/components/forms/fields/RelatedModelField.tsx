@@ -71,24 +71,30 @@ export function RelatedModelField({
         return;
       }
 
-      api.get(url).then((response) => {
-        const pk_field = definition.pk_field ?? 'pk';
-        if (response.data?.[pk_field]) {
-          const value = {
-            value: response.data[pk_field],
-            data: response.data
-          };
+      const params = definition?.filters ?? {};
 
-          // Run custom callback for this field (if provided)
-          if (definition.onValueChange) {
-            definition.onValueChange(response.data[pk_field], response.data);
+      api
+        .get(url, {
+          params: params
+        })
+        .then((response) => {
+          const pk_field = definition.pk_field ?? 'pk';
+          if (response.data?.[pk_field]) {
+            const value = {
+              value: response.data[pk_field],
+              data: response.data
+            };
+
+            // Run custom callback for this field (if provided)
+            if (definition.onValueChange) {
+              definition.onValueChange(response.data[pk_field], response.data);
+            }
+
+            setInitialData(value);
+            dataRef.current = [value];
+            setPk(response.data[pk_field]);
           }
-
-          setInitialData(value);
-          dataRef.current = [value];
-          setPk(response.data[pk_field]);
-        }
-      });
+        });
     } else {
       setPk(null);
     }

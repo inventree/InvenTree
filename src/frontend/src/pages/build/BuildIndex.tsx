@@ -12,14 +12,25 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { PartCategoryFilter, type TableFilter } from '../../tables/Filter';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
 function BuildOrderCalendar() {
+  const globalSettings = useGlobalSettingsState();
+
   const calendarFilters: TableFilter[] = useMemo(() => {
-    return [PartCategoryFilter()];
-  }, []);
+    return [
+      {
+        name: 'external',
+        label: t`External`,
+        description: t`Show external build orders`,
+        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      },
+      PartCategoryFilter()
+    ];
+  }, [globalSettings]);
 
   return (
     <OrderCalendar
