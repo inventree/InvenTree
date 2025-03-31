@@ -584,6 +584,7 @@ jobs:
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
+      VITE_COVERAGE_BUILD: true
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
@@ -607,12 +608,6 @@ jobs:
         run: |
           invoke int.frontend-compile
           cd src/frontend && npx playwright install --with-deps
-      - name: Set Production Mode
-        if: github.event_name == 'pull_request'
-        run: echo "VITE_PRODUCTION_BUILD=true" >> $GITHUB_ENV
-      - name: Set Coverage Mode
-        if: github.event_name != 'pull_request'
-        run: echo "VITE_COVERAGE_BUILD=true" >> $GITHUB_ENV
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
