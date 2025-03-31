@@ -5,7 +5,7 @@ import re
 from datetime import datetime
 
 from django.db.models import Count, F, Q
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
@@ -2187,10 +2187,8 @@ part_api_urls = [
         'thumbs/',
         include([
             path('', PartThumbs.as_view(), name='api-part-thumbs'),
-            re_path(
-                r'^(?P<pk>\d+)/?',
-                PartThumbsUpdate.as_view(),
-                name='api-part-thumbs-update',
+            path(
+                '<int:pk>/', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'
             ),
         ]),
     ),

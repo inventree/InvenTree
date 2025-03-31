@@ -66,6 +66,7 @@ class PluginsRegistry:
         'inventreelabel',
         'inventreelabelmachine',
         'inventreelabelsheet',
+        'parameter-exporter',
     ]
 
     def __init__(self) -> None:
