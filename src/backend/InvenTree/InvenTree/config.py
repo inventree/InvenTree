@@ -9,9 +9,6 @@ import shutil
 import string
 from pathlib import Path
 
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
@@ -392,6 +389,9 @@ def get_oidc_private_key():
     if key_loc.exists():
         return key_loc.read_text()
     else:
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+
         # Default location for private key file
         logger.info("Generating oidc key file at '%s'", key_loc)
         ensure_dir(key_loc.parent)
