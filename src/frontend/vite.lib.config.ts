@@ -20,7 +20,7 @@ export default defineConfig((cfg) =>
             preserveModules: true,
             preserveModulesRoot: 'lib'
           },
-          external: ['react', 'react-dom']
+          external: ['react', 'react-dom', '@mantine/core', '@mantine/hooks']
         },
         lib: {
           entry: {
