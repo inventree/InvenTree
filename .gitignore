@@ -57,6 +57,7 @@ data.json
 
 # Key file
 secret_key.txt
+oidc.pem
 
 # IDE / development files
 .idea/
