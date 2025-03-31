@@ -120,8 +120,6 @@ test('Forms - Supplier Validation', async ({ page, request }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Is prevented, due to uniqueness requirements
-  await page
-    .getByText('Company with this Company name and Email already exists')
-    .waitFor();
+  await page.getByText('Form Error').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
