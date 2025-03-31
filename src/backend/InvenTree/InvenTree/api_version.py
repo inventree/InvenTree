@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 329
+INVENTREE_API_VERSION = 330
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v329 - 2025-03-31 : https://github.com/inventree/InvenTree/pull/9312
+v330 - 2025-03-31 : https://github.com/inventree/InvenTree/pull/9312
     - Adds "external" flag for BuildOrder
+
+v329 - 2025-03-30 : https://github.com/inventree/InvenTree/pull/9399
+    - Convert url path regex-specified PKs to int
 
 v228 - 2025-03-29 : https://github.com/inventree/InvenTree/pull/9407
     - Updates schema to include paging arguments
