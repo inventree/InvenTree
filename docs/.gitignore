@@ -22,3 +22,8 @@ releases.json
 versions.json
 
 .vscode/
+
+inventree_filters.yml
+inventree_report_context.json
+inventree_settings.json
+inventree_tags.yml
