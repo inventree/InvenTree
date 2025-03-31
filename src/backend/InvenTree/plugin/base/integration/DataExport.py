@@ -6,7 +6,7 @@ from typing import Union
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
 
-from rest_framework import serializers
+from rest_framework import serializers, views
 
 from common.models import DataOutput
 from InvenTree.helpers import current_date
@@ -36,8 +36,8 @@ class DataExportMixin:
         self,
         model_class: type,
         user: User,
-        serializer_class=None,
-        view_class=None,
+        serializer_class: serializers.Serializer = None,
+        view_class: views.APIView = None,
         *args,
         **kwargs,
     ) -> bool:
