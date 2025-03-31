@@ -451,7 +451,7 @@ def render_html_text(text: str, **kwargs):
 
 @register.simple_tag
 def format_number(
-    number,
+    number: int | float | Decimal,
     decimal_places: Optional[int] = None,
     integer: bool = False,
     leading: int = 0,
