@@ -13,17 +13,6 @@ In addition to the model-specific context variables, the following global contex
 
 {{ report_context("base", "global") }}
 
-| Variable | Description |
-| --- | --- |
-| base_url | The base URL for the InvenTree instance |
-| date | Current date, represented as a Python datetime.date object |
-| datetime | Current datetime, represented as a Python datetime object |
-| template | The report template instance which is being rendered against |
-| template_description | Description of the report template |
-| template_name | Name of the report template |
-| template_revision | Revision of the report template |
-| user | User who made the request to render the template |
-
 ::: report.models.ReportTemplateBase.base_context
     options:
         show_source: True
@@ -33,11 +22,6 @@ In addition to the model-specific context variables, the following global contex
 In addition to the [global context](#global-context), all *report* templates have access to the following context variables:
 
 {{ report_context("base", "report") }}
-
-| Variable | Description |
-| --- | --- |
-| page_size | The page size of the report |
-| landscape | Boolean value, True if the report is in landscape mode |
 
 Note that custom plugins may also add additional context variables to the report context.
 
@@ -51,17 +35,11 @@ In addition to the [global context](#global-context), all *label* templates have
 
 {{ report_context("base", "label") }}
 
-| Variable | Description |
-| --- | --- |
-| width | The width of the label (in mm) |
-| height | The height of the label (in mm) |
-
 Note that custom plugins may also add additional context variables to the label context.
 
 ::: report.models.LabelTemplate.get_context
     options:
         show_source: True
-
 
 ## Template Types
 
