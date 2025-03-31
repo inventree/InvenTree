@@ -10,14 +10,16 @@ from drf_spectacular.utils import _SchemaType
 class ExtendedAutoSchema(AutoSchema):
     """Extend drf-spectacular to allow customizing the schema to match the actual API behavior."""
 
+    def is_bulk_delete(self) -> bool:
+        """Check the class of the current view for the BulkDeleteMixin."""
+        return 'BulkDeleteMixin' in [c.__name__ for c in type(self.view).__mro__]
+
     def get_operation_id(self) -> str:
         """Custom path handling overrides, falling back to default behavior."""
         result_id = super().get_operation_id()
 
         # rename bulk deletes to deconflict with single delete operation_id
-        if self.method == 'DELETE' and not (
-            self.path.endswith('/{id}/') or self.path.endswith('user/me/')
-        ):
+        if self.method == 'DELETE' and self.is_bulk_delete():
             action = self.method_mapping[self.method.lower()]
             result_id = result_id.replace(action, 'bulk_' + action)
 
@@ -40,7 +42,7 @@ class ExtendedAutoSchema(AutoSchema):
 
         # drf-spectacular doesn't support a body on DELETE endpoints because the semantics are not well-defined and
         # OpenAPI recommends against it. This allows us to generate a schema that follows existing behavior.
-        if '_bulk_destroy' in operation['operationId']:
+        if self.method == 'DELETE' and self.is_bulk_delete():
             original_method = self.method
             self.method = 'PUT'
             request_body = self._get_request_body()
