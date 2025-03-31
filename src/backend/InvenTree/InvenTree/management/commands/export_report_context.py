@@ -35,6 +35,8 @@ def get_type_str(type_obj):
     if type_obj.__module__ == 'builtins':
         return type_obj.__name__
 
+    print(type_obj)
+
     return f'{type_obj.__module__}.{type_obj.__name__}'
 
 
