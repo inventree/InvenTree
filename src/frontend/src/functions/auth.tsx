@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
@@ -65,7 +65,7 @@ export const doBasicLogin = async (
   password: string,
   navigate: NavigateFunction
 ) => {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
@@ -79,6 +79,8 @@ export const doBasicLogin = async (
 
   let loginDone = false;
   let success = false;
+
+  const host: string = getHost();
 
   // Attempt login with
   await api
@@ -156,7 +158,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 };
 
 export const doSimpleLogin = async (email: string) => {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const mail = await axios
     .post(
       apiUrl(ApiEndpoints.user_simple_login),
@@ -164,7 +166,7 @@ export const doSimpleLogin = async (email: string) => {
         email: email
       },
       {
-        baseURL: host,
+        baseURL: getHost(),
         timeout: 2000
       }
     )

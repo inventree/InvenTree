@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';

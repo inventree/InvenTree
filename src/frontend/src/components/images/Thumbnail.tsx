@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Anchor, Group } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 

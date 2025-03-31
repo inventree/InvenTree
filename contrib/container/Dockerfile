@@ -9,7 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-alpine3.20 AS inventree_base
+FROM python:3.11-alpine3.20@sha256:520924f35357a374aa1beaa81b867f449f9f12a53f00b69ad03c3d697fdf4aad AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -107,7 +107,9 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
 # Frontend builder image:
 FROM prebuild AS frontend
 
-RUN apk add --no-cache --update nodejs npm yarn
+RUN apk add --no-cache --update nodejs npm yarn bash
+RUN npm install -g --ignore-scripts n
+RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
@@ -149,7 +151,9 @@ RUN pip install --require-hashes -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
-RUN apk add --no-cache --update nodejs npm yarn
+RUN apk add --no-cache --update nodejs npm yarn bash
+RUN npm install -g --ignore-scripts n
+RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/

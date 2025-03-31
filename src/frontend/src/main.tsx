@@ -21,7 +21,8 @@ declare global {
       server_list: HostList;
       default_server: string;
       show_server_selector: boolean;
-      base_url: string;
+      base_url?: string;
+      api_host?: string;
       sentry_dsn?: string;
       environment?: string;
     };
@@ -29,12 +30,14 @@ declare global {
   }
 }
 
+// Running in dev mode (i.e. vite)
 export const IS_DEV = import.meta.env.DEV;
 export const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
 export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
 
 // Filter out any settings that are not defined
 const loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
+
 Object.keys(loaded_vals).forEach((key) => {
   if (loaded_vals[key] === undefined) {
     delete loaded_vals[key];
@@ -47,13 +50,9 @@ Object.keys(loaded_vals).forEach((key) => {
 
 window.INVENTREE_SETTINGS = {
   server_list: {
-    'mantine-cqj63coxn': {
-      host: `${window.location.origin}/`,
-      name: 'Current Server'
-    },
     ...(IS_DEV
       ? {
-          'mantine-2j5j5j5j5': {
+          'server-localhost': {
             host: 'http://localhost:8000',
             name: 'Localhost'
           }
@@ -61,21 +60,25 @@ window.INVENTREE_SETTINGS = {
       : {}),
     ...(IS_DEV_OR_DEMO
       ? {
-          'mantine-u56l5jt85': {
+          'server-demo': {
             host: 'https://demo.inventree.org/',
             name: 'InvenTree Demo'
           }
         }
-      : {})
+      : {}),
+    'server-current': {
+      host: `${window.location.origin}/`,
+      name: 'Current Server'
+    }
   },
   default_server: IS_DEV
-    ? 'mantine-2j5j5j5j5'
+    ? 'server-localhost'
     : IS_DEMO
-      ? 'mantine-u56l5jt85'
-      : 'mantine-cqj63coxn',
+      ? 'server-demo'
+      : 'server-current',
   show_server_selector: IS_DEV_OR_DEMO,
 
-  // merge in settings that are already set via django's spa_view or for development
+  // Merge in settings that are already set via django's spa_view or for development
   ...loaded_vals
 };
 

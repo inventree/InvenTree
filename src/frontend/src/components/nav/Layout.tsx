@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Container, Flex, Space } from '@mantine/core';
 import { Spotlight, createSpotlight } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';

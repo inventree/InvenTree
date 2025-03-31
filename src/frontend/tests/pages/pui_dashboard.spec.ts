@@ -1,9 +1,9 @@
 import { test } from '../baseFixtures.js';
-import { doQuickLogin } from '../login.js';
+import { doCachedLogin } from '../login.js';
 import { setPluginState } from '../settings.js';
 
-test('Dashboard - Basic', async ({ page }) => {
-  await doQuickLogin(page);
+test('Dashboard - Basic', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByText('Use the menu to add widgets').waitFor();
 
@@ -35,7 +35,7 @@ test('Dashboard - Basic', async ({ page }) => {
   await page.getByLabel('dashboard-accept-layout').click();
 });
 
-test('Dashboard - Plugins', async ({ page, request }) => {
+test('Dashboard - Plugins', async ({ browser, request }) => {
   // Ensure that the "SampleUI" plugin is enabled
   await setPluginState({
     request,
@@ -43,7 +43,7 @@ test('Dashboard - Plugins', async ({ page, request }) => {
     state: true
   });
 
-  await doQuickLogin(page);
+  const page = await doCachedLogin(browser);
 
   // Add a dashboard widget from the SampleUI plugin
   await page.getByLabel('dashboard-menu').click();
