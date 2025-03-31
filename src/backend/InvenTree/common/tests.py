@@ -1112,7 +1112,7 @@ class NotificationTest(InvenTreeAPITestCase):
 
         # Now, let's bulk delete all 'unread' notifications via the API,
         # but only associated with the logged in user
-        response = self.delete(url, {'filters': {'read': False}}, expected_code=204)
+        response = self.delete(url, {'filters': {'read': False}}, expected_code=200)
 
         # Only 7 notifications should have been deleted,
         # as the notifications associated with other users must remain untouched

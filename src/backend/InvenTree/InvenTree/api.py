@@ -383,9 +383,7 @@ class BulkRequestSerializer(serializers.Serializer):
     )
 
     filters = serializers.DictField(
-        label='A dictionary of filter values',
-        child=serializers.CharField(),
-        required=False,
+        label='A dictionary of filter values', required=False
     )
 
 
