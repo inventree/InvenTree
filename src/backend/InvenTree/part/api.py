@@ -1441,6 +1441,7 @@ class PartRelatedFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part):
         """Filter queryset to include only PartRelated objects which reference the specified part."""
         return queryset.filter(Q(part_1=part) | Q(part_2=part)).distinct()
