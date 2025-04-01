@@ -361,7 +361,7 @@ class SearchTests(InvenTreeAPITestCase):
 
         response = self.post(
             reverse('api-search'),
-            {'search': SEARCH_TERM, 'part': {}, 'build': {}},
+            {'search': SEARCH_TERM, 'limit': 10, 'part': {}, 'build': {}},
             expected_code=200,
         )
         # No build or part results
@@ -371,7 +371,13 @@ class SearchTests(InvenTreeAPITestCase):
         # add the search_notes param
         response = self.post(
             reverse('api-search'),
-            {'search': SEARCH_TERM, 'search_notes': True, 'part': {}, 'build': {}},
+            {
+                'search': SEARCH_TERM,
+                'limit': 10,
+                'search_notes': True,
+                'part': {},
+                'build': {},
+            },
             expected_code=200,
         )
         # now should have some build results
@@ -380,7 +386,13 @@ class SearchTests(InvenTreeAPITestCase):
         # use the regex term
         response = self.post(
             reverse('api-search'),
-            {'search': RE_SEARCH_TERM, 'search_notes': True, 'part': {}, 'build': {}},
+            {
+                'search': RE_SEARCH_TERM,
+                'limit': 10,
+                'search_notes': True,
+                'part': {},
+                'build': {},
+            },
             expected_code=200,
         )
         # No results again
@@ -391,6 +403,7 @@ class SearchTests(InvenTreeAPITestCase):
             reverse('api-search'),
             {
                 'search': RE_SEARCH_TERM,
+                'limit': 10,
                 'search_notes': True,
                 'search_regex': True,
                 'part': {},
@@ -406,6 +419,7 @@ class SearchTests(InvenTreeAPITestCase):
             reverse('api-search'),
             {
                 'search': RE_SEARCH_TERM,
+                'limit': 10,
                 'search_notes': True,
                 'search_regex': True,
                 'search_whole': True,
