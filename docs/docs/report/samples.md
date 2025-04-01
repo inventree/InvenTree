@@ -33,7 +33,7 @@ The following report templates are provided "out of the box" and can be used as 
 
 ### Purchase Order
 
-{{ templatefile("report/inventree_bill_of_materials_report.html") }}
+{{ templatefile("report/inventree_purchase_order_report.html") }}
 
 ### Return Order
 

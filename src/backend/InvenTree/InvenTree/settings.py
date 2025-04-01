@@ -536,7 +536,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'InvenTree.schema.ExtendedAutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
@@ -1088,6 +1088,7 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://*localhost:4173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
