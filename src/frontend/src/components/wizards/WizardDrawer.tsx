@@ -1,3 +1,5 @@
+import { Boundary } from '@lib/components';
+import { StylishText } from '@lib/components';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -17,8 +19,6 @@ import {
   IconCircleCheck
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo } from 'react';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Progress stepper displayed at the top of the wizard drawer.

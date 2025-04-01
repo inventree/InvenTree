@@ -7,6 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+*.tsbuildinfo
+
 node_modules
 dist
 dist-ssr
@@ -29,3 +31,6 @@ dist-ssr
 /playwright/.cache/
 /.nyc_output/
 /coverage/
+
+# library component directory
+!lib/

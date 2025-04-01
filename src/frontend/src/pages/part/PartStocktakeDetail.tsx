@@ -10,26 +10,26 @@ import {
 } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import dayjs from 'dayjs';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { formatDate, formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
-import {
-  generateStocktakeReportFields,
-  partStocktakeFields
-} from '../../forms/PartForms';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../../tables/Column';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { formatDate, formatPriceRange } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import dayjs from 'dayjs';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
+import {
+  generateStocktakeReportFields,
+  partStocktakeFields
+} from '../../forms/PartForms';
 
 /*
  * Render a tooltip for the chart, with correct date information

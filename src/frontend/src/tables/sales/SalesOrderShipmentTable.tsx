@@ -3,34 +3,29 @@ import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import dayjs from 'dayjs';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import {
-  useSalesOrderShipmentCompleteFields,
-  useSalesOrderShipmentFields
-} from '../../forms/SalesOrderForms';
+import { YesNoButton } from '@lib/components';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { DateColumn, LinkColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { RowCancelAction, RowEditAction, RowViewAction } from '@lib/tables';
+import dayjs from 'dayjs';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 import {
-  type RowAction,
-  RowCancelAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
+  useSalesOrderShipmentCompleteFields,
+  useSalesOrderShipmentFields
+} from '../../forms/SalesOrderForms';
+import { DateColumn, LinkColumn } from '../ColumnRenderers';
 
 export default function SalesOrderShipmentTable({
   orderId

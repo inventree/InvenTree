@@ -1,3 +1,9 @@
+import {} from '@lib/forms';
+import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Badge, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -8,17 +14,11 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import {} from '../../components/items/ActionDropdown';
+import {} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import {} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 
 /**
  * Detail page for a single user

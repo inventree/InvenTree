@@ -1,12 +1,9 @@
 import { IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import type {
-  StatusCodeInterface,
-  StatusCodeListInterface
-} from '../components/render/StatusRenderer';
-import { useGlobalStatusState } from '../states/StatusState';
+import type { ApiFormFieldSet } from '@lib/forms';
+import type { StatusCodeInterface, StatusCodeListInterface } from '@lib/index';
+import { useGlobalStatusState } from '@lib/index';
 
 export function projectCodeFields(): ApiFormFieldSet {
   return {

@@ -14,9 +14,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
+import { apiUrl } from '@lib/functions';
+import { getApi } from '@lib/functions/api';
+import { ApiEndpoints } from '@lib/index';
 
 export function LicenceView(entries: Readonly<any[]>) {
   return (
@@ -53,6 +53,8 @@ export function LicenceView(entries: Readonly<any[]>) {
 }
 
 export function LicenseModal() {
+  const api = getApi();
+
   const { data, isFetching, isError } = useQuery({
     queryKey: ['license'],
     refetchOnMount: true,

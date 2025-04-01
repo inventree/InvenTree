@@ -2,11 +2,11 @@ import { t } from '@lingui/core/macro';
 import { Code } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import type { TableColumn } from '../Column';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
 
 export interface PluginRegistryErrorI {
   id: number;

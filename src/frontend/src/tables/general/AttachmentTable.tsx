@@ -12,26 +12,25 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { ActionButton } from '../../components/buttons/ActionButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { ProgressBar } from '../../components/items/ProgressBar';
-import { useApi } from '../../contexts/ApiContext';
-import { formatFileSize } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
+import { ActionButton, ProgressBar } from '@lib/components';
+import type { ApiFormFieldSet } from '@lib/forms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { formatFileSize } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { useApi } from '@lib/hooks/UseApi';
+import { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
+import type { TableFilter } from '@lib/tables';
+import { RowDeleteAction, RowEditAction } from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
+import { AttachmentLink } from '../../components/items/AttachmentLink';
 
 /**
  * Define set of columns to display for the attachment table

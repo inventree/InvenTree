@@ -4,9 +4,22 @@ import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { OptionsActionDropdown } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
+import { getDetailUrl } from '@lib/functions';
+import { formatDate } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
 import dayjs from 'dayjs';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -17,31 +30,18 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
-  EditItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  EditItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
 } from '../../forms/SalesOrderForms';
-import { getDetailUrl } from '../../functions/urls';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 
 export default function SalesOrderShipmentDetail() {

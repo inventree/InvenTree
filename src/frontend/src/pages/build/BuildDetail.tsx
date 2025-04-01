@@ -13,9 +13,19 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { OptionsActionDropdown, StatusRenderer } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
+import { useCreateApiFormModal, useEditApiFormModal } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useStatusCodes } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -27,29 +37,15 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  HoldItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { getDetailUrl } from '../../functions/urls';
-import {
-  useCreateApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';

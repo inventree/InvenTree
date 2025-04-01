@@ -3,12 +3,12 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { apiUrl } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import type { TableColumn } from '@lib/tables';
+import { InvenTreeTable } from '../../../../lib/tables/InvenTreeTable';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
-import type { TableColumn } from '../../../tables/Column';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import {
   SupplierPriceBreakColumns,
   calculateSupplierPartUnitPrice

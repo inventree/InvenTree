@@ -10,16 +10,16 @@ import {
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { StylishText } from '@lib/components';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import { AboutLinks, DocumentationLinks } from '../../defaults/links';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
-import { StylishText } from '../items/StylishText';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];

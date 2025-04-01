@@ -1,11 +1,43 @@
 {
-    "name": "inventreeui",
-    "private": true,
+    "name": "inventree",
+    "private": false,
+    "license": "MIT",
     "version": "0.1.0",
+    "description": "UI components for the InvenTree project",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "typesVersions": {
+        "*": {
+            "components": ["./dist/components/index.d.ts"],
+            "forms": ["./dist/forms/index.d.ts"],
+            "functions": ["./dist/functions/index.d.ts"],
+            "hooks": ["./dist/hooks/index.d.ts"],
+            "tables": ["./dist/tables/index.d.ts"]
+        }
+    },
+    "exports": {
+        ".": "./dist/index.js",
+        "./components": "./dist/components.js",
+        "./forms": "./dist/forms.js",
+        "./functions": "./dist/functions.js",
+        "./hooks": "./dist/hooks.js",
+        "./tables": "./dist/tables.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/inventree/inventree"
+    },
+    "author": {
+        "name": "InvenTree",
+        "email": "support@inventree.org",
+        "url": "https://inventree.org",
+        "organization": "InvenTree"
+    },
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "tsc && vite build --emptyOutDir",
+        "library": "tsc --p ./tsconfig.lib.json && vite --config vite.lib.config.ts build",
         "preview": "vite preview",
         "extract": "lingui extract",
         "compile": "lingui compile --typescript"
@@ -72,6 +104,7 @@
         "react-window": "1.8.10",
         "recharts": "^2.15.0",
         "styled-components": "^6.1.14",
+        "tsc-alias": "^1.8.11",
         "zustand": "^4.5.5"
     },
     "devDependencies": {
@@ -96,11 +129,12 @@
         "babel-plugin-macros": "^3.1.0",
         "nyc": "^17.1.0",
         "path": "^0.12.7",
-        "rollup": "^4.0.0",
+        "rollup": "^4.37.0",
         "rollup-plugin-license": "^3.5.3",
         "typescript": "^5.8.2",
         "vite": "^6.2.4",
         "vite-plugin-babel-macros": "^1.0.6",
+        "vite-plugin-dts": "^4.5.3",
         "vite-plugin-istanbul": "^6.0.2"
     }
 }

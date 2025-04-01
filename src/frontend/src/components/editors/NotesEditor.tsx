@@ -7,11 +7,11 @@ import 'easymde/dist/easymde.min.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
-import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { apiUrl } from '../../states/ApiState';
-import { ModelInformationDict } from '../render/ModelType';
+import { apiUrl } from '@lib/functions';
+import { useApi } from '@lib/hooks/UseApi';
+import { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
 
 /*
  * A text editor component for editing notes against a model type and instance.

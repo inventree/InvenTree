@@ -7,56 +7,21 @@ import {
   Code,
   Divider,
   Group,
-  Image,
   Select,
-  Skeleton,
   Stack,
   Text
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
-import QR from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { CopyButton } from '../buttons/CopyButton';
-import type { QrCodeType } from '../items/ActionDropdown';
-
-import { extractErrorMessage } from '../../functions/api';
+import { CopyButton, QRCode, type QRCodeProps } from '@lib/components';
+import { apiUrl, extractErrorMessage } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
+import type { QrCodeType } from '../items/Dropdown';
 import { BarcodeInput } from './BarcodeInput';
-
-type QRCodeProps = {
-  ecl?: 'L' | 'M' | 'Q' | 'H';
-  margin?: number;
-  data?: string;
-};
-
-export const QRCode = ({ data, ecl = 'Q', margin = 1 }: QRCodeProps) => {
-  const [qrCode, setQRCode] = useState<string>();
-
-  useEffect(() => {
-    if (!data) return setQRCode(undefined);
-
-    QR.toString(data, { errorCorrectionLevel: ecl, type: 'svg', margin }).then(
-      (svg) => {
-        setQRCode(`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`);
-      }
-    );
-  }, [data, ecl]);
-
-  return (
-    <Box>
-      {qrCode ? (
-        <Image src={qrCode} alt='QR Code' />
-      ) : (
-        <Skeleton height={500} />
-      )}
-    </Box>
-  );
-};
 
 type InvenTreeQRCodeProps = {
   mdl_prop: QrCodeType;
@@ -71,6 +36,8 @@ export const InvenTreeQRCode = ({
 }: InvenTreeQRCodeProps) => {
   const settings = useGlobalSettingsState();
   const [ecl, setEcl] = useState(eclProp);
+
+  const api = useApi();
 
   useEffect(() => {
     if (eclProp) setEcl(eclProp);
@@ -152,6 +119,7 @@ export const InvenTreeQRCode = ({
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [error, setError] = useState<string>('');
 
+  const api = useApi();
   const linkBarcode = useCallback((barcode: string) => {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
@@ -182,6 +150,8 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
 };
 
 export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
+  const api = useApi();
+
   function unlinkBarcode() {
     api
       .post(apiUrl(ApiEndpoints.barcode_unlink), {

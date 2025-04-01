@@ -19,19 +19,17 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
+import { apiUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { useLocalState } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/index';
 import { t } from '@lingui/core/macro';
-import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
+import { useServerApiState } from '../../states/ApiState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
 import { MainMenu } from './MainMenu';
@@ -66,6 +64,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
+  const api = useApi();
   const { isLoggedIn } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();

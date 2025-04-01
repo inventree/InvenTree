@@ -33,8 +33,31 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
+import {
+  ActionDropdown,
+  InvenTreeIcon,
+  OptionsActionDropdown
+} from '@lib/components';
+import { Thumbnail } from '@lib/components';
+import { RenderPart } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
+import type { ApiFormFieldSet } from '@lib/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { formatPriceRange } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useApi } from '@lib/hooks/UseApi';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState, useUserSettingsState } from '@lib/index';
 import AdminButton from '../../components/buttons/AdminButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
   type DetailsField,
@@ -43,16 +66,12 @@ import {
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
+  EditItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -60,33 +79,13 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { useApi } from '../../contexts/ApiContext';
-import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';

@@ -1,3 +1,5 @@
+import { StylishText } from '@lib/components';
+import { useUserState } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -11,9 +13,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
-import { StylishText } from '../../components/items/StylishText';
 import { handleChangePassword } from '../../functions/auth';
-import { useUserState } from '../../states/UserState';
 import { Wrapper } from './Layout';
 
 export default function Set_Password() {

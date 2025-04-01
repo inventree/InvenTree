@@ -1,4 +1,5 @@
 import { platform, release } from 'node:os';
+
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
@@ -10,15 +11,12 @@ import istanbul from 'vite-plugin-istanbul';
 // Required for enabling file system polling
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
 
-// Detect if code coverage is enabled (runs in GitHub CI)
-const IS_COVERAGE = !!process.env.VITE_COVERAGE_BUILD;
-
 if (IS_IN_WSL) {
   console.log('WSL detected: using polling for file system events');
 }
 
 // Output directory for the built files
-const OUTPUT_DIR = '../../src/backend/InvenTree/web/static/web';
+const OUTPUT_DIR = '../backend/InvenTree/web/static/web';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -37,7 +35,7 @@ export default defineConfig(({ command, mode }) => {
           includePrivate: true,
           multipleVersions: true,
           output: {
-            file: '../backend/InvenTree/web/static/web/.vite/dependencies.json',
+            file: `${OUTPUT_DIR}/.vite/dependencies.json`,
             template(dependencies) {
               return JSON.stringify(dependencies);
             }
@@ -45,7 +43,7 @@ export default defineConfig(({ command, mode }) => {
         }
       }),
       istanbul({
-        include: 'src/*',
+        include: ['src/*', 'lib/*'],
         exclude: ['node_modules', 'test/'],
         extension: ['.js', '.ts', '.tsx'],
         requireEnv: true
@@ -59,10 +57,15 @@ export default defineConfig(({ command, mode }) => {
     // When building, set the base path to an empty string
     // This is required to ensure that the static path prefix is observed
     base: command == 'build' ? '' : undefined,
+    resolve: {
+      alias: {
+        '@lib': '/lib'
+      }
+    },
     build: {
       manifest: true,
-      outDir: OUTPUT_DIR,
-      sourcemap: IS_COVERAGE
+      sourcemap: true,
+      outDir: OUTPUT_DIR
     },
     server: {
       proxy: {

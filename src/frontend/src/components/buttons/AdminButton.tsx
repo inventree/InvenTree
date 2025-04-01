@@ -2,12 +2,12 @@ import { t } from '@lingui/core/macro';
 import { IconUserStar } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import type { ModelType } from '../../enums/ModelType';
-import { generateUrl } from '../../functions/urls';
+import { ActionButton } from '@lib/components';
+import { generateUrl } from '@lib/functions';
+import type { ModelType } from '@lib/index';
+import { ModelInformationDict } from '@lib/index';
+import { useUserState } from '@lib/index';
 import { useServerApiState } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import { ModelInformationDict } from '../render/ModelType';
-import { ActionButton } from './ActionButton';
 
 export type AdminButtonProps = {
   model: ModelType;

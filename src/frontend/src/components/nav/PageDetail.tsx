@@ -1,11 +1,11 @@
 import { Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 
+import { StylishText } from '@lib/components';
+import { ApiImage } from '@lib/components';
+import { shortenString } from '@lib/functions';
+import { useUserSettingsState } from '@lib/index';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { shortenString } from '../../functions/tables';
-import { useUserSettingsState } from '../../states/SettingsState';
-import { ApiImage } from '../images/ApiImage';
-import { StylishText } from '../items/StylishText';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
 

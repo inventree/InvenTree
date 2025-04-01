@@ -1,16 +1,14 @@
 import type FullCalendar from '@fullcalendar/react';
+import { apiUrl, showApiErrorMessage } from '@lib/functions';
+import { useApi } from '@lib/hooks';
+import type { UseModalReturn } from '@lib/hooks';
+import useDataExport from '@lib/hooks/UseDataExport';
+import { type FilterSetState, useFilterSet } from '@lib/hooks/UseFilterSet';
+import type { ApiEndpoints } from '@lib/index';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { api } from '../App';
-import type { ApiEndpoints } from '../enums/ApiEndpoints';
-import { showApiErrorMessage } from '../functions/notifications';
-import { apiUrl } from '../states/ApiState';
-import useDataExport from './UseDataExport';
-import { type FilterSetState, useFilterSet } from './UseFilterSet';
-import type { UseModalReturn } from './UseModal';
-
 /*
  * Type definition for representing the state of a calendar:
  *
@@ -59,6 +57,7 @@ export default function useCalendar({
   endpoint: ApiEndpoints;
   queryParams?: any;
 }): CalendarState {
+  const api = useApi();
   const ref = useRef<FullCalendar | null>(null);
 
   const filterSet = useFilterSet(`calendar-${name}`);

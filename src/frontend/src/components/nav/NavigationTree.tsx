@@ -21,14 +21,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useApi } from '../../contexts/ApiContext';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
-import { ApiIcon } from '../items/ApiIcon';
-import { StylishText } from '../items/StylishText';
+import { StylishText } from '@lib/components';
+import { ApiIcon } from '@lib/components';
+import { apiUrl } from '@lib/functions';
+import { getDetailUrl } from '@lib/functions';
+import { navigateToLink } from '@lib/functions';
+import { useApi } from '@lib/hooks/UseApi';
+import type { ApiEndpoints } from '@lib/index';
+import type { ModelType } from '@lib/index';
 
 /*
  * A generic navigation tree component.

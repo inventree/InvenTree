@@ -1,28 +1,27 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { formatCurrency } from '../../defaults/formatters';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { UserRoles } from '../../enums/Roles';
-import { extraLineItemFields } from '../../forms/CommonForms';
+import { AddItemButton } from '@lib/components/buttons/AddItemButton';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { LinkColumn, NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
+import { useTable } from '@lib/hooks';
+import type { ApiEndpoints } from '@lib/index';
+import type { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/tables';
 import {
-  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
-} from '../RowActions';
+} from '@lib/tables';
+import { InvenTreeTable } from '../../../lib/tables/InvenTreeTable';
+import { extraLineItemFields } from '../../forms/CommonForms';
+import { LinkColumn, NoteColumn } from '../ColumnRenderers';
 
 export default function ExtraLineItemTable({
   endpoint,

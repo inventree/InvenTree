@@ -1,16 +1,18 @@
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { api, queryClient } from '../App';
-import { ApiProvider } from '../contexts/ApiContext';
+import { ApiProvider } from '@lib/contexts/ApiContext';
+import { getBaseUrl } from '@lib/functions';
+import { getApi, queryClient } from '@lib/functions/api';
+import { useLocalState } from '@lib/index';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { defaultHostList } from '../defaults/defaultHostList';
-import { getBaseUrl } from '../main';
 import { routes } from '../router';
-import { useLocalState } from '../states/LocalState';
 
 export default function DesktopAppView() {
   const [hostList] = useLocalState((state) => [state.hostList]);
+  const base_url = getBaseUrl();
+  const api = getApi();
 
   useEffect(() => {
     if (Object.keys(hostList).length === 0) {
@@ -21,7 +23,7 @@ export default function DesktopAppView() {
   return (
     <ApiProvider client={queryClient} api={api}>
       <ThemeContext>
-        <BrowserRouter basename={getBaseUrl()}>{routes}</BrowserRouter>
+        <BrowserRouter basename={base_url}>{routes}</BrowserRouter>
       </ThemeContext>
     </ApiProvider>
   );

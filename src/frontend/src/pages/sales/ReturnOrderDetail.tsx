@@ -4,9 +4,21 @@ import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { OptionsActionDropdown, StylishText } from '@lib/components';
+import { StatusRenderer } from '@lib/components';
+import { PrintingActions } from '@lib/components/items/PrintingActions';
+import { useCreateApiFormModal, useEditApiFormModal } from '@lib/forms';
+import { apiUrl } from '@lib/functions';
+import { formatCurrency } from '@lib/functions';
+import { useInstance } from '@lib/hooks';
+import { useStatusCodes } from '@lib/hooks';
+import { ApiEndpoints } from '@lib/index';
+import { ModelType } from '@lib/index';
+import { UserRoles } from '@lib/index';
+import { useUserState } from '@lib/index';
+import { useGlobalSettingsState } from '@lib/index';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -18,31 +30,15 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction,
-  OptionsActionDropdown
-} from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
+  HoldItemAction
+} from '../../components/items/Dropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
-import {
-  useCreateApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
-import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
-import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
 

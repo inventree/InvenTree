@@ -4,9 +4,9 @@ import { useCallback, useMemo } from 'react';
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
 
-import type { UiSizeType } from '../../defaults/formatters';
-import { useLocalState } from '../../states/LocalState';
-import { StylishText } from '../items/StylishText';
+import { StylishText } from '@lib/components';
+import type { UiSizeType } from '@lib/index';
+import { useLocalState } from '@lib/index';
 import * as classes from './DetailDrawer.css';
 
 /**
