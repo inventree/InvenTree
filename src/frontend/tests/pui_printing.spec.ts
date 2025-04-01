@@ -142,7 +142,7 @@ test('Report Editing', async ({ browser, request }) => {
     console.log('==>', await arg.jsonValue());
   }
   expect(await msg[0].jsonValue()).toBe('updatePreview');
-  expect((await msg[1].jsonValue())[0]).toBe(newTextareaValue);
+  expect(await msg[1].jsonValue()).toBe(newTextareaValue);
 
   // deactivate the sample plugin again after the test
   await setPluginState({
