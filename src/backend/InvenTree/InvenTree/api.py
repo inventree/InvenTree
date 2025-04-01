@@ -374,6 +374,20 @@ class NotFoundView(APIView):
         return self.not_found(request)
 
 
+class BulkRequestSerializer(serializers.Serializer):
+    """Parameters for selecting items for bulk operations."""
+
+    items = serializers.ListField(
+        label='A list of primary key values',
+        child=serializers.IntegerField(),
+        required=False,
+    )
+
+    filters = serializers.DictField(
+        label='A dictionary of filter values', required=False
+    )
+
+
 class BulkOperationMixin:
     """Mixin class for handling bulk data operations.
 
@@ -533,6 +547,7 @@ class BulkDeleteMixin(BulkOperationMixin):
         """
         return queryset
 
+    @extend_schema(request=BulkRequestSerializer)
     def delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
@@ -554,7 +569,7 @@ class BulkDeleteMixin(BulkOperationMixin):
             for item in queryset:
                 item.delete()
 
-        return Response({'success': f'Deleted {n_deleted} items'}, status=204)
+        return Response({'success': f'Deleted {n_deleted} items'}, status=200)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):

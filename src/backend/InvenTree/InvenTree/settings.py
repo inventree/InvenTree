@@ -556,7 +556,7 @@ REST_FRAMEWORK = {
         'InvenTree.permissions.RolePermission',
         'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'InvenTree.schema.ExtendedAutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
