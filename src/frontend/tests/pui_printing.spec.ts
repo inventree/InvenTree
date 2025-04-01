@@ -137,7 +137,7 @@ test('Report Editing', async ({ browser, request }) => {
     .getByLabel('split-button-preview-options', { exact: true })
     .click();
   const msg = (await consoleLogPromise).args();
-  console.log(msg);
+  console.log('MSG', msg);
   for (const arg of msg) {
     console.log('==>', await arg.jsonValue());
   }
