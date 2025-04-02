@@ -10,13 +10,14 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
+from typing import Optional, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
-from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
+from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
@@ -359,6 +360,38 @@ class PartManager(TreeManager):
         )
 
 
+class PartReportContext(report.mixins.BaseReportContext):
+    """Context for the part model.
+
+    Attributes:
+        bom_items: Query set of all BomItem objects associated with the Part
+        category: The PartCategory object associated with the Part
+        description: The description field of the Part
+        IPN: The IPN (internal part number) of the Part
+        name: The name of the Part
+        parameters: Dict object containing the parameters associated with the Part
+        part: The Part object itself
+        qr_data: Formatted QR code data for the Part
+        qr_url: Generated URL for embedding in a QR code
+        revision: The revision of the Part
+        test_template_list: List of test templates associated with the Part
+        test_templates: Dict object of test templates associated with the Part
+    """
+
+    bom_items: report.mixins.QuerySet[BomItem]
+    category: Optional[PartCategory]
+    description: str
+    IPN: Optional[str]
+    name: str
+    parameters: dict[str, str]
+    part: Part
+    qr_data: str
+    qr_url: str
+    revision: Optional[str]
+    test_template_list: report.mixins.QuerySet[PartTestTemplate]
+    test_templates: dict[str, PartTestTemplate]
+
+
 @cleanup.ignore
 class Part(
     InvenTree.models.InvenTreeAttachmentMixin,
@@ -441,10 +474,10 @@ class Part(
         """Return the associated barcode model type code for this model."""
         return 'PA'
 
-    def report_context(self):
+    def report_context(self) -> PartReportContext:
         """Return custom report context information."""
         return {
-            'bom_items': self.get_bom_items(),
+            'bom_items': cast(report.mixins.QuerySet['BomItem'], self.get_bom_items()),
             'category': self.category,
             'description': self.description,
             'IPN': self.IPN,
@@ -1731,7 +1764,7 @@ class Part(
 
         return bom_filter
 
-    def get_bom_items(self, include_inherited=True):
+    def get_bom_items(self, include_inherited=True) -> QuerySet[BomItem]:
         """Return a queryset containing all BOM items for this part.
 
         By default, will include inherited BOM items
@@ -2294,7 +2327,9 @@ class Part(
 
             parameter.save()
 
-    def getTestTemplates(self, required=None, include_parent=True, enabled=None):
+    def getTestTemplates(
+        self, required=None, include_parent=True, enabled=None
+    ) -> QuerySet[PartTestTemplate]:
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
