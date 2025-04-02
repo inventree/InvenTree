@@ -42,6 +42,13 @@ See [INVE-W1](#inve-w1)
 
 See [INVE-W1](#inve-w1)
 
+#### INVE-W4
+**Server is running in debug mode**
+
+InvenTree is running in debug mode. This is **not** recommended for production use, as it exposes sensitive information and makes the server more vulnerable to attacks. Debug mode is not intended for production/exposed instances, **even for short duration**.
+
+It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/intro.md#debug-mode).
+
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.

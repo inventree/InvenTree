@@ -3,6 +3,7 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { t } from '@lingui/core/macro';
+import { docLinks } from '../../defaults/links';
 import { useServerApiState } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
@@ -10,6 +11,7 @@ import { useUserState } from '../../states/UserState';
 interface AlertInfo {
   key: string;
   title: string;
+  code?: string;
   message: string;
 }
 
@@ -35,6 +37,7 @@ export function Alerts() {
       _alerts.push({
         key: 'debug',
         title: t`Debug Mode`,
+        code: 'INVE-W4',
         message: t`The server is running in debug mode.`
       });
     }
@@ -93,6 +96,7 @@ export function Alerts() {
                 onClose={() => setDismissed([...dismissed, alert.key])}
               >
                 {alert.message}
+                {alert.code && errorCodeLink(alert.code)}
               </Alert>
             </Menu.Item>
           ))}
@@ -100,4 +104,15 @@ export function Alerts() {
       </Menu>
     );
   return null;
+}
+export function errorCodeLink(code: string) {
+  return (
+    <a
+      href={`${docLinks.errorcodes}#${code.toLowerCase()}`}
+      target='_blank'
+      rel='noreferrer'
+    >
+      {t`Learn more about ${code}`}
+    </a>
+  );
 }

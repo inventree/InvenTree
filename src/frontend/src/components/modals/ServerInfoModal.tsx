@@ -52,6 +52,7 @@ export function ServerInfoModal({
                 <Trans>Debug Mode</Trans>
               </Table.Td>
               <Table.Td>
+                <Badge color='red'>INVE-W4</Badge>
                 <Trans>Server is running in debug mode</Trans>
               </Table.Td>
             </Table.Tr>
