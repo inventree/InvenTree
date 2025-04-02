@@ -754,7 +754,7 @@ export default function StockDetail() {
             hidden:
               isBuilding ||
               serialized ||
-              stockitem?.quantity == 1 ||
+              stockitem?.quantity < 1 ||
               stockitem?.part_detail?.trackable != true,
             icon: <InvenTreeIcon icon='serial' iconProps={{ color: 'blue' }} />,
             onClick: () => {
