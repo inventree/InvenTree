@@ -104,7 +104,7 @@ export function ServerInfoModal({
               </Table.Td>
               <Table.Td>
                 <Badge color='red'>INVE-W5</Badge>
-                <Trans>The Background worker process is not running</Trans>
+                <Trans>The Background worker process is not running.</Trans>
               </Table.Td>
             </Table.Tr>
           )}
@@ -115,7 +115,7 @@ export function ServerInfoModal({
               </Table.Td>
               <Table.Td>
                 <Badge color='red'>INVE-W7</Badge>
-                <Trans>Email settings not configured</Trans>
+                <Trans>Email settings not configured.</Trans>
               </Table.Td>
             </Table.Tr>
           )}
