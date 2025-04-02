@@ -116,7 +116,7 @@ export function useEditApiFormModal(props: ApiFormModalProps) {
   return useApiFormModal(editProps);
 }
 
-interface BulkEditApiFormModalProps extends ApiFormModalProps {
+export interface BulkEditApiFormModalProps extends ApiFormModalProps {
   items: number[];
 }
 

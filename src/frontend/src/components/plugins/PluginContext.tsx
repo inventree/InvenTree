@@ -20,6 +20,7 @@ import { type UserStateProps, useUserState } from '../../states/UserState';
 
 import {
   type ApiFormModalProps,
+  type BulkEditApiFormModalProps,
   useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -28,7 +29,7 @@ import {
 import type { UseModalReturn } from '../../hooks/UseModal';
 
 export type InvenTreeFormsContext = {
-  bulkEdit: (props: ApiFormModalProps) => UseModalReturn;
+  bulkEdit: (props: BulkEditApiFormModalProps) => UseModalReturn;
   create: (props: ApiFormModalProps) => UseModalReturn;
   delete: (props: ApiFormModalProps) => UseModalReturn;
   edit: (props: ApiFormModalProps) => UseModalReturn;
