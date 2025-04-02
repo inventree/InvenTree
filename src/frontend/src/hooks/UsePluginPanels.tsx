@@ -89,14 +89,15 @@ export function usePluginPanels({
   // Cache the context data which is delivered to the plugins
   const inventreeContext = useInvenTreeContext();
 
-  const contextData = useMemo<PluginPanelContext>(() => {
-    return {
-      model: model,
-      id: id,
-      instance: instance,
-      ...inventreeContext
-    };
-  }, [model, id, instance, inventreeContext]);
+  const contextData: InvenTreePluginContext =
+    useMemo<PluginPanelContext>(() => {
+      return {
+        model: model,
+        id: id,
+        instance: instance,
+        ...inventreeContext
+      };
+    }, [model, id, instance, inventreeContext]);
 
   const pluginPanels: PluginPanelType[] = useMemo(() => {
     return (

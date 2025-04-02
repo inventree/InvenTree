@@ -12,6 +12,7 @@ export default defineConfig((cfg) =>
     defineConfig({
       resolve: {},
       build: {
+        minify: false,
         manifest: true,
         outDir: 'dist',
         sourcemap: true,
@@ -20,7 +21,7 @@ export default defineConfig((cfg) =>
             preserveModules: true,
             preserveModulesRoot: 'lib'
           },
-          external: ['react', 'react-dom', '@mantine/core', '@mantine/hooks']
+          external: ['react', 'react-dom']
         },
         lib: {
           entry: {

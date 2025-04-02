@@ -2,6 +2,7 @@ import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import type { NavigateFunction } from 'react-router-dom';
+import type { ModelType } from '../enums/ModelType';
 import type { ApiFormModalProps, BulkEditApiFormModalProps } from './Forms';
 import type { UseModalReturn } from './Modals';
 import type { SettingsStateProps } from './Settings';
@@ -34,6 +35,9 @@ export type InvenTreeFormsContext = {
  * @param host - The current host URL
  * @param locale - The current locale string (e.g. 'en' / 'de')
  * @param context - Any additional context data which may be passed to the plugin
+ * @param model - The model type associated with the rendered component (if applicable)
+ * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
+ * @param instance - The model instance data (if available)
  */
 export type InvenTreePluginContext = {
   api: AxiosInstance;
@@ -48,4 +52,7 @@ export type InvenTreePluginContext = {
   forms: InvenTreeFormsContext;
   colorScheme: MantineColorScheme;
   context?: any;
+  model?: ModelType | string;
+  id?: string | number | null;
+  instance?: any;
 };
