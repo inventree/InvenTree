@@ -19,7 +19,7 @@
       "@lib/*": ["./lib/*"]
     }
   },
-  "include": ["src", "lib"],
+  "include": ["src", "lib", "vite-env.d.ts"],
   "exclude": ["node_nodules", "dist"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

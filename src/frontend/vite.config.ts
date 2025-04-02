@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { platform, release } from 'node:os';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
@@ -5,6 +6,8 @@ import react from '@vitejs/plugin-react';
 import license from 'rollup-plugin-license';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
+
+const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
 // Detect if the current environment is WSL
 // Required for enabling file system polling
@@ -87,6 +90,9 @@ export default defineConfig(({ command, mode }) => {
         // Ref: https://github.com/vitejs/vite/issues/1153#issuecomment-785467271
         usePolling: IS_IN_WSL
       }
+    },
+    define: {
+      __INVENTREE_LIB_VERSION__: JSON.stringify(packageJson.version)
     }
   };
 });
