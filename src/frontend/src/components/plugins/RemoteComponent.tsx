@@ -1,8 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Stack, Text } from '@mantine/core';
+import { Alert, MantineProvider, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { createRoot } from 'react-dom/client';
+import { api, queryClient } from '../../App';
+import { ApiProvider } from '../../contexts/ApiContext';
+import { LanguageContext } from '../../contexts/LanguageContext';
+import { colorSchema } from '../../contexts/colorSchema';
 import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
 import type { InvenTreeContext } from './PluginContext';
@@ -57,10 +62,23 @@ export default function RemoteComponent({
         .then((func) => {
           if (func) {
             try {
-              func(componentRef.current, context);
+              // Render the plugin component into the target element
+              // Note that we have to provide the right context(s) to the component
+              createRoot(componentRef.current!).render(
+                <ApiProvider client={queryClient} api={api}>
+                  <MantineProvider
+                    theme={context.theme}
+                    colorSchemeManager={colorSchema}
+                  >
+                    <LanguageContext>{func(context)}</LanguageContext>
+                  </MantineProvider>
+                </ApiProvider>
+              );
+
               setRenderingError('');
             } catch (error) {
               setRenderingError(`${error}`);
+              console.error(error);
             }
           } else {
             setRenderingError(`${sourceFile}:${functionName}`);
