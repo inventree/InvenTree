@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { AuthConfig, AuthContext } from '@lib/types/Auth';
+import type { PathParams } from '@lib/types/Core';
 import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import type { ServerAPIProps } from './states';
@@ -90,8 +91,6 @@ export const useServerApiState = create<ServerApiStateProps>()(
 export function apiPrefix(): string {
   return '/api/';
 }
-
-export type PathParams = Record<string, string | number>;
 
 /**
  * Construct an API URL with an endpoint and (optional) pk value

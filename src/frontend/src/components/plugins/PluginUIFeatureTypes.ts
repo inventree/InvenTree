@@ -1,8 +1,8 @@
 import type { ModelType } from '@lib/enums/ModelType';
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import type { InvenTreeIconType } from '../../functions/icons';
 import type { TemplateI } from '../../tables/settings/TemplateTable';
 import type { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
-import type { InvenTreeContext } from './PluginContext';
 import type { PluginUIFeature } from './PluginUIFeature';
 
 // #region  Type Helpers
@@ -16,7 +16,7 @@ export type BaseUIFeature = {
 
 export type PluginUIGetFeatureType<T extends BaseUIFeature> = (params: {
   featureContext: T['featureContext'];
-  inventreeContext: InvenTreeContext;
+  inventreeContext: InvenTreePluginContext;
 }) => T['featureReturnType'];
 
 export type PluginUIFuncWithoutInvenTreeContextType<T extends BaseUIFeature> = (

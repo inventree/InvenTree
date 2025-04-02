@@ -13,19 +13,19 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableState } from '@lib/types/Tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
-import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import type { TableColumn } from './Column';
-import type { TableFilter } from './Filter';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 

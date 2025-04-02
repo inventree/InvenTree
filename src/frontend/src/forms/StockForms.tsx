@@ -20,11 +20,13 @@ import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+  ApiFormFieldSet,
+  ApiFormModalProps
+} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -33,11 +35,7 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
-import {
-  type ApiFormModalProps,
-  useCreateApiFormModal,
-  useDeleteApiFormModal
-} from '../hooks/UseForm';
+import { useCreateApiFormModal, useDeleteApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator

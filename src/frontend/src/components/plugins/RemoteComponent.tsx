@@ -3,6 +3,7 @@ import { Alert, MantineProvider, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { createRoot } from 'react-dom/client';
 import { api, queryClient } from '../../App';
 import { ApiProvider } from '../../contexts/ApiContext';
@@ -10,7 +11,6 @@ import { LanguageContext } from '../../contexts/LanguageContext';
 import { colorSchema } from '../../contexts/colorSchema';
 import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
-import type { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 
 /**
@@ -29,7 +29,7 @@ export default function RemoteComponent({
 }: Readonly<{
   source: string;
   defaultFunctionName: string;
-  context: InvenTreeContext;
+  context: InvenTreePluginContext;
 }>) {
   const componentRef = useRef<HTMLDivElement>();
 

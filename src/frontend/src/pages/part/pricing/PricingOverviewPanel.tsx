@@ -25,9 +25,9 @@ import { DataTable } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import {
   EditItemAction,
   OptionsActionDropdown

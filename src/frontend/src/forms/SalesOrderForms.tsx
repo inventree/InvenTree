@@ -12,11 +12,12 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet,
   ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+} from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { useCreateApiFormModal } from '../hooks/UseForm';

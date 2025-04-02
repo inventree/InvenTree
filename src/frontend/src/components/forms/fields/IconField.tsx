@@ -21,9 +21,9 @@ import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useIconState } from '../../../states/IconState';
 import { ApiIcon } from '../../items/ApiIcon';
-import type { ApiFormFieldType } from './ApiFormField';
 
 export default function IconField({
   controller,

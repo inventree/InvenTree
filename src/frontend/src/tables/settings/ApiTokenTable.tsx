@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
@@ -15,7 +16,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import type { RowAction } from '../../tables/RowActions';
 import { BooleanColumn } from '../ColumnRenderers';
-import { type TableFilter, UserFilter } from '../Filter';
+import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ApiTokenTable({

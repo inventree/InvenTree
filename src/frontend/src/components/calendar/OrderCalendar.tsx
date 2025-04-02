@@ -5,6 +5,7 @@ import type {
 } from '@fullcalendar/core';
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
@@ -27,8 +28,7 @@ import {
   HasProjectCodeFilter,
   OrderStatusFilter,
   ProjectCodeFilter,
-  ResponsibleFilter,
-  type TableFilter
+  ResponsibleFilter
 } from '../../tables/Filter';
 import { ModelInformationDict } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';

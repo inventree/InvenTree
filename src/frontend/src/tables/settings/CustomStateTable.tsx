@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type {
   StatusCodeInterface,
@@ -21,7 +22,6 @@ import { apiUrl } from '../../states/ApiState';
 import { useGlobalStatusState } from '../../states/StatusState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,

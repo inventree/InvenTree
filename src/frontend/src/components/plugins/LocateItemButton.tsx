@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconRadar } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -6,7 +7,6 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { apiUrl } from '../../states/ApiState';
 import { ActionButton } from '../buttons/ActionButton';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import type { PluginInterface } from './PluginInterface';
 
 export default function LocateItemButton({

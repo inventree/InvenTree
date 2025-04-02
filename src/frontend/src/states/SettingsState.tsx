@@ -4,10 +4,11 @@
 import { create, createStore } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { PathParams } from '@lib/types/Core';
 import type { Setting, SettingsLookup } from '@lib/types/Settings';
 import { api } from '../App';
 import { isTrue } from '../functions/conversion';
-import { type PathParams, apiUrl } from './ApiState';
+import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 
 export interface SettingsStateProps {

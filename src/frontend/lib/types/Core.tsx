@@ -9,3 +9,5 @@ export interface UserTheme {
   radius: UiSizeType;
   loader: string;
 }
+
+export type PathParams = Record<string, string | number>;

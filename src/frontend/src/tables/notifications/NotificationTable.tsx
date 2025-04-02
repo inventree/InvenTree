@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { TableState } from '../../hooks/UseTable';
+import type { TableState } from '@lib/types/Tables';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';

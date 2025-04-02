@@ -31,10 +31,11 @@ import dayjs from 'dayjs';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps

@@ -3,13 +3,11 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { api } from '../App';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
-import {
-  type InvenTreeContext,
-  useInvenTreeContext
-} from '../components/plugins/PluginContext';
+import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import PluginPanelContent from '../components/plugins/PluginPanel';
 import {
   type PluginUIFeature,
@@ -23,7 +21,7 @@ import { useGlobalSettingsState } from '../states/SettingsState';
  * @param id - The ID (primary key) of the model instance for the plugin
  * @param instance - The model instance data (if available)
  */
-export type PluginPanelContext = InvenTreeContext & {
+export type PluginPanelContext = InvenTreePluginContext & {
   model?: ModelType | string;
   id?: string | number | null;
   instance?: any;

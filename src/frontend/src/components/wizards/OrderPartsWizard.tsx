@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
@@ -16,7 +17,6 @@ import { ActionButton } from '../buttons/ActionButton';
 import { AddItemButton } from '../buttons/AddItemButton';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import Expand from '../items/Expand';
 
 /**
