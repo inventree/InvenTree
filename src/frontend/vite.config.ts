@@ -62,7 +62,7 @@ export default defineConfig(({ command, mode }) => {
     build: {
       manifest: true,
       outDir: OUTPUT_DIR,
-      sourcemap: IS_COVERAGE
+      sourcemap: true
     },
     server: {
       proxy: {

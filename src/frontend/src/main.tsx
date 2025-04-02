@@ -13,6 +13,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
+import { MantineThemeContext } from '@mantine/core';
 import type { HostList } from './states/states';
 import MainView from './views/MainView';
 
@@ -32,6 +33,7 @@ declare global {
     React: typeof React;
     ReactDOM: typeof ReactDOM;
     ReactDOMClient: typeof ReactDOMClient;
+    MantineThemeContext: typeof MantineThemeContext;
   }
 }
 
@@ -102,6 +104,7 @@ export const getBaseUrl = (): string =>
 (window as any).React = React;
 (window as any).ReactDOM = ReactDOM;
 (window as any).ReactDOMClient = ReactDOMClient;
+(window as any).MantineThemeContext = MantineThemeContext;
 
 ReactDOMClient.createRoot(
   document.getElementById('root') as HTMLElement
