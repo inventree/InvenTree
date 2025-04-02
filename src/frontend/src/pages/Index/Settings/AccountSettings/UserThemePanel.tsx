@@ -34,8 +34,8 @@ const LOOKUP = Object.assign(
 
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
-  const [usertheme, setTheme, setLanguage] = useLocalState((state) => [
-    state.usertheme,
+  const [userTheme, setTheme, setLanguage] = useLocalState((state) => [
+    state.userTheme,
     state.setTheme,
     state.setLanguage
   ]);
@@ -47,7 +47,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
     return SizeMarks[0];
   }
   function getDefaultRadius() {
-    const value = Number.parseInt(usertheme.radius.toString());
+    const value = Number.parseInt(userTheme.radius.toString());
     return SizeMarks.some((mark) => mark.value === value) ? value : 50;
   }
   const [radius, setRadius] = useState(getDefaultRadius());
@@ -119,7 +119,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ColorInput
                 aria-label='Color Picker White'
-                value={usertheme.whiteColor}
+                value={userTheme.whiteColor}
                 onChange={(v) => setTheme([{ key: 'whiteColor', value: v }])}
               />
             </Table.Td>
@@ -142,7 +142,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ColorInput
                 aria-label='Color Picker Black'
-                value={usertheme.blackColor}
+                value={userTheme.blackColor}
                 onChange={(v) => setTheme([{ key: 'blackColor', value: v }])}
               />
             </Table.Td>
@@ -187,7 +187,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
                     { value: 'oval', label: t`Oval` },
                     { value: 'dots', label: t`Dots` }
                   ]}
-                  value={usertheme.loader}
+                  value={userTheme.loader}
                   onChange={(v) => {
                     if (v != null) setTheme([{ key: 'loader', value: v }]);
                   }}
@@ -196,7 +196,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <Group justify='left'>
-                <Loader type={usertheme.loader} mah={16} size='sm' />
+                <Loader type={userTheme.loader} mah={16} size='sm' />
               </Group>
             </Table.Td>
           </Table.Tr>

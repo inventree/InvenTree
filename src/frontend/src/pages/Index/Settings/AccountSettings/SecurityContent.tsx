@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { type AuthConfig, type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -33,11 +34,6 @@ import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
-import {
-  type AuthConfig,
-  FlowEnum,
-  type Provider
-} from '../../../../states/states';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
@@ -241,7 +237,7 @@ function EmailSection() {
   );
 }
 
-function ProviderButton({ provider }: Readonly<{ provider: Provider }>) {
+function ProviderButton({ provider }: Readonly<{ provider: AuthProvider }>) {
   return (
     <Button
       key={provider.id}
@@ -659,7 +655,7 @@ async function runActionWithFallback(
   getReauthText: (props: any) => any
 ) {
   const { setAuthContext } = useServerApiState.getState();
-  const rslt = await action().catch((err) => {
+  const result = await action().catch((err) => {
     setAuthContext(err.response.data?.data);
     // check if we need to re-authenticate
     if (err.status == 401) {
@@ -682,7 +678,7 @@ async function runActionWithFallback(
       return ResultType.error;
     }
   });
-  if (rslt == ResultType.mfareauth) {
+  if (result == ResultType.mfareauth) {
     authApi(apiUrl(ApiEndpoints.auth_mfa_reauthenticate), undefined, 'post', {
       code: await getReauthText({
         label: t`TOTP Code`,
@@ -697,7 +693,7 @@ async function runActionWithFallback(
       .catch((err) => {
         setAuthContext(err.response.data?.data);
       });
-  } else if (rslt == ResultType.reauth) {
+  } else if (result == ResultType.reauth) {
     authApi(apiUrl(ApiEndpoints.auth_reauthenticate), undefined, 'post', {
       password: await getReauthText({
         label: t`Password`,

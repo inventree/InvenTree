@@ -14,8 +14,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
+import type { HostList } from '@lib/types/Server';
 import { MantineThemeContext } from '@mantine/core';
-import type { HostList } from './states/states';
 import MainView from './views/MainView';
 
 // define settings

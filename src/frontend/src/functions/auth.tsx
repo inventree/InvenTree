@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
@@ -8,7 +9,7 @@ import { api, setApiDefaults } from '../App';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
-import { FlowEnum, type Provider, fetchGlobalStates } from '../states/states';
+import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -181,7 +182,7 @@ function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
-  const { language, setLanguage, usertheme, setTheme } =
+  const { language, setLanguage, userTheme, setTheme } =
     useLocalState.getState();
   if (user) {
     if (user.profile?.language && language != user.profile.language) {
@@ -196,14 +197,14 @@ function observeProfile() {
 
     if (user.profile?.theme) {
       // extract keys of usertheme and set them to the values of user.profile.theme
-      const newTheme = Object.keys(usertheme).map((key) => {
+      const newTheme = Object.keys(userTheme).map((key) => {
         return {
-          key: key as keyof typeof usertheme,
+          key: key as keyof typeof userTheme,
           value: user.profile.theme[key] as string
         };
       });
       const diff = newTheme.filter(
-        (item) => usertheme[item.key] !== item.value
+        (item) => userTheme[item.key] !== item.value
       );
       if (diff.length > 0) {
         showNotification({
@@ -361,7 +362,7 @@ export function clearCsrfCookie() {
 }
 
 export async function ProviderLogin(
-  provider: Provider,
+  provider: AuthProvider,
   process: 'login' | 'connect' = 'login'
 ) {
   await ensureCsrf();
