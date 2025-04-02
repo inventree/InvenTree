@@ -55,6 +55,7 @@ export function Alerts() {
       _alerts.push({
         key: 'restart',
         title: t`Server Restart`,
+        code: 'INVE-W6',
         message: t`The server requires a restart to apply changes.`
       });
     }

@@ -56,6 +56,11 @@ The background worker seems to not be running. This is detected by a heartbeat t
 Check if the process for background workers is running and reaching the database. Steps vary between deployment methods.
 See [Background Worker Information](../start/processes.md#background-worker)
 
+#### INVE-W6
+**Server restart required - Backend**
+
+The server needs a restart due to changes in settings. Steps very between deployment methods.
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 
