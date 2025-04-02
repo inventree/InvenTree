@@ -2,9 +2,9 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { UserRoles } from '@lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
-import type { UserRoles } from '../../enums/Roles';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,

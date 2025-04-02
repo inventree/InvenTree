@@ -5,8 +5,8 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { UserRoles } from '../../enums/Roles';
 import {
   useStockItemInstallFields,
   useStockItemUninstallFields

@@ -15,11 +15,11 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
 import { CopyButton } from '../../components/buttons/CopyButton';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { StylishText } from '../../components/items/StylishText';
 import { RenderUser } from '../../components/render/User';
-import { UserRoles } from '../../enums/Roles';
 import { shortenString } from '../../functions/tables';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';

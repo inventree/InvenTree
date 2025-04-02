@@ -4,6 +4,7 @@ import { IconCalendar, IconTable, IconTools } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { useLocalStorage } from '@mantine/hooks';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
@@ -11,7 +12,6 @@ import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import { PartCategoryFilter, type TableFilter } from '../../tables/Filter';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
