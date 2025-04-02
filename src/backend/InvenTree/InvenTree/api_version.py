@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 331
 
 
 INVENTREE_API_TEXT = """
+v331 - 2025-04-01 : https://github.com/inventree/InvenTree/pull/9437
+    - Set correct types on various formerly-string PK fields as well permissions
+    - Include metadata request and response types
 
 v331 - 2025-03-26 : https://github.com/inventree/InvenTree/pull/9393
     - Adds 'search_notes' parameter to all searchable API endpoints

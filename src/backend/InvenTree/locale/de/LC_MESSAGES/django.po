@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-18 00:36+0000\n"
-"PO-Revision-Date: 2025-03-18 00:39\n"
+"POT-Creation-Date: 2025-03-31 23:39+0000\n"
+"PO-Revision-Date: 2025-03-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -25,31 +25,31 @@ msgstr "Sie müssen die Zwei-Faktor-Authentifizierung aktivieren, bevor Sie etwa
 msgid "API endpoint not found"
 msgstr "API-Endpunkt nicht gefunden"
 
-#: InvenTree/api.py:402
+#: InvenTree/api.py:416
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:409
+#: InvenTree/api.py:423
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:417
+#: InvenTree/api.py:431
 msgid "Invalid items list provided"
 msgstr "Ungültige Artikelliste angegeben"
 
-#: InvenTree/api.py:423
+#: InvenTree/api.py:437
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:430
+#: InvenTree/api.py:444
 msgid "Invalid filters provided"
 msgstr "Ungültige Filter angegeben"
 
-#: InvenTree/api.py:435
+#: InvenTree/api.py:449
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:680
+#: InvenTree/api.py:695
 msgid "User does not have permission to view this model"
 msgstr "Benutzer hat keine Berechtigung, dieses Modell anzuzeigen"
 
@@ -406,7 +406,7 @@ msgstr "Ungültige Auswahl"
 #: InvenTree/models.py:734 common/models.py:1311 common/models.py:1738
 #: common/models.py:1991 common/models.py:2116 common/serializers.py:485
 #: company/models.py:593 generic/states/serializers.py:20 machine/models.py:24
-#: part/models.py:998 part/models.py:3780 plugin/models.py:52
+#: part/models.py:998 part/models.py:3780 plugin/models.py:53
 #: report/models.py:145 stock/models.py:83
 msgid "Name"
 msgstr "Name"
@@ -558,6 +558,7 @@ msgstr "Varianten einschließen"
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
+#: templates/email/part_event_notification.html:15
 msgid "Part"
 msgstr "Teil"
 
@@ -671,6 +672,7 @@ msgstr "Zugeordnet"
 #: build/api.py:490 company/models.py:889 company/serializers.py:427
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
+#: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "Verfügbar"
 
@@ -681,7 +683,7 @@ msgstr "Verfügbar"
 msgid "Build Order"
 msgstr "Bauauftrag"
 
-#: build/models.py:93 users/models.py:205
+#: build/models.py:93 users/models.py:225
 msgid "Build Orders"
 msgstr "Bauaufträge"
 
@@ -1060,7 +1062,7 @@ msgstr "Seriennummer für dieses Endprodukt eingeben"
 #: order/serializers.py:910 order/serializers.py:2019 part/serializers.py:1245
 #: stock/serializers.py:105 stock/serializers.py:638 stock/serializers.py:740
 #: stock/serializers.py:904 stock/serializers.py:1000 stock/serializers.py:1469
-#: stock/serializers.py:1759 users/models.py:989
+#: stock/serializers.py:1759 users/models.py:1009
 msgid "Location"
 msgstr "Lagerort"
 
@@ -1108,7 +1110,7 @@ msgstr "Lagerort für fertige Endprodukte"
 #: build/serializers.py:587 order/models.py:509 order/models.py:1045
 #: order/models.py:2266 order/serializers.py:801 order/serializers.py:1987
 #: stock/serializers.py:603 stock/serializers.py:1007 stock/serializers.py:1064
-#: stock/serializers.py:1626 users/models.py:982
+#: stock/serializers.py:1626 users/models.py:1002
 msgid "Status"
 msgstr "Status"
 
@@ -1484,9 +1486,9 @@ msgstr "Schlüsseltext muss eindeutig sein"
 #: common/models.py:1325 common/models.py:1570 common/models.py:1571
 #: common/models.py:1895 common/models.py:1896 common/models.py:2277
 #: importer/models.py:89 part/models.py:3319 part/models.py:3406
-#: part/models.py:3480 part/models.py:3508 plugin/models.py:316
-#: plugin/models.py:317 report/templates/report/inventree_test_report.html:105
-#: users/models.py:109 users/models.py:941
+#: part/models.py:3480 part/models.py:3508 plugin/models.py:322
+#: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
+#: users/models.py:129 users/models.py:961
 msgid "User"
 msgstr "Benutzer"
 
@@ -1517,8 +1519,8 @@ msgstr "Name für diesen Webhook"
 
 #: common/models.py:1316 common/models.py:2136 common/models.py:2243
 #: company/models.py:164 company/models.py:799 machine/models.py:39
-#: part/models.py:1205 plugin/models.py:67 stock/api.py:590 users/models.py:180
-#: users/models.py:994 users/serializers.py:270
+#: part/models.py:1205 plugin/models.py:68 stock/api.py:590 users/models.py:200
+#: users/models.py:1014 users/serializers.py:270
 msgid "Active"
 msgstr "Aktiv"
 
@@ -1526,7 +1528,7 @@ msgstr "Aktiv"
 msgid "Is this webhook active"
 msgstr "Ist dieser Webhook aktiv"
 
-#: common/models.py:1332 users/models.py:157
+#: common/models.py:1332 users/models.py:177
 msgid "Token"
 msgstr "Token"
 
@@ -1936,7 +1938,7 @@ msgstr ""
 msgid "URL endpoint which processed the barcode"
 msgstr ""
 
-#: common/models.py:2297 order/models.py:1495 plugin/serializers.py:89
+#: common/models.py:2297 order/models.py:1495 plugin/serializers.py:91
 msgid "Context"
 msgstr "Kontext"
 
@@ -1991,7 +1993,7 @@ msgstr "Artikel wurden aus einer Bestellung erhalten"
 msgid "Items have been received against a return order"
 msgstr "Artikel wurden aus einer Rücksendung erhalten"
 
-#: common/notifications.py:477
+#: common/notifications.py:480
 msgid "Error raised by plugin"
 msgstr "Fehler in Plugin aufgetreten"
 
@@ -3366,58 +3368,66 @@ msgid "The navbar position is fixed to the top of the screen"
 msgstr "Position der Navigationsleiste am oberen Bildschirmrand fixieren"
 
 #: common/setting/user.py:187
+msgid "Navigation Icons"
+msgstr ""
+
+#: common/setting/user.py:188
+msgid "Display icons in the navigation bar"
+msgstr ""
+
+#: common/setting/user.py:193
 msgid "Date Format"
 msgstr "Datumsformat"
 
-#: common/setting/user.py:188
+#: common/setting/user.py:194
 msgid "Preferred format for displaying dates"
 msgstr "Bevorzugtes Format für die Anzeige von Daten"
 
-#: common/setting/user.py:201
+#: common/setting/user.py:207
 msgid "Part Scheduling"
 msgstr "Teilzeitplanung"
 
-#: common/setting/user.py:202
+#: common/setting/user.py:208
 msgid "Display part scheduling information"
 msgstr "Zeige Zeitplanung für Teile"
 
-#: common/setting/user.py:207
+#: common/setting/user.py:213
 msgid "Part Stocktake"
 msgstr "Inventur"
 
-#: common/setting/user.py:209
+#: common/setting/user.py:215
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "Zeigt Inventur-Informationen an (falls die Inventurfunktion aktiviert ist)"
 
-#: common/setting/user.py:215
+#: common/setting/user.py:221
 msgid "Table String Length"
 msgstr "Zeichenkettenlänge in Tabellen"
 
-#: common/setting/user.py:216
+#: common/setting/user.py:222
 msgid "Maximum length limit for strings displayed in table views"
 msgstr "Maximale Länge für Zeichenketten, die in Tabellenansichten angezeigt werden"
 
-#: common/setting/user.py:221
+#: common/setting/user.py:227
 msgid "Show Last Breadcrumb"
 msgstr ""
 
-#: common/setting/user.py:222
+#: common/setting/user.py:228
 msgid "Show the current page in breadcrumbs"
 msgstr ""
 
-#: common/setting/user.py:227
+#: common/setting/user.py:233
 msgid "Receive error reports"
 msgstr "Fehlerberichte empfangen"
 
-#: common/setting/user.py:228
+#: common/setting/user.py:234
 msgid "Receive notifications for system errors"
 msgstr "Benachrichtigungen bei Systemfehlern erhalten"
 
-#: common/setting/user.py:233
+#: common/setting/user.py:239
 msgid "Last used printing machines"
 msgstr "Zuletzt verwendete Druckmaschinen"
 
-#: common/setting/user.py:234
+#: common/setting/user.py:240
 msgid "Save the last used printing machines for a user"
 msgstr "Die zuletzt benutzten Druckmaschinen für einen Benutzer speichern"
 
@@ -3521,7 +3531,7 @@ msgid "Contact email address"
 msgstr "Kontakt-Email"
 
 #: company/models.py:142 company/models.py:274 order/models.py:413
-#: users/models.py:1001
+#: users/models.py:1021
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -3832,27 +3842,27 @@ msgstr "Firmenname"
 msgid "In Stock"
 msgstr "Auf Lager"
 
-#: data_exporter/mixins.py:319 data_exporter/mixins.py:388
+#: data_exporter/mixins.py:324 data_exporter/mixins.py:393
 msgid "Error occurred during data export"
 msgstr ""
 
-#: data_exporter/mixins.py:370
+#: data_exporter/mixins.py:375
 msgid "Data export plugin returned incorrect data format"
 msgstr ""
 
-#: data_exporter/serializers.py:59
+#: data_exporter/serializers.py:74
 msgid "Export Format"
 msgstr ""
 
-#: data_exporter/serializers.py:60
+#: data_exporter/serializers.py:75
 msgid "Select export file format"
 msgstr ""
 
-#: data_exporter/serializers.py:67
+#: data_exporter/serializers.py:82
 msgid "Export Plugin"
 msgstr ""
 
-#: data_exporter/serializers.py:68
+#: data_exporter/serializers.py:83
 msgid "Select export plugin"
 msgstr ""
 
@@ -3864,7 +3874,7 @@ msgstr ""
 msgid "Additional status information for this item"
 msgstr ""
 
-#: generic/states/serializers.py:16 plugin/models.py:44 users/models.py:98
+#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:118
 msgid "Key"
 msgstr "Schlüssel"
 
@@ -4838,7 +4848,7 @@ msgstr "Zielort für empfangene Teile auswählen"
 msgid "Enter batch code for incoming stock items"
 msgstr "Losnummer für eingehende Lagerartikel"
 
-#: order/serializers.py:783 stock/models.py:1005 users/models.py:122
+#: order/serializers.py:783 stock/models.py:1005 users/models.py:142
 msgid "Expiry Date"
 msgstr "Ablaufdatum"
 
@@ -5114,10 +5124,11 @@ msgid "Uses"
 msgstr "Verwendet"
 
 #: part/models.py:89 part/models.py:4080
+#: templates/email/part_event_notification.html:16
 msgid "Part Category"
 msgstr "Teil-Kategorie"
 
-#: part/models.py:90 users/models.py:200
+#: part/models.py:90 users/models.py:220
 msgid "Part Categories"
 msgstr "Teil-Kategorien"
 
@@ -5159,7 +5170,7 @@ msgid "You cannot make this part category structural because some parts are alre
 msgstr "Sie können diese Teilekategorie nicht als strukturell festlegen, da ihr bereits Teile zugewiesen sind!"
 
 #: part/models.py:418 part/serializers.py:128 part/serializers.py:337
-#: users/models.py:201
+#: users/models.py:221
 msgid "Parts"
 msgstr "Teile"
 
@@ -6029,7 +6040,7 @@ msgid "Building"
 msgstr "Im Bau"
 
 #: part/serializers.py:933 part/stocktake.py:223 stock/serializers.py:1050
-#: stock/serializers.py:1228 users/models.py:204
+#: stock/serializers.py:1228 users/models.py:224
 msgid "Stock Items"
 msgstr "Lagerartikel"
 
@@ -6042,6 +6053,7 @@ msgid "Suppliers"
 msgstr "Zulieferer"
 
 #: part/serializers.py:936 templates/email/low_stock_notification.html:16
+#: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "Gesamtbestand"
 
@@ -6275,7 +6287,23 @@ msgstr "Benachrichtigungen über geringen Bestand"
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "Der verfügbare Bestand für {part.name} ist unter das konfigurierte Mindestniveau gefallen"
 
-#: plugin/api.py:175
+#: plugin/api.py:79
+msgid "Builtin"
+msgstr ""
+
+#: plugin/api.py:93
+msgid "Mandatory"
+msgstr ""
+
+#: plugin/api.py:104
+msgid "Sample"
+msgstr ""
+
+#: plugin/api.py:118 plugin/models.py:159
+msgid "Installed"
+msgstr "Installiert"
+
+#: plugin/api.py:185
 msgid "Plugin cannot be deleted as it is currently active"
 msgstr "Das Plugin kann nicht gelöscht werden, da es derzeit aktiv ist"
 
@@ -6527,8 +6555,10 @@ msgstr "Bietet native Unterstützung für Barcodes"
 #: plugin/builtin/barcodes/inventree_barcode.py:30
 #: plugin/builtin/exporter/bom_exporter.py:61
 #: plugin/builtin/exporter/inventree_exporter.py:17
+#: plugin/builtin/exporter/part_parameter_exporter.py:36
 #: plugin/builtin/integration/core_notifications.py:33
 #: plugin/builtin/integration/currency_exchange.py:21
+#: plugin/builtin/integration/part_notifications.py:25
 #: plugin/builtin/labels/inventree_label.py:26
 #: plugin/builtin/labels/inventree_machine.py:64
 #: plugin/builtin/labels/label_sheet.py:64
@@ -6570,18 +6600,22 @@ msgid "Number of levels to export"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:23
+#: plugin/builtin/exporter/part_parameter_exporter.py:17
 msgid "Stock Data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:23
+#: plugin/builtin/exporter/part_parameter_exporter.py:17
 msgid "Include part stock data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:27
+#: plugin/builtin/exporter/part_parameter_exporter.py:21
 msgid "Pricing Data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:27
+#: plugin/builtin/exporter/part_parameter_exporter.py:21
 msgid "Include part pricing data"
 msgstr ""
 
@@ -6667,6 +6701,14 @@ msgstr ""
 msgid "Provides support for exporting data from InvenTree"
 msgstr ""
 
+#: plugin/builtin/exporter/part_parameter_exporter.py:33
+msgid "Part Parameter Exporter"
+msgstr ""
+
+#: plugin/builtin/exporter/part_parameter_exporter.py:34
+msgid "Exporter for part parameter data"
+msgstr ""
+
 #: plugin/builtin/integration/core_notifications.py:32
 msgid "InvenTree Notifications"
 msgstr "InvenTree Benachrichtigungen"
@@ -6712,6 +6754,31 @@ msgstr "InvenTree Währungsumstellung"
 #: plugin/builtin/integration/currency_exchange.py:23
 msgid "Default currency exchange integration"
 msgstr "Standard-Wechselkursintegration"
+
+#: plugin/builtin/integration/part_notifications.py:24
+msgid "Part Notifications"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:26
+msgid "Notify users about part changes"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:31
+msgid "Send notifications"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:32
+msgid "Send notifications for part changes to subscribed users"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:49
+msgid "Changed part notification"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:59
+#, python-brace-format
+msgid "The part `{part.name}` has been triggered with a `{part_action}` event"
+msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:23
 msgid "InvenTree PDF label printer"
@@ -6888,55 +6955,55 @@ msgstr ""
 msgid "Uninstalled plugin successfully"
 msgstr "Plugin erfolgreich deinstallieren"
 
-#: plugin/models.py:37
+#: plugin/models.py:38
 msgid "Plugin Configuration"
 msgstr "Plugin-Konfiguration"
 
-#: plugin/models.py:38
+#: plugin/models.py:39
 msgid "Plugin Configurations"
 msgstr "Plugin-Konfigurationen"
 
-#: plugin/models.py:45
+#: plugin/models.py:46
 msgid "Key of plugin"
 msgstr "Schlüssel des Plugins"
 
-#: plugin/models.py:53
+#: plugin/models.py:54
 msgid "PluginName of the plugin"
 msgstr "Name des Plugins"
 
-#: plugin/models.py:60 plugin/serializers.py:115
+#: plugin/models.py:61 plugin/serializers.py:117
 msgid "Package Name"
 msgstr "Paket-Name"
 
-#: plugin/models.py:62
+#: plugin/models.py:63
 msgid "Name of the installed package, if the plugin was installed via PIP"
 msgstr "Name des installierten Paketes, wenn das Plugin über PIP installiert wurde"
 
-#: plugin/models.py:67
+#: plugin/models.py:68
 msgid "Is the plugin active"
 msgstr "Ist das Plugin aktiv"
 
-#: plugin/models.py:158
-msgid "Installed"
-msgstr "Installiert"
-
-#: plugin/models.py:167
+#: plugin/models.py:168
 msgid "Sample plugin"
 msgstr "Beispiel-Plugin"
 
-#: plugin/models.py:175
+#: plugin/models.py:176
 msgid "Builtin Plugin"
 msgstr "Integriertes Plugin"
 
-#: plugin/models.py:183
+#: plugin/models.py:184
+msgid "Mandatory Plugin"
+msgstr ""
+
+#: plugin/models.py:189
 msgid "Package Plugin"
 msgstr "Paket-Plugin"
 
-#: plugin/models.py:262
+#: plugin/models.py:268
 msgid "Plugin"
 msgstr "Plugin"
 
-#: plugin/models.py:309
+#: plugin/models.py:315
 msgid "Method"
 msgstr "Methode"
 
@@ -6944,17 +7011,17 @@ msgstr "Methode"
 msgid "No author found"
 msgstr "Kein Autor gefunden"
 
-#: plugin/registry.py:591
+#: plugin/registry.py:608
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Plugin '{p}' ist nicht kompatibel mit der aktuellen InvenTree Version {v}"
 
-#: plugin/registry.py:594
+#: plugin/registry.py:611
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Plugin benötigt mindestens Version {v}"
 
-#: plugin/registry.py:596
+#: plugin/registry.py:613
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Plugin benötigt maximal Version {v}"
@@ -7063,91 +7130,91 @@ msgstr ""
 msgid "This is an admin-only dashboard item."
 msgstr ""
 
-#: plugin/serializers.py:82
+#: plugin/serializers.py:84
 msgid "Source File"
 msgstr ""
 
-#: plugin/serializers.py:83
+#: plugin/serializers.py:85
 msgid "Path to the source file for admin integration"
 msgstr ""
 
-#: plugin/serializers.py:90
+#: plugin/serializers.py:92
 msgid "Optional context data for the admin integration"
 msgstr ""
 
-#: plugin/serializers.py:106
+#: plugin/serializers.py:108
 msgid "Source URL"
 msgstr "Quell-URL"
 
-#: plugin/serializers.py:108
+#: plugin/serializers.py:110
 msgid "Source for the package - this can be a custom registry or a VCS path"
 msgstr "Quelle für das Paket - dies kann eine eigene Registry oder ein VCS-Pfad sein"
 
-#: plugin/serializers.py:117
+#: plugin/serializers.py:119
 msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr "Name für das Plugin-Paket - kann auch einen Versionstext enthalten"
 
-#: plugin/serializers.py:124
+#: plugin/serializers.py:126
 msgid "Version"
 msgstr "Version"
 
-#: plugin/serializers.py:126
+#: plugin/serializers.py:128
 msgid "Version specifier for the plugin. Leave blank for latest version."
 msgstr "Versionsangabe für das Plugin. Leer lassen für die neueste Version."
 
-#: plugin/serializers.py:131
+#: plugin/serializers.py:133
 msgid "Confirm plugin installation"
 msgstr "Plugin-Installation bestätigen"
 
-#: plugin/serializers.py:133
+#: plugin/serializers.py:135
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr "Dies wird dieses Plugin sofort in die aktuelle Instanz installieren. Die Instanz wird sofort in Wartung gehen."
 
-#: plugin/serializers.py:146
+#: plugin/serializers.py:148
 msgid "Installation not confirmed"
 msgstr "Installation nicht bestätigt"
 
-#: plugin/serializers.py:148
+#: plugin/serializers.py:150
 msgid "Either packagename of URL must be provided"
 msgstr "Entweder Paketname oder URL muss angegeben werden"
 
-#: plugin/serializers.py:184
+#: plugin/serializers.py:186
 msgid "Full reload"
 msgstr "Komplett neu laden"
 
-#: plugin/serializers.py:185
+#: plugin/serializers.py:187
 msgid "Perform a full reload of the plugin registry"
 msgstr "Führe ein vollständiges Nachladen der Plugin-Registrierung durch"
 
-#: plugin/serializers.py:191
+#: plugin/serializers.py:193
 msgid "Force reload"
 msgstr "Neuladen erzwingen"
 
-#: plugin/serializers.py:193
+#: plugin/serializers.py:195
 msgid "Force a reload of the plugin registry, even if it is already loaded"
 msgstr "Erzwinge ein erneutes Laden der Plugin-Registrierung, auch wenn sie bereits geladen ist"
 
-#: plugin/serializers.py:200
+#: plugin/serializers.py:202
 msgid "Collect plugins"
 msgstr "Plugins sammeln"
 
-#: plugin/serializers.py:201
+#: plugin/serializers.py:203
 msgid "Collect plugins and add them to the registry"
 msgstr "Plugins sammeln und zur Registrierung hinzufügen"
 
-#: plugin/serializers.py:228
+#: plugin/serializers.py:230
 msgid "Activate Plugin"
 msgstr "Plugin aktivieren"
 
-#: plugin/serializers.py:229
+#: plugin/serializers.py:231
 msgid "Activate this plugin"
 msgstr "Dieses Plugin aktivieren"
 
-#: plugin/serializers.py:249
+#: plugin/serializers.py:251
 msgid "Delete configuration"
 msgstr "Konfiguration löschen"
 
-#: plugin/serializers.py:250
+#: plugin/serializers.py:252
 msgid "Delete the plugin configuration from the database"
 msgstr "Plugin-Konfiguration aus der Datenbank löschen"
 
@@ -7588,7 +7655,7 @@ msgstr "Standardsymbol für alle Orte, die kein Icon gesetzt haben (optional)"
 msgid "Stock Location"
 msgstr "Bestand-Lagerort"
 
-#: stock/models.py:138 users/models.py:203
+#: stock/models.py:138 users/models.py:223
 msgid "Stock Locations"
 msgstr "Bestand-Lagerorte"
 
@@ -7604,7 +7671,7 @@ msgstr "Besitzer auswählen"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Lagerartikel können nicht direkt an einen strukturellen Lagerort verlegt werden, können aber an einen untergeordneten Lagerort verlegt werden."
 
-#: stock/models.py:203 users/models.py:937
+#: stock/models.py:203 users/models.py:957
 msgid "External"
 msgstr "Extern"
 
@@ -7954,7 +8021,7 @@ msgstr "Packungsgröße beim Hinzufügen verwenden: Die definierte Menge ist die
 msgid "Supplier Part Number"
 msgstr ""
 
-#: stock/serializers.py:656 users/models.py:172
+#: stock/serializers.py:656 users/models.py:192
 msgid "Expired"
 msgstr "abgelaufen"
 
@@ -8367,12 +8434,18 @@ msgid "You are receiving this email because you are subscribed to notifications 
 msgstr "Sie erhalten diese E-Mail, weil Sie Benachrichtigungen für diesen Teil abonniert haben "
 
 #: templates/email/low_stock_notification.html:9
+#: templates/email/part_event_notification.html:9
 msgid "Click on the following link to view this part"
 msgstr "Klicken Sie auf den folgenden Link, um diesen Teil anzuzeigen"
 
 #: templates/email/low_stock_notification.html:18
+#: templates/email/part_event_notification.html:19
 msgid "Minimum Quantity"
 msgstr "Mindestmenge"
+
+#: templates/email/part_event_notification.html:32
+msgid "You are receiving this email because you are subscribed to notifications for this part or a category that it is part of "
+msgstr ""
 
 #: users/admin.py:100
 msgid "Users"
@@ -8398,7 +8471,7 @@ msgstr "Berechtigungen"
 msgid "Important dates"
 msgstr "wichtige Daten"
 
-#: users/authentication.py:29 users/models.py:136
+#: users/authentication.py:29 users/models.py:156
 msgid "Token has been revoked"
 msgstr "Token wurde widerrufen"
 
@@ -8406,187 +8479,187 @@ msgstr "Token wurde widerrufen"
 msgid "Token has expired"
 msgstr "Token ist abgelaufen"
 
-#: users/models.py:79
+#: users/models.py:99
 msgid "API Token"
 msgstr "API Token"
 
-#: users/models.py:80
+#: users/models.py:100
 msgid "API Tokens"
 msgstr "API-Tokens"
 
-#: users/models.py:116
+#: users/models.py:136
 msgid "Token Name"
 msgstr "Tokenname"
 
-#: users/models.py:117
+#: users/models.py:137
 msgid "Custom token name"
 msgstr "Benutzerdefinierter Tokenname"
 
-#: users/models.py:123
+#: users/models.py:143
 msgid "Token expiry date"
 msgstr "Token Ablaufdatum"
 
-#: users/models.py:131
+#: users/models.py:151
 msgid "Last Seen"
 msgstr "Zuletzt gesehen"
 
-#: users/models.py:132
+#: users/models.py:152
 msgid "Last time the token was used"
 msgstr "Das letzte Mal, wo das Token verwendet wurde"
 
-#: users/models.py:136
+#: users/models.py:156
 msgid "Revoked"
 msgstr "Widerrufen"
 
-#: users/models.py:199
+#: users/models.py:219
 msgid "Admin"
 msgstr "Admin"
 
-#: users/models.py:202
+#: users/models.py:222
 msgid "Stocktake"
 msgstr "Inventur"
 
-#: users/models.py:206
+#: users/models.py:226
 msgid "Purchase Orders"
 msgstr "Bestellungen"
 
-#: users/models.py:207
+#: users/models.py:227
 msgid "Sales Orders"
 msgstr "Aufträge"
 
-#: users/models.py:208
+#: users/models.py:228
 msgid "Return Orders"
 msgstr "Rücksendeaufträge"
 
-#: users/models.py:382
+#: users/models.py:402
 msgid "Permission set"
 msgstr "Berechtigung geändert"
 
-#: users/models.py:391
+#: users/models.py:411
 msgid "Group"
 msgstr "Gruppe"
 
-#: users/models.py:395
+#: users/models.py:415
 msgid "View"
 msgstr "Ansicht"
 
-#: users/models.py:395
+#: users/models.py:415
 msgid "Permission to view items"
 msgstr "Berechtigung Einträge anzuzeigen"
 
-#: users/models.py:399
+#: users/models.py:419
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: users/models.py:399
+#: users/models.py:419
 msgid "Permission to add items"
 msgstr "Berechtigung Einträge zu erstellen"
 
-#: users/models.py:403
+#: users/models.py:423
 msgid "Change"
 msgstr "Ändern"
 
-#: users/models.py:405
+#: users/models.py:425
 msgid "Permissions to edit items"
 msgstr "Berechtigungen Einträge zu ändern"
 
-#: users/models.py:409
+#: users/models.py:429
 msgid "Delete"
 msgstr "Löschen"
 
-#: users/models.py:411
+#: users/models.py:431
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#: users/models.py:935
+#: users/models.py:955
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:936
+#: users/models.py:956
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:938
+#: users/models.py:958
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:947
+#: users/models.py:967
 msgid "Language"
 msgstr ""
 
-#: users/models.py:948
+#: users/models.py:968
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:953
+#: users/models.py:973
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:954
+#: users/models.py:974
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:959
+#: users/models.py:979
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:961
+#: users/models.py:981
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:968
+#: users/models.py:988
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:969
+#: users/models.py:989
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:975
+#: users/models.py:995
 msgid "Position"
 msgstr ""
 
-#: users/models.py:976
+#: users/models.py:996
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:983
+#: users/models.py:1003
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:990
+#: users/models.py:1010
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:995
+#: users/models.py:1015
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:1002
+#: users/models.py:1022
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:1008
+#: users/models.py:1028
 msgid "Type"
 msgstr ""
 
-#: users/models.py:1009
+#: users/models.py:1029
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:1015
+#: users/models.py:1035
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:1016
+#: users/models.py:1036
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:1024
+#: users/models.py:1044
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:1025
+#: users/models.py:1045
 msgid "Primary group for the user"
 msgstr ""
 
