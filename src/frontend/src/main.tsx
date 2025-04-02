@@ -9,6 +9,7 @@ import 'mantine-contextmenu/styles.css';
 import 'mantine-datatable/styles.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import * as MantineCore from '@mantine/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
@@ -34,6 +35,7 @@ declare global {
     ReactDOM: typeof ReactDOM;
     ReactDOMClient: typeof ReactDOMClient;
     MantineThemeContext: typeof MantineThemeContext;
+    MantineCore: typeof MantineCore;
   }
 }
 
@@ -105,6 +107,7 @@ export const getBaseUrl = (): string =>
 (window as any).ReactDOM = ReactDOM;
 (window as any).ReactDOMClient = ReactDOMClient;
 (window as any).MantineThemeContext = MantineThemeContext;
+(window as any).MantineCore = MantineCore;
 
 ReactDOMClient.createRoot(
   document.getElementById('root') as HTMLElement
