@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -13,7 +14,6 @@ import { StylishText } from '../../components/items/StylishText';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { RowAction } from '../../tables/RowActions';
 import { BooleanColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';

@@ -12,10 +12,10 @@ import React, {
 import { useStore } from 'zustand';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import {
   createMachineSettingsState,
   createPluginSettingsState,

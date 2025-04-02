@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
@@ -25,7 +26,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';

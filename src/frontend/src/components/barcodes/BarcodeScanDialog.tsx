@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
@@ -7,7 +8,6 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { extractErrorMessage } from '../../functions/api';
 import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
 import { ModelInformationDict } from '../render/ModelType';

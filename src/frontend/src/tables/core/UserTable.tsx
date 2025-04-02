@@ -1,11 +1,11 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {} from '../../hooks/UseFilter';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 

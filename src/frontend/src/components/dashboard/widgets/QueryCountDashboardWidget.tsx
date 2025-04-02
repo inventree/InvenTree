@@ -5,13 +5,13 @@ import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { useApi } from '../../../contexts/ApiContext';
 import {
   InvenTreeIcon,
   type InvenTreeIconType
 } from '../../../functions/icons';
 import { navigateToLink } from '../../../functions/navigation';
-import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
 import { ModelInformationDict } from '../../render/ModelType';

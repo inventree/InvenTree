@@ -4,9 +4,9 @@ import { Group, SimpleGrid, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
 import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';

@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
@@ -6,7 +7,7 @@ import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { apiUrl, useServerApiState } from '../states/ApiState';
+import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';

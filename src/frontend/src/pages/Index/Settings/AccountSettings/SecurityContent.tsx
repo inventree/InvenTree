@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { type AuthConfig, type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -33,7 +34,7 @@ import { useMemo, useState } from 'react';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { apiUrl, useServerApiState } from '../../../../states/ApiState';
+import { useServerApiState } from '../../../../states/ApiState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';

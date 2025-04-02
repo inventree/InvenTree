@@ -11,6 +11,7 @@ import {
 } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
@@ -20,7 +21,6 @@ import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { LocationColumn } from '../ColumnRenderers';

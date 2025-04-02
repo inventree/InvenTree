@@ -21,6 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { api } from '../../App';
@@ -33,7 +34,6 @@ import {
   notYetImplemented,
   showApiErrorMessage
 } from '../../functions/notifications';
-import { apiUrl } from '../../states/ApiState';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {

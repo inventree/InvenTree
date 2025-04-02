@@ -5,6 +5,7 @@ import type {
 } from '@fullcalendar/core';
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -21,7 +22,6 @@ import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   AssignedToMeFilter,

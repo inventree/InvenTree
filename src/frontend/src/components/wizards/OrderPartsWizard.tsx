@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
@@ -11,7 +12,6 @@ import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
-import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
 import { ActionButton } from '../buttons/ActionButton';
 import { AddItemButton } from '../buttons/AddItemButton';

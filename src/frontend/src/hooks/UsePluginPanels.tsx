@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { api } from '../App';
 import { ApiIcon } from '../components/items/ApiIcon';
@@ -13,7 +14,6 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**

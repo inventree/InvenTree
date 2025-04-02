@@ -16,6 +16,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { CopyButton } from '../../components/buttons/CopyButton';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
@@ -24,7 +25,6 @@ import { RenderUser } from '../../components/render/User';
 import { shortenString } from '../../functions/tables';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

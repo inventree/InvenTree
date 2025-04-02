@@ -32,6 +32,7 @@ import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -50,7 +51,6 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance

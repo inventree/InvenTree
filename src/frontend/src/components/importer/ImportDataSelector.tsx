@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
@@ -20,7 +21,6 @@ import {
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import {

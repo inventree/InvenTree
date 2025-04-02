@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { formatDecimal } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

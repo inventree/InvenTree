@@ -21,6 +21,7 @@ import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
@@ -41,7 +42,6 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 

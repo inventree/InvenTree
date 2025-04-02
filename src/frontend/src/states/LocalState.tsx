@@ -3,10 +3,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import type { UserTheme } from '@lib/types/Core';
 import type { HostList } from '@lib/types/Server';
 import { api } from '../App';
-import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 
 interface LocalStateProps {

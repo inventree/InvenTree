@@ -23,10 +23,10 @@ import { useNavigate } from 'react-router-dom';
 
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { useApi } from '../../contexts/ApiContext';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
 import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';
 

@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
@@ -9,7 +10,6 @@ import { api } from '../../App';
 import { extractAvailableFields } from '../../functions/forms';
 import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState

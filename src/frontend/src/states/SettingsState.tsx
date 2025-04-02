@@ -4,6 +4,7 @@
 import { create, createStore } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import type { PathParams } from '@lib/types/Core';
 import type {
   Setting,
@@ -12,7 +13,6 @@ import type {
 } from '@lib/types/Settings';
 import { api } from '../App';
 import { isTrue } from '../functions/conversion';
-import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 
 /**

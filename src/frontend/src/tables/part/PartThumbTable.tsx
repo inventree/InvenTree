@@ -20,10 +20,10 @@ import type React from 'react';
 import { Suspense, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { apiUrl } from '../../states/ApiState';
 
 /**
  * Input props to table
