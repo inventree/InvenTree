@@ -10,7 +10,10 @@ import {
 } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 
-import type { InvenTreePluginContext } from '@lib/types/Plugins';
+import {
+  INVENTREE_PLUGIN_VERSION,
+  type InvenTreePluginContext
+} from '@lib/types/Plugins';
 import {
   useBulkEditApiFormModal,
   useCreateApiFormModal,
@@ -29,6 +32,7 @@ export const useInvenTreeContext = () => {
 
   const contextData = useMemo<InvenTreePluginContext>(() => {
     return {
+      version: INVENTREE_PLUGIN_VERSION,
       user: user,
       host: host,
       locale: locale,

@@ -25,6 +25,7 @@ export type InvenTreeFormsContext = {
  * A set of properties which are passed to a plugin,
  * for rendering an element in the user interface.
  *
+ * @param version - The version of the running InvenTree software stack
  * @param api - The Axios API instance (see ../states/ApiState.tsx)
  * @param user - The current user instance (see ../states/UserState.tsx)
  * @param userSettings - The current user settings (see ../states/SettingsState.tsx)
@@ -40,6 +41,7 @@ export type InvenTreeFormsContext = {
  * @param instance - The model instance data (if available)
  */
 export type InvenTreePluginContext = {
+  version: number;
   api: AxiosInstance;
   queryClient: QueryClient;
   user: UserStateProps;
@@ -56,3 +58,16 @@ export type InvenTreePluginContext = {
   id?: string | number | null;
   instance?: any;
 };
+
+/*
+ * The version of the InvenTree plugin context interface.
+ * This number should be incremented if the interface changes.
+ */
+export const INVENTREE_PLUGIN_VERSION: number = 1;
+
+/**
+ * Track version information if the plugin interface changes
+ *
+ * v1 - 2025-04-03 : https://github.com/inventree/InvenTree/pull/9439
+ * - Add typed plugin context interface for InvenTree plugins
+ */
