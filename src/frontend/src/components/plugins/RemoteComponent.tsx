@@ -1,14 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { Alert, MantineProvider, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
-import { createRoot } from 'react-dom/client';
+import { type Root, createRoot } from 'react-dom/client';
 import { api, queryClient } from '../../App';
 import { ApiProvider } from '../../contexts/ApiContext';
 import { LanguageContext } from '../../contexts/LanguageContext';
-import { colorSchema } from '../../contexts/colorSchema';
 import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
 import { findExternalPluginFunction } from './PluginSource';
@@ -32,6 +31,13 @@ export default function RemoteComponent({
   context: InvenTreePluginContext;
 }>) {
   const componentRef = useRef<HTMLDivElement>();
+  const [rootElement, setRootElement] = useState<Root | null>(null);
+
+  useEffect(() => {
+    if (componentRef.current && !rootElement) {
+      setRootElement(createRoot(componentRef.current));
+    }
+  }, [componentRef.current]);
 
   const [renderingError, setRenderingError] = useState<string | undefined>(
     undefined
@@ -52,28 +58,35 @@ export default function RemoteComponent({
     return defaultFunctionName;
   }, [source, defaultFunctionName]);
 
-  const reloadPluginContent = async () => {
-    if (!componentRef.current) {
+  const reloadPluginContent = useCallback(() => {
+    if (!rootElement) {
       return;
     }
 
     if (sourceFile && functionName) {
       findExternalPluginFunction(sourceFile, functionName)
         .then((func) => {
-          if (func) {
+          if (!!func) {
             try {
-              // Render the plugin component into the target element
-              // Note that we have to provide the right context(s) to the component
-              createRoot(componentRef.current!).render(
-                <ApiProvider client={queryClient} api={api}>
-                  <MantineProvider
-                    theme={context.theme}
-                    colorSchemeManager={colorSchema}
-                  >
-                    <LanguageContext>{func(context)}</LanguageContext>
-                  </MantineProvider>
-                </ApiProvider>
-              );
+              if (func.length > 1) {
+                // Support "legacy" plugin functions which call createRoot() internally
+                // Ref: https://github.com/inventree/InvenTree/pull/9439/
+                func(componentRef.current, context);
+              } else {
+                // Render the plugin component into the target element
+                // Note that we have to provide the right context(s) to the component
+                // This approach ensures that the component is rendered in the correct context tree
+                rootElement.render(
+                  <ApiProvider client={queryClient} api={api}>
+                    <MantineProvider
+                      theme={context.theme}
+                      defaultColorScheme={context.colorScheme}
+                    >
+                      <LanguageContext>{func(context)}</LanguageContext>
+                    </MantineProvider>
+                  </ApiProvider>
+                );
+              }
 
               setRenderingError('');
             } catch (error) {
@@ -94,12 +107,12 @@ export default function RemoteComponent({
         `${t`Invalid source or function name`} - ${sourceFile}:${functionName}`
       );
     }
-  };
+  }, [componentRef, rootElement, sourceFile, functionName, context]);
 
   // Reload the plugin content dynamically
   useEffect(() => {
     reloadPluginContent();
-  }, [sourceFile, functionName, context]);
+  }, [sourceFile, functionName, context, rootElement]);
 
   return (
     <Boundary
@@ -117,7 +130,7 @@ export default function RemoteComponent({
             </Text>
           </Alert>
         )}
-        <div ref={componentRef as any} />
+        {componentRef && <div ref={componentRef as any} />}
       </Stack>
     </Boundary>
   );

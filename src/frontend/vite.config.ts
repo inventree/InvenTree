@@ -75,6 +75,11 @@ export default defineConfig(({ command, mode }) => {
           target: 'http://localhost:8000',
           changeOrigin: true,
           secure: true
+        },
+        '/static': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+          secure: true
         }
       },
       watch: {

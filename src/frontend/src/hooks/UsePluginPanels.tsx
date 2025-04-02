@@ -17,17 +17,6 @@ import {
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
- * @param model - The model type for the plugin (e.g. 'part' / 'purchaseorder')
- * @param id - The ID (primary key) of the model instance for the plugin
- * @param instance - The model instance data (if available)
- */
-export type PluginPanelContext = InvenTreePluginContext & {
-  model?: ModelType | string;
-  id?: string | number | null;
-  instance?: any;
-};
-
-/**
  * Type definition for a plugin panel which extends the standard PanelType
  * @param pluginName - The name of the plugin which provides this panel
  */
@@ -90,12 +79,12 @@ export function usePluginPanels({
   const inventreeContext = useInvenTreeContext();
 
   const contextData: InvenTreePluginContext =
-    useMemo<PluginPanelContext>(() => {
+    useMemo<InvenTreePluginContext>(() => {
       return {
+        ...inventreeContext,
         model: model,
         id: id,
-        instance: instance,
-        ...inventreeContext
+        instance: instance
       };
     }, [model, id, instance, inventreeContext]);
 
@@ -104,9 +93,9 @@ export function usePluginPanels({
       pluginQuery?.data?.map((props: PluginUIFeature) => {
         const iconName: string = props?.icon || 'ti:plug:outline';
 
-        const pluginContext: any = {
+        const ctx: InvenTreePluginContext = {
           ...contextData,
-          context: props.context
+          pluginContext: props.context
         };
 
         return {
@@ -115,10 +104,7 @@ export function usePluginPanels({
           label: props.title,
           icon: <ApiIcon name={iconName} />,
           content: (
-            <PluginPanelContent
-              pluginFeature={props}
-              pluginContext={pluginContext}
-            />
+            <PluginPanelContent pluginFeature={props} pluginContext={ctx} />
           )
         };
       }) ?? []
