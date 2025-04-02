@@ -37,7 +37,7 @@ export default defineConfig(({ command, mode }) => {
           includePrivate: true,
           multipleVersions: true,
           output: {
-            file: '../backend/InvenTree/web/static/web/.vite/dependencies.json',
+            file: `${OUTPUT_DIR}/.vite/dependencies.json`,
             template(dependencies) {
               return JSON.stringify(dependencies);
             }
@@ -45,7 +45,7 @@ export default defineConfig(({ command, mode }) => {
         }
       }),
       istanbul({
-        include: 'src/*',
+        include: ['src/*', 'lib/*'],
         exclude: ['node_modules', 'test/'],
         extension: ['.js', '.ts', '.tsx'],
         requireEnv: true
@@ -63,6 +63,11 @@ export default defineConfig(({ command, mode }) => {
       manifest: true,
       outDir: OUTPUT_DIR,
       sourcemap: true
+    },
+    resolve: {
+      alias: {
+        '@lib': '/lib'
+      }
     },
     server: {
       proxy: {
