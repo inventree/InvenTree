@@ -51,6 +51,15 @@ export function Alerts() {
       });
     }
 
+    if (!server?.email_configured) {
+      _alerts.push({
+        key: 'email',
+        title: t`Email settings`,
+        code: 'INVE-W7',
+        message: t`Email settings not configured.`
+      });
+    }
+
     if (globalSettings.isSet('SERVER_RESTART_REQUIRED')) {
       _alerts.push({
         key: 'restart',

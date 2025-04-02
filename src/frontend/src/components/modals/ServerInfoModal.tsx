@@ -108,15 +108,14 @@ export function ServerInfoModal({
               </Table.Td>
             </Table.Tr>
           )}
-          {server?.email_configured == false && (
+          {!server?.email_configured && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Email Settings</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>
-                  <Trans>Email settings not configured</Trans>
-                </Badge>
+                <Badge color='red'>INVE-W7</Badge>
+                <Trans>Email settings not configured</Trans>
               </Table.Td>
             </Table.Tr>
           )}
