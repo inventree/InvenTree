@@ -103,9 +103,8 @@ export function ServerInfoModal({
                 <Trans>Background Worker</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>
-                  <Trans>Background worker not running</Trans>
-                </Badge>
+                <Badge color='red'>INVE-W5</Badge>
+                <Trans>The Background worker process is not running</Trans>
               </Table.Td>
             </Table.Tr>
           )}

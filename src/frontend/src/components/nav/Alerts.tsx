@@ -42,10 +42,11 @@ export function Alerts() {
       });
     }
 
-    if (server?.worker_running == false) {
+    if (!server?.worker_running) {
       _alerts.push({
         key: 'worker',
         title: t`Background Worker`,
+        code: 'INVE-W5',
         message: t`The background worker process is not running.`
       });
     }

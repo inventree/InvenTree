@@ -43,12 +43,18 @@ See [INVE-W1](#inve-w1)
 See [INVE-W1](#inve-w1)
 
 #### INVE-W4
-**Server is running in debug mode**
+**Server is running in debug mode - Backend**
 
 InvenTree is running in debug mode. This is **not** recommended for production use, as it exposes sensitive information and makes the server more vulnerable to attacks. Debug mode is not intended for production/exposed instances, **even for short duration**.
 
 It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/intro.md#debug-mode).
 
+#### INVE-W5
+**Background worker process not running - Backend**
+
+The background worker seems to not be running. This is detected by a heartbeat that runs all 5 minutes - this error triggers after not being run in the last 10 minutes.
+Check if the process for background workers is running and reaching the database. Steps vary between deployment methods.
+See [Background Worker Information](../start/processes.md#background-worker)
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
