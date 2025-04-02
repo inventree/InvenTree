@@ -18,6 +18,22 @@ import {
 } from '../../states/SettingsState';
 import { type UserStateProps, useUserState } from '../../states/UserState';
 
+import {
+  type ApiFormModalProps,
+  useBulkEditApiFormModal,
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import type { UseModalReturn } from '../../hooks/UseModal';
+
+export type InvenTreeFormsContext = {
+  bulkEdit: (props: ApiFormModalProps) => UseModalReturn;
+  create: (props: ApiFormModalProps) => UseModalReturn;
+  delete: (props: ApiFormModalProps) => UseModalReturn;
+  edit: (props: ApiFormModalProps) => UseModalReturn;
+};
+
 /**
  * A set of properties which are passed to a plugin,
  * for rendering an element in the user interface.
@@ -43,6 +59,7 @@ export type InvenTreeContext = {
   locale: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
+  forms: InvenTreeFormsContext;
   colorScheme: MantineColorScheme;
   context?: any;
 };
@@ -67,7 +84,13 @@ export const useInvenTreeContext = () => {
       globalSettings: globalSettings,
       userSettings: userSettings,
       theme: theme,
-      colorScheme: colorScheme
+      colorScheme: colorScheme,
+      forms: {
+        bulkEdit: useBulkEditApiFormModal,
+        create: useCreateApiFormModal,
+        delete: useDeleteApiFormModal,
+        edit: useEditApiFormModal
+      }
     };
   }, [
     user,
