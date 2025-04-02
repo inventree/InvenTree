@@ -20,7 +20,7 @@ def get_type_str(type_obj):
     """Get the type str of a type object, including any generic parameters."""
     if type_obj is django.db.models.QuerySet:
         raise CommandError(
-            'Do not use django.db.models.QuerySet directly for typing, use report.mixins.QuerySet instead.'
+            'INVE-E3 - Do not use django.db.models.QuerySet directly for typing, use report.mixins.QuerySet instead.'
         )
 
     if origin := get_origin(type_obj):
@@ -130,7 +130,7 @@ class Command(BaseCommand):
 
         if is_error:
             raise CommandError(
-                'Some models associated with the `InvenTreeReportMixin` do not have a valid `report_context` return type annotation.'
+                'INVE-E4 - Some models associated with the `InvenTreeReportMixin` do not have a valid `report_context` return type annotation.'
             )
 
         filename = kwargs.get('filename', 'inventree_report_context.json')

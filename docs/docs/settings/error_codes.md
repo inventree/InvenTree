@@ -22,6 +22,16 @@ Raise an issue if none of these options work.
 The used invoke executable is the wrong one. InvenTree needs to have
 You probably have a reference to invoke or a directory with invoke in your PATH variable that is not in InvenTrees virtual environment. You can check this by running `which invoke` and `which python` in your installations base directory and compare the output. If they are not the same, you need to adjust your PATH variable to point to the correct virtual environment before it lists other directories with invoke.
 
+#### INVE-E3
+**Report Context use custom QuerySet**
+
+As the `django.db.models.QuerySet` is not a generic class, we would loose type information without `django-stubs`. Therefore use the `report.mixins.QuerySet` generic class when typing a report context.
+
+#### INVE-E4
+**Model missing report_context return type annotation**
+
+Models that implement the `InvenTreeReportMixin` must have an explicit return type annotation for the `report_context` function.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
