@@ -3,6 +3,23 @@
     "private": true,
     "version": "0.1.0",
     "type": "module",
+    "license": "MIT",
+    "description": "UI components for the InvenTree project",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/inventree/inventree"
+    },
+    "author": {
+        "name": "InvenTree Developers",
+        "email": "support@inventree.org",
+        "url": "https://inventree.org",
+        "org": "InvenTree"
+    },
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build --emptyOutDir",
