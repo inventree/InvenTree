@@ -10,12 +10,12 @@ import 'mantine-datatable/styles.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import * as MantineCore from '@mantine/core';
+import * as MantineNotifications from '@mantine/notifications';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
 import type { HostList } from '@lib/types/Server';
-import { MantineThemeContext } from '@mantine/core';
 import MainView from './views/MainView';
 
 // define settings
@@ -34,8 +34,8 @@ declare global {
     React: typeof React;
     ReactDOM: typeof ReactDOM;
     ReactDOMClient: typeof ReactDOMClient;
-    MantineThemeContext: typeof MantineThemeContext;
     MantineCore: typeof MantineCore;
+    MantineNotifications: typeof MantineNotifications;
   }
 }
 
@@ -106,8 +106,8 @@ export const getBaseUrl = (): string =>
 (window as any).React = React;
 (window as any).ReactDOM = ReactDOM;
 (window as any).ReactDOMClient = ReactDOMClient;
-(window as any).MantineThemeContext = MantineThemeContext;
 (window as any).MantineCore = MantineCore;
+(window as any).MantineNotifications = MantineNotifications;
 
 ReactDOMClient.createRoot(
   document.getElementById('root') as HTMLElement
