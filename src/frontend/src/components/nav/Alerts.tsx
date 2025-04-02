@@ -76,6 +76,7 @@ export function Alerts() {
       _alerts.push({
         key: 'migrations',
         title: t`Database Migrations`,
+        code: 'INVE-W8',
         message: t`There are pending database migrations.`
       });
     }

@@ -68,6 +68,15 @@ The server needs a restart due to changes in settings. Steps very between deploy
 Not all required settings for sending emails are configured. Not having an email provider configured might lead to degraded processes as password reset, update notifications and user notifications can not work. Setting up email is recommended.
 See [Email information](../start/config.md#email-settings).
 
+
+#### INVE-W8
+**Database Migrations required - Backend**
+
+There are database migrations waiting to be applied. This might lead to integrity and availability issues. Applying migrations as soon as possible is recommended.
+
+Some deployment methods support [auto applying of updates](../start/config.md#auto-update). See also [Perform Database Migrations](../start/install.md#perform-database-migrations).
+Steps very between deployment methods.
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 
