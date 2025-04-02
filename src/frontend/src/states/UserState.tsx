@@ -2,41 +2,11 @@ import { create } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
-import type { UserProps } from '@lib/types/User';
-import { UserPermissions, type UserRoles } from '../../lib/enums/Roles';
+import { UserPermissions, type UserRoles } from '@lib/enums/Roles';
+import type { UserProps, UserStateProps } from '@lib/types/User';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
-
-export interface UserStateProps {
-  user: UserProps | undefined;
-  is_authed: boolean;
-  userId: () => number | undefined;
-  username: () => string;
-  setAuthenticated: (authed?: boolean) => void;
-  fetchUserToken: () => Promise<void>;
-  setUser: (newUser: UserProps | undefined) => void;
-  getUser: () => UserProps | undefined;
-  fetchUserState: () => Promise<void>;
-  clearUserState: () => void;
-  checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
-  hasDeleteRole: (role: UserRoles) => boolean;
-  hasChangeRole: (role: UserRoles) => boolean;
-  hasAddRole: (role: UserRoles) => boolean;
-  hasViewRole: (role: UserRoles) => boolean;
-  checkUserPermission: (
-    model: ModelType,
-    permission: UserPermissions
-  ) => boolean;
-  hasDeletePermission: (model: ModelType) => boolean;
-  hasChangePermission: (model: ModelType) => boolean;
-  hasAddPermission: (model: ModelType) => boolean;
-  hasViewPermission: (model: ModelType) => boolean;
-  isAuthed: () => boolean;
-  isLoggedIn: () => boolean;
-  isStaff: () => boolean;
-  isSuperuser: () => boolean;
-}
 
 /**
  * Global user information state, using Zustand manager

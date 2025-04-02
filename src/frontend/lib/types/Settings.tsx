@@ -1,3 +1,6 @@
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import type { PathParams } from './Core';
+
 export enum SettingTyp {
   InvenTree = 'inventree',
   Plugin = 'plugin',
@@ -40,3 +43,13 @@ export interface SettingChoice {
 export type SettingsLookup = {
   [key: string]: string;
 };
+
+export interface SettingsStateProps {
+  settings: Setting[];
+  lookup: SettingsLookup;
+  fetchSettings: () => Promise<boolean>;
+  endpoint: ApiEndpoints;
+  pathParams?: PathParams;
+  getSetting: (key: string, default_value?: string) => string; // Return a raw setting value
+  isSet: (key: string, default_value?: boolean) => boolean; // Check a "boolean" setting
+}

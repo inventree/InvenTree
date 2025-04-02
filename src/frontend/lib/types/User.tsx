@@ -1,4 +1,7 @@
-export interface Profile {
+import type { ModelType } from '../enums/ModelType';
+import type { UserPermissions, UserRoles } from '../enums/Roles';
+
+export interface UserProfile {
   language: string;
   theme: any;
   widgets: any;
@@ -25,5 +28,35 @@ export interface UserProps {
   roles?: Record<string, string[]>;
   permissions?: Record<string, string[]>;
   groups: any[] | null;
-  profile: Profile;
+  profile: UserProfile;
+}
+
+export interface UserStateProps {
+  user: UserProps | undefined;
+  is_authed: boolean;
+  userId: () => number | undefined;
+  username: () => string;
+  setAuthenticated: (authed?: boolean) => void;
+  fetchUserToken: () => Promise<void>;
+  setUser: (newUser: UserProps | undefined) => void;
+  getUser: () => UserProps | undefined;
+  fetchUserState: () => Promise<void>;
+  clearUserState: () => void;
+  checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
+  hasDeleteRole: (role: UserRoles) => boolean;
+  hasChangeRole: (role: UserRoles) => boolean;
+  hasAddRole: (role: UserRoles) => boolean;
+  hasViewRole: (role: UserRoles) => boolean;
+  checkUserPermission: (
+    model: ModelType,
+    permission: UserPermissions
+  ) => boolean;
+  hasDeletePermission: (model: ModelType) => boolean;
+  hasChangePermission: (model: ModelType) => boolean;
+  hasAddPermission: (model: ModelType) => boolean;
+  hasViewPermission: (model: ModelType) => boolean;
+  isAuthed: () => boolean;
+  isLoggedIn: () => boolean;
+  isStaff: () => boolean;
+  isSuperuser: () => boolean;
 }

@@ -2,10 +2,10 @@ import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import type { NavigateFunction } from 'react-router-dom';
-import type { SettingsStateProps } from '../../src/states/SettingsState';
-import type { UserStateProps } from '../../src/states/UserState';
 import type { ApiFormModalProps, BulkEditApiFormModalProps } from './Forms';
 import type { UseModalReturn } from './Modals';
+import type { SettingsStateProps } from './Settings';
+import type { UserStateProps } from './User';
 
 export interface PluginProps {
   name: string;
