@@ -366,7 +366,7 @@ class SearchTests(InvenTreeAPITestCase):
         )
         # No build or part results
         self.assertEqual(response.data['build']['count'], 0)
-        self.assertEqual(response.data['build']['count'], 0)
+        self.assertEqual(response.data['part']['count'], 0)
 
         # add the search_notes param
         response = self.post(
