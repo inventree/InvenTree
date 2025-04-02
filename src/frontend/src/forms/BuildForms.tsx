@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import type {
@@ -23,7 +24,6 @@ import {
 } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';

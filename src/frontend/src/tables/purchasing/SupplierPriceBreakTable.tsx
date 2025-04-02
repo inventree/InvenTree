@@ -2,11 +2,11 @@ import { t } from '@lingui/core/macro';
 import { Anchor, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { getDetailUrl } from '../../functions/urls';

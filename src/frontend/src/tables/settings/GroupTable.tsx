@@ -12,12 +12,12 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,

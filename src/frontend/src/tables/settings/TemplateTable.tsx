@@ -5,6 +5,7 @@ import { IconFileCode } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   CodeEditor,
@@ -26,7 +27,6 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { GetIcon } from '../../functions/icons';

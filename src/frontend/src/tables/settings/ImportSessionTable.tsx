@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { useFilters } from '../../hooks/UseFilter';

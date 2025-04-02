@@ -2,9 +2,9 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';

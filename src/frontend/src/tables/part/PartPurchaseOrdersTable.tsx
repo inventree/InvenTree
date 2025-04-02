@@ -2,9 +2,9 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';

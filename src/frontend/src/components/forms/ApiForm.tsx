@@ -23,8 +23,8 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { useApi } from '../../contexts/ApiContext';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import {
   type NestedDict,

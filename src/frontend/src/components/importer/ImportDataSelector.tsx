@@ -9,8 +9,8 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { cancelEvent } from '../../functions/events';
 import {
   useDeleteApiFormModal,

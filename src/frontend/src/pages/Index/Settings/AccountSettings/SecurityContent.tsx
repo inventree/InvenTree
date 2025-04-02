@@ -1,3 +1,4 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -30,7 +31,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import {

@@ -10,6 +10,7 @@ import {
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import AdminButton from '../../components/buttons/AdminButton';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
@@ -28,7 +29,6 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';

@@ -1,4 +1,4 @@
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '../../../../enums/ModelType';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 

@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import type {
@@ -16,7 +17,6 @@ import type {
 } from '../components/forms/fields/ApiFormField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';

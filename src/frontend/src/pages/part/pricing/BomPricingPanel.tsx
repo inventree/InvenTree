@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
@@ -18,7 +19,6 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';

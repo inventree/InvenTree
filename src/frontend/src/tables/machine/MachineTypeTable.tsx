@@ -18,10 +18,10 @@ import { IconExclamationCircle, IconRefresh } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { InfoItem } from '../../components/items/InfoItem';
 import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';

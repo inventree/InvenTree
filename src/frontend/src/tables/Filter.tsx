@@ -1,10 +1,10 @@
 import { t } from '@lingui/core/macro';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';

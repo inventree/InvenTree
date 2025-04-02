@@ -13,8 +13,8 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
 import { StandaloneField } from '../forms/StandaloneField';

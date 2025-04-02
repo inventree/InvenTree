@@ -1,7 +1,7 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { t } from '@lingui/core/macro';
 import { IconRadar } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { apiUrl } from '../../states/ApiState';

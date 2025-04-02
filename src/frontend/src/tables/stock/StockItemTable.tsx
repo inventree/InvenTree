@@ -2,11 +2,11 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {

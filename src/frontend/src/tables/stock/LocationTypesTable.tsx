@@ -1,10 +1,10 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,

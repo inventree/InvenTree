@@ -3,11 +3,11 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { formatDecimal } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { usePartParameterFields } from '../../forms/PartForms';
 import {

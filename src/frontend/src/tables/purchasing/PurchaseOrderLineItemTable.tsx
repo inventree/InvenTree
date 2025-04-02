@@ -3,12 +3,12 @@ import { Text } from '@mantine/core';
 import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderStockLocation } from '../../components/render/Stock';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';

@@ -1,10 +1,10 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';

@@ -13,12 +13,12 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

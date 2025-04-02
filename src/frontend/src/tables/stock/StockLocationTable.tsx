@@ -2,10 +2,10 @@ import { t } from '@lingui/core/macro';
 import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';

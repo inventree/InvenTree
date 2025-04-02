@@ -3,6 +3,7 @@ import { Table, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { RenderBuildOrder } from '../../components/render/Build';
 import { RenderCompany } from '../../components/render/Company';
 import {
@@ -17,7 +18,6 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';

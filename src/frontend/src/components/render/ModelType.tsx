@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import type { InvenTreeIconType } from '../../functions/icons';
 

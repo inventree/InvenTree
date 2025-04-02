@@ -2,13 +2,13 @@ import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../../components/render/StatusRenderer';
 import { statusColorMap } from '../../defaults/backendMappings';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { useCustomStateFields } from '../../forms/CommonForms';
 import {

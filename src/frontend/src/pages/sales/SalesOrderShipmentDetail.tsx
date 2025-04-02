@@ -4,6 +4,7 @@ import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import dayjs from 'dayjs';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -27,7 +28,6 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {

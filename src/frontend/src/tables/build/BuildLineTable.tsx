@@ -11,10 +11,10 @@ import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {

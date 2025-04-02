@@ -1,8 +1,8 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';

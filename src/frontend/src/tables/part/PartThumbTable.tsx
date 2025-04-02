@@ -19,10 +19,10 @@ import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { Suspense, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
 /**

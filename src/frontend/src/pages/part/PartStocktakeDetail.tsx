@@ -10,10 +10,10 @@ import {
 } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import dayjs from 'dayjs';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
   generateStocktakeReportFields,

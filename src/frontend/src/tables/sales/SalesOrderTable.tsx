@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';

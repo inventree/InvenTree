@@ -1,3 +1,4 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
@@ -8,7 +9,6 @@ import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { CopyButton } from '../../components/buttons/CopyButton';
 import { StylishText } from '../../components/items/StylishText';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';

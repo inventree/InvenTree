@@ -19,6 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { Trans } from '@lingui/react/macro';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
@@ -40,7 +41,6 @@ import {
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

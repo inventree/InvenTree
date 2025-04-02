@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {
