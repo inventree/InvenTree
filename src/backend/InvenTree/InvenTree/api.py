@@ -18,10 +18,11 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
+import common.models
 import InvenTree.version
 import users.models
 from common.settings import get_global_setting
-from InvenTree import helpers
+from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
@@ -373,6 +374,20 @@ class NotFoundView(APIView):
         return self.not_found(request)
 
 
+class BulkRequestSerializer(serializers.Serializer):
+    """Parameters for selecting items for bulk operations."""
+
+    items = serializers.ListField(
+        label='A list of primary key values',
+        child=serializers.IntegerField(),
+        required=False,
+    )
+
+    filters = serializers.DictField(
+        label='A dictionary of filter values', required=False
+    )
+
+
 class BulkOperationMixin:
     """Mixin class for handling bulk data operations.
 
@@ -532,6 +547,7 @@ class BulkDeleteMixin(BulkOperationMixin):
         """
         return queryset
 
+    @extend_schema(request=BulkRequestSerializer)
     def delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
@@ -553,7 +569,7 @@ class BulkDeleteMixin(BulkOperationMixin):
             for item in queryset:
                 item.delete()
 
-        return Response({'success': f'Deleted {n_deleted} items'}, status=204)
+        return Response({'success': f'Deleted {n_deleted} items'}, status=200)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
@@ -694,6 +710,9 @@ class MetadataView(RetrieveUpdateAPI):
     def get_model_type(self):
         """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
+
+        if ready.isGeneratingSchema():
+            model = common.models.ProjectCode
 
         if 'lookup_field' in self.kwargs:
             # Set custom lookup field (instead of default 'pk' value) if supplied

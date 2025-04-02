@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-18 00:36+0000\n"
-"PO-Revision-Date: 2025-03-18 00:39\n"
+"POT-Creation-Date: 2025-03-31 23:39+0000\n"
+"PO-Revision-Date: 2025-03-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -25,31 +25,31 @@ msgstr ""
 msgid "API endpoint not found"
 msgstr "API funkciót nem találom"
 
-#: InvenTree/api.py:402
+#: InvenTree/api.py:416
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:409
+#: InvenTree/api.py:423
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:417
+#: InvenTree/api.py:431
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:423
+#: InvenTree/api.py:437
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:430
+#: InvenTree/api.py:444
 msgid "Invalid filters provided"
 msgstr "Érvénytelen szűrők vannak megadva"
 
-#: InvenTree/api.py:435
+#: InvenTree/api.py:449
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:680
+#: InvenTree/api.py:695
 msgid "User does not have permission to view this model"
 msgstr "Nincs jogosultságod az adatok megtekintéséhez"
 
@@ -406,7 +406,7 @@ msgstr "Érvénytelen választás"
 #: InvenTree/models.py:734 common/models.py:1311 common/models.py:1738
 #: common/models.py:1991 common/models.py:2116 common/serializers.py:485
 #: company/models.py:593 generic/states/serializers.py:20 machine/models.py:24
-#: part/models.py:998 part/models.py:3780 plugin/models.py:52
+#: part/models.py:998 part/models.py:3780 plugin/models.py:53
 #: report/models.py:145 stock/models.py:83
 msgid "Name"
 msgstr "Név"
@@ -558,6 +558,7 @@ msgstr "Változatokkal együtt"
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
+#: templates/email/part_event_notification.html:15
 msgid "Part"
 msgstr "Alkatrész"
 
@@ -671,6 +672,7 @@ msgstr "Lefoglalva"
 #: build/api.py:490 company/models.py:889 company/serializers.py:427
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
+#: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "Elérhető"
 
@@ -681,7 +683,7 @@ msgstr "Elérhető"
 msgid "Build Order"
 msgstr "Gyártási utasítás"
 
-#: build/models.py:93 users/models.py:205
+#: build/models.py:93 users/models.py:225
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
 
@@ -1060,7 +1062,7 @@ msgstr "Add meg a sorozatszámokat a gyártás kimenetéhez"
 #: order/serializers.py:910 order/serializers.py:2019 part/serializers.py:1245
 #: stock/serializers.py:105 stock/serializers.py:638 stock/serializers.py:740
 #: stock/serializers.py:904 stock/serializers.py:1000 stock/serializers.py:1469
-#: stock/serializers.py:1759 users/models.py:989
+#: stock/serializers.py:1759 users/models.py:1009
 msgid "Location"
 msgstr "Hely"
 
@@ -1108,7 +1110,7 @@ msgstr "A kész gyártási kimenetek helye"
 #: build/serializers.py:587 order/models.py:509 order/models.py:1045
 #: order/models.py:2266 order/serializers.py:801 order/serializers.py:1987
 #: stock/serializers.py:603 stock/serializers.py:1007 stock/serializers.py:1064
-#: stock/serializers.py:1626 users/models.py:982
+#: stock/serializers.py:1626 users/models.py:1002
 msgid "Status"
 msgstr "Állapot"
 
@@ -1485,9 +1487,9 @@ msgstr "Kulcs string egyedi kell legyen"
 #: common/models.py:1325 common/models.py:1570 common/models.py:1571
 #: common/models.py:1895 common/models.py:1896 common/models.py:2277
 #: importer/models.py:89 part/models.py:3319 part/models.py:3406
-#: part/models.py:3480 part/models.py:3508 plugin/models.py:316
-#: plugin/models.py:317 report/templates/report/inventree_test_report.html:105
-#: users/models.py:109 users/models.py:941
+#: part/models.py:3480 part/models.py:3508 plugin/models.py:322
+#: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
+#: users/models.py:129 users/models.py:961
 msgid "User"
 msgstr "Felhasználó"
 
@@ -1518,8 +1520,8 @@ msgstr "Webhook neve"
 
 #: common/models.py:1316 common/models.py:2136 common/models.py:2243
 #: company/models.py:164 company/models.py:799 machine/models.py:39
-#: part/models.py:1205 plugin/models.py:67 stock/api.py:590 users/models.py:180
-#: users/models.py:994 users/serializers.py:270
+#: part/models.py:1205 plugin/models.py:68 stock/api.py:590 users/models.py:200
+#: users/models.py:1014 users/serializers.py:270
 msgid "Active"
 msgstr "Aktív"
 
@@ -1527,7 +1529,7 @@ msgstr "Aktív"
 msgid "Is this webhook active"
 msgstr "Aktív-e ez a webhook"
 
-#: common/models.py:1332 users/models.py:157
+#: common/models.py:1332 users/models.py:177
 msgid "Token"
 msgstr "Token"
 
@@ -1937,7 +1939,7 @@ msgstr ""
 msgid "URL endpoint which processed the barcode"
 msgstr ""
 
-#: common/models.py:2297 order/models.py:1495 plugin/serializers.py:89
+#: common/models.py:2297 order/models.py:1495 plugin/serializers.py:91
 msgid "Context"
 msgstr "Kontextus"
 
@@ -1992,7 +1994,7 @@ msgstr "Készlet érkezett egy beszerzési megrendeléshez"
 msgid "Items have been received against a return order"
 msgstr "Készlet érkezett vissza egy visszavétel miatt"
 
-#: common/notifications.py:477
+#: common/notifications.py:480
 msgid "Error raised by plugin"
 msgstr "Plugin hiba"
 
@@ -3367,58 +3369,66 @@ msgid "The navbar position is fixed to the top of the screen"
 msgstr "A menü pozíciója mindig rögzítve a lap tetején"
 
 #: common/setting/user.py:187
+msgid "Navigation Icons"
+msgstr ""
+
+#: common/setting/user.py:188
+msgid "Display icons in the navigation bar"
+msgstr ""
+
+#: common/setting/user.py:193
 msgid "Date Format"
 msgstr "Dátum formátum"
 
-#: common/setting/user.py:188
+#: common/setting/user.py:194
 msgid "Preferred format for displaying dates"
 msgstr "Preferált dátum formátum a dátumok kijelzésekor"
 
-#: common/setting/user.py:201
+#: common/setting/user.py:207
 msgid "Part Scheduling"
 msgstr "Alkatrész ütemezés"
 
-#: common/setting/user.py:202
+#: common/setting/user.py:208
 msgid "Display part scheduling information"
 msgstr "Alkatrész ütemezési információk megjelenítése"
 
-#: common/setting/user.py:207
+#: common/setting/user.py:213
 msgid "Part Stocktake"
 msgstr "Alkatrész leltár"
 
-#: common/setting/user.py:209
+#: common/setting/user.py:215
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "Alkatrész leltár információk megjelenítése (ha a leltár funkció engedélyezett)"
 
-#: common/setting/user.py:215
+#: common/setting/user.py:221
 msgid "Table String Length"
 msgstr "Táblázati szöveg hossz"
 
-#: common/setting/user.py:216
+#: common/setting/user.py:222
 msgid "Maximum length limit for strings displayed in table views"
 msgstr "Maximális szöveg hossz ami megjelenhet a táblázatokban"
 
-#: common/setting/user.py:221
+#: common/setting/user.py:227
 msgid "Show Last Breadcrumb"
 msgstr ""
 
-#: common/setting/user.py:222
+#: common/setting/user.py:228
 msgid "Show the current page in breadcrumbs"
 msgstr ""
 
-#: common/setting/user.py:227
+#: common/setting/user.py:233
 msgid "Receive error reports"
 msgstr "Hibariportok fogadása"
 
-#: common/setting/user.py:228
+#: common/setting/user.py:234
 msgid "Receive notifications for system errors"
 msgstr "Értesítések fogadása a rendszerhibákról"
 
-#: common/setting/user.py:233
+#: common/setting/user.py:239
 msgid "Last used printing machines"
 msgstr "Utoljára használt nyomtató gépek"
 
-#: common/setting/user.py:234
+#: common/setting/user.py:240
 msgid "Save the last used printing machines for a user"
 msgstr "Az utoljára használt nyomtató tárolása a felhasználóhoz"
 
@@ -3522,7 +3532,7 @@ msgid "Contact email address"
 msgstr "Kapcsolattartó email címe"
 
 #: company/models.py:142 company/models.py:274 order/models.py:413
-#: users/models.py:1001
+#: users/models.py:1021
 msgid "Contact"
 msgstr "Névjegy"
 
@@ -3833,27 +3843,27 @@ msgstr "Cégnév"
 msgid "In Stock"
 msgstr "Készleten"
 
-#: data_exporter/mixins.py:319 data_exporter/mixins.py:388
+#: data_exporter/mixins.py:324 data_exporter/mixins.py:393
 msgid "Error occurred during data export"
 msgstr ""
 
-#: data_exporter/mixins.py:370
+#: data_exporter/mixins.py:375
 msgid "Data export plugin returned incorrect data format"
 msgstr ""
 
-#: data_exporter/serializers.py:59
+#: data_exporter/serializers.py:74
 msgid "Export Format"
 msgstr ""
 
-#: data_exporter/serializers.py:60
+#: data_exporter/serializers.py:75
 msgid "Select export file format"
 msgstr ""
 
-#: data_exporter/serializers.py:67
+#: data_exporter/serializers.py:82
 msgid "Export Plugin"
 msgstr ""
 
-#: data_exporter/serializers.py:68
+#: data_exporter/serializers.py:83
 msgid "Select export plugin"
 msgstr ""
 
@@ -3865,7 +3875,7 @@ msgstr "Saját Állapot Kulcs"
 msgid "Additional status information for this item"
 msgstr "További állapot információk erről a tételről"
 
-#: generic/states/serializers.py:16 plugin/models.py:44 users/models.py:98
+#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:118
 msgid "Key"
 msgstr "Kulcs"
 
@@ -4839,7 +4849,7 @@ msgstr "Válassz cél helyet a beérkezett tételeknek"
 msgid "Enter batch code for incoming stock items"
 msgstr "Írd be a batch kódját a beérkezett tételeknek"
 
-#: order/serializers.py:783 stock/models.py:1005 users/models.py:122
+#: order/serializers.py:783 stock/models.py:1005 users/models.py:142
 msgid "Expiry Date"
 msgstr "Lejárati dátum"
 
@@ -5115,10 +5125,11 @@ msgid "Uses"
 msgstr "Használ"
 
 #: part/models.py:89 part/models.py:4080
+#: templates/email/part_event_notification.html:16
 msgid "Part Category"
 msgstr "Alkatrész kategória"
 
-#: part/models.py:90 users/models.py:200
+#: part/models.py:90 users/models.py:220
 msgid "Part Categories"
 msgstr "Alkatrész kategóriák"
 
@@ -5160,7 +5171,7 @@ msgid "You cannot make this part category structural because some parts are alre
 msgstr "Nem lehet az alkatrészkategóriát szerkezeti kategóriává tenni, mert már vannak itt alkatrészek!"
 
 #: part/models.py:418 part/serializers.py:128 part/serializers.py:337
-#: users/models.py:201
+#: users/models.py:221
 msgid "Parts"
 msgstr "Alkatrészek"
 
@@ -6030,7 +6041,7 @@ msgid "Building"
 msgstr "Gyártásban"
 
 #: part/serializers.py:933 part/stocktake.py:223 stock/serializers.py:1050
-#: stock/serializers.py:1228 users/models.py:204
+#: stock/serializers.py:1228 users/models.py:224
 msgid "Stock Items"
 msgstr "Készlet tételek"
 
@@ -6043,6 +6054,7 @@ msgid "Suppliers"
 msgstr "Beszállítók"
 
 #: part/serializers.py:936 templates/email/low_stock_notification.html:16
+#: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "Teljes készlet"
 
@@ -6276,7 +6288,23 @@ msgstr "Alacsony készlet értesítés"
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "A {part.name} alkatrész rendelkezésre álló készlete a megadott minimum alá csökkent"
 
-#: plugin/api.py:175
+#: plugin/api.py:79
+msgid "Builtin"
+msgstr ""
+
+#: plugin/api.py:93
+msgid "Mandatory"
+msgstr ""
+
+#: plugin/api.py:104
+msgid "Sample"
+msgstr ""
+
+#: plugin/api.py:118 plugin/models.py:159
+msgid "Installed"
+msgstr "Beépítve"
+
+#: plugin/api.py:185
 msgid "Plugin cannot be deleted as it is currently active"
 msgstr "Plugin nem törölhető mivel még aktív"
 
@@ -6528,8 +6556,10 @@ msgstr "Alapvető vonalkód támogatást ad"
 #: plugin/builtin/barcodes/inventree_barcode.py:30
 #: plugin/builtin/exporter/bom_exporter.py:61
 #: plugin/builtin/exporter/inventree_exporter.py:17
+#: plugin/builtin/exporter/part_parameter_exporter.py:36
 #: plugin/builtin/integration/core_notifications.py:33
 #: plugin/builtin/integration/currency_exchange.py:21
+#: plugin/builtin/integration/part_notifications.py:25
 #: plugin/builtin/labels/inventree_label.py:26
 #: plugin/builtin/labels/inventree_machine.py:64
 #: plugin/builtin/labels/label_sheet.py:64
@@ -6571,18 +6601,22 @@ msgid "Number of levels to export"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:23
+#: plugin/builtin/exporter/part_parameter_exporter.py:17
 msgid "Stock Data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:23
+#: plugin/builtin/exporter/part_parameter_exporter.py:17
 msgid "Include part stock data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:27
+#: plugin/builtin/exporter/part_parameter_exporter.py:21
 msgid "Pricing Data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:27
+#: plugin/builtin/exporter/part_parameter_exporter.py:21
 msgid "Include part pricing data"
 msgstr ""
 
@@ -6668,6 +6702,14 @@ msgstr ""
 msgid "Provides support for exporting data from InvenTree"
 msgstr ""
 
+#: plugin/builtin/exporter/part_parameter_exporter.py:33
+msgid "Part Parameter Exporter"
+msgstr ""
+
+#: plugin/builtin/exporter/part_parameter_exporter.py:34
+msgid "Exporter for part parameter data"
+msgstr ""
+
 #: plugin/builtin/integration/core_notifications.py:32
 msgid "InvenTree Notifications"
 msgstr "InvenTree értesítések"
@@ -6713,6 +6755,31 @@ msgstr "InvenTree Pénzváltó"
 #: plugin/builtin/integration/currency_exchange.py:23
 msgid "Default currency exchange integration"
 msgstr "Alapértelmezett pénzváltó integráció"
+
+#: plugin/builtin/integration/part_notifications.py:24
+msgid "Part Notifications"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:26
+msgid "Notify users about part changes"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:31
+msgid "Send notifications"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:32
+msgid "Send notifications for part changes to subscribed users"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:49
+msgid "Changed part notification"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:59
+#, python-brace-format
+msgid "The part `{part.name}` has been triggered with a `{part_action}` event"
+msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:23
 msgid "InvenTree PDF label printer"
@@ -6889,55 +6956,55 @@ msgstr ""
 msgid "Uninstalled plugin successfully"
 msgstr "Plugin eltávolítása sikeres"
 
-#: plugin/models.py:37
+#: plugin/models.py:38
 msgid "Plugin Configuration"
 msgstr "Plugin beállítás"
 
-#: plugin/models.py:38
+#: plugin/models.py:39
 msgid "Plugin Configurations"
 msgstr "Plugin beállítások"
 
-#: plugin/models.py:45
+#: plugin/models.py:46
 msgid "Key of plugin"
 msgstr "Plugin kulcsa"
 
-#: plugin/models.py:53
+#: plugin/models.py:54
 msgid "PluginName of the plugin"
 msgstr "PluginNeve a pluginnak"
 
-#: plugin/models.py:60 plugin/serializers.py:115
+#: plugin/models.py:61 plugin/serializers.py:117
 msgid "Package Name"
 msgstr "Csomag neve"
 
-#: plugin/models.py:62
+#: plugin/models.py:63
 msgid "Name of the installed package, if the plugin was installed via PIP"
 msgstr "A telepített csomag neve, ha a plugin a PIP-el lett telepítve"
 
-#: plugin/models.py:67
+#: plugin/models.py:68
 msgid "Is the plugin active"
 msgstr "Aktív-e a plugin"
 
-#: plugin/models.py:158
-msgid "Installed"
-msgstr "Beépítve"
-
-#: plugin/models.py:167
+#: plugin/models.py:168
 msgid "Sample plugin"
 msgstr "Példa plugin"
 
-#: plugin/models.py:175
+#: plugin/models.py:176
 msgid "Builtin Plugin"
 msgstr "Beépített plugin"
 
-#: plugin/models.py:183
+#: plugin/models.py:184
+msgid "Mandatory Plugin"
+msgstr ""
+
+#: plugin/models.py:189
 msgid "Package Plugin"
 msgstr "Csomag plugin"
 
-#: plugin/models.py:262
+#: plugin/models.py:268
 msgid "Plugin"
 msgstr "Bővítmény"
 
-#: plugin/models.py:309
+#: plugin/models.py:315
 msgid "Method"
 msgstr "Módszer"
 
@@ -6945,17 +7012,17 @@ msgstr "Módszer"
 msgid "No author found"
 msgstr "Nincs szerző"
 
-#: plugin/registry.py:591
+#: plugin/registry.py:608
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "A '{p}' plugin nem kompatibilis az aktuális applikáció verzióval {v}"
 
-#: plugin/registry.py:594
+#: plugin/registry.py:611
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "A pluginhoz minimum {v} verzió kell"
 
-#: plugin/registry.py:596
+#: plugin/registry.py:613
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "A pluginhoz maximum {v} verzió kell"
@@ -7064,91 +7131,91 @@ msgstr ""
 msgid "This is an admin-only dashboard item."
 msgstr ""
 
-#: plugin/serializers.py:82
+#: plugin/serializers.py:84
 msgid "Source File"
 msgstr ""
 
-#: plugin/serializers.py:83
+#: plugin/serializers.py:85
 msgid "Path to the source file for admin integration"
 msgstr ""
 
-#: plugin/serializers.py:90
+#: plugin/serializers.py:92
 msgid "Optional context data for the admin integration"
 msgstr ""
 
-#: plugin/serializers.py:106
+#: plugin/serializers.py:108
 msgid "Source URL"
 msgstr "Forrás URL"
 
-#: plugin/serializers.py:108
+#: plugin/serializers.py:110
 msgid "Source for the package - this can be a custom registry or a VCS path"
 msgstr "Csomag forrása - ez lehet egy registry vagy VCS útvonal"
 
-#: plugin/serializers.py:117
+#: plugin/serializers.py:119
 msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr "Plugin csomag neve - verzió megjelölést is tartalmazhat"
 
-#: plugin/serializers.py:124
+#: plugin/serializers.py:126
 msgid "Version"
 msgstr "Verzió"
 
-#: plugin/serializers.py:126
+#: plugin/serializers.py:128
 msgid "Version specifier for the plugin. Leave blank for latest version."
 msgstr "Verzió azonosító a pluginhoz. Hagyd üresen a legújabb verzióhoz."
 
-#: plugin/serializers.py:131
+#: plugin/serializers.py:133
 msgid "Confirm plugin installation"
 msgstr "Bővítmény telepítésének megerősítése"
 
-#: plugin/serializers.py:133
+#: plugin/serializers.py:135
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr "Ez telepíti ezt a plugint az aktuális példányra. A példány karbantartási módba megy."
 
-#: plugin/serializers.py:146
+#: plugin/serializers.py:148
 msgid "Installation not confirmed"
 msgstr "Tlepítés nincs megerősítve"
 
-#: plugin/serializers.py:148
+#: plugin/serializers.py:150
 msgid "Either packagename of URL must be provided"
 msgstr "Vagy csomag nevet vagy URL-t meg kell adni"
 
-#: plugin/serializers.py:184
+#: plugin/serializers.py:186
 msgid "Full reload"
 msgstr "Teljes újratöltés"
 
-#: plugin/serializers.py:185
+#: plugin/serializers.py:187
 msgid "Perform a full reload of the plugin registry"
 msgstr "A plugin tárolók teljes újratöltése"
 
-#: plugin/serializers.py:191
+#: plugin/serializers.py:193
 msgid "Force reload"
 msgstr "Kényszerített újratöltés"
 
-#: plugin/serializers.py:193
+#: plugin/serializers.py:195
 msgid "Force a reload of the plugin registry, even if it is already loaded"
 msgstr "Akkor is töltse újra a plugin tárolót ha már be lett töltve"
 
-#: plugin/serializers.py:200
+#: plugin/serializers.py:202
 msgid "Collect plugins"
 msgstr "Pluginok begyűjtése"
 
-#: plugin/serializers.py:201
+#: plugin/serializers.py:203
 msgid "Collect plugins and add them to the registry"
 msgstr "Pluginok begyűjtése és a tárolóhoz adása"
 
-#: plugin/serializers.py:228
+#: plugin/serializers.py:230
 msgid "Activate Plugin"
 msgstr "Plugin aktiválása"
 
-#: plugin/serializers.py:229
+#: plugin/serializers.py:231
 msgid "Activate this plugin"
 msgstr "Plugin bekapcsolása"
 
-#: plugin/serializers.py:249
+#: plugin/serializers.py:251
 msgid "Delete configuration"
 msgstr "Konfiguráció törlése"
 
-#: plugin/serializers.py:250
+#: plugin/serializers.py:252
 msgid "Delete the plugin configuration from the database"
 msgstr "Plugin konfiguráció törlése az adatbázisból"
 
@@ -7589,7 +7656,7 @@ msgstr "Alapértelmezett ikon azokhoz a helyekhez, melyeknek nincs ikonja beáll
 msgid "Stock Location"
 msgstr "Készlet hely"
 
-#: stock/models.py:138 users/models.py:203
+#: stock/models.py:138 users/models.py:223
 msgid "Stock Locations"
 msgstr "Készlethelyek"
 
@@ -7605,7 +7672,7 @@ msgstr "Tulajdonos kiválasztása"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "A szerkezeti raktári helyekre nem lehet direktben raktározni, csak az al-helyekre."
 
-#: stock/models.py:203 users/models.py:937
+#: stock/models.py:203 users/models.py:957
 msgid "External"
 msgstr "Külső"
 
@@ -7955,7 +8022,7 @@ msgstr "Csomagolási mennyiség használata: a megadott mennyiség ennyi csomag"
 msgid "Supplier Part Number"
 msgstr "Beszállítói Cikkszám"
 
-#: stock/serializers.py:656 users/models.py:172
+#: stock/serializers.py:656 users/models.py:192
 msgid "Expired"
 msgstr "Lejárt"
 
@@ -8368,12 +8435,18 @@ msgid "You are receiving this email because you are subscribed to notifications 
 msgstr "Ezért kapod ezt a levelet mert értesítést kértél erre az alkatrészre "
 
 #: templates/email/low_stock_notification.html:9
+#: templates/email/part_event_notification.html:9
 msgid "Click on the following link to view this part"
 msgstr "Klikk a következő linkre az alkatrész megjelenítéséhez"
 
 #: templates/email/low_stock_notification.html:18
+#: templates/email/part_event_notification.html:19
 msgid "Minimum Quantity"
 msgstr "Minimum mennyiség"
+
+#: templates/email/part_event_notification.html:32
+msgid "You are receiving this email because you are subscribed to notifications for this part or a category that it is part of "
+msgstr ""
 
 #: users/admin.py:100
 msgid "Users"
@@ -8399,7 +8472,7 @@ msgstr "Jogosultságok"
 msgid "Important dates"
 msgstr "Fontos dátumok"
 
-#: users/authentication.py:29 users/models.py:136
+#: users/authentication.py:29 users/models.py:156
 msgid "Token has been revoked"
 msgstr "A token visszavonva"
 
@@ -8407,187 +8480,187 @@ msgstr "A token visszavonva"
 msgid "Token has expired"
 msgstr "A token lejárt"
 
-#: users/models.py:79
+#: users/models.py:99
 msgid "API Token"
 msgstr "API Token"
 
-#: users/models.py:80
+#: users/models.py:100
 msgid "API Tokens"
 msgstr "API Tokenek"
 
-#: users/models.py:116
+#: users/models.py:136
 msgid "Token Name"
 msgstr "Token név"
 
-#: users/models.py:117
+#: users/models.py:137
 msgid "Custom token name"
 msgstr "Egyedi token név"
 
-#: users/models.py:123
+#: users/models.py:143
 msgid "Token expiry date"
 msgstr "Token lejárati dátum"
 
-#: users/models.py:131
+#: users/models.py:151
 msgid "Last Seen"
 msgstr "Utolsó tevékenység"
 
-#: users/models.py:132
+#: users/models.py:152
 msgid "Last time the token was used"
 msgstr "Token utolsó használata"
 
-#: users/models.py:136
+#: users/models.py:156
 msgid "Revoked"
 msgstr "Visszavonva"
 
-#: users/models.py:199
+#: users/models.py:219
 msgid "Admin"
 msgstr "Adminisztrátor"
 
-#: users/models.py:202
+#: users/models.py:222
 msgid "Stocktake"
 msgstr "Leltár"
 
-#: users/models.py:206
+#: users/models.py:226
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
 
-#: users/models.py:207
+#: users/models.py:227
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
 
-#: users/models.py:208
+#: users/models.py:228
 msgid "Return Orders"
 msgstr "Visszavételek"
 
-#: users/models.py:382
+#: users/models.py:402
 msgid "Permission set"
 msgstr "Jogosultságok"
 
-#: users/models.py:391
+#: users/models.py:411
 msgid "Group"
 msgstr "Csoport"
 
-#: users/models.py:395
+#: users/models.py:415
 msgid "View"
 msgstr "Nézet"
 
-#: users/models.py:395
+#: users/models.py:415
 msgid "Permission to view items"
 msgstr "Jogosultság tételek megtekintéséhez"
 
-#: users/models.py:399
+#: users/models.py:419
 msgid "Add"
 msgstr "Hozzáad"
 
-#: users/models.py:399
+#: users/models.py:419
 msgid "Permission to add items"
 msgstr "Jogosultság tételek hozzáadásához"
 
-#: users/models.py:403
+#: users/models.py:423
 msgid "Change"
 msgstr "Módosítás"
 
-#: users/models.py:405
+#: users/models.py:425
 msgid "Permissions to edit items"
 msgstr "Jogosultság tételek szerkesztéséhez"
 
-#: users/models.py:409
+#: users/models.py:429
 msgid "Delete"
 msgstr "Törlés"
 
-#: users/models.py:411
+#: users/models.py:431
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#: users/models.py:935
+#: users/models.py:955
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:936
+#: users/models.py:956
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:938
+#: users/models.py:958
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:947
+#: users/models.py:967
 msgid "Language"
 msgstr ""
 
-#: users/models.py:948
+#: users/models.py:968
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:953
+#: users/models.py:973
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:954
+#: users/models.py:974
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:959
+#: users/models.py:979
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:961
+#: users/models.py:981
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:968
+#: users/models.py:988
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:969
+#: users/models.py:989
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:975
+#: users/models.py:995
 msgid "Position"
 msgstr ""
 
-#: users/models.py:976
+#: users/models.py:996
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:983
+#: users/models.py:1003
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:990
+#: users/models.py:1010
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:995
+#: users/models.py:1015
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:1002
+#: users/models.py:1022
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:1008
+#: users/models.py:1028
 msgid "Type"
 msgstr ""
 
-#: users/models.py:1009
+#: users/models.py:1029
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:1015
+#: users/models.py:1035
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:1016
+#: users/models.py:1036
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:1024
+#: users/models.py:1044
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:1025
+#: users/models.py:1045
 msgid "Primary group for the user"
 msgstr ""
 

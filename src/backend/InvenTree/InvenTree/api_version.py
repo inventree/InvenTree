@@ -1,12 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 329
+INVENTREE_API_VERSION = 331
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v331 - 2025-04-01 : https://github.com/inventree/InvenTree/pull/9437
+    - Set correct types on various formerly-string PK fields as well permissions
+    - Include metadata request and response types
+
+v330 - 2025-03-31 : https://github.com/inventree/InvenTree/pull/9420
+    - Deconflict operation id between single and bulk destroy operations
+    - Add request body definition for bulk destroy operations
 
 v329 - 2025-03-30 : https://github.com/inventree/InvenTree/pull/9399
     - Convert url path regex-specified PKs to int
