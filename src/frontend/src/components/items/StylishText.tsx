@@ -23,9 +23,9 @@ const useThematicGradient = () => {
   const secondary = useMemo(() => {
     let secondary = primary;
     if (colorScheme.colorScheme == 'dark') {
-      secondary = lighten(primary, 0.3);
+      secondary = lighten(primary, 0.25);
     } else {
-      secondary = darken(primary, 0.3);
+      secondary = darken(primary, 0.25);
     }
 
     return secondary;
