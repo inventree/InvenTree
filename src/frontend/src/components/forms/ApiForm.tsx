@@ -21,7 +21,7 @@ import {
   type SubmitHandler,
   useForm
 } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { useApi } from '../../contexts/ApiContext';
 import type { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -216,7 +216,16 @@ export function ApiForm({
 }>) {
   const api = useApi();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+
+  // Accessor for the navigation function (which is used to redirect the user)
+  let navigate: NavigateFunction | null = null;
+
+  try {
+    navigate = useNavigate();
+  } catch (_error) {
+    // Note: If we launch a form within a plugin context, useNavigate() may not be available
+    navigate = null;
+  }
 
   const [fields, setFields] = useState<ApiFormFieldSet>(
     () => props.fields ?? {}
@@ -479,7 +488,9 @@ export function ApiForm({
 
             if (props.follow && props.modelType && response.data?.pk) {
               // If we want to automatically follow the returned data
-              navigate(getDetailUrl(props.modelType, response.data?.pk));
+              if (!!navigate) {
+                navigate(getDetailUrl(props.modelType, response.data?.pk));
+              }
             } else if (props.table) {
               // If we want to automatically update or reload a linked table
               const pk_field = props.pk_field ?? 'pk';
