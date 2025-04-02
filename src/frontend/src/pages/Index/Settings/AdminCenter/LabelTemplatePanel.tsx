@@ -1,5 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '../../../../enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
 function LabelTemplateTable() {

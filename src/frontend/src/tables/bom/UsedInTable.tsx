@@ -3,8 +3,8 @@ import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '../../defaults/formatters';
-import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';

@@ -3,8 +3,8 @@ import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
+import { ModelType } from '@lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
-import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { shortenString } from '../../functions/tables';
 import { apiUrl } from '../../states/ApiState';

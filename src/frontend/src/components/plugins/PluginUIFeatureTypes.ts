@@ -1,4 +1,4 @@
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
 import type { InvenTreeIconType } from '../../functions/icons';
 import type { TemplateI } from '../../tables/settings/TemplateTable';
 import type { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';

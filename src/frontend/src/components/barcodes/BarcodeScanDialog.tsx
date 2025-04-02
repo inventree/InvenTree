@@ -1,10 +1,10 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
-import type { ModelType } from '../../enums/ModelType';
 import { extractErrorMessage } from '../../functions/api';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';

@@ -11,8 +11,8 @@ import {
 import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ModelType } from '@lib/enums/ModelType';
 import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import type { Setting } from '../../states/states';
 import { vars } from '../../theme';

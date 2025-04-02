@@ -3,6 +3,7 @@ import type {
   EventClickArg,
   EventContentArg
 } from '@fullcalendar/core';
+import type { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
@@ -15,7 +16,6 @@ import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
-import type { ModelType } from '../../enums/ModelType';
 import type { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';

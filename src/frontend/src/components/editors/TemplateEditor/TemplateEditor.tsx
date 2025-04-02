@@ -24,8 +24,8 @@ import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ModelType } from '@lib/enums/ModelType';
 import { api } from '../../../App';
-import { ModelType } from '../../../enums/ModelType';
 import type { TablerIconType } from '../../../functions/icons';
 import { apiUrl } from '../../../states/ApiState';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';

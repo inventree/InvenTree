@@ -12,6 +12,7 @@ import {
 import { type ReactNode, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
@@ -19,7 +20,6 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../../defaults/formatters';
-import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import type { TableColumn } from '../../../tables/Column';

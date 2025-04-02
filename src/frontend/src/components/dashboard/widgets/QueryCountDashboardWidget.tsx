@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { ModelType } from '@lib/enums/ModelType';
 import { useApi } from '../../../contexts/ApiContext';
-import type { ModelType } from '../../../enums/ModelType';
 import {
   InvenTreeIcon,
   type InvenTreeIconType

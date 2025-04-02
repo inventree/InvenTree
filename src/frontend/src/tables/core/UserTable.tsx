@@ -1,7 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { ModelType } from '../../enums/ModelType';
 import {} from '../../hooks/UseFilter';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';

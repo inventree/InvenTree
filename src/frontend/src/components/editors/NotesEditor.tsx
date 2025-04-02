@@ -8,8 +8,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
 import { useApi } from '../../contexts/ApiContext';
-import type { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { ModelInformationDict } from '../render/ModelType';
 

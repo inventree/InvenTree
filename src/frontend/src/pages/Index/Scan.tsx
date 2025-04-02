@@ -20,6 +20,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { api } from '../../App';
@@ -28,7 +29,6 @@ import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem'
 import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
 import { ModelInformationDict } from '../../components/render/ModelType';
-import type { ModelType } from '../../enums/ModelType';
 import {
   notYetImplemented,
   showApiErrorMessage
