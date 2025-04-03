@@ -421,7 +421,6 @@ class SearchTests(InvenTreeAPITestCase):
                 'search': RE_SEARCH_TERM,
                 'limit': 10,
                 'search_notes': True,
-                'search_regex': True,
                 'search_whole': True,
                 'part': {},
                 'build': {},
