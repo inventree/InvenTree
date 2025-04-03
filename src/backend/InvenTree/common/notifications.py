@@ -6,6 +6,7 @@ from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -31,7 +32,7 @@ class NotificationMethod:
     GLOBAL_SETTING = None
     USER_SETTING = None
 
-    def __init__(self, obj, category, targets, context) -> None:
+    def __init__(self, obj: Model, category: str, targets: list, context) -> None:
         """Check that the method is read.
 
         This checks that:
@@ -357,8 +358,21 @@ class InvenTreeNotificationBodies:
     )
 
 
-def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
-    """Send out a notification."""
+def trigger_notification(
+    obj: Model, category: Optional[str] = None, obj_ref: str = 'pk', **kwargs
+):
+    """Send out a notification.
+
+    Args:
+        obj: The object (model instance) that is triggering the notification
+        category: The category (label) for the notification
+        obj_ref: The reference to the object that should be used for the notification
+        kwargs: Additional arguments to pass to the notification method
+    """
+    # Check if data is importing currently
+    if isImportingData() or isRebuildingData():
+        return
+
     targets = kwargs.get('targets')
     target_fnc = kwargs.get('target_fnc')
     target_args = kwargs.get('target_args', [])
@@ -367,10 +381,6 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     context = kwargs.get('context', {})
     delivery_methods = kwargs.get('delivery_methods')
     check_recent = kwargs.get('check_recent', True)
-
-    # Check if data is importing currently
-    if isImportingData() or isRebuildingData():
-        return
 
     # Resolve object reference
     refs = [obj_ref, 'pk', 'id', 'uid']
@@ -484,12 +494,18 @@ def trigger_superuser_notification(plugin: PluginConfig, msg: str):
 
 
 def deliver_notification(
-    cls: NotificationMethod, obj, category: str, targets, context: dict
+    cls: NotificationMethod, obj: Model, category: str, targets: list, context: dict
 ):
     """Send notification with the provided class.
 
-    This:
-    - Intis the method
+    Arguments:
+        cls: The class that should be used to send the notification
+        obj: The object (model instance) that triggered the notification
+        category: The category (label) for the notification
+        targets: List of users that should receive the notification
+        context: Context dictionary with additional information for the notification
+
+    - Initializes the method
     - Checks that there are valid targets
     - Runs the delivery setup
     - Sends notifications either via `send_bulk` or send`
