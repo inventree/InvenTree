@@ -21,6 +21,7 @@ from django.core.validators import URLValidator
 from django.http import Http404, HttpResponseGone
 
 import structlog
+from corsheaders.defaults import default_headers as default_cors_headers
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
@@ -1202,6 +1203,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     default_value=[],
     typecast=list,
 )
+
+# Allow extra CORS headers in DEBUG mode
+# Required for serving /static/ and /media/ files
+if DEBUG:
+    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
 
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server

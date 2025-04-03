@@ -52,6 +52,7 @@ export function ServerInfoModal({
                 <Trans>Debug Mode</Trans>
               </Table.Td>
               <Table.Td>
+                <Badge color='red'>INVE-W4</Badge>
                 <Trans>Server is running in debug mode</Trans>
               </Table.Td>
             </Table.Tr>
@@ -102,21 +103,19 @@ export function ServerInfoModal({
                 <Trans>Background Worker</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>
-                  <Trans>Background worker not running</Trans>
-                </Badge>
+                <Badge color='red'>INVE-W5</Badge>
+                <Trans>The Background worker process is not running.</Trans>
               </Table.Td>
             </Table.Tr>
           )}
-          {server?.email_configured == false && (
+          {!server?.email_configured && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Email Settings</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>
-                  <Trans>Email settings not configured</Trans>
-                </Badge>
+                <Badge color='red'>INVE-W7</Badge>
+                <Trans>Email settings not configured.</Trans>
               </Table.Td>
             </Table.Tr>
           )}
