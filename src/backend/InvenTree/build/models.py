@@ -817,6 +817,7 @@ class Build(
             Build,
             exclude=self.issued_by,
             content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.part.get_subscribers(),
         )
 
         trigger_event(BuildEvents.CANCELLED, id=self.pk)
@@ -1470,7 +1471,10 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(
-                instance, sender, exclude=instance.issued_by
+                instance,
+                sender,
+                exclude=instance.issued_by,
+                extra_users=instance.part.get_subscribers(),
             )
 
         else:
