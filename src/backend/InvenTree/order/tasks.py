@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
@@ -15,19 +15,26 @@ from InvenTree.tasks import ScheduledTask, scheduled_task
 from order.events import PurchaseOrderEvents, SalesOrderEvents
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from plugin.events import trigger_event
+from users.models import Owner
 
 logger = structlog.get_logger('inventree')
 
 
-def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
-    """Notify users that a PurchaseOrder has just become 'overdue'."""
-    targets = []
+def notify_overdue_purchase_order(po: order.models.PurchaseOrder) -> None:
+    """Notify users that a PurchaseOrder has just become 'overdue'.
+
+    Arguments:
+        po: The PurchaseOrder object that is overdue.
+    """
+    targets: list[User | Group | Owner] = []
 
     if po.created_by:
         targets.append(po.created_by)
 
     if po.responsible:
         targets.append(po.responsible)
+
+    targets.extend(po.subscribed_users())
 
     name = _('Overdue Purchase Order')
 
@@ -69,15 +76,17 @@ def check_overdue_purchase_orders():
         notify_overdue_purchase_order(po)
 
 
-def notify_overdue_sales_order(so: order.models.SalesOrder):
+def notify_overdue_sales_order(so: order.models.SalesOrder) -> None:
     """Notify appropriate users that a SalesOrder has just become 'overdue'."""
-    targets = []
+    targets: list[User, Group, Owner] = []
 
     if so.created_by:
         targets.append(so.created_by)
 
     if so.responsible:
         targets.append(so.responsible)
+
+    targets.extend(so.subscribed_users())
 
     name = _('Overdue Sales Order')
 
