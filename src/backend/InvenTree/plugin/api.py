@@ -276,7 +276,6 @@ class PluginReload(CreateAPI):
         return serializer.save()
 
 
-@extend_schema(operation_id='plugins_settings_list_all')
 class PluginSettingList(ListAPI):
     """List endpoint for all plugin related settings.
 
@@ -292,6 +291,15 @@ class PluginSettingList(ListAPI):
     filter_backends = [DjangoFilterBackend]
 
     filterset_fields = ['plugin__active', 'plugin__key']
+
+    @extend_schema(operation_id='plugins_settings_list_all')
+    def get(self, request, *args, **kwargs):
+        """List endpoint for all plugin related settings.
+
+        - read only
+        - only accessible by staff users
+        """
+        return super().get(request, *args, **kwargs)
 
 
 def check_plugin(
