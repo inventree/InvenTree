@@ -8,6 +8,7 @@ import {
   useMantineTheme
 } from '@mantine/core';
 import { useMemo } from 'react';
+import type { JSX } from 'react';
 import { useLocalState } from '../../states/LocalState';
 
 // Hook that memoizes the gradient color based on the primary color of the theme

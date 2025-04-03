@@ -14,6 +14,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
 import { t } from '@lingui/core/macro';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -36,11 +37,10 @@ import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
-  const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
-    state.setNavigationOpen,
-    state.navigationOpen
-  ]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [setNavigationOpen, navigationOpen] = useLocalState(
+    useShallow((state) => [state.setNavigationOpen, state.navigationOpen])
+  );
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [
@@ -53,7 +53,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
-  const { isLoggedIn } = useUserState();
+  const { isLoggedIn, isStaff } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
 
