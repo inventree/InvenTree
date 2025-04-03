@@ -286,8 +286,15 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
         return prefetch.filter(category=self.id)
 
-    def get_subscribers(self, include_parents=True):
-        """Return a list of users who subscribe to this PartCategory."""
+    def get_subscribers(self, include_parents: bool = True) -> list[User]:
+        """Return a list of users who subscribe to this PartCategory.
+
+        Arguments:
+            include_parents (bool): If True, include users who subscribe to parent categories.
+
+        Returns:
+            list[User]: List of users who subscribe to this category.
+        """
         subscribers = set()
 
         if include_parents:
@@ -1429,8 +1436,17 @@ class Part(
         """
         return self.total_stock - self.allocation_count() + self.on_order
 
-    def get_subscribers(self, include_variants=True, include_categories=True):
+    def get_subscribers(
+        self, include_variants: bool = True, include_categories: bool = True
+    ) -> list[User]:
         """Return a list of users who are 'subscribed' to this part.
+
+        Arguments:
+            include_variants: If True, include users who are subscribed to a variant part
+            include_categories: If True, include users who are subscribed to the category
+
+        Returns:
+            list[User]: A list of users who are subscribed to this part
 
         A user may 'subscribe' to this part in the following ways:
 

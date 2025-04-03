@@ -575,6 +575,21 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Return the associated barcode model type code for this model."""
         return 'PO'
 
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this PurchaseOrder.
+
+        By this, we mean users to are interested in any of the parts associated with this order.
+        """
+        subscribed_users = set()
+
+        for line in self.lines.all():
+            if line.part and line.part.part:
+                # Add the part to the list of subscribed users
+                for user in line.part.part.get_subscribers():
+                    subscribed_users.add(user)
+
+        return list(subscribed_users)
+
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
         return f'{self.reference} - {self.supplier.name if self.supplier else _("deleted")}'
@@ -747,6 +762,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 PurchaseOrder,
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
             )
 
     def _action_complete(self, *args, **kwargs):
@@ -841,6 +857,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 PurchaseOrder,
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
+                extra_users=self.subscribed_users(),
             )
 
     @property
@@ -1045,6 +1062,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
+            extra_users=line.part.part.get_subscribers(),
         )
 
 
@@ -1095,6 +1113,21 @@ class SalesOrder(TotalPriceMixin, Order):
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
         return 'SO'
+
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this SalesOrder.
+
+        By this, we mean users to are interested in any of the parts associated with this order.
+        """
+        subscribed_users = set()
+
+        for line in self.lines.all():
+            if line.part:
+                # Add the part to the list of subscribed users
+                for user in line.part.get_subscribers():
+                    subscribed_users.add(user)
+
+        return list(subscribed_users)
 
     def __str__(self):
         """Render a string representation of this SalesOrder."""
@@ -1248,6 +1281,15 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event(SalesOrderEvents.ISSUED, id=self.pk)
 
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                SalesOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
+            )
+
     @property
     def can_hold(self):
         """Return True if this order can be placed on hold."""
@@ -1325,6 +1367,7 @@ class SalesOrder(TotalPriceMixin, Order):
             SalesOrder,
             exclude=self.created_by,
             content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.subscribed_users(),
         )
 
         return True
@@ -1465,9 +1508,6 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
         if get_global_setting('SALESORDER_DEFAULT_SHIPMENT'):
             # Create default shipment
             SalesOrderShipment.objects.create(order=instance, reference='1')
-
-        # Notify the responsible users that the sales order has been created
-        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
@@ -2337,6 +2377,21 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return the associated barcode model type code for this model."""
         return 'RO'
 
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this ReturnOrder.
+
+        By this, we mean users to are interested in any of the parts associated with this order.
+        """
+        subscribed_users = set()
+
+        for line in self.lines.all():
+            if line.item and line.item.part:
+                # Add the part to the list of subscribed users
+                for user in line.item.part.get_subscribers():
+                    subscribed_users.add(user)
+
+        return list(subscribed_users)
+
     def __str__(self):
         """Render a string representation of this ReturnOrder."""
         return f'{self.reference} - {self.customer.name if self.customer else _("no customer")}'
@@ -2439,6 +2494,7 @@ class ReturnOrder(TotalPriceMixin, Order):
                 ReturnOrder,
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
+                extra_users=self.subscribed_users(),
             )
 
     def _action_complete(self, *args, **kwargs):
@@ -2470,6 +2526,15 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.save()
 
             trigger_event(ReturnOrderEvents.ISSUED, id=self.pk)
+
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                ReturnOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
+            )
 
     @transaction.atomic
     def hold_order(self):
@@ -2575,6 +2640,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             ReturnOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ReturnOrderItemsReceived,
+            extra_users=line.item.part.get_subscribers(),
         )
 
 
