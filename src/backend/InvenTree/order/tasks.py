@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.db import transaction
 from django.db.models import F
 from django.utils.translation import gettext_lazy as _
@@ -14,21 +14,32 @@ import InvenTree.helpers_model
 import order.models
 from InvenTree.tasks import ScheduledTask, scheduled_task
 from order.events import PurchaseOrderEvents, SalesOrderEvents
-from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
+from order.status_codes import (
+    PurchaseOrderStatusGroups,
+    ReturnOrderStatusGroups,
+    SalesOrderStatusGroups,
+)
 from plugin.events import trigger_event
+from users.models import Owner
 
 logger = structlog.get_logger('inventree')
 
 
-def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
-    """Notify users that a PurchaseOrder has just become 'overdue'."""
-    targets = []
+def notify_overdue_purchase_order(po: order.models.PurchaseOrder) -> None:
+    """Notify users that a PurchaseOrder has just become 'overdue'.
+
+    Arguments:
+        po: The PurchaseOrder object that is overdue.
+    """
+    targets: list[User | Group | Owner] = []
 
     if po.created_by:
         targets.append(po.created_by)
 
     if po.responsible:
         targets.append(po.responsible)
+
+    targets.extend(po.subscribed_users())
 
     name = _('Overdue Purchase Order')
 
@@ -86,15 +97,17 @@ def check_overdue_purchase_orders():
             notified_orders.add(line.order.pk)
 
 
-def notify_overdue_sales_order(so: order.models.SalesOrder):
+def notify_overdue_sales_order(so: order.models.SalesOrder) -> None:
     """Notify appropriate users that a SalesOrder has just become 'overdue'."""
-    targets = []
+    targets: list[User, Group, Owner] = []
 
     if so.created_by:
         targets.append(so.created_by)
 
     if so.responsible:
         targets.append(so.responsible)
+
+    targets.extend(so.subscribed_users())
 
     name = _('Overdue Sales Order')
 
@@ -146,6 +159,71 @@ def check_overdue_sales_orders():
     for line in overdue_lines:
         if line.order.pk not in notified_orders:
             notify_overdue_sales_order(line.order)
+            notified_orders.add(line.order.pk)
+
+
+def notify_overdue_return_order(ro: order.models.ReturnOrder) -> None:
+    """Notify appropriate users that a ReturnOrder has just become 'overdue'."""
+    targets: list[User, Group, Owner] = []
+
+    if ro.created_by:
+        targets.append(ro.created_by)
+
+    if ro.responsible:
+        targets.append(ro.responsible)
+
+    targets.extend(ro.subscribed_users())
+
+    name = _('Overdue Return Order')
+
+    context = {
+        'order': ro,
+        'name': name,
+        'message': _(f'Return order {ro} is now overdue'),
+        'link': InvenTree.helpers_model.construct_absolute_url(ro.get_absolute_url()),
+        'template': {'html': 'email/overdue_return_order.html', 'subject': name},
+    }
+
+    event_name = SalesOrderEvents.OVERDUE
+
+    # Send a notification to the appropriate users
+    common.notifications.trigger_notification(
+        ro, event_name, targets=targets, context=context
+    )
+
+    # Register a matching event to the plugin system
+    trigger_event(event_name, return_order=ro.pk)
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def check_overdue_return_orders():
+    """Check if any outstanding return orders have just become overdue.
+
+    - This check is performed daily
+    - Look at the 'target_date' of any outstanding return order objects
+    - If the 'target_date' expired *yesterday* then the order is just out of date
+    """
+    yesterday = datetime.now().date() - timedelta(days=1)
+
+    overdue_orders = order.models.ReturnOrder.objects.filter(
+        target_date=yesterday, status__in=ReturnOrderStatusGroups.OPEN
+    )
+
+    overdue_lines = order.models.ReturnOrderLineItem.objects.filter(
+        target_date=yesterday,
+        order__status__in=ReturnOrderStatusGroups.OPEN,
+        received_date__isnull=True,
+    )
+
+    notified_orders = set()
+
+    for ro in overdue_orders:
+        notify_overdue_return_order(ro)
+        notified_orders.add(ro.pk)
+
+    for line in overdue_lines:
+        if line.order.pk not in notified_orders:
+            notify_overdue_return_order(line.order)
             notified_orders.add(line.order.pk)
 
 
