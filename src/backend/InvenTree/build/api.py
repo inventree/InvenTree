@@ -8,6 +8,8 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from drf_spectacular.utils import extend_schema_field
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 import build.admin
@@ -103,6 +105,7 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Category'),
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Category')))
     def filter_category(self, queryset, name, category):
         """Filter by part category (including sub-categories)."""
         categories = category.get_descendants(include_self=True)
@@ -114,6 +117,7 @@ class BuildFilter(rest_filters.FilterSet):
         method='filter_ancestor',
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Ancestor Build')))
     def filter_ancestor(self, queryset, name, parent):
         """Filter by 'parent' build order."""
         builds = parent.get_descendants(include_self=False)
@@ -293,6 +297,7 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Exclude Tree'),
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Exclude Tree')))
     def filter_exclude_tree(self, queryset, name, value):
         """Filter by excluding a tree of Build objects."""
         queryset = queryset.exclude(

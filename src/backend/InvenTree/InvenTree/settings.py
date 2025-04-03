@@ -21,6 +21,7 @@ from django.core.validators import URLValidator
 from django.http import Http404, HttpResponseGone
 
 import structlog
+from corsheaders.defaults import default_headers as default_cors_headers
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
@@ -536,7 +537,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'InvenTree.schema.ExtendedAutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
@@ -1088,6 +1089,7 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://*localhost:4173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
@@ -1201,6 +1203,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     default_value=[],
     typecast=list,
 )
+
+# Allow extra CORS headers in DEBUG mode
+# Required for serving /static/ and /media/ files
+if DEBUG:
+    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
 
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server
