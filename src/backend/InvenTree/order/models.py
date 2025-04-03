@@ -2640,7 +2640,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             ReturnOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ReturnOrderItemsReceived,
-            extra_users=line.part.get_subscribers(),
+            extra_users=line.item.part.get_subscribers(),
         )
 
 
