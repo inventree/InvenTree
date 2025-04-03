@@ -276,6 +276,7 @@ class PluginReload(CreateAPI):
         return serializer.save()
 
 
+@extend_schema(operation_id='plugins_settings_list_all')
 class PluginSettingList(ListAPI):
     """List endpoint for all plugin related settings.
 
