@@ -16,7 +16,7 @@ import InvenTree.helpers
 from InvenTree.ready import isImportingData, isRebuildingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
-from users.models import Owner
+from users.models import Owner, check_user_permission
 
 logger = structlog.get_logger('inventree')
 
@@ -451,26 +451,40 @@ def trigger_notification(
                 )
 
     if target_users:
-        logger.info("Sending notification '%s' for '%s'", category, str(obj))
+        # Filter out any users who are inactive, or do not have the required model permissions
+        valid_users = list(
+            filter(
+                lambda u: u and u.is_active and check_user_permission(u, obj, 'view'),
+                list(target_users),
+            )
+        )
 
-        # Collect possible methods
-        if delivery_methods is None:
-            delivery_methods = storage.methods or []
-        else:
-            delivery_methods = delivery_methods - IGNORED_NOTIFICATION_CLS
+        if len(valid_users) > 0:
+            logger.info(
+                "Sending notification '%s' for '%s' to %s users",
+                category,
+                str(obj),
+                len(valid_users),
+            )
 
-        for method in delivery_methods:
-            logger.info("Triggering notification method '%s'", method.METHOD_NAME)
-            try:
-                deliver_notification(method, obj, category, target_users, context)
-            except NotImplementedError as error:
-                # Allow any single notification method to fail, without failing the others
-                logger.error(error)
-            except Exception as error:
-                logger.error(error)
+            # Collect possible methods
+            if delivery_methods is None:
+                delivery_methods = storage.methods or []
+            else:
+                delivery_methods = delivery_methods - IGNORED_NOTIFICATION_CLS
 
-        # Set delivery flag
-        common.models.NotificationEntry.notify(category, obj_ref_value)
+            for method in delivery_methods:
+                logger.info("Triggering notification method '%s'", method.METHOD_NAME)
+                try:
+                    deliver_notification(method, obj, category, valid_users, context)
+                except NotImplementedError as error:
+                    # Allow any single notification method to fail, without failing the others
+                    logger.error(error)
+                except Exception as error:
+                    logger.error(error)
+
+            # Set delivery flag
+            common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
         logger.info("No possible users for notification '%s'", category)
 
