@@ -1124,7 +1124,7 @@ class SalesOrder(TotalPriceMixin, Order):
         for line in self.lines.all():
             if line.part:
                 # Add the part to the list of subscribed users
-                for user in line.part.part.get_subscribers():
+                for user in line.part.get_subscribers():
                     subscribed_users.add(user)
 
         return list(subscribed_users)
@@ -2387,7 +2387,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         for line in self.lines.all():
             if line.part:
                 # Add the part to the list of subscribed users
-                for user in line.part.part.get_subscribers():
+                for user in line.item.part.get_subscribers():
                     subscribed_users.add(user)
 
         return list(subscribed_users)
