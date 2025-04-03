@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import textwrap
+from typing import Literal
 
 import requests
 import yaml
@@ -33,6 +34,7 @@ global GLOBAL_SETTINGS
 global USER_SETTINGS
 global TAGS
 global FILTERS
+global REPORT_CONTEXT
 
 # Read in the InvenTree settings file
 here = os.path.dirname(__file__)
@@ -50,6 +52,9 @@ with open(os.path.join(here, 'inventree_tags.yml'), encoding='utf-8') as f:
 # Filters
 with open(os.path.join(here, 'inventree_filters.yml'), encoding='utf-8') as f:
     FILTERS = yaml.load(f, yaml.BaseLoader)
+# Report context
+with open(os.path.join(here, 'inventree_report_context.json'), encoding='utf-8') as f:
+    REPORT_CONTEXT = json.load(f)
 
 
 def get_repo_url(raw=False):
@@ -335,5 +340,18 @@ def define_env(env):
                 ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
             ret_data += '\n'
         ret_data += '\n'
+
+        return ret_data
+
+    @env.macro
+    def report_context(type_: Literal['models', 'base'], model: str):
+        """Extract information on a particular report context."""
+        global REPORT_CONTEXT
+
+        context = REPORT_CONTEXT.get(type_).get(model)
+
+        ret_data = '| Variable | Type | Description |\n| --- | --- | --- |\n'
+        for k, v in context['context'].items():
+            ret_data += f'| {k} | `{v["type"]}` | {v["description"]} |\n'
 
         return ret_data

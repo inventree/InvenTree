@@ -1278,6 +1278,7 @@ def export_definitions(c, basedir: str = ''):
         Path(basedir + 'inventree_settings.json').resolve(),
         Path(basedir + 'inventree_tags.yml').resolve(),
         Path(basedir + 'inventree_filters.yml').resolve(),
+        Path(basedir + 'inventree_report_context.json').resolve(),
     ]
 
     info('Exporting definitions...')
@@ -1288,6 +1289,9 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[2], overwrite=True)
     manage(c, f'export_filters {filenames[2]}', pty=True)
+
+    check_file_existence(filenames[3], overwrite=True)
+    manage(c, f'export_report_context {filenames[3]}', pty=True)
 
     info('Exporting definitions complete')
 
