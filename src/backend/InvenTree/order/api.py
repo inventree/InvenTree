@@ -11,8 +11,11 @@ from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
+import rest_framework.serializers
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -289,6 +292,7 @@ class PurchaseOrderFilter(OrderFilter):
         method='filter_part',
     )
 
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part: Part):
         """Filter by provided Part instance."""
         orders = part.purchase_orders()
@@ -301,6 +305,9 @@ class PurchaseOrderFilter(OrderFilter):
         method='filter_supplier_part',
     )
 
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Supplier Part'))
+    )
     def filter_supplier_part(
         self, queryset, name, supplier_part: company.models.SupplierPart
     ):
@@ -520,6 +527,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         label=_('Internal Part'),
     )
 
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Internal Part'))
+    )
     def filter_base_part(self, queryset, name, base_part):
         """Filter by the 'base_part' attribute.
 
@@ -735,6 +745,7 @@ class SalesOrderFilter(OrderFilter):
         queryset=Part.objects.all(), field_name='part', method='filter_part'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter SalesOrder by selected 'part'.
 
@@ -1108,6 +1119,7 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part):
         """Filter by the 'part' attribute.
 
@@ -1335,6 +1347,7 @@ class ReturnOrderFilter(OrderFilter):
         queryset=Part.objects.all(), field_name='part', method='filter_part'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter by selected 'part'.
 

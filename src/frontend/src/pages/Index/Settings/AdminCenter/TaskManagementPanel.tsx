@@ -3,6 +3,7 @@ import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
 import { lazy } from 'react';
 
 import { StylishText } from '../../../../components/items/StylishText';
+import { errorCodeLink } from '../../../../components/nav/Alerts';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { Loadable } from '../../../../functions/loading';
@@ -28,6 +29,7 @@ export default function TaskManagementPanel() {
       {taskInfo?.is_running == false && (
         <Alert title={t`Background worker not running`} color='red'>
           <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
+          {errorCodeLink('INVE-W5')}
         </Alert>
       )}
       <Stack gap='xs'>

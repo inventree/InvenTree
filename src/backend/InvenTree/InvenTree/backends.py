@@ -1,14 +1,12 @@
-"""Custom backend implementations."""
+"""Custom backend implementation for maintenance-mode."""
 
 import datetime
 import time
 
-from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-
 import structlog
 from maintenance_mode.backends import AbstractStateBackend
 
-import common.models
+from common.settings import get_global_setting, set_global_setting
 
 logger = structlog.get_logger('inventree')
 
@@ -28,15 +26,11 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
             bool: True if maintenance mode is active, False otherwise.
         """
         try:
-            setting = common.models.InvenTreeSetting.objects.get(key=self.SETTING_KEY)
-            value = str(setting.value).strip()
-        except common.models.InvenTreeSetting.DoesNotExist:
-            # Database is accessible, but setting is not available - assume False
-            return False
-        except (IntegrityError, OperationalError, ProgrammingError):
+            value = get_global_setting(self.SETTING_KEY)
+        except Exception:
             # Database is inaccessible - assume we are not in maintenance mode
-            logger.debug('Failed to read maintenance mode state - assuming True')
-            return True
+            logger.debug('Failed to read maintenance mode state - assuming False')
+            return False
 
         # Extract timestamp from string
         try:
@@ -65,21 +59,24 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
             # Blank timestamp means maintenance mode is not active
             timestamp = ''
 
-        while retries > 0:
-            try:
-                common.models.InvenTreeSetting.set_setting(self.SETTING_KEY, timestamp)
+        r = retries
 
+        while r > 0:
+            try:
+                set_global_setting(self.SETTING_KEY, timestamp)
                 # Read the value back to confirm
                 if self.get_value() == value:
                     break
-            except (IntegrityError, OperationalError, ProgrammingError):
+            except Exception:
                 # In the database is locked, then
                 logger.debug(
-                    'Failed to set maintenance mode state (%s retries left)', retries
+                    'Failed to set maintenance mode state (%s retries left)', r
                 )
                 time.sleep(0.1)
 
-            retries -= 1
+            r -= 1
 
-            if retries == 0:
-                logger.warning('Failed to set maintenance mode state')
+            if r == 0:
+                logger.warning(
+                    'Failed to set maintenance mode state after %s retries', retries
+                )

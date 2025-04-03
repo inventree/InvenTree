@@ -57,6 +57,8 @@ ignore = [
     "RUF032",
     # - RUF045 - implicit-class-var-in-dataclass
     "RUF045",
+    # - UP045 - Use `X | None` instead of `Optional[X]`
+    "UP045",
 
     # TODO These should be followed up and fixed
     # - B904 Within an `except` clause, raise exceptions

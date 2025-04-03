@@ -1,10 +1,19 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { ActionIcon, Divider, Group, Select, Table, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Divider,
+  Group,
+  Select,
+  Table,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import {
   IconApi,
-  IconCheck,
+  IconCircleCheck,
+  IconEdit,
   IconInfoCircle,
   IconPlugConnected,
   IconServer,
@@ -16,7 +25,7 @@ import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import type { HostList } from '../../states/states';
-import { EditButton } from '../buttons/EditButton';
+import { ActionButton } from '../buttons/ActionButton';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({
@@ -47,24 +56,33 @@ export function InstanceOptions({
 
   return (
     <Wrapper titleText={t`Select Server`} smallPadding>
-      <Group gap='xs' wrap='nowrap'>
+      <Group gap='xs' justify='space-between' wrap='nowrap'>
         <Select
+          style={{ width: '100%' }}
           value={hostKey}
           onChange={ChangeHost}
           data={hostListData}
           disabled={HostListEdit}
         />
-        <EditButton
-          setEditing={setHostListEdit}
-          editing={HostListEdit}
-          disabled={HostListEdit}
-        />
-        <EditButton
-          setEditing={setHostEdit}
-          editing={true}
-          disabled={HostListEdit}
-          saveIcon={<IconCheck />}
-        />
+        <Group gap='xs' wrap='nowrap'>
+          <Tooltip label={t`Edit host options`} position='top'>
+            <ActionButton
+              variant='transparent'
+              disabled={HostListEdit}
+              onClick={setHostListEdit}
+              icon={<IconEdit />}
+            />
+          </Tooltip>
+          <Tooltip label={t`Save host selection`} position='top'>
+            <ActionButton
+              variant='transparent'
+              onClick={setHostEdit}
+              disabled={HostListEdit}
+              icon={<IconCircleCheck />}
+              color='green'
+            />
+          </Tooltip>
+        </Group>
       </Group>
 
       {HostListEdit ? (

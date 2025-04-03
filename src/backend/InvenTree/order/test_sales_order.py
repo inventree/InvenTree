@@ -333,17 +333,19 @@ class SalesOrderTest(TestCase):
         self.assertEqual(len(messages), 1)
 
     def test_new_so_notification(self):
-        """Test that a notification is sent when a new SalesOrder is created.
+        """Test that a notification is sent when a new SalesOrder is issued.
 
         - The responsible user should receive a notification
         - The creating user should *not* receive a notification
         """
-        SalesOrder.objects.create(
+        so = SalesOrder.objects.create(
             customer=self.customer,
             reference='1234567',
             created_by=get_user_model().objects.get(pk=3),
             responsible=Owner.create(obj=Group.objects.get(pk=3)),
         )
+
+        so.issue_order()
 
         messages = NotificationMessage.objects.filter(category='order.new_salesorder')
 

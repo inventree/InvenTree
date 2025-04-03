@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 
+from django.conf import settings
 from django.utils import timezone
 
 import structlog
@@ -60,13 +61,16 @@ def check_system_health(**kwargs):
 
     if not is_worker_running(**kwargs):  # pragma: no cover
         result = False
-        logger.warning('Background worker check failed')
+        if not settings.DEBUG:
+            logger.warning('Background worker check failed')
 
     if not InvenTree.helpers_email.is_email_configured():  # pragma: no cover
         result = False
-        logger.warning('Email backend not configured')
+        if not settings.DEBUG:
+            logger.warning('INVE-W7: Email backend not configured')
 
     if not result:  # pragma: no cover
-        logger.warning('InvenTree system health checks failed')
+        if not settings.DEBUG:
+            logger.warning('InvenTree system health checks failed')
 
     return result

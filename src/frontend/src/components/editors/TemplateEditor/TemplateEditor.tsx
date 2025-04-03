@@ -26,7 +26,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
-import type { TablerIconType } from '../../../functions/icons';
 import { apiUrl } from '../../../states/ApiState';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { Boundary } from '../../Boundary';
@@ -50,7 +49,7 @@ export type EditorComponent = React.ForwardRefExoticComponent<
 export type Editor = {
   key: string;
   name: string;
-  icon?: TablerIconType;
+  icon?: React.ReactNode;
   component: EditorComponent;
 };
 
@@ -72,7 +71,7 @@ export type PreviewAreaComponent = React.ForwardRefExoticComponent<
 export type PreviewArea = {
   key: string;
   name: string;
-  icon: TablerIconType;
+  icon: React.ReactNode;
   component: PreviewAreaComponent;
 };
 
@@ -132,8 +131,17 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
 
     api.get(templateUrl).then((response: any) => {
       if (response.data?.template) {
+        // Fetch the raw template file from the server
+        // Request that it is provided without any caching,
+        // to ensure that we always get the latest version
         api
-          .get(response.data.template)
+          .get(response.data.template, {
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+              Expires: '0'
+            }
+          })
           .then((res) => {
             codeRef.current = res.data;
             loadCodeToEditor(res.data);
@@ -272,7 +280,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                   <Tabs.Tab
                     key={Editor.key}
                     value={Editor.key}
-                    leftSection={Editor.icon && <Editor.icon size='0.8rem' />}
+                    leftSection={Editor.icon}
                   >
                     {Editor.name}
                   </Tabs.Tab>
@@ -336,9 +344,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                 <Tabs.Tab
                   key={PreviewArea.key}
                   value={PreviewArea.key}
-                  leftSection={
-                    PreviewArea.icon && <PreviewArea.icon size='0.8rem' />
-                  }
+                  leftSection={PreviewArea.icon}
                 >
                   {PreviewArea.name}
                 </Tabs.Tab>

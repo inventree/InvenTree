@@ -69,7 +69,7 @@ class BarcodeMixin:
 
         return True
 
-    def generate(self, model_instance: InvenTreeBarcodeMixin):
+    def generate(self, model_instance: InvenTreeBarcodeMixin) -> str:
         """Generate barcode data for the given model instance.
 
         Arguments:

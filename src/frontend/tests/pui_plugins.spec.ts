@@ -6,12 +6,15 @@ import {
   loadTab,
   navigate
 } from './helpers.js';
-import { doQuickLogin } from './login.js';
+import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
 // Unit test for plugin settings
-test('Plugins - Settings', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('Plugins - Settings', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that the SampleIntegration plugin is enabled
   await setPluginState({
@@ -57,13 +60,17 @@ test('Plugins - Settings', async ({ page, request }) => {
 });
 
 // Test base plugin functionality
-test('Plugins - Functionality', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
-
+test('Plugins - Functionality', async ({ browser }) => {
   // Navigate and select the plugin
-  await navigate(page, 'settings/admin/plugin/');
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree',
+    url: 'settings/admin/plugin/'
+  });
+
   await clearTableFilters(page);
   await page.getByPlaceholder('Search').fill('sample');
+  await page.waitForLoadState('networkidle');
 
   // Activate the plugin
   const cell = await page.getByText('Sample API Caller', { exact: true });
@@ -79,8 +86,11 @@ test('Plugins - Functionality', async ({ page, request }) => {
   await page.getByText('The plugin was deactivated').waitFor();
 });
 
-test('Plugins - Panels', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('Plugins - Panels', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that UI plugins are enabled
   await setSettingState({
@@ -107,7 +117,7 @@ test('Plugins - Panels', async ({ page, request }) => {
   await loadTab(page, 'Part Details');
 
   // Allow time for the plugin panels to load (they are loaded asynchronously)
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
 
   // Check out each of the plugin panels
   await loadTab(page, 'Broken Panel');
@@ -138,8 +148,11 @@ test('Plugins - Panels', async ({ page, request }) => {
 /**
  * Unit test for custom admin integration for plugins
  */
-test('Plugins - Custom Admin', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('Plugins - Custom Admin', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that the SampleUI plugin is enabled
   await setPluginState({
@@ -169,8 +182,11 @@ test('Plugins - Custom Admin', async ({ page, request }) => {
   await page.getByText('hello: world').waitFor();
 });
 
-test('Plugins - Locate Item', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('Plugins - Locate Item', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that the sample location plugin is enabled
   await setPluginState({
@@ -183,6 +199,7 @@ test('Plugins - Locate Item', async ({ page, request }) => {
 
   // Navigate to the "stock item" page
   await navigate(page, 'stock/item/287/');
+  await page.waitForLoadState('networkidle');
 
   // "Locate" this item
   await page.getByLabel('action-button-locate-item').click();

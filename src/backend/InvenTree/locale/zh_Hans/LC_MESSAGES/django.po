@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-18 00:36+0000\n"
-"PO-Revision-Date: 2025-03-18 00:39\n"
+"POT-Creation-Date: 2025-03-31 23:39+0000\n"
+"PO-Revision-Date: 2025-03-31 23:41\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -25,31 +25,31 @@ msgstr ""
 msgid "API endpoint not found"
 msgstr "未找到 API 端点"
 
-#: InvenTree/api.py:402
+#: InvenTree/api.py:416
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:409
+#: InvenTree/api.py:423
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:417
+#: InvenTree/api.py:431
 msgid "Invalid items list provided"
 msgstr "提供了无效的单位"
 
-#: InvenTree/api.py:423
+#: InvenTree/api.py:437
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:430
+#: InvenTree/api.py:444
 msgid "Invalid filters provided"
 msgstr "提供了无效的过滤器"
 
-#: InvenTree/api.py:435
+#: InvenTree/api.py:449
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:680
+#: InvenTree/api.py:695
 msgid "User does not have permission to view this model"
 msgstr "用户没有权限查阅当前模型。"
 
@@ -406,7 +406,7 @@ msgstr "無效的選項"
 #: InvenTree/models.py:734 common/models.py:1311 common/models.py:1738
 #: common/models.py:1991 common/models.py:2116 common/serializers.py:485
 #: company/models.py:593 generic/states/serializers.py:20 machine/models.py:24
-#: part/models.py:998 part/models.py:3780 plugin/models.py:52
+#: part/models.py:998 part/models.py:3780 plugin/models.py:53
 #: report/models.py:145 stock/models.py:83
 msgid "Name"
 msgstr "名稱"
@@ -558,6 +558,7 @@ msgstr "包含变体"
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
+#: templates/email/part_event_notification.html:15
 msgid "Part"
 msgstr "零件"
 
@@ -671,6 +672,7 @@ msgstr "已分配"
 #: build/api.py:490 company/models.py:889 company/serializers.py:427
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
+#: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "可用数量"
 
@@ -681,7 +683,7 @@ msgstr "可用数量"
 msgid "Build Order"
 msgstr "生产订单"
 
-#: build/models.py:93 users/models.py:205
+#: build/models.py:93 users/models.py:225
 msgid "Build Orders"
 msgstr "生产订单"
 
@@ -1060,7 +1062,7 @@ msgstr "输出产出的序列号"
 #: order/serializers.py:910 order/serializers.py:2019 part/serializers.py:1245
 #: stock/serializers.py:105 stock/serializers.py:638 stock/serializers.py:740
 #: stock/serializers.py:904 stock/serializers.py:1000 stock/serializers.py:1469
-#: stock/serializers.py:1759 users/models.py:989
+#: stock/serializers.py:1759 users/models.py:1009
 msgid "Location"
 msgstr "地點"
 
@@ -1108,7 +1110,7 @@ msgstr "已完成删除的库存地点"
 #: build/serializers.py:587 order/models.py:509 order/models.py:1045
 #: order/models.py:2266 order/serializers.py:801 order/serializers.py:1987
 #: stock/serializers.py:603 stock/serializers.py:1007 stock/serializers.py:1064
-#: stock/serializers.py:1626 users/models.py:982
+#: stock/serializers.py:1626 users/models.py:1002
 msgid "Status"
 msgstr "狀態"
 
@@ -1484,9 +1486,9 @@ msgstr "键字符串必须是唯一的"
 #: common/models.py:1325 common/models.py:1570 common/models.py:1571
 #: common/models.py:1895 common/models.py:1896 common/models.py:2277
 #: importer/models.py:89 part/models.py:3319 part/models.py:3406
-#: part/models.py:3480 part/models.py:3508 plugin/models.py:316
-#: plugin/models.py:317 report/templates/report/inventree_test_report.html:105
-#: users/models.py:109 users/models.py:941
+#: part/models.py:3480 part/models.py:3508 plugin/models.py:322
+#: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
+#: users/models.py:129 users/models.py:961
 msgid "User"
 msgstr "使用者"
 
@@ -1517,8 +1519,8 @@ msgstr "此网络钩子的名称"
 
 #: common/models.py:1316 common/models.py:2136 common/models.py:2243
 #: company/models.py:164 company/models.py:799 machine/models.py:39
-#: part/models.py:1205 plugin/models.py:67 stock/api.py:590 users/models.py:180
-#: users/models.py:994 users/serializers.py:270
+#: part/models.py:1205 plugin/models.py:68 stock/api.py:590 users/models.py:200
+#: users/models.py:1014 users/serializers.py:270
 msgid "Active"
 msgstr "激活"
 
@@ -1526,7 +1528,7 @@ msgstr "激活"
 msgid "Is this webhook active"
 msgstr "网络钩子是否已启用"
 
-#: common/models.py:1332 users/models.py:157
+#: common/models.py:1332 users/models.py:177
 msgid "Token"
 msgstr "令牌"
 
@@ -1936,7 +1938,7 @@ msgstr "扫描条形码的日期和时间"
 msgid "URL endpoint which processed the barcode"
 msgstr "处理条形码的 URL 终点"
 
-#: common/models.py:2297 order/models.py:1495 plugin/serializers.py:89
+#: common/models.py:2297 order/models.py:1495 plugin/serializers.py:91
 msgid "Context"
 msgstr "上下文"
 
@@ -1991,7 +1993,7 @@ msgstr "已根据采购订单收到物品"
 msgid "Items have been received against a return order"
 msgstr "已收到退货订单中的物品"
 
-#: common/notifications.py:477
+#: common/notifications.py:480
 msgid "Error raised by plugin"
 msgstr "插件引发的错误"
 
@@ -3366,58 +3368,66 @@ msgid "The navbar position is fixed to the top of the screen"
 msgstr "导航栏位置固定在屏幕顶部"
 
 #: common/setting/user.py:187
+msgid "Navigation Icons"
+msgstr ""
+
+#: common/setting/user.py:188
+msgid "Display icons in the navigation bar"
+msgstr ""
+
+#: common/setting/user.py:193
 msgid "Date Format"
 msgstr "时间格式"
 
-#: common/setting/user.py:188
+#: common/setting/user.py:194
 msgid "Preferred format for displaying dates"
 msgstr "显示时间的首选格式"
 
-#: common/setting/user.py:201
+#: common/setting/user.py:207
 msgid "Part Scheduling"
 msgstr "零件调度"
 
-#: common/setting/user.py:202
+#: common/setting/user.py:208
 msgid "Display part scheduling information"
 msgstr "显示零件排程信息"
 
-#: common/setting/user.py:207
+#: common/setting/user.py:213
 msgid "Part Stocktake"
 msgstr "零件盘点"
 
-#: common/setting/user.py:209
+#: common/setting/user.py:215
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "显示零件盘点信息 (如果启用了盘点功能)"
 
-#: common/setting/user.py:215
+#: common/setting/user.py:221
 msgid "Table String Length"
 msgstr "表字符串长度"
 
-#: common/setting/user.py:216
+#: common/setting/user.py:222
 msgid "Maximum length limit for strings displayed in table views"
 msgstr "表视图中显示的字符串的最大长度限制"
 
-#: common/setting/user.py:221
+#: common/setting/user.py:227
 msgid "Show Last Breadcrumb"
 msgstr ""
 
-#: common/setting/user.py:222
+#: common/setting/user.py:228
 msgid "Show the current page in breadcrumbs"
 msgstr ""
 
-#: common/setting/user.py:227
+#: common/setting/user.py:233
 msgid "Receive error reports"
 msgstr "接收错误报告"
 
-#: common/setting/user.py:228
+#: common/setting/user.py:234
 msgid "Receive notifications for system errors"
 msgstr "接收系统错误通知"
 
-#: common/setting/user.py:233
+#: common/setting/user.py:239
 msgid "Last used printing machines"
 msgstr "上次使用的打印设备"
 
-#: common/setting/user.py:234
+#: common/setting/user.py:240
 msgid "Save the last used printing machines for a user"
 msgstr "为用户保存上次使用的打印设备"
 
@@ -3521,7 +3531,7 @@ msgid "Contact email address"
 msgstr "联系人电子邮箱地址"
 
 #: company/models.py:142 company/models.py:274 order/models.py:413
-#: users/models.py:1001
+#: users/models.py:1021
 msgid "Contact"
 msgstr "联系人"
 
@@ -3832,27 +3842,27 @@ msgstr "公司名称"
 msgid "In Stock"
 msgstr "有库存"
 
-#: data_exporter/mixins.py:319 data_exporter/mixins.py:388
+#: data_exporter/mixins.py:324 data_exporter/mixins.py:393
 msgid "Error occurred during data export"
 msgstr ""
 
-#: data_exporter/mixins.py:370
+#: data_exporter/mixins.py:375
 msgid "Data export plugin returned incorrect data format"
 msgstr ""
 
-#: data_exporter/serializers.py:59
+#: data_exporter/serializers.py:74
 msgid "Export Format"
 msgstr ""
 
-#: data_exporter/serializers.py:60
+#: data_exporter/serializers.py:75
 msgid "Select export file format"
 msgstr ""
 
-#: data_exporter/serializers.py:67
+#: data_exporter/serializers.py:82
 msgid "Export Plugin"
 msgstr ""
 
-#: data_exporter/serializers.py:68
+#: data_exporter/serializers.py:83
 msgid "Select export plugin"
 msgstr ""
 
@@ -3864,7 +3874,7 @@ msgstr "自定义状态密钥"
 msgid "Additional status information for this item"
 msgstr "此项目的附加状态信息"
 
-#: generic/states/serializers.py:16 plugin/models.py:44 users/models.py:98
+#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:118
 msgid "Key"
 msgstr "键"
 
@@ -4838,7 +4848,7 @@ msgstr "为收到的物品选择目的地位置"
 msgid "Enter batch code for incoming stock items"
 msgstr "输入入库项目的批号"
 
-#: order/serializers.py:783 stock/models.py:1005 users/models.py:122
+#: order/serializers.py:783 stock/models.py:1005 users/models.py:142
 msgid "Expiry Date"
 msgstr "有效期至"
 
@@ -5114,10 +5124,11 @@ msgid "Uses"
 msgstr "使用"
 
 #: part/models.py:89 part/models.py:4080
+#: templates/email/part_event_notification.html:16
 msgid "Part Category"
 msgstr "零件类别"
 
-#: part/models.py:90 users/models.py:200
+#: part/models.py:90 users/models.py:220
 msgid "Part Categories"
 msgstr "零件类别"
 
@@ -5159,7 +5170,7 @@ msgid "You cannot make this part category structural because some parts are alre
 msgstr "您不能使这个零件类别结构化，因为有些零件已经分配给了它！"
 
 #: part/models.py:418 part/serializers.py:128 part/serializers.py:337
-#: users/models.py:201
+#: users/models.py:221
 msgid "Parts"
 msgstr "零件"
 
@@ -6029,7 +6040,7 @@ msgid "Building"
 msgstr "正在生产"
 
 #: part/serializers.py:933 part/stocktake.py:223 stock/serializers.py:1050
-#: stock/serializers.py:1228 users/models.py:204
+#: stock/serializers.py:1228 users/models.py:224
 msgid "Stock Items"
 msgstr "库存项"
 
@@ -6042,6 +6053,7 @@ msgid "Suppliers"
 msgstr "供应商"
 
 #: part/serializers.py:936 templates/email/low_stock_notification.html:16
+#: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "库存总量"
 
@@ -6275,7 +6287,23 @@ msgstr "低库存通知"
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "可用的 {part.name}库存已经跌到设置的最低值"
 
-#: plugin/api.py:175
+#: plugin/api.py:79
+msgid "Builtin"
+msgstr ""
+
+#: plugin/api.py:93
+msgid "Mandatory"
+msgstr ""
+
+#: plugin/api.py:104
+msgid "Sample"
+msgstr ""
+
+#: plugin/api.py:118 plugin/models.py:159
+msgid "Installed"
+msgstr "已安装"
+
+#: plugin/api.py:185
 msgid "Plugin cannot be deleted as it is currently active"
 msgstr "插件不能被删除，因为它当前处于激活状态"
 
@@ -6527,8 +6555,10 @@ msgstr "提供条形码本地支持"
 #: plugin/builtin/barcodes/inventree_barcode.py:30
 #: plugin/builtin/exporter/bom_exporter.py:61
 #: plugin/builtin/exporter/inventree_exporter.py:17
+#: plugin/builtin/exporter/part_parameter_exporter.py:36
 #: plugin/builtin/integration/core_notifications.py:33
 #: plugin/builtin/integration/currency_exchange.py:21
+#: plugin/builtin/integration/part_notifications.py:25
 #: plugin/builtin/labels/inventree_label.py:26
 #: plugin/builtin/labels/inventree_machine.py:64
 #: plugin/builtin/labels/label_sheet.py:64
@@ -6570,18 +6600,22 @@ msgid "Number of levels to export"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:23
+#: plugin/builtin/exporter/part_parameter_exporter.py:17
 msgid "Stock Data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:23
+#: plugin/builtin/exporter/part_parameter_exporter.py:17
 msgid "Include part stock data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:27
+#: plugin/builtin/exporter/part_parameter_exporter.py:21
 msgid "Pricing Data"
 msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:27
+#: plugin/builtin/exporter/part_parameter_exporter.py:21
 msgid "Include part pricing data"
 msgstr ""
 
@@ -6667,6 +6701,14 @@ msgstr ""
 msgid "Provides support for exporting data from InvenTree"
 msgstr ""
 
+#: plugin/builtin/exporter/part_parameter_exporter.py:33
+msgid "Part Parameter Exporter"
+msgstr ""
+
+#: plugin/builtin/exporter/part_parameter_exporter.py:34
+msgid "Exporter for part parameter data"
+msgstr ""
+
 #: plugin/builtin/integration/core_notifications.py:32
 msgid "InvenTree Notifications"
 msgstr "Inventree 通知"
@@ -6712,6 +6754,31 @@ msgstr "InvenTree 货币兑换"
 #: plugin/builtin/integration/currency_exchange.py:23
 msgid "Default currency exchange integration"
 msgstr "默认货币兑换集成"
+
+#: plugin/builtin/integration/part_notifications.py:24
+msgid "Part Notifications"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:26
+msgid "Notify users about part changes"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:31
+msgid "Send notifications"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:32
+msgid "Send notifications for part changes to subscribed users"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:49
+msgid "Changed part notification"
+msgstr ""
+
+#: plugin/builtin/integration/part_notifications.py:59
+#, python-brace-format
+msgid "The part `{part.name}` has been triggered with a `{part_action}` event"
+msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:23
 msgid "InvenTree PDF label printer"
@@ -6888,55 +6955,55 @@ msgstr ""
 msgid "Uninstalled plugin successfully"
 msgstr "插件卸载成功"
 
-#: plugin/models.py:37
+#: plugin/models.py:38
 msgid "Plugin Configuration"
 msgstr "插件配置"
 
-#: plugin/models.py:38
+#: plugin/models.py:39
 msgid "Plugin Configurations"
 msgstr "插件配置"
 
-#: plugin/models.py:45
+#: plugin/models.py:46
 msgid "Key of plugin"
 msgstr "插件的键"
 
-#: plugin/models.py:53
+#: plugin/models.py:54
 msgid "PluginName of the plugin"
 msgstr "插件名称"
 
-#: plugin/models.py:60 plugin/serializers.py:115
+#: plugin/models.py:61 plugin/serializers.py:117
 msgid "Package Name"
 msgstr "软件包名"
 
-#: plugin/models.py:62
+#: plugin/models.py:63
 msgid "Name of the installed package, if the plugin was installed via PIP"
 msgstr "已安装的软件包名字，如果插件是通过 PIP 安装的"
 
-#: plugin/models.py:67
+#: plugin/models.py:68
 msgid "Is the plugin active"
 msgstr "插件是否激活"
 
-#: plugin/models.py:158
-msgid "Installed"
-msgstr "已安装"
-
-#: plugin/models.py:167
+#: plugin/models.py:168
 msgid "Sample plugin"
 msgstr "示例插件"
 
-#: plugin/models.py:175
+#: plugin/models.py:176
 msgid "Builtin Plugin"
 msgstr "内置插件"
 
-#: plugin/models.py:183
+#: plugin/models.py:184
+msgid "Mandatory Plugin"
+msgstr ""
+
+#: plugin/models.py:189
 msgid "Package Plugin"
 msgstr "软件包插件"
 
-#: plugin/models.py:262
+#: plugin/models.py:268
 msgid "Plugin"
 msgstr "插件"
 
-#: plugin/models.py:309
+#: plugin/models.py:315
 msgid "Method"
 msgstr "方法"
 
@@ -6944,17 +7011,17 @@ msgstr "方法"
 msgid "No author found"
 msgstr "未找到作者"
 
-#: plugin/registry.py:591
+#: plugin/registry.py:608
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "插件 '{p}' 与当前 InvenTree 版本{v} 不兼容"
 
-#: plugin/registry.py:594
+#: plugin/registry.py:611
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "插件所需最低版本 {v}"
 
-#: plugin/registry.py:596
+#: plugin/registry.py:613
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "插件所需最高版本 {v}"
@@ -7063,91 +7130,91 @@ msgstr "管理面板"
 msgid "This is an admin-only dashboard item."
 msgstr "这是一个仅限管理员查看的面板。"
 
-#: plugin/serializers.py:82
+#: plugin/serializers.py:84
 msgid "Source File"
 msgstr "源文件"
 
-#: plugin/serializers.py:83
+#: plugin/serializers.py:85
 msgid "Path to the source file for admin integration"
 msgstr "管理员集成的源文件路径"
 
-#: plugin/serializers.py:90
+#: plugin/serializers.py:92
 msgid "Optional context data for the admin integration"
 msgstr "管理员集成的可选上下文数据"
 
-#: plugin/serializers.py:106
+#: plugin/serializers.py:108
 msgid "Source URL"
 msgstr "源URL"
 
-#: plugin/serializers.py:108
+#: plugin/serializers.py:110
 msgid "Source for the package - this can be a custom registry or a VCS path"
 msgstr "软件包的来源 - 这可以是自定义注册表或 VCS 路径"
 
-#: plugin/serializers.py:117
+#: plugin/serializers.py:119
 msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr "插件包名称 - 也可以包含版本指示器"
 
-#: plugin/serializers.py:124
+#: plugin/serializers.py:126
 msgid "Version"
 msgstr "版本"
 
-#: plugin/serializers.py:126
+#: plugin/serializers.py:128
 msgid "Version specifier for the plugin. Leave blank for latest version."
 msgstr "插件版本说明。新版请留白。"
 
-#: plugin/serializers.py:131
+#: plugin/serializers.py:133
 msgid "Confirm plugin installation"
 msgstr "确认插件安装"
 
-#: plugin/serializers.py:133
+#: plugin/serializers.py:135
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr "这将把这个插件安装到当前实例中。这个实例将进行维护。"
 
-#: plugin/serializers.py:146
+#: plugin/serializers.py:148
 msgid "Installation not confirmed"
 msgstr "安装尚未确认"
 
-#: plugin/serializers.py:148
+#: plugin/serializers.py:150
 msgid "Either packagename of URL must be provided"
 msgstr "必须提供软件包名称或者URL"
 
-#: plugin/serializers.py:184
+#: plugin/serializers.py:186
 msgid "Full reload"
 msgstr "完全重载"
 
-#: plugin/serializers.py:185
+#: plugin/serializers.py:187
 msgid "Perform a full reload of the plugin registry"
 msgstr "执行插件库的完整重载"
 
-#: plugin/serializers.py:191
+#: plugin/serializers.py:193
 msgid "Force reload"
 msgstr "强制重载"
 
-#: plugin/serializers.py:193
+#: plugin/serializers.py:195
 msgid "Force a reload of the plugin registry, even if it is already loaded"
 msgstr "强制重载插件库，即使已经加载"
 
-#: plugin/serializers.py:200
+#: plugin/serializers.py:202
 msgid "Collect plugins"
 msgstr "收集插件"
 
-#: plugin/serializers.py:201
+#: plugin/serializers.py:203
 msgid "Collect plugins and add them to the registry"
 msgstr "收集插件并添加到注册表中"
 
-#: plugin/serializers.py:228
+#: plugin/serializers.py:230
 msgid "Activate Plugin"
 msgstr "激活插件"
 
-#: plugin/serializers.py:229
+#: plugin/serializers.py:231
 msgid "Activate this plugin"
 msgstr "激活此插件"
 
-#: plugin/serializers.py:249
+#: plugin/serializers.py:251
 msgid "Delete configuration"
 msgstr "删除配置"
 
-#: plugin/serializers.py:250
+#: plugin/serializers.py:252
 msgid "Delete the plugin configuration from the database"
 msgstr "从数据库中删除插件配置"
 
@@ -7588,7 +7655,7 @@ msgstr "为所有没有图标的位置设置默认图标(可选)"
 msgid "Stock Location"
 msgstr "库存地点"
 
-#: stock/models.py:138 users/models.py:203
+#: stock/models.py:138 users/models.py:223
 msgid "Stock Locations"
 msgstr "库存地点"
 
@@ -7604,7 +7671,7 @@ msgstr "选择所有者"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "库存项可能不直接位于结构库存地点，但可能位于其子地点。"
 
-#: stock/models.py:203 users/models.py:937
+#: stock/models.py:203 users/models.py:957
 msgid "External"
 msgstr "外部"
 
@@ -7954,7 +8021,7 @@ msgstr "添加时使用包装尺寸：定义的数量是包装的数量"
 msgid "Supplier Part Number"
 msgstr "供应商零件编号"
 
-#: stock/serializers.py:656 users/models.py:172
+#: stock/serializers.py:656 users/models.py:192
 msgid "Expired"
 msgstr "已过期"
 
@@ -8367,12 +8434,18 @@ msgid "You are receiving this email because you are subscribed to notifications 
 msgstr "您收到此邮件是因为您订阅了此零件的通知 "
 
 #: templates/email/low_stock_notification.html:9
+#: templates/email/part_event_notification.html:9
 msgid "Click on the following link to view this part"
 msgstr "点击以下链接查看此零件"
 
 #: templates/email/low_stock_notification.html:18
+#: templates/email/part_event_notification.html:19
 msgid "Minimum Quantity"
 msgstr "最小数量"
+
+#: templates/email/part_event_notification.html:32
+msgid "You are receiving this email because you are subscribed to notifications for this part or a category that it is part of "
+msgstr ""
 
 #: users/admin.py:100
 msgid "Users"
@@ -8398,7 +8471,7 @@ msgstr "权限"
 msgid "Important dates"
 msgstr "重要日期"
 
-#: users/authentication.py:29 users/models.py:136
+#: users/authentication.py:29 users/models.py:156
 msgid "Token has been revoked"
 msgstr "令牌已被撤销"
 
@@ -8406,187 +8479,187 @@ msgstr "令牌已被撤销"
 msgid "Token has expired"
 msgstr "令牌已过期"
 
-#: users/models.py:79
+#: users/models.py:99
 msgid "API Token"
 msgstr "API 令牌"
 
-#: users/models.py:80
+#: users/models.py:100
 msgid "API Tokens"
 msgstr "API 令牌"
 
-#: users/models.py:116
+#: users/models.py:136
 msgid "Token Name"
 msgstr "令牌名称"
 
-#: users/models.py:117
+#: users/models.py:137
 msgid "Custom token name"
 msgstr "自定义令牌名称"
 
-#: users/models.py:123
+#: users/models.py:143
 msgid "Token expiry date"
 msgstr "令牌过期日期"
 
-#: users/models.py:131
+#: users/models.py:151
 msgid "Last Seen"
 msgstr "最近一次在线"
 
-#: users/models.py:132
+#: users/models.py:152
 msgid "Last time the token was used"
 msgstr "最近使用令牌的时间"
 
-#: users/models.py:136
+#: users/models.py:156
 msgid "Revoked"
 msgstr "撤销"
 
-#: users/models.py:199
+#: users/models.py:219
 msgid "Admin"
 msgstr "管理员"
 
-#: users/models.py:202
+#: users/models.py:222
 msgid "Stocktake"
 msgstr "库存盘点"
 
-#: users/models.py:206
+#: users/models.py:226
 msgid "Purchase Orders"
 msgstr "采购订单"
 
-#: users/models.py:207
+#: users/models.py:227
 msgid "Sales Orders"
 msgstr "销售订单"
 
-#: users/models.py:208
+#: users/models.py:228
 msgid "Return Orders"
 msgstr "退货订单"
 
-#: users/models.py:382
+#: users/models.py:402
 msgid "Permission set"
 msgstr "权限设置"
 
-#: users/models.py:391
+#: users/models.py:411
 msgid "Group"
 msgstr "组"
 
-#: users/models.py:395
+#: users/models.py:415
 msgid "View"
 msgstr "查看"
 
-#: users/models.py:395
+#: users/models.py:415
 msgid "Permission to view items"
 msgstr "查看项目的权限"
 
-#: users/models.py:399
+#: users/models.py:419
 msgid "Add"
 msgstr "添加"
 
-#: users/models.py:399
+#: users/models.py:419
 msgid "Permission to add items"
 msgstr "添加项目的权限"
 
-#: users/models.py:403
+#: users/models.py:423
 msgid "Change"
 msgstr "更改"
 
-#: users/models.py:405
+#: users/models.py:425
 msgid "Permissions to edit items"
 msgstr "编辑项目的权限"
 
-#: users/models.py:409
+#: users/models.py:429
 msgid "Delete"
 msgstr "删除"
 
-#: users/models.py:411
+#: users/models.py:431
 msgid "Permission to delete items"
 msgstr "删除项目的权限"
 
-#: users/models.py:935
+#: users/models.py:955
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:936
+#: users/models.py:956
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:938
+#: users/models.py:958
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:947
+#: users/models.py:967
 msgid "Language"
 msgstr ""
 
-#: users/models.py:948
+#: users/models.py:968
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:953
+#: users/models.py:973
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:954
+#: users/models.py:974
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:959
+#: users/models.py:979
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:961
+#: users/models.py:981
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:968
+#: users/models.py:988
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:969
+#: users/models.py:989
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:975
+#: users/models.py:995
 msgid "Position"
 msgstr ""
 
-#: users/models.py:976
+#: users/models.py:996
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:983
+#: users/models.py:1003
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:990
+#: users/models.py:1010
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:995
+#: users/models.py:1015
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:1002
+#: users/models.py:1022
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:1008
+#: users/models.py:1028
 msgid "Type"
 msgstr ""
 
-#: users/models.py:1009
+#: users/models.py:1029
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:1015
+#: users/models.py:1035
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:1016
+#: users/models.py:1036
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:1024
+#: users/models.py:1044
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:1025
+#: users/models.py:1045
 msgid "Primary group for the user"
 msgstr ""
 
