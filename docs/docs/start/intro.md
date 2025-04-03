@@ -125,9 +125,9 @@ Running in DEBUG mode provides many handy development features, however it is st
 
 So, for a production setup, you should set `INVENTREE_DEBUG=false` in the [configuration options](./config.md).
 
-### Potential Issues
+### Turning Debug Mode off
 
-Turning off DEBUG mode creates further work for the system administrator. In particular, when running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that when DEBUG mode is *disabled*, the InvenTree server can no longer run as a monolithic process.
+When running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that when DEBUG mode is *disabled*, the proxy setup has to be configured to handle this.
 
 !!! info "Read More"
     Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
