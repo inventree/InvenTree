@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group, User
 from django.db import transaction
+from django.db.models import F
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -68,12 +69,28 @@ def check_overdue_purchase_orders():
     """
     yesterday = datetime.now().date() - timedelta(days=1)
 
+    # Check for PurchaseOrder objects that have a target date of yesterday
     overdue_orders = order.models.PurchaseOrder.objects.filter(
         target_date=yesterday, status__in=PurchaseOrderStatusGroups.OPEN
     )
 
+    # Check for individual line items that are overdue
+    overdue_lines = order.models.PurchaseOrderLineItem.objects.filter(
+        target_date=yesterday,
+        order__status__in=PurchaseOrderStatusGroups.OPEN,
+        received__lt=F('quantity'),
+    )
+
+    notified_orders = set()
+
     for po in overdue_orders:
         notify_overdue_purchase_order(po)
+        notified_orders.add(po.pk)
+
+    for line in overdue_lines:
+        if line.order.pk not in notified_orders:
+            notify_overdue_purchase_order(line.order)
+            notified_orders.add(line.order.pk)
 
 
 def notify_overdue_sales_order(so: order.models.SalesOrder) -> None:
@@ -123,8 +140,22 @@ def check_overdue_sales_orders():
         target_date=yesterday, status__in=SalesOrderStatusGroups.OPEN
     )
 
+    overdue_lines = order.models.SalesOrderLineItem.objects.filter(
+        target_date=yesterday,
+        order__status__in=SalesOrderStatusGroups.OPEN,
+        shipped__lt=F('quantity'),
+    )
+
+    notified_orders = set()
+
     for po in overdue_orders:
         notify_overdue_sales_order(po)
+        notified_orders.add(po.pk)
+
+    for line in overdue_lines:
+        if line.order.pk not in notified_orders:
+            notify_overdue_sales_order(line.order)
+            notified_orders.add(line.order.pk)
 
 
 def complete_sales_order_shipment(shipment_id: int, user_id: int) -> None:
