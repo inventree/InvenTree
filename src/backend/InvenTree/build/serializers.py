@@ -18,6 +18,7 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
@@ -557,6 +558,15 @@ class BuildOutputScrapSerializer(serializers.Serializer):
                 )
 
 
+@extend_schema_field(
+    serializers.IntegerField(
+        help_text='Status key, chosen from the list of StockStatus keys'
+    )
+)
+class BuildOutputStatusCustomKeySerializer(serializers.ChoiceField):
+    """Serializer to allow annotating the schema to use int on custom key fields."""
+
+
 class BuildOutputCompleteSerializer(serializers.Serializer):
     """DRF serializer for completing one or more build outputs."""
 
@@ -581,7 +591,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
-    status_custom_key = serializers.ChoiceField(
+    status_custom_key = BuildOutputStatusCustomKeySerializer(
         choices=StockStatus.items(custom=True),
         default=StockStatus.OK.value,
         label=_('Status'),
