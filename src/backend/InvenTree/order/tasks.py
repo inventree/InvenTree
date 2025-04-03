@@ -68,7 +68,7 @@ def check_overdue_purchase_orders():
     )
 
     # Check for individual line items that are overdue
-    overdue_lines = order.models.PurchaseOrderLine.objects.filter(
+    overdue_lines = order.models.PurchaseOrderLineItem.objects.filter(
         target_date=yesterday,
         order__status__in=PurchaseOrderStatusGroups.OPEN,
         received__lt=F('quantity'),
@@ -131,7 +131,7 @@ def check_overdue_sales_orders():
         target_date=yesterday, status__in=SalesOrderStatusGroups.OPEN
     )
 
-    overdude_lines = order.models.SalesOrderLineItem.objects.filter(
+    overdue_lines = order.models.SalesOrderLineItem.objects.filter(
         target_date=yesterday,
         order__status__in=SalesOrderStatusGroups.OPEN,
         shipped__lt=F('quantity'),
@@ -143,7 +143,7 @@ def check_overdue_sales_orders():
         notify_overdue_sales_order(po)
         notified_orders.add(po.pk)
 
-    for line in overdude_lines:
+    for line in overdue_lines:
         if line.order.pk not in notified_orders:
             notify_overdue_sales_order(line.order)
             notified_orders.add(line.order.pk)
