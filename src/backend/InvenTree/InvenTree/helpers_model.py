@@ -2,7 +2,7 @@
 
 import io
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, cast
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -27,7 +27,7 @@ from InvenTree.format import format_money
 logger = structlog.get_logger('inventree')
 
 
-def get_base_url(request=None):
+def get_base_url(request=None) -> str:
     """Return the base URL for the InvenTree server.
 
     The base URL is determined in the following order of decreasing priority:
@@ -56,7 +56,7 @@ def get_base_url(request=None):
     # Check if a global InvenTree setting is provided
     try:
         if site_url := get_global_setting('INVENTREE_BASE_URL', create=False):
-            return site_url
+            return cast(str, site_url)
     except (ProgrammingError, OperationalError):
         pass
 

@@ -752,10 +752,9 @@ export default function StockDetail() {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
             hidden:
-              !canTransfer ||
               isBuilding ||
               serialized ||
-              stockitem?.quantity != 1 ||
+              stockitem?.quantity < 1 ||
               stockitem?.part_detail?.trackable != true,
             icon: <InvenTreeIcon icon='serial' iconProps={{ color: 'blue' }} />,
             onClick: () => {

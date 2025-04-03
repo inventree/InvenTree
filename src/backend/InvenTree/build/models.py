@@ -49,6 +49,30 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
+class BuildReportContext(report.mixins.BaseReportContext):
+    """Context for the Build model.
+
+    Attributes:
+        bom_items: Query set of all BuildItem objects associated with the BuildOrder
+        build: The BuildOrder instance itself
+        build_outputs: Query set of all BuildItem objects associated with the BuildOrder
+        line_items: Query set of all build line items associated with the BuildOrder
+        part: The Part object which is being assembled in the build order
+        quantity: The total quantity of the part being assembled
+        reference: The reference field of the BuildOrder
+        title: The title field of the BuildOrder
+    """
+
+    bom_items: report.mixins.QuerySet[part.models.BomItem]
+    build: 'Build'
+    build_outputs: report.mixins.QuerySet[stock.models.StockItem]
+    line_items: report.mixins.QuerySet['BuildLine']
+    part: part.models.Part
+    quantity: int
+    reference: str
+    title: str
+
+
 class Build(
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
@@ -183,7 +207,7 @@ class Build(
                 'target_date': _('Target date must be after start date')
             })
 
-    def report_context(self) -> dict:
+    def report_context(self) -> BuildReportContext:
         """Generate custom report context data."""
         return {
             'bom_items': self.part.get_bom_items(),
@@ -1454,6 +1478,28 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.update_build_line_items()
 
 
+class BuildLineReportContext(report.mixins.BaseReportContext):
+    """Context for the BuildLine model.
+
+    Attributes:
+        allocated_quantity: The quantity of the part which has been allocated to this build
+        allocations: A query set of all StockItem objects which have been allocated to this build line
+        bom_item: The BomItem associated with this line item
+        build: The BuildOrder instance associated with this line item
+        build_line: The build line instance itself
+        part: The sub-part (component) associated with the linked BomItem instance
+        quantity: The quantity required for this line item
+    """
+
+    allocated_quantity: decimal.Decimal
+    allocations: report.mixins.QuerySet['BuildItem']
+    bom_item: part.models.BomItem
+    build: Build
+    build_line: 'BuildLine'
+    part: part.models.Part
+    quantity: decimal.Decimal
+
+
 class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
@@ -1481,7 +1527,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the API URL used to access this model."""
         return reverse('api-build-line-list')
 
-    def report_context(self):
+    def report_context(self) -> BuildLineReportContext:
         """Generate custom report context for this BuildLine object."""
         return {
             'allocated_quantity': self.allocated_quantity,
