@@ -71,6 +71,7 @@ export default function UserSettings() {
             keys={[
               'SEARCH_WHOLE',
               'SEARCH_REGEX',
+              'SEARCH_NOTES',
               'SEARCH_PREVIEW_RESULTS',
               'SEARCH_PREVIEW_SHOW_PARTS',
               'SEARCH_HIDE_INACTIVE_PARTS',
