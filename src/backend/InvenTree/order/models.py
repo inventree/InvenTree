@@ -580,15 +580,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         By this, we mean users to are interested in any of the parts associated with this order.
         """
-        subsribed_users = set()
+        subscribed_users = set()
 
         for line in self.lines.all():
             if line.part and line.part.part:
                 # Add the part to the list of subscribed users
                 for user in line.part.part.get_subscribers():
-                    subsribed_users.add(user)
+                    subscribed_users.add(user)
 
-        return list(subsribed_users)
+        return list(subscribed_users)
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
@@ -2385,7 +2385,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         subscribed_users = set()
 
         for line in self.lines.all():
-            if line.part:
+            if line.item and line.item.part:
                 # Add the part to the list of subscribed users
                 for user in line.item.part.get_subscribers():
                     subscribed_users.add(user)
