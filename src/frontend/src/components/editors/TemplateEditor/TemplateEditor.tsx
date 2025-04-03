@@ -132,8 +132,17 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
 
     api.get(templateUrl).then((response: any) => {
       if (response.data?.template) {
+        // Fetch the raw template file from the server
+        // Request that it is provided without any caching,
+        // to ensure that we always get the latest version
         api
-          .get(response.data.template)
+          .get(response.data.template, {
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+              Expires: '0'
+            }
+          })
           .then((res) => {
             codeRef.current = res.data;
             loadCodeToEditor(res.data);
