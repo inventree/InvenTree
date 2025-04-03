@@ -35,10 +35,10 @@ export type InvenTreeFormsContext = {
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
  * @param host - The current host URL
  * @param locale - The current locale string (e.g. 'en' / 'de')
- * @param pluginContext - Any additional context data which may be passed to the plugin
  * @param model - The model type associated with the rendered component (if applicable)
  * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
  * @param instance - The model instance data (if available)
+ * @param context - Any additional context data which may be passed to the plugin
  */
 export type InvenTreePluginContext = {
   version: string;
@@ -53,10 +53,10 @@ export type InvenTreePluginContext = {
   theme: MantineTheme;
   forms: InvenTreeFormsContext;
   colorScheme: MantineColorScheme;
-  pluginContext?: any;
   model?: ModelType | string;
   id?: string | number | null;
   instance?: any;
+  context?: any;
 };
 
 /*

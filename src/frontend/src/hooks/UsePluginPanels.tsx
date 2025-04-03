@@ -95,7 +95,7 @@ export function usePluginPanels({
 
         const ctx: InvenTreePluginContext = {
           ...contextData,
-          pluginContext: props.context
+          context: props.context
         };
 
         return {
