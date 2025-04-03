@@ -343,6 +343,7 @@ class RegistryTests(TestCase):
             Arguments:
                 version: The version string to use for the plugin file
                 enabled: Whether the plugin should be enabled or not
+                reload: Whether to reload the plugin registry after creating the file
 
             Returns:
                 str: The plugin registry hash
