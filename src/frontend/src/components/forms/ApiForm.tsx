@@ -22,6 +22,7 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormFieldSet,
   ApiFormFieldType,
@@ -39,7 +40,6 @@ import {
   invalidResponse,
   showTimeoutNotification
 } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import { Boundary } from '../Boundary';
 import { ApiFormField } from './fields/ApiFormField';
 

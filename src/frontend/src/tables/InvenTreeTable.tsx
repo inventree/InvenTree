@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableState } from '@lib/types/Tables';
@@ -23,7 +24,6 @@ import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
-import { getDetailUrl } from '../functions/urls';
 import { useLocalState } from '../states/LocalState';
 import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';

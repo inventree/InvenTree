@@ -1,4 +1,4 @@
-import { getBaseUrl } from '../main';
+import { getBaseUrl } from '@lib/functions/Navigation';
 import { cancelEvent } from './events';
 
 /*

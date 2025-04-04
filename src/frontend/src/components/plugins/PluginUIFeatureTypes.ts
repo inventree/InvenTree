@@ -1,6 +1,6 @@
 import type { ModelType } from '@lib/enums/ModelType';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
-import type { InvenTreeIconType } from '../../functions/icons';
 import type { TemplateI } from '../../tables/settings/TemplateTable';
 import type { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
 import type { PluginUIFeature } from './PluginUIFeature';

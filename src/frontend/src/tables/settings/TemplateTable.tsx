@@ -143,7 +143,12 @@ export function TemplateDrawer({
           ({
             key: preview.options.key,
             name: preview.options.title,
-            icon: <ApiIcon name={preview.options.icon || 'plugin'} size={18} />,
+            icon: (
+              <ApiIcon
+                name={preview.options?.icon?.toString() || 'plugin'}
+                size={18}
+              />
+            ),
             component: getPluginTemplatePreview(preview.func, template)
           }) as PreviewArea
       ) || [])

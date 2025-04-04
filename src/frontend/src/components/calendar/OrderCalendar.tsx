@@ -3,9 +3,11 @@ import type {
   EventClickArg,
   EventContentArg
 } from '@fullcalendar/core';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -20,7 +22,6 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
 import { useUserState } from '../../states/UserState';
 import {
@@ -30,7 +31,6 @@ import {
   ProjectCodeFilter,
   ResponsibleFilter
 } from '../../tables/Filter';
-import { ModelInformationDict } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 

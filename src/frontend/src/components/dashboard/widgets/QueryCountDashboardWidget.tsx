@@ -4,17 +4,15 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../../contexts/ApiContext';
-import {
-  InvenTreeIcon,
-  type InvenTreeIconType
-} from '../../../functions/icons';
+import { InvenTreeIcon } from '../../../functions/icons';
 import { navigateToLink } from '../../../functions/navigation';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
-import { ModelInformationDict } from '../../render/ModelType';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**
@@ -28,7 +26,7 @@ function QueryCountWidget({
 }: Readonly<{
   modelType: ModelType;
   title: string;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   params: any;
 }>): ReactNode {
   const api = useApi();

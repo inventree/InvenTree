@@ -11,3 +11,5 @@ Published the first version of the UI components API. This allows external plugi
 - `window.ReactDOMClient`: The `react-dom/client` library
 - `window.MantineCore`: The `@mantine/core` library
 - `window.MantineNotifications`: The `@mantine/notifications` library
+
+All of these components can be "externalized" in the plugin build step.

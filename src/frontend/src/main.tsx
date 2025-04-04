@@ -15,6 +15,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
+import { getBaseUrl } from '@lib/functions/Navigation';
 import type { HostList } from '@lib/types/Server';
 import MainView from './views/MainView';
 
@@ -99,9 +100,6 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
     environment: window.INVENTREE_SETTINGS.environment || 'default'
   });
 }
-
-export const getBaseUrl = (): string =>
-  window.INVENTREE_SETTINGS?.base_url || 'web';
 
 (window as any).React = React;
 (window as any).ReactDOM = ReactDOM;

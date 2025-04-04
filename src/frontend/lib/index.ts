@@ -4,8 +4,10 @@ export { INVENTREE_PLUGIN_VERSION } from './types/Plugins';
 // Common type definitions
 export { ApiEndpoints } from './enums/ApiEndpoints';
 export { ModelType } from './enums/ModelType';
+
 export type { InvenTreePluginContext } from './types/Plugins';
 
 // Common utility functions
 export { apiUrl } from './functions/Api';
+export { getBaseUrl, getDetailUrl } from './functions/Navigation';
 export { checkPluginVersion } from './functions/Plugins';

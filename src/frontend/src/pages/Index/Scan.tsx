@@ -20,6 +20,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { hideNotification, showNotification } from '@mantine/notifications';
@@ -29,7 +30,6 @@ import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
-import { ModelInformationDict } from '../../components/render/ModelType';
 import {
   notYetImplemented,
   showApiErrorMessage

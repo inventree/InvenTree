@@ -24,6 +24,7 @@ import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../App';
@@ -31,7 +32,6 @@ import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { Boundary } from '../../Boundary';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
-import { ModelInformationDict } from '../../render/ModelType';
 
 type EditorProps = {
   template: TemplateI;
