@@ -1,7 +1,7 @@
 {
-    "name": "inventree",
+    "name": "inventree-ui",
     "private": false,
-    "version": "1.0.0",
+    "version": "0.0.1",
     "type": "module",
     "license": "MIT",
     "description": "UI components for the InvenTree project",
