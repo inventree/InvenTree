@@ -32,13 +32,22 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         """Return a set of search fields for the request, adjusted based on request params.
 
         The following query params are available to 'augment' the search (in decreasing order of priority)
+        - search_notes: If True, 'notes' is added to the search_fields if it isn't already present
         - search_regex: If True, search is performed on 'regex' comparison
         """
-        regex = InvenTree.helpers.str2bool(
-            request.query_params.get('search_regex', False)
+        search_notes = InvenTree.helpers.str2bool(
+            request.query_params.get('search_notes', False)
         )
 
         search_fields = super().get_search_fields(view, request)
+
+        if search_notes and 'notes' not in search_fields:
+            # don't modify existing list, create a new object so further queries aren't affected
+            search_fields = [*search_fields, 'notes']
+
+        regex = InvenTree.helpers.str2bool(
+            request.query_params.get('search_regex', False)
+        )
 
         fields = []
 

@@ -194,6 +194,7 @@ def format_money(
         money (Money): The money object to format
         decimal_places (int): Number of decimal places to use
         fmt (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
+        include_symbol (bool): Whether to include the currency symbol in the formatted output
 
     Returns:
         str: The formatted string

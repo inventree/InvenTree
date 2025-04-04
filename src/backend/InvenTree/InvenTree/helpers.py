@@ -437,6 +437,7 @@ def increment_serial_number(serial, part=None):
 
     Arguments:
         serial: The serial number which should be incremented
+        part: Optional part object to provide additional context for incrementing the serial number
 
     Returns:
         incremented value, or None if incrementing could not be performed.
@@ -491,6 +492,7 @@ def extract_serial_numbers(
         input_string: Input string with specified serial numbers (string, or integer)
         expected_quantity: The number of (unique) serial numbers we expect
         starting_value: Provide a starting value for the sequence (or None)
+        part: Part that should be used as context
     """
     if starting_value is None:
         starting_value = increment_serial_number(None, part=part)

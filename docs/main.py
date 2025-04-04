@@ -126,17 +126,18 @@ def define_env(env):
     """Define custom environment variables for the documentation build process."""
 
     @env.macro
-    def sourcedir(dirname, branch=None):
+    def sourcedir(dirname: str, branch=None):
         """Return a link to a directory within the source code repository.
 
         Arguments:
-            - dirname: The name of the directory to link to (relative to the top-level directory)
+            dirname: The name of the directory to link to (relative to the top-level directory)
+            branch: The branch of the repository to link to (defaults to the current build environment)
 
         Returns:
-            - A fully qualified URL to the source code directory on GitHub
+            A fully qualified URL to the source code directory on GitHub
 
         Raises:
-            - FileNotFoundError: If the directory does not exist, or the generated URL is invalid
+            FileNotFoundError: If the directory does not exist, or the generated URL is invalid
         """
         if branch == None:
             branch = get_build_environment()
@@ -169,13 +170,15 @@ def define_env(env):
         """Return a link to a file within the source code repository.
 
         Arguments:
-            - filename: The name of the file to link to (relative to the top-level directory)
+            filename: The name of the file to link to (relative to the top-level directory)
+            branch: The branch of the repository to link to (defaults to the current build environment)
+            raw: If True, return the raw URL to the file (defaults to False)
 
         Returns:
-            - A fully qualified URL to the source code file on GitHub
+            A fully qualified URL to the source code file on GitHub
 
         Raises:
-            - FileNotFoundError: If the file does not exist, or the generated URL is invalid
+            FileNotFoundError: If the file does not exist, or the generated URL is invalid
         """
         if branch == None:
             branch = get_build_environment()
@@ -247,9 +250,9 @@ def define_env(env):
         """Include a file in the documentation, in a 'collapse' block.
 
         Arguments:
-            - filename: The name of the file to include (relative to the top-level directory)
-            - title:
-            - fmt:
+            filename: The name of the file to include (relative to the top-level directory)
+            title: The title of the collapse block in the documentation
+            fmt: The format of the included file (e.g., 'python', 'html', etc.)
         """
         here = os.path.dirname(__file__)
         path = os.path.join(here, '..', filename)
@@ -299,7 +302,7 @@ def define_env(env):
         """Extract information on a particular global setting.
 
         Arguments:
-            - key: The name of the global setting to extract information for.
+            key: The name of the global setting to extract information for.
         """
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
@@ -311,7 +314,7 @@ def define_env(env):
         """Extract information on a particular user setting.
 
         Arguments:
-            - key: The name of the user setting to extract information for.
+            key: The name of the user setting to extract information for.
         """
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
