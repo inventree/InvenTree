@@ -1,5 +1,7 @@
+import type { NavigateFunction } from 'react-router-dom';
 import { ModelInformationDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
+import { cancelEvent } from './Events';
 
 export const getBaseUrl = (): string =>
   (window as any).INVENTREE_SETTINGS?.base_url || 'web';
@@ -32,3 +34,25 @@ export function getDetailUrl(
   console.error(`No detail URL found for model ${model} <${pk}>`);
   return '';
 }
+
+/*
+ * Navigate to a provided link.
+ * - If the link is to be opened externally, open it in a new tab.
+ * - Otherwise, navigate using the provided navigate function.
+ */
+export const navigateToLink = (
+  link: string,
+  navigate: NavigateFunction,
+  event: any
+) => {
+  cancelEvent(event);
+
+  if (event?.ctrlKey || event?.shiftKey) {
+    // Open the link in a new tab
+    const url = `/${getBaseUrl()}${link}`;
+    window.open(url, '_blank');
+  } else {
+    // Navigate internally
+    navigate(link);
+  }
+};

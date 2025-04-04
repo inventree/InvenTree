@@ -8,6 +8,7 @@ import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -21,7 +22,6 @@ import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
-import { navigateToLink } from '../../functions/navigation';
 import useCalendar from '../../hooks/UseCalendar';
 import { useUserState } from '../../states/UserState';
 import {

@@ -11,9 +11,9 @@ import {
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { InvenTreeIcon } from '../../functions/icons';
-import { navigateToLink } from '../../functions/navigation';
 import { StylishText } from './StylishText';
 
 export interface MenuLinkItem {

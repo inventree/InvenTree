@@ -15,6 +15,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -25,7 +26,6 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { bomItemFields } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
-import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
 import {
   useApiFormModal,

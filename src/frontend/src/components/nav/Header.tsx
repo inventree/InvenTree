@@ -15,10 +15,10 @@ import { useMatch, useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
-import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';

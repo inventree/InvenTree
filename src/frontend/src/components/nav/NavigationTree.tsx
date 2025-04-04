@@ -25,8 +25,8 @@ import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { useApi } from '../../contexts/ApiContext';
-import { navigateToLink } from '../../functions/navigation';
 import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';
 

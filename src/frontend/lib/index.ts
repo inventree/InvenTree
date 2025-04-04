@@ -9,5 +9,9 @@ export type { InvenTreePluginContext } from './types/Plugins';
 
 // Common utility functions
 export { apiUrl } from './functions/Api';
-export { getBaseUrl, getDetailUrl } from './functions/Navigation';
+export {
+  getBaseUrl,
+  getDetailUrl,
+  navigateToLink
+} from './functions/Navigation';
 export { checkPluginVersion } from './functions/Plugins';

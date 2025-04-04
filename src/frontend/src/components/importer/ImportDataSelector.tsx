@@ -11,10 +11,10 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
-import { cancelEvent } from '../../functions/events';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
