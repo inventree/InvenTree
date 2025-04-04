@@ -111,6 +111,7 @@ class DataImportSessionAcceptFields(APIView):
     """API endpoint to accept the field mapping for a DataImportSession."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     @extend_schema(
         responses={200: importer.serializers.DataImportSessionSerializer(many=False)}
