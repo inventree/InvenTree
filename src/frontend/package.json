@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -10,6 +10,14 @@
     "exports": {
         ".": "./dist/index.js"
     },
+    "files": [
+        "dist",
+        "lib",
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
+    ],
+    "homepage": "https://inventree.org",
     "repository": {
         "type": "git",
         "url": "https://github.com/inventree/inventree"
