@@ -28,6 +28,7 @@ from InvenTree.unit_test import (
     InvenTreeAPITestCase,
     InvenTreeTestCase,
     PluginMixin,
+    addUserPermission,
 )
 from part.models import Part, PartParameterTemplate
 from plugin import registry
@@ -1075,6 +1076,9 @@ class NotificationTest(InvenTreeAPITestCase):
         """Tests for bulk deletion of user notifications."""
         from error_report.models import Error
 
+        # Ensure *this* user has permission to view error reports
+        addUserPermission(self.user, 'error_report', 'error', 'view')
+
         # Create some notification messages by throwing errors
         for _ii in range(10):
             Error.objects.create()
@@ -1086,7 +1090,7 @@ class NotificationTest(InvenTreeAPITestCase):
         # However, one user is marked as inactive
         self.assertEqual(messages.count(), 20)
 
-        # Only 10 messages related to *this* user
+        # Only messages related to *this* user
         my_notifications = messages.filter(user=self.user)
         self.assertEqual(my_notifications.count(), 10)
 

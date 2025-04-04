@@ -681,7 +681,7 @@ def clear_user_role_cache(user: User):
             cache.delete(key)
 
 
-def check_user_permission(user: User, model, permission):
+def check_user_permission(user: User, model: models.Model, permission: str) -> bool:
     """Check if the user has a particular permission against a given model type.
 
     Arguments:
@@ -696,7 +696,7 @@ def check_user_permission(user: User, model, permission):
     return user.has_perm(permission_name)
 
 
-def check_user_role(user: User, role, permission):
+def check_user_role(user: User, role: str, permission: str) -> bool:
     """Check if a user has a particular role:permission combination.
 
     If the user is a superuser, this will return True
