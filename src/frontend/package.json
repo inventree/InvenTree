@@ -1,10 +1,10 @@
 {
-    "name": "inventree-ui",
-    "private": false,
+    "name": "@inventreedb/ui",
+    "description": "UI components for the InvenTree project",
     "version": "0.0.1",
+    "private": false,
     "type": "module",
     "license": "MIT",
-    "description": "UI components for the InvenTree project",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
