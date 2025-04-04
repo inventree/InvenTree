@@ -170,11 +170,11 @@ class InvenTreeMetadata(SimpleMetadata):
         - model_value is callable, and field_value is not (this indicates that the model value is translated)
         - model_value is not a string, and field_value is a string (this indicates that the model value is translated)
 
-        Arguments:
-            - field_name: The name of the field
-            - field_key: The property key to override
-            - field_value: The value of the field (if available)
-            - model_value: The equivalent value of the model (if available)
+        Args:
+            field_name (str): The name of the field.
+            field_key (str): The property key to override.
+            field_value: The value of the field (if available).
+            model_value: The equivalent value of the model (if available).
         """
         if field_value is None and model_value is not None:
             return model_value
