@@ -15,9 +15,11 @@ import { useMatch, useNavigate } from 'react-router-dom';
 
 import { t } from '@lingui/core/macro';
 import { api } from '../../App';
+import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -179,10 +181,18 @@ function NavTabs() {
     [userSettings]
   );
 
+  const extraNavs = usePluginUIFeature<NavigationUIFeature>({
+    featureType: 'navigation',
+    context: {}
+  });
+
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    navTabs.forEach((tab) => {
+    const mainNavTabs = getNavTabs(user);
+
+    // static content
+    mainNavTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
@@ -205,9 +215,23 @@ function NavTabs() {
         </Tabs.Tab>
       );
     });
+    // dynamic content
+    extraNavs.forEach((nav) => {
+      _tabs.push(
+        <Tabs.Tab
+          value={nav.options.title}
+          key={nav.options.key}
+          onClick={(event: any) =>
+            navigateToLink(nav.options.options.url, navigate, event)
+          }
+        >
+          {nav.options.title}
+        </Tabs.Tab>
+      );
+    });
 
     return _tabs;
-  }, [navTabs, user, withIcons]);
+  }, [extraNavs, navTabs, user, withIcons]);
 
   return (
     <Tabs
