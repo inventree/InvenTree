@@ -321,7 +321,6 @@ class SalesOrderTest(TestCase):
         """Test overdue sales order notification."""
         user = get_user_model().objects.get(pk=3)
 
-        # addUserPermission(user, 'order.view_salesorder')
         addUserPermission(user, 'order', 'salesorder', 'view')
         user.is_active = True
         user.save()
