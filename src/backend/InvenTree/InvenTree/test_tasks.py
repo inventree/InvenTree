@@ -87,7 +87,7 @@ class InvenTreeTaskTests(TestCase):
         ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
 
-    def test_task_hearbeat(self):
+    def test_task_heartbeat(self):
         """Test the task heartbeat."""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)
 

@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 331
+INVENTREE_API_VERSION = 332
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v332 - 2025-04-02 : https://github.com/inventree/InvenTree/pull/9393
+    - Adds 'search_notes' parameter to all searchable API endpoints
+
 v331 - 2025-04-01 : https://github.com/inventree/InvenTree/pull/9437
     - Set correct types on various formerly-string PK fields as well permissions
     - Include metadata request and response types

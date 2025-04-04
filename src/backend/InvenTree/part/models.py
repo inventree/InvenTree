@@ -753,6 +753,7 @@ class Part(
         Arguments:
             serial: The proposed serial number
             stock_item: (optional) A StockItem instance which has this serial number assigned (e.g. testing for duplicates)
+            check_duplicates: If True, checks for duplicate serial numbers in the database.
             raise_error: If False, and ValidationError(s) will be handled
 
         Returns:
@@ -2344,15 +2345,20 @@ class Part(
             parameter.save()
 
     def getTestTemplates(
-        self, required=None, include_parent=True, enabled=None
+        self, required=None, include_parent: bool = True, enabled=None
     ) -> QuerySet[PartTestTemplate]:
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
 
+
         Args:
-            required: Set to True or False to filter by "required" status
-            include_parent: Set to True to traverse upwards
+            required (bool, optional): Filter templates by whether they are required. Defaults to None.
+            include_parent (bool, optional): Include templates from parent parts. Defaults to True.
+            enabled (bool, optional): Filter templates by their enabled status. Defaults to None.
+
+        Returns:
+            QuerySet: A queryset of matching test templates.
         """
         if include_parent:
             tests = PartTestTemplate.objects.filter(
