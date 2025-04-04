@@ -47,12 +47,24 @@ export const navigateToLink = (
 ) => {
   cancelEvent(event);
 
+  const base = `/${getBaseUrl()}`;
+
   if (event?.ctrlKey || event?.shiftKey) {
     // Open the link in a new tab
-    const url = `/${getBaseUrl()}${link}`;
+    let url = link;
+    if (link.startsWith('/') && !link.startsWith(base)) {
+      url = `${base}${link}`;
+    }
     window.open(url, '_blank');
   } else {
     // Navigate internally
-    navigate(link);
+    let url = link;
+
+    if (link.startsWith(base)) {
+      // Strip the base URL from the link
+      url = link.replace(base, '');
+    }
+
+    navigate(url);
   }
 };
