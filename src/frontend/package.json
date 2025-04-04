@@ -1,6 +1,6 @@
 {
     "name": "inventree",
-    "private": true,
+    "private": false,
     "version": "1.0.0",
     "type": "module",
     "license": "MIT",
