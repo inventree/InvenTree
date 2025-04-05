@@ -16,7 +16,6 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -30,6 +29,7 @@ import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
+import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 

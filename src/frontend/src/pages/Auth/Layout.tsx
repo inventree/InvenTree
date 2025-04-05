@@ -1,4 +1,3 @@
-import { StylishText } from '@lib/components/StylishText';
 import { Trans } from '@lingui/react/macro';
 import {
   Button,
@@ -12,6 +11,7 @@ import {
 } from '@mantine/core';
 import { Outlet, useNavigate } from 'react-router-dom';
 import SplashScreen from '../../components/SplashScreen';
+import { StylishText } from '../../components/items/StylishText';
 import { doLogout } from '../../functions/auth';
 
 export default function Layout() {

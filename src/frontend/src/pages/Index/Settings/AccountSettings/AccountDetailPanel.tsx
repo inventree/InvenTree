@@ -7,10 +7,10 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useNavigate } from 'react-router-dom';
-import { StylishText } from '../../../../../lib/components/StylishText';
 import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
+import { StylishText } from '../../../../components/items/StylishText';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 

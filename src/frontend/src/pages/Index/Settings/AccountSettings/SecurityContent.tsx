@@ -31,8 +31,8 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { StylishText } from '../../../../../lib/components/StylishText';
 import { api } from '../../../../App';
+import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ApiState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';

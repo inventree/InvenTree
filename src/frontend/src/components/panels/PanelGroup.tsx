@@ -28,7 +28,6 @@ import {
   useParams
 } from 'react-router-dom';
 
-import { StylishText } from '@lib/components/StylishText';
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
 import { navigateToLink } from '@lib/functions/Navigation';
@@ -36,6 +35,7 @@ import { identifierString } from '../../functions/conversion';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
+import { StylishText } from '../items/StylishText';
 import type { PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 
