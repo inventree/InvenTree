@@ -9,10 +9,10 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
+import { StylishText } from '../../../../lib/components/StylishText';
 import { useApi } from '../../../contexts/ApiContext';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useUserState } from '../../../states/UserState';
-import { StylishText } from '../../items/StylishText';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**

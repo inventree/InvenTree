@@ -14,6 +14,7 @@ import {
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
@@ -21,7 +22,6 @@ import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
-import { StylishText } from '../items/StylishText';
 
 type AboutLookupRef = {
   ref: string;

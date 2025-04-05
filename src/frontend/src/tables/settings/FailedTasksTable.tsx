@@ -5,9 +5,9 @@ import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { StylishText } from '../../components/items/StylishText';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';

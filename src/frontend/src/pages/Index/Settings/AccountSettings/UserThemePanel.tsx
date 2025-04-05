@@ -17,9 +17,9 @@ import {
 import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { StylishText } from '../../../../../lib/components/StylishText';
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
-import { StylishText } from '../../../../components/items/StylishText';
 import { SizeMarks } from '../../../../defaults/defaults';
 import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';

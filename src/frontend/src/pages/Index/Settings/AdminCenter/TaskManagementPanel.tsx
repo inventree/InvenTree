@@ -3,7 +3,7 @@ import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
 import { lazy } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { StylishText } from '../../../../components/items/StylishText';
+import { StylishText } from '../../../../../lib/components/StylishText';
 import { errorCodeLink } from '../../../../components/nav/Alerts';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { Loadable } from '../../../../functions/loading';

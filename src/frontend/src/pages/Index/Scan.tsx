@@ -19,6 +19,7 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -28,7 +29,6 @@ import dayjs from 'dayjs';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
-import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
 import {
   notYetImplemented,
