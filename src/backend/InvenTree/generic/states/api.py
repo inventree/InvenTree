@@ -99,6 +99,7 @@ class AllStatusViews(StatusView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = EmptySerializer
 
+    @extend_schema(operation_id='generic_status_retrieve_all')
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
         from InvenTree.helpers import inheritors
