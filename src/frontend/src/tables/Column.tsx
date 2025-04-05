@@ -1,4 +1,4 @@
-import type { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldType } from '@lib/types/Forms';
 
 export type TableColumnProps<T = any> = {
   accessor?: string; // The key in the record to access

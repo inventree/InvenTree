@@ -28,10 +28,10 @@ import {
   useParams
 } from 'react-router-dom';
 
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
+import { cancelEvent } from '@lib/functions/Events';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { identifierString } from '../../functions/conversion';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';

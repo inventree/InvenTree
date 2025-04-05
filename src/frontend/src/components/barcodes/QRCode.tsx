@@ -18,9 +18,9 @@ import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
 import type { QrCodeType } from '../items/ActionDropdown';

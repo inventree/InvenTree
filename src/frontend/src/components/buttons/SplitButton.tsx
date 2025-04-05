@@ -10,8 +10,8 @@ import {
 import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import type { TablerIconType } from '@lib/types/Icons';
 import { identifierString } from '../../functions/conversion';
-import type { TablerIconType } from '../../functions/icons';
 import * as classes from './SplitButton.css';
 
 interface SplitButtonOption {

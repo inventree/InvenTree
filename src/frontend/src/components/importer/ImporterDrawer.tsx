@@ -16,7 +16,7 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { useImportSession } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { StylishText } from '../items/StylishText';

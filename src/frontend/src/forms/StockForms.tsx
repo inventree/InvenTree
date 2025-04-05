@@ -13,16 +13,21 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+  ApiFormFieldSet,
+  ApiFormModalProps
+} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -30,20 +35,13 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
-import {
-  type ApiFormModalProps,
-  useCreateApiFormModal,
-  useDeleteApiFormModal
-} from '../hooks/UseForm';
+import { useCreateApiFormModal, useDeleteApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 

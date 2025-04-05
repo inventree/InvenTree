@@ -13,13 +13,14 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
