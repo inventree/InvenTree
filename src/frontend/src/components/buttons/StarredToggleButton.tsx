@@ -54,7 +54,11 @@ export default function StarredToggleButton({
       color={instance.starred ? 'green' : 'blue'}
       size='lg'
       variant={instance.starred ? 'filled' : 'outline'}
-      tooltip={t`Unsubscribe from part`}
+      tooltip={
+        instance.starred
+          ? t`Unsubscribe from notifications`
+          : t`Subscribe to notifications`
+      }
       onClick={() => change(instance.starred, instance.pk)}
       tooltipAlignment='bottom'
     />
