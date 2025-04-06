@@ -63,6 +63,11 @@ export default function RemoteComponent({
       return;
     }
 
+    const ctx: InvenTreePluginContext = {
+      ...context,
+      reloadContent: reloadPluginContent
+    };
+
     if (sourceFile && functionName) {
       findExternalPluginFunction(sourceFile, functionName)
         .then((func) => {
@@ -71,7 +76,7 @@ export default function RemoteComponent({
               if (func.length > 1) {
                 // Support "legacy" plugin functions which call createRoot() internally
                 // Ref: https://github.com/inventree/InvenTree/pull/9439/
-                func(componentRef.current, context);
+                func(componentRef.current, ctx);
               } else {
                 // Render the plugin component into the target element
                 // Note that we have to provide the right context(s) to the component
@@ -79,10 +84,10 @@ export default function RemoteComponent({
                 rootElement.render(
                   <ApiProvider client={queryClient} api={api}>
                     <MantineProvider
-                      theme={context.theme}
-                      defaultColorScheme={context.colorScheme}
+                      theme={ctx.theme}
+                      defaultColorScheme={ctx.colorScheme}
                     >
-                      <LanguageContext>{func(context)}</LanguageContext>
+                      <LanguageContext>{func(ctx)}</LanguageContext>
                     </MantineProvider>
                   </ApiProvider>
                 );
