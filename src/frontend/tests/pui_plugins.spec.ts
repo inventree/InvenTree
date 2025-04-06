@@ -75,9 +75,14 @@ test('Plugins - Functionality', async ({ browser }) => {
   // Activate the plugin
   const cell = await page.getByText('Sample API Caller', { exact: true });
   await clickOnRowMenu(cell);
-  await page.getByRole('menuitem', { name: 'Activate' }).click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('The plugin was activated').waitFor();
+  await page.waitForTimeout(100);
+
+  // Activate the plugin (unless already activated)
+  if ((await page.getByRole('menuitem', { name: 'Deactivate' }).count()) == 0) {
+    await page.getByRole('menuitem', { name: 'Activate' }).click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('The plugin was activated').waitFor();
+  }
 
   // Deactivate the plugin again
   await clickOnRowMenu(cell);
