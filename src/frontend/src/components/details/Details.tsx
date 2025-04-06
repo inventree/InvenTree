@@ -5,6 +5,7 @@ import {
   Badge,
   Group,
   HoverCard,
+  type MantineColor,
   Paper,
   Skeleton,
   Stack,
@@ -380,9 +381,12 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     value = data?.name;
   }
 
+  let color: MantineColor | undefined = undefined;
+
   if (value === undefined) {
     value = data?.name ?? props.field_data?.backup_value ?? t`No name defined`;
     make_link = false;
+    color = 'red';
   }
 
   return (
@@ -392,7 +396,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
           <Text>{value}</Text>
         </Anchor>
       ) : (
-        <Text>{value}</Text>
+        <Text c={color}>{value}</Text>
       )}
     </>
   );

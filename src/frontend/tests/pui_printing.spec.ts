@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
-import { activateTableView, loadTab, navigate } from './helpers.js';
-import { doQuickLogin } from './login.js';
+import { activateTableView, loadTab } from './helpers.js';
+import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
 /*
@@ -8,10 +8,9 @@ import { setPluginState } from './settings.js';
  * Select a number of stock items from the table,
  * and print labels against them
  */
-test('Label Printing', async ({ page }) => {
-  await doQuickLogin(page);
+test('Label Printing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
-  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/web/stock/location/**');
 
   await loadTab(page, 'Stock Items');
@@ -50,10 +49,9 @@ test('Label Printing', async ({ page }) => {
  * Navigate to a PurchaseOrder detail page,
  * and print a report against it.
  */
-test('Report Printing', async ({ page }) => {
-  await doQuickLogin(page);
+test('Report Printing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
-  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/web/stock/location/**');
 
   // Navigate to a specific PurchaseOrder
@@ -81,9 +79,11 @@ test('Report Printing', async ({ page }) => {
   await page.context().close();
 });
 
-test('Report Editing', async ({ page, request }) => {
-  const [username, password] = ['admin', 'inventree'];
-  await doQuickLogin(page, username, password);
+test('Report Editing', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // activate the sample plugin for this test
   await setPluginState({
@@ -138,7 +138,7 @@ test('Report Editing', async ({ page, request }) => {
     .click();
   const msg = (await consoleLogPromise).args();
   expect(await msg[0].jsonValue()).toBe('updatePreview');
-  expect((await msg[1].jsonValue())[0]).toBe(newTextareaValue);
+  expect(await msg[1].jsonValue()).toBe(newTextareaValue);
 
   // deactivate the sample plugin again after the test
   await setPluginState({

@@ -214,7 +214,15 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         return self.get_rule_set(obj, 'return_order')
 
     def get_formsets_with_inlines(self, request, obj=None):
-        """Return all inline formsets."""
+        """Retrieve all inline formsets for the given request and object.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            obj (Model, optional): The model instance for which the formsets are being retrieved. Defaults to None.
+
+        Yields:
+            tuple: A tuple containing the formset and the corresponding inline instance.
+        """
         for inline in self.get_inline_instances(request, obj):
             # Hide RuleSetInline in the 'Add role' view
             if not isinstance(inline, RuleSetInline) or obj is not None:

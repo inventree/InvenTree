@@ -11,16 +11,7 @@ Context variables are provided to each template when it is rendered. The availab
 
 In addition to the model-specific context variables, the following global context variables are available to all templates:
 
-| Variable | Description |
-| --- | --- |
-| base_url | The base URL for the InvenTree instance |
-| date | Current date, represented as a Python datetime.date object |
-| datetime | Current datetime, represented as a Python datetime object |
-| template | The report template instance which is being rendered against |
-| template_description | Description of the report template |
-| template_name | Name of the report template |
-| template_revision | Revision of the report template |
-| user | User who made the request to render the template |
+{{ report_context("base", "global") }}
 
 ::: report.models.ReportTemplateBase.base_context
     options:
@@ -30,10 +21,7 @@ In addition to the model-specific context variables, the following global contex
 
 In addition to the [global context](#global-context), all *report* templates have access to the following context variables:
 
-| Variable | Description |
-| --- | --- |
-| page_size | The page size of the report |
-| landscape | Boolean value, True if the report is in landscape mode |
+{{ report_context("base", "report") }}
 
 Note that custom plugins may also add additional context variables to the report context.
 
@@ -45,17 +33,13 @@ Note that custom plugins may also add additional context variables to the report
 
 In addition to the [global context](#global-context), all *label* templates have access to the following context variables:
 
-| Variable | Description |
-| --- | --- |
-| width | The width of the label (in mm) |
-| height | The height of the label (in mm) |
+{{ report_context("base", "label") }}
 
 Note that custom plugins may also add additional context variables to the label context.
 
 ::: report.models.LabelTemplate.get_context
     options:
         show_source: True
-
 
 ## Template Types
 
@@ -76,19 +60,7 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 
 When printing a report or label against a [Build Order](../build/build.md) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| bom_items | Query set of all BuildItem objects associated with the BuildOrder |
-| build | The BuildOrder instance itself |
-| build_outputs | Query set of all BuildItem objects associated with the BuildOrder |
-| line_items | Query set of all build line items associated with the BuildOrder |
-| part | The Part object which is being assembled in the build order |
-| quantity | The total quantity of the part being assembled |
-| reference | The reference field of the BuildOrder |
-| title | The title field of the BuildOrder |
-| build.creation_date | The date when the build was created |
-| build.target_date | The given target date of the build order |
-| build.completion_date | The date when the build was completed |
+{{ report_context("models", "build") }}
 
 ::: build.models.Build.report_context
     options:
@@ -98,39 +70,29 @@ When printing a report or label against a [Build Order](../build/build.md) objec
 
 When printing a report or label against a [BuildOrderLineItem](../build/build.md) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| allocated_quantity | The quantity of the part which has been allocated to this build |
-| allocations | A query set of all StockItem objects which have been allocated to this build line |
-| bom_item | The BomItem associated with this line item |
-| build | The BuildOrder instance associated with this line item |
-| build_line | The build line instance itself |
-| part | The sub-part (component) associated with the linked BomItem instance |
-| quantity | The quantity required for this line item |
+{{ report_context("models", "buildline") }}
 
 ::: build.models.BuildLine.report_context
     options:
         show_source: True
 
-
 ### Sales Order
 
 When printing a report or label against a [SalesOrder](../order/sales_order.md) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| customer | The customer object associated with the SalesOrder |
-| description | The description field of the SalesOrder |
-| extra_lines | Query set of all extra lines associated with the SalesOrder |
-| lines | Query set of all line items associated with the SalesOrder |
-| order | The SalesOrder instance itself |
-| reference | The reference field of the SalesOrder |
-| title | The title (string representation) of the SalesOrder |
-| order.creation_date | The date when the order was created |
-| order.target_date | The given target date |
-| order.shipment_date | The date when the order was shipped to the customer |
+{{ report_context("models", "salesorder") }}
 
 ::: order.models.Order.report_context
+    options:
+        show_source: True
+
+### Sales Order Shipment
+
+When printing a report or label against a [SalesOrderShipment](../order/sales_order.md#sales-order-shipments) object, the following context variables are available:
+
+{{ report_context("models", "salesordershipment") }}
+
+::: order.models.SalesOrderShipment.report_context
     options:
         show_source: True
 
@@ -138,105 +100,39 @@ When printing a report or label against a [SalesOrder](../order/sales_order.md) 
 
 When printing a report or label against a [ReturnOrder](../order/return_order.md) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| customer | The customer object associated with the ReturnOrder |
-| description | The description field of the ReturnOrder |
-| extra_lines | Query set of all extra lines associated with the ReturnOrder |
-| lines | Query set of all line items associated with the ReturnOrder |
-| order | The ReturnOrder instance itself |
-| reference | The reference field of the ReturnOrder |
-| title | The title (string representation) of the ReturnOrder |
-| order.creation_date | The date when the order was created |
-| order.target_date | The given target date |
-| order.issue_date | The date when the return order was issued |
+{{ report_context("models", "returnorder") }}
 
 ### Purchase Order
 
 When printing a report or label against a [PurchaseOrder](../order/purchase_order.md) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| description | The description field of the PurchaseOrder |
-| extra_lines | Query set of all extra lines associated with the PurchaseOrder |
-| lines | Query set of all line items associated with the PurchaseOrder |
-| order | The PurchaseOrder instance itself |
-| reference | The reference field of the PurchaseOrder |
-| supplier | The supplier object associated with the PurchaseOrder |
-| title | The title (string representation) of the PurchaseOrder |
-| order.creation_date | The date when the order was created |
-| order.target_date | The given target date |
-| order.issue_date | The date then the order was issued |
-| order.complete_date | The date then the order was received and completed |
+{{ report_context("models", "purchaseorder") }}
 
 ### Stock Item
 
 When printing a report or label against a [StockItem](../stock/stock.md#stock-item) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| barcode_data | Generated barcode data for the StockItem |
-| barcode_hash | Hash of the barcode data |
-| batch | The batch code for the StockItem |
-| child_items | Query set of all StockItem objects which are children of this StockItem |
-| ipn | The IPN (internal part number) of the associated Part |
-| installed_items | Query set of all StockItem objects which are installed in this StockItem |
-| item | The StockItem object itself |
-| name | The name of the associated Part |
-| part | The Part object which is associated with the StockItem |
-| qr_data | Generated QR code data for the StockItem |
-| qr_url | Generated URL for embedding in a QR code |
-| parameters | Dict object containing the parameters associated with the base Part |
-| quantity | The quantity of the StockItem |
-| result_list | FLattened list of TestResult data associated with the stock item |
-| results | Dict object of TestResult data associated with the StockItem |
-| serial | The serial number of the StockItem |
-| stock_item | The StockItem object itself (shadow of 'item') |
-| tests | Dict object of TestResult data associated with the StockItem (shadow of 'results') |
-| test_keys | List of test keys associated with the StockItem |
-| test_template_list | List of test templates associated with the StockItem |
-| test_templates | Dict object of test templates associated with the StockItem |
+{{ report_context("models", "stockitem") }}
 
 ::: stock.models.StockItem.report_context
     options:
         show_source: True
 
-
 ### Stock Location
 
 When printing a report or label against a [StockLocation](../stock/stock.md#stock-location) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| location | The StockLocation object itself |
-| qr_data | Formatted QR code data for the StockLocation |
-| parent | The parent StockLocation object |
-| stock_location | The StockLocation object itself (shadow of 'location') |
-| stock_items | Query set of all StockItem objects which are located in the StockLocation |
+{{ report_context("models", "stocklocation") }}
 
 ::: stock.models.StockLocation.report_context
     options:
         show_source: True
 
-
 ### Part
 
 When printing a report or label against a [Part](../part/part.md) object, the following context variables are available:
 
-| Variable | Description |
-| --- | --- |
-| bom_items | Query set of all BomItem objects associated with the Part |
-| category | The PartCategory object associated with the Part |
-| description | The description field of the Part |
-| IPN | The IPN (internal part number) of the Part |
-| name | The name of the Part |
-| parameters | Dict object containing the parameters associated with the Part |
-| part | The Part object itself |
-| qr_data | Formatted QR code data for the Part |
-| qr_url | Generated URL for embedding in a QR code |
-| revision | The revision of the Part |
-| test_template_list | List of test templates associated with the Part |
-| test_templates | Dict object of test templates associated with the Part |
+{{ report_context("models", "part") }}
 
 ::: part.models.Part.report_context
     options:

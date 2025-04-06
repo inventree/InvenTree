@@ -84,7 +84,8 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
 
             return func({
               featureContext,
-              inventreeContext
+              inventreeContext,
+              serverContext: feature.context
             });
           }) as PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>
         };
