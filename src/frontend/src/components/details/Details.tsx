@@ -3,6 +3,7 @@ import {
   Anchor,
   Badge,
   Group,
+  type MantineColor,
   Paper,
   Skeleton,
   Stack,
