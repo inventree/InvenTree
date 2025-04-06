@@ -66,6 +66,7 @@ class PluginsRegistry:
         'inventreelabel',
         'inventreelabelmachine',
         'inventreelabelsheet',
+        'parameter-exporter',
     ]
 
     def __init__(self) -> None:
@@ -108,10 +109,13 @@ class PluginsRegistry:
     def get_plugin(self, slug, active=None, with_mixin=None):
         """Lookup plugin by slug (unique key).
 
-        Arguments:
-            slug {str}: The slug (unique key) of the plugin
-            active {bool, None}: Filter by 'active' status of plugin. Defaults to None.
-            with_mixin {str, None}: Filter by mixin. Defaults to None.
+        Args:
+            slug (str): The slug of the plugin to look up.
+            active (bool, optional): Filter by 'active' status of the plugin. If None, no filtering is applied. Defaults to None.
+            with_mixin (str, optional): Filter by mixin name. If None, no filtering is applied. Defaults to None.
+
+        Returns:
+            InvenTreePlugin or None: The plugin instance if found, otherwise None.
         """
         # Check if the registry needs to be reloaded
         self.check_reload()

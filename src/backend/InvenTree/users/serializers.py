@@ -52,7 +52,7 @@ class GroupSerializer(InvenTreeModelSerializer):
 
     permissions = serializers.SerializerMethodField(allow_null=True)
 
-    def get_permissions(self, group: Group):
+    def get_permissions(self, group: Group) -> dict:
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
 
@@ -109,7 +109,7 @@ class RoleSerializer(InvenTreeModelSerializer):
         return generate_permission_dict(permissions)
 
 
-def generate_permission_dict(permissions):
+def generate_permission_dict(permissions) -> dict:
     """Generate a dictionary of permissions for a given set of permissions."""
     perms = {}
 

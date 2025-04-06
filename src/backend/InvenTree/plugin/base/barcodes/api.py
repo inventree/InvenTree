@@ -37,12 +37,13 @@ class BarcodeView(CreateAPIView):
     # Default serializer class (can be overridden)
     serializer_class = barcode_serializers.BarcodeSerializer
 
-    def log_scan(self, request, response=None, result=False):
+    def log_scan(self, request, response=None, result: bool = False):
         """Log a barcode scan to the database.
 
         Arguments:
             request: HTTP request object
             response: Optional response data
+            result: Boolean indicating success or failure of the scan
         """
         from common.models import BarcodeScanResult
 

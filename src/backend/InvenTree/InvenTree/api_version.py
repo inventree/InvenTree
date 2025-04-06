@@ -1,16 +1,29 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 329
+INVENTREE_API_VERSION = 323
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-
-v329 - 2025-03-31 : https://github.com/inventree/InvenTree/pull/8191
+v333 - 2025-04-06 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
+
+v332 - 2025-04-02 : https://github.com/inventree/InvenTree/pull/9393
+    - Adds 'search_notes' parameter to all searchable API endpoints
+
+v331 - 2025-04-01 : https://github.com/inventree/InvenTree/pull/9437
+    - Set correct types on various formerly-string PK fields as well permissions
+    - Include metadata request and response types
+
+v330 - 2025-03-31 : https://github.com/inventree/InvenTree/pull/9420
+    - Deconflict operation id between single and bulk destroy operations
+    - Add request body definition for bulk destroy operations
+
+v329 - 2025-03-30 : https://github.com/inventree/InvenTree/pull/9399
+    - Convert url path regex-specified PKs to int
 
 v228 - 2025-03-29 : https://github.com/inventree/InvenTree/pull/9407
     - Updates schema to include paging arguments
