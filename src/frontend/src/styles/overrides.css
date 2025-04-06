@@ -1,0 +1,5 @@
+/* mantine-datatable overrides */
+.mantine-datatable-pointer-cursor,
+.mantine-datatable-context-menu-cursor {
+  cursor: pointer;
+}
