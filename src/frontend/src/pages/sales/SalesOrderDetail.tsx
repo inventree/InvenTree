@@ -583,8 +583,9 @@ export default function SalesOrderDetail() {
             pageKey='salesorder'
             panels={orderPanels}
             model={ModelType.salesorder}
-            id={order.pk}
+            reloadInstance={refreshInstance}
             instance={order}
+            id={order.pk}
           />
         </Stack>
       </InstanceDetail>

@@ -569,6 +569,7 @@ export default function BuildDetail() {
             pageKey='build'
             panels={buildPanels}
             instance={build}
+            reloadInstance={refreshInstance}
             model={ModelType.build}
             id={build.pk}
           />

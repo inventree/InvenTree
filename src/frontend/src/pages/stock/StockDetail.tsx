@@ -931,8 +931,9 @@ export default function StockDetail() {
           pageKey='stockitem'
           panels={stockPanels}
           model={ModelType.stockitem}
-          id={stockitem.pk}
+          reloadInstance={refreshInstance}
           instance={stockitem}
+          id={stockitem.pk}
         />
         {editStockItem.modal}
         {duplicateStockItem.modal}

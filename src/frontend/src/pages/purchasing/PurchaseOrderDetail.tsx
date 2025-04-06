@@ -538,6 +538,7 @@ export default function PurchaseOrderDetail() {
             panels={orderPanels}
             model={ModelType.purchaseorder}
             instance={order}
+            reloadInstance={refreshInstance}
             id={order.pk}
           />
         </Stack>

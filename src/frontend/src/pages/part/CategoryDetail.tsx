@@ -360,6 +360,7 @@ export default function CategoryDetail() {
             panels={panels}
             model={ModelType.partcategory}
             instance={category}
+            reloadInstance={refreshInstance}
             id={category.pk ?? null}
           />
         </Stack>

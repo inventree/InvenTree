@@ -33,10 +33,12 @@ export type PluginPanelSet = {
 
 export function usePluginPanels({
   instance,
+  reloadFunc,
   model,
   id
 }: {
   instance?: any;
+  reloadFunc?: () => void;
   model?: ModelType | string;
   id?: string | number | null;
 }): PluginPanelSet {
@@ -82,9 +84,10 @@ export function usePluginPanels({
     useMemo<InvenTreePluginContext>(() => {
       return {
         ...inventreeContext,
-        model: model,
         id: id,
-        instance: instance
+        model: model,
+        instance: instance,
+        reloadInstance: reloadFunc
       };
     }, [model, id, instance, inventreeContext]);
 

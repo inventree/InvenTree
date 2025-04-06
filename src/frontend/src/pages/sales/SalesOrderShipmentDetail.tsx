@@ -375,6 +375,7 @@ export default function SalesOrderShipmentDetail() {
             pageKey='salesordershipment'
             panels={shipmentPanels}
             model={ModelType.salesordershipment}
+            reloadInstance={refreshShipment}
             instance={shipment}
             id={shipment.pk}
           />

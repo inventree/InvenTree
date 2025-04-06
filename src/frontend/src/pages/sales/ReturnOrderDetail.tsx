@@ -519,6 +519,7 @@ export default function ReturnOrderDetail() {
             pageKey='returnorder'
             panels={orderPanels}
             model={ModelType.returnorder}
+            reloadInstance={instanceQuery.refetch}
             instance={order}
             id={order.pk}
           />

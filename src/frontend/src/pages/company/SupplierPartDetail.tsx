@@ -423,6 +423,7 @@ export default function SupplierPartDetail() {
             pageKey='supplierpart'
             panels={panels}
             instance={supplierPart}
+            reloadInstance={refreshInstance}
             model={ModelType.supplierpart}
             id={supplierPart.pk}
           />

@@ -90,6 +90,7 @@ export default function GroupDetail() {
           model={ModelType.group}
           id={instance.pk}
           instance={instance}
+          reloadInstance={instanceQuery.refetch}
         />
       </Stack>
     </InstanceDetail>

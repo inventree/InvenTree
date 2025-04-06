@@ -342,6 +342,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             pageKey='company'
             panels={companyPanels}
             instance={company}
+            reloadInstance={refreshInstance}
             model={ModelType.company}
             id={company.pk}
           />

@@ -186,6 +186,7 @@ export default function UserDetail() {
           model={ModelType.user}
           id={instance.pk}
           instance={instance}
+          reloadInstance={instanceQuery.refetch}
         />
       </Stack>
     </InstanceDetail>

@@ -297,6 +297,7 @@ export default function ManufacturerPartDetail() {
             pageKey='manufacturerpart'
             panels={panels}
             instance={manufacturerPart}
+            reloadInstance={refreshInstance}
             model={ModelType.manufacturerpart}
             id={manufacturerPart.pk}
           />

@@ -38,6 +38,7 @@ export type InvenTreeFormsContext = {
  * @param model - The model type associated with the rendered component (if applicable)
  * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
  * @param instance - The model instance data (if available)
+ * @param reloadInstance - A function which can be called to reload the model instance
  * @param context - Any additional context data which may be passed to the plugin
  */
 export type InvenTreePluginContext = {
@@ -56,6 +57,7 @@ export type InvenTreePluginContext = {
   model?: ModelType | string;
   id?: string | number | null;
   instance?: any;
+  reloadInstance?: () => void;
   context?: any;
 };
 

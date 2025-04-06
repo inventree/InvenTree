@@ -1059,6 +1059,7 @@ export default function PartDetail() {
             pageKey='part'
             panels={partPanels}
             instance={part}
+            reloadInstance={refreshInstance}
             model={ModelType.part}
             id={part.pk}
           />

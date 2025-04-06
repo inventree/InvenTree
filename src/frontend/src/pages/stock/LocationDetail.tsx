@@ -401,7 +401,8 @@ export default function Stock() {
             pageKey='stocklocation'
             panels={locationPanels}
             model={ModelType.stocklocation}
-            id={location.pk ?? null}
+            reloadInstance={refreshInstance}
+            id={location?.pk}
             instance={location}
           />
           {transferStockItems.modal}
