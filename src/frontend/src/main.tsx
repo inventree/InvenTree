@@ -14,6 +14,7 @@ import * as MantineNotifications from '@mantine/notifications';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
+import './styles/overrides.css';
 
 import { getBaseUrl } from '@lib/functions/Navigation';
 import type { HostList } from '@lib/types/Server';
@@ -107,6 +108,11 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
 (window as any).MantineCore = MantineCore;
 (window as any).MantineNotifications = MantineNotifications;
 
+// Redirect to base url if on /
+if (window.location.pathname === '/') {
+  window.location.replace(`/${getBaseUrl()}`);
+}
+
 ReactDOMClient.createRoot(
   document.getElementById('root') as HTMLElement
 ).render(
@@ -114,8 +120,3 @@ ReactDOMClient.createRoot(
     <MainView />
   </React.StrictMode>
 );
-
-// Redirect to base url if on /
-if (window.location.pathname === '/') {
-  window.location.replace(`/${getBaseUrl()}`);
-}
