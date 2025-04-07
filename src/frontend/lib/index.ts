@@ -4,6 +4,7 @@ export { INVENTREE_PLUGIN_VERSION } from './types/Plugins';
 // Common type definitions
 export { ApiEndpoints } from './enums/ApiEndpoints';
 export { ModelType } from './enums/ModelType';
+export { UserRoles, UserPermissions } from './enums/Roles';
 
 export type { InvenTreePluginContext } from './types/Plugins';
 
