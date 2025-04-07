@@ -585,11 +585,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
-    status_custom_key = StockStatusCustomSerializer(
-        choices=StockStatus.items(custom=True),
-        default=StockStatus.OK.value,
-        label=_('Status'),
-    )
+    status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     accept_incomplete_allocation = serializers.BooleanField(
         default=False,
