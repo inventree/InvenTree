@@ -103,7 +103,10 @@ export function GroupDrawer({
           url: ApiEndpoints.group_list,
           pk: id,
           fields: {
-            name: {}
+            name: {
+              label: t`Name`,
+              description: t`Name of the user group`
+            }
           },
           onFormSuccess: () => {
             refreshTable();
@@ -185,8 +188,13 @@ export function GroupTable({
 
   const newGroup = useCreateApiFormModal({
     url: ApiEndpoints.group_list,
-    title: t`Add group`,
-    fields: { name: {} },
+    title: t`Add Group`,
+    fields: {
+      name: {
+        label: t`Name`,
+        description: t`Name of the user group`
+      }
+    },
     table: table
   });
 
@@ -210,7 +218,7 @@ export function GroupTable({
       {newGroup.modal}
       {deleteGroup.modal}
       <DetailDrawer
-        title={t`Edit group`}
+        title={t`Edit Group`}
         renderContent={(id) => {
           if (!id || !id.startsWith('group-')) return false;
           return (

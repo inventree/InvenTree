@@ -265,6 +265,8 @@ export function UserTable() {
   const tableActions = useMemo(() => {
     const actions = [];
 
+    console.log('tableActions:', user.hasAddPermission(ModelType.user));
+
     actions.push(
       <AddItemButton
         key='add-user'
@@ -302,7 +304,7 @@ export function UserTable() {
       {newUser.modal}
       {deleteUser.modal}
       <DetailDrawer
-        title={t`Edit user`}
+        title={t`Edit User`}
         renderContent={(id) => {
           if (!id || !id.startsWith('user-')) return false;
           return (
