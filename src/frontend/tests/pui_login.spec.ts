@@ -59,6 +59,7 @@ test('Login - Change Password', async ({ page }) => {
   await page.getByRole('button', { name: 'Confirm' }).click();
   await page.getByText('The two password fields didn’t match').waitFor();
 
+  await page.getByLabel('input-password-2').clear();
   await page.getByLabel('input-password-2').fill('12345');
   await page.getByRole('button', { name: 'Confirm' }).click();
 
@@ -66,6 +67,7 @@ test('Login - Change Password', async ({ page }) => {
   await page.getByText('This password is entirely numeric').waitFor();
 
   await page.getByLabel('input-password-1').fill('youshallnotpass');
+  await page.getByLabel('input-password-2').clear();
   await page.getByLabel('input-password-2').fill('youshallnotpass');
   await page.getByRole('button', { name: 'Confirm' }).click();
 
