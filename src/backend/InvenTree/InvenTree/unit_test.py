@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest import mock
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
@@ -25,16 +25,23 @@ from plugin import registry
 from plugin.models import PluginConfig
 
 
-def addUserPermission(user, permission):
-    """Shortcut function for adding a certain permission to a user."""
-    perm = Permission.objects.get(codename=permission)
-    user.user_permissions.add(perm)
+def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:
+    """Add a specific permission for the provided user.
 
+    Arguments:
+        user: The user to add the permission to
+        app_name: The name of the app (e.g. 'part')
+        model_name: The name of the model (e.g. 'location')
+        perm: The permission to add (e.g. 'add', 'change', 'delete', 'view')
+    """
+    # Get the permission object
+    permission = Permission.objects.get(
+        content_type__model=model_name, codename=f'{perm}_{model_name}'
+    )
 
-def addUserPermissions(user, permissions):
-    """Shortcut function for adding multiple permissions to a user."""
-    for permission in permissions:
-        addUserPermission(user, permission)
+    # Add the permission to the user
+    user.user_permissions.add(permission)
+    user.save()
 
 
 def getMigrationFileNames(app):

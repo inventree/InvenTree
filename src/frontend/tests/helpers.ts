@@ -55,6 +55,7 @@ export const setTableChoiceFilter = async (page, filter, value) => {
   await page.getByPlaceholder('Select filter value').click();
   await page.getByRole('option', { name: value }).click();
 
+  await page.waitForLoadState('networkidle');
   await closeFilterDrawer(page);
 };
 
