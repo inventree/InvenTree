@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Badge, Grid, Skeleton, Stack } from '@mantine/core';
+import { Badge, Group, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -33,6 +33,8 @@ export default function UserDetail() {
     endpoint: ApiEndpoints.user_list,
     pk: id
   });
+
+  const userGroups: any[] = useMemo(() => instance?.groups ?? [], [instance]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -74,6 +76,44 @@ export default function UserDetail() {
 
     const tr: DetailsField[] = [
       {
+        type: 'boolean',
+        name: 'is_active',
+        label: t`Active`,
+        icon: 'info'
+      },
+      {
+        type: 'boolean',
+        name: 'is_staff',
+        label: t`Staff`,
+        icon: 'info'
+      },
+      {
+        type: 'boolean',
+        name: 'is_superuser',
+        label: t`Superuser`,
+        icon: 'info'
+      },
+      {
+        type: 'text',
+        name: 'groups',
+        label: t`Groups`,
+        icon: 'group',
+        copy: false,
+        hidden: !userGroups,
+        value_formatter: () => {
+          return (
+            <Group gap='xs'>
+              {userGroups?.map((group) => (
+                <Badge key={group.pk}>{group.name}</Badge>
+              ))}
+            </Group>
+          );
+        }
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
         type: 'text',
         name: 'displayname',
         label: t`Display Name`,
@@ -88,12 +128,7 @@ export default function UserDetail() {
         icon: 'info',
         hidden: !instance.position
       },
-      {
-        type: 'boolean',
-        name: 'is_active',
-        label: t`Active`,
-        icon: 'info'
-      },
+
       {
         type: 'text',
         name: 'contact',
@@ -127,19 +162,24 @@ export default function UserDetail() {
       }
     ];
 
+    const hasProfile =
+      instance.displayname ||
+      instance.position ||
+      instance.contact ||
+      instance.organisation ||
+      instance.status ||
+      instance.location;
+
     return (
       <ItemDetailsGrid>
-        <Grid grow>
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={instance} />
-          </Grid.Col>
-        </Grid>
-        {settings.isSet('DISPLAY_PROFILE_INFO') && (
-          <DetailsTable fields={tr} item={instance} />
+        <DetailsTable fields={tl} item={instance} />
+        <DetailsTable fields={tr} item={instance} />
+        {hasProfile && settings.isSet('DISPLAY_PROFILE_INFO') && (
+          <DetailsTable fields={br} item={instance} />
         )}
       </ItemDetailsGrid>
     );
-  }, [instance, instanceQuery]);
+  }, [instance, userGroups, instanceQuery]);
 
   const userPanels: PanelType[] = useMemo(() => {
     return [
