@@ -42,12 +42,6 @@ export default function UserDetail() {
     const tl: DetailsField[] = [
       {
         type: 'text',
-        name: 'email',
-        label: t`Email`,
-        copy: true
-      },
-      {
-        type: 'text',
         name: 'username',
         label: t`Username`,
         icon: 'info',
@@ -58,14 +52,23 @@ export default function UserDetail() {
         name: 'first_name',
         label: t`First Name`,
         icon: 'info',
-        copy: true
+        copy: true,
+        hidden: !instance.first_name
       },
       {
         type: 'text',
         name: 'last_name',
         label: t`Last Name`,
         icon: 'info',
-        copy: true
+        copy: true,
+        hidden: !instance.last_name
+      },
+      {
+        type: 'text',
+        name: 'email',
+        label: t`Email`,
+        copy: true,
+        hidden: !instance.email
       }
     ];
 
@@ -75,17 +78,19 @@ export default function UserDetail() {
         name: 'displayname',
         label: t`Display Name`,
         icon: 'user',
-        copy: true
+        copy: true,
+        hidden: !instance.displayname
       },
       {
         type: 'text',
         name: 'position',
         label: t`Position`,
-        icon: 'info'
+        icon: 'info',
+        hidden: !instance.position
       },
       {
         type: 'boolean',
-        name: 'active',
+        name: 'is_active',
         label: t`Active`,
         icon: 'info'
       },
@@ -94,27 +99,31 @@ export default function UserDetail() {
         name: 'contact',
         label: t`Contact`,
         icon: 'email',
-        copy: true
+        copy: true,
+        hidden: !instance.contact
       },
       {
         type: 'text',
         name: 'organisation',
         label: t`Organisation`,
         icon: 'info',
-        copy: true
+        copy: true,
+        hidden: !instance.organisation
       },
       {
         type: 'text',
         name: 'status',
         label: t`Status`,
-        icon: 'note'
+        icon: 'note',
+        hidden: !instance.status
       },
       {
         type: 'text',
         name: 'location',
         label: t`Location`,
         icon: 'location',
-        copy: true
+        copy: true,
+        hidden: !instance.location
       }
     ];
 
