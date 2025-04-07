@@ -1440,6 +1440,9 @@ SPECTACULAR_SETTINGS = {
         'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
         'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
         'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
+        # Allauth
+        'UnauthorizedStatus': [[401, 401]],
+        'IsTrueEnum': [[True, True]],
     },
 }
 
