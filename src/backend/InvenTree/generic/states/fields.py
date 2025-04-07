@@ -143,16 +143,22 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
         if self.status_class:
             validators.append(CustomStatusCodeValidator(status_class=self.status_class))
 
-        extra_help_text = (
-            '. Can be any of the keys in the corresponding status field, as well as any defined custom keys for the status type.'
-            if InvenTree.ready.isGeneratingSchema()
-            else ''
-        )
+        help_text = _('Additional status information for this item')
+        if InvenTree.ready.isGeneratingSchema():
+            help_text = (
+                help_text
+                + '\n\n'
+                + '\n'.join(
+                    f'* `{value}` - {label}'
+                    for value, label in self.status_class.items(custom=True)
+                )
+                + "\n\nAdditional custom status keys may be retrieved from the corresponding 'status_retrieve' call."
+            )
+
         custom_key_field = ExtraInvenTreeCustomStatusModelField(
             default=None,
             verbose_name=_('Custom status key'),
-            help_text=_('Additional status information for this item')
-            + extra_help_text,
+            help_text=help_text,
             validators=validators,
             blank=True,
             null=True,
