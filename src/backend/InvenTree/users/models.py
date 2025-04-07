@@ -686,7 +686,7 @@ def update_group_roles(group, debug=False):
                         )
 
 
-def check_user_permission(user: User, model, permission) -> bool:
+def check_user_permission(user: User, model: models.Model, permission: str) -> bool:
     """Check if the user has a particular permission against a given model type.
 
     Arguments:
@@ -707,7 +707,7 @@ def check_user_permission(user: User, model, permission) -> bool:
     return user.has_perm(permission_name)
 
 
-def check_user_role(user: User, role, permission) -> bool:
+def check_user_role(user: User, role: str, permission: str) -> bool:
     """Check if a user has a particular role:permission combination.
 
     Arguments:

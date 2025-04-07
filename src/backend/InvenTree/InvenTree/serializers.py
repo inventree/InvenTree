@@ -112,10 +112,13 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
         if 'help_text' not in kwargs:
             kwargs['help_text'] = _('Select currency from available options')
+
         if InvenTree.ready.isGeneratingSchema():
             kwargs['help_text'] = (
                 kwargs['help_text']
-                + ". This should be a three-letter currency code (such as USD or AUD) from the 'CURRENCY_CODES' global setting."
+                + '\n\n'
+                + '\n'.join(f'* `{value}` - {label}' for value, label in choices)
+                + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
             )
 
         super().__init__(*args, **kwargs)

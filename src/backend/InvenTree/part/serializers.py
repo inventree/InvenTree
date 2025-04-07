@@ -1303,7 +1303,13 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
 @extend_schema_field(
     serializers.CharField(
-        help_text="This should be a three-letter currency code (such as USD or AUD) from the 'CURRENCY_CODES' global setting."
+        help_text=_('Select currency from available options')
+        + '\n\n'
+        + '\n'.join(
+            f'* `{value}` - {label}'
+            for value, label in common.currency.currency_code_mappings()
+        )
+        + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
     )
 )
 class PartPricingCurrencySerializer(serializers.ChoiceField):

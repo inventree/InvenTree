@@ -811,7 +811,7 @@ class IconList(ListAPI):
 
     def get_queryset(self):
         """Return a list of all available icon packages."""
-        return get_icon_packs().values()
+        return list(get_icon_packs().values())
 
 
 class SelectionListList(ListCreateAPI):
