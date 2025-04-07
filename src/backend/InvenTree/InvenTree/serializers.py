@@ -87,6 +87,21 @@ class InvenTreeMoneySerializer(MoneyField):
             return amount
 
 
+# class CurrencySerializerFix(OpenApiSerializerFieldExtension):
+#     target_class = 'InvenTree.serializers.InvenTreeCurrencySerializer'
+
+#     def map_serializer_field(self, auto_schema, direction):
+#         """Generate schema with choice documentation, then strip out the enum type to allow customizations."""
+#         schema = auto_schema._map_serializer_field(self.target, direction, bypass_extensions=True)
+#         schema.pop('enum')
+#         schema.pop('x-spec-enum-id')
+
+#         # Add schema-specific documentation notes
+#         schema['description'] = schema['description'] + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
+
+#         return schema
+
+
 @extend_schema_field(serializers.CharField())
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
     """Custom serializers for selecting currency option."""
@@ -112,10 +127,13 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
         if 'help_text' not in kwargs:
             kwargs['help_text'] = _('Select currency from available options')
+
         if InvenTree.ready.isGeneratingSchema():
             kwargs['help_text'] = (
                 kwargs['help_text']
-                + ". This should be a three-letter currency code (such as USD or AUD) from the 'CURRENCY_CODES' global setting."
+                + '\n\n'
+                + '\n'.join(f'* `{value}` - {label}' for value, label in choices)
+                + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
             )
 
         super().__init__(*args, **kwargs)
