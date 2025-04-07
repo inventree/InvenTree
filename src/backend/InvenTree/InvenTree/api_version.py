@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 332
+INVENTREE_API_VERSION = 323
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v333 - 2025-04-06 : https://github.com/inventree/InvenTree/pull/8191
+    - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
+
 v332 - 2025-04-02 : https://github.com/inventree/InvenTree/pull/9393
     - Adds 'search_notes' parameter to all searchable API endpoints
 
