@@ -38,6 +38,7 @@ Customize settings for search results:
 | ---- | ----------- | ------- | ----- |
 {{ usersetting("SEARCH_WHOLE") }}
 {{ usersetting("SEARCH_REGEX") }}
+{{ usersetting("SEARCH_NOTES") }}
 {{ usersetting("SEARCH_PREVIEW_RESULTS") }}
 {{ usersetting("SEARCH_PREVIEW_SHOW_PARTS") }}
 {{ usersetting("SEARCH_HIDE_INACTIVE_PARTS") }}

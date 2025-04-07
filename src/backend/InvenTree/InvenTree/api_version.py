@@ -1,15 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 331
+INVENTREE_API_VERSION = 333
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v331 - 2025-03-27 : https://github.com/inventree/InvenTree/pull/9333
+v333 - 2025-04-08 : https://github.com/inventree/InvenTree/pull/9333
     - Adds oAuth2 support for the API
+
+v332 - 2025-04-02 : https://github.com/inventree/InvenTree/pull/9393
+    - Adds 'search_notes' parameter to all searchable API endpoints
+
+v331 - 2025-04-01 : https://github.com/inventree/InvenTree/pull/9437
+    - Set correct types on various formerly-string PK fields as well permissions
+    - Include metadata request and response types
 
 v330 - 2025-03-31 : https://github.com/inventree/InvenTree/pull/9420
     - Deconflict operation id between single and bulk destroy operations

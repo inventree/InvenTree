@@ -306,7 +306,7 @@ class SupplierPartFilter(rest_filters.FilterSet):
         label=_('Company'), queryset=Company.objects.all(), method='filter_company'
     )
 
-    def filter_company(self, queryset, name, value):
+    def filter_company(self, queryset, name, value: int):
         """Filter the queryset by either manufacturer or supplier."""
         return queryset.filter(
             Q(manufacturer_part__manufacturer=value) | Q(supplier=value)

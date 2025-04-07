@@ -18,11 +18,12 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
+import common.models
 import InvenTree.permissions
 import InvenTree.version
 import users.models
 from common.settings import get_global_setting
-from InvenTree import helpers
+from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
@@ -582,6 +583,7 @@ class APISearchViewSerializer(serializers.Serializer):
     search = serializers.CharField()
     search_regex = serializers.BooleanField(default=False, required=False)
     search_whole = serializers.BooleanField(default=False, required=False)
+    search_notes = serializers.BooleanField(default=False, required=False)
     limit = serializers.IntegerField(default=1, required=False)
     offset = serializers.IntegerField(default=0, required=False)
 
@@ -643,6 +645,7 @@ class APISearchView(GenericAPIView):
             'search': '',
             'search_regex': False,
             'search_whole': False,
+            'search_notes': False,
             'limit': 1,
             'offset': 0,
         }
@@ -710,6 +713,9 @@ class MetadataView(RetrieveUpdateAPI):
     def get_model_type(self):
         """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
+
+        if ready.isGeneratingSchema():
+            model = common.models.ProjectCode
 
         if 'lookup_field' in self.kwargs:
             # Set custom lookup field (instead of default 'pk' value) if supplied
