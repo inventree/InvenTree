@@ -1,5 +1,6 @@
 """Schema processing functions for cleaning up generated schema."""
 
+from itertools import chain
 from typing import Optional
 
 from drf_spectacular.openapi import AutoSchema
@@ -76,5 +77,49 @@ def postprocess_required_nullable(result, generator, request, public):
                 required_fields.remove(field)
         if 'required' in schema and len(required_fields) == 0:
             schema.pop('required')
+
+    return result
+
+
+def postprocess_print_stats(result, generator, request, public):
+    """Prints statistics against schema."""
+    rlt_dict = {}
+    for path in result['paths']:
+        for method in result['paths'][path]:
+            sec = result['paths'][path][method].get('security', [])
+            scopes = list(filter(None, (item.get('oauth2') for item in sec)))
+            rlt_dict[f'{path}:{method}'] = {
+                'method': method,
+                'oauth': list(chain(*scopes)),
+                'sec': sec is None,
+            }
+
+    # Get paths without oauth2
+    no_oauth2 = [
+        path for path, details in rlt_dict.items() if not any(details['oauth'])
+    ]
+    no_oauth2_wa = [path for path in no_oauth2 if not path.startswith('/api/auth/v1/')]
+    # Get paths without security
+    no_security = [path for path, details in rlt_dict.items() if details['sec']]
+    # Get path counts per scope
+    scopes = {}
+    for path, details in rlt_dict.items():
+        if details['oauth']:
+            for scope in details['oauth']:
+                if scope not in scopes:
+                    scopes[scope] = []
+                scopes[scope].append(path)
+    # Sort scopes by keys
+    scopes = dict(sorted(scopes.items()))
+
+    # Print statistics
+    print('\nSchema statistics:')
+    print(f'Paths without oauth2:                   {len(no_oauth2)}')
+    print(f'Paths without oauth2 (without allauth): {len(no_oauth2_wa)}')
+    print(f'Paths without security:                 {len(no_security)}\n')
+    print('Scope stats:')
+    for scope, paths in scopes.items():
+        print(f'  {scope}: {len(paths)}')
+    print()
 
     return result
