@@ -33,7 +33,7 @@ invoke dev.schema -help
 Users must be authenticated to gain access to the InvenTree API. The API accepts either basic username:password authentication, or token authentication. Token authentication is recommended as it provides much faster API access.
 
 !!! warning "Permissions"
-    API access is restricted based on the permissions assigned to the user.
+    API access is restricted based on the permissions assigned to the user or scope of the application.
 
 ### Basic Auth
 
@@ -94,6 +94,46 @@ headers = {
 }
 response = request.get('http://localhost:8080/api/part/', data=data, headers=headers)
 ```
+
+### oAuth2 / OIDC
+
+!!! warning "Experimental"
+    This is an experimental feature that needs to be specifically enabled. See [Experimental features](../settings/experimental.md) for more information.
+
+InvenTree has built-in support for using [oAuth2](https://oauth.net/2/) and OpenID Connect (OIDC) for authentication to the API. This enables using the instance as a very limited identity provider.
+
+A default application using a public client with PKCE enabled ships with each instance. Intended to be used with the python api and configured with very wide scopes this can also be used for quick tests - the cliend_id is `zDFnsiRheJIOKNx6aCQ0quBxECg1QBHtVFDPloJ6`.
+
+#### Managing applications
+
+Superusers can register new applications and manage existing ones using a small application under the subpath `/o/applications/`.
+It is recommended to:
+- read the spec (RFC 6749 / 6750) and/or best practices (RFC 9700) before choosing client types
+- chose scopes as narrow as possible
+- configure redirection URIs as exact as possible
+
+#### Scopes
+
+InvenTree's oAuth scopes are strongly related to the [user roles](#user-roles).
+Names consist of 1. type, 2. kind and 3. (opt) role, separated by colons.
+
+
+There are 3 types:
+
+- a: administrative scopes - used for administrating the server - these can be staff or superuser scopes
+- g: general scopes - give wide access to the basic building blocks of InvenTree
+- r: role scopes - map to specific actions (2) and roles (3)
+
+Examples:
+```bash
+a:superuser
+g:read
+r:change:part
+r:delete:stock
+```
+
+!!! info "Read the API docs"
+    The API [documentation](#documentation) and [schema](./schema.md) list the required scopes for every API endpoint / interaction in the security sections.
 
 ## Authorization
 
