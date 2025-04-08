@@ -1,21 +1,43 @@
 """Ruleset definitions which control the InvenTree user permissions."""
 
+import enum
+
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+
+
+class RuleSetEnum(str, enum.Enum):
+    """Enumeration of ruleset names."""
+
+    def __str__(self):
+        """Return the string representation of the ruleset."""
+        return str(self.value)
+
+    ADMIN = 'admin'
+    PART_CATEGORY = 'part_category'
+    PART = 'part'
+    STOCKTAKE = 'stocktake'
+    STOCK_LOCATION = 'stock_location'
+    STOCK = 'stock'
+    BUILD = 'build'
+    PURCHASE_ORDER = 'purchase_order'
+    SALES_ORDER = 'sales_order'
+    RETURN_ORDER = 'return_order'
+
 
 # This is a list of all the ruleset choices available in the system.
 # These are used to determine the permissions available to a group of users.
 RULESET_CHOICES = [
-    ('admin', _('Admin')),
-    ('part_category', _('Part Categories')),
-    ('part', _('Parts')),
-    ('stocktake', _('Stocktake')),
-    ('stock_location', _('Stock Locations')),
-    ('stock', _('Stock Items')),
-    ('build', _('Build Orders')),
-    ('purchase_order', _('Purchase Orders')),
-    ('sales_order', _('Sales Orders')),
-    ('return_order', _('Return Orders')),
+    (RuleSetEnum.ADMIN, _('Admin')),
+    (RuleSetEnum.PART_CATEGORY, _('Part Categories')),
+    (RuleSetEnum.PART, _('Parts')),
+    (RuleSetEnum.STOCKTAKE, _('Stocktake')),
+    (RuleSetEnum.STOCK_LOCATION, _('Stock Locations')),
+    (RuleSetEnum.STOCK, _('Stock Items')),
+    (RuleSetEnum.BUILD, _('Build Orders')),
+    (RuleSetEnum.PURCHASE_ORDER, _('Purchase Orders')),
+    (RuleSetEnum.SALES_ORDER, _('Sales Orders')),
+    (RuleSetEnum.RETURN_ORDER, _('Return Orders')),
 ]
 
 # Ruleset names available in the system.
