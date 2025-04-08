@@ -1,24 +1,18 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import {
-  Alert,
-  List,
-  LoadingOverlay,
-  Spoiler,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core';
+import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
+import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
+import { StylishText } from '../../components/items/StylishText';
 import {
-  DetailDrawer,
-  DetailDrawerLink
-} from '../../components/nav/DetailDrawer';
+  TransferList,
+  type TransferListItem
+} from '../../components/items/TransferList';
+import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import {
@@ -87,75 +81,110 @@ export function UserDrawer({
     );
   }
 
-  return (
-    <Stack>
-      <EditApiForm
-        props={{
-          url: ApiEndpoints.user_list,
-          pk: id,
-          fields: {
-            username: {},
-            first_name: {},
-            last_name: {},
-            email: {},
-            is_active: {
-              label: t`Is Active`,
-              description: t`Designates whether this user should be treated as active. Unselect this instead of deleting accounts.`,
-              disabled: isCurrentUser
-            },
-            is_staff: {
-              label: t`Is Staff`,
-              description: t`Designates whether the user can log into the django admin site.`,
-              disabled: isCurrentUser
-            },
-            is_superuser: {
-              label: t`Is Superuser`,
-              description: t`Designates that this user has all permissions without explicitly assigning them.`,
-              disabled: isCurrentUser
-            }
-          },
-          postFormContent: isCurrentUser ? (
-            <Alert
-              title={<Trans>Info</Trans>}
-              color='blue'
-              icon={<IconInfoCircle />}
-            >
-              <Trans>
-                You cannot edit the rights for the currently logged-in user.
-              </Trans>
-            </Alert>
-          ) : undefined,
-          onFormSuccess: () => {
-            refreshTable();
-            refreshInstance();
-          }
-        }}
-        id={`user-detail-drawer-${id}`}
-      />
+  const left: TransferListItem[] = [
+    {
+      value: 'hello',
+      label: 'Hello'
+    },
+    {
+      value: 'world',
+      label: 'World'
+    },
+    {
+      value: 'foo',
+      label: 'Foo'
+    }
+  ];
 
-      <Stack>
-        <Title order={5}>
-          <Trans>Groups</Trans>
-        </Title>
-        <Spoiler maxHeight={125} showLabel='Show More' hideLabel='Show Less'>
-          <Text ml={'md'}>
-            {userDetail?.groups && userDetail?.groups?.length > 0 ? (
-              <List>
-                {userDetail?.groups?.map((group: any) => (
-                  <List.Item key={group.pk}>
-                    <DetailDrawerLink
-                      to={`../group-${group.pk}`}
-                      text={group.name}
-                    />
-                  </List.Item>
-                ))}
-              </List>
-            ) : (
-              <Trans>No groups</Trans>
-            )}
-          </Text>
-        </Spoiler>
-      </Stack>
+  const right: TransferListItem[] = [
+    {
+      value: 'bar',
+      label: 'Bar'
+    },
+    {
+      value: 'baz',
+      label: 'Baz'
+    }
+  ];
+
+  return (
+    <Stack gap='xs'>
+      <Accordion defaultValue={'details'}>
+        <Accordion.Item key='details' value='details'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>User Details</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <EditApiForm
+              props={{
+                url: ApiEndpoints.user_list,
+                pk: id,
+                fields: {
+                  username: {},
+                  first_name: {},
+                  last_name: {},
+                  email: {},
+                  is_active: {
+                    label: t`Is Active`,
+                    description: t`Designates whether this user should be treated as active. Unselect this instead of deleting accounts.`,
+                    disabled: isCurrentUser
+                  },
+                  is_staff: {
+                    label: t`Is Staff`,
+                    description: t`Designates whether the user can log into the django admin site.`,
+                    disabled: isCurrentUser
+                  },
+                  is_superuser: {
+                    label: t`Is Superuser`,
+                    description: t`Designates that this user has all permissions without explicitly assigning them.`,
+                    disabled: isCurrentUser
+                  }
+                },
+                postFormContent: isCurrentUser ? (
+                  <Alert
+                    title={<Trans>Info</Trans>}
+                    color='blue'
+                    icon={<IconInfoCircle />}
+                  >
+                    <Trans>
+                      You cannot edit the rights for the currently logged-in
+                      user.
+                    </Trans>
+                  </Alert>
+                ) : undefined,
+                onFormSuccess: () => {
+                  refreshTable();
+                  refreshInstance();
+                }
+              }}
+              id={`user-detail-drawer-${id}`}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item key='groups' value='groups'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>User Groups</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <TransferList
+              itemsLeft={left}
+              itemsRight={right}
+              titleLeft={t`Available Groups`}
+              titleRight={t`Assigned Groups`}
+              onSave={(left, right) => {
+                console.log('svaed:');
+                console.log('- left:', left);
+                console.log('- right:', right);
+              }}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </Stack>
   );
 }
@@ -265,8 +294,6 @@ export function UserTable() {
   const tableActions = useMemo(() => {
     const actions = [];
 
-    console.log('tableActions:', user.hasAddPermission(ModelType.user));
-
     actions.push(
       <AddItemButton
         key='add-user'
@@ -304,6 +331,7 @@ export function UserTable() {
       {newUser.modal}
       {deleteUser.modal}
       <DetailDrawer
+        size='xl'
         title={t`Edit User`}
         renderContent={(id) => {
           if (!id || !id.startsWith('user-')) return false;
@@ -320,10 +348,16 @@ export function UserTable() {
         tableState={table}
         columns={columns}
         props={{
-          rowActions: rowActions,
+          rowActions:
+            user.hasChangePermission(ModelType.user) ||
+            user.hasDeletePermission(ModelType.user)
+              ? rowActions
+              : undefined,
           tableActions: tableActions,
           tableFilters: tableFilters,
-          onRowClick: (record) => openDetailDrawer(record.pk)
+          onRowClick: user.hasChangePermission(ModelType.user)
+            ? (record) => openDetailDrawer(record.pk)
+            : undefined
         }}
       />
     </>
