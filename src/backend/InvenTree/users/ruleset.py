@@ -53,7 +53,7 @@ def get_ruleset_models() -> dict:
     This function maps particular database models to each ruleset.
     """
     ruleset_models = {
-        'admin': [
+        RuleSetEnum.ADMIN: [
             'auth_group',
             'auth_user',
             'auth_permission',
@@ -83,12 +83,12 @@ def get_ruleset_models() -> dict:
             'machine_machineconfig',
             'machine_machinesetting',
         ],
-        'part_category': [
+        RuleSetEnum.PART_CATEGORY: [
             'part_partcategory',
             'part_partcategoryparametertemplate',
             'part_partcategorystar',
         ],
-        'part': [
+        RuleSetEnum.PART: [
             'part_part',
             'part_partpricing',
             'part_bomitem',
@@ -105,14 +105,14 @@ def get_ruleset_models() -> dict:
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
         ],
-        'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
-        'stock_location': ['stock_stocklocation', 'stock_stocklocationtype'],
-        'stock': [
+        RuleSetEnum.STOCKTAKE: ['part_partstocktake', 'part_partstocktakereport'],
+        RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
+        RuleSetEnum.STOCK: [
             'stock_stockitem',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',
         ],
-        'build': [
+        RuleSetEnum.BUILD: [
             'part_part',
             'part_partcategory',
             'part_bomitem',
@@ -123,7 +123,7 @@ def get_ruleset_models() -> dict:
             'stock_stockitem',
             'stock_stocklocation',
         ],
-        'purchase_order': [
+        RuleSetEnum.PURCHASE_ORDER: [
             'company_company',
             'company_contact',
             'company_address',
@@ -135,7 +135,7 @@ def get_ruleset_models() -> dict:
             'order_purchaseorderlineitem',
             'order_purchaseorderextraline',
         ],
-        'sales_order': [
+        RuleSetEnum.SALES_ORDER: [
             'company_company',
             'company_contact',
             'company_address',
@@ -145,7 +145,7 @@ def get_ruleset_models() -> dict:
             'order_salesorderextraline',
             'order_salesordershipment',
         ],
-        'return_order': [
+        RuleSetEnum.RETURN_ORDER: [
             'company_company',
             'company_contact',
             'company_address',
