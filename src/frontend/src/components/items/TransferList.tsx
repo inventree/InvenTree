@@ -19,7 +19,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface TransferListItem {
-  value: string;
+  value: string | number;
   label: string;
   selected?: boolean;
 }
@@ -59,7 +59,7 @@ function TransferListGroup({
                 : undefined
             }}
           >
-            {item.value}
+            {item.label || item.value}
           </Text>
         ))}
         {items.length == 0 && <Text size='sm' fs='italic'>{t`No items`}</Text>}
@@ -69,28 +69,23 @@ function TransferListGroup({
 }
 
 export function TransferList({
-  itemsLeft,
-  itemsRight,
-  titleLeft,
-  titleRight,
+  available,
+  selected,
   onSave
 }: {
-  itemsLeft: TransferListItem[];
-  itemsRight: TransferListItem[];
-  titleLeft?: string;
-  titleRight?: string;
-  onSave?: (
-    leftItems: TransferListItem[],
-    rightItems: TransferListItem[]
-  ) => void;
+  available: TransferListItem[];
+  selected: TransferListItem[];
+  onSave?: (selected: TransferListItem[]) => void;
 }) {
-  const [leftItems, setLeftItems] = useState<TransferListItem[]>(itemsLeft);
-  const [rightItems, setRightItems] = useState<TransferListItem[]>(itemsRight);
+  const [leftItems, setLeftItems] = useState<TransferListItem[]>([]);
+  const [rightItems, setRightItems] = useState<TransferListItem[]>([]);
 
   useEffect(() => {
-    setLeftItems(itemsLeft);
-    setRightItems(itemsRight);
-  }, [itemsLeft, itemsRight]);
+    setRightItems(selected);
+    setLeftItems(
+      available.filter((item) => !selected.some((i) => i.value === item.value))
+    );
+  }, [available, selected]);
 
   const leftToggled = useCallback(
     (item: TransferListItem) => {
@@ -162,12 +157,10 @@ export function TransferList({
   return (
     <Paper p='sm' withBorder style={{ width: '100%' }}>
       <Stack gap='xs'>
-        {(titleLeft || titleRight) && (
-          <Group justify='space-between'>
-            <Text>{titleLeft}</Text>
-            <Text>{titleRight}</Text>
-          </Group>
-        )}
+        <Group justify='space-between'>
+          <Text>{t`Available`}</Text>
+          <Text>{t`Selected`}</Text>
+        </Group>
 
         <Group justify='space-aprt' wrap='nowrap' align='flex-start'>
           <TransferListGroup
@@ -223,7 +216,7 @@ export function TransferList({
             <Button
               color='green'
               onClick={() => {
-                onSave?.(leftItems, rightItems);
+                onSave?.(rightItems);
               }}
               leftSection={<IconCircleCheck />}
             >

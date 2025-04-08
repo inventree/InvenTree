@@ -4,7 +4,9 @@ import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { StylishText } from '../../components/items/StylishText';
@@ -15,6 +17,7 @@ import {
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { showApiErrorMessage } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -60,9 +63,63 @@ export function UserDrawer({
   });
 
   const currentUserPk = useUserState((s) => s.user?.pk);
+
   const isCurrentUser = useMemo(
     () => currentUserPk === Number.parseInt(id, 10),
     [currentUserPk, id]
+  );
+
+  const userGroups = useInstance({
+    endpoint: ApiEndpoints.group_list,
+    hasPrimaryKey: false,
+    defaultValue: []
+  });
+
+  const availableGroups: TransferListItem[] = useMemo(() => {
+    return (
+      userGroups.instance?.map((group: any) => {
+        return {
+          value: group.pk,
+          label: group.name
+        };
+      }) ?? []
+    );
+  }, [userGroups.instance]);
+
+  const selectedGroups: TransferListItem[] = useMemo(() => {
+    return (
+      userDetail?.groups?.map((group: any) => {
+        return {
+          value: group.pk,
+          label: group.name
+        };
+      }) ?? []
+    );
+  }, [userDetail]);
+
+  const onSaveGroups = useCallback(
+    (selected: TransferListItem[]) => {
+      if (userDetail.pk) {
+        api
+          .patch(apiUrl(ApiEndpoints.user_list, userDetail.pk), {
+            group_ids: selected.map((group) => group.value)
+          })
+          .then(() => {
+            showNotification({
+              title: t`Groups updated`,
+              message: t`User groups updated successfully`,
+              color: 'green'
+            });
+          })
+          .catch((error) => {
+            showApiErrorMessage({
+              error: error,
+              title: t`Error updating user groups`
+            });
+          });
+      }
+    },
+    [userDetail]
   );
 
   if (isFetching) {
@@ -80,32 +137,6 @@ export function UserDrawer({
       </Text>
     );
   }
-
-  const left: TransferListItem[] = [
-    {
-      value: 'hello',
-      label: 'Hello'
-    },
-    {
-      value: 'world',
-      label: 'World'
-    },
-    {
-      value: 'foo',
-      label: 'Foo'
-    }
-  ];
-
-  const right: TransferListItem[] = [
-    {
-      value: 'bar',
-      label: 'Bar'
-    },
-    {
-      value: 'baz',
-      label: 'Baz'
-    }
-  ];
 
   return (
     <Stack gap='xs'>
@@ -172,15 +203,9 @@ export function UserDrawer({
           </Accordion.Control>
           <Accordion.Panel>
             <TransferList
-              itemsLeft={left}
-              itemsRight={right}
-              titleLeft={t`Available Groups`}
-              titleRight={t`Assigned Groups`}
-              onSave={(left, right) => {
-                console.log('svaed:');
-                console.log('- left:', left);
-                console.log('- right:', right);
-              }}
+              available={availableGroups}
+              selected={selectedGroups}
+              onSave={onSaveGroups}
             />
           </Accordion.Panel>
         </Accordion.Item>

@@ -286,14 +286,13 @@ class ExtendedUserSerializer(UserSerializer):
 
     from users.serializers import GroupSerializer
 
-    groups = GroupSerializer(read_only=True, many=True)
-
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
 
         fields = [
             *UserSerializer.Meta.fields,
             'groups',
+            'group_ids',
             'is_staff',
             'is_superuser',
             'is_active',
@@ -301,6 +300,13 @@ class ExtendedUserSerializer(UserSerializer):
         ]
 
         read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
+
+    groups = GroupSerializer(many=True, read_only=True)
+
+    # Write-only field, for updating the groups associated with the user
+    group_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), many=True, write_only=True
+    )
 
     is_staff = serializers.BooleanField(
         label=_('Staff'), help_text=_('Does this user have staff permissions')
@@ -334,6 +340,20 @@ class ExtendedUserSerializer(UserSerializer):
                     _('You do not have permission to change this user role.')
                 )
         return super().validate(attrs)
+
+    def update(self, instance, validated_data):
+        """Update the user instance with the provided data."""
+        # Update the groups associated with the user
+        groups = validated_data.pop('group_ids', None)
+
+        instance = super().update(instance, validated_data)
+
+        if groups is not None:
+            instance.groups.set(groups)
+
+        print('groups:', instance.groups)
+
+        return instance
 
 
 class MeUserSerializer(ExtendedUserSerializer):
