@@ -114,8 +114,7 @@ export default function AdminCenter() {
         name: 'user',
         label: t`User Management`,
         icon: <IconUsersGroup />,
-        content: <UserManagementPanel />,
-        hidden: !user.hasViewRole(UserRoles.users)
+        content: <UserManagementPanel />
       },
       {
         name: 'import',
@@ -231,10 +230,15 @@ export default function AdminCenter() {
     ];
   }, []);
 
+  const isStaff = useMemo(
+    () => user.isStaff() && user.hasViewRole(UserRoles.admin),
+    [user]
+  );
+
   return (
     <>
       <PageTitle title={t`Admin Center`} />
-      {user.isStaff() ? (
+      {isStaff ? (
         <Stack gap='xs'>
           <SettingsHeader
             label='admin'
