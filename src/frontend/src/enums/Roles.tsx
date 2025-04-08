@@ -11,8 +11,7 @@ export enum UserRoles {
   sales_order = 'sales_order',
   stock = 'stock',
   stock_location = 'stock_location',
-  stocktake = 'stocktake',
-  users = 'users'
+  stocktake = 'stocktake'
 }
 
 /*

@@ -226,7 +226,6 @@ class RuleSet(models.Model):
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
         ('return_order', _('Return Orders')),
-        ('users', _('Users')),
     ]
 
     RULESET_NAMES = [choice[0] for choice in RULESET_CHOICES]
@@ -247,6 +246,15 @@ class RuleSet(models.Model):
                 'report_reportasset',
                 'report_reportsnippet',
                 'report_reporttemplate',
+                'account_emailaddress',
+                'account_emailconfirmation',
+                'socialaccount_socialaccount',
+                'socialaccount_socialapp',
+                'socialaccount_socialtoken',
+                'otp_totp_totpdevice',
+                'otp_static_statictoken',
+                'otp_static_staticdevice',
+                'mfa_authenticator',
                 'plugin_pluginconfig',
                 'plugin_pluginsetting',
                 'plugin_notificationusersetting',
@@ -328,23 +336,6 @@ class RuleSet(models.Model):
                 'order_returnorderlineitem',
                 'order_returnorderextraline',
             ],
-            'users': [
-                'auth_group',
-                'auth_user',
-                'auth_permission',
-                'users_owner',
-                'users_apitoken',
-                'users_ruleset',
-                'account_emailaddress',
-                'account_emailconfirmation',
-                'socialaccount_socialaccount',
-                'socialaccount_socialapp',
-                'socialaccount_socialtoken',
-                'otp_totp_totpdevice',
-                'otp_static_statictoken',
-                'otp_static_staticdevice',
-                'mfa_authenticator',
-            ],
         }
 
         if settings.SITE_MULTI:
@@ -375,6 +366,7 @@ class RuleSet(models.Model):
             'common_inventreecustomuserstatemodel',
             'common_selectionlistentry',
             'common_selectionlist',
+            'users_owner',
             'users_userprofile',  # User profile is handled in the serializer - only own user can change
             # Third-party tables
             'error_report_error',
