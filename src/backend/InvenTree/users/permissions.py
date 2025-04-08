@@ -46,12 +46,11 @@ def split_permission(app: str, perm: str) -> tuple[str, str]:
     """
     permission_name, *model = perm.split('_')
 
-    # Support models with underscores
-    if len(model) > 1:
+    # Handle models that have underscores
+    if len(model) > 1:  # pragma: no cover
         app += '_' + '_'.join(model[:-1])
-        perm = permission_name + '_' + model[-1][0]
-
-    model = model[-1][0]
+        perm = permission_name + '_' + model[-1:][0]
+    model = model[-1:][0]
     return perm, model
 
 
