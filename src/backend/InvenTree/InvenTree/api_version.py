@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 334
+INVENTREE_API_VERSION = 335
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v334 - 2025-04-08 : https://github.com/inventree/InvenTree/pull/9333
+v335 - 2025-04-08 : https://github.com/inventree/InvenTree/pull/9333
     - Adds oAuth2 support for the API
+
+v334 - 2025-04-08 : https://github.com/inventree/InvenTree/pull/9453
+    - Fixes various operationId and enum collisions and help texts
 
 v333 - 2025-04-03 : https://github.com/inventree/InvenTree/pull/9452
     - Currency string is no longer restricted to a hardcoded enum

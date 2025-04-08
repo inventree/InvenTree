@@ -1456,6 +1456,15 @@ SPECTACULAR_SETTINGS = {
         'drf_spectacular.hooks.postprocess_schema_enums',
         'InvenTree.schema.postprocess_required_nullable',
     ],
+    'ENUM_NAME_OVERRIDES': {
+        'UserTypeEnum': 'users.models.UserProfile.UserType',
+        'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
+        'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
+        'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
+        # Allauth
+        'UnauthorizedStatus': [[401, 401]],
+        'IsTrueEnum': [[True, True]],
+    },
     # oAuth2
     'OAUTH2_FLOWS': ['authorizationCode', 'clientCredentials'],
     'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
