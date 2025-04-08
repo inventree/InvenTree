@@ -68,13 +68,16 @@ def model_permission_string(model: models.Model, permission: str) -> str:
     return f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
 
 
-def check_user_role(user: User, role: str, permission: str) -> bool:
+def check_user_role(
+    user: User, role: str, permission: str, allow_inactive: bool = False
+) -> bool:
     """Check if a user has a particular role:permission combination.
 
     Arguments:
         user: The user object to check
         role: The role to check (e.g. 'part' / 'stock')
         permission: The permission to check (e.g. 'view' / 'delete')
+        allow_inactive: If False, disallow inactive users from having permissions
 
     Returns:
         bool: True if the user has the specified role:permission combination
@@ -82,6 +85,9 @@ def check_user_role(user: User, role: str, permission: str) -> bool:
     Note: As this check may be called frequently, we cache the result in the session cache.
     """
     if not user:
+        return False
+
+    if not user.is_active and not allow_inactive:
         return False
 
     if user.is_superuser:
@@ -112,13 +118,16 @@ def check_user_role(user: User, role: str, permission: str) -> bool:
     return result
 
 
-def check_user_permission(user: User, model: models.Model, permission: str) -> bool:
+def check_user_permission(
+    user: User, model: models.Model, permission: str, allow_inactive: bool = False
+) -> bool:
     """Check if the user has a particular permission against a given model type.
 
     Arguments:
         user: The user object to check
         model: The model class to check (e.g. 'part')
         permission: The permission to check (e.g. 'view' / 'delete')
+        allow_inactive: If False, disallow inactive users from having permissions
 
     Returns:
         bool: True if the user has the specified permission
@@ -126,6 +135,9 @@ def check_user_permission(user: User, model: models.Model, permission: str) -> b
     Note: As this check may be called frequently, we cache the result in the session cache.
     """
     if not user:
+        return False
+
+    if not user.is_active and not allow_inactive:
         return False
 
     if user.is_superuser:

@@ -104,23 +104,20 @@ def update_group_roles(group: Group, debug: bool = False) -> None:
     }
 
     # Get all the rulesets associated with this group
-    for r in RULESET_CHOICES:
-        rulename = r[0]
-
-        if rulename in rulesets:
-            ruleset = rulesets[rulename]
+    for rule_name, _rule_label in RULESET_CHOICES:
+        if rule_name in rulesets:
+            ruleset = rulesets[rule_name]
         else:
             try:
-                ruleset = RuleSet.objects.get(group=group, name=rulename)
+                ruleset = RuleSet.objects.get(group=group, name=rule_name)
             except RuleSet.DoesNotExist:
-                ruleset = RuleSet.objects.create(group=group, name=rulename)
+                ruleset = RuleSet.objects.create(group=group, name=rule_name)
 
         # Which database tables does this RuleSet touch?
         models = ruleset.get_models()
 
         for model in models:
             # Keep track of the available permissions for each model
-
             add_model(model, 'view', ruleset.can_view)
             add_model(model, 'add', ruleset.can_add)
             add_model(model, 'change', ruleset.can_change)
