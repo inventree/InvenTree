@@ -51,39 +51,6 @@ class RuleSetSerializer(InvenTreeModelSerializer):
         read_only_fields = ['pk', 'name', 'label', 'group']
 
 
-class GroupSerializer(InvenTreeModelSerializer):
-    """Serializer for a 'Group'."""
-
-    class Meta:
-        """Metaclass defines serializer fields."""
-
-        model = Group
-        fields = ['pk', 'name', 'permissions', 'roles']
-
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra fields as required."""
-        role_detail = kwargs.pop('role_detail', False)
-        permission_detail = kwargs.pop('permission_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        try:
-            if not permission_detail and not isGeneratingSchema():
-                self.fields.pop('permissions', None)
-            if not role_detail and not isGeneratingSchema():
-                self.fields.pop('roles', None)
-        except AppRegistryNotReady:
-            pass
-
-    permissions = serializers.SerializerMethodField(allow_null=True)
-
-    def get_permissions(self, group: Group) -> dict:
-        """Return a list of permissions associated with the group."""
-        return generate_permission_dict(group.permissions.all())
-
-    roles = RuleSetSerializer(source='rule_sets', many=True, read_only=True)
-
-
 class RoleSerializer(InvenTreeModelSerializer):
     """Serializer for a roles associated with a given user."""
 
@@ -279,6 +246,51 @@ class UserSerializer(InvenTreeModelSerializer):
     email = serializers.EmailField(
         label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
     )
+
+
+class GroupSerializer(InvenTreeModelSerializer):
+    """Serializer for a 'Group'."""
+
+    class Meta:
+        """Metaclass defines serializer fields."""
+
+        model = Group
+        fields = ['pk', 'name', 'permissions', 'roles', 'users']
+
+    def __init__(self, *args, **kwargs):
+        """Initialize this serializer with extra fields as required."""
+        role_detail = kwargs.pop('role_detail', False)
+        user_detail = kwargs.pop('user_detail', False)
+        permission_detail = kwargs.pop('permission_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        try:
+            if not isGeneratingSchema():
+                if not permission_detail:
+                    self.fields.pop('permissions', None)
+                if not role_detail:
+                    self.fields.pop('roles', None)
+                if not user_detail:
+                    self.fields.pop('users', None)
+
+        except AppRegistryNotReady:
+            pass
+
+    permissions = serializers.SerializerMethodField(allow_null=True, read_only=True)
+
+    def get_permissions(self, group: Group) -> dict:
+        """Return a list of permissions associated with the group."""
+        return generate_permission_dict(group.permissions.all())
+
+    roles = RuleSetSerializer(source='rule_sets', many=True, read_only=True)
+
+    users = UserSerializer(source='user_set', many=True, read_only=True)
+
+    def validate(self, data):
+        """Validate the provided data."""
+        print('validate:', data)
+        raise PermissionDenied('NO!')
 
 
 class ExtendedUserSerializer(UserSerializer):

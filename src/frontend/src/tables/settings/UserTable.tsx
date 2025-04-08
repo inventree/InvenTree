@@ -99,25 +99,30 @@ export function UserDrawer({
 
   const onSaveGroups = useCallback(
     (selected: TransferListItem[]) => {
-      if (userDetail.pk) {
-        api
-          .patch(apiUrl(ApiEndpoints.user_list, userDetail.pk), {
-            group_ids: selected.map((group) => group.value)
-          })
-          .then(() => {
-            showNotification({
-              title: t`Groups updated`,
-              message: t`User groups updated successfully`,
-              color: 'green'
-            });
-          })
-          .catch((error) => {
-            showApiErrorMessage({
-              error: error,
-              title: t`Error updating user groups`
-            });
-          });
+      if (!userDetail.pk) {
+        return;
       }
+      api
+        .patch(apiUrl(ApiEndpoints.user_list, userDetail.pk), {
+          group_ids: selected.map((group) => group.value)
+        })
+        .then(() => {
+          showNotification({
+            title: t`Groups updated`,
+            message: t`User groups updated successfully`,
+            color: 'green'
+          });
+        })
+        .catch((error) => {
+          showApiErrorMessage({
+            error: error,
+            title: t`Error updating user groups`
+          });
+        })
+        .finally(() => {
+          refreshInstance();
+          refreshTable();
+        });
     },
     [userDetail]
   );

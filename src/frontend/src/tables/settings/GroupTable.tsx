@@ -252,7 +252,9 @@ export function GroupDrawer({
     pk: id,
     throwError: true,
     params: {
-      permission_detail: true
+      permission_detail: true,
+      role_detail: true,
+      user_detail: true
     }
   });
 

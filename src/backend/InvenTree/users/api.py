@@ -198,6 +198,11 @@ class GroupMixin:
         kwargs['permission_detail'] = InvenTree.helpers.str2bool(
             params.get('permission_detail', None)
         )
+
+        kwargs['user_detail'] = InvenTree.helpers.str2bool(
+            params.get('user_detail', None)
+        )
+
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
@@ -207,7 +212,7 @@ class GroupMixin:
 
         Note that the queryset is filtered by the permissions of the current user.
         """
-        return super().get_queryset().prefetch_related('rule_sets')
+        return super().get_queryset().prefetch_related('rule_sets', 'user_set')
 
 
 class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
