@@ -198,13 +198,19 @@ class GroupMixin:
 
         return super().get_serializer(*args, **kwargs)
 
+    def get_queryset(self):
+        """Return queryset for this endpoint.
+
+        Note that the queryset is filtered by the permissions of the current user.
+        """
+        return super().get_queryset().prefetch_related('rule_sets')
+
 
 class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group."""
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class GroupList(GroupMixin, ListCreateAPI):
@@ -212,7 +218,6 @@ class GroupList(GroupMixin, ListCreateAPI):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = SEARCH_ORDER_FILTER
 
