@@ -21,12 +21,7 @@ _roles = {
     'sales_order': 'Role Sales Orders',
     'return_order': 'Role Return Orders',
 }
-_methods = {
-    'view': 'GET',
-    'create': 'POST',
-    'change': 'PUT / PATCH',
-    'delete': 'DELETE',
-}
+_methods = {'view': 'GET', 'add': 'POST', 'change': 'PUT / PATCH', 'delete': 'DELETE'}
 
 calculated = {
     get_granular_scope(method[0], role[0]): f'{method[1]} for {role[1]}'
