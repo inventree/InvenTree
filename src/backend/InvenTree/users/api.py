@@ -26,7 +26,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner, UserProfile
+from users.models import ApiToken, Owner, RuleSet, UserProfile
 from users.serializers import (
     ApiTokenSerializer,
     ExtendedUserSerializer,
@@ -35,6 +35,7 @@ from users.serializers import (
     MeUserSerializer,
     OwnerSerializer,
     RoleSerializer,
+    RuleSetSerializer,
     UserCreateSerializer,
     UserProfileSerializer,
 )
@@ -182,6 +183,9 @@ class UserList(ListCreateAPI):
 class GroupMixin:
     """Mixin for Group API endpoints to add permissions filter."""
 
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
@@ -209,21 +213,34 @@ class GroupMixin:
 class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group."""
 
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-
 
 class GroupList(GroupMixin, ListCreateAPI):
     """List endpoint for all auth groups."""
 
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name']
+    ordering_fields = ['name']
+
+
+class RuleSetMixin:
+    """Mixin for RuleSet API endpoints."""
+
+    queryset = RuleSet.objects.all()
+    serializer_class = RuleSetSerializer
+
+
+class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for a particular RuleSet instance."""
+
+
+class RuleSetList(RuleSetMixin, ListCreateAPI):
+    """List endpoint for all RuleSet instances."""
 
     filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = ['name']
-
     ordering_fields = ['name']
+    filterset_fields = ['group', 'name']
 
 
 class GetAuthToken(GenericAPIView):
@@ -407,6 +424,13 @@ user_urls = [
         include([
             path('<int:pk>/', GroupDetail.as_view(), name='api-group-detail'),
             path('', GroupList.as_view(), name='api-group-list'),
+        ]),
+    ),
+    path(
+        'ruleset/',
+        include([
+            path('<int:pk>/', RuleSetDetail.as_view(), name='api-ruleset-detail'),
+            path('', RuleSetList.as_view(), name='api-ruleset-list'),
         ]),
     ),
     path('<int:pk>/', UserDetail.as_view(), name='api-user-detail'),
