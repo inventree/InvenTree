@@ -1025,7 +1025,7 @@ class UserProfile(InvenTree.models.MetadataMixin):
         max_length=10,
         choices=UserType.choices,
         default=UserType.INTERNAL,
-        verbose_name=_('Type'),
+        verbose_name=_('User Type'),
         help_text=_('Which type of user is this?'),
     )
     organisation = models.CharField(

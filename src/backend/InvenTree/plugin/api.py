@@ -292,6 +292,15 @@ class PluginSettingList(ListAPI):
 
     filterset_fields = ['plugin__active', 'plugin__key']
 
+    @extend_schema(operation_id='plugins_settings_list_all')
+    def get(self, request, *args, **kwargs):
+        """List endpoint for all plugin related settings.
+
+        - read only
+        - only accessible by staff users
+        """
+        return super().get(request, *args, **kwargs)
+
 
 def check_plugin(
     plugin_slug: Optional[str], plugin_pk: Optional[int]
