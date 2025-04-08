@@ -141,9 +141,9 @@ def update_group_roles(group: Group, debug: bool = False) -> None:
                 content_type=content_type, codename=perm
             )
         except ContentType.DoesNotExist:  # pragma: no cover
-            # logger.warning(
-            #     "Error: Could not find permission matching '%s'", permission_string
-            # )
+            logger.warning(
+                "Error: Could not find permission matching '%s'", permission_string
+            )
             permission = None
 
         return permission
