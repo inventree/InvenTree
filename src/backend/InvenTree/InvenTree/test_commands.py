@@ -1,4 +1,4 @@
-"""Testts for custom InvenTree management commands."""
+"""Tests for custom InvenTree management commands."""
 
 from django.core.management import call_command
 from django.test import TestCase

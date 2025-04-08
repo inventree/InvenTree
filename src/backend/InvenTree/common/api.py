@@ -29,7 +29,6 @@ from rest_framework.views import APIView
 import common.models
 import common.serializers
 import InvenTree.conversion
-import InvenTree.permissions
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
@@ -46,10 +45,13 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.permissions import (
+    AllowAnyOrReadScope,
+    GlobalSettingsPermissions,
     IsAdminOrAdminScope,
     IsAuthenticatedOrReadScope,
     IsStaffOrReadOnlyScope,
     IsSuperuserOrSuperScope,
+    UserSettingsPermissionsOrScope,
 )
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
@@ -242,10 +244,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
             key, cache=False, create=True
         )
 
-    permission_classes = [
-        IsAuthenticatedOrReadScope,
-        InvenTree.permissions.GlobalSettingsPermissions,
-    ]
+    permission_classes = [IsAuthenticatedOrReadScope, GlobalSettingsPermissions]
 
 
 class UserSettingsList(SettingsList):
@@ -304,7 +303,7 @@ class UserSettingsDetail(RetrieveUpdateAPI):
             key, user=self.request.user, cache=False, create=True
         )
 
-    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
+    permission_classes = [UserSettingsPermissionsOrScope]
 
 
 class NotificationUserSettingsList(SettingsList):
@@ -333,7 +332,7 @@ class NotificationUserSettingsDetail(RetrieveUpdateAPI):
 
     queryset = NotificationUserSetting.objects.all()
     serializer_class = NotificationUserSettingSerializer
-    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
+    permission_classes = [UserSettingsPermissionsOrScope]
 
 
 class NotificationMessageMixin:
@@ -341,7 +340,7 @@ class NotificationMessageMixin:
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
-    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
+    permission_classes = [UserSettingsPermissionsOrScope]
 
     def get_queryset(self):
         """Return prefetched queryset."""
@@ -642,14 +641,14 @@ class FlagList(ListAPI):
 
     queryset = settings.FLAGS
     serializer_class = common.serializers.FlagSerializer
-    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+    permission_classes = [AllowAnyOrReadScope]
 
 
 class FlagDetail(RetrieveAPI):
     """Detail view for an individual feature flag."""
 
     serializer_class = common.serializers.FlagSerializer
-    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+    permission_classes = [AllowAnyOrReadScope]
 
     def get_object(self):
         """Attempt to find a config object with the provided key."""
@@ -786,7 +785,7 @@ class IconList(ListAPI):
     """List view for available icon packages."""
 
     serializer_class = common.serializers.IconPackageSerializer
-    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+    permission_classes = [AllowAnyOrReadScope]
 
     def get_queryset(self):
         """Return a list of all available icon packages."""
@@ -842,7 +841,7 @@ class DataOutputEndpointMixin:
 
     queryset = common.models.DataOutput.objects.all()
     serializer_class = common.serializers.DataOutputSerializer
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
 class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
