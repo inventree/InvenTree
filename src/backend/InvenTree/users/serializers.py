@@ -29,6 +29,25 @@ class OwnerSerializer(InvenTreeModelSerializer):
     label = serializers.CharField(read_only=True)
 
 
+class RuleSetSerializer(InvenTreeModelSerializer):
+    """Serializer for a RuleSet."""
+
+    class Meta:
+        """Metaclass defines serializer fields."""
+
+        model = RuleSet
+        fields = [
+            'pk',
+            'name',
+            'group',
+            'can_view',
+            'can_add',
+            'can_change',
+            'can_delete',
+        ]
+        read_only_fields = ['pk', 'group']
+
+
 class GroupSerializer(InvenTreeModelSerializer):
     """Serializer for a 'Group'."""
 
@@ -36,10 +55,11 @@ class GroupSerializer(InvenTreeModelSerializer):
         """Metaclass defines serializer fields."""
 
         model = Group
-        fields = ['pk', 'name', 'permissions']
+        fields = ['pk', 'name', 'permissions', 'roles']
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra fields as required."""
+        role_detail = kwargs.pop('role_detail', False)
         permission_detail = kwargs.pop('permission_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -47,6 +67,8 @@ class GroupSerializer(InvenTreeModelSerializer):
         try:
             if not permission_detail and not isGeneratingSchema():
                 self.fields.pop('permissions', None)
+            if not role_detail and not isGeneratingSchema():
+                self.fields.pop('roles', None)
         except AppRegistryNotReady:
             pass
 
@@ -55,6 +77,8 @@ class GroupSerializer(InvenTreeModelSerializer):
     def get_permissions(self, group: Group) -> dict:
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
+
+    roles = RuleSetSerializer(source='rule_sets', many=True, read_only=True)
 
 
 class RoleSerializer(InvenTreeModelSerializer):
@@ -121,6 +145,23 @@ def generate_permission_dict(permissions) -> dict:
 
         perms[model].append(perm)
     return perms
+
+
+def generate_roles_dict(roles) -> dict:
+    """Generate a dictionary of roles for a given set of roles."""
+    # Build out an (initially empty) dictionary of roles
+    role_dict = {name: [] for name, _ in RuleSet.RULESET_CHOICES}
+
+    for role in roles:
+        permissions = []
+
+        for permission in ['view', 'add', 'change', 'delete']:
+            if getattr(role, f'can_{permission}', False):
+                permissions.append(permission)
+
+        role_dict[role.name] = permissions
+
+    return role_dict
 
 
 class ApiTokenSerializer(InvenTreeModelSerializer):

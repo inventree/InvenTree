@@ -186,6 +186,11 @@ class GroupMixin:
         """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
         params = self.request.query_params
+
+        kwargs['role_detail'] = InvenTree.helpers.str2bool(
+            params.get('role_detail', True)
+        )
+
         kwargs['permission_detail'] = InvenTree.helpers.str2bool(
             params.get('permission_detail', None)
         )
