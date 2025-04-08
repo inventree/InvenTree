@@ -2,15 +2,21 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
+  Button,
   Checkbox,
+  Group,
   LoadingOverlay,
   Stack,
   Table,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { notifications } from '@mantine/notifications';
+import { IconCircleCheck } from '@tabler/icons-react';
+import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { StylishText } from '../../components/items/StylishText';
@@ -44,6 +50,7 @@ interface RuleSet {
   can_add: boolean;
   can_change: boolean;
   can_delete: boolean;
+  edited?: boolean;
 }
 
 function RoleTable({
@@ -51,49 +58,168 @@ function RoleTable({
 }: {
   roles: RuleSet[];
 }) {
+  const [rulesets, setRulesets] = useState<RuleSet[]>(roles);
+
+  useEffect(() => {
+    setRulesets(roles);
+  }, [roles]);
+
+  const edited = useMemo(() => rulesets.some((r) => r.edited), [rulesets]);
+
+  // Ensure the rulesets are always displayed in the same order
+  const sortedRulesets = useMemo(() => {
+    return rulesets.sort((a, b) => (a.label > b.label ? 1 : -1));
+  }, [rulesets]);
+
+  // Change the edited state of the ruleset
+  const onToggle = useCallback((rule: RuleSet, field: string) => {
+    setRulesets((prev) => {
+      const updated = prev.map((r) => {
+        if (r.pk === rule.pk) {
+          return {
+            ...r,
+            [field]: !(r as any)[field],
+            edited: true
+          };
+        }
+        return r;
+      });
+      return updated;
+    });
+  }, []);
+
+  const onSave = async (rulesets: RuleSet[]) => {
+    notifications.show({
+      id: 'group-roles-update',
+      title: t`Updating`,
+      message: t`Updating group roles`,
+      loading: true,
+      color: 'blue',
+      autoClose: false
+    });
+
+    for (const ruleset of rulesets.filter((r) => r.edited)) {
+      await api
+        .patch(apiUrl(ApiEndpoints.ruleset_list, ruleset.pk), {
+          can_view: ruleset.can_view,
+          can_add: ruleset.can_add,
+          can_change: ruleset.can_change,
+          can_delete: ruleset.can_delete
+        })
+        .then(() => {
+          // Mark this ruleset as "not edited"
+          setRulesets((prev) => {
+            const updated = prev.map((r) => {
+              if (r.pk === ruleset.pk) {
+                return {
+                  ...r,
+                  edited: false
+                };
+              }
+              return r;
+            });
+            return updated;
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+    notifications.update({
+      id: 'group-roles-update',
+      title: t`Updated`,
+      message: t`Group roles updated`,
+      autoClose: 2000,
+      color: 'green',
+      icon: <IconCircleCheck />,
+      loading: false
+    });
+  };
+
   return (
-    <Table striped withColumnBorders withRowBorders withTableBorder>
-      <Table.Thead>
-        <Table.Th>
-          <Text fw={700}>
-            <Trans>Role</Trans>
-          </Text>
-        </Table.Th>
-        <Table.Th>
-          <Trans>View</Trans>
-        </Table.Th>
-        <Table.Th>
-          <Trans>Change</Trans>
-        </Table.Th>
-        <Table.Th>
-          <Trans>Add</Trans>
-        </Table.Th>
-        <Table.Th>
-          <Trans>Delete</Trans>
-        </Table.Th>
-      </Table.Thead>
-      <Table.Tbody>
-        {roles.map((role) => (
-          <Table.Tr key={role.pk}>
-            <Table.Td>
-              <Text>{role.label}</Text>
-            </Table.Td>
-            <Table.Td>
-              <Checkbox checked={role.can_view} />
-            </Table.Td>
-            <Table.Td>
-              <Checkbox checked={role.can_change} />
-            </Table.Td>
-            <Table.Td>
-              <Checkbox checked={role.can_add} />
-            </Table.Td>
-            <Table.Td>
-              <Checkbox checked={role.can_delete} />
-            </Table.Td>
-          </Table.Tr>
-        ))}
-      </Table.Tbody>
-    </Table>
+    <>
+      <Stack gap='xs'>
+        <Table striped withColumnBorders withRowBorders withTableBorder>
+          <Table.Thead>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Role</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>View</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Change</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Add</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Delete</Trans>
+              </Text>
+            </Table.Th>
+          </Table.Thead>
+          <Table.Tbody>
+            {sortedRulesets.map((rule) => (
+              <Table.Tr key={rule.pk}>
+                <Table.Td>
+                  <Group gap='xs'>
+                    <Text>{rule.label}</Text>
+                    {rule.edited && <Text>*</Text>}
+                  </Group>
+                </Table.Td>
+                <Table.Td>
+                  <Checkbox
+                    checked={rule.can_view}
+                    onChange={() => onToggle(rule, 'can_view')}
+                  />
+                </Table.Td>
+                <Table.Td>
+                  <Checkbox
+                    checked={rule.can_change}
+                    onChange={() => onToggle(rule, 'can_change')}
+                  />
+                </Table.Td>
+                <Table.Td>
+                  <Checkbox
+                    checked={rule.can_add}
+                    onChange={() => onToggle(rule, 'can_add')}
+                  />
+                </Table.Td>
+                <Table.Td>
+                  <Checkbox
+                    checked={rule.can_delete}
+                    onChange={() => onToggle(rule, 'can_delete')}
+                  />
+                </Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
+        <Group justify='right'>
+          <Tooltip label={t`Update group roles`} disabled={!edited}>
+            <Button
+              color='green'
+              onClick={() => {
+                onSave(rulesets);
+              }}
+              disabled={!edited}
+            >
+              {t`Update`}
+            </Button>
+          </Tooltip>
+        </Group>
+      </Stack>
+    </>
   );
 }
 
