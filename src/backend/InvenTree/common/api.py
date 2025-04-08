@@ -262,6 +262,9 @@ class UserSettingsList(SettingsList):
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
 
+    # Note: Any user can view and edit their own settings
+    permission_classes = [permissions.IsAuthenticated]
+
     def list(self, request, *args, **kwargs):
         """Ensure all user settings are created."""
         common.models.InvenTreeUserSetting.build_default_values(user=request.user)
