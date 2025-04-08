@@ -9,6 +9,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 from users.models import ApiToken, Owner, RuleSet
+from users.ruleset import RULESET_CHOICES
 
 User = get_user_model()
 
@@ -65,7 +66,7 @@ class RuleSetInline(admin.TabularInline):
     verbose_plural_name = 'Rulesets'
     fields = ['name', *list(RuleSet.RULE_OPTIONS)]
     readonly_fields = ['name']
-    max_num = len(RuleSet.RULESET_CHOICES)
+    max_num = len(RULESET_CHOICES)
     min_num = 1
     extra = 0
     ordering = ['name']

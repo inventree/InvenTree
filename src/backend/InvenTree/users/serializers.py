@@ -13,6 +13,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
 from .permissions import check_user_role
+from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
@@ -107,12 +108,12 @@ class RoleSerializer(InvenTreeModelSerializer):
         """Roles associated with the user."""
         roles = {}
 
-        for ruleset in RuleSet.RULESET_CHOICES:
+        for ruleset in RULESET_CHOICES:
             role, _text = ruleset
 
             permissions = []
 
-            for permission in RuleSet.RULESET_PERMISSIONS:
+            for permission in RULESET_PERMISSIONS:
                 if check_user_role(user, role, permission):
                     permissions.append(permission)
 
@@ -152,7 +153,7 @@ def generate_permission_dict(permissions) -> dict:
 def generate_roles_dict(roles) -> dict:
     """Generate a dictionary of roles for a given set of roles."""
     # Build out an (initially empty) dictionary of roles
-    role_dict = {name: [] for name, _ in RuleSet.RULESET_CHOICES}
+    role_dict = {name: [] for name, _ in RULESET_CHOICES}
 
     for role in roles:
         permissions = []

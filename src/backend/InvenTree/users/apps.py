@@ -6,6 +6,7 @@ from django.db.utils import OperationalError, ProgrammingError
 import structlog
 
 import InvenTree.ready
+from users.ruleset import RULESET_NAMES
 
 logger = structlog.get_logger('inventree')
 
@@ -48,7 +49,7 @@ class UsersConfig(AppConfig):
         # First, delete any rule_set objects which have become outdated!
         for rule in RuleSet.objects.all():
             if (
-                rule.name not in RuleSet.RULESET_NAMES
+                rule.name not in RULESET_NAMES
             ):  # pragma: no cover  # can not change ORM without the app being loaded
                 logger.info('Deleting outdated ruleset: %s', rule.name)
                 rule.delete()

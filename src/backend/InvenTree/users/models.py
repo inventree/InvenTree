@@ -26,6 +26,8 @@ import InvenTree.models
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 
+from .ruleset import RULESET_CHOICES, get_ruleset_models
+
 logger = structlog.get_logger('inventree')
 
 
@@ -214,177 +216,6 @@ class RuleSet(models.Model):
     which are then handled using the normal django permissions approach.
     """
 
-    RULESET_CHOICES = [
-        ('admin', _('Admin')),
-        ('part_category', _('Part Categories')),
-        ('part', _('Parts')),
-        ('stocktake', _('Stocktake')),
-        ('stock_location', _('Stock Locations')),
-        ('stock', _('Stock Items')),
-        ('build', _('Build Orders')),
-        ('purchase_order', _('Purchase Orders')),
-        ('sales_order', _('Sales Orders')),
-        ('return_order', _('Return Orders')),
-    ]
-
-    RULESET_NAMES = [choice[0] for choice in RULESET_CHOICES]
-
-    RULESET_PERMISSIONS = ['view', 'add', 'change', 'delete']
-
-    @staticmethod
-    def get_ruleset_models():
-        """Return a dictionary of models associated with each ruleset."""
-        ruleset_models = {
-            'admin': [
-                'auth_group',
-                'auth_user',
-                'auth_permission',
-                'users_apitoken',
-                'users_ruleset',
-                'report_labeltemplate',
-                'report_reportasset',
-                'report_reportsnippet',
-                'report_reporttemplate',
-                'account_emailaddress',
-                'account_emailconfirmation',
-                'socialaccount_socialaccount',
-                'socialaccount_socialapp',
-                'socialaccount_socialtoken',
-                'otp_totp_totpdevice',
-                'otp_static_statictoken',
-                'otp_static_staticdevice',
-                'mfa_authenticator',
-                'plugin_pluginconfig',
-                'plugin_pluginsetting',
-                'plugin_notificationusersetting',
-                'common_barcodescanresult',
-                'common_newsfeedentry',
-                'taggit_tag',
-                'taggit_taggeditem',
-                'flags_flagstate',
-                'machine_machineconfig',
-                'machine_machinesetting',
-            ],
-            'part_category': [
-                'part_partcategory',
-                'part_partcategoryparametertemplate',
-                'part_partcategorystar',
-            ],
-            'part': [
-                'part_part',
-                'part_partpricing',
-                'part_bomitem',
-                'part_bomitemsubstitute',
-                'part_partsellpricebreak',
-                'part_partinternalpricebreak',
-                'part_parttesttemplate',
-                'part_partparametertemplate',
-                'part_partparameter',
-                'part_partrelated',
-                'part_partstar',
-                'part_partcategorystar',
-                'company_supplierpart',
-                'company_manufacturerpart',
-                'company_manufacturerpartparameter',
-            ],
-            'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
-            'stock_location': ['stock_stocklocation', 'stock_stocklocationtype'],
-            'stock': [
-                'stock_stockitem',
-                'stock_stockitemtracking',
-                'stock_stockitemtestresult',
-            ],
-            'build': [
-                'part_part',
-                'part_partcategory',
-                'part_bomitem',
-                'part_bomitemsubstitute',
-                'build_build',
-                'build_builditem',
-                'build_buildline',
-                'stock_stockitem',
-                'stock_stocklocation',
-            ],
-            'purchase_order': [
-                'company_company',
-                'company_contact',
-                'company_address',
-                'company_manufacturerpart',
-                'company_manufacturerpartparameter',
-                'company_supplierpart',
-                'company_supplierpricebreak',
-                'order_purchaseorder',
-                'order_purchaseorderlineitem',
-                'order_purchaseorderextraline',
-            ],
-            'sales_order': [
-                'company_company',
-                'company_contact',
-                'company_address',
-                'order_salesorder',
-                'order_salesorderallocation',
-                'order_salesorderlineitem',
-                'order_salesorderextraline',
-                'order_salesordershipment',
-            ],
-            'return_order': [
-                'company_company',
-                'company_contact',
-                'company_address',
-                'order_returnorder',
-                'order_returnorderlineitem',
-                'order_returnorderextraline',
-            ],
-        }
-
-        if settings.SITE_MULTI:
-            ruleset_models['admin'].append('sites_site')
-
-        return ruleset_models
-
-    # Database models we ignore permission sets for
-    @staticmethod
-    def get_ruleset_ignore():
-        """Return a list of database tables which do not require permissions."""
-        return [
-            # Core django models (not user configurable)
-            'admin_logentry',
-            'contenttypes_contenttype',
-            # Models which currently do not require permissions
-            'common_attachment',
-            'common_customunit',
-            'common_dataoutput',
-            'common_inventreesetting',
-            'common_inventreeusersetting',
-            'common_notificationentry',
-            'common_notificationmessage',
-            'common_notesimage',
-            'common_projectcode',
-            'common_webhookendpoint',
-            'common_webhookmessage',
-            'common_inventreecustomuserstatemodel',
-            'common_selectionlistentry',
-            'common_selectionlist',
-            'users_owner',
-            'users_userprofile',  # User profile is handled in the serializer - only own user can change
-            # Third-party tables
-            'error_report_error',
-            'exchange_rate',
-            'exchange_exchangebackend',
-            'usersessions_usersession',
-            'sessions_session',
-            # Django-q
-            'django_q_ormq',
-            'django_q_failure',
-            'django_q_task',
-            'django_q_schedule',
-            'django_q_success',
-            # Importing
-            'importer_dataimportsession',
-            'importer_dataimportcolumnmap',
-            'importer_dataimportrow',
-        ]
-
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
 
     RULE_OPTIONS = ['can_view', 'can_add', 'can_change', 'can_delete']
@@ -397,7 +228,7 @@ class RuleSet(models.Model):
     @property
     def label(self) -> str:
         """Return the translated label for this ruleset."""
-        return dict(self.RULESET_CHOICES).get(self.name, self.name)
+        return dict(RULESET_CHOICES).get(self.name, self.name)
 
     name = models.CharField(
         max_length=50,
@@ -473,7 +304,7 @@ class RuleSet(models.Model):
 
     def get_models(self):
         """Return the database tables / models that this ruleset covers."""
-        return self.get_ruleset_models().get(self.name, [])
+        return get_ruleset_models().get(self.name, [])
 
 
 def split_model(model):
@@ -555,7 +386,7 @@ def update_group_roles(group, debug=False):
     }
 
     # Get all the rulesets associated with this group
-    for r in RuleSet.RULESET_CHOICES:
+    for r in RULESET_CHOICES:
         rulename = r[0]
 
         if rulename in rulesets:
