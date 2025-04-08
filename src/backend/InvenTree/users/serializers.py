@@ -39,13 +39,14 @@ class RuleSetSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'name',
+            'label',
             'group',
             'can_view',
             'can_add',
             'can_change',
             'can_delete',
         ]
-        read_only_fields = ['pk', 'group']
+        read_only_fields = ['pk', 'name', 'label', 'group']
 
 
 class GroupSerializer(InvenTreeModelSerializer):

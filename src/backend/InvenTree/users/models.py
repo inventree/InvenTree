@@ -395,6 +395,11 @@ class RuleSet(models.Model):
 
         unique_together = (('name', 'group'),)
 
+    @property
+    def label(self) -> str:
+        """Return the translated label for this ruleset."""
+        return dict(self.RULESET_CHOICES).get(self.name, self.name)
+
     name = models.CharField(
         max_length=50,
         choices=RULESET_CHOICES,
