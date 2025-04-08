@@ -8,7 +8,7 @@ INVENTREE_API_VERSION = 334
 
 INVENTREE_API_TEXT = """
 
-v334 - 2025-04-07 : https://github.com/inventree/InvenTree/pull/9453
+v334 - 2025-04-08 : https://github.com/inventree/InvenTree/pull/9453
     - Fixes various operationId and enum collisions and help texts
 
 v333 - 2025-04-03 : https://github.com/inventree/InvenTree/pull/9452
