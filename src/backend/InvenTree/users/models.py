@@ -5,7 +5,7 @@ import datetime
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission, User
+from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinLengthValidator
@@ -24,7 +24,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
-from InvenTree.ready import canAppAccessDatabase, isImportingData
+from InvenTree.ready import isImportingData
 
 from .ruleset import RULESET_CHOICES, get_ruleset_models
 
@@ -266,13 +266,6 @@ class RuleSet(models.Model):
         help_text=_('Permission to delete items'),
     )
 
-    @staticmethod
-    def get_model_permission_string(model, permission):
-        """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
-        model, app = split_model(model)
-
-        return f'{app}.{permission}_{model}'
-
     def __str__(self, debug=False):  # pragma: no cover
         """Ruleset string representation."""
         if debug:
@@ -290,6 +283,8 @@ class RuleSet(models.Model):
         It does not make sense to be able to change / create something,
         but not be able to view it!
         """
+        from users.tasks import update_group_roles
+
         if self.can_add or self.can_change or self.can_delete:
             self.can_view = True
 
@@ -301,189 +296,11 @@ class RuleSet(models.Model):
         if self.group:
             # Update the group too!
             self.group.save()
+            update_group_roles(self.group, debug=True)
 
     def get_models(self):
         """Return the database tables / models that this ruleset covers."""
         return get_ruleset_models().get(self.name, [])
-
-
-def split_model(model):
-    """Get modelname and app from modelstring."""
-    *app, model = model.split('_')
-
-    # handle models that have
-    app = '_'.join(app) if len(app) > 1 else app[0]
-
-    return model, app
-
-
-def split_permission(app, perm):
-    """Split permission string into permission and model."""
-    permission_name, *model = perm.split('_')
-    # handle models that have underscores
-    if len(model) > 1:  # pragma: no cover
-        app += '_' + '_'.join(model[:-1])
-        perm = permission_name + '_' + model[-1:][0]
-    model = model[-1:][0]
-    return perm, model
-
-
-def update_group_roles(group, debug=False):
-    """Iterates through all of the RuleSets associated with the group, and ensures that the correct permissions are either applied or removed from the group.
-
-    This function is called under the following conditions:
-
-    a) Whenever the InvenTree database is launched
-    b) Whenever the group object is updated
-
-    The RuleSet model has complete control over the permissions applied to any group.
-    """
-    if not canAppAccessDatabase(allow_test=True):
-        return  # pragma: no cover
-
-    # List of permissions already associated with this group
-    group_permissions = set()
-
-    # Iterate through each permission already assigned to this group,
-    # and create a simplified permission key string
-    for p in group.permissions.all().prefetch_related('content_type'):
-        (permission, app, model) = p.natural_key()
-        permission_string = f'{app}.{permission}'
-        group_permissions.add(permission_string)
-
-    # List of permissions which must be added to the group
-    permissions_to_add = set()
-
-    # List of permissions which must be removed from the group
-    permissions_to_delete = set()
-
-    def add_model(name, action, allowed):
-        """Add a new model to the pile.
-
-        Args:
-            name: The name of the model e.g. part_part
-            action: The permission action e.g. view
-            allowed: Whether or not the action is allowed
-        """
-        if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
-            raise ValueError(f'Action {action} is invalid')
-
-        permission_string = RuleSet.get_model_permission_string(model, action)
-
-        if allowed:
-            # An 'allowed' action is always preferenced over a 'forbidden' action
-            if permission_string in permissions_to_delete:
-                permissions_to_delete.remove(permission_string)
-
-            permissions_to_add.add(permission_string)
-
-        elif permission_string not in permissions_to_add:
-            permissions_to_delete.add(permission_string)
-
-    # Pre-fetch all the RuleSet objects
-    rulesets = {
-        r.name: r for r in RuleSet.objects.filter(group=group).prefetch_related('group')
-    }
-
-    # Get all the rulesets associated with this group
-    for r in RULESET_CHOICES:
-        rulename = r[0]
-
-        if rulename in rulesets:
-            ruleset = rulesets[rulename]
-        else:
-            try:
-                ruleset = RuleSet.objects.get(group=group, name=rulename)
-            except RuleSet.DoesNotExist:
-                ruleset = RuleSet.objects.create(group=group, name=rulename)
-
-        # Which database tables does this RuleSet touch?
-        models = ruleset.get_models()
-
-        for model in models:
-            # Keep track of the available permissions for each model
-
-            add_model(model, 'view', ruleset.can_view)
-            add_model(model, 'add', ruleset.can_add)
-            add_model(model, 'change', ruleset.can_change)
-            add_model(model, 'delete', ruleset.can_delete)
-
-    def get_permission_object(permission_string):
-        """Find the permission object in the database, from the simplified permission string.
-
-        Args:
-            permission_string: a simplified permission_string e.g. 'part.view_partcategory'
-
-        Returns the permission object in the database associated with the permission string
-        """
-        (app, perm) = permission_string.split('.')
-
-        perm, model = split_permission(app, perm)
-
-        try:
-            content_type = ContentType.objects.get(app_label=app, model=model)
-            permission = Permission.objects.get(
-                content_type=content_type, codename=perm
-            )
-        except ContentType.DoesNotExist:  # pragma: no cover
-            # logger.warning(
-            #     "Error: Could not find permission matching '%s'", permission_string
-            # )
-            permission = None
-
-        return permission
-
-    # Add any required permissions to the group
-    for perm in permissions_to_add:
-        # Ignore if permission is already in the group
-        if perm in group_permissions:
-            continue
-
-        permission = get_permission_object(perm)
-
-        if permission:
-            group.permissions.add(permission)
-
-        if debug:  # pragma: no cover
-            logger.debug('Adding permission %s to group %s', perm, group.name)
-
-    # Remove any extra permissions from the group
-    for perm in permissions_to_delete:
-        # Ignore if the permission is not already assigned
-        if perm not in group_permissions:
-            continue
-
-        permission = get_permission_object(perm)
-
-        if permission:
-            group.permissions.remove(permission)
-
-        if debug:  # pragma: no cover
-            logger.debug('Removing permission %s from group %s', perm, group.name)
-
-    # Enable all action permissions for certain children models
-    # if parent model has 'change' permission
-    for parent, child in RuleSet.RULESET_CHANGE_INHERIT:
-        parent_child_string = f'{parent}_{child}'
-
-        # Check each type of permission
-        for action in ['view', 'change', 'add', 'delete']:
-            parent_perm = f'{parent}.{action}_{parent}'
-
-            if parent_perm in group_permissions:
-                child_perm = f'{parent}.{action}_{child}'
-
-                # Check if child permission not already in group
-                if child_perm not in group_permissions:
-                    # Create permission object
-                    add_model(parent_child_string, action, ruleset.can_delete)
-                    # Add to group
-                    permission = get_permission_object(child_perm)
-                    if permission:
-                        group.permissions.add(permission)
-                        logger.debug(
-                            'Adding permission %s to group %s', child_perm, group.name
-                        )
 
 
 class Owner(models.Model):
@@ -670,6 +487,8 @@ def create_missing_rule_sets(sender, instance, **kwargs):
 
     As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
     """
+    from users.tasks import update_group_roles
+
     update_group_roles(instance)
 
 

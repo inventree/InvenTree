@@ -1,9 +1,71 @@
-"""User permission checks."""
+"""Helper functions for user permission checks."""
 
 from django.contrib.auth.models import User
 from django.db import models
 
 import InvenTree.cache
+
+
+def split_model(model_label: str) -> tuple[str, str]:
+    """Split a model string into its component parts.
+
+    Arguments:
+        model_label: The model class to check (e.g. 'part_partcategory')
+
+    Returns:
+        A tuple of the model and app names (e.g. ('partcategory', 'part'))
+    """
+    *app, model = model_label.split('_')
+    app = '_'.join(app) if len(app) > 1 else app[0]
+    return model, app
+
+
+def get_model_permission_string(model: models.Model, permission: str) -> str:
+    """Generate a permission string for a given model and permission type.
+
+    Arguments:
+        model: The model class to check
+        permission: The permission to check (e.g. 'view' / 'delete')
+
+    Returns:
+        str: The permission string (e.g. 'part.view_part')
+    """
+    model, app = split_model(model)
+    return f'{app}.{permission}_{model}'
+
+
+def split_permission(app: str, perm: str) -> tuple[str, str]:
+    """Split the permission string into its component parts.
+
+    Arguments:
+        app: The application name (e.g. 'part')
+        perm: The permission string (e.g. 'view_part' / 'delete_partcategory')
+
+    Returns:
+        A tuple of the permission and model names
+    """
+    permission_name, *model = perm.split('_')
+
+    # Support models with underscores
+    if len(model) > 1:
+        app += '_' + '_'.join(model[:-1])
+        perm = permission_name + '_' + model[-1][0]
+
+    model = model[-1][0]
+    return perm, model
+
+
+def model_permission_string(model: models.Model, permission: str) -> str:
+    """Generate a permission string for a given model and permission type.
+
+    Arguments:
+        model: The model class to check (e.g. 'part')
+        permission: The permission to check (e.g. 'view' / 'delete')
+
+    Returns:
+        str: The permission string (e.g. 'part.view_part')
+    """
+    return f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
 
 
 def check_user_role(user: User, role: str, permission: str) -> bool:
