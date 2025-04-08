@@ -1,4 +1,12 @@
-import { ActionIcon, Alert, Menu, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Anchor,
+  Group,
+  Menu,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
@@ -104,11 +112,23 @@ export function Alerts() {
               <Alert
                 withCloseButton
                 color='red'
-                title={alert.title}
+                title={
+                  <Group gap='xs'>
+                    {alert.code && (
+                      <Anchor
+                        target='_blank'
+                        rel='noreferrer'
+                        href={`${docLinks.errorcodes}#${alert.code.toLowerCase()}`}
+                      >
+                        {alert.code}
+                      </Anchor>
+                    )}
+                    <Text>{alert.title}</Text>
+                  </Group>
+                }
                 onClose={() => setDismissed([...dismissed, alert.key])}
               >
                 {alert.message}
-                {alert.code && errorCodeLink(alert.code)}
               </Alert>
             </Menu.Item>
           ))}
@@ -116,15 +136,4 @@ export function Alerts() {
       </Menu>
     );
   return null;
-}
-export function errorCodeLink(code: string) {
-  return (
-    <a
-      href={`${docLinks.errorcodes}#${code.toLowerCase()}`}
-      target='_blank'
-      rel='noreferrer'
-    >
-      {t`Learn more about ${code}`}
-    </a>
-  );
 }
