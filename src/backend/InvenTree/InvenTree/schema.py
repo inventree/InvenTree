@@ -1,5 +1,6 @@
 """Schema processing functions for cleaning up generated schema."""
 
+from itertools import chain
 from typing import Optional
 
 from drf_spectacular.openapi import AutoSchema
@@ -83,9 +84,10 @@ def postprocess_print_stats(result, generator, request, public):
     for path in result['paths']:
         for method in result['paths'][path]:
             sec = result['paths'][path][method].get('security', [])
+            scopes = list(filter(None, (item.get('oauth2') for item in sec)))
             rlt_dict[f'{path}:{method}'] = {
                 'method': method,
-                'oauth': {item.get('oauth2') for item in sec},
+                'oauth': list(chain(*scopes)),
                 'sec': sec is None,
             }
 
@@ -104,6 +106,8 @@ def postprocess_print_stats(result, generator, request, public):
                 if scope not in scopes:
                     scopes[scope] = []
                 scopes[scope].append(path)
+    # Sort scopes by keys
+    scopes = dict(sorted(scopes.items()))
 
     # Print statistics
     print('\nSchema statistics:')
@@ -113,8 +117,6 @@ def postprocess_print_stats(result, generator, request, public):
     print('Scope stats:')
     for scope, paths in scopes.items():
         print(f'  {scope}: {len(paths)}')
-        if len(paths) < 5:
-            print(f'    {paths}')
     print()
 
     return result
