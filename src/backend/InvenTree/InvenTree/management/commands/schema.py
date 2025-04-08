@@ -108,3 +108,5 @@ class Command(spectacular.Command):
         settings.SPECTACULAR_SETTINGS['APPEND_COMPONENTS'] = components
 
         super().handle(*args, **kwargs)
+
+        return 'done'
