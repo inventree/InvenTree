@@ -702,7 +702,6 @@ class ContentTypeDetail(RetrieveAPI):
     permission_classes = [permissions.IsAuthenticated]
 
 
-@extend_schema(operation_id='contenttype_retrieve_model')
 class ContentTypeModelDetail(ContentTypeDetail):
     """Detail view for a ContentType model."""
 
@@ -716,6 +715,11 @@ class ContentTypeModelDetail(ContentTypeDetail):
             except ContentType.DoesNotExist:
                 raise NotFound()
         raise NotFound()
+
+    @extend_schema(operation_id='contenttype_retrieve_model')
+    def get(self, request, *args, **kwargs):
+        """Detail view for a ContentType model."""
+        return super().get(request, *args, **kwargs)
 
 
 class AttachmentFilter(rest_filters.FilterSet):
