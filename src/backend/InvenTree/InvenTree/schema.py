@@ -83,21 +83,38 @@ def postprocess_print_stats(result, generator, request, public):
     for path in result['paths']:
         for method in result['paths'][path]:
             sec = result['paths'][path][method].get('security', [])
-            rlt_dict[f'{path}:{method}'] = [
-                method,
-                any(item.get('oauth2') for item in sec),
-                sec is None,
-            ]
+            rlt_dict[f'{path}:{method}'] = {
+                'method': method,
+                'oauth': {item.get('oauth2') for item in sec},
+                'sec': sec is None,
+            }
 
-    # Get paths without outh2
-    no_oauth2 = [path for path in rlt_dict if not rlt_dict[path][1]]
-    no_oauth2_wa = [a for a in no_oauth2 if not a.startswith('/api/auth/v1/')]
+    # Get paths without oauth2
+    no_oauth2 = [
+        path for path, details in rlt_dict.items() if not any(details['oauth'])
+    ]
+    no_oauth2_wa = [path for path in no_oauth2 if not path.startswith('/api/auth/v1/')]
     # Get paths without security
-    no_security = [path for path in rlt_dict if rlt_dict[path][2]]
+    no_security = [path for path, details in rlt_dict.items() if details['sec']]
+    # Get path counts per scope
+    scopes = {}
+    for path, details in rlt_dict.items():
+        if details['oauth']:
+            for scope in details['oauth']:
+                if scope not in scopes:
+                    scopes[scope] = []
+                scopes[scope].append(path)
 
     # Print statistics
-    print(f'Paths without oauth2: {len(no_oauth2)}')
+    print('\nSchema statistics:')
+    print(f'Paths without oauth2:                   {len(no_oauth2)}')
     print(f'Paths without oauth2 (without allauth): {len(no_oauth2_wa)}')
-    print(f'Paths without security: {len(no_security)}')
+    print(f'Paths without security:                 {len(no_security)}\n')
+    print('Scope stats:')
+    for scope, paths in scopes.items():
+        print(f'  {scope}: {len(paths)}')
+        if len(paths) < 5:
+            print(f'    {paths}')
+    print()
 
     return result
