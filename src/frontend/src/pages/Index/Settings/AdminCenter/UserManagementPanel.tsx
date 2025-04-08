@@ -28,7 +28,7 @@ export default function UserManagementPanel() {
       </Accordion.Item>
       <Accordion.Item value='tokens' key='tokens'>
         <Accordion.Control>
-          <StylishText size='lg'>{t`Access Tokens`}</StylishText>
+          <StylishText size='lg'>{t`Tokens`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <ApiTokenTable only_myself={false} />
