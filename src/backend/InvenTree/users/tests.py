@@ -27,7 +27,7 @@ class RuleSetModelTest(TestCase):
         missing = [name for name in RuleSet.RULESET_NAMES if name not in keys]
 
         if len(missing) > 0:  # pragma: no cover
-            print('WRONG RULESET: The following rulesets do not have models assigned:')
+            print('INVE-E5: The following rulesets do not have models assigned:')
             for m in missing:
                 print('-', m)
 
@@ -36,7 +36,7 @@ class RuleSetModelTest(TestCase):
 
         if len(extra) > 0:  # pragma: no cover
             print(
-                'WRONG RULESET: The following rulesets have been improperly added to get_ruleset_models():'
+                'INVE-E5: The following rulesets have been improperly added to get_ruleset_models():'
             )
             for e in extra:
                 print('-', e)
@@ -46,14 +46,14 @@ class RuleSetModelTest(TestCase):
 
         if len(empty) > 0:  # pragma: no cover
             print(
-                'WRONG RULESET: The following rulesets have empty entries in get_ruleset_models():'
+                'INVE-E5: The following rulesets have empty entries in get_ruleset_models():'
             )
             for e in empty:
                 print('-', e)
 
-        self.assertEqual(len(missing), 0, 'Search for WRONG RULESET')
-        self.assertEqual(len(extra), 0, 'Search for WRONG RULESET')
-        self.assertEqual(len(empty), 0, 'Search for WRONG RULESET')
+        self.assertEqual(len(missing), 0, 'See INVE-E5 in the docs')
+        self.assertEqual(len(extra), 0, 'See INVE-E5 in the docs')
+        self.assertEqual(len(empty), 0, 'See INVE-E5 in the docs')
 
     def test_model_names(self):
         """Test that each model defined in the rulesets is valid, based on the database schema!"""
@@ -86,7 +86,7 @@ class RuleSetModelTest(TestCase):
 
         if len(missing_models) > 0:  # pragma: no cover
             print(
-                'WRONG RULESET: The following database models are not covered by the defined RuleSet permissions:'
+                'INVE-E5: The following database models are not covered by the defined RuleSet permissions:'
             )
             for m in missing_models:
                 print('-', m)
@@ -107,13 +107,13 @@ class RuleSetModelTest(TestCase):
 
         if len(extra_models) > 0:  # pragma: no cover
             print(
-                'WRONG RULESET: The following RuleSet permissions do not match a database model:'
+                'INVE-E5: The following RuleSet permissions do not match a database model:'
             )
             for m in extra_models:
                 print('-', m)
 
-        self.assertEqual(len(missing_models), 0, 'Search for WRONG RULESET')
-        self.assertEqual(len(extra_models), 0, 'Search for WRONG RULESET')
+        self.assertEqual(len(missing_models), 0, 'See INVE-E5 in the docs')
+        self.assertEqual(len(extra_models), 0, 'See INVE-E5 in the docs')
 
     def test_scope_names(self):
         """Ensure that the rulesets map to scopes and vice versa."""
@@ -121,9 +121,7 @@ class RuleSetModelTest(TestCase):
         missing = [scope for scope in G_SCOPES if scope not in G_RULESETS]
 
         if len(missing) > 0:  # pragma: no cover
-            print(
-                'WRONG SCOPE: The following scopes do not have corresponding rulesets:'
-            )
+            print('INVE-E6: The following scopes do not have corresponding rulesets:')
             for m in missing:
                 print('-', m)
 
@@ -131,14 +129,12 @@ class RuleSetModelTest(TestCase):
         extra = [scope for scope in G_RULESETS if scope not in G_SCOPES]
 
         if len(extra) > 0:  # pragma: no cover
-            print(
-                'WRONG SCOPE: The following rulesets do not have corresponding scopes:'
-            )
+            print('INVE-E6: The following rulesets do not have corresponding scopes:')
             for m in extra:
                 print('-', m)
 
-        self.assertEqual(len(missing), 0, 'Search for WRONG SCOPE')
-        self.assertEqual(len(extra), 0, 'Search for WRONG SCOPE')
+        self.assertEqual(len(missing), 0, 'See INVE-E6 in the docs')
+        self.assertEqual(len(extra), 0, 'See INVE-E6 in the docs')
 
     def test_permission_assign(self):
         """Test that the permission assigning works!"""
