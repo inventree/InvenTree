@@ -218,6 +218,7 @@ export function GroupTable({
       {newGroup.modal}
       {deleteGroup.modal}
       <DetailDrawer
+        size='xl'
         title={t`Edit Group`}
         renderContent={(id) => {
           if (!id || !id.startsWith('group-')) return false;

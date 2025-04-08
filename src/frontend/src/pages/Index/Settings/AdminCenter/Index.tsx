@@ -27,6 +27,7 @@ import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { UserRoles } from '../../../../enums/Roles';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
 
@@ -113,7 +114,8 @@ export default function AdminCenter() {
         name: 'user',
         label: t`User Management`,
         icon: <IconUsersGroup />,
-        content: <UserManagementPanel />
+        content: <UserManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.users)
       },
       {
         name: 'import',
@@ -178,19 +180,22 @@ export default function AdminCenter() {
         name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />
+        content: <PartParameterPanel />,
+        hidden: !user.hasViewRole(UserRoles.part)
       },
       {
         name: 'category-parameters',
         label: t`Category Parameters`,
         icon: <IconSitemap />,
-        content: <PartCategoryTemplateTable />
+        content: <PartCategoryTemplateTable />,
+        hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
         name: 'stocktake',
         label: t`Stocktake`,
         icon: <IconClipboardCheck />,
-        content: <StocktakePanel />
+        content: <StocktakePanel />,
+        hidden: !user.hasViewRole(UserRoles.stocktake)
       },
       {
         name: 'labels',
@@ -208,7 +213,8 @@ export default function AdminCenter() {
         name: 'location-types',
         label: t`Location Types`,
         icon: <IconPackages />,
-        content: <LocationTypesTable />
+        content: <LocationTypesTable />,
+        hidden: !user.hasViewRole(UserRoles.stock_location)
       },
       {
         name: 'plugin',
