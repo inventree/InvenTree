@@ -2,23 +2,22 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
-  Group,
+  Checkbox,
   LoadingOverlay,
-  Pill,
-  PillGroup,
   Stack,
+  Table,
   Text
 } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -34,6 +33,68 @@ import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export interface GroupDetailI {
   pk: number;
   name: string;
+}
+
+interface RuleSet {
+  pk: number;
+  name: string;
+  label: string;
+  group: number;
+  can_view: boolean;
+  can_add: boolean;
+  can_change: boolean;
+  can_delete: boolean;
+}
+
+function RoleTable({
+  roles
+}: {
+  roles: RuleSet[];
+}) {
+  return (
+    <Table striped withColumnBorders withRowBorders withTableBorder>
+      <Table.Thead>
+        <Table.Th>
+          <Text fw={700}>
+            <Trans>Role</Trans>
+          </Text>
+        </Table.Th>
+        <Table.Th>
+          <Trans>View</Trans>
+        </Table.Th>
+        <Table.Th>
+          <Trans>Change</Trans>
+        </Table.Th>
+        <Table.Th>
+          <Trans>Add</Trans>
+        </Table.Th>
+        <Table.Th>
+          <Trans>Delete</Trans>
+        </Table.Th>
+      </Table.Thead>
+      <Table.Tbody>
+        {roles.map((role) => (
+          <Table.Tr key={role.pk}>
+            <Table.Td>
+              <Text>{role.label}</Text>
+            </Table.Td>
+            <Table.Td>
+              <Checkbox checked={role.can_view} />
+            </Table.Td>
+            <Table.Td>
+              <Checkbox checked={role.can_change} />
+            </Table.Td>
+            <Table.Td>
+              <Checkbox checked={role.can_add} />
+            </Table.Td>
+            <Table.Td>
+              <Checkbox checked={role.can_delete} />
+            </Table.Td>
+          </Table.Tr>
+        ))}
+      </Table.Tbody>
+    </Table>
+  );
 }
 
 export function GroupDrawer({
@@ -56,28 +117,8 @@ export function GroupDrawer({
     }
   });
 
-  const permissionsAccordion = useMemo(() => {
-    if (!instance?.permissions) return null;
-
-    const data = instance.permissions;
-    return (
-      <Accordion w={'100%'}>
-        {Object.keys(data).map((key) => (
-          <Accordion.Item key={key} value={key}>
-            <Accordion.Control>
-              <Pill>{instance.permissions[key].length}</Pill> {key}
-            </Accordion.Control>
-            <Accordion.Panel>
-              <PillGroup>
-                {data[key].map((perm: string) => (
-                  <Pill key={perm}>{perm}</Pill>
-                ))}
-              </PillGroup>
-            </Accordion.Panel>
-          </Accordion.Item>
-        ))}
-      </Accordion>
-    );
+  const groupRoles: RuleSet[] = useMemo(() => {
+    return instance?.roles ?? [];
   }, [instance]);
 
   if (isFetching) {
@@ -115,13 +156,18 @@ export function GroupDrawer({
         }}
         id={`group-detail-drawer-${id}`}
       />
-      <Group justify='space-between'>
-        <StylishText size='md'>
-          <Trans>Permission set</Trans>
-        </StylishText>
-        <AdminButton model={ModelType.group} id={instance.pk} />
-      </Group>
-      <Group>{permissionsAccordion}</Group>
+      <Accordion defaultValue={'roles'}>
+        <Accordion.Item key='roles' value='roles'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>Group Roles</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <RoleTable roles={groupRoles} />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </Stack>
   );
 }
@@ -217,19 +263,21 @@ export function GroupTable({
     <>
       {newGroup.modal}
       {deleteGroup.modal}
-      <DetailDrawer
-        size='xl'
-        title={t`Edit Group`}
-        renderContent={(id) => {
-          if (!id || !id.startsWith('group-')) return false;
-          return (
-            <GroupDrawer
-              id={id.replace('group-', '')}
-              refreshTable={table.refreshTable}
-            />
-          );
-        }}
-      />
+      {user.hasViewRole(UserRoles.admin) && (
+        <DetailDrawer
+          size='xl'
+          title={t`Edit Group`}
+          renderContent={(id) => {
+            if (!id || !id.startsWith('group-')) return false;
+            return (
+              <GroupDrawer
+                id={id.replace('group-', '')}
+                refreshTable={table.refreshTable}
+              />
+            );
+          }}
+        />
+      )}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.group_list)}
         tableState={table}
@@ -239,9 +287,9 @@ export function GroupTable({
           tableActions: tableActions,
           onRowClick: directLink
             ? undefined
-            : (record) => openDetailDrawer(record.pk),
+            : (record) => openDetailDrawer(record.pk)
 
-          modelType: ModelType.group
+          // modelType: ModelType.group
         }}
       />
     </>
