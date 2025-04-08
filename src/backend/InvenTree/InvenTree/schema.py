@@ -75,3 +75,29 @@ def postprocess_required_nullable(result, generator, request, public):
             schema.pop('required')
 
     return result
+
+
+def postprocess_print_stats(result, generator, request, public):
+    """Prints statistics against schema."""
+    rlt_dict = {}
+    for path in result['paths']:
+        for method in result['paths'][path]:
+            sec = result['paths'][path][method].get('security', [])
+            rlt_dict[f'{path}:{method}'] = [
+                method,
+                any(item.get('oauth2') for item in sec),
+                sec is None,
+            ]
+
+    # Get paths without outh2
+    no_oauth2 = [path for path in rlt_dict if not rlt_dict[path][1]]
+    no_oauth2_wa = [a for a in no_oauth2 if not a.startswith('/api/auth/v1/')]
+    # Get paths without security
+    no_security = [path for path in rlt_dict if rlt_dict[path][2]]
+
+    # Print statistics
+    print(f'Paths without oauth2: {len(no_oauth2)}')
+    print(f'Paths without oauth2 (without allauth): {len(no_oauth2_wa)}')
+    print(f'Paths without security: {len(no_security)}')
+
+    return result
