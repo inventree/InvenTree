@@ -8,7 +8,7 @@ import type { UiSizeType } from '../defaults/formatters';
 
 export interface UseModalProps {
   title: string;
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
   size?: UiSizeType;
   onOpen?: () => void;
   onClose?: () => void;

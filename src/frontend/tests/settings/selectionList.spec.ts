@@ -89,7 +89,7 @@ test('PUI - Admin - Parameter', async ({ browser }) => {
     .getByText('Template *Parameter')
     .locator('div')
     .filter({ hasText: /^Search\.\.\.$/ })
-    .nth(2)
+    .first()
     .click();
   await page
     .getByText('Template *Parameter')

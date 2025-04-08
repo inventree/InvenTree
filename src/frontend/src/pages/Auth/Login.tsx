@@ -4,6 +4,8 @@ import { Anchor, Divider, Group, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+
+import { useShallow } from 'zustand/react/shallow';
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
@@ -19,15 +21,12 @@ import { useLocalState } from '../../states/LocalState';
 import { Wrapper } from './Layout';
 
 export default function Login() {
-  const [hostKey, setHost, hostList] = useLocalState((state) => [
-    state.hostKey,
-    state.setHost,
-    state.hostList
-  ]);
-  const [server, fetchServerApiState] = useServerApiState((state) => [
-    state.server,
-    state.fetchServerApiState
-  ]);
+  const [hostKey, setHost, hostList] = useLocalState(
+    useShallow((state) => [state.hostKey, state.setHost, state.hostList])
+  );
+  const [server, fetchServerApiState] = useServerApiState(
+    useShallow((state) => [state.server, state.fetchServerApiState])
+  );
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
@@ -36,7 +35,10 @@ export default function Login() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const [sso_registration, registration_enabled] = useServerApiState(
-    (state) => [state.sso_registration_enabled, state.registration_enabled]
+    useShallow((state) => [
+      state.sso_registration_enabled,
+      state.registration_enabled
+    ])
   );
   const both_reg_enabled =
     registration_enabled() || sso_registration() || false;
