@@ -16,7 +16,8 @@ import InvenTree.helpers
 from InvenTree.ready import isImportingData, isRebuildingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
-from users.models import Owner, check_user_permission
+from users.models import Owner
+from users.permissions import check_user_permission
 
 logger = structlog.get_logger('inventree')
 

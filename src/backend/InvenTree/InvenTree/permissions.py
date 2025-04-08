@@ -4,7 +4,7 @@ from functools import wraps
 
 from rest_framework import permissions
 
-import users.models
+import users.permissions
 
 
 def get_model_for_view(view):
@@ -73,7 +73,7 @@ class RolePermission(permissions.BasePermission):
             if '.' in role:
                 role, permission = role.split('.')
 
-            return users.models.check_user_role(user, role, permission)
+            return users.permissions.check_user_role(user, role, permission)
 
         try:
             # Extract the model name associated with this request
@@ -82,16 +82,12 @@ class RolePermission(permissions.BasePermission):
             if model is None:
                 return True
 
-            app_label = model._meta.app_label
-            model_name = model._meta.model_name
-
-            table = f'{app_label}_{model_name}'
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta,
             # then we don't need a permission
             return True
 
-        return users.models.RuleSet.check_table_permission(user, table, permission)
+        return users.permissions.check_user_permission(user, model, permission)
 
 
 class IsSuperuser(permissions.IsAdminUser):

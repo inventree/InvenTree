@@ -21,7 +21,6 @@ import structlog
 from allauth.account.models import EmailAddress
 from rest_framework.authtoken.models import Token as AuthToken
 
-import InvenTree.cache
 import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
@@ -436,41 +435,6 @@ class RuleSet(models.Model):
         help_text=_('Permission to delete items'),
     )
 
-    @classmethod
-    def check_table_permission(cls, user: User, table, permission):
-        """Check if the provided user has the specified permission against the table."""
-        # Superuser knows no bounds
-        if user.is_superuser:
-            return True
-
-        # If the table does *not* require permissions
-        if table in cls.get_ruleset_ignore():
-            return True
-
-        # Work out which roles touch the given table
-        for role in cls.RULESET_NAMES:
-            if table in cls.get_ruleset_models()[role]:
-                if check_user_role(user, role, permission):
-                    return True
-
-        # Check for children models which inherits from parent role
-        for parent, child in cls.RULESET_CHANGE_INHERIT:
-            # Get child model name
-            parent_child_string = f'{parent}_{child}'
-
-            if parent_child_string == table:
-                # Check if parent role has change permission
-                if check_user_role(user, parent, 'change'):
-                    return True
-
-        # Print message instead of throwing an error
-        name = getattr(user, 'name', user.pk)
-        logger.debug(
-            "User '%s' failed permission check for %s.%s", name, table, permission
-        )
-
-        return False
-
     @staticmethod
     def get_model_permission_string(model, permission):
         """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
@@ -689,79 +653,6 @@ def update_group_roles(group, debug=False):
                         logger.debug(
                             'Adding permission %s to group %s', child_perm, group.name
                         )
-
-
-def check_user_permission(user: User, model: models.Model, permission: str) -> bool:
-    """Check if the user has a particular permission against a given model type.
-
-    Arguments:
-        user: The user object to check
-        model: The model class to check (e.g. 'part')
-        permission: The permission to check (e.g. 'view' / 'delete')
-
-    Returns:
-        bool: True if the user has the specified permission
-    """
-    if not user:
-        return False
-
-    if user.is_superuser:
-        return True
-
-    permission_name = f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
-    return user.has_perm(permission_name)
-
-
-def check_user_role(user: User, role: str, permission: str) -> bool:
-    """Check if a user has a particular role:permission combination.
-
-    Arguments:
-        user: The user object to check
-        role: The role to check (e.g. 'part' / 'stock')
-        permission: The permission to check (e.g. 'view' / 'delete')
-
-    Returns:
-        bool: True if the user has the specified role:permission combination
-    """
-    if not user:
-        return False
-
-    if user.is_superuser:
-        return True
-
-    # First, check the session cache
-    cache_key = f'role_{user.pk}_{role}_{permission}'
-    result = InvenTree.cache.get_session_cache(cache_key)
-
-    if result is not None:
-        return result
-
-    # Default for no match
-    result = False
-
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
-            if rule.name == role:
-                if permission == 'add' and rule.can_add:
-                    result = True
-                    break
-
-                if permission == 'change' and rule.can_change:
-                    result = True
-                    break
-
-                if permission == 'view' and rule.can_view:
-                    result = True
-                    break
-
-                if permission == 'delete' and rule.can_delete:
-                    result = True
-                    break
-
-    # Save result to session-cache
-    InvenTree.cache.set_session_cache(cache_key, result)
-
-    return result
 
 
 class Owner(models.Model):

@@ -21,7 +21,7 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from users.models import check_user_permission
+from users.permissions import check_user_permission
 
 
 class DataImporterPermission(permissions.BasePermission):

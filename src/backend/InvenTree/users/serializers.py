@@ -11,7 +11,8 @@ from rest_framework.exceptions import PermissionDenied
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import InvenTreeModelSerializer
 
-from .models import ApiToken, Owner, RuleSet, UserProfile, check_user_role
+from .models import ApiToken, Owner, RuleSet, UserProfile
+from .permissions import check_user_role
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
