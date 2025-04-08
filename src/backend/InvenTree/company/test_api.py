@@ -408,7 +408,10 @@ class AddressTest(InvenTreeAPITestCase):
 
         self.delete(url, expected_code=403)
 
+        # Assign role, check permission
+        self.assertFalse(check_user_permission(self.user, Address, 'delete'))
         self.assignRole('purchase_order.delete')
+        self.assertTrue(check_user_permission(self.user, Address, 'delete'))
 
         self.delete(url, expected_code=204)
 
