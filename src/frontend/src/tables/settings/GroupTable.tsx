@@ -12,10 +12,10 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { notifications } from '@mantine/notifications';
-import { IconCircleCheck } from '@tabler/icons-react';
+import { IconCircleCheck, IconReload } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
@@ -206,15 +206,28 @@ function RoleTable({
           </Table.Tbody>
         </Table>
         <Group justify='right'>
-          <Tooltip label={t`Update group roles`} disabled={!edited}>
+          <Tooltip label={t`Reset group roles`} disabled={!edited}>
+            <Button
+              color='red'
+              onClick={() => {
+                setRulesets(roles);
+              }}
+              disabled={!edited}
+              leftSection={<IconReload />}
+            >
+              {t`Reset`}
+            </Button>
+          </Tooltip>
+          <Tooltip label={t`Save group roles`} disabled={!edited}>
             <Button
               color='green'
               onClick={() => {
                 onSave(rulesets);
               }}
               disabled={!edited}
+              leftSection={<IconCircleCheck />}
             >
-              {t`Update`}
+              {t`Save`}
             </Button>
           </Tooltip>
         </Group>
@@ -265,24 +278,34 @@ export function GroupDrawer({
 
   return (
     <Stack>
-      <EditApiForm
-        props={{
-          url: ApiEndpoints.group_list,
-          pk: id,
-          fields: {
-            name: {
-              label: t`Name`,
-              description: t`Name of the user group`
-            }
-          },
-          onFormSuccess: () => {
-            refreshTable();
-            refreshInstance();
-          }
-        }}
-        id={`group-detail-drawer-${id}`}
-      />
-      <Accordion defaultValue={'roles'}>
+      <Accordion defaultValue={'details'}>
+        <Accordion.Item key='details' value='details'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>Group Details</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <EditApiForm
+              props={{
+                url: ApiEndpoints.group_list,
+                pk: id,
+                fields: {
+                  name: {
+                    label: t`Name`,
+                    description: t`Name of the user group`
+                  }
+                },
+                onFormSuccess: () => {
+                  refreshTable();
+                  refreshInstance();
+                }
+              }}
+              id={`group-detail-drawer-${id}`}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+
         <Accordion.Item key='roles' value='roles'>
           <Accordion.Control>
             <StylishText size='lg'>
@@ -385,6 +408,11 @@ export function GroupTable({
     return actions;
   }, [user]);
 
+  const clickable: boolean = useMemo(
+    () => user.hasChangePermission(ModelType.group) && !directLink,
+    [user, directLink]
+  );
+
   return (
     <>
       {newGroup.modal}
@@ -409,13 +437,11 @@ export function GroupTable({
         tableState={table}
         columns={columns}
         props={{
-          rowActions: directLink ? undefined : rowActions,
+          rowActions: clickable ? rowActions : undefined,
           tableActions: tableActions,
-          onRowClick: directLink
-            ? undefined
-            : (record) => openDetailDrawer(record.pk)
-
-          // modelType: ModelType.group
+          onRowClick: clickable
+            ? (record) => openDetailDrawer(record.pk)
+            : undefined
         }}
       />
     </>
