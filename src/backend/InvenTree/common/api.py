@@ -990,7 +990,10 @@ common_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=common.models.ProjectCode),
+                        MetadataView.as_view(
+                            model=common.models.ProjectCode,
+                            permission_classes=[IsStaffOrReadOnlyScope],
+                        ),
                         name='api-project-code-metadata',
                     ),
                     path(

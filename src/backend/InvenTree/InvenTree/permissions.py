@@ -181,15 +181,13 @@ class InvenTreeTokenMatchesOASRequirements(OASTokenMatcher):
         try:
             # Extract the model name associated with this request
             model = get_model_for_view(view)
-
-            if model is None:
-                return map_scope(only_read=True)
-
-            return map_scope(
-                roles=precalculated_roles.get(
-                    f'{model._meta.app_label}_{model._meta.model_name}', []
-                )
+            calc = precalculated_roles.get(
+                f'{model._meta.app_label}_{model._meta.model_name}', []
             )
+
+            if model is None or not calc:
+                return map_scope(only_read=True)
+            return map_scope(roles=calc)
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta,
             # then we don't need a permission
