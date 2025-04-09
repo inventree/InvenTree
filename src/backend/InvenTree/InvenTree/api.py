@@ -21,7 +21,7 @@ import InvenTree.ready
 import InvenTree.version
 import users.models
 from common.settings import get_global_setting
-from InvenTree import helpers, ready
+from InvenTree import helpers
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
@@ -707,40 +707,30 @@ class MetadataView(RetrieveUpdateAPI):
     """Generic API endpoint for reading and editing metadata for a model."""
 
     @classmethod
-    def as_view(cls, model, **initkwargs):
+    def as_view(cls, model, lookup_field=None, **initkwargs):
         """Override to ensure model specific rendering."""
         if model is None:
             raise ValidationError(
                 "MetadataView defined without 'model' arg"
             )  # pragma: no cover
-
         cls.model = model
+
+        # Set custom lookup field (instead of default 'pk' value) if supplied
+        if lookup_field:
+            cls.lookup_field = lookup_field
         return super().as_view(**initkwargs)
-
-    def get_model_type(self):
-        """Return the model type associated with this API instance."""
-        model = self.model
-
-        if model is None and ready.isGeneratingSchema():
-            model = Part
-
-        if 'lookup_field' in self.kwargs:
-            # Set custom lookup field (instead of default 'pk' value) if supplied
-            self.lookup_field = self.kwargs.pop('lookup_field')
-
-        return model
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
-        return self.get_model_type()
+        return self.model
 
     def get_queryset(self):
         """Return the queryset for this endpoint."""
-        return self.get_model_type().objects.all()
+        return self.model.objects.all()
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
         # Detect if we are currently generating the OpenAPI schema
         if InvenTree.ready.isGeneratingSchema():
             return MetadataSerializer(Part, *args, **kwargs)  # pragma: no cover
-        return MetadataSerializer(self.get_model_type(), *args, **kwargs)
+        return MetadataSerializer(self.model, *args, **kwargs)
