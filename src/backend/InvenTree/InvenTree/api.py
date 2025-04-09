@@ -79,8 +79,8 @@ def read_license_file(path: Path) -> list:
 class LicenseViewSerializer(serializers.Serializer):
     """Serializer for license information."""
 
-    backend = serializers.CharField(help_text='Backend licenses texts', read_only=True)
-    frontend = serializers.CharField(
+    backend = serializers.ListField(help_text='Backend licenses texts', read_only=True)
+    frontend = serializers.ListField(
         help_text='Frontend licenses texts', read_only=True
     )
 
