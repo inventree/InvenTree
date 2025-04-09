@@ -49,6 +49,7 @@ class OwnerList(ListAPI):
 
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def filter_queryset(self, queryset):
         """Implement text search for the "owner" model.
@@ -112,6 +113,7 @@ class OwnerDetail(RetrieveAPI):
 
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
 
 class RoleDetails(RetrieveAPI):

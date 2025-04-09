@@ -22,7 +22,7 @@ from error_report.models import Error
 from pint._typing import UnitLike
 from rest_framework import serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -216,6 +216,7 @@ class GlobalSettingsList(SettingsList):
 
     queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith='_')
     serializer_class = common.serializers.GlobalSettingsSerializer
+    permission_classes = [IsAuthenticated, GlobalSettingsPermissions]
 
     def list(self, request, *args, **kwargs):
         """Ensure all global settings are created."""
@@ -232,6 +233,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
     lookup_field = 'key'
     queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith='_')
     serializer_class = common.serializers.GlobalSettingsSerializer
+    permission_classes = [IsAuthenticated, GlobalSettingsPermissions]
 
     def get_object(self):
         """Attempt to find a global setting object with the provided key."""
@@ -244,14 +246,13 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
             key, cache=False, create=True
         )
 
-    permission_classes = [IsAuthenticatedOrReadScope, GlobalSettingsPermissions]
-
 
 class UserSettingsList(SettingsList):
     """API endpoint for accessing a list of user settings objects."""
 
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+    permission_classes = [UserSettingsPermissionsOrScope]
 
     def list(self, request, *args, **kwargs):
         """Ensure all user settings are created."""
@@ -288,6 +289,7 @@ class UserSettingsDetail(RetrieveUpdateAPI):
     lookup_field = 'key'
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+    permission_classes = [UserSettingsPermissionsOrScope]
 
     def get_object(self):
         """Attempt to find a user setting object with the provided key."""
@@ -303,14 +305,13 @@ class UserSettingsDetail(RetrieveUpdateAPI):
             key, user=self.request.user, cache=False, create=True
         )
 
-    permission_classes = [UserSettingsPermissionsOrScope]
-
 
 class NotificationUserSettingsList(SettingsList):
     """API endpoint for accessing a list of notification user settings objects."""
 
     queryset = NotificationUserSetting.objects.all()
     serializer_class = NotificationUserSettingSerializer
+    permission_classes = [UserSettingsPermissionsOrScope]
 
     def filter_queryset(self, queryset):
         """Only list settings which apply to the current user."""
