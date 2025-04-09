@@ -287,11 +287,6 @@ class GroupSerializer(InvenTreeModelSerializer):
 
     users = UserSerializer(source='user_set', many=True, read_only=True)
 
-    def validate(self, data):
-        """Validate the provided data."""
-        print('validate:', data)
-        raise PermissionDenied('NO!')
-
 
 class ExtendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
@@ -362,8 +357,6 @@ class ExtendedUserSerializer(UserSerializer):
 
         if groups is not None:
             instance.groups.set(groups)
-
-        print('groups:', instance.groups)
 
         return instance
 

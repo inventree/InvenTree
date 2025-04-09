@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 import InvenTree.cache
+from users.ruleset import RULESET_CHANGE_INHERIT, get_ruleset_ignore, get_ruleset_models
 
 
 def split_model(model_label: str) -> tuple[str, str]:
@@ -141,6 +142,27 @@ def check_user_permission(
 
     if user.is_superuser:
         return True
+
+    table_name = f'{model._meta.app_label}_{model._meta.model_name}'
+
+    # Particular table does not require specific permissions
+    if table_name in get_ruleset_ignore():
+        return True
+
+    for role, table_names in get_ruleset_models().items():
+        if table_name in table_names:
+            if check_user_role(user, role, permission):
+                return True
+
+    # Check for children models which inherits from parent role
+    for parent, child in RULESET_CHANGE_INHERIT:
+        # Get child model name
+        parent_child_string = f'{parent}_{child}'
+
+        if parent_child_string == table_name:
+            # Check if parent role has change permission
+            if check_user_role(user, parent, 'change'):
+                return True
 
     # Generate the permission name based on the model and permission
     # e.g. 'part.view_part'

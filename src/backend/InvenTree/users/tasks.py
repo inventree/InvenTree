@@ -8,7 +8,7 @@ import structlog
 from InvenTree.ready import canAppAccessDatabase
 from users.models import RuleSet
 from users.permissions import get_model_permission_string, split_permission
-from users.ruleset import RULESET_CHOICES, RULESET_NAMES
+from users.ruleset import RULESET_CHANGE_INHERIT, RULESET_CHOICES, RULESET_NAMES
 
 logger = structlog.get_logger('inventree')
 
@@ -134,6 +134,7 @@ def update_group_roles(group: Group, debug: bool = False) -> None:
         (app, perm) = permission_string.split('.')
 
         perm, model = split_permission(app, perm)
+        permission = None
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
@@ -141,10 +142,9 @@ def update_group_roles(group: Group, debug: bool = False) -> None:
                 content_type=content_type, codename=perm
             )
         except ContentType.DoesNotExist:  # pragma: no cover
-            logger.warning(
-                "Error: Could not find permission matching '%s'", permission_string
-            )
-            permission = None
+            logger.warning("No ContentType found matching '%s' and '%s'", app, model)
+        except Permission.DoesNotExist:
+            logger.warning("No Permission found matching '%s' and '%s'", app, perm)
 
         return permission
 
@@ -154,13 +154,10 @@ def update_group_roles(group: Group, debug: bool = False) -> None:
         if perm in group_permissions:
             continue
 
-        permission = get_permission_object(perm)
-
-        if permission:
+        if permission := get_permission_object(perm):
             group.permissions.add(permission)
-
-        if debug:  # pragma: no cover
-            logger.debug('Adding permission %s to group %s', perm, group.name)
+            if debug:  # pragma: no cover
+                logger.debug('Adding permission %s to group %s', perm, group.name)
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -168,17 +165,14 @@ def update_group_roles(group: Group, debug: bool = False) -> None:
         if perm not in group_permissions:
             continue
 
-        permission = get_permission_object(perm)
-
-        if permission:
+        if permission := get_permission_object(perm):
             group.permissions.remove(permission)
-
-        if debug:  # pragma: no cover
-            logger.debug('Removing permission %s from group %s', perm, group.name)
+            if debug:  # pragma: no cover
+                logger.debug('Removing permission %s from group %s', perm, group.name)
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
-    for parent, child in RuleSet.RULESET_CHANGE_INHERIT:
+    for parent, child in RULESET_CHANGE_INHERIT:
         parent_child_string = f'{parent}_{child}'
 
         # Check each type of permission

@@ -216,8 +216,6 @@ class RuleSet(models.Model):
     which are then handled using the normal django permissions approach.
     """
 
-    RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
-
     RULE_OPTIONS = ['can_view', 'can_add', 'can_change', 'can_delete']
 
     class Meta:
@@ -283,8 +281,6 @@ class RuleSet(models.Model):
         It does not make sense to be able to change / create something,
         but not be able to view it!
         """
-        from users.tasks import update_group_roles
-
         if self.can_add or self.can_change or self.can_delete:
             self.can_view = True
 
@@ -295,8 +291,8 @@ class RuleSet(models.Model):
 
         if self.group:
             # Update the group too!
+            # Note: This will trigger the 'update_group_roles' signal
             self.group.save()
-            update_group_roles(self.group, debug=True)
 
     def get_models(self):
         """Return the database tables / models that this ruleset covers."""
