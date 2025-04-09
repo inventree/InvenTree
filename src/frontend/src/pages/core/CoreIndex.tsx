@@ -20,7 +20,7 @@ export default function CoreIndex() {
         name: 'users',
         label: t`Users`,
         icon: <IconUser />,
-        content: <UserTable />
+        content: <UserTable directLink />
       },
       {
         name: 'groups',

@@ -17,6 +17,7 @@ import {
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
@@ -222,7 +223,11 @@ export function UserDrawer({
 /**
  * Table for displaying list of users
  */
-export function UserTable() {
+export function UserTable({
+  directLink
+}: {
+  directLink?: boolean;
+}) {
   const table = useTable('users');
   const navigate = useNavigate();
   const user = useUserState();
@@ -358,42 +363,43 @@ export function UserTable() {
     ];
   }, []);
 
-  const hasRowActions = useMemo(() => {
-    return (
-      user.isStaff() &&
-      (user.hasChangePermission(ModelType.user) ||
-        user.hasDeletePermission(ModelType.user))
-    );
-  }, [user]);
+  // Determine whether the UserTable is editable
+  const editable: boolean = useMemo(
+    () => !directLink && user.isStaff() && user.hasChangeRole(UserRoles.admin),
+    [user, directLink]
+  );
 
   return (
     <>
-      {newUser.modal}
-      {deleteUser.modal}
-      <DetailDrawer
-        size='xl'
-        title={t`Edit User`}
-        renderContent={(id) => {
-          if (!id || !id.startsWith('user-')) return false;
-          return (
-            <UserDrawer
-              id={id.replace('user-', '')}
-              refreshTable={table.refreshTable}
-            />
-          );
-        }}
-      />
+      {editable && newUser.modal}
+      {editable && deleteUser.modal}
+      {editable && (
+        <DetailDrawer
+          size='xl'
+          title={t`Edit User`}
+          renderContent={(id) => {
+            if (!id || !id.startsWith('user-')) return false;
+            return (
+              <UserDrawer
+                id={id.replace('user-', '')}
+                refreshTable={table.refreshTable}
+              />
+            );
+          }}
+        />
+      )}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.user_list)}
         tableState={table}
         columns={columns}
         props={{
-          rowActions: hasRowActions ? rowActions : undefined,
-          tableActions: tableActions,
+          rowActions: editable ? rowActions : undefined,
+          tableActions: editable ? tableActions : undefined,
           tableFilters: tableFilters,
-          onRowClick: hasRowActions
+          onRowClick: editable
             ? (record) => openDetailDrawer(record.pk)
-            : undefined
+            : undefined,
+          modelType: directLink ? ModelType.user : undefined
         }}
       />
     </>

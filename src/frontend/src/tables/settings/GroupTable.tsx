@@ -410,11 +410,17 @@ export function GroupTable({
     return actions;
   }, [user]);
 
+  // Determine whether the GroupTable is editable
+  const editable: boolean = useMemo(
+    () => !directLink && user.isStaff() && user.hasChangeRole(UserRoles.admin),
+    [user, directLink]
+  );
+
   return (
     <>
-      {newGroup.modal}
-      {deleteGroup.modal}
-      {user.hasViewRole(UserRoles.admin) && (
+      {editable && newGroup.modal}
+      {editable && deleteGroup.modal}
+      {editable && (
         <DetailDrawer
           size='xl'
           title={t`Edit Group`}
@@ -434,16 +440,12 @@ export function GroupTable({
         tableState={table}
         columns={columns}
         props={{
-          rowActions:
-            user.hasChangeRole(UserRoles.admin) && !directLink
-              ? rowActions
-              : undefined,
-          tableActions: tableActions,
+          rowActions: editable ? rowActions : undefined,
+          tableActions: editable ? tableActions : undefined,
           modelType: directLink ? ModelType.group : undefined,
-          onRowClick:
-            user.hasChangeRole(UserRoles.admin) && !directLink
-              ? (record) => openDetailDrawer(record.pk)
-              : undefined
+          onRowClick: editable
+            ? (record) => openDetailDrawer(record.pk)
+            : undefined
         }}
       />
     </>
