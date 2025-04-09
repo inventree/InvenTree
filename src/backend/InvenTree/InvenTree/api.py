@@ -705,6 +705,8 @@ class APISearchView(GenericAPIView):
 class MetadataView(RetrieveUpdateAPI):
     """Generic API endpoint for reading and editing metadata for a model."""
 
+    model = None  # Placeholder for the model class
+
     @classmethod
     def as_view(cls, model, lookup_field=None, **initkwargs):
         """Override to ensure model specific rendering."""
@@ -712,11 +714,12 @@ class MetadataView(RetrieveUpdateAPI):
             raise ValidationError(
                 "MetadataView defined without 'model' arg"
             )  # pragma: no cover
-        cls.model = model
+        initkwargs['model'] = model
 
         # Set custom lookup field (instead of default 'pk' value) if supplied
         if lookup_field:
-            cls.lookup_field = lookup_field
+            initkwargs['lookup_field'] = lookup_field
+
         return super().as_view(**initkwargs)
 
     def get_permission_model(self):
