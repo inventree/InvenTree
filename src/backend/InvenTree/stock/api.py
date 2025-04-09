@@ -1512,8 +1512,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocation},
+                        MetadataView.as_view(model=StockLocation),
                         name='api-location-metadata',
                     ),
                     path('', StockLocationDetail.as_view(), name='api-location-detail'),
@@ -1531,8 +1530,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocationType},
+                        MetadataView.as_view(model=StockLocationType),
                         name='api-location-type-metadata',
                     ),
                     path(
@@ -1562,8 +1560,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockItemTestResult},
+                        MetadataView.as_view(model=StockItemTestResult),
                         name='api-stock-test-result-metadata',
                     ),
                     path(
@@ -1605,8 +1602,7 @@ stock_api_urls = [
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': StockItem},
+                MetadataView.as_view(model=StockItem),
                 name='api-stock-item-metadata',
             ),
             path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),

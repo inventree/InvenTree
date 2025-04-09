@@ -964,8 +964,7 @@ common_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': common.models.Attachment},
+                        MetadataView.as_view(model=common.models.Attachment),
                         name='api-attachment-metadata',
                     ),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
@@ -990,8 +989,7 @@ common_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': common.models.ProjectCode},
+                        MetadataView.as_view(model=common.models.ProjectCode),
                         name='api-project-code-metadata',
                     ),
                     path(

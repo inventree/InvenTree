@@ -358,8 +358,7 @@ label_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.LabelTemplate},
+                        MetadataView.as_view(model=report.models.LabelTemplate),
                         name='api-label-template-metadata',
                     ),
                     path(
@@ -386,8 +385,7 @@ report_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.ReportTemplate},
+                        MetadataView.as_view(model=report.models.ReportTemplate),
                         name='api-report-template-metadata',
                     ),
                     path(
