@@ -920,8 +920,7 @@ build_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': BuildItem},
+                        MetadataView.as_view(model=BuildItem),
                         name='api-build-item-metadata',
                     ),
                     path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
@@ -967,8 +966,7 @@ build_api_urls = [
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': Build},
+                MetadataView.as_view(model=Build),
                 name='api-build-metadata',
             ),
             path('', BuildDetail.as_view(), name='api-build-detail'),

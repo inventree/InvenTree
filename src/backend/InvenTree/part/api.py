@@ -1996,8 +1996,9 @@ part_api_urls = [
                         include([
                             path(
                                 'metadata/',
-                                MetadataView.as_view(),
-                                {'model': PartCategoryParameterTemplate},
+                                MetadataView.as_view(
+                                    model=PartCategoryParameterTemplate
+                                ),
                                 name='api-part-category-parameter-metadata',
                             ),
                             path(
@@ -2020,8 +2021,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartCategory},
+                        MetadataView.as_view(model=PartCategory),
                         name='api-part-category-metadata',
                     ),
                     # PartCategory detail endpoint
@@ -2040,8 +2040,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartTestTemplate},
+                        MetadataView.as_view(model=PartTestTemplate),
                         name='api-part-test-template-metadata',
                     ),
                     path(
@@ -2091,8 +2090,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartRelated},
+                        MetadataView.as_view(model=PartRelated),
                         name='api-part-related-metadata',
                     ),
                     path(
@@ -2115,8 +2113,7 @@ part_api_urls = [
                         include([
                             path(
                                 'metadata/',
-                                MetadataView.as_view(),
-                                {'model': PartParameterTemplate},
+                                MetadataView.as_view(model=PartParameterTemplate),
                                 name='api-part-parameter-template-metadata',
                             ),
                             path(
@@ -2138,8 +2135,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartParameter},
+                        MetadataView.as_view(model=PartParameter),
                         name='api-part-parameter-metadata',
                     ),
                     path(
@@ -2217,10 +2213,7 @@ part_api_urls = [
             ),
             # Part metadata
             path(
-                'metadata/',
-                MetadataView.as_view(),
-                {'model': Part},
-                name='api-part-metadata',
+                'metadata/', MetadataView.as_view(model=Part), name='api-part-metadata'
             ),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
@@ -2241,8 +2234,7 @@ bom_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': BomItemSubstitute},
+                        MetadataView.as_view(model=BomItemSubstitute),
                         name='api-bom-substitute-metadata',
                     ),
                     path(
@@ -2263,8 +2255,7 @@ bom_api_urls = [
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': BomItem},
+                MetadataView.as_view(model=BomItem),
                 name='api-bom-item-metadata',
             ),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
