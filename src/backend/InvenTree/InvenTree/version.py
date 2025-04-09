@@ -129,11 +129,6 @@ def inventreeAppUrl():
     return 'https://docs.inventree.org/app/'
 
 
-def inventreeCreditsUrl():
-    """Return URL for InvenTree credits site."""
-    return 'https://docs.inventree.org/en/latest/credits/'
-
-
 def inventreeGithubUrl():
     """Return URL for InvenTree github site."""
     return 'https://github.com/InvenTree/InvenTree/'

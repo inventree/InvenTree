@@ -122,7 +122,6 @@ class VersionViewSerializer(serializers.Serializer):
 
         doc = serializers.URLField()
         code = serializers.URLField()
-        credit = serializers.URLField()
         app = serializers.URLField()
         bug = serializers.URLField()
 
@@ -155,7 +154,6 @@ class VersionView(APIView):
             'links': {
                 'doc': InvenTree.version.inventreeDocUrl(),
                 'code': InvenTree.version.inventreeGithubUrl(),
-                'credit': InvenTree.version.inventreeCreditsUrl(),
                 'app': InvenTree.version.inventreeAppUrl(),
                 'bug': f'{InvenTree.version.inventreeGithubUrl()}issues',
             },
