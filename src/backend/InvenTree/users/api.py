@@ -128,7 +128,12 @@ class RoleDetails(RetrieveAPI):
 
 
 class UserDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for a single user."""
+    """Detail endpoint for a single user.
+
+    Permissions:
+    - Staff users (who also have the 'admin' role) can perform write operations
+    - Otherwise authenticated users have read-only access
+    """
 
     queryset = User.objects.all()
     serializer_class = ExtendedUserSerializer
@@ -136,9 +141,15 @@ class UserDetail(RetrieveUpdateDestroyAPI):
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
-    """Detail endpoint for current user."""
+    """Detail endpoint for current user.
+
+    Permissions:
+    - User can edit their own details via this endpoint
+    - Only a subset of fields are available here
+    """
 
     serializer_class = MeUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
 
@@ -155,7 +166,12 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
 
 
 class UserList(ListCreateAPI):
-    """List endpoint for detail on all users."""
+    """List endpoint for detail on all users.
+
+    Permissions:
+    - Staff users (who also have the 'admin' role) can perform write operations
+    - Otherwise authenticated users have read-only access
+    """
 
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
@@ -181,7 +197,12 @@ class UserList(ListCreateAPI):
 
 
 class GroupMixin:
-    """Mixin for Group API endpoints to add permissions filter."""
+    """Mixin for Group API endpoints to add permissions filter.
+
+    Permissions:
+    - Staff users (who also have the 'admin' role) can perform write operations
+    - Otherwise authenticated users have read-only access
+    """
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -396,7 +417,12 @@ class LoginRedirect(RedirectView):
 
 
 class UserProfileDetail(RetrieveUpdateAPI):
-    """Detail endpoint for the user profile."""
+    """Detail endpoint for the user profile.
+
+    Permissions:
+    - Any authenticated user has write access against this endpoint
+    - The endpoint always returns the profile associated with the current user
+    """
 
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
