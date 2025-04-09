@@ -65,6 +65,10 @@ export function AccountDetailPanel() {
       { label: t`First Name`, value: user?.first_name },
       { label: t`Last Name`, value: user?.last_name },
       {
+        label: t`Active`,
+        value: <YesNoUndefinedButton value={user?.profile?.active} />
+      },
+      {
         label: t`Staff Access`,
         value: <YesNoUndefinedButton value={user?.is_staff} />
       },
@@ -82,10 +86,6 @@ export function AccountDetailPanel() {
       { label: t`Position`, value: user?.profile?.position },
       { label: t`Status`, value: user?.profile?.status },
       { label: t`Location`, value: user?.profile?.location },
-      {
-        label: t`Active`,
-        value: <YesNoUndefinedButton value={user?.profile?.active} />
-      },
       { label: t`Contact`, value: user?.profile?.contact },
       { label: t`Type`, value: <Badge>{user?.profile?.type}</Badge> },
       { label: t`Organisation`, value: user?.profile?.organisation },
