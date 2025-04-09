@@ -236,11 +236,7 @@ class RuleSetMixin:
     permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
-class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for a particular RuleSet instance."""
-
-
-class RuleSetList(RuleSetMixin, ListCreateAPI):
+class RuleSetList(RuleSetMixin, ListAPI):
     """List endpoint for all RuleSet instances."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -248,6 +244,10 @@ class RuleSetList(RuleSetMixin, ListCreateAPI):
     search_fields = ['name']
     ordering_fields = ['name']
     filterset_fields = ['group', 'name']
+
+
+class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for a particular RuleSet instance."""
 
 
 class GetAuthToken(GenericAPIView):
