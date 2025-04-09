@@ -113,7 +113,7 @@ class VersionViewSerializer(serializers.Serializer):
         api = serializers.IntegerField()
         commit_hash = serializers.CharField()
         commit_date = serializers.CharField()
-        commit_branch = serializers.CharField()
+        commit_branch = serializers.CharField(allow_null=True)
         python = serializers.CharField()
         django = serializers.CharField()
 
