@@ -114,7 +114,8 @@ export default function AdminCenter() {
         name: 'user',
         label: t`User Management`,
         icon: <IconUsersGroup />,
-        content: <UserManagementPanel />
+        content: <UserManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'import',
@@ -219,26 +220,23 @@ export default function AdminCenter() {
         name: 'plugin',
         label: t`Plugins`,
         icon: <IconPlugConnected />,
-        content: <PluginManagementPanel />
+        content: <PluginManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'machine',
         label: t`Machines`,
         icon: <IconDevicesPc />,
-        content: <MachineManagementPanel />
+        content: <MachineManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
-  }, []);
-
-  const isStaff = useMemo(
-    () => user.isStaff() && user.hasViewRole(UserRoles.admin),
-    [user]
-  );
+  }, [user]);
 
   return (
     <>
       <PageTitle title={t`Admin Center`} />
-      {isStaff ? (
+      {user.isStaff() ? (
         <Stack gap='xs'>
           <SettingsHeader
             label='admin'
