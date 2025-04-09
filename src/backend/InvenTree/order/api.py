@@ -1779,8 +1779,7 @@ order_api_urls = [
                     path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrder},
+                        MetadataView.as_view(model=models.PurchaseOrder),
                         name='api-po-metadata',
                     ),
                     path(
@@ -1812,8 +1811,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrderLineItem},
+                        MetadataView.as_view(model=models.PurchaseOrderLineItem),
                         name='api-po-line-metadata',
                     ),
                     path(
@@ -1835,8 +1833,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrderExtraLine},
+                        MetadataView.as_view(model=models.PurchaseOrderExtraLine),
                         name='api-po-extra-line-metadata',
                     ),
                     path(
@@ -1868,8 +1865,7 @@ order_api_urls = [
                             ),
                             path(
                                 'metadata/',
-                                MetadataView.as_view(),
-                                {'model': models.SalesOrderShipment},
+                                MetadataView.as_view(model=models.SalesOrderShipment),
                                 name='api-so-shipment-metadata',
                             ),
                             path(
@@ -1910,8 +1906,7 @@ order_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrder},
+                        MetadataView.as_view(model=models.SalesOrder),
                         name='api-so-metadata',
                     ),
                     # SalesOrder detail endpoint
@@ -1938,8 +1933,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrderLineItem},
+                        MetadataView.as_view(model=models.SalesOrderLineItem),
                         name='api-so-line-metadata',
                     ),
                     path(
@@ -1961,8 +1955,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrderExtraLine},
+                        MetadataView.as_view(model=models.SalesOrderExtraLine),
                         name='api-so-extra-line-metadata',
                     ),
                     path(
@@ -2018,8 +2011,7 @@ order_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrder},
+                        MetadataView.as_view(model=models.ReturnOrder),
                         name='api-return-order-metadata',
                     ),
                     path(
@@ -2047,8 +2039,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrderLineItem},
+                        MetadataView.as_view(model=models.ReturnOrderLineItem),
                         name='api-return-order-line-metadata',
                     ),
                     path(
@@ -2079,8 +2070,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrderExtraLine},
+                        MetadataView.as_view(model=models.ReturnOrderExtraLine),
                         name='api-return-order-extra-line-metadata',
                     ),
                     path(
