@@ -25,7 +25,6 @@ from InvenTree import helpers
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
-from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
@@ -731,6 +730,4 @@ class MetadataView(RetrieveUpdateAPI):
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
         # Detect if we are currently generating the OpenAPI schema
-        if InvenTree.ready.isGeneratingSchema():
-            return MetadataSerializer(Part, *args, **kwargs)  # pragma: no cover
         return MetadataSerializer(self.model, *args, **kwargs)
