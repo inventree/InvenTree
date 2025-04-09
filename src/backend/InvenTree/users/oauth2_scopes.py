@@ -11,6 +11,7 @@ def get_granular_scope(method, role=None, type='r'):
 # region generated stuff
 _roles = {
     'admin': 'Role Admin',
+    'importer': 'Role Importer',
     'part_category': 'Role Part Categories',
     'part': 'Role Parts',
     'stocktake': 'Role Stocktake',

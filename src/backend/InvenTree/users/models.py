@@ -217,6 +217,7 @@ class RuleSet(models.Model):
 
     RULESET_CHOICES = [
         ('admin', _('Admin')),
+        ('importer', _('Import')),
         ('part_category', _('Part Categories')),
         ('part', _('Parts')),
         ('stocktake', _('Stocktake')),
@@ -273,6 +274,12 @@ class RuleSet(models.Model):
                 'flags_flagstate',
                 'machine_machineconfig',
                 'machine_machinesetting',
+            ],
+            'importer': [
+                # Importing
+                'importer_dataimportsession',
+                'importer_dataimportcolumnmap',
+                'importer_dataimportrow',
             ],
             'part_category': [
                 'part_partcategory',
@@ -388,10 +395,6 @@ class RuleSet(models.Model):
             'django_q_task',
             'django_q_schedule',
             'django_q_success',
-            # Importing
-            'importer_dataimportsession',
-            'importer_dataimportcolumnmap',
-            'importer_dataimportrow',
         ]
 
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
