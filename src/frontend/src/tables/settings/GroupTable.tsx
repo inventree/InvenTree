@@ -410,11 +410,6 @@ export function GroupTable({
     return actions;
   }, [user]);
 
-  const clickable: boolean = useMemo(
-    () => user.hasChangePermission(ModelType.group) && !directLink,
-    [user, directLink]
-  );
-
   return (
     <>
       {newGroup.modal}
@@ -439,11 +434,16 @@ export function GroupTable({
         tableState={table}
         columns={columns}
         props={{
-          rowActions: clickable ? rowActions : undefined,
+          rowActions:
+            user.hasChangeRole(UserRoles.admin) && !directLink
+              ? rowActions
+              : undefined,
           tableActions: tableActions,
-          onRowClick: clickable
-            ? (record) => openDetailDrawer(record.pk)
-            : undefined
+          modelType: directLink ? ModelType.group : undefined,
+          onRowClick:
+            user.hasChangeRole(UserRoles.admin) && !directLink
+              ? (record) => openDetailDrawer(record.pk)
+              : undefined
         }}
       />
     </>

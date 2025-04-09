@@ -26,7 +26,7 @@ export default function CoreIndex() {
         name: 'groups',
         label: t`Groups`,
         icon: <IconUsersGroup />,
-        content: <GroupTable />
+        content: <GroupTable directLink />
       },
       {
         name: 'contacts',
