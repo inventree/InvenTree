@@ -13,7 +13,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
 from .permissions import check_user_role
-from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS
+from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
@@ -316,37 +316,32 @@ class ExtendedUserSerializer(UserSerializer):
     )
 
     is_staff = serializers.BooleanField(
-        label=_('Staff'), help_text=_('Does this user have staff permissions')
+        label=_('Staff'),
+        help_text=_('Does this user have staff permissions'),
+        required=False,
     )
 
     is_superuser = serializers.BooleanField(
-        label=_('Superuser'), help_text=_('Is this user a superuser')
+        label=_('Superuser'), help_text=_('Is this user a superuser'), required=False
     )
 
     is_active = serializers.BooleanField(
-        label=_('Active'), help_text=_('Is this user account active')
+        label=_('Active'), help_text=_('Is this user account active'), required=False
     )
 
     profile = BriefUserProfileSerializer(many=False, read_only=True)
 
-    def validate(self, attrs):
-        """Expanded validation for changing user role."""
-        # Check if is_staff or is_superuser is in attrs
-        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
+    def validate_is_superuser(self, value):
+        """Only a superuser account can adjust this value!"""
         request_user = self.context['request'].user
 
-        if role_change:
-            if request_user.is_superuser:
-                # Superusers can change any role
-                pass
-            elif request_user.is_staff and 'is_superuser' not in attrs:
-                # Staff can change any role except is_superuser
-                pass
-            else:
-                raise PermissionDenied(
-                    _('You do not have permission to change this user role.')
-                )
-        return super().validate(attrs)
+        if 'is_superuser' in self.context['request'].data:
+            if not request_user.is_superuser:
+                raise PermissionDenied({
+                    'is_superuser': _('Only a superuser can adjust this field')
+                })
+
+        return value
 
     def update(self, instance, validated_data):
         """Update the user instance with the provided data."""
@@ -392,9 +387,18 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
     def validate(self, attrs):
         """Expanded valiadation for auth."""
+        user = self.context['request'].user
+
         # Check that the user trying to create a new user is a superuser
-        if not self.context['request'].user.is_superuser:
-            raise serializers.ValidationError(_('Only superusers can create new users'))
+        if not user.is_staff:
+            raise serializers.ValidationError(
+                _('Only staff users can create new users')
+            )
+
+        if not check_user_role(user, RuleSetEnum.ADMIN, 'add'):
+            raise serializers.ValidationError(
+                _('You do not have permission to create users')
+            )
 
         # Generate a random password
         password = User.objects.make_random_password(length=14)

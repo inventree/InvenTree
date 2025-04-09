@@ -60,31 +60,83 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertIn('pk', response.data)
         self.assertIn('username', response.data)
 
-        # Test create user
-        response = self.post(url, expected_code=403)
+        data = {
+            'username': 'test',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'email': 'aa@example.org',
+        }
+
+        # Test create user - requires staff access with 'admin' role
+        response = self.post(url, data=data, expected_code=403)
         self.assertIn(
             'You do not have permission to perform this action.', str(response.data)
         )
 
-        self.user.is_superuser = True
+        # Try again with "staff" access
+        self.user.is_staff = True
         self.user.save()
 
-        response = self.post(
-            url,
-            data={
-                'username': 'test',
-                'first_name': 'Test',
-                'last_name': 'User',
-                'email': 'aa@example.org',
-            },
-            expected_code=201,
-        )
+        # Try again - should fail still, as user does not have "admin" role
+        response = self.post(url, data=data, expected_code=403)
+
+        # Assign the "admin" role to the user
+        self.assignRole('admin.view')
+
+        # Fail again - user does not have "add" permission against the "admin" role
+        response = self.post(url, data=data, expected_code=403)
+
+        self.assignRole('admin.add')
+
+        response = self.post(url, data=data, expected_code=201)
+
         self.assertEqual(response.data['username'], 'test')
         self.assertEqual(response.data['first_name'], 'Test')
         self.assertEqual(response.data['last_name'], 'User')
         self.assertEqual(response.data['is_staff'], False)
         self.assertEqual(response.data['is_superuser'], False)
         self.assertEqual(response.data['is_active'], True)
+
+        # Try to adjust the 'is_superuser' field
+        # Only a "superuser" can set this field
+        response = self.post(
+            url,
+            data={**data, 'username': 'Superuser', 'is_superuser': True},
+            expected_code=403,
+        )
+
+        self.assertIn('Only a superuser can adjust this field', str(response.data))
+
+    def test_user_detail(self):
+        """Test the UserDetail API endpoint."""
+        user = User.objects.first()
+        url = reverse('api-user-detail', kwargs={'pk': user.pk})
+
+        user.is_staff = False
+        user.save()
+
+        # Any authenticated user can access the user detail endpoint
+        self.get(url, expected_code=200)
+
+        # Let's try to update the user
+        data = {'is_active': False, 'is_staff': False}
+
+        self.patch(url, data=data, expected_code=403)
+
+        # But, what if we have the "admin" role?
+        self.assignRole('admin.change')
+
+        # Still cannot - we are not staff
+        self.patch(url, data=data, expected_code=403)
+
+        self.user.is_staff = True
+        self.user.save()
+
+        self.patch(url, data=data, expected_code=200)
+
+        # Try again, but logged out - expect no access to the endpoint
+        self.logout()
+        self.get(url, expected_code=401)
 
     def test_group_api(self):
         """Tests for the Group API endpoints."""

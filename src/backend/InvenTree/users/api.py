@@ -46,7 +46,7 @@ logger = structlog.get_logger('inventree')
 class OwnerList(ListAPI):
     """List API endpoint for Owner model.
 
-    Cannot create.
+    Cannot create a new Owner object via the API, but can view existing instances.
     """
 
     queryset = Owner.objects.all()
@@ -132,7 +132,7 @@ class UserDetail(RetrieveUpdateDestroyAPI):
 
     queryset = User.objects.all()
     serializer_class = ExtendedUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):

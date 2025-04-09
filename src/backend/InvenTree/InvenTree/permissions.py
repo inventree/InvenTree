@@ -101,20 +101,22 @@ class RolePermissionOrReadOnly(RolePermission):
         - If the user does have the required role, then allow the request
         - If the user does not have the required role, but is authenticated, then allow read-only access
         """
-        if not request or not request.user or not request.user.is_authenticated:
+        user = getattr(request, 'user', None)
+
+        if not user or not user.is_active or not user.is_authenticated:
             return False
 
-        if request.user.is_superuser:
+        if user.is_superuser:
             return True
 
-        if not self.REQUIRE_STAFF or request.user.is_staff:
+        if not self.REQUIRE_STAFF or user.is_staff:
             if super().has_permission(request, view):
                 return True
 
         return request.method in permissions.SAFE_METHODS
 
 
-class StaffRolePermissionOrReadOnly(RolePermission):
+class StaffRolePermissionOrReadOnly(RolePermissionOrReadOnly):
     """RolePermission which requires staff AND role access, or read-only."""
 
     REQUIRE_STAFF = True
