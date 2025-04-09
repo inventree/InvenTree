@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken
+from users.ruleset import RULESET_NAMES, get_ruleset_models
 
 
 class UserAPITests(InvenTreeAPITestCase):
@@ -114,6 +115,43 @@ class UserAPITests(InvenTreeAPITestCase):
         """Test login redirect endpoint."""
         response = self.get(reverse('api-login-redirect'), expected_code=302)
         self.assertEqual(response.url, '/web/logged-in/')
+
+    def test_user_roles(self):
+        """Test the user 'roles' API endpoint."""
+        url = reverse('api-user-roles')
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+
+        # User has no 'permissions' yet
+        self.assertEqual(len(data['permissions']), 0)
+        self.assertEqual(len(data['roles']), len(RULESET_NAMES))
+
+        # assign the 'purchase_order.add' role to the test group
+        self.assignRole('purchase_order.add')
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+
+        # Expected number of permissions
+        perms = get_ruleset_models()['purchase_order']
+        self.assertEqual(len(data['permissions']), len(perms))
+
+        for P in data['permissions'].values():
+            self.assertIn('add', P)
+            self.assertIn('change', P)
+            self.assertIn('view', P)
+
+            self.assertNotIn('delete', P)
+
+        # assign a different role - check stacking
+        self.assignRole('build.view')
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+        build_perms = get_ruleset_models()['build']
+
+        self.assertEqual(len(data['permissions']), len(perms) + len(build_perms))
 
 
 class UserTokenTests(InvenTreeAPITestCase):
