@@ -90,6 +90,36 @@ class RolePermission(permissions.BasePermission):
         return users.permissions.check_user_permission(user, model, permission)
 
 
+class RolePermissionOrReadOnly(RolePermission):
+    """RolePermission which also allows read access for any authenticated user."""
+
+    REQUIRE_STAFF = False
+
+    def has_permission(self, request, view):
+        """Determine if the current user has the specified permissions.
+
+        - If the user does have the required role, then allow the request
+        - If the user does not have the required role, but is authenticated, then allow read-only access
+        """
+        if not request or not request.user or not request.user.is_authenticated:
+            return False
+
+        if request.user.is_superuser:
+            return True
+
+        if not self.REQUIRE_STAFF or request.user.is_staff:
+            if super().has_permission(request, view):
+                return True
+
+        return request.method in permissions.SAFE_METHODS
+
+
+class StaffRolePermissionOrReadOnly(RolePermission):
+    """RolePermission which requires staff AND role access, or read-only."""
+
+    REQUIRE_STAFF = True
+
+
 class IsSuperuser(permissions.IsAdminUser):
     """Allows access only to superuser users."""
 

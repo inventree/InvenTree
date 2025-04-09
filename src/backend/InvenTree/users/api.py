@@ -159,10 +159,10 @@ class UserList(ListCreateAPI):
 
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-        InvenTree.permissions.IsSuperuserOrReadOnly,
-    ]
+
+    # User must have the right role, AND be a staff user, else read-only
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
+
     filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = ['first_name', 'last_name', 'username']
@@ -185,6 +185,7 @@ class GroupMixin:
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
@@ -232,6 +233,7 @@ class RuleSetMixin:
 
     queryset = RuleSet.objects.all()
     serializer_class = RuleSetSerializer
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):

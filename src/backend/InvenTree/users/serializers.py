@@ -312,7 +312,7 @@ class ExtendedUserSerializer(UserSerializer):
 
     # Write-only field, for updating the groups associated with the user
     group_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Group.objects.all(), many=True, write_only=True
+        queryset=Group.objects.all(), many=True, write_only=True, required=False
     )
 
     is_staff = serializers.BooleanField(
