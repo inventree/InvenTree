@@ -501,8 +501,9 @@ plugin_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        PluginMetadataView.as_view(model=PluginConfig),
-                        {'lookup_field': 'key'},
+                        PluginMetadataView.as_view(
+                            model=PluginConfig, lookup_field='key'
+                        ),
                         name='api-plugin-metadata',
                     ),
                     path(
