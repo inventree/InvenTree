@@ -1434,6 +1434,7 @@ SPECTACULAR_SETTINGS = {
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
         'InvenTree.schema.postprocess_required_nullable',
+        'InvenTree.schema.postprocess_print_stats',
     ],
     'ENUM_NAME_OVERRIDES': {
         'UserTypeEnum': 'users.models.UserProfile.UserType',
