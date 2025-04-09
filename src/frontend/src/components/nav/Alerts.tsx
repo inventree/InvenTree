@@ -1,4 +1,4 @@
-import { ActionIcon, Alert, Menu, Tooltip } from '@mantine/core';
+import { ActionIcon, Alert, Group, Menu, Stack, Tooltip } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
@@ -13,6 +13,7 @@ interface AlertInfo {
   title: string;
   code?: string;
   message: string;
+  error?: boolean;
 }
 
 /**
@@ -84,6 +85,11 @@ export function Alerts() {
     return _alerts.filter((alert) => !dismissed.includes(alert.key));
   }, [server, dismissed, globalSettings]);
 
+  const anyErrors: boolean = useMemo(
+    () => alerts.some((alert) => alert.error),
+    [alerts]
+  );
+
   if (user.isStaff() && alerts.length > 0)
     return (
       <Menu withinPortal={true} position='bottom-end'>
@@ -92,7 +98,7 @@ export function Alerts() {
             <ActionIcon
               variant='transparent'
               aria-label='open-alerts'
-              color='red'
+              color={anyErrors ? 'red' : 'orange'}
             >
               <IconExclamationCircle />
             </ActionIcon>
@@ -103,12 +109,19 @@ export function Alerts() {
             <Menu.Item key={`alert-item-${alert.key}`}>
               <Alert
                 withCloseButton
-                color='red'
-                title={alert.title}
+                color={alert.error ? 'red' : 'orange'}
+                title={
+                  <Group gap='xs'>
+                    {alert.code && `${alert.code}: `}
+                    {alert.title}
+                  </Group>
+                }
                 onClose={() => setDismissed([...dismissed, alert.key])}
               >
-                {alert.message}
-                {alert.code && errorCodeLink(alert.code)}
+                <Stack gap='xs'>
+                  {alert.message}
+                  {alert.code && errorCodeLink(alert.code)}
+                </Stack>
               </Alert>
             </Menu.Item>
           ))}
