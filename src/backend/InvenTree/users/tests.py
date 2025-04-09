@@ -7,8 +7,13 @@ from django.urls import reverse
 
 from common.settings import set_global_setting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
-from users.models import ApiToken, Owner, RuleSet
-from users.ruleset import RULESET_CHOICES, RULESET_NAMES, get_ruleset_models
+from users.models import ApiToken, Owner
+from users.ruleset import (
+    RULESET_CHOICES,
+    RULESET_NAMES,
+    get_ruleset_ignore,
+    get_ruleset_models,
+)
 
 
 class RuleSetModelTest(TestCase):
@@ -72,8 +77,7 @@ class RuleSetModelTest(TestCase):
 
         for model in available_tables:
             if (
-                model not in assigned_models
-                and model not in RuleSet.get_ruleset_ignore()
+                model not in assigned_models and model not in get_ruleset_ignore()
             ):  # pragma: no cover
                 missing_models.add(model)
 
@@ -91,7 +95,7 @@ class RuleSetModelTest(TestCase):
         for model in assigned_models:
             defined_models.add(model)
 
-        for model in RuleSet.get_ruleset_ignore():
+        for model in get_ruleset_ignore():
             defined_models.add(model)
 
         for model in defined_models:  # pragma: no cover
