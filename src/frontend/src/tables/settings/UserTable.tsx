@@ -281,13 +281,14 @@ export function UserTable() {
 
   const rowActions = useCallback(
     (record: UserDetailI): RowAction[] => {
+      const staff: boolean = user.isStaff() || user.isSuperuser();
       return [
         RowEditAction({
           onClick: () => openDetailDrawer(record.pk),
-          hidden: !user.hasChangePermission(ModelType.user)
+          hidden: !staff || !user.hasChangePermission(ModelType.user)
         }),
         RowDeleteAction({
-          hidden: !user.hasDeletePermission(ModelType.user),
+          hidden: !staff || !user.hasDeletePermission(ModelType.user),
           onClick: () => {
             setSelectedUser(record.pk);
             deleteUser.open();
@@ -323,13 +324,14 @@ export function UserTable() {
 
   const tableActions = useMemo(() => {
     const actions = [];
+    const staff: boolean = user.isStaff() || user.isSuperuser();
 
     actions.push(
       <AddItemButton
         key='add-user'
         onClick={newUser.open}
         tooltip={t`Add user`}
-        hidden={!user.hasAddPermission(ModelType.user)}
+        hidden={!staff || !user.hasAddPermission(ModelType.user)}
       />
     );
 
@@ -356,6 +358,14 @@ export function UserTable() {
     ];
   }, []);
 
+  const hasRowActions = useMemo(() => {
+    return (
+      user.isStaff() &&
+      (user.hasChangePermission(ModelType.user) ||
+        user.hasDeletePermission(ModelType.user))
+    );
+  }, [user]);
+
   return (
     <>
       {newUser.modal}
@@ -378,14 +388,10 @@ export function UserTable() {
         tableState={table}
         columns={columns}
         props={{
-          rowActions:
-            user.hasChangePermission(ModelType.user) ||
-            user.hasDeletePermission(ModelType.user)
-              ? rowActions
-              : undefined,
+          rowActions: hasRowActions ? rowActions : undefined,
           tableActions: tableActions,
           tableFilters: tableFilters,
-          onRowClick: user.hasChangePermission(ModelType.user)
+          onRowClick: hasRowActions
             ? (record) => openDetailDrawer(record.pk)
             : undefined
         }}
