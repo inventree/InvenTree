@@ -172,10 +172,10 @@ export default function UserDetail() {
 
     return (
       <ItemDetailsGrid>
-        <DetailsTable fields={tl} item={instance} />
-        <DetailsTable fields={tr} item={instance} />
+        <DetailsTable fields={tl} item={instance} title={t`User Information`} />
+        <DetailsTable fields={tr} item={instance} title={t`User Permissions`} />
         {hasProfile && settings.isSet('DISPLAY_PROFILE_INFO') && (
-          <DetailsTable fields={br} item={instance} />
+          <DetailsTable fields={br} item={instance} title={t`User Profile`} />
         )}
       </ItemDetailsGrid>
     );
