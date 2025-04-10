@@ -1028,6 +1028,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                         'Cannot receive items against an internal build order'
                     )
 
+                if build_order.part != data['part']:
+                    raise ValidationError(
+                        'Cannot receive items against a build order for a different part'
+                    )
+
                 if not location and build_order.destination:
                     # Override with the build order destination (if not specified)
                     data['location'] = location = build_order.destination
@@ -1679,8 +1684,8 @@ class PurchaseOrderLineItem(OrderLineItem):
         part: Reference to a SupplierPart object
         received: Number of items received
         purchase_price: Unit purchase price for this line item
+        build_order: Link to an external BuildOrder to be fulfilled by this line item
         destination: Destination for received items
-        build_order: Link to a BuildOrder for this line item
     """
 
     class Meta:
@@ -1788,14 +1793,14 @@ class PurchaseOrderLineItem(OrderLineItem):
         """Return the 'purchase_price' field as 'price'."""
         return self.purchase_price
 
-    build_order = models.OneToOneField(
+    build_order = models.ForeignKey(
         'build.Build',
         on_delete=models.SET_NULL,
         blank=True,
+        related_name='external_line_items',
         null=True,
         verbose_name=_('Build Order'),
-        help_text=_('External Build Order for this line item'),
-        related_name='purchase_order_line',
+        help_text=_('External Build Order to be fulfilled by this line item'),
     )
 
     destination = TreeForeignKey(
