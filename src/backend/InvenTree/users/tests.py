@@ -16,7 +16,7 @@ from users.ruleset import (
     get_ruleset_models,
 )
 
-G_RULESETS = get_ruleset_models().keys()
+G_RULESETS = get_ruleset_models()
 G_RULESETS_IG = get_ruleset_ignore()
 G_SCOPES = _roles.keys()
 
