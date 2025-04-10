@@ -37,6 +37,7 @@ ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 # InvenTree configuration files
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
+ENV INVENTREE_OIDC_PRIVATE_KEY_FILE="${INVENTREE_DATA_DIR}/oidc.pem"
 ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DATA_DIR}/plugins.txt"
 
 # Worker configuration (can be altered by user)

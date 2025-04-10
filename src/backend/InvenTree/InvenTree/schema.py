@@ -3,9 +3,12 @@
 from itertools import chain
 from typing import Optional
 
+from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import ComponentRegistry
 from drf_spectacular.utils import _SchemaType
+
+from users.oauth2_scopes import oauth2_scopes
 
 
 class ExtendedAutoSchema(AutoSchema):
@@ -121,5 +124,10 @@ def postprocess_print_stats(result, generator, request, public):
     for scope, paths in scopes.items():
         print(f'  {scope}: {len(paths)}')
     print()
+
+    # Check for unknown scopes
+    for scope, paths in scopes.items():
+        if scope not in oauth2_scopes:
+            warn(f'unknown scope `{scope}` in {len(paths)} paths')
 
     return result

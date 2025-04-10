@@ -7,12 +7,13 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
 import common.models
+import InvenTree.permissions
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
@@ -22,7 +23,6 @@ from InvenTree.exceptions import log_error
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
 from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
-from InvenTree.permissions import IsStaffOrReadOnly
 from plugin import PluginMixinEnum, registry
 from users.permissions import check_user_permission
 
@@ -107,7 +107,7 @@ class BarcodeView(CreateAPIView):
         return None
 
     # Default permission classes (can be overridden)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def create(self, request, *args, **kwargs):
         """Handle create method - override default create."""
@@ -236,7 +236,7 @@ class BarcodeGenerate(CreateAPIView):
         return None
 
     # Default permission classes (can be overridden)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def create(self, request, *args, **kwargs):
         """Perform the barcode generation action."""
@@ -758,7 +758,7 @@ class BarcodeScanResultMixin:
 
     queryset = common.models.BarcodeScanResult.objects.all()
     serializer_class = barcode_serializers.BarcodeScanResultSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
     def get_queryset(self):
         """Return the queryset for the BarcodeScan API."""

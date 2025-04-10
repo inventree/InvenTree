@@ -74,9 +74,17 @@ def get_ruleset_models() -> dict:
             'otp_static_statictoken',
             'otp_static_staticdevice',
             'mfa_authenticator',
+            # Oauth
+            'oauth2_provider_application',
+            'oauth2_provider_grant',
+            'oauth2_provider_idtoken',
+            'oauth2_provider_accesstoken',
+            'oauth2_provider_refreshtoken',
+            # Plugins
             'plugin_pluginconfig',
             'plugin_pluginsetting',
             'plugin_notificationusersetting',
+            # Misc
             'common_barcodescanresult',
             'common_newsfeedentry',
             'taggit_tag',

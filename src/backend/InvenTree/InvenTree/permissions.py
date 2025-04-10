@@ -1,9 +1,28 @@
 """Permission set for InvenTree."""
 
 from functools import wraps
+from typing import Optional
 
+from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
+from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import permissions
 
+import users.ruleset
+from users.oauth2_scopes import (
+    DEFAULT_READ,
+    DEFAULT_STAFF,
+    DEFAULT_SUPERUSER,
+    get_granular_scope,
+)
+
+ACTION_MAP = {
+    'GET': 'view',
+    'POST': 'add',
+    'PUT': 'change',
+    'PATCH': 'change',
+    'DELETE': 'delete',
+    'OPTIONS': DEFAULT_READ,
+}
 import users.permissions
 
 
@@ -52,14 +71,7 @@ class RolePermission(permissions.BasePermission):
             return True
 
         # Map the request method to a permission type
-        rolemap = {
-            'GET': 'view',
-            'OPTIONS': 'view',
-            'POST': 'add',
-            'PUT': 'change',
-            'PATCH': 'change',
-            'DELETE': 'delete',
-        }
+        rolemap = {**ACTION_MAP, 'OPTIONS': 'view'}
 
         # let the view define a custom rolemap
         if hasattr(view, 'rolemap'):
@@ -122,15 +134,110 @@ class StaffRolePermissionOrReadOnly(RolePermissionOrReadOnly):
     REQUIRE_STAFF = True
 
 
-class IsSuperuser(permissions.IsAdminUser):
+def map_scope(
+    roles: Optional[list[str]] = None,
+    only_read=False,
+    read_name=DEFAULT_READ,
+    map_read: Optional[list[str]] = None,
+    map_read_name=DEFAULT_READ,
+) -> dict:
+    """Generate the required scopes for OAS permission views.
+
+    Args:
+        roles (Optional[list[str]]): A list of roles or tables to generate granular scopes for.
+        only_read (bool): If True, only the read scope will be returned for all actions.
+        read_name (str): The read scope name to use when `only_read` is True.
+        map_read (Optional[list[str]]): A list of HTTP methods that should map to the default read scope (use if some actions requirea differing role).
+        map_read_name (str): The read scope name to use for methods specified in `map_read` when `map_read` is specified.
+
+    Returns:
+        dict: A dictionary mapping HTTP methods to their corresponding scopes.
+              Each scope is represented as a list of lists of strings.
+    """
+
+    def scope_name(action):
+        if only_read:
+            return [[read_name]]
+        if roles:
+            return [[get_granular_scope(action, table) for table in roles]]
+        return [[action]]
+
+    def get_scope(method, action):
+        if map_read and method in map_read:
+            return [[map_read_name]]
+        return scope_name(action)
+
+    return {
+        method: get_scope(method, action) if method != 'OPTIONS' else [[DEFAULT_READ]]
+        for method, action in ACTION_MAP.items()
+    }
+
+
+# Precalculate the roles mapping
+roles = users.ruleset.get_ruleset_models()
+precalculated_roles = {}
+for role, tables in roles.items():
+    for table in tables:
+        if table not in precalculated_roles:
+            precalculated_roles[table] = []
+        precalculated_roles[table].append(role)
+
+
+class OASTokenMatcher(TokenMatchesOASRequirements):
+    """Mixin that combines the permissions of normal classes and token classes."""
+
+    def has_permission(self, request, view):
+        """Check if the user has the required scopes or was authenticated another way."""
+        is_authenticated = permissions.IsAuthenticated().has_permission(request, view)
+        oauth2authenticated = False
+        if is_authenticated:
+            oauth2authenticated = isinstance(
+                request.successful_authenticator, OAuth2Authentication
+            )
+
+        return (is_authenticated and not oauth2authenticated) or super().has_permission(
+            request, view
+        )
+
+
+class InvenTreeTokenMatchesOASRequirements(OASTokenMatcher):
+    """Permission that discovers the required scopes from the OpenAPI schema."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        if hasattr(view, 'required_alternate_scopes'):
+            return view.required_alternate_scopes
+        try:
+            # Extract the model name associated with this request
+            model = get_model_for_view(view)
+            calc = precalculated_roles.get(
+                f'{model._meta.app_label}_{model._meta.model_name}', []
+            )
+
+            if model is None or not calc:
+                return map_scope(only_read=True)
+            return map_scope(roles=calc)
+        except AttributeError:
+            # We will assume that if the serializer class does *not* have a Meta,
+            # then we don't need a permission
+            return map_scope(only_read=True)
+        except Exception:
+            return map_scope(only_read=True)
+
+
+class IsSuperuserOrSuperScope(OASTokenMatcher, permissions.IsAdminUser):
     """Allows access only to superuser users."""
 
     def has_permission(self, request, view):
         """Check if the user is a superuser."""
         return bool(request.user and request.user.is_superuser)
 
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True, read_name=DEFAULT_SUPERUSER)
 
-class IsSuperuserOrReadOnly(permissions.IsAdminUser):
+
+class IsSuperuserOrReadOnlyOrScope(OASTokenMatcher, permissions.IsAdminUser):
     """Allow read-only access to any user, but write access is restricted to superuser users."""
 
     def has_permission(self, request, view):
@@ -140,16 +247,58 @@ class IsSuperuserOrReadOnly(permissions.IsAdminUser):
             or request.method in permissions.SAFE_METHODS
         )
 
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(
+            only_read=True,
+            read_name=DEFAULT_SUPERUSER,
+            map_read=permissions.SAFE_METHODS,
+        )
 
-class IsStaffOrReadOnly(permissions.IsAdminUser):
-    """Allows read-only access to any user, but write access is restricted to staff users."""
+
+class IsAuthenticatedOrReadScope(OASTokenMatcher, permissions.IsAuthenticated):
+    """Allows access only to authenticated users or read scope tokens."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
+
+
+class IsStaffOrReadOnlyScope(OASTokenMatcher, permissions.IsAuthenticated):
+    """Allows read-only access to any authenticated user, but write access is restricted to staff users."""
 
     def has_permission(self, request, view):
-        """Check if the user is a superuser."""
-        return bool(
+        """Check if the user is a staff."""
+        return bool(permissions.IsAuthenticated().has_permission(request, view)) and (
             (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
         )
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(
+            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+        )
+
+
+class IsAdminOrAdminScope(OASTokenMatcher, permissions.IsAdminUser):
+    """Allows access only to admin users or admin scope tokens."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True, read_name=DEFAULT_STAFF)
+
+
+class AllowAnyOrReadScope(TokenMatchesOASRequirements, permissions.AllowAny):
+    """Allows access to any user or read scope tokens."""
+
+    def has_permission(self, request, view):
+        """Anyone is allowed."""
+        return True
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
 
 
 def auth_exempt(view_func):
@@ -160,3 +309,43 @@ def auth_exempt(view_func):
 
     wrapped_view.auth_exempt = True
     return wraps(view_func)(wrapped_view)
+
+
+class UserSettingsPermissionsOrScope(OASTokenMatcher, permissions.BasePermission):
+    """Special permission class to determine if the user can view / edit a particular setting."""
+
+    def has_object_permission(self, request, view, obj):
+        """Check if the user that requested is also the object owner."""
+        try:
+            user = request.user
+        except AttributeError:  # pragma: no cover
+            return False
+
+        return user == obj.user
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(only_read=True)
+
+
+class GlobalSettingsPermissions(OASTokenMatcher, permissions.BasePermission):
+    """Special permission class to determine if the user is "staff"."""
+
+    def has_permission(self, request, view):
+        """Check that the requesting user is 'admin'."""
+        try:
+            user = request.user
+
+            if request.method in permissions.SAFE_METHODS:
+                return True
+            # Any other methods require staff access permissions
+            return user.is_staff
+
+        except AttributeError:  # pragma: no cover
+            return False
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(
+            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+        )

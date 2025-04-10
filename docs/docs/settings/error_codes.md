@@ -32,6 +32,18 @@ As the `django.db.models.QuerySet` is not a generic class, we would loose type i
 
 Models that implement the `InvenTreeReportMixin` must have an explicit return type annotation for the `report_context` function.
 
+#### INVE-E5
+**Rulesets have issues - Backend**
+
+The rulesets used for managing user/group/oAuth permissions have an issue.
+This might be caused by an addition or removal of models to the code base. Running the test suit should surface more logs with the error code indicating the exact infractions.
+
+#### INVE-E6
+**Scopes have issues - Backend**
+
+The scopes used for oAuth permissions have an issue and do not match the rulesets.
+This might be caused by an addition or removal of models to the code base or changes to the rulesets. Running the test suit should surface more logs with the error code indicating the exact infractions.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 

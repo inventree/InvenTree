@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 335
+INVENTREE_API_VERSION = 336
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v336 - 2025-04-10 : https://github.com/inventree/InvenTree/pull/9333
+    - Adds oAuth2 support for the API
 
 v335 - 2025-04-09 : https://github.com/inventree/InvenTree/pull/9476
     - Adds "roles" detail to the Group API endpoint

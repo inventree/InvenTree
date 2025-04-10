@@ -160,6 +160,7 @@ nav:
       - Single Sign on: settings/SSO.md
       - Multi Factor Authentication: settings/MFA.md
       - Email: settings/email.md
+      - Experimental Features: settings/experimental.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
     - Operations:

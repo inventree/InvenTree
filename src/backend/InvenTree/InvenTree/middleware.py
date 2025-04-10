@@ -86,6 +86,11 @@ class AuthRequiredMiddleware:
             response = self.get_response(request)
             return response
 
+        # oAuth2 requests are handled by the oAuth2 library
+        if request.path_info.startswith('/o/'):
+            response = self.get_response(request)
+            return response
+
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
 

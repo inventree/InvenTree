@@ -125,6 +125,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     list_display = (
         'name',
         'admin',
+        'importer',
         'part_category',
         'part',
         'stocktake',
@@ -177,6 +178,10 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     def admin(self, obj):
         """Return the ruleset for the admin role."""
         return self.get_rule_set(obj, 'admin')
+
+    def importer(self, obj):
+        """Return the ruleset for the importer role."""
+        return self.get_rule_set(obj, 'importer')
 
     def part_category(self, obj):
         """Return the ruleset for the PartCategory role."""
