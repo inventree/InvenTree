@@ -255,7 +255,7 @@ class RuleSetMixin:
 
     queryset = RuleSet.objects.all()
     serializer_class = RuleSetSerializer
-    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
 class RuleSetList(RuleSetMixin, ListAPI):

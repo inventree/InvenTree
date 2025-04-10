@@ -7,7 +7,7 @@ from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
 from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import permissions
 
-import users.models
+import users.ruleset
 from users.oauth2_scopes import (
     DEFAULT_READ,
     DEFAULT_STAFF,
@@ -174,7 +174,7 @@ def map_scope(
 
 
 # Precalculate the roles mapping
-roles = users.models.RuleSet.get_ruleset_models()
+roles = users.ruleset.get_ruleset_models()
 precalculated_roles = {}
 for role, tables in roles.items():
     for table in tables:
