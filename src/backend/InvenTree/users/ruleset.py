@@ -14,7 +14,6 @@ class RuleSetEnum(str, enum.Enum):
         return str(self.value)
 
     ADMIN = 'admin'
-    IMPORTER = 'importer'
     PART_CATEGORY = 'part_category'
     PART = 'part'
     STOCKTAKE = 'stocktake'
@@ -30,7 +29,6 @@ class RuleSetEnum(str, enum.Enum):
 # These are used to determine the permissions available to a group of users.
 RULESET_CHOICES = [
     (RuleSetEnum.ADMIN, _('Admin')),
-    (RuleSetEnum.IMPORTER, _('Importer')),
     (RuleSetEnum.PART_CATEGORY, _('Part Categories')),
     (RuleSetEnum.PART, _('Parts')),
     (RuleSetEnum.STOCKTAKE, _('Stocktake')),
@@ -86,12 +84,6 @@ def get_ruleset_models() -> dict:
             'flags_flagstate',
             'machine_machineconfig',
             'machine_machinesetting',
-        ],
-        RuleSetEnum.IMPORTER: [
-            # Importing
-            'importer_dataimportsession',
-            'importer_dataimportcolumnmap',
-            'importer_dataimportrow',
         ],
         RuleSetEnum.PART_CATEGORY: [
             'part_partcategory',
@@ -206,4 +198,8 @@ def get_ruleset_ignore() -> list[str]:
         'django_q_task',
         'django_q_schedule',
         'django_q_success',
+        # Importing
+        'importer_dataimportsession',
+        'importer_dataimportcolumnmap',
+        'importer_dataimportrow',
     ]
