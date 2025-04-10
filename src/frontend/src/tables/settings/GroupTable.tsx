@@ -1,24 +1,17 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import {
-  Accordion,
-  Group,
-  LoadingOverlay,
-  Pill,
-  PillGroup,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Accordion, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
+import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
+import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
 import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -52,32 +45,14 @@ export function GroupDrawer({
     pk: id,
     throwError: true,
     params: {
-      permission_detail: true
+      permission_detail: true,
+      role_detail: true,
+      user_detail: true
     }
   });
 
-  const permissionsAccordion = useMemo(() => {
-    if (!instance?.permissions) return null;
-
-    const data = instance.permissions;
-    return (
-      <Accordion w={'100%'}>
-        {Object.keys(data).map((key) => (
-          <Accordion.Item key={key} value={key}>
-            <Accordion.Control>
-              <Pill>{instance.permissions[key].length}</Pill> {key}
-            </Accordion.Control>
-            <Accordion.Panel>
-              <PillGroup>
-                {data[key].map((perm: string) => (
-                  <Pill key={perm}>{perm}</Pill>
-                ))}
-              </PillGroup>
-            </Accordion.Panel>
-          </Accordion.Item>
-        ))}
-      </Accordion>
-    );
+  const groupRoles: RuleSet[] = useMemo(() => {
+    return instance?.roles ?? [];
   }, [instance]);
 
   if (isFetching) {
@@ -98,27 +73,45 @@ export function GroupDrawer({
 
   return (
     <Stack>
-      <EditApiForm
-        props={{
-          url: ApiEndpoints.group_list,
-          pk: id,
-          fields: {
-            name: {}
-          },
-          onFormSuccess: () => {
-            refreshTable();
-            refreshInstance();
-          }
-        }}
-        id={`group-detail-drawer-${id}`}
-      />
-      <Group justify='space-between'>
-        <StylishText size='md'>
-          <Trans>Permission set</Trans>
-        </StylishText>
-        <AdminButton model={ModelType.group} id={instance.pk} />
-      </Group>
-      <Group>{permissionsAccordion}</Group>
+      <Accordion defaultValue={'details'}>
+        <Accordion.Item key='details' value='details'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>Group Details</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <EditApiForm
+              props={{
+                url: ApiEndpoints.group_list,
+                pk: id,
+                fields: {
+                  name: {
+                    label: t`Name`,
+                    description: t`Name of the user group`
+                  }
+                },
+                onFormSuccess: () => {
+                  refreshTable();
+                  refreshInstance();
+                }
+              }}
+              id={`group-detail-drawer-${id}`}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item key='roles' value='roles'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>Group Roles</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <RoleTable roles={groupRoles} editable />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </Stack>
   );
 }
@@ -185,8 +178,13 @@ export function GroupTable({
 
   const newGroup = useCreateApiFormModal({
     url: ApiEndpoints.group_list,
-    title: t`Add group`,
-    fields: { name: {} },
+    title: t`Add Group`,
+    fields: {
+      name: {
+        label: t`Name`,
+        description: t`Name of the user group`
+      }
+    },
     table: table
   });
 
@@ -205,34 +203,42 @@ export function GroupTable({
     return actions;
   }, [user]);
 
+  // Determine whether the GroupTable is editable
+  const editable: boolean = useMemo(
+    () => !directLink && user.isStaff() && user.hasChangeRole(UserRoles.admin),
+    [user, directLink]
+  );
+
   return (
     <>
-      {newGroup.modal}
-      {deleteGroup.modal}
-      <DetailDrawer
-        title={t`Edit group`}
-        renderContent={(id) => {
-          if (!id || !id.startsWith('group-')) return false;
-          return (
-            <GroupDrawer
-              id={id.replace('group-', '')}
-              refreshTable={table.refreshTable}
-            />
-          );
-        }}
-      />
+      {editable && newGroup.modal}
+      {editable && deleteGroup.modal}
+      {editable && (
+        <DetailDrawer
+          size='xl'
+          title={t`Edit Group`}
+          renderContent={(id) => {
+            if (!id || !id.startsWith('group-')) return false;
+            return (
+              <GroupDrawer
+                id={id.replace('group-', '')}
+                refreshTable={table.refreshTable}
+              />
+            );
+          }}
+        />
+      )}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.group_list)}
         tableState={table}
         columns={columns}
         props={{
-          rowActions: directLink ? undefined : rowActions,
-          tableActions: tableActions,
-          onRowClick: directLink
-            ? undefined
-            : (record) => openDetailDrawer(record.pk),
-
-          modelType: ModelType.group
+          rowActions: editable ? rowActions : undefined,
+          tableActions: editable ? tableActions : undefined,
+          modelType: directLink ? ModelType.group : undefined,
+          onRowClick: editable
+            ? (record) => openDetailDrawer(record.pk)
+            : undefined
         }}
       />
     </>

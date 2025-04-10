@@ -19,7 +19,6 @@ from rest_framework.views import APIView
 
 import InvenTree.ready
 import InvenTree.version
-import users.models
 from common.settings import get_global_setting
 from InvenTree import helpers
 from InvenTree.auth_overrides import registration_enabled
@@ -27,6 +26,7 @@ from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
+from users.permissions import check_user_permission
 
 from .helpers import plugins_info
 from .helpers_email import is_email_configured
@@ -681,14 +681,9 @@ class APISearchView(GenericAPIView):
 
                 # Check permissions and update results dict with particular query
                 model = view.serializer_class.Meta.model
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-                table = f'{app_label}_{model_name}'
 
                 try:
-                    if users.models.RuleSet.check_table_permission(
-                        request.user, table, 'view'
-                    ):
+                    if check_user_permission(request.user, model, 'view'):
                         results[key] = view.list(request, *args, **kwargs).data
                     else:
                         results[key] = {

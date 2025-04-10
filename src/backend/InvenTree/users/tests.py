@@ -7,7 +7,13 @@ from django.urls import reverse
 
 from common.settings import set_global_setting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
-from users.models import ApiToken, Owner, RuleSet
+from users.models import ApiToken, Owner
+from users.ruleset import (
+    RULESET_CHOICES,
+    RULESET_NAMES,
+    get_ruleset_ignore,
+    get_ruleset_models,
+)
 
 
 class RuleSetModelTest(TestCase):
@@ -15,11 +21,11 @@ class RuleSetModelTest(TestCase):
 
     def test_ruleset_models(self):
         """Test that the role rulesets work as intended."""
-        keys = RuleSet.get_ruleset_models().keys()
+        keys = get_ruleset_models().keys()
 
         # Check if there are any rulesets which do not have models defined
 
-        missing = [name for name in RuleSet.RULESET_NAMES if name not in keys]
+        missing = [name for name in RULESET_NAMES if name not in keys]
 
         if len(missing) > 0:  # pragma: no cover
             print('The following rulesets do not have models assigned:')
@@ -27,7 +33,7 @@ class RuleSetModelTest(TestCase):
                 print('-', m)
 
         # Check if models have been defined for a ruleset which is incorrect
-        extra = [name for name in keys if name not in RuleSet.RULESET_NAMES]
+        extra = [name for name in keys if name not in RULESET_NAMES]
 
         if len(extra) > 0:  # pragma: no cover
             print(
@@ -37,7 +43,7 @@ class RuleSetModelTest(TestCase):
                 print('-', e)
 
         # Check that each ruleset has models assigned
-        empty = [key for key in keys if len(RuleSet.get_ruleset_models()[key]) == 0]
+        empty = [key for key in keys if len(get_ruleset_models()[key]) == 0]
 
         if len(empty) > 0:  # pragma: no cover
             print('The following rulesets have empty entries in get_ruleset_models():')
@@ -63,9 +69,7 @@ class RuleSetModelTest(TestCase):
         assigned_models = set()
 
         # Now check that each defined model is a valid table name
-        for key in RuleSet.get_ruleset_models():
-            models = RuleSet.get_ruleset_models()[key]
-
+        for models in get_ruleset_models().values():
             for m in models:
                 assigned_models.add(m)
 
@@ -73,8 +77,7 @@ class RuleSetModelTest(TestCase):
 
         for model in available_tables:
             if (
-                model not in assigned_models
-                and model not in RuleSet.get_ruleset_ignore()
+                model not in assigned_models and model not in get_ruleset_ignore()
             ):  # pragma: no cover
                 missing_models.add(model)
 
@@ -92,7 +95,7 @@ class RuleSetModelTest(TestCase):
         for model in assigned_models:
             defined_models.add(model)
 
-        for model in RuleSet.get_ruleset_ignore():
+        for model in get_ruleset_ignore():
             defined_models.add(model)
 
         for model in defined_models:  # pragma: no cover
@@ -115,12 +118,12 @@ class RuleSetModelTest(TestCase):
         rulesets = group.rule_sets.all()
 
         # Rulesets should have been created automatically for this group
-        self.assertEqual(rulesets.count(), len(RuleSet.RULESET_CHOICES))
+        self.assertEqual(rulesets.count(), len(RULESET_CHOICES))
 
         # Check that all permissions have been assigned permissions?
         permission_set = set()
 
-        for models in RuleSet.get_ruleset_models().values():
+        for models in get_ruleset_models().values():
             for model in models:
                 permission_set.add(model)
 

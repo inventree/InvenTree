@@ -262,6 +262,9 @@ class UserSettingsList(SettingsList):
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
 
+    # Note: Any user can view and edit their own settings
+    permission_classes = [permissions.IsAuthenticated]
+
     def list(self, request, *args, **kwargs):
         """Ensure all user settings are created."""
         common.models.InvenTreeUserSetting.build_default_values(user=request.user)
@@ -771,7 +774,7 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
         - Ensure that the user has correct 'delete' permissions for each model
         """
         from common.validators import attachment_model_class_from_label
-        from users.models import check_user_permission
+        from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
