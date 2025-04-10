@@ -167,6 +167,7 @@ def parse_version_text():
     # Remove first newline on latest version
     patched_data[0] = patched_data[0].replace('\n', '', 1)
 
+    latest_version = f'v{INVENTREE_API_VERSION}'
     version_data = {}
     for version in patched_data:
         data = version.split('\n')
@@ -184,7 +185,7 @@ def parse_version_text():
             'date': version_detail[0].strip(),
             'gh': version_detail[1].strip() if len(version_detail) > 1 else None,
             'text': data[1:],
-            'latest': f'v{INVENTREE_API_VERSION}' == version_string,
+            'latest': latest_version == version_string,
         }
         version_data[version_string] = new_data
     return version_data

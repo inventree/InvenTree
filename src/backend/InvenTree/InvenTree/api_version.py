@@ -38,7 +38,7 @@ v330 -> 2025-03-31 : https://github.com/inventree/InvenTree/pull/9420
 v329 -> 2025-03-30 : https://github.com/inventree/InvenTree/pull/9399
     - Convert url path regex-specified PKs to int
 
-v228 -> 2025-03-29 : https://github.com/inventree/InvenTree/pull/9407
+v328 -> 2025-03-29 : https://github.com/inventree/InvenTree/pull/9407
     - Updates schema to include paging arguments
 
 v327 -> 2025-03-20 : https://github.com/inventree/InvenTree/pull/9339
@@ -256,29 +256,29 @@ v269 -> 2024-10-16 : https://github.com/inventree/InvenTree/pull/8295
     - Adds "include_variants" filter to the PurchaseOrderLineItem API endpoint
     - Adds "include_variants" filter to the ReturnOrder API endpoint
 
-268 - 2024-10-11 : https://github.com/inventree/InvenTree/pull/8274
+v268 -> 2024-10-11 : https://github.com/inventree/InvenTree/pull/8274
     - Adds "in_stock" attribute to the StockItem serializer
 
-267 - 2024-10-8 : https://github.com/inventree/InvenTree/pull/8250
+v267 -> 2024-10-8 : https://github.com/inventree/InvenTree/pull/8250
     - Remove "allocations" field from the SalesOrderShipment API endpoint(s)
     - Add "allocated_items" field to the SalesOrderShipment API endpoint(s)
 
-266 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8249
+v266 -> 2024-10-07 : https://github.com/inventree/InvenTree/pull/8249
     - Tweak SalesOrderShipment API for more efficient data retrieval
 
-265 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8228
+v265 -> 2024-10-07 : https://github.com/inventree/InvenTree/pull/8228
     - Adds API endpoint for providing custom admin integration details for plugins
 
-264 - 2024-10-03 : https://github.com/inventree/InvenTree/pull/8231
+v264 -> 2024-10-03 : https://github.com/inventree/InvenTree/pull/8231
     - Adds Sales Order Shipment attachment model type
 
-263 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8194
+v263 -> 2024-09-30 : https://github.com/inventree/InvenTree/pull/8194
     - Adds Sales Order Shipment report
 
-262 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8220
+v262 -> 2024-09-30 : https://github.com/inventree/InvenTree/pull/8220
     - Tweak permission requirements for uninstalling plugins via API
 
-261 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8184
+v261 -> 2024-09-26 : https://github.com/inventree/InvenTree/pull/8184
     - Fixes for BuildOrder API serializers
 
 v260 -> 2024-09-26 : https://github.com/inventree/InvenTree/pull/8190
