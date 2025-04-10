@@ -23,6 +23,7 @@ ACTION_MAP = {
     'DELETE': 'delete',
     'OPTIONS': DEFAULT_READ,
 }
+import users.permissions
 
 
 def get_model_for_view(view):
@@ -84,7 +85,7 @@ class RolePermission(permissions.BasePermission):
             if '.' in role:
                 role, permission = role.split('.')
 
-            return users.models.check_user_role(user, role, permission)
+            return users.permissions.check_user_role(user, role, permission)
 
         try:
             # Extract the model name associated with this request
@@ -93,16 +94,44 @@ class RolePermission(permissions.BasePermission):
             if model is None:
                 return True
 
-            app_label = model._meta.app_label
-            model_name = model._meta.model_name
-
-            table = f'{app_label}_{model_name}'
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta,
             # then we don't need a permission
             return True
 
-        return users.models.RuleSet.check_table_permission(user, table, permission)
+        return users.permissions.check_user_permission(user, model, permission)
+
+
+class RolePermissionOrReadOnly(RolePermission):
+    """RolePermission which also allows read access for any authenticated user."""
+
+    REQUIRE_STAFF = False
+
+    def has_permission(self, request, view):
+        """Determine if the current user has the specified permissions.
+
+        - If the user does have the required role, then allow the request
+        - If the user does not have the required role, but is authenticated, then allow read-only access
+        """
+        user = getattr(request, 'user', None)
+
+        if not user or not user.is_active or not user.is_authenticated:
+            return False
+
+        if user.is_superuser:
+            return True
+
+        if not self.REQUIRE_STAFF or user.is_staff:
+            if super().has_permission(request, view):
+                return True
+
+        return request.method in permissions.SAFE_METHODS
+
+
+class StaffRolePermissionOrReadOnly(RolePermissionOrReadOnly):
+    """RolePermission which requires staff AND role access, or read-only."""
+
+    REQUIRE_STAFF = True
 
 
 def map_scope(

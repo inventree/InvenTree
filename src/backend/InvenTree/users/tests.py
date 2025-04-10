@@ -7,11 +7,17 @@ from django.urls import reverse
 
 from common.settings import set_global_setting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
-from users.models import ApiToken, Owner, RuleSet
+from users.models import ApiToken, Owner
 from users.oauth2_scopes import _roles
+from users.ruleset import (
+    RULESET_CHOICES,
+    RULESET_NAMES,
+    get_ruleset_ignore,
+    get_ruleset_models,
+)
 
-G_RULESETS = RuleSet.get_ruleset_models()
-G_RULESETS_IG = RuleSet.get_ruleset_ignore()
+G_RULESETS = get_ruleset_models().keys()
+G_RULESETS_IG = get_ruleset_ignore()
 G_SCOPES = _roles.keys()
 
 
@@ -24,7 +30,7 @@ class RuleSetModelTest(TestCase):
 
         # Check if there are any rulesets which do not have models defined
 
-        missing = [name for name in RuleSet.RULESET_NAMES if name not in keys]
+        missing = [name for name in RULESET_NAMES if name not in keys]
 
         if len(missing) > 0:  # pragma: no cover
             print('INVE-E5: The following rulesets do not have models assigned:')
@@ -32,7 +38,7 @@ class RuleSetModelTest(TestCase):
                 print('-', m)
 
         # Check if models have been defined for a ruleset which is incorrect
-        extra = [name for name in keys if name not in RuleSet.RULESET_NAMES]
+        extra = [name for name in keys if name not in RULESET_NAMES]
 
         if len(extra) > 0:  # pragma: no cover
             print(
@@ -144,7 +150,7 @@ class RuleSetModelTest(TestCase):
         rulesets = group.rule_sets.all()
 
         # Rulesets should have been created automatically for this group
-        self.assertEqual(rulesets.count(), len(RuleSet.RULESET_CHOICES))
+        self.assertEqual(rulesets.count(), len(RULESET_CHOICES))
 
         # Check that all permissions have been assigned permissions?
         permission_set = set()

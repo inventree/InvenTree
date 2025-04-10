@@ -5,7 +5,7 @@ import datetime
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission, User
+from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinLengthValidator
@@ -21,11 +21,12 @@ import structlog
 from allauth.account.models import EmailAddress
 from rest_framework.authtoken.models import Token as AuthToken
 
-import InvenTree.cache
 import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
-from InvenTree.ready import canAppAccessDatabase, isImportingData
+from InvenTree.ready import isImportingData
+
+from .ruleset import RULESET_CHOICES, get_ruleset_models
 
 logger = structlog.get_logger('inventree')
 
@@ -215,196 +216,17 @@ class RuleSet(models.Model):
     which are then handled using the normal django permissions approach.
     """
 
-    RULESET_CHOICES = [
-        ('admin', _('Admin')),
-        ('importer', _('Import')),
-        ('part_category', _('Part Categories')),
-        ('part', _('Parts')),
-        ('stocktake', _('Stocktake')),
-        ('stock_location', _('Stock Locations')),
-        ('stock', _('Stock Items')),
-        ('build', _('Build Orders')),
-        ('purchase_order', _('Purchase Orders')),
-        ('sales_order', _('Sales Orders')),
-        ('return_order', _('Return Orders')),
-    ]
-
-    RULESET_NAMES = [choice[0] for choice in RULESET_CHOICES]
-
-    RULESET_PERMISSIONS = ['view', 'add', 'change', 'delete']
-
-    @staticmethod
-    def get_ruleset_models():
-        """Return a dictionary of models associated with each ruleset."""
-        ruleset_models = {
-            'admin': [
-                'auth_group',
-                'auth_user',
-                'auth_permission',
-                'users_apitoken',
-                'users_ruleset',
-                # oAuth
-                'oauth2_provider_accesstoken',
-                'oauth2_provider_idtoken',
-                'oauth2_provider_grant',
-                'oauth2_provider_application',
-                'oauth2_provider_refreshtoken',
-                #'oauth2_provider_code',
-                # Report / label stuff
-                'report_labeltemplate',
-                'report_reportasset',
-                'report_reportsnippet',
-                'report_reporttemplate',
-                'account_emailaddress',
-                'account_emailconfirmation',
-                'socialaccount_socialaccount',
-                'socialaccount_socialapp',
-                'socialaccount_socialtoken',
-                'otp_totp_totpdevice',
-                'otp_static_statictoken',
-                'otp_static_staticdevice',
-                'mfa_authenticator',
-                'plugin_pluginconfig',
-                'plugin_pluginsetting',
-                'plugin_notificationusersetting',
-                'common_barcodescanresult',
-                'common_newsfeedentry',
-                'taggit_tag',
-                'taggit_taggeditem',
-                'flags_flagstate',
-                'machine_machineconfig',
-                'machine_machinesetting',
-            ],
-            'importer': [
-                # Importing
-                'importer_dataimportsession',
-                'importer_dataimportcolumnmap',
-                'importer_dataimportrow',
-            ],
-            'part_category': [
-                'part_partcategory',
-                'part_partcategoryparametertemplate',
-                'part_partcategorystar',
-            ],
-            'part': [
-                'part_part',
-                'part_partpricing',
-                'part_bomitem',
-                'part_bomitemsubstitute',
-                'part_partsellpricebreak',
-                'part_partinternalpricebreak',
-                'part_parttesttemplate',
-                'part_partparametertemplate',
-                'part_partparameter',
-                'part_partrelated',
-                'part_partstar',
-                'part_partcategorystar',
-                'company_supplierpart',
-                'company_manufacturerpart',
-                'company_manufacturerpartparameter',
-            ],
-            'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
-            'stock_location': ['stock_stocklocation', 'stock_stocklocationtype'],
-            'stock': [
-                'stock_stockitem',
-                'stock_stockitemtracking',
-                'stock_stockitemtestresult',
-            ],
-            'build': [
-                'part_part',
-                'part_partcategory',
-                'part_bomitem',
-                'part_bomitemsubstitute',
-                'build_build',
-                'build_builditem',
-                'build_buildline',
-                'stock_stockitem',
-                'stock_stocklocation',
-            ],
-            'purchase_order': [
-                'company_company',
-                'company_contact',
-                'company_address',
-                'company_manufacturerpart',
-                'company_manufacturerpartparameter',
-                'company_supplierpart',
-                'company_supplierpricebreak',
-                'order_purchaseorder',
-                'order_purchaseorderlineitem',
-                'order_purchaseorderextraline',
-            ],
-            'sales_order': [
-                'company_company',
-                'company_contact',
-                'company_address',
-                'order_salesorder',
-                'order_salesorderallocation',
-                'order_salesorderlineitem',
-                'order_salesorderextraline',
-                'order_salesordershipment',
-            ],
-            'return_order': [
-                'company_company',
-                'company_contact',
-                'company_address',
-                'order_returnorder',
-                'order_returnorderlineitem',
-                'order_returnorderextraline',
-            ],
-        }
-
-        if settings.SITE_MULTI:
-            ruleset_models['admin'].append('sites_site')
-
-        return ruleset_models
-
-    # Database models we ignore permission sets for
-    @staticmethod
-    def get_ruleset_ignore():
-        """Return a list of database tables which do not require permissions."""
-        return [
-            # Core django models (not user configurable)
-            'admin_logentry',
-            'contenttypes_contenttype',
-            # Models which currently do not require permissions
-            'common_attachment',
-            'common_customunit',
-            'common_dataoutput',
-            'common_inventreesetting',
-            'common_inventreeusersetting',
-            'common_notificationentry',
-            'common_notificationmessage',
-            'common_notesimage',
-            'common_projectcode',
-            'common_webhookendpoint',
-            'common_webhookmessage',
-            'common_inventreecustomuserstatemodel',
-            'common_selectionlistentry',
-            'common_selectionlist',
-            'users_owner',
-            'users_userprofile',  # User profile is handled in the serializer - only own user can change
-            # Third-party tables
-            'error_report_error',
-            'exchange_rate',
-            'exchange_exchangebackend',
-            'usersessions_usersession',
-            'sessions_session',
-            # Django-q
-            'django_q_ormq',
-            'django_q_failure',
-            'django_q_task',
-            'django_q_schedule',
-            'django_q_success',
-        ]
-
-    RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
-
     RULE_OPTIONS = ['can_view', 'can_add', 'can_change', 'can_delete']
 
     class Meta:
         """Metaclass defines additional model properties."""
 
         unique_together = (('name', 'group'),)
+
+    @property
+    def label(self) -> str:
+        """Return the translated label for this ruleset."""
+        return dict(RULESET_CHOICES).get(self.name, self.name)
 
     name = models.CharField(
         max_length=50,
@@ -442,48 +264,6 @@ class RuleSet(models.Model):
         help_text=_('Permission to delete items'),
     )
 
-    @classmethod
-    def check_table_permission(cls, user: User, table, permission):
-        """Check if the provided user has the specified permission against the table."""
-        # Superuser knows no bounds
-        if user.is_superuser:
-            return True
-
-        # If the table does *not* require permissions
-        if table in cls.get_ruleset_ignore():
-            return True
-
-        # Work out which roles touch the given table
-        for role in cls.RULESET_NAMES:
-            if table in cls.get_ruleset_models()[role]:
-                if check_user_role(user, role, permission):
-                    return True
-
-        # Check for children models which inherits from parent role
-        for parent, child in cls.RULESET_CHANGE_INHERIT:
-            # Get child model name
-            parent_child_string = f'{parent}_{child}'
-
-            if parent_child_string == table:
-                # Check if parent role has change permission
-                if check_user_role(user, parent, 'change'):
-                    return True
-
-        # Print message instead of throwing an error
-        name = getattr(user, 'name', user.pk)
-        logger.debug(
-            "User '%s' failed permission check for %s.%s", name, table, permission
-        )
-
-        return False
-
-    @staticmethod
-    def get_model_permission_string(model, permission):
-        """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
-        model, app = split_model(model)
-
-        return f'{app}.{permission}_{model}'
-
     def __str__(self, debug=False):  # pragma: no cover
         """Ruleset string representation."""
         if debug:
@@ -511,263 +291,12 @@ class RuleSet(models.Model):
 
         if self.group:
             # Update the group too!
+            # Note: This will trigger the 'update_group_roles' signal
             self.group.save()
 
     def get_models(self):
         """Return the database tables / models that this ruleset covers."""
-        return self.get_ruleset_models().get(self.name, [])
-
-
-def split_model(model):
-    """Get modelname and app from modelstring."""
-    *app, model = model.split('_')
-
-    # handle models that have
-    app = '_'.join(app) if len(app) > 1 else app[0]
-
-    return model, app
-
-
-def split_permission(app, perm):
-    """Split permission string into permission and model."""
-    permission_name, *model = perm.split('_')
-    # handle models that have underscores
-    if len(model) > 1:  # pragma: no cover
-        app += '_' + '_'.join(model[:-1])
-        perm = permission_name + '_' + model[-1:][0]
-    model = model[-1:][0]
-    return perm, model
-
-
-def update_group_roles(group, debug=False):
-    """Iterates through all of the RuleSets associated with the group, and ensures that the correct permissions are either applied or removed from the group.
-
-    This function is called under the following conditions:
-
-    a) Whenever the InvenTree database is launched
-    b) Whenever the group object is updated
-
-    The RuleSet model has complete control over the permissions applied to any group.
-    """
-    if not canAppAccessDatabase(allow_test=True):
-        return  # pragma: no cover
-
-    # List of permissions already associated with this group
-    group_permissions = set()
-
-    # Iterate through each permission already assigned to this group,
-    # and create a simplified permission key string
-    for p in group.permissions.all().prefetch_related('content_type'):
-        (permission, app, model) = p.natural_key()
-        permission_string = f'{app}.{permission}'
-        group_permissions.add(permission_string)
-
-    # List of permissions which must be added to the group
-    permissions_to_add = set()
-
-    # List of permissions which must be removed from the group
-    permissions_to_delete = set()
-
-    def add_model(name, action, allowed):
-        """Add a new model to the pile.
-
-        Args:
-            name: The name of the model e.g. part_part
-            action: The permission action e.g. view
-            allowed: Whether or not the action is allowed
-        """
-        if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
-            raise ValueError(f'Action {action} is invalid')
-
-        permission_string = RuleSet.get_model_permission_string(model, action)
-
-        if allowed:
-            # An 'allowed' action is always preferenced over a 'forbidden' action
-            if permission_string in permissions_to_delete:
-                permissions_to_delete.remove(permission_string)
-
-            permissions_to_add.add(permission_string)
-
-        elif permission_string not in permissions_to_add:
-            permissions_to_delete.add(permission_string)
-
-    # Pre-fetch all the RuleSet objects
-    rulesets = {
-        r.name: r for r in RuleSet.objects.filter(group=group).prefetch_related('group')
-    }
-
-    # Get all the rulesets associated with this group
-    for r in RuleSet.RULESET_CHOICES:
-        rulename = r[0]
-
-        if rulename in rulesets:
-            ruleset = rulesets[rulename]
-        else:
-            try:
-                ruleset = RuleSet.objects.get(group=group, name=rulename)
-            except RuleSet.DoesNotExist:
-                ruleset = RuleSet.objects.create(group=group, name=rulename)
-
-        # Which database tables does this RuleSet touch?
-        models = ruleset.get_models()
-
-        for model in models:
-            # Keep track of the available permissions for each model
-
-            add_model(model, 'view', ruleset.can_view)
-            add_model(model, 'add', ruleset.can_add)
-            add_model(model, 'change', ruleset.can_change)
-            add_model(model, 'delete', ruleset.can_delete)
-
-    def get_permission_object(permission_string):
-        """Find the permission object in the database, from the simplified permission string.
-
-        Args:
-            permission_string: a simplified permission_string e.g. 'part.view_partcategory'
-
-        Returns the permission object in the database associated with the permission string
-        """
-        (app, perm) = permission_string.split('.')
-
-        perm, model = split_permission(app, perm)
-
-        try:
-            content_type = ContentType.objects.get(app_label=app, model=model)
-            permission = Permission.objects.get(
-                content_type=content_type, codename=perm
-            )
-        except ContentType.DoesNotExist:  # pragma: no cover
-            # logger.warning(
-            #     "Error: Could not find permission matching '%s'", permission_string
-            # )
-            permission = None
-
-        return permission
-
-    # Add any required permissions to the group
-    for perm in permissions_to_add:
-        # Ignore if permission is already in the group
-        if perm in group_permissions:
-            continue
-
-        permission = get_permission_object(perm)
-
-        if permission:
-            group.permissions.add(permission)
-
-        if debug:  # pragma: no cover
-            logger.debug('Adding permission %s to group %s', perm, group.name)
-
-    # Remove any extra permissions from the group
-    for perm in permissions_to_delete:
-        # Ignore if the permission is not already assigned
-        if perm not in group_permissions:
-            continue
-
-        permission = get_permission_object(perm)
-
-        if permission:
-            group.permissions.remove(permission)
-
-        if debug:  # pragma: no cover
-            logger.debug('Removing permission %s from group %s', perm, group.name)
-
-    # Enable all action permissions for certain children models
-    # if parent model has 'change' permission
-    for parent, child in RuleSet.RULESET_CHANGE_INHERIT:
-        parent_child_string = f'{parent}_{child}'
-
-        # Check each type of permission
-        for action in ['view', 'change', 'add', 'delete']:
-            parent_perm = f'{parent}.{action}_{parent}'
-
-            if parent_perm in group_permissions:
-                child_perm = f'{parent}.{action}_{child}'
-
-                # Check if child permission not already in group
-                if child_perm not in group_permissions:
-                    # Create permission object
-                    add_model(parent_child_string, action, ruleset.can_delete)
-                    # Add to group
-                    permission = get_permission_object(child_perm)
-                    if permission:
-                        group.permissions.add(permission)
-                        logger.debug(
-                            'Adding permission %s to group %s', child_perm, group.name
-                        )
-
-
-def check_user_permission(user: User, model: models.Model, permission: str) -> bool:
-    """Check if the user has a particular permission against a given model type.
-
-    Arguments:
-        user: The user object to check
-        model: The model class to check (e.g. 'part')
-        permission: The permission to check (e.g. 'view' / 'delete')
-
-    Returns:
-        bool: True if the user has the specified permission
-    """
-    if not user:
-        return False
-
-    if user.is_superuser:
-        return True
-
-    permission_name = f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
-    return user.has_perm(permission_name)
-
-
-def check_user_role(user: User, role: str, permission: str) -> bool:
-    """Check if a user has a particular role:permission combination.
-
-    Arguments:
-        user: The user object to check
-        role: The role to check (e.g. 'part' / 'stock')
-        permission: The permission to check (e.g. 'view' / 'delete')
-
-    Returns:
-        bool: True if the user has the specified role:permission combination
-    """
-    if not user:
-        return False
-
-    if user.is_superuser:
-        return True
-
-    # First, check the session cache
-    cache_key = f'role_{user.pk}_{role}_{permission}'
-    result = InvenTree.cache.get_session_cache(cache_key)
-
-    if result is not None:
-        return result
-
-    # Default for no match
-    result = False
-
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
-            if rule.name == role:
-                if permission == 'add' and rule.can_add:
-                    result = True
-                    break
-
-                if permission == 'change' and rule.can_change:
-                    result = True
-                    break
-
-                if permission == 'view' and rule.can_view:
-                    result = True
-                    break
-
-                if permission == 'delete' and rule.can_delete:
-                    result = True
-                    break
-
-    # Save result to session-cache
-    InvenTree.cache.set_session_cache(cache_key, result)
-
-    return result
+        return get_ruleset_models().get(self.name, [])
 
 
 class Owner(models.Model):
@@ -954,6 +483,8 @@ def create_missing_rule_sets(sender, instance, **kwargs):
 
     As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
     """
+    from users.tasks import update_group_roles
+
     update_group_roles(instance)
 
 

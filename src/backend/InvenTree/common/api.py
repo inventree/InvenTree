@@ -750,7 +750,7 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
         - Ensure that the user has correct 'delete' permissions for each model
         """
         from common.validators import attachment_model_class_from_label
-        from users.models import check_user_permission
+        from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
