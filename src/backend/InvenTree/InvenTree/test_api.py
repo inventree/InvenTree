@@ -12,7 +12,8 @@ from InvenTree.api import read_license_file
 from InvenTree.api_version import INVENTREE_API_VERSION
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from InvenTree.version import inventreeApiText, parse_version_text
-from users.models import RuleSet, update_group_roles
+from users.ruleset import RULESET_NAMES
+from users.tasks import update_group_roles
 
 
 class HTMLAPITests(InvenTreeTestCase):
@@ -142,7 +143,7 @@ class ApiAccessTests(InvenTreeAPITestCase):
         role_names = roles.keys()
 
         # By default, no permissions are provided
-        for rule in RuleSet.RULESET_NAMES:
+        for rule in RULESET_NAMES:
             self.assertIn(rule, role_names)
 
             if roles[rule] is None:
@@ -167,7 +168,7 @@ class ApiAccessTests(InvenTreeAPITestCase):
 
         roles = response.data['roles']
 
-        for rule in RuleSet.RULESET_NAMES:
+        for rule in RULESET_NAMES:
             self.assertIn(rule, roles.keys())
 
             for perm in ['view', 'add', 'change', 'delete']:

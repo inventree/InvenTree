@@ -191,7 +191,7 @@ class InvenTreeTaskTests(TestCase):
 
         # Create a staff user (to ensure notifications are sent)
         user = User.objects.create_user(
-            username='staff', password='staffpass', is_staff=True
+            username='staff', password='staffpass', is_staff=False
         )
 
         n_tasks = Task.objects.count()
@@ -216,8 +216,8 @@ class InvenTreeTaskTests(TestCase):
         self.assertEqual(NotificationEntry.objects.count(), n_entries + 0)
         self.assertEqual(NotificationMessage.objects.count(), n_messages + 0)
 
-        # Give them all the permissions
-        user.is_superuser = True
+        # Give them all the required staff level permissions
+        user.is_staff = True
         user.save()
 
         # Create a 'failed' task in the database

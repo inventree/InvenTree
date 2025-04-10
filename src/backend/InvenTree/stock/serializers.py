@@ -10,6 +10,7 @@ from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -984,6 +985,38 @@ class ConvertStockItemSerializer(serializers.Serializer):
         stock_item.convert_to_variant(part, request.user)
 
 
+@extend_schema_field(
+    serializers.IntegerField(
+        help_text='Status key, chosen from the list of StockStatus keys'
+    )
+)
+class StockStatusCustomSerializer(serializers.ChoiceField):
+    """Serializer to allow annotating the schema to use int where custom values may be entered."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the status selector."""
+        if 'choices' not in kwargs:
+            kwargs['choices'] = stock.status_codes.StockStatus.items(custom=True)
+
+        if 'label' not in kwargs:
+            kwargs['label'] = _('Status')
+
+        if 'help_text' not in kwargs:
+            kwargs['help_text'] = _('Stock item status code')
+
+        if InvenTree.ready.isGeneratingSchema():
+            kwargs['help_text'] = (
+                kwargs['help_text']
+                + '\n\n'
+                + '\n'.join(
+                    f'* `{value}` - {label}' for value, label in kwargs['choices']
+                )
+                + "\n\nAdditional custom status keys may be retrieved from the 'stock_status_retrieve' call."
+            )
+
+        super().__init__(*args, **kwargs)
+
+
 class ReturnStockItemSerializer(serializers.Serializer):
     """DRF serializer for returning a stock item from a customer."""
 
@@ -1001,14 +1034,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
         help_text=_('Destination location for returned item'),
     )
 
-    status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(custom=True),
-        default=None,
-        label=_('Status'),
-        help_text=_('Stock item status code'),
-        required=False,
-        allow_blank=True,
-    )
+    status = StockStatusCustomSerializer(default=None, required=False, allow_blank=True)
 
     notes = serializers.CharField(
         label=_('Notes'),
@@ -1058,10 +1084,8 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         return items
 
-    status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(custom=True),
-        default=stock.status_codes.StockStatus.OK.value,
-        label=_('Status'),
+    status = StockStatusCustomSerializer(
+        default=stock.status_codes.StockStatus.OK.value
     )
 
     note = serializers.CharField(
@@ -1620,11 +1644,9 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         help_text=_('Batch code for this stock item'),
     )
 
-    status = serializers.ChoiceField(
+    status = StockStatusCustomSerializer(
         choices=stock_item_adjust_status_options(),
         default=None,
-        label=_('Status'),
-        help_text=_('Stock item status code'),
         required=False,
         allow_blank=True,
     )

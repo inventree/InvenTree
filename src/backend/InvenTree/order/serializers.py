@@ -802,11 +802,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         allow_blank=True,
     )
 
-    status = serializers.ChoiceField(
-        choices=StockStatus.items(custom=True),
-        default=StockStatus.OK.value,
-        label=_('Status'),
-    )
+    status = stock.serializers.StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     packaging = serializers.CharField(
         label=_('Packaging'),
@@ -1988,13 +1984,8 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
         label=_('Return order line item'),
     )
 
-    status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(custom=True),
-        default=None,
-        label=_('Status'),
-        help_text=_('Stock item status code'),
-        required=False,
-        allow_blank=True,
+    status = stock.serializers.StockStatusCustomSerializer(
+        default=None, required=False, allow_blank=True
     )
 
     def validate_line_item(self, item):

@@ -8,7 +8,7 @@ msgstr ""
 "Language: bg\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-01 22:04\n"
+"PO-Revision-Date: 2025-04-06 02:34\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -84,13 +84,13 @@ msgstr ""
 
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/editors/NotesEditor.tsx:74
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:148
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 #: src/components/forms/fields/ApiFormField.tsx:351
 #: src/components/forms/fields/TableField.tsx:45
 #: src/components/importer/ImportDataSelector.tsx:188
 #: src/components/importer/ImporterColumnSelector.tsx:216
 #: src/components/modals/LicenseModal.tsx:88
-#: src/components/nav/SearchDrawer.tsx:554
+#: src/components/nav/SearchDrawer.tsx:575
 #: src/components/render/ModelType.tsx:273
 #: src/functions/auth.tsx:527
 #: src/pages/ErrorPage.tsx:11
@@ -99,7 +99,7 @@ msgstr ""
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/InvenTreeTable.tsx:508
+#: src/tables/InvenTreeTable.tsx:512
 #: src/tables/InvenTreeTableHeader.tsx:118
 #: src/tables/bom/BomTable.tsx:455
 #: src/tables/stock/StockItemTestResultTable.tsx:321
@@ -292,7 +292,15 @@ msgid "Open spotlight"
 msgstr ""
 
 #: src/components/buttons/StarredToggleButton.tsx:57
-msgid "Unsubscribe from part"
+#~ msgid "Unsubscribe from part"
+#~ msgstr "Unsubscribe from part"
+
+#: src/components/buttons/StarredToggleButton.tsx:59
+msgid "Unsubscribe from notifications"
+msgstr ""
+
+#: src/components/buttons/StarredToggleButton.tsx:60
+msgid "Subscribe to notifications"
 msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:16
@@ -549,12 +557,12 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:158
 #: src/components/dashboard/widgets/GetStartedWidget.tsx:15
-#: src/defaults/links.tsx:85
+#: src/defaults/links.tsx:86
 msgid "Getting Started"
 msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:159
-#: src/defaults/links.tsx:88
+#: src/defaults/links.tsx:89
 msgid "Getting started with InvenTree"
 msgstr ""
 
@@ -606,7 +614,7 @@ msgstr ""
 msgid "There are no unread news items"
 msgstr ""
 
-#: src/components/details/Details.tsx:115
+#: src/components/details/Details.tsx:116
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
 #: src/pages/core/UserDetail.tsx:154
 #: src/tables/core/UserTable.tsx:29
@@ -614,7 +622,7 @@ msgstr ""
 msgid "Superuser"
 msgstr ""
 
-#: src/components/details/Details.tsx:116
+#: src/components/details/Details.tsx:117
 #: src/pages/core/UserDetail.tsx:151
 #: src/tables/core/UserTable.tsx:24
 #: src/tables/settings/UserTable.tsx:289
@@ -622,14 +630,14 @@ msgid "Staff"
 msgstr ""
 
 #: src/components/details/Details.tsx:117
-msgid "Email: "
-msgstr ""
-
-#: src/components/details/Details.tsx:117
 #~ msgid "Email:"
 #~ msgstr "Email:"
 
-#: src/components/details/Details.tsx:384
+#: src/components/details/Details.tsx:118
+msgid "Email: "
+msgstr ""
+
+#: src/components/details/Details.tsx:387
 msgid "No name defined"
 msgstr ""
 
@@ -642,7 +650,7 @@ msgid "Remove the associated image from this item?"
 msgstr ""
 
 #: src/components/details/DetailsImage.tsx:83
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:178
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:187
 #: src/components/items/ActionDropdown.tsx:275
 #: src/components/items/ActionDropdown.tsx:276
 #: src/contexts/ThemeContext.tsx:42
@@ -830,36 +838,36 @@ msgstr ""
 msgid "Error saving template"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:149
-msgid "Could not load the template from the server."
-msgstr ""
-
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 #~ msgid "Save & Reload preview?"
 #~ msgstr "Save & Reload preview?"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:166
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:297
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
+msgid "Could not load the template from the server."
+msgstr ""
+
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:175
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:306
 msgid "Save & Reload Preview"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:171
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:180
 msgid "Are you sure you want to Save & Reload the preview?"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:173
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:182
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:177
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:186
 msgid "Save & Reload"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:209
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:218
 msgid "Preview updated"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:210
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:219
 msgid "The preview has been updated successfully."
 msgstr ""
 
@@ -867,15 +875,15 @@ msgstr ""
 #~ msgid "Save & Reload preview"
 #~ msgstr "Save & Reload preview"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:289
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:298
 msgid "Reload preview"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:290
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:299
 msgid "Use the currently stored template from the server"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:298
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:307
 msgid "Save the current template and reload the preview"
 msgstr ""
 
@@ -883,11 +891,11 @@ msgstr ""
 #~ msgid "to preview"
 #~ msgstr "to preview"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:357
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:366
 msgid "Select instance to preview"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:401
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:410
 msgid "Error rendering template"
 msgstr ""
 
@@ -1280,7 +1288,7 @@ msgid "{0} icons"
 msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
-#: src/components/nav/Header.tsx:187
+#: src/components/nav/Header.tsx:131
 #: src/pages/Index/Settings/UserSettings.tsx:67
 #: src/tables/Search.tsx:27
 msgid "Search"
@@ -1461,7 +1469,7 @@ msgstr ""
 #: src/components/importer/ImporterDrawer.tsx:112
 #: src/components/importer/ImporterDrawer.tsx:121
 #: src/components/modals/AboutInvenTreeModal.tsx:183
-#: src/components/modals/ServerInfoModal.tsx:132
+#: src/components/modals/ServerInfoModal.tsx:131
 msgid "Close"
 msgstr ""
 
@@ -1566,7 +1574,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:8
-#: src/tables/InvenTreeTable.tsx:500
+#: src/tables/InvenTreeTable.tsx:504
 msgid "Unknown error"
 msgstr ""
 
@@ -1739,54 +1747,53 @@ msgid "Database"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:52
-#: src/components/nav/Header.tsx:85
+#: src/components/nav/Alerts.tsx:39
 msgid "Debug Mode"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:55
+#: src/components/modals/ServerInfoModal.tsx:56
 msgid "Server is running in debug mode"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:62
+#: src/components/modals/ServerInfoModal.tsx:63
 msgid "Docker Mode"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:65
+#: src/components/modals/ServerInfoModal.tsx:66
 msgid "Server is deployed using docker"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:71
+#: src/components/modals/ServerInfoModal.tsx:72
 msgid "Plugin Support"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:76
+#: src/components/modals/ServerInfoModal.tsx:77
 msgid "Plugin support enabled"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:78
+#: src/components/modals/ServerInfoModal.tsx:79
 msgid "Plugin support disabled"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:85
+#: src/components/modals/ServerInfoModal.tsx:86
 msgid "Server status"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:91
+#: src/components/modals/ServerInfoModal.tsx:92
 msgid "Healthy"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:93
+#: src/components/modals/ServerInfoModal.tsx:94
 msgid "Issues detected"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:102
-#: src/components/nav/Header.tsx:93
+#: src/components/modals/ServerInfoModal.tsx:103
+#: src/components/nav/Alerts.tsx:48
 msgid "Background Worker"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:106
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:29
-msgid "Background worker not running"
+#: src/components/modals/ServerInfoModal.tsx:107
+msgid "The Background worker process is not running."
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:114
@@ -1794,45 +1801,58 @@ msgid "Email Settings"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:118
-msgid "Email settings not configured"
+#: src/components/nav/Alerts.tsx:59
+msgid "Email settings not configured."
 msgstr ""
 
-#: src/components/nav/Header.tsx:86
+#: src/components/modals/ServerInfoModal.tsx:118
+#~ msgid "Email settings not configured"
+#~ msgstr "Email settings not configured"
+
+#: src/components/nav/Alerts.tsx:41
 msgid "The server is running in debug mode."
 msgstr ""
 
-#: src/components/nav/Header.tsx:94
+#: src/components/nav/Alerts.tsx:50
 msgid "The background worker process is not running."
 msgstr ""
 
-#: src/components/nav/Header.tsx:101
+#: src/components/nav/Alerts.tsx:57
+msgid "Email settings"
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:66
 msgid "Server Restart"
 msgstr ""
 
-#: src/components/nav/Header.tsx:102
+#: src/components/nav/Alerts.tsx:68
 msgid "The server requires a restart to apply changes."
 msgstr ""
 
-#: src/components/nav/Header.tsx:112
+#: src/components/nav/Alerts.tsx:78
 msgid "Database Migrations"
 msgstr ""
 
-#: src/components/nav/Header.tsx:113
+#: src/components/nav/Alerts.tsx:80
 msgid "There are pending database migrations."
 msgstr ""
 
-#: src/components/nav/Header.tsx:206
+#: src/components/nav/Alerts.tsx:91
+msgid "Alerts"
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:127
+msgid "Learn more about {code}"
+msgstr ""
+
+#: src/components/nav/Header.tsx:150
 #: src/components/nav/NavigationDrawer.tsx:141
 #: src/components/nav/NotificationDrawer.tsx:179
 #: src/pages/Index/Settings/SystemSettings.tsx:112
-#: src/pages/Index/Settings/UserSettings.tsx:98
+#: src/pages/Index/Settings/UserSettings.tsx:99
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
-msgstr ""
-
-#: src/components/nav/Header.tsx:219
-msgid "Alerts"
 msgstr ""
 
 #: src/components/nav/Layout.tsx:80
@@ -1851,7 +1871,7 @@ msgid "Settings"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:59
-#: src/pages/Index/Settings/UserSettings.tsx:125
+#: src/pages/Index/Settings/UserSettings.tsx:126
 msgid "Account Settings"
 msgstr ""
 
@@ -1978,7 +1998,7 @@ msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:147
 #: src/components/nav/SettingsHeader.tsx:40
-#: src/pages/Index/Settings/UserSettings.tsx:121
+#: src/pages/Index/Settings/UserSettings.tsx:122
 msgid "User Settings"
 msgstr ""
 
@@ -2036,7 +2056,7 @@ msgstr ""
 msgid "Remove search group"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:276
+#: src/components/nav/SearchDrawer.tsx:287
 #: src/pages/company/ManufacturerPartDetail.tsx:177
 #: src/pages/part/PartDetail.tsx:561
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -2044,13 +2064,13 @@ msgstr ""
 msgid "Suppliers"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:286
+#: src/components/nav/SearchDrawer.tsx:297
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:98
 msgid "Manufacturers"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:296
+#: src/components/nav/SearchDrawer.tsx:307
 #: src/pages/sales/SalesIndex.tsx:124
 msgid "Customers"
 msgstr ""
@@ -2059,37 +2079,41 @@ msgstr ""
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:468
+#: src/components/nav/SearchDrawer.tsx:480
 msgid "Enter search text"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:479
+#: src/components/nav/SearchDrawer.tsx:491
 msgid "Refresh search results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:490
-#: src/components/nav/SearchDrawer.tsx:497
+#: src/components/nav/SearchDrawer.tsx:502
+#: src/components/nav/SearchDrawer.tsx:509
 msgid "Search Options"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:500
-msgid "Regex search"
-msgstr ""
-
-#: src/components/nav/SearchDrawer.tsx:509
+#: src/components/nav/SearchDrawer.tsx:512
 msgid "Whole word search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:557
+#: src/components/nav/SearchDrawer.tsx:521
+msgid "Regex search"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:530
+msgid "Notes search"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:578
 msgid "An error occurred during search query"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:568
+#: src/components/nav/SearchDrawer.tsx:589
 #: src/tables/part/PartTestTemplateTable.tsx:82
 msgid "No Results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:571
+#: src/components/nav/SearchDrawer.tsx:592
 msgid "No results available for search query"
 msgstr ""
 
@@ -2374,7 +2398,7 @@ msgstr ""
 #: src/forms/BuildForms.tsx:409
 #: src/forms/BuildForms.tsx:546
 #: src/forms/SalesOrderForms.tsx:268
-#: src/pages/stock/StockDetail.tsx:911
+#: src/pages/stock/StockDetail.tsx:910
 #: src/tables/stock/StockTrackingTable.tsx:46
 #: src/tables/stock/StockTrackingTable.tsx:53
 msgid "Stock Item"
@@ -2397,7 +2421,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:89
 #: src/pages/stock/LocationDetail.tsx:177
 #: src/pages/stock/LocationDetail.tsx:372
-#: src/pages/stock/StockDetail.tsx:902
+#: src/pages/stock/StockDetail.tsx:901
 msgid "Stock Locations"
 msgstr ""
 
@@ -2693,7 +2717,7 @@ msgstr ""
 
 #: src/components/render/Stock.tsx:61
 #: src/pages/stock/StockDetail.tsx:185
-#: src/pages/stock/StockDetail.tsx:838
+#: src/pages/stock/StockDetail.tsx:837
 #: src/tables/build/BuildAllocatedStockTable.tsx:123
 #: src/tables/build/BuildOutputTable.tsx:81
 #: src/tables/sales/SalesOrderAllocationTable.tsx:141
@@ -2716,7 +2740,7 @@ msgstr ""
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
 #: src/pages/stock/StockDetail.tsx:180
-#: src/pages/stock/StockDetail.tsx:844
+#: src/pages/stock/StockDetail.tsx:843
 #: src/tables/build/BuildLineTable.tsx:78
 #: src/tables/build/BuildOrderTestTable.tsx:205
 #: src/tables/part/PartPurchaseOrdersTable.tsx:93
@@ -3410,8 +3434,8 @@ msgid "Visit the documentation to learn more about InvenTree"
 msgstr ""
 
 #: src/defaults/actions.tsx:41
-#: src/defaults/links.tsx:139
-#: src/defaults/links.tsx:185
+#: src/defaults/links.tsx:140
+#: src/defaults/links.tsx:186
 msgid "About InvenTree"
 msgstr ""
 
@@ -3429,13 +3453,13 @@ msgid "Server Information"
 msgstr ""
 
 #: src/defaults/actions.tsx:49
-#: src/defaults/links.tsx:168
+#: src/defaults/links.tsx:169
 msgid "About this InvenTree instance"
 msgstr ""
 
 #: src/defaults/actions.tsx:55
-#: src/defaults/links.tsx:152
-#: src/defaults/links.tsx:174
+#: src/defaults/links.tsx:153
+#: src/defaults/links.tsx:175
 msgid "License Information"
 msgstr ""
 
@@ -3529,35 +3553,35 @@ msgstr ""
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:92
+#: src/defaults/links.tsx:93
 msgid "API"
 msgstr ""
 
-#: src/defaults/links.tsx:95
+#: src/defaults/links.tsx:96
 msgid "InvenTree API documentation"
 msgstr ""
 
-#: src/defaults/links.tsx:99
+#: src/defaults/links.tsx:100
 msgid "Developer Manual"
 msgstr ""
 
-#: src/defaults/links.tsx:102
+#: src/defaults/links.tsx:103
 msgid "InvenTree developer manual"
 msgstr ""
 
-#: src/defaults/links.tsx:106
+#: src/defaults/links.tsx:107
 msgid "FAQ"
 msgstr ""
 
-#: src/defaults/links.tsx:109
+#: src/defaults/links.tsx:110
 msgid "Frequently asked questions"
 msgstr ""
 
-#: src/defaults/links.tsx:113
+#: src/defaults/links.tsx:114
 msgid "GitHub Repository"
 msgstr ""
 
-#: src/defaults/links.tsx:116
+#: src/defaults/links.tsx:117
 msgid "InvenTree source code on GitHub"
 msgstr ""
 
@@ -3565,8 +3589,8 @@ msgstr ""
 #~ msgid "Licenses for packages used by InvenTree"
 #~ msgstr "Licenses for packages used by InvenTree"
 
-#: src/defaults/links.tsx:126
-#: src/defaults/links.tsx:167
+#: src/defaults/links.tsx:127
+#: src/defaults/links.tsx:168
 msgid "System Information"
 msgstr ""
 
@@ -3574,11 +3598,11 @@ msgstr ""
 #~ msgid "Licenses"
 #~ msgstr "Licenses"
 
-#: src/defaults/links.tsx:175
+#: src/defaults/links.tsx:176
 msgid "Licenses for dependencies of the InvenTree software"
 msgstr ""
 
-#: src/defaults/links.tsx:186
+#: src/defaults/links.tsx:187
 msgid "About the InvenTree Project"
 msgstr ""
 
@@ -3938,7 +3962,7 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:618
 #: src/pages/build/BuildDetail.tsx:219
 #: src/pages/stock/StockDetail.tsx:204
-#: src/pages/stock/StockDetail.tsx:860
+#: src/pages/stock/StockDetail.tsx:859
 #: src/tables/build/BuildAllocatedStockTable.tsx:130
 #: src/tables/build/BuildOrderTestTable.tsx:196
 #: src/tables/build/BuildOutputTable.tsx:86
@@ -4212,22 +4236,22 @@ msgid "Label"
 msgstr ""
 
 #: src/functions/api.tsx:33
-#: src/tables/InvenTreeTable.tsx:487
+#: src/tables/InvenTreeTable.tsx:491
 msgid "Bad request"
 msgstr ""
 
 #: src/functions/api.tsx:36
-#: src/tables/InvenTreeTable.tsx:490
+#: src/tables/InvenTreeTable.tsx:494
 msgid "Unauthorized"
 msgstr ""
 
 #: src/functions/api.tsx:39
-#: src/tables/InvenTreeTable.tsx:493
+#: src/tables/InvenTreeTable.tsx:497
 msgid "Forbidden"
 msgstr ""
 
 #: src/functions/api.tsx:42
-#: src/tables/InvenTreeTable.tsx:496
+#: src/tables/InvenTreeTable.tsx:500
 msgid "Not found"
 msgstr ""
 
@@ -4768,7 +4792,7 @@ msgid "Item already scanned"
 msgstr ""
 
 #: src/pages/Index/Scan.tsx:82
-#: src/tables/InvenTreeTable.tsx:213
+#: src/tables/InvenTreeTable.tsx:217
 msgid "API Error"
 msgstr ""
 
@@ -5551,6 +5575,10 @@ msgid "Stocktake Reports"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:30
+msgid "Background worker not running"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:31
 msgid "The background task manager service is not running. Contact your system administrator."
 msgstr ""
 
@@ -5558,18 +5586,18 @@ msgstr ""
 #~ msgid "Background Worker Not Running"
 #~ msgstr "Background Worker Not Running"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:36
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:45
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:38
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:47
 msgid "Pending Tasks"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:37
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:53
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:39
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:55
 msgid "Scheduled Tasks"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:38
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:61
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:40
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:63
 msgid "Failed Tasks"
 msgstr ""
 
@@ -5658,7 +5686,7 @@ msgid "Labels"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:169
-#: src/pages/Index/Settings/UserSettings.tsx:104
+#: src/pages/Index/Settings/UserSettings.tsx:105
 msgid "Reporting"
 msgstr ""
 
@@ -6488,7 +6516,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:323
 #: src/pages/part/PartDetail.tsx:779
-#: src/pages/stock/StockDetail.tsx:833
+#: src/pages/stock/StockDetail.tsx:832
 #: src/tables/build/BuildOrderTestTable.tsx:227
 #: src/tables/stock/StockItemTable.tsx:347
 msgid "In Production"
@@ -6607,7 +6635,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:755
 #: src/pages/stock/StockDetail.tsx:191
-#: src/pages/stock/StockDetail.tsx:850
+#: src/pages/stock/StockDetail.tsx:849
 #: src/tables/build/BuildLineTable.tsx:186
 #: src/tables/part/PartTable.tsx:122
 #: src/tables/stock/StockItemTable.tsx:172
@@ -6655,12 +6683,12 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:933
 #: src/pages/part/PartSchedulingDetail.tsx:71
-#: src/pages/stock/StockDetail.tsx:766
+#: src/pages/stock/StockDetail.tsx:765
 msgid "Order"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:934
-#: src/pages/stock/StockDetail.tsx:767
+#: src/pages/stock/StockDetail.tsx:766
 #: src/tables/build/BuildLineTable.tsx:594
 msgid "Order Stock"
 msgstr ""
@@ -7478,37 +7506,37 @@ msgstr ""
 msgid "Serialize stock"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:778
+#: src/pages/stock/StockDetail.tsx:777
 msgid "Return"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:779
+#: src/pages/stock/StockDetail.tsx:778
 msgid "Return from customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:792
+#: src/pages/stock/StockDetail.tsx:791
 msgid "Assign to Customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:793
+#: src/pages/stock/StockDetail.tsx:792
 msgid "Assign to a customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:805
+#: src/pages/stock/StockDetail.tsx:804
 msgid "Stock Item Actions"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:874
+#: src/pages/stock/StockDetail.tsx:873
 #: src/tables/stock/StockItemTable.tsx:422
 msgid "Stale"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:880
+#: src/pages/stock/StockDetail.tsx:879
 #: src/tables/stock/StockItemTable.tsx:416
 msgid "Expired"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:886
+#: src/pages/stock/StockDetail.tsx:885
 msgid "Unavailable"
 msgstr ""
 
@@ -7756,17 +7784,17 @@ msgstr ""
 msgid "Clear Filters"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:101
-#: src/tables/InvenTreeTable.tsx:440
-#: src/tables/InvenTreeTable.tsx:468
+#: src/tables/InvenTreeTable.tsx:105
+#: src/tables/InvenTreeTable.tsx:444
+#: src/tables/InvenTreeTable.tsx:472
 msgid "No records found"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:214
+#: src/tables/InvenTreeTable.tsx:218
 msgid "Failed to load table options"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:479
+#: src/tables/InvenTreeTable.tsx:483
 msgid "Server returned incorrect data type"
 msgstr ""
 
@@ -7794,6 +7822,10 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:595
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
+
+#: src/tables/InvenTreeTable.tsx:647
+msgid "View details"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656

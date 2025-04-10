@@ -55,6 +55,7 @@ export enum ApiEndpoints {
   license = 'license/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  ruleset_list = 'user/ruleset/',
   content_type_list = 'contenttype/',
   icons = 'icons/',
   selectionlist_list = 'selection/',

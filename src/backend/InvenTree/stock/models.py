@@ -33,7 +33,6 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
-import report.models
 import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
