@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Paper, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { type ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   type DetailsField,
@@ -9,6 +9,8 @@ import {
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {} from '../../components/items/ActionDropdown';
+import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
@@ -34,6 +36,8 @@ export default function GroupDetail() {
       return <Skeleton />;
     }
 
+    const roles: RuleSet[] = instance?.roles ?? [];
+
     const tl: DetailsField[] = [
       {
         type: 'text',
@@ -45,11 +49,13 @@ export default function GroupDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid grow>
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={instance} />
-          </Grid.Col>
-        </Grid>
+        <DetailsTable fields={tl} item={instance} title={t`Group Details`} />
+        <Paper p='xs' withBorder>
+          <Stack gap='xs'>
+            <StylishText size='lg'>{t`Group Roles`}</StylishText>
+            <RoleTable roles={roles} />
+          </Stack>
+        </Paper>
       </ItemDetailsGrid>
     );
   }, [instance, instanceQuery]);
@@ -65,17 +71,12 @@ export default function GroupDetail() {
     ];
   }, [instance, id]);
 
-  const groupBadges: ReactNode[] = useMemo(() => {
-    return instanceQuery.isLoading ? [] : ['group info'];
-  }, [instance, instanceQuery]);
-
   return (
     <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
       <Stack gap='xs'>
         <PageDetail
           title={`${t`Group`}: ${instance.name}`}
           imageUrl={instance?.image}
-          badges={groupBadges}
           breadcrumbs={[
             { name: t`System Overview`, url: '/core/' },
             { name: t`Groups`, url: '/core/index/groups/' }

@@ -1,7 +1,6 @@
 """Main JSON interface views."""
 
 import json
-import sys
 from pathlib import Path
 
 from django.conf import settings
@@ -18,17 +17,16 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
-import common.models
+import InvenTree.ready
 import InvenTree.version
-import users.models
 from common.settings import get_global_setting
-from InvenTree import helpers, ready
+from InvenTree import helpers
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
-from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
+from users.permissions import check_user_permission
 
 from .helpers import plugins_info
 from .helpers_email import is_email_configured
@@ -683,14 +681,9 @@ class APISearchView(GenericAPIView):
 
                 # Check permissions and update results dict with particular query
                 model = view.serializer_class.Meta.model
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-                table = f'{app_label}_{model_name}'
 
                 try:
-                    if users.models.RuleSet.check_table_permission(
-                        request.user, table, 'view'
-                    ):
+                    if check_user_permission(request.user, model, 'view'):
                         results[key] = view.list(request, *args, **kwargs).data
                     else:
                         results[key] = {
@@ -707,37 +700,32 @@ class APISearchView(GenericAPIView):
 class MetadataView(RetrieveUpdateAPI):
     """Generic API endpoint for reading and editing metadata for a model."""
 
-    MODEL_REF = 'model'
+    model = None  # Placeholder for the model class
 
-    def get_model_type(self):
-        """Return the model type associated with this API instance."""
-        model = self.kwargs.get(self.MODEL_REF, None)
-
-        if ready.isGeneratingSchema():
-            model = common.models.ProjectCode
-
-        if 'lookup_field' in self.kwargs:
-            # Set custom lookup field (instead of default 'pk' value) if supplied
-            self.lookup_field = self.kwargs.pop('lookup_field')
-
+    @classmethod
+    def as_view(cls, model, lookup_field=None, **initkwargs):
+        """Override to ensure model specific rendering."""
         if model is None:
             raise ValidationError(
-                f"MetadataView called without '{self.MODEL_REF}' parameter"
+                "MetadataView defined without 'model' arg"
             )  # pragma: no cover
+        initkwargs['model'] = model
 
-        return model
+        # Set custom lookup field (instead of default 'pk' value) if supplied
+        if lookup_field:
+            initkwargs['lookup_field'] = lookup_field
+
+        return super().as_view(**initkwargs)
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
-        return self.get_model_type()
+        return self.model
 
     def get_queryset(self):
         """Return the queryset for this endpoint."""
-        return self.get_model_type().objects.all()
+        return self.model.objects.all()
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
         # Detect if we are currently generating the OpenAPI schema
-        if 'spectacular' in sys.argv:
-            return MetadataSerializer(Part, *args, **kwargs)  # pragma: no cover
-        return MetadataSerializer(self.get_model_type(), *args, **kwargs)
+        return MetadataSerializer(self.model, *args, **kwargs)
