@@ -172,17 +172,21 @@ def parse_version_text():
         data = version.split('\n')
 
         version_split = data[0].split(' -> ')
+        version_string = version_split[0].strip()
+        if version_string == '':
+            continue
+
         version_detail = (
             version_split[1].split(':', 1) if len(version_split) > 1 else ['']
         )
         new_data = {
-            'version': version_split[0].strip(),
+            'version': version_string,
             'date': version_detail[0].strip(),
             'gh': version_detail[1].strip() if len(version_detail) > 1 else None,
             'text': data[1:],
-            'latest': False,
+            'latest': f'v{INVENTREE_API_VERSION}' == version_string,
         }
-        version_data[new_data['version']] = new_data
+        version_data[version_string] = new_data
     return version_data
 
 

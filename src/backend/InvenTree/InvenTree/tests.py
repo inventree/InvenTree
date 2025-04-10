@@ -1049,6 +1049,28 @@ class TestVersionNumber(TestCase):
         self.assertEqual(d, version.inventreeCommitDate())
 
 
+class VersionTextTest(TestCase):
+    """Unit tests for API version text functions."""
+
+    def test_parse_text(self):
+        """Test that the version text parsing produces the expected fields."""
+        parsed_text = version.parse_version_text()
+
+        latest_version = version.inventreeApiVersion()
+        self.assertTrue(parsed_text[f'v{latest_version}']['latest'])
+
+        # All fields except github link should exist for every version
+        latest_count = 0
+        for k, v in parsed_text.items():
+            self.assertEqual(k, v['version'])
+            self.assertIsNotNone(v['date'])
+            self.assertIsNotNone(v['text'])
+            self.assertGreater(len(v['text']), 0, v)
+            self.assertIsNotNone(v['latest'])
+            latest_count = latest_count + (1 if v['latest'] else 0)
+        self.assertEqual(1, latest_count, 'Should have a single version marked latest')
+
+
 class CurrencyTests(TestCase):
     """Unit tests for currency / exchange rate functionality."""
 
