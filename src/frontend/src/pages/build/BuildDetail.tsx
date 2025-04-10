@@ -380,7 +380,9 @@ export default function BuildDetail() {
           <Skeleton />
         ),
         hidden:
-          !build.external && !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+          !user.hasViewRole(UserRoles.purchase_order) ||
+          !build.external ||
+          !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
       {
         name: 'child-orders',
