@@ -17,10 +17,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
 export interface RuleSet {
-  pk: number;
+  pk?: number;
+  group?: number;
   name: string;
   label: string;
-  group: number;
   can_view: boolean;
   can_add: boolean;
   can_change: boolean;
@@ -129,35 +129,37 @@ export function RoleTable({
       <Stack gap='xs'>
         <Table striped withColumnBorders withRowBorders withTableBorder>
           <Table.Thead>
-            <Table.Th>
-              <Text fw={700}>
-                <Trans>Role</Trans>
-              </Text>
-            </Table.Th>
-            <Table.Th>
-              <Text fw={700}>
-                <Trans>View</Trans>
-              </Text>
-            </Table.Th>
-            <Table.Th>
-              <Text fw={700}>
-                <Trans>Change</Trans>
-              </Text>
-            </Table.Th>
-            <Table.Th>
-              <Text fw={700}>
-                <Trans>Add</Trans>
-              </Text>
-            </Table.Th>
-            <Table.Th>
-              <Text fw={700}>
-                <Trans>Delete</Trans>
-              </Text>
-            </Table.Th>
+            <Table.Tr>
+              <Table.Th>
+                <Text fw={700}>
+                  <Trans>Role</Trans>
+                </Text>
+              </Table.Th>
+              <Table.Th>
+                <Text fw={700}>
+                  <Trans>View</Trans>
+                </Text>
+              </Table.Th>
+              <Table.Th>
+                <Text fw={700}>
+                  <Trans>Change</Trans>
+                </Text>
+              </Table.Th>
+              <Table.Th>
+                <Text fw={700}>
+                  <Trans>Add</Trans>
+                </Text>
+              </Table.Th>
+              <Table.Th>
+                <Text fw={700}>
+                  <Trans>Delete</Trans>
+                </Text>
+              </Table.Th>
+            </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {sortedRulesets.map((rule) => (
-              <Table.Tr key={rule.pk}>
+              <Table.Tr key={rule.pk ?? rule.name}>
                 <Table.Td>
                   <Group gap='xs'>
                     <Text>{rule.label}</Text>
