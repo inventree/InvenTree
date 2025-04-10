@@ -205,7 +205,7 @@ def inventreeApiText(versions: int = 10, start_version: int = 0):
 
     # Define the range of versions to return
     if start_version == 0:
-        start_version = INVENTREE_API_VERSION - versions
+        start_version = INVENTREE_API_VERSION - versions + 1
 
     return {
         f'v{a}': version_data.get(f'v{a}', None)
