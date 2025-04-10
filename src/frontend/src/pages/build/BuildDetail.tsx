@@ -58,6 +58,7 @@ import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
@@ -373,7 +374,11 @@ export default function BuildDetail() {
         name: 'external-purchase-orders',
         label: t`External Orders`,
         icon: <IconShoppingCart />,
-        content: <Skeleton />,
+        content: build.pk ? (
+          <PurchaseOrderTable externalBuildId={build.pk} />
+        ) : (
+          <Skeleton />
+        ),
         hidden:
           !build.external && !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
