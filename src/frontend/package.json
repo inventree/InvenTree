@@ -99,7 +99,7 @@
         "rollup": "^4.0.0",
         "rollup-plugin-license": "^3.5.3",
         "typescript": "^5.8.2",
-        "vite": "^6.2.5",
+        "vite": "^6.2.6",
         "vite-plugin-babel-macros": "^1.0.6",
         "vite-plugin-istanbul": "^6.0.2"
     }
