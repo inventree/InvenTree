@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 336
 
 
 INVENTREE_API_TEXT = """
-v336 - 2025-04-10 : https://github.com/inventree/InvenTree/pull/9312
+v336 -> 2025-04-10 : https://github.com/inventree/InvenTree/pull/9312
     - Adds "external" flag for BuildOrder
 
 v336 -> 2025-04-10 : https://github.com/inventree/InvenTree/pull/9492
