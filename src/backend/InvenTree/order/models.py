@@ -1951,6 +1951,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
 
 class SalesOrderShipment(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
