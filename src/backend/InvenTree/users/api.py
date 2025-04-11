@@ -328,8 +328,8 @@ class TokenListView(TokenMixin, ListCreateAPI):
         'revoked',
         'revoked',
     ]
-
     filterset_fields = ['revoked', 'user']
+    queryset = ApiToken.objects.none()
 
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""

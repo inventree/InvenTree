@@ -193,7 +193,6 @@ jobs:
           diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
         run: invoke dev.schema
-        continue-on-error: true
       - name: Extract version for publishing
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
@@ -682,7 +681,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # pin@v3
+        uses: github/codeql-action/upload-sarif@fc7e4a0fa01c3cca5fd6a1fddec5c0740c977aa2 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor
