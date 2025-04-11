@@ -541,7 +541,7 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
-class AllUnitList(ListAPI):
+class AllUnitList(RetrieveAPI):
     """List of all defined units."""
 
     serializer_class = common.serializers.AllUnitListResponseSerializer

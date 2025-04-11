@@ -129,11 +129,6 @@ def inventreeAppUrl():
     return 'https://docs.inventree.org/app/'
 
 
-def inventreeCreditsUrl():
-    """Return URL for InvenTree credits site."""
-    return 'https://docs.inventree.org/en/latest/credits/'
-
-
 def inventreeGithubUrl():
     """Return URL for InvenTree github site."""
     return 'https://github.com/InvenTree/InvenTree/'
@@ -172,22 +167,27 @@ def parse_version_text():
     # Remove first newline on latest version
     patched_data[0] = patched_data[0].replace('\n', '', 1)
 
+    latest_version = f'v{INVENTREE_API_VERSION}'
     version_data = {}
     for version in patched_data:
         data = version.split('\n')
 
         version_split = data[0].split(' -> ')
+        version_string = version_split[0].strip()
+        if version_string == '':
+            continue
+
         version_detail = (
             version_split[1].split(':', 1) if len(version_split) > 1 else ['']
         )
         new_data = {
-            'version': version_split[0].strip(),
+            'version': version_string,
             'date': version_detail[0].strip(),
             'gh': version_detail[1].strip() if len(version_detail) > 1 else None,
             'text': data[1:],
-            'latest': False,
+            'latest': latest_version == version_string,
         }
-        version_data[new_data['version']] = new_data
+        version_data[version_string] = new_data
     return version_data
 
 
@@ -206,7 +206,7 @@ def inventreeApiText(versions: int = 10, start_version: int = 0):
 
     # Define the range of versions to return
     if start_version == 0:
-        start_version = INVENTREE_API_VERSION - versions
+        start_version = INVENTREE_API_VERSION - versions + 1
 
     return {
         f'v{a}': version_data.get(f'v{a}', None)

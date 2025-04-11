@@ -428,7 +428,7 @@ class AllUnitListResponseSerializer(serializers.Serializer):
 
     default_system = serializers.CharField()
     available_systems = serializers.ListField(child=serializers.CharField())
-    available_units = Unit(many=True)
+    available_units = serializers.DictField(child=Unit())
 
 
 class ErrorMessageSerializer(InvenTreeModelSerializer):
