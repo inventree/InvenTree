@@ -36,7 +36,7 @@ create-inventree-plugin
 Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
 
 !!! warning "Namechange"
-    The name of the base class was changed with `0.7.0` from `IntegrationPluginBase` to `InvenTreePlugin`. While the old name is still available till `0.8.0` we strongly suggest upgrading your plugins. Deprecation warnings are raised if the old name is used.
+    The name of the base class was changed with `0.7.0` from `IntegrationPluginBase` to `InvenTreePlugin`.
 
 ### Imports
 
@@ -121,6 +121,7 @@ Supported mixin classes are:
 | [ReportMixin](./plugins/report.md) | Add custom context data to reports |
 | [ScheduleMixin](./plugins/schedule.md) | Schedule periodic tasks |
 | [SettingsMixin](./plugins/settings.md) | Integrate user configurable settings |
+| [UserInterfaceMixin](./plugins/ui.md) | Add custom user interface features |
 | [UrlsMixin](./plugins/urls.md) | Respond to custom URL endpoints |
 | [ValidationMixin](./plugins/validation.md) | Provide custom validation of database models |
 
