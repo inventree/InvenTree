@@ -4,7 +4,7 @@ title: Plugins
 
 ## InvenTree Plugin Architecture
 
-The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the database server. This allows development of complex behaviours which are decoupled from core InvenTree code.
+The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the database server. This allows development of complex behaviors which are decoupled from core InvenTree code.
 
 Plugins can be added from multiple sources:
 
@@ -35,7 +35,7 @@ create-inventree-plugin
 
 Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
 
-!!! warning "Namechange"
+!!! warning "Name Change"
     The name of the base class was changed with `0.7.0` from `IntegrationPluginBase` to `InvenTreePlugin`.
 
 ### Imports
@@ -66,7 +66,7 @@ Mixins are split up internally to keep the source tree clean and enable better t
 #### Models and other internal InvenTree APIs
 
 !!! warning "Danger Zone"
-    The APIs outside of the `plugin` namespace are not structured for public usage and require a more in-depth knowledge of the Django framework. Please ask in GitHub discussions of the `ÌnvenTree` org if you are not sure you are using something the intended way.
+    The APIs outside of the `plugin` namespace are not structured for public usage and require a more in-depth knowledge of the Django framework. Please ask in GitHub discussions of the `InvenTree` org if you are not sure you are using something the intended way.
 
 We do not provide stable interfaces to models or any other internal python APIs. If you need to integrate into these parts please make yourself familiar with the codebase. We follow general Django patterns and only stray from them in limited, special cases.
 If you need to react to state changes please use the [EventMixin](./plugins/event.md).

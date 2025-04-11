@@ -14,8 +14,8 @@ A list of known third-party InvenTree extensions is provided below. If you have 
 
 [PK2InvenTree](https://github.com/rgilham/PK2InvenTree) is an open-source tool for migrating an existing [PartKeepr](https://github.com/partkeepr/PartKeepr) database to InvenTree.
 
-### Digikey-Inventree-Integration
-[Digikey-Inventree-Integration](https://github.com/EUdds/Digikey-Inventree-Integration) is a simple project that takes a digikey part number to creates a part in InvenTree.
+### DigiKey-Inventree-Integration
+[Digikey-Inventree-Integration](https://github.com/EUdds/Digikey-Inventree-Integration) is a simple project that takes a DigiKey part number to creates a part in InvenTree.
 
 ### F360-InvenTree
 
