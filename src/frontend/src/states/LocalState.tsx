@@ -2,20 +2,12 @@ import type { DataTableSortStatus } from 'mantine-datatable';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { UserTheme } from '@lib/types/Core';
+import type { HostList } from '@lib/types/Server';
 import { api } from '../App';
-import type { UiSizeType } from '../defaults/formatters';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
-import type { HostList } from './states';
-
-interface Theme {
-  primaryColor: string;
-  whiteColor: string;
-  blackColor: string;
-  radius: UiSizeType;
-  loader: string;
-}
 
 interface LocalStateProps {
   autoupdate: boolean;
@@ -28,11 +20,10 @@ interface LocalStateProps {
   setHostList: (newHostList: HostList) => void;
   language: string;
   setLanguage: (newLanguage: string, noPatch?: boolean) => void;
-  // theme
-  usertheme: Theme;
+  userTheme: UserTheme;
   setTheme: (
     newValues: {
-      key: keyof Theme;
+      key: keyof UserTheme;
       value: string;
     }[],
     noPatch?: boolean
@@ -98,8 +89,7 @@ export const useLocalState = create<LocalStateProps>()(
         set({ language: newLanguage });
         if (!noPatch) patchUser('language', newLanguage);
       },
-      //theme
-      usertheme: {
+      userTheme: {
         primaryColor: 'indigo',
         whiteColor: '#fff',
         blackColor: '#000',
@@ -107,12 +97,11 @@ export const useLocalState = create<LocalStateProps>()(
         loader: 'oval'
       },
       setTheme: (newValues, noPatch = false) => {
-        const newTheme = { ...get().usertheme };
+        const newTheme = { ...get().userTheme };
         newValues.forEach((val) => {
           newTheme[val.key] = val.value;
         });
-        // console.log('setting theme, changed val',newValues.map(a => a.key).join(','), newTheme);
-        set({ usertheme: newTheme });
+        set({ userTheme: newTheme });
         if (!noPatch) patchUser('theme', newTheme);
       },
       // panels

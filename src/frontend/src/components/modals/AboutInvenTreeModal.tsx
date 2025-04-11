@@ -14,10 +14,11 @@ import {
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { generateUrl } from '../../functions/urls';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';

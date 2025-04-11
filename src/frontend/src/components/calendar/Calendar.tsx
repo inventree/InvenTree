@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
+import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -27,7 +28,6 @@ import {
 import { useCallback, useState } from 'react';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
-import type { TableFilter } from '../../tables/Filter';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 import { TableSearchInput } from '../../tables/Search';
 import { Boundary } from '../Boundary';

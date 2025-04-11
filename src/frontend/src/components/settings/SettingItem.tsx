@@ -11,14 +11,14 @@ import {
 import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { Setting } from '@lib/types/Settings';
 import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
-import { apiUrl } from '../../states/ApiState';
-import type { Setting } from '../../states/states';
 import { vars } from '../../theme';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict } from '../render/ModelType';
 
 /**
  * Render a single setting value

@@ -2,6 +2,9 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { openContextModal } from '@mantine/modals';
 
+import { UserRoles } from '@lib/enums/Roles';
+import type { SettingsStateProps } from '@lib/types/Settings';
+import type { UserStateProps } from '@lib/types/User';
 import {
   IconBox,
   IconBuildingFactory2,
@@ -13,9 +16,6 @@ import {
 import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
 import { StylishText } from '../components/items/StylishText';
-import { UserRoles } from '../enums/Roles';
-import type { SettingsStateProps } from '../states/SettingsState';
-import type { UserStateProps } from '../states/UserState';
 
 type NavTab = {
   name: string;

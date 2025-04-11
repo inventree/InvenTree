@@ -28,10 +28,10 @@ import {
   useParams
 } from 'react-router-dom';
 
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
+import { cancelEvent } from '@lib/functions/Events';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { identifierString } from '../../functions/conversion';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
@@ -47,6 +47,7 @@ import * as classes from './PanelGroup.css';
  * @param model - The target model for this panel group (e.g. 'part' / 'salesorder')
  * @param id - The target ID for this panel group (set to *null* for groups which do not target a specific model instance)
  * @param instance - The target model instance for this panel group
+ * @param reloadInstance - Function to reload the model instance
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
@@ -55,6 +56,7 @@ export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
   instance?: any;
+  reloadInstance?: () => void;
   model?: ModelType | string;
   id?: number | null;
   selectedPanel?: string;
@@ -67,6 +69,7 @@ function BasePanelGroup({
   panels,
   onPanelChange,
   selectedPanel,
+  reloadInstance,
   instance,
   model,
   id,
@@ -82,9 +85,10 @@ function BasePanelGroup({
 
   // Hook to load plugins for this panel
   const pluginPanelSet = usePluginPanels({
+    id: id,
     model: model,
     instance: instance,
-    id: id
+    reloadFunc: reloadInstance
   });
 
   // Rebuild the list of panels

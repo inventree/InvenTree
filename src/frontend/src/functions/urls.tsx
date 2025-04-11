@@ -1,36 +1,4 @@
-import { ModelInformationDict } from '../components/render/ModelType';
-import type { ModelType } from '../enums/ModelType';
-import { getBaseUrl } from '../main';
 import { useLocalState } from '../states/LocalState';
-
-/**
- * Returns the detail view URL for a given model type
- */
-export function getDetailUrl(
-  model: ModelType,
-  pk: number | string,
-  absolute?: boolean
-): string {
-  const modelInfo = ModelInformationDict[model];
-
-  if (pk === undefined || pk === null) {
-    return '';
-  }
-
-  if (!!pk && modelInfo && modelInfo.url_detail) {
-    const url = modelInfo.url_detail.replace(':pk', pk.toString());
-    const base = getBaseUrl();
-
-    if (absolute && base) {
-      return `/${base}${url}`;
-    } else {
-      return url;
-    }
-  }
-
-  console.error(`No detail URL found for model ${model} <${pk}>`);
-  return '';
-}
 
 /**
  * Returns the edit view URL for a given model type
