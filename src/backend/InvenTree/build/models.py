@@ -195,7 +195,7 @@ class Build(
         if self.external and not self.part.purchaseable:
             raise ValidationError({
                 'external': _(
-                    'Build orders can only be external for purchaseable parts'
+                    'Build orders can only be externally fulfilled for purchaseable parts'
                 )
             })
 

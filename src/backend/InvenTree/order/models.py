@@ -1724,16 +1724,16 @@ class PurchaseOrderLineItem(OrderLineItem):
                 })
 
             if part := self.part.part:
-                if self.build_order.part != self.part.part:
-                    raise ValidationError({
-                        'build_order': _('Build order part must match line item part')
-                    })
-
                 if not part.assembly:
                     raise ValidationError({
                         'build_order': _(
                             'Build orders can only be linked to assembly parts'
                         )
+                    })
+
+                if self.build_order.part != self.part.part:
+                    raise ValidationError({
+                        'build_order': _('Build order part must match line item part')
                     })
 
     def __str__(self):
@@ -1798,6 +1798,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         on_delete=models.SET_NULL,
         blank=True,
         related_name='external_line_items',
+        limit_choices_to={'external': True},
         null=True,
         verbose_name=_('Build Order'),
         help_text=_('External Build Order to be fulfilled by this line item'),
