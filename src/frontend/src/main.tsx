@@ -10,7 +10,6 @@ import 'mantine-datatable/styles.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import * as MantineCore from '@mantine/core';
-import * as MantineHooks from '@mantine/hooks';
 import * as MantineNotifications from '@mantine/notifications';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -107,7 +106,6 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
 (window as any).ReactDOM = ReactDOM;
 (window as any).ReactDOMClient = ReactDOMClient;
 (window as any).MantineCore = MantineCore;
-(window as any).MantineHooks = MantineHooks;
 (window as any).MantineNotifications = MantineNotifications;
 
 // Redirect to base url if on /
