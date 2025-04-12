@@ -81,6 +81,7 @@ export const INVENTREE_PLUGIN_VERSION: string = __INVENTREE_LIB_VERSION__;
 export const INVENTREE_REACT_VERSION: string = __INVENTREE_REACT_VERSION__;
 // @ts-ignore
 export const INVENTREE_REACT_DOM_VERSION: string =
+  // @ts-ignore
   __INVENTREE_REACT_DOM_VERSION__;
 // @ts-ignore
 export const INVENTREE_MANTINE_VERSION: string = __INVENTREE_MANTINE_VERSION__;
