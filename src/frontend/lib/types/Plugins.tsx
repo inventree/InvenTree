@@ -14,6 +14,13 @@ export interface PluginProps {
   version: null | string;
 }
 
+export interface PluginVersion {
+  inventree: string;
+  react: string;
+  reactDom: string;
+  mantine: string;
+}
+
 export type InvenTreeFormsContext = {
   bulkEdit: (props: BulkEditApiFormModalProps) => UseModalReturn;
   create: (props: ApiFormModalProps) => UseModalReturn;
@@ -43,7 +50,7 @@ export type InvenTreeFormsContext = {
  * @param context - Any additional context data which may be passed to the plugin
  */
 export type InvenTreePluginContext = {
-  version: string;
+  version: PluginVersion;
   api: AxiosInstance;
   queryClient: QueryClient;
   user: UserStateProps;

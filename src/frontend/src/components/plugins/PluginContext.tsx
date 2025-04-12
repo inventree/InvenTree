@@ -11,7 +11,9 @@ import {
 import { useUserState } from '../../states/UserState';
 
 import {
+  INVENTREE_MANTINE_VERSION,
   INVENTREE_PLUGIN_VERSION,
+  INVENTREE_REACT_VERSION,
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
 import {
@@ -32,7 +34,12 @@ export const useInvenTreeContext = () => {
 
   const contextData = useMemo<InvenTreePluginContext>(() => {
     return {
-      version: INVENTREE_PLUGIN_VERSION,
+      version: {
+        inventree: INVENTREE_PLUGIN_VERSION,
+        react: INVENTREE_REACT_VERSION,
+        reactDom: INVENTREE_REACT_VERSION,
+        mantine: INVENTREE_MANTINE_VERSION
+      },
       user: user,
       host: host,
       locale: locale,
