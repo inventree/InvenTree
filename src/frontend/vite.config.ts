@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { platform, release } from 'node:os';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
@@ -7,7 +6,7 @@ import license from 'rollup-plugin-license';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
-const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'));
+import { __INVENTREE_VERSION_INFO__ } from './version-info';
 
 // Detect if the current environment is WSL
 // Required for enabling file system polling
@@ -92,7 +91,7 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     define: {
-      __INVENTREE_LIB_VERSION__: JSON.stringify(packageJson.version)
+      ...__INVENTREE_VERSION_INFO__
     }
   };
 });

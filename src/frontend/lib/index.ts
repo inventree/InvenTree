@@ -1,5 +1,10 @@
 // Constant value definitions
-export { INVENTREE_PLUGIN_VERSION } from './types/Plugins';
+export {
+  INVENTREE_PLUGIN_VERSION,
+  INVENTREE_REACT_VERSION,
+  INVENTREE_REACT_DOM_VERSION,
+  INVENTREE_MANTINE_VERSION
+} from './types/Plugins';
 
 // Common type definitions
 export { ApiEndpoints } from './enums/ApiEndpoints';

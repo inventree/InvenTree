@@ -1,13 +1,12 @@
 // This config file is used to build the common InvenTree UI library components,
 // which are distributed via NPM - to facilitate plugin development
 
-import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig, mergeConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import viteConfig from './vite.config';
 
-const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'));
+import { __INVENTREE_VERSION_INFO__ } from './version-info';
 
 export default defineConfig((cfg) =>
   mergeConfig(
@@ -43,7 +42,7 @@ export default defineConfig((cfg) =>
         })
       ],
       define: {
-        __INVENTREE_LIB_VERSION__: JSON.stringify(packageJson.version)
+        ...__INVENTREE_VERSION_INFO__
       }
     })
   )

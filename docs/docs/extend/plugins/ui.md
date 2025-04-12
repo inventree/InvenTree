@@ -249,6 +249,9 @@ Additionally, for the Mantine library, the following modules are provided as glo
 
 To use these modules in your plugin, they must be correctly *externalized* in the Vite configuration. Getting this right is crucial to ensure that the plugin is compatible with the InvenTree user interface. The [InvenTre plugin creator](https://github.com/inventree-plugin-creator) provides a good starting point for this configuration, and can be used to generate a new plugin with the correct configuration.
 
+!!! info "Bundled Version"
+    Keep in mind that the version of React and Mantine used in the InvenTree core may differ from the version used in your plugin. It is recommended to use the same version as the InvenTree core to avoid compatibility issues.
+
 ### Plugin Creator
 
 The [InvenTree plugin creator](https://github.com/inventree-plugin-creator) provides an out-of-the-box setup for creating InvenTree plugins which integrate into the user interface. This includes a pre-configured Vite setup, which allows you to quickly get started with building your own custom UI plugins.
