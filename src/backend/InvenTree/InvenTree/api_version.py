@@ -8,7 +8,7 @@ INVENTREE_API_VERSION = 337
 
 INVENTREE_API_TEXT = """
 
-v337 - 2025-04-10 : https://github.com/inventree/InvenTree/pull/9333
+v337 -> 2025-04-10 : https://github.com/inventree/InvenTree/pull/9333
     - Adds oAuth2 support for the API
 
 v336 -> 2025-04-10 : https://github.com/inventree/InvenTree/pull/9492
