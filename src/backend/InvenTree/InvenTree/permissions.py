@@ -7,6 +7,7 @@ from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
 from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import permissions
 
+import users.permissions
 import users.ruleset
 from users.oauth2_scopes import (
     DEFAULT_READ,
@@ -23,7 +24,6 @@ ACTION_MAP = {
     'DELETE': 'delete',
     'OPTIONS': DEFAULT_READ,
 }
-import users.permissions
 
 
 def get_model_for_view(view):
@@ -40,7 +40,65 @@ def get_model_for_view(view):
     raise AttributeError(f'Serializer class not specified for {view.__class__}')
 
 
-class RolePermission(permissions.BasePermission):
+# Precalculate the roles mapping
+roles = users.ruleset.get_ruleset_models()
+precalculated_roles = {}
+for role, tables in roles.items():
+    for table in tables:
+        if table not in precalculated_roles:
+            precalculated_roles[table] = []
+        precalculated_roles[table].append(role)
+
+
+class OASTokenMatcher(TokenMatchesOASRequirements):
+    """Mixin that combines the permissions of normal classes and token classes."""
+
+    def has_permission(self, request, view):
+        """Check if the user has the required scopes or was authenticated another way."""
+        return self.check_oauth2_authentication(
+            request, view
+        ) or super().has_permission(request, view)
+
+    def check_oauth2_authentication(self, request, view):
+        """Check if the user is authenticated using OAuth2 and has the required scopes."""
+        oauth2authenticated = False
+        if bool(request.user and request.user.is_authenticated):
+            oauth2authenticated = isinstance(
+                request.successful_authenticator, OAuth2Authentication
+            )
+        oauth_success = (
+            oauth2authenticated
+            and TokenMatchesOASRequirements().has_permission(request, view)
+        )
+        return oauth_success
+
+
+class InvenTreeTokenMatchesOASRequirements(OASTokenMatcher):
+    """Permission that discovers the required scopes from the OpenAPI schema."""
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        if hasattr(view, 'required_alternate_scopes'):
+            return view.required_alternate_scopes
+        try:
+            # Extract the model name associated with this request
+            model = get_model_for_view(view)
+            calc = precalculated_roles.get(
+                f'{model._meta.app_label}_{model._meta.model_name}', []
+            )
+
+            if model is None or not calc:
+                return map_scope(only_read=True)
+            return map_scope(roles=calc)
+        except AttributeError:
+            # We will assume that if the serializer class does *not* have a Meta,
+            # then we don't need a permission
+            return map_scope(only_read=True)
+        except Exception:
+            return map_scope(only_read=True)
+
+
+class RolePermission(InvenTreeTokenMatchesOASRequirements, permissions.BasePermission):
     """Role mixin for API endpoints, allowing us to specify the user "role" which is required for certain operations.
 
     Each endpoint can have one or more of the following actions:
@@ -127,6 +185,13 @@ class RolePermissionOrReadOnly(RolePermission):
 
         return request.method in permissions.SAFE_METHODS
 
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        scopes = map_scope(
+            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+        )
+        return scopes
+
 
 class StaffRolePermissionOrReadOnly(RolePermissionOrReadOnly):
     """RolePermission which requires staff AND role access, or read-only."""
@@ -171,58 +236,6 @@ def map_scope(
         method: get_scope(method, action) if method != 'OPTIONS' else [[DEFAULT_READ]]
         for method, action in ACTION_MAP.items()
     }
-
-
-# Precalculate the roles mapping
-roles = users.ruleset.get_ruleset_models()
-precalculated_roles = {}
-for role, tables in roles.items():
-    for table in tables:
-        if table not in precalculated_roles:
-            precalculated_roles[table] = []
-        precalculated_roles[table].append(role)
-
-
-class OASTokenMatcher(TokenMatchesOASRequirements):
-    """Mixin that combines the permissions of normal classes and token classes."""
-
-    def has_permission(self, request, view):
-        """Check if the user has the required scopes or was authenticated another way."""
-        is_authenticated = permissions.IsAuthenticated().has_permission(request, view)
-        oauth2authenticated = False
-        if is_authenticated:
-            oauth2authenticated = isinstance(
-                request.successful_authenticator, OAuth2Authentication
-            )
-
-        return (is_authenticated and not oauth2authenticated) or super().has_permission(
-            request, view
-        )
-
-
-class InvenTreeTokenMatchesOASRequirements(OASTokenMatcher):
-    """Permission that discovers the required scopes from the OpenAPI schema."""
-
-    def get_required_alternate_scopes(self, request, view):
-        """Return the required scopes for the current request."""
-        if hasattr(view, 'required_alternate_scopes'):
-            return view.required_alternate_scopes
-        try:
-            # Extract the model name associated with this request
-            model = get_model_for_view(view)
-            calc = precalculated_roles.get(
-                f'{model._meta.app_label}_{model._meta.model_name}', []
-            )
-
-            if model is None or not calc:
-                return map_scope(only_read=True)
-            return map_scope(roles=calc)
-        except AttributeError:
-            # We will assume that if the serializer class does *not* have a Meta,
-            # then we don't need a permission
-            return map_scope(only_read=True)
-        except Exception:
-            return map_scope(only_read=True)
 
 
 class IsSuperuserOrSuperScope(OASTokenMatcher, permissions.IsAdminUser):
