@@ -9,6 +9,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 from users.models import ApiToken, Owner, RuleSet
+from users.ruleset import RULESET_CHOICES
 
 User = get_user_model()
 
@@ -65,7 +66,7 @@ class RuleSetInline(admin.TabularInline):
     verbose_plural_name = 'Rulesets'
     fields = ['name', *list(RuleSet.RULE_OPTIONS)]
     readonly_fields = ['name']
-    max_num = len(RuleSet.RULESET_CHOICES)
+    max_num = len(RULESET_CHOICES)
     min_num = 1
     extra = 0
     ordering = ['name']
@@ -214,7 +215,15 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         return self.get_rule_set(obj, 'return_order')
 
     def get_formsets_with_inlines(self, request, obj=None):
-        """Return all inline formsets."""
+        """Retrieve all inline formsets for the given request and object.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            obj (Model, optional): The model instance for which the formsets are being retrieved. Defaults to None.
+
+        Yields:
+            tuple: A tuple containing the formset and the corresponding inline instance.
+        """
         for inline in self.get_inline_instances(request, obj):
             # Hide RuleSetInline in the 'Add role' view
             if not isinstance(inline, RuleSetInline) or obj is not None:

@@ -280,9 +280,14 @@ class DataExportViewMixin:
             # Get the base model associated with this view
             try:
                 serializer_class = self.get_serializer_class()
+                export_kwargs['serializer_class'] = serializer_class
                 export_kwargs['model_class'] = serializer_class.Meta.model
+                export_kwargs['view_class'] = self.__class__
             except AttributeError:
+                # If the serializer class is not available, set to None
+                export_kwargs['serializer_class'] = None
                 export_kwargs['model_class'] = None
+                export_kwargs['view_class'] = None
 
             return data_exporter.serializers.DataExportOptionsSerializer(
                 *args, **export_kwargs

@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.serializers
 from plugin import PluginMixinEnum, registry
@@ -28,7 +29,10 @@ class DataExportOptionsSerializer(serializers.Serializer):
 
         # Generate a list of plugins to choose from
         # If a model type is provided, use this to filter the list of plugins
+        serializer_class = kwargs.pop('serializer_class', None)
         model_class = kwargs.pop('model_class', None)
+        view_class = kwargs.pop('view_class', None)
+
         request = kwargs.pop('request', None)
 
         # Is a plugin serializer provided?
@@ -46,7 +50,18 @@ class DataExportOptionsSerializer(serializers.Serializer):
         plugin_options = []
 
         for plugin in registry.with_mixin(PluginMixinEnum.EXPORTER):
-            if plugin.supports_export(model_class, request.user):
+            try:
+                supports_export = plugin.supports_export(
+                    model_class,
+                    user=request.user,
+                    serializer_class=serializer_class,
+                    view_class=view_class,
+                )
+            except Exception:
+                InvenTree.exceptions.log_error(f'plugin.{plugin.slug}.supports_export')
+                supports_export = False
+
+            if supports_export:
                 plugin_options.append((plugin.slug, plugin.name))
 
         self.fields['export_plugin'].choices = plugin_options

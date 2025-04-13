@@ -269,7 +269,7 @@ export default function ParametricPartTable({
         tableState={table}
         columns={tableColumns}
         props={{
-          enableDownload: false,
+          enableDownload: true,
           tableFilters: tableFilters,
           params: {
             category: categoryId,

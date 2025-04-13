@@ -162,7 +162,6 @@ export function AboutInvenTreeModal({
             [
               { ref: 'doc', title: <Trans>Documentation</Trans> },
               { ref: 'code', title: <Trans>Source Code</Trans> },
-              { ref: 'credit', title: <Trans>Credits</Trans> },
               { ref: 'app', title: <Trans>Mobile App</Trans> },
               { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
             ],

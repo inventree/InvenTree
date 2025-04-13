@@ -4,7 +4,7 @@ title: Pricing Support
 
 ## Pricing
 
-Pricing is an inherently complex topic, often subject to the particular requirements of the user. InvenTree attempts to provide a comprehensive pricing architecture which is useful without being proscriptive.
+Pricing is an inherently complex topic, often subject to the particular requirements of the user. InvenTree attempts to provide a comprehensive pricing architecture which is useful without being prescriptive.
 
 InvenTree provides support for multiple currencies, allowing pricing information to be stored with base currency rates.
 

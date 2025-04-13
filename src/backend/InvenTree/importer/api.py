@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import include, path
 
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,7 +21,7 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from users.models import check_user_permission
+from users.permissions import check_user_permission
 
 
 class DataImporterPermission(permissions.BasePermission):
@@ -56,10 +56,19 @@ class DataImporterPermissionMixin:
     permission_classes = [permissions.IsAuthenticated, DataImporterPermission]
 
 
+class DataImporterModelSerializer(serializers.Serializer):
+    """Model references to map info that might get imported."""
+
+    serializer = serializers.CharField(read_only=True)
+    model_type = serializers.CharField(read_only=True)
+    api_url = serializers.URLField(read_only=True)
+
+
 class DataImporterModelList(APIView):
     """API endpoint for displaying a list of models available for import."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = DataImporterModelSerializer(many=True)
 
     def get(self, request):
         """Return a list of models available for import."""
@@ -102,6 +111,7 @@ class DataImportSessionAcceptFields(APIView):
     """API endpoint to accept the field mapping for a DataImportSession."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     @extend_schema(
         responses={200: importer.serializers.DataImportSessionSerializer(many=False)}

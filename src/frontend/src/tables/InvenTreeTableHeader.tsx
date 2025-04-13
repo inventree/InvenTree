@@ -81,6 +81,8 @@ export default function InvenTreeTableHeader({
         }
       }
     }
+
+    return filters;
   }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
 
   const exportModal = useDataExport({

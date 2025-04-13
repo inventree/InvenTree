@@ -2015,7 +2015,7 @@ class StockTestResultTest(StockAPITestCase):
 
         # Try again, but with the correct filters this time
         response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=204
+            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=200
         )
 
         self.assertEqual(StockItemTestResult.objects.count(), n)

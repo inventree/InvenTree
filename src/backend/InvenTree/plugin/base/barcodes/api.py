@@ -24,7 +24,7 @@ from InvenTree.helpers import hash_barcode
 from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
 from InvenTree.permissions import IsStaffOrReadOnly
 from plugin import PluginMixinEnum, registry
-from users.models import RuleSet
+from users.permissions import check_user_permission
 
 from . import serializers as barcode_serializers
 
@@ -37,12 +37,13 @@ class BarcodeView(CreateAPIView):
     # Default serializer class (can be overridden)
     serializer_class = barcode_serializers.BarcodeSerializer
 
-    def log_scan(self, request, response=None, result=False):
+    def log_scan(self, request, response=None, result: bool = False):
         """Log a barcode scan to the database.
 
         Arguments:
             request: HTTP request object
             response: Optional response data
+            result: Boolean indicating success or failure of the scan
         """
         from common.models import BarcodeScanResult
 
@@ -301,14 +302,9 @@ class BarcodeAssign(BarcodeView):
 
             if instance := kwargs.get(label):
                 # Check that the user has the required permission
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-
-                table = f'{app_label}_{model_name}'
-
-                if not RuleSet.check_table_permission(request.user, table, 'change'):
+                if not check_user_permission(request.user, model, 'change'):
                     raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {table}'
+                        'error': f'You do not have the required permissions for {model}'
                     })
 
                 instance.assign_barcode(barcode_data=barcode, barcode_hash=barcode_hash)
@@ -364,14 +360,9 @@ class BarcodeUnassign(BarcodeView):
 
             if instance := data.get(label, None):
                 # Check that the user has the required permission
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-
-                table = f'{app_label}_{model_name}'
-
-                if not RuleSet.check_table_permission(request.user, table, 'change'):
+                if not check_user_permission(request.user, model, 'change'):
                     raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {table}'
+                        'error': f'You do not have the required permissions for {model}'
                     })
 
                 # Unassign the barcode data from the model instance

@@ -30,15 +30,15 @@ def is_email_configured():
 
         # Display warning unless in test mode
         if not testing:  # pragma: no cover
-            logger.debug('EMAIL_HOST is not configured')
+            logger.debug('INVE-W7: EMAIL_HOST is not configured')
 
     # Display warning unless in test mode
     if not settings.EMAIL_HOST_USER and not testing:  # pragma: no cover
-        logger.debug('EMAIL_HOST_USER is not configured')
+        logger.debug('INVE-W7: EMAIL_HOST_USER is not configured')
 
     # Display warning unless in test mode
     if not settings.EMAIL_HOST_PASSWORD and testing:  # pragma: no cover
-        logger.debug('EMAIL_HOST_PASSWORD is not configured')
+        logger.debug('INVE-W7: EMAIL_HOST_PASSWORD is not configured')
 
     # Email sender must be configured
     if not settings.DEFAULT_FROM_EMAIL:
@@ -64,6 +64,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
 
     if not is_email_configured() and not settings.TESTING:
         # Email is not configured / enabled
+        logger.info('INVE-W7: Email will not be send, no mail server configured')
         return
 
     # If a *from_email* is not specified, ensure that the default is set

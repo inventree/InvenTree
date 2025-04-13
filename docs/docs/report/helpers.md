@@ -33,6 +33,8 @@ Result: {{ myvar }}
 {% endraw %}
 ```
 
+Note the use of the `as` keyword to assign the output of the function to a variable. This can be used to assign the result of a function to a named variable, which can then be used later in the template.
+
 ## Data Structure Access
 
 A number of helper functions are available for accessing data contained in a particular structure format:

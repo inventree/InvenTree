@@ -165,6 +165,22 @@ test('Stock - Serial Numbers', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+test('Stock - Serialize', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/item/232/details' });
+
+  // Fill out with faulty serial numbers to check buttons and forms
+  await page.getByLabel('action-menu-stock-operations').click();
+  await page.getByLabel('action-menu-stock-operations-serialize').click();
+
+  await page.getByLabel('text-field-serial_numbers').fill('200-250');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page
+    .getByText('Group range 200-250 exceeds allowed quantity')
+    .waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
 /**
  * Test various 'actions' on the stock detail page
  */

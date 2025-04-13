@@ -119,6 +119,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom panels to be injected into the UI
@@ -133,6 +134,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom dashboard items to be injected into the UI
@@ -147,6 +149,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom template editors to be injected into the UI
@@ -161,6 +164,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom template previews to be injected into the UI
@@ -175,6 +179,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom navigation items to be injected into the UI

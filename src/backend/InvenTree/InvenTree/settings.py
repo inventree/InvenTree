@@ -21,6 +21,7 @@ from django.core.validators import URLValidator
 from django.http import Http404, HttpResponseGone
 
 import structlog
+from corsheaders.defaults import default_headers as default_cors_headers
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
@@ -536,7 +537,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'InvenTree.schema.ExtendedAutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
@@ -1203,6 +1204,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     typecast=list,
 )
 
+# Allow extra CORS headers in DEBUG mode
+# Required for serving /static/ and /media/ files
+if DEBUG:
+    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
+
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server
 if DEBUG:
@@ -1428,7 +1434,17 @@ SPECTACULAR_SETTINGS = {
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
         'InvenTree.schema.postprocess_required_nullable',
+        'InvenTree.schema.postprocess_print_stats',
     ],
+    'ENUM_NAME_OVERRIDES': {
+        'UserTypeEnum': 'users.models.UserProfile.UserType',
+        'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
+        'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
+        'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
+        # Allauth
+        'UnauthorizedStatus': [[401, 401]],
+        'IsTrueEnum': [[True, True]],
+    },
 }
 
 if SITE_URL and not TESTING:

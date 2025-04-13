@@ -947,7 +947,7 @@ class InvenTreeBarcodeMixin(models.Model):
         )
 
     def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a QR code for this model instance."""
+        """Return a string for formatting a QR code for this model instance."""
         from plugin.base.barcodes.helper import generate_barcode
 
         return generate_barcode(self)
@@ -966,7 +966,7 @@ class InvenTreeBarcodeMixin(models.Model):
         return data
 
     @property
-    def barcode(self):
+    def barcode(self) -> str:
         """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode()
 

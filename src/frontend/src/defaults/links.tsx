@@ -75,7 +75,8 @@ export const docLinks = {
   api: 'https://docs.inventree.org/en/latest/api/api/',
   developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
   faq: 'https://docs.inventree.org/en/latest/faq/',
-  github: 'https://github.com/inventree/inventree'
+  github: 'https://github.com/inventree/inventree',
+  errorcodes: 'https://docs.inventree.org/en/latest/settings/error_codes/'
 };
 
 export function DocumentationLinks(): MenuLinkItem[] {

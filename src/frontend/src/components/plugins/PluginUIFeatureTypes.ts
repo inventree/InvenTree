@@ -14,9 +14,13 @@ export type BaseUIFeature = {
   featureReturnType: any;
 };
 
-export type PluginUIGetFeatureType<T extends BaseUIFeature> = (params: {
+export type PluginUIGetFeatureType<
+  T extends BaseUIFeature,
+  ServerContext extends Record<string, unknown>
+> = (params: {
   featureContext: T['featureContext'];
   inventreeContext: InvenTreeContext;
+  serverContext: ServerContext;
 }) => T['featureReturnType'];
 
 export type PluginUIFuncWithoutInvenTreeContextType<T extends BaseUIFeature> = (
@@ -25,9 +29,8 @@ export type PluginUIFuncWithoutInvenTreeContextType<T extends BaseUIFeature> = (
 
 export type PluginUIFeatureAPIResponse<T extends BaseUIFeature> = {
   feature_type: T['featureType'];
-  options: T['responseOptions'];
   source: string;
-};
+} & T['responseOptions'];
 
 // #region Types
 export type TemplateEditorUIFeature = {
@@ -45,7 +48,7 @@ export type TemplateEditorUIFeature = {
     }) => void;
     template: TemplateI;
   };
-  featureReturnType: undefined;
+  featureReturnType: (() => void) | undefined;
 };
 
 export type TemplatePreviewUIFeature = {

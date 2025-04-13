@@ -1,17 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
-import type TestConfigWebServer from '@playwright/test';
 
 // Detect if running in CI
 const IS_CI = !!process.env.CI;
-const IS_COVERAGE = !!process.env.VITE_COVERAGE_BUILD;
-
-// If specified, tests will be run against the production build
-const IS_PRODUCTION = !!process.env.VITE_PRODUCTION_BUILD;
 
 console.log('Running Playwright tests:');
 console.log(`  - CI Mode: ${IS_CI}`);
-console.log(`  - Coverage Mode: ${IS_COVERAGE}`);
-console.log(`  - Production Mode: ${IS_PRODUCTION}`);
 
 const MAX_WORKERS: number = 3;
 const MAX_RETRIES: number = 3;
@@ -37,51 +30,11 @@ const MAX_RETRIES: number = 3;
  * - WORKERS = 1 (to avoid conflicts with HMR)
  */
 
-const devServer: TestConfigWebServer = {
-  command: 'yarn run dev --host --port 5173',
-  url: 'http://localhost:5173',
-  reuseExistingServer: IS_CI,
-  stdout: 'pipe',
-  stderr: 'pipe',
-  timeout: 120 * 1000
-};
-
-const WEB_BUILD_CMD: string =
-  'yarn run extract && yarn run compile && yarn run build';
-
 // Command to spin-up the backend server
 // In production mode, we want a stronger webserver to handle multiple requests
-const WEB_SERVER_CMD: string = IS_PRODUCTION
-  ? `${WEB_BUILD_CMD} && gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi`
+const WEB_SERVER_CMD: string = IS_CI
+  ? 'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi'
   : 'invoke dev.server -a 127.0.0.1:8000';
-
-const webServer: TestConfigWebServer = {
-  // If running in production mode, we need to build the frontend first
-  command: WEB_SERVER_CMD,
-  env: {
-    INVENTREE_DEBUG: 'True',
-    INVENTREE_PLUGINS_ENABLED: 'True',
-    INVENTREE_ADMIN_URL: 'test-admin',
-    INVENTREE_SITE_URL: 'http://localhost:8000',
-    INVENTREE_FRONTEND_API_HOST: 'http://localhost:8000',
-    INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
-    INVENTREE_COOKIE_SAMESITE: 'Lax',
-    INVENTREE_LOGIN_ATTEMPTS: '100'
-  },
-  url: 'http://localhost:8000/api/',
-  reuseExistingServer: IS_CI,
-  stdout: 'pipe',
-  stderr: 'pipe',
-  timeout: 120 * 1000
-};
-
-const serverList: TestConfigWebServer[] = [];
-
-if (!IS_PRODUCTION) {
-  serverList.push(devServer);
-}
-
-serverList.push(webServer);
 
 export default defineConfig({
   testDir: './tests',
@@ -89,7 +42,7 @@ export default defineConfig({
   timeout: 90000,
   forbidOnly: !!IS_CI,
   retries: IS_CI ? MAX_RETRIES : 0,
-  workers: IS_PRODUCTION ? MAX_WORKERS : 1,
+  workers: IS_CI ? MAX_WORKERS : 1,
   reporter: IS_CI ? [['html', { open: 'never' }], ['github']] : 'list',
 
   /* Configure projects for major browsers */
@@ -109,11 +62,41 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: serverList,
+  webServer: [
+    {
+      command: 'yarn run dev --host --port 5173',
+      url: 'http://localhost:5173',
+      reuseExistingServer: IS_CI,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      timeout: 120 * 1000
+    },
+    {
+      command: WEB_SERVER_CMD,
+      env: {
+        INVENTREE_DEBUG: 'True',
+        INVENTREE_PLUGINS_ENABLED: 'True',
+        INVENTREE_ADMIN_URL: 'test-admin',
+        INVENTREE_SITE_URL: 'http://localhost:8000',
+        INVENTREE_FRONTEND_API_HOST: 'http://localhost:8000',
+        INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
+        INVENTREE_COOKIE_SAMESITE: 'Lax',
+        INVENTREE_LOGIN_ATTEMPTS: '100'
+      },
+      url: 'http://localhost:8000/api/',
+      reuseExistingServer: IS_CI,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      timeout: 120 * 1000
+    }
+  ],
   globalSetup: './playwright/global-setup.ts',
   use: {
-    baseURL: IS_PRODUCTION ? 'http://localhost:8000' : 'http://localhost:5173',
-    headless: IS_PRODUCTION ? true : undefined,
-    trace: 'on-first-retry'
+    baseURL: 'http://localhost:5173',
+    headless: IS_CI ? true : undefined,
+    trace: 'on-first-retry',
+    contextOptions: {
+      reducedMotion: 'reduce'
+    }
   }
 });

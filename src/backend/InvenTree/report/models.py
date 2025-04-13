@@ -3,8 +3,11 @@
 import io
 import os
 import sys
+from datetime import date, datetime
+from typing import Optional, TypedDict, cast
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -24,7 +27,7 @@ import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
-from common.models import DataOutput
+from common.models import DataOutput, RenderChoices
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
@@ -123,8 +126,63 @@ class TemplateUploadMixin:
         return super().validate_unique(exclude)
 
 
+class BaseContextExtension(TypedDict):
+    """Base context extension.
+
+    Attributes:
+        base_url: The base URL for the InvenTree instance
+        date: Current date, represented as a Python datetime.date object
+        datetime: Current datetime, represented as a Python datetime object
+        template: The report template instance which is being rendered against
+        template_description: Description of the report template
+        template_name: Name of the report template
+        template_revision: Revision of the report template
+        user: User who made the request to render the template
+    """
+
+    base_url: str
+    date: date
+    datetime: datetime
+    template: 'ReportTemplateBase'
+    template_description: str
+    template_name: str
+    template_revision: int
+    user: Optional[AbstractUser]
+
+
+class LabelContextExtension(TypedDict):
+    """Label report context extension.
+
+    Attributes:
+        width: The width of the label (in mm)
+        height: The height of the label (in mm)
+        page_style: The CSS @page style for the label template. This is used to be inserted at the top of the style block for a given label
+    """
+
+    width: float
+    height: float
+    page_style: Optional[str]
+
+
+class ReportContextExtension(TypedDict):
+    """Report context extension.
+
+    Attributes:
+        page_size: The page size of the report
+        landscape: Boolean value, True if the report is in landscape mode
+    """
+
+    page_size: str
+    landscape: bool
+
+
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     """Base class for reports, labels."""
+
+    class ModelChoices(RenderChoices):
+        """Model choices for report templates."""
+
+        choice_fnc = report.helpers.report_model_options
 
     class Meta:
         """Metaclass options."""
@@ -216,6 +274,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     model_type = models.CharField(
         max_length=100,
         validators=[report.validators.validate_report_model_type],
+        verbose_name=_('Model Type'),
         help_text=_('Target model type for template'),
     )
 
@@ -245,7 +304,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
-    def base_context(self, request=None):
+    def base_context(self, request=None) -> BaseContextExtension:
         """Return base context data (available to all templates)."""
         return {
             'base_url': get_base_url(request=request),
@@ -313,11 +372,11 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         help_text=_('Render report in landscape orientation'),
     )
 
-    def get_report_size(self):
+    def get_report_size(self) -> str:
         """Return the printable page size for this report."""
         try:
-            page_size_default = get_global_setting(
-                'REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False
+            page_size_default = cast(
+                str, get_global_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False)
             )
         except Exception:
             page_size_default = 'A4'
@@ -331,11 +390,13 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the report template for rendering."""
-        context = {
-            **super().get_context(instance, request),
+        base_context = super().get_context(instance, request)
+        report_context: ReportContextExtension = {
             'page_size': self.get_report_size(),
             'landscape': self.landscape,
         }
+
+        context = {**base_context, **report_context}
 
         # Pass the context through to the plugin registry for any additional information
         for plugin in registry.with_mixin(PluginMixinEnum.REPORT):
@@ -536,11 +597,14 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
-        context = {
-            **super().get_context(instance, request, **kwargs),
+        base_context = super().get_context(instance, request, **kwargs)
+        label_context: LabelContextExtension = {
             'width': self.width,
             'height': self.height,
+            'page_style': None,
         }
+
+        context = {**base_context, **label_context}
 
         if kwargs.pop('insert_page_style', True):
             context['page_style'] = self.generate_page_style()

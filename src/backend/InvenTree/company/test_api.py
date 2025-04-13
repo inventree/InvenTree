@@ -2,10 +2,10 @@
 
 from django.urls import reverse
 
+from company.models import Address, Company, Contact, ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
-
-from .models import Address, Company, Contact, ManufacturerPart, SupplierPart
+from users.permissions import check_user_permission
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -384,7 +384,7 @@ class AddressTest(InvenTreeAPITestCase):
             self.assertIn(key, response.data)
 
     def test_edit(self):
-        """Test editing an object."""
+        """Test editing an Address object."""
         addr = Address.objects.first()
 
         url = reverse('api-address-detail', kwargs={'pk': addr.pk})
@@ -392,6 +392,7 @@ class AddressTest(InvenTreeAPITestCase):
         self.patch(url, {'title': 'Hello'}, expected_code=403)
 
         self.assignRole('purchase_order.change')
+        self.assertTrue(check_user_permission(self.user, Address, 'change'))
 
         self.patch(url, {'title': 'World'}, expected_code=200)
 
@@ -407,7 +408,10 @@ class AddressTest(InvenTreeAPITestCase):
 
         self.delete(url, expected_code=403)
 
+        # Assign role, check permission
+        self.assertFalse(check_user_permission(self.user, Address, 'delete'))
         self.assignRole('purchase_order.delete')
+        self.assertTrue(check_user_permission(self.user, Address, 'delete'))
 
         self.delete(url, expected_code=204)
 

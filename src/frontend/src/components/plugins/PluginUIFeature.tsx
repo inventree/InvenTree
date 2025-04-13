@@ -83,9 +83,10 @@ export const getPluginTemplateEditor = (
     }));
 
     useEffect(() => {
+      let unmountHandler: (() => void) | undefined;
       (async () => {
         try {
-          func({
+          unmountHandler = await func({
             ref: elRef.current!,
             registerHandlers: ({ getCode, setCode }) => {
               setCodeRef.current = setCode;
@@ -102,6 +103,12 @@ export const getPluginTemplateEditor = (
           console.error(error);
         }
       })();
+
+      return () => {
+        if (typeof unmountHandler === 'function') {
+          unmountHandler();
+        }
+      };
     }, []);
 
     return (
