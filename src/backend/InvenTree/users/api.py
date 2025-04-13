@@ -138,7 +138,7 @@ class UserDetail(RetrieveUpdateDestroyAPI):
 
     queryset = User.objects.all()
     serializer_class = ExtendedUserSerializer
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
@@ -178,7 +178,7 @@ class UserList(ListCreateAPI):
     serializer_class = UserCreateSerializer
 
     # User must have the right role, AND be a staff user, else read-only
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
     filter_backends = SEARCH_ORDER_FILTER
 
