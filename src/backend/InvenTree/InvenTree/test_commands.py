@@ -9,5 +9,5 @@ class CommandTestCase(TestCase):
 
     def test_schema(self):
         """Test the schema generation command."""
-        output = call_command('schema', verbosity=0)
+        output = call_command('schema', file='src/frontend/schema.yml', verbosity=0)
         self.assertEqual(output, 'done')
