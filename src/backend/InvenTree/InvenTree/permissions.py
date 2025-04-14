@@ -50,7 +50,7 @@ for role, tables in roles.items():
         precalculated_roles[table].append(role)
 
 
-class OASTokenMatcher(TokenMatchesOASRequirements):
+class OASTokenMixin:
     """Mixin that combines the permissions of normal classes and token classes."""
 
     def has_permission(self, request, view):
@@ -61,19 +61,21 @@ class OASTokenMatcher(TokenMatchesOASRequirements):
 
     def check_oauth2_authentication(self, request, view):
         """Check if the user is authenticated using OAuth2 and has the required scopes."""
+        return self.is_oauth2ed(
+            request
+        ) and TokenMatchesOASRequirements().has_permission(request, view)
+
+    def is_oauth2ed(self, request):
+        """Check if the user is authenticated using OAuth2."""
         oauth2authenticated = False
         if bool(request.user and request.user.is_authenticated):
             oauth2authenticated = isinstance(
                 request.successful_authenticator, OAuth2Authentication
             )
-        oauth_success = (
-            oauth2authenticated
-            and TokenMatchesOASRequirements().has_permission(request, view)
-        )
-        return oauth_success
+        return oauth2authenticated
 
 
-class InvenTreeTokenMatchesOASRequirements(OASTokenMatcher):
+class InvenTreeRoleScopeMixin(OASTokenMixin):
     """Permission that discovers the required scopes from the OpenAPI schema."""
 
     def get_required_alternate_scopes(self, request, view):
@@ -98,7 +100,22 @@ class InvenTreeTokenMatchesOASRequirements(OASTokenMatcher):
             return map_scope(only_read=True)
 
 
-class RolePermission(InvenTreeTokenMatchesOASRequirements, permissions.BasePermission):
+class InvenTreeTokenMatchesOASRequirements(
+    InvenTreeRoleScopeMixin, TokenMatchesOASRequirements
+):
+    """Combines InvenTree role-based scope handling with OpenAPI schema token requirements."""
+
+    def has_permission(self, request, view):
+        """Check if the user has the required scopes or was authenticated another way."""
+        if self.is_oauth2ed(request):
+            # Check if the user is authenticated using OAuth2 and has the required scopes
+            return super().has_permission(request, view)
+
+        # If the user is authenticated using another method, check if they have the required permissions
+        return bool(request.user and request.user.is_authenticated)
+
+
+class RolePermission(InvenTreeRoleScopeMixin, permissions.BasePermission):
     """Role mixin for API endpoints, allowing us to specify the user "role" which is required for certain operations.
 
     Each endpoint can have one or more of the following actions:
@@ -238,7 +255,7 @@ def map_scope(
     }
 
 
-class IsSuperuserOrSuperScope(OASTokenMatcher, permissions.IsAdminUser):
+class IsSuperuserOrSuperScope(OASTokenMixin, permissions.IsAdminUser):
     """Allows access only to superuser users."""
 
     def has_permission(self, request, view):
@@ -250,7 +267,7 @@ class IsSuperuserOrSuperScope(OASTokenMatcher, permissions.IsAdminUser):
         return map_scope(only_read=True, read_name=DEFAULT_SUPERUSER)
 
 
-class IsSuperuserOrReadOnlyOrScope(OASTokenMatcher, permissions.IsAdminUser):
+class IsSuperuserOrReadOnlyOrScope(OASTokenMixin, permissions.IsAdminUser):
     """Allow read-only access to any user, but write access is restricted to superuser users."""
 
     def has_permission(self, request, view):
@@ -269,7 +286,7 @@ class IsSuperuserOrReadOnlyOrScope(OASTokenMatcher, permissions.IsAdminUser):
         )
 
 
-class IsAuthenticatedOrReadScope(OASTokenMatcher, permissions.IsAuthenticated):
+class IsAuthenticatedOrReadScope(OASTokenMixin, permissions.IsAuthenticated):
     """Allows access only to authenticated users or read scope tokens."""
 
     def get_required_alternate_scopes(self, request, view):
@@ -277,7 +294,7 @@ class IsAuthenticatedOrReadScope(OASTokenMatcher, permissions.IsAuthenticated):
         return map_scope(only_read=True)
 
 
-class IsStaffOrReadOnlyScope(OASTokenMatcher, permissions.IsAuthenticated):
+class IsStaffOrReadOnlyScope(OASTokenMixin, permissions.IsAuthenticated):
     """Allows read-only access to any authenticated user, but write access is restricted to staff users."""
 
     def has_permission(self, request, view):
@@ -294,7 +311,7 @@ class IsStaffOrReadOnlyScope(OASTokenMatcher, permissions.IsAuthenticated):
         )
 
 
-class IsAdminOrAdminScope(OASTokenMatcher, permissions.IsAdminUser):
+class IsAdminOrAdminScope(OASTokenMixin, permissions.IsAdminUser):
     """Allows access only to admin users or admin scope tokens."""
 
     def get_required_alternate_scopes(self, request, view):
@@ -324,7 +341,7 @@ def auth_exempt(view_func):
     return wraps(view_func)(wrapped_view)
 
 
-class UserSettingsPermissionsOrScope(OASTokenMatcher, permissions.BasePermission):
+class UserSettingsPermissionsOrScope(OASTokenMixin, permissions.BasePermission):
     """Special permission class to determine if the user can view / edit a particular setting."""
 
     def has_object_permission(self, request, view, obj):
@@ -341,7 +358,7 @@ class UserSettingsPermissionsOrScope(OASTokenMatcher, permissions.BasePermission
         return map_scope(only_read=True)
 
 
-class GlobalSettingsPermissions(OASTokenMatcher, permissions.BasePermission):
+class GlobalSettingsPermissions(OASTokenMixin, permissions.BasePermission):
     """Special permission class to determine if the user is "staff"."""
 
     def has_permission(self, request, view):
