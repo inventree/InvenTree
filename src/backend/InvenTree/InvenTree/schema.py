@@ -3,12 +3,35 @@
 from itertools import chain
 from typing import Optional
 
+from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitScheme
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import ComponentRegistry
 from drf_spectacular.utils import _SchemaType
 
+from InvenTree.permissions import OASTokenMixin
 from users.oauth2_scopes import oauth2_scopes
+
+
+class ExtendedOAuth2Scheme(DjangoOAuthToolkitScheme):
+    """Extend drf-spectacular to allow customizing the schema to match the actual API behavior."""
+
+    target_class = 'users.authentication.ExtendedOAuth2Authentication'
+
+    def get_security_requirement(self, auto_schema):
+        """Get the security requirement for the current view."""
+        ret = super().get_security_requirement(auto_schema)
+        if ret:
+            return ret
+
+        # If no security requirement is found, try if the view uses our OASTokenMixin
+        for permission in auto_schema.view.get_permissions():
+            if isinstance(permission, OASTokenMixin):
+                alt_scopes = permission.get_required_alternate_scopes(
+                    auto_schema.view.request, auto_schema.view
+                )
+                alt_scopes = alt_scopes.get(auto_schema.method, [])
+                return [{self.name: group} for group in alt_scopes]
 
 
 class ExtendedAutoSchema(AutoSchema):
