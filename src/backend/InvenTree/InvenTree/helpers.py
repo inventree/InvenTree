@@ -32,17 +32,48 @@ from .settings import MEDIA_URL, STATIC_URL
 
 logger = structlog.get_logger('inventree')
 
+INT_CLIP_MAX = 0x7FFFFFFF
+INT_CLIP_MIN = -INT_CLIP_MAX
 
-def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
-    """Extract an integer out of reference."""
+
+def extract_int(
+    reference, clip=INT_CLIP_MAX, try_hex=False, allow_negative=False
+) -> int:
+    """Extract an integer out of provided string.
+
+    Arguments:
+        reference: Input string to extract integer from
+        clip: Maximum value to return (default = 0x7FFFFFFF)
+        try_hex: Attempt to parse as hex if integer conversion fails (default = False)
+        allow_negative: Allow negative values (default = False)
+    """
     # Default value if we cannot convert to an integer
     ref_int = 0
+
+    # Enforce clipping limits
+    clip = min(clip, INT_CLIP_MAX)
+    clip = max(clip, INT_CLIP_MIN)
 
     reference = str(reference).strip()
 
     # Ignore empty string
     if len(reference) == 0:
         return 0
+
+    # Try naive integer conversion first
+    try:
+        ref_int = int(reference)
+        return ref_int
+    except ValueError:
+        pass
+
+    # Hex?
+    if try_hex or reference.startswith('0x'):
+        try:
+            ref_int = int(reference, 16)
+            return ref_int
+        except ValueError:
+            pass
 
     # Look at the start of the string - can it be "integerized"?
     result = re.match(r'^(\d+)', reference)
