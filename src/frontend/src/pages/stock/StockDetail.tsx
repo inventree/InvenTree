@@ -176,14 +176,15 @@ export default function StockDetail() {
     const tr: DetailsField[] = [
       {
         type: 'text',
-        name: 'quantity',
-        label: t`Quantity`
-      },
-      {
-        type: 'text',
         name: 'serial',
         label: t`Serial Number`,
         hidden: !stockitem.serial
+      },
+      {
+        type: 'text',
+        name: 'quantity',
+        label: t`Quantity`,
+        hidden: !!stockitem.serial && stockitem.quantity == 1
       },
       {
         type: 'text',
