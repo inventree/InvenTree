@@ -40,6 +40,45 @@ def get_model_for_view(view):
     raise AttributeError(f'Serializer class not specified for {view.__class__}')
 
 
+def map_scope(
+    roles: Optional[list[str]] = None,
+    only_read=False,
+    read_name=DEFAULT_READ,
+    map_read: Optional[list[str]] = None,
+    map_read_name=DEFAULT_READ,
+) -> dict:
+    """Generate the required scopes for OAS permission views.
+
+    Args:
+        roles (Optional[list[str]]): A list of roles or tables to generate granular scopes for.
+        only_read (bool): If True, only the read scope will be returned for all actions.
+        read_name (str): The read scope name to use when `only_read` is True.
+        map_read (Optional[list[str]]): A list of HTTP methods that should map to the default read scope (use if some actions requirea differing role).
+        map_read_name (str): The read scope name to use for methods specified in `map_read` when `map_read` is specified.
+
+    Returns:
+        dict: A dictionary mapping HTTP methods to their corresponding scopes.
+              Each scope is represented as a list of lists of strings.
+    """
+
+    def scope_name(action):
+        if only_read:
+            return [[read_name]]
+        if roles:
+            return [[get_granular_scope(action, table) for table in roles]]
+        return [[action]]
+
+    def get_scope(method, action):
+        if map_read and method in map_read:
+            return [[map_read_name]]
+        return scope_name(action)
+
+    return {
+        method: get_scope(method, action) if method != 'OPTIONS' else [[DEFAULT_READ]]
+        for method, action in ACTION_MAP.items()
+    }
+
+
 # Precalculate the roles mapping
 roles = users.ruleset.get_ruleset_models()
 precalculated_roles = {}
@@ -100,10 +139,11 @@ class InvenTreeRoleScopeMixin(OASTokenMixin):
             return map_scope(only_read=True)
 
 
-class InvenTreeTokenMatchesOASRequirements(
-    InvenTreeRoleScopeMixin, TokenMatchesOASRequirements
-):
-    """Combines InvenTree role-based scope handling with OpenAPI schema token requirements."""
+class InvenTreeTokenMatchesOASRequirements(InvenTreeRoleScopeMixin):
+    """Combines InvenTree role-based scope handling with OpenAPI schema token requirements.
+
+    Usesd as default permission class.
+    """
 
     def has_permission(self, request, view):
         """Check if the user has the required scopes or was authenticated another way."""
@@ -216,45 +256,6 @@ class StaffRolePermissionOrReadOnly(RolePermissionOrReadOnly):
     REQUIRE_STAFF = True
 
 
-def map_scope(
-    roles: Optional[list[str]] = None,
-    only_read=False,
-    read_name=DEFAULT_READ,
-    map_read: Optional[list[str]] = None,
-    map_read_name=DEFAULT_READ,
-) -> dict:
-    """Generate the required scopes for OAS permission views.
-
-    Args:
-        roles (Optional[list[str]]): A list of roles or tables to generate granular scopes for.
-        only_read (bool): If True, only the read scope will be returned for all actions.
-        read_name (str): The read scope name to use when `only_read` is True.
-        map_read (Optional[list[str]]): A list of HTTP methods that should map to the default read scope (use if some actions requirea differing role).
-        map_read_name (str): The read scope name to use for methods specified in `map_read` when `map_read` is specified.
-
-    Returns:
-        dict: A dictionary mapping HTTP methods to their corresponding scopes.
-              Each scope is represented as a list of lists of strings.
-    """
-
-    def scope_name(action):
-        if only_read:
-            return [[read_name]]
-        if roles:
-            return [[get_granular_scope(action, table) for table in roles]]
-        return [[action]]
-
-    def get_scope(method, action):
-        if map_read and method in map_read:
-            return [[map_read_name]]
-        return scope_name(action)
-
-    return {
-        method: get_scope(method, action) if method != 'OPTIONS' else [[DEFAULT_READ]]
-        for method, action in ACTION_MAP.items()
-    }
-
-
 class IsSuperuserOrSuperScope(OASTokenMixin, permissions.IsAdminUser):
     """Allows access only to superuser users."""
 
@@ -319,7 +320,7 @@ class IsAdminOrAdminScope(OASTokenMixin, permissions.IsAdminUser):
         return map_scope(only_read=True, read_name=DEFAULT_STAFF)
 
 
-class AllowAnyOrReadScope(TokenMatchesOASRequirements, permissions.AllowAny):
+class AllowAnyOrReadScope(OASTokenMixin, permissions.AllowAny):
     """Allows access to any user or read scope tokens."""
 
     def has_permission(self, request, view):
