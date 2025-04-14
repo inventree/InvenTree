@@ -1,5 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Alert, Grid, Skeleton, Stack } from '@mantine/core';
+import {
+  Accordion,
+  Alert,
+  Grid,
+  Group,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -7,6 +15,7 @@ import {
   IconHistory,
   IconInfoCircle,
   IconPackages,
+  IconSearch,
   IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
@@ -14,6 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -171,7 +181,21 @@ export default function StockDetail() {
         type: 'text',
         name: 'serial',
         label: t`Serial Number`,
-        hidden: !stockitem.serial
+        hidden: !stockitem.serial,
+        value_formatter: () => (
+          <Group gap='xs' justify='space-apart' grow wrap='nowrap'>
+            <Text>{stockitem.serial}</Text>
+            <Group gap='xs' justify='right'>
+              <ActionButton
+                icon={<IconSearch size={18} />}
+                tooltip={t`Find serial`}
+                variant='transparent'
+                size='lg'
+                onClick={() => {}}
+              />
+            </Group>
+          </Group>
+        )
       },
       {
         type: 'text',
