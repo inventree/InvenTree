@@ -371,3 +371,41 @@ test('Build Order - Duplicate', async ({ browser }) => {
 
   await page.getByText('Pending').first().waitFor();
 });
+
+// Tests for external build orders
+test('Build Order - External', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'manufacturing/index/' });
+  await loadTab(page, 'Build Orders');
+
+  // Filter to show only external builds
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'External', 'Yes');
+  await page.getByRole('cell', { name: 'BO0025' }).click();
+  await page
+    .locator('span')
+    .filter({ hasText: /^External$/ })
+    .waitFor();
+
+  await loadTab(page, 'Line Items');
+  await loadTab(page, 'Incomplete Outputs');
+  await page
+    .getByText('This build order is fulfilled by an external purchase order')
+    .waitFor();
+
+  await loadTab(page, 'External Orders');
+  await page.getByRole('cell', { name: 'PO0016' }).click();
+
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Received Stock');
+  await loadTab(page, 'Line Items');
+  await page
+    .getByRole('cell', { name: '002.01-PCBA', exact: true })
+    .click({ button: 'right' });
+
+  await page.getByRole('button', { name: 'Receive line item' }).waitFor();
+  await page.getByRole('button', { name: 'Edit' }).waitFor();
+  await page.getByRole('button', { name: 'View Build Order' }).click();
+
+  // Wait for navigation back to build order detail page
+  await page.getByText('Build Order: BO0025', { exact: true }).waitFor();
+});

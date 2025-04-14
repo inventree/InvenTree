@@ -2,13 +2,7 @@ import { t } from '@lingui/core/macro';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { PassFailButton } from '../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
@@ -16,6 +10,7 @@ import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -25,7 +20,6 @@ import type { TableColumn } from '../Column';
 import { LocationColumn } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import type { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -234,13 +228,6 @@ export default function BuildOrderTestTable({
     return [];
   }, []);
 
-  const rowActions = useCallback(
-    (record: any): RowAction[] => {
-      return [];
-    },
-    [user]
-  );
-
   return (
     <>
       {createTestResult.modal}
@@ -249,13 +236,13 @@ export default function BuildOrderTestTable({
         tableState={table}
         columns={tableColumns}
         props={{
+          modelType: ModelType.stockitem,
           params: {
             part_detail: true,
             location_detail: true,
             tests: true,
             build: buildId
           },
-          rowActions: rowActions,
           tableFilters: tableFilters,
           tableActions: tableActions
         }}
