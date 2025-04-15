@@ -165,6 +165,33 @@ test('Stock - Serial Numbers', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+// Test navigation by serial number
+test('Stock - Serial Navigation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/79/details' });
+
+  await page.getByLabel('action-menu-stock-actions').click();
+  await page.getByLabel('action-menu-stock-actions-search').click();
+  await page.getByLabel('text-field-serial').fill('359');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Start at serial 359
+  await page.getByText('359', { exact: true }).first().waitFor();
+  await page.getByLabel('next-serial-number').waitFor();
+  await page.getByLabel('previous-serial-number').click();
+
+  // Navigate to serial 358
+  await page.getByText('358', { exact: true }).first().waitFor();
+
+  await page.getByLabel('action-button-find-serial').click();
+  await page.getByLabel('text-field-serial').fill('200');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Serial Number: 200').waitFor();
+  await page.getByText('200', { exact: true }).first().waitFor();
+  await page.getByText('199', { exact: true }).first().waitFor();
+  await page.getByText('201', { exact: true }).first().waitFor();
+});
+
 test('Stock - Serialize', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/item/232/details' });
 
