@@ -89,6 +89,7 @@ nav:
     - Project:
       - Governance: project/governance.md
       - Project Security: project/security.md
+      - Resources: project/resources.md
     - Security: security.md
   - Install:
     - Introduction: start/intro.md
