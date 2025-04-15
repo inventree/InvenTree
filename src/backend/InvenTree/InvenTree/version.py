@@ -26,13 +26,21 @@ logger = logging.getLogger('inventree')
 
 # Discover git
 try:
+    from dulwich.errors import NotGitRepository
     from dulwich.porcelain import active_branch
     from dulwich.repo import Repo
 
-    main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
-    main_commit = main_repo[main_repo.head()]
     try:
-        main_branch = active_branch(main_repo)
+        main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
+        main_commit = main_repo[main_repo.head()]
+    except NotGitRepository:
+        # If we are running in a docker container, the repo may not be available
+        logger.warning('INVE-W3: Could not detect git information.')
+        main_repo = None
+        main_commit = None
+
+    try:
+        main_branch = active_branch(main_repo) if main_repo else None
     except (KeyError, IndexError):
         logger.warning('INVE-W1: Current branch could not be detected.')
         main_branch = None
