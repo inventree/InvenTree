@@ -33,7 +33,6 @@ from .settings import MEDIA_URL, STATIC_URL
 logger = structlog.get_logger('inventree')
 
 INT_CLIP_MAX = 0x7FFFFFFF
-INT_CLIP_MIN = -INT_CLIP_MAX
 
 
 def extract_int(
@@ -50,9 +49,23 @@ def extract_int(
     # Default value if we cannot convert to an integer
     ref_int = 0
 
-    # Enforce clipping limits
-    clip = min(clip, INT_CLIP_MAX)
-    clip = max(clip, INT_CLIP_MIN)
+    def do_clip(value: int, clip: int) -> int:
+        """Perform clipping on the provided value.
+
+        Arguments:
+            value: Value to clip
+            clip: Maximum value to clip to
+        """
+        if clip is None:
+            return value
+
+        clip = min(clip, INT_CLIP_MAX)
+
+        if value > clip:
+            return clip
+        elif value < -clip:
+            return -clip
+        return value
 
     reference = str(reference).strip()
 
@@ -63,15 +76,15 @@ def extract_int(
     # Try naive integer conversion first
     try:
         ref_int = int(reference)
-        return ref_int
+        return do_clip(ref_int, clip)
     except ValueError:
         pass
 
     # Hex?
     if try_hex or reference.startswith('0x'):
         try:
-            ref_int = int(reference, 16)
-            return ref_int
+            ref_int = int(reference, base=16)
+            return do_clip(ref_int, clip)
         except ValueError:
             pass
 
@@ -97,11 +110,7 @@ def extract_int(
 
     # Ensure that the returned values are within the range that can be stored in an IntegerField
     # Note: This will result in large values being "clipped"
-    if clip is not None:
-        if ref_int > clip:
-            ref_int = clip
-        elif ref_int < -clip:
-            ref_int = -clip
+    ref_int = do_clip(ref_int, clip)
 
     if not allow_negative and ref_int < 0:
         ref_int = abs(ref_int)
