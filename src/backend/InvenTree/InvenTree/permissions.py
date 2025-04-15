@@ -8,7 +8,11 @@ import users.permissions
 
 
 def get_model_for_view(view):
-    """Attempt to introspect the 'model' type for an API view."""
+    """Attempt to introspect the 'model' type for an API view.
+
+    Arguments:
+        view: The view being accessed
+    """
     if hasattr(view, 'get_permission_model'):
         return view.get_permission_model()
 
@@ -43,8 +47,13 @@ class RolePermission(permissions.BasePermission):
     For example, a DELETE action will be rejected unless the user has the "part.remove" permission
     """
 
-    def has_permission(self, request, view):
-        """Determine if the current user has the specified permissions."""
+    def has_permission(self, request, view) -> bool:
+        """Determine if the current user has the specified permissions.
+
+        Arguments:
+            request: The HTTP request
+            view: The view being accessed
+        """
         user = request.user
 
         # Superuser can do it all
@@ -65,7 +74,7 @@ class RolePermission(permissions.BasePermission):
         if hasattr(view, 'rolemap'):
             rolemap.update(view.rolemap)
 
-        permission = rolemap[request.method]
+        permission = rolemap.get(request.method)
 
         # The required role may be defined for the view class
         if role := getattr(view, 'role_required', None):
@@ -95,8 +104,12 @@ class RolePermissionOrReadOnly(RolePermission):
 
     REQUIRE_STAFF = False
 
-    def has_permission(self, request, view):
+    def has_permission(self, request, view) -> bool:
         """Determine if the current user has the specified permissions.
+
+        Arguments:
+            request: The HTTP request
+            view: The view being accessed
 
         - If the user does have the required role, then allow the request
         - If the user does not have the required role, but is authenticated, then allow read-only access
@@ -125,16 +138,26 @@ class StaffRolePermissionOrReadOnly(RolePermissionOrReadOnly):
 class IsSuperuser(permissions.IsAdminUser):
     """Allows access only to superuser users."""
 
-    def has_permission(self, request, view):
-        """Check if the user is a superuser."""
+    def has_permission(self, request, view) -> bool:
+        """Check if the user is a superuser.
+
+        Arguments:
+            request: The HTTP request
+            view: The view being accessed
+        """
         return bool(request.user and request.user.is_superuser)
 
 
 class IsSuperuserOrReadOnly(permissions.IsAdminUser):
     """Allow read-only access to any user, but write access is restricted to superuser users."""
 
-    def has_permission(self, request, view):
-        """Check if the user is a superuser."""
+    def has_permission(self, request, view) -> bool:
+        """Check if the user is a superuser.
+
+        Arguments:
+            request: The HTTP request
+            view: The view being accessed
+        """
         return bool(
             (request.user and request.user.is_superuser)
             or request.method in permissions.SAFE_METHODS
@@ -144,8 +167,13 @@ class IsSuperuserOrReadOnly(permissions.IsAdminUser):
 class IsStaffOrReadOnly(permissions.IsAdminUser):
     """Allows read-only access to any user, but write access is restricted to staff users."""
 
-    def has_permission(self, request, view):
-        """Check if the user is a superuser."""
+    def has_permission(self, request, view) -> bool:
+        """Check if the user is a superuser.
+
+        Arguments:
+            request: The HTTP request
+            view: The view being accessed
+        """
         return bool(
             (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
