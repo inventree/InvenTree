@@ -24,6 +24,8 @@ services:
     volumes:
       - ../:/home/inventree:z
       - /tmp/.X11-unix:/tmp/.X11-unix
+    ports:
+      - 8000:8000
 
     environment:
       INVENTREE_DB_ENGINE: postgresql
