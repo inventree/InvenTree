@@ -180,7 +180,7 @@ export default function AdminCenter() {
         label: t`Category Parameters`,
         icon: <IconSitemap />,
         content: <PartCategoryTemplateTable />,
-        hidden: !user.hasViewRole(UserRoles.part_category)
+        hidden: !user.hasViewRole(UserRoles.part)
       },
       {
         name: 'stocktake',
@@ -206,7 +206,7 @@ export default function AdminCenter() {
         label: t`Location Types`,
         icon: <IconPackages />,
         content: <LocationTypesTable />,
-        hidden: !user.hasViewRole(UserRoles.stock_location)
+        hidden: !user.hasViewRole(UserRoles.stock)
       },
       {
         name: 'plugin',

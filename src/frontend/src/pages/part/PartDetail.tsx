@@ -983,7 +983,7 @@ export default function PartDetail() {
         requiredRole={UserRoles.part}
       >
         <Stack gap='xs'>
-          {user.hasViewRole(UserRoles.part_category) && (
+          {user.hasViewRole(UserRoles.part) && (
             <NavigationTree
               title={t`Part Categories`}
               modelType={ModelType.partcategory}
@@ -1006,9 +1006,7 @@ export default function PartDetail() {
             imageUrl={part.image}
             badges={badges}
             breadcrumbs={
-              user.hasViewRole(UserRoles.part_category)
-                ? breadcrumbs
-                : undefined
+              user.hasViewRole(UserRoles.part) ? breadcrumbs : undefined
             }
             lastCrumb={[
               {

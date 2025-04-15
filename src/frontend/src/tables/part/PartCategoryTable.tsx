@@ -134,8 +134,8 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
   });
 
   const tableActions = useMemo(() => {
-    const can_add = user.hasAddRole(UserRoles.part_category);
-    const can_edit = user.hasChangeRole(UserRoles.part_category);
+    const can_add = user.hasAddRole(UserRoles.part);
+    const can_edit = user.hasChangeRole(UserRoles.part);
 
     return [
       <ActionDropdown
@@ -166,7 +166,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      const can_edit = user.hasChangeRole(UserRoles.part_category);
+      const can_edit = user.hasChangeRole(UserRoles.part);
 
       return [
         RowEditAction({

@@ -7,12 +7,10 @@ export enum UserRoles {
   admin = 'admin',
   build = 'build',
   part = 'part',
-  part_category = 'part_category',
   purchase_order = 'purchase_order',
   return_order = 'return_order',
   sales_order = 'sales_order',
   stock = 'stock',
-  stock_location = 'stock_location',
   stocktake = 'stocktake'
 }
 
@@ -34,8 +32,6 @@ export function userRoleLabel(role: UserRoles): string {
       return t`Build Orders`;
     case UserRoles.part:
       return t`Parts`;
-    case UserRoles.part_category:
-      return t`Part Categories`;
     case UserRoles.purchase_order:
       return t`Purchase Orders`;
     case UserRoles.return_order:
@@ -44,8 +40,6 @@ export function userRoleLabel(role: UserRoles): string {
       return t`Sales Orders`;
     case UserRoles.stock:
       return t`Stock Items`;
-    case UserRoles.stock_location:
-      return t`Stock Location`;
     case UserRoles.stocktake:
       return t`Stocktake`;
     default:

@@ -248,7 +248,7 @@ export function SearchDrawer({
         model: ModelType.partcategory,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.part_category) &&
+          user.hasViewRole(UserRoles.part) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_CATEGORIES')
       },
       {
@@ -268,7 +268,7 @@ export function SearchDrawer({
         model: ModelType.stocklocation,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.stock_location) &&
+          user.hasViewRole(UserRoles.stock) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_LOCATIONS')
       },
       {
