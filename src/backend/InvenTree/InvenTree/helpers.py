@@ -49,12 +49,13 @@ def extract_int(
     # Default value if we cannot convert to an integer
     ref_int = 0
 
-    def do_clip(value: int, clip: int) -> int:
+    def do_clip(value: int, clip: int, allow_negative: bool) -> int:
         """Perform clipping on the provided value.
 
         Arguments:
             value: Value to clip
             clip: Maximum value to clip to
+            allow_negative: Allow negative values (default = False)
         """
         if clip is None:
             return value
@@ -65,6 +66,10 @@ def extract_int(
             return clip
         elif value < -clip:
             return -clip
+
+        if not allow_negative:
+            value = abs(value)
+
         return value
 
     reference = str(reference).strip()
@@ -76,7 +81,7 @@ def extract_int(
     # Try naive integer conversion first
     try:
         ref_int = int(reference)
-        return do_clip(ref_int, clip)
+        return do_clip(ref_int, clip, allow_negative)
     except ValueError:
         pass
 
@@ -84,7 +89,7 @@ def extract_int(
     if try_hex or reference.startswith('0x'):
         try:
             ref_int = int(reference, base=16)
-            return do_clip(ref_int, clip)
+            return do_clip(ref_int, clip, allow_negative)
         except ValueError:
             pass
 
@@ -110,7 +115,7 @@ def extract_int(
 
     # Ensure that the returned values are within the range that can be stored in an IntegerField
     # Note: This will result in large values being "clipped"
-    ref_int = do_clip(ref_int, clip)
+    ref_int = do_clip(ref_int, clip, allow_negative)
 
     if not allow_negative and ref_int < 0:
         ref_int = abs(ref_int)
