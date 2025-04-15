@@ -154,6 +154,10 @@ class InvenTreeTokenMatchesOASRequirements(InvenTreeRoleScopeMixin):
         # If the user is authenticated using another method, check if they have the required permissions
         return bool(request.user and request.user.is_authenticated)
 
+    def has_object_permission(self, request, view, obj):
+        """Return `True` if permission is granted, `False` otherwise."""
+        return True
+
 
 class RolePermission(InvenTreeRoleScopeMixin, permissions.BasePermission):
     """Role mixin for API endpoints, allowing us to specify the user "role" which is required for certain operations.
