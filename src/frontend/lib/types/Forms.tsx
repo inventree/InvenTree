@@ -1,7 +1,7 @@
 import type { DefaultMantineColor, MantineStyleProp } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { ReactNode } from 'react';
-import type { FieldValues } from 'react-hook-form';
+import type { FieldValues, UseFormReturn } from 'react-hook-form';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import type { ModelType } from '../enums/ModelType';
 import type { PathParams, UiSizeType } from './Core';
@@ -130,6 +130,7 @@ export type ApiFormFieldSet = Record<string, ApiFormFieldType>;
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
  * @param processFormData : A callback function to process the form data before submission
+ * @param checkClose: A callback function to check if the form can be closed after submission
  * @param modelType : Define a model type for this form
  * @param follow : Boolean, follow the result of the form (if possible)
  * @param table : Table to update on success (if provided)
@@ -153,9 +154,10 @@ export interface ApiFormProps {
   preFormSuccess?: string;
   postFormContent?: JSX.Element;
   successMessage?: string | null;
-  onFormSuccess?: (data: any) => void;
-  onFormError?: (response: any) => void;
-  processFormData?: (data: any) => any;
+  onFormSuccess?: (data: any, form: UseFormReturn) => void;
+  onFormError?: (response: any, form: UseFormReturn) => void;
+  processFormData?: (data: any, form: UseFormReturn) => any;
+  checkClose?: (data: any, form: UseFormReturn) => boolean;
   table?: TableState;
   modelType?: ModelType;
   follow?: boolean;

@@ -30,12 +30,14 @@ export function useApiFormModal(props: ApiFormModalProps) {
           }
         }
       ],
-      onFormSuccess: (data) => {
-        modalClose.current();
-        props.onFormSuccess?.(data);
+      onFormSuccess: (data, form) => {
+        if (props.checkClose?.(data, form) ?? true) {
+          modalClose.current();
+        }
+        props.onFormSuccess?.(data, form);
       },
-      onFormError: (error: any) => {
-        props.onFormError?.(error);
+      onFormError: (error: any, form) => {
+        props.onFormError?.(error, form);
       }
     }),
     [props]

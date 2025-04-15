@@ -16,12 +16,14 @@ import { Suspense, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/index';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
@@ -36,7 +38,11 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
-import { useCreateApiFormModal, useDeleteApiFormModal } from '../hooks/UseForm';
+import {
+  useApiFormModal,
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
@@ -1293,4 +1299,57 @@ export function useTestResultFields({
     templateId,
     includeTestStation
   ]);
+}
+
+/**
+ * Modal form for finding a particular stock item by serial number
+ */
+export function useFindSerialNumberForm({
+  partId
+}: {
+  partId: number;
+}) {
+  const navigate = useNavigate();
+
+  return useApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_item_list),
+    fetchInitialData: false,
+    method: 'GET',
+    title: t`Find Serial Number`,
+    fields: {
+      serial: {},
+      part_tree: {
+        value: partId,
+        hidden: true,
+        field_type: 'integer'
+      }
+    },
+    checkClose: (data, form) => {
+      if (data.length == 0) {
+        form.setError('serial', { message: t`No matching items` });
+        return false;
+      }
+
+      if (data.length > 1) {
+        form.setError('serial', {
+          message: t`Multiple matching items`
+        });
+        return false;
+      }
+
+      if (data[0].pk) {
+        return true;
+      } else {
+        form.setError('serial', {
+          message: t`Invalid response from server`
+        });
+        return false;
+      }
+    },
+    onFormSuccess: (data) => {
+      if (data.length == 1 && data[0].pk) {
+        navigate(getDetailUrl(ModelType.stockitem, data[0].pk));
+      }
+    }
+  });
 }

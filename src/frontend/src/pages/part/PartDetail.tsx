@@ -20,6 +20,7 @@ import {
   IconListTree,
   IconLock,
   IconPackages,
+  IconSearch,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -73,6 +74,7 @@ import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
   useCountStockItem,
+  useFindSerialNumberForm,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -879,6 +881,8 @@ export default function PartDetail() {
     parts: [part]
   });
 
+  const findBySerialNumber = useFindSerialNumberForm({ partId: part.pk });
+
   const partActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.part} id={part.pk} />,
@@ -940,6 +944,13 @@ export default function PartDetail() {
             onClick: () => {
               orderPartsWizard.openWizard();
             }
+          },
+          {
+            name: t`Search`,
+            tooltip: t`Search by serial number`,
+            hidden: !part.trackable,
+            icon: <IconSearch />,
+            onClick: findBySerialNumber.open
           }
         ]}
       />,
@@ -976,6 +987,7 @@ export default function PartDetail() {
       {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
+      {findBySerialNumber.modal}
       {orderPartsWizard.wizard}
       <InstanceDetail
         status={requestStatus}

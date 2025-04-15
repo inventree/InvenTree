@@ -362,7 +362,7 @@ export function ApiForm({
 
     // Optionally pre-process the data before submitting it
     if (props.processFormData) {
-      data = props.processFormData(data);
+      data = props.processFormData(data, form);
     }
 
     const jsonData = { ...data };
@@ -422,7 +422,7 @@ export function ApiForm({
 
             if (props.onFormSuccess) {
               // A custom callback hook is provided
-              props.onFormSuccess(response.data);
+              props.onFormSuccess(response.data, form);
             }
 
             if (props.follow && props.modelType && response.data?.pk) {
@@ -457,7 +457,7 @@ export function ApiForm({
           default:
             // Unexpected state on form success
             invalidResponse(response.status);
-            props.onFormError?.(response);
+            props.onFormError?.(response, form);
             break;
         }
 
@@ -522,18 +522,18 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
-              props.onFormError?.(error);
+              props.onFormError?.(error, form);
 
               break;
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);
-              props.onFormError?.(error);
+              props.onFormError?.(error, form);
               break;
           }
         } else {
           showTimeoutNotification();
-          props.onFormError?.(error);
+          props.onFormError?.(error, form);
         }
 
         return error;
@@ -542,7 +542,7 @@ export function ApiForm({
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(
     (error: any) => {
-      props.onFormError?.(error);
+      props.onFormError?.(error, form);
     },
     [props.onFormError]
   );
