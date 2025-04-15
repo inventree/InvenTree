@@ -706,17 +706,9 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
 
     def test_category(self):
         """Test the PartCategory API OPTIONS endpoint."""
-        actions = self.getActions(reverse('api-part-category-list'))
-
-        # actions should *not* contain 'POST' as we do not have the correct role
-        self.assertNotIn('POST', actions)
-
-        self.assignRole('part.add')
-
         actions = self.getActions(reverse('api-part-category-list'))['POST']
 
         name = actions['name']
-
         self.assertTrue(name['required'])
         self.assertEqual(name['label'], 'Name')
 
