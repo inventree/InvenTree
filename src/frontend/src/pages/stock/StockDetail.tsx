@@ -2,12 +2,14 @@ import { t } from '@lingui/core/macro';
 import {
   Accordion,
   Alert,
+  Button,
   Grid,
   Group,
   Skeleton,
   Space,
   Stack,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
 import {
   IconArrowLeft,
@@ -197,45 +199,55 @@ export default function StockDetail() {
         label: t`Serial Number`,
         hidden: !stockitem.serial,
         value_formatter: () => (
-          <Group gap='xs' justify='space-apart' wrap='nowrap'>
+          <Group gap='xs' justify='space-apart'>
             <Text>{stockitem.serial}</Text>
             <Space flex={10} />
-            <Group gap={2} justify='right' wrap='nowrap'>
+            <Group gap={2} justify='right'>
               {serialNumbers.previous?.pk && (
-                <ActionButton
-                  icon={<IconArrowLeft size={18} />}
-                  tooltip={serialNumbers.previous.serial}
-                  tooltipAlignment='top'
-                  variant='transparent'
-                  onClick={() =>
-                    navigate(
-                      getDetailUrl(
-                        ModelType.stockitem,
-                        serialNumbers.previous.pk
-                      )
-                    )
-                  }
-                />
+                <Tooltip label={t`Previous serial number`} position='top'>
+                  <Button
+                    p={3}
+                    aria-label='previous-serial-number'
+                    leftSection={<IconArrowLeft />}
+                    variant='transparent'
+                    size='sm'
+                    onClick={() => {
+                      navigate(
+                        getDetailUrl(
+                          ModelType.stockitem,
+                          serialNumbers.previous.pk
+                        )
+                      );
+                    }}
+                  >
+                    {serialNumbers.previous.serial}
+                  </Button>
+                </Tooltip>
               )}
               <ActionButton
                 icon={<IconSearch size={18} />}
-                tooltip={t`Find serial`}
+                tooltip={t`Find serial number`}
                 tooltipAlignment='top'
                 variant='transparent'
                 onClick={findBySerialNumber.open}
               />
               {serialNumbers.next?.pk && (
-                <ActionButton
-                  icon={<IconArrowRight size={18} />}
-                  tooltip={serialNumbers.next.serial}
-                  tooltipAlignment='top'
-                  variant='transparent'
-                  onClick={() =>
-                    navigate(
-                      getDetailUrl(ModelType.stockitem, serialNumbers.next.pk)
-                    )
-                  }
-                />
+                <Tooltip label={t`Next serial number`} position='top'>
+                  <Button
+                    p={3}
+                    aria-label='next-serial-number'
+                    rightSection={<IconArrowRight />}
+                    variant='transparent'
+                    size='sm'
+                    onClick={() => {
+                      navigate(
+                        getDetailUrl(ModelType.stockitem, serialNumbers.next.pk)
+                      );
+                    }}
+                  >
+                    {serialNumbers.next.serial}
+                  </Button>
+                </Tooltip>
               )}
             </Group>
           </Group>
