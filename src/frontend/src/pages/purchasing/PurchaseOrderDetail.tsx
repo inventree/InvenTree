@@ -4,6 +4,10 @@ import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -30,9 +34,6 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import {
   useCreateApiFormModal,
@@ -40,7 +41,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
@@ -538,6 +538,7 @@ export default function PurchaseOrderDetail() {
             panels={orderPanels}
             model={ModelType.purchaseorder}
             instance={order}
+            reloadInstance={refreshInstance}
             id={order.pk}
           />
         </Stack>
