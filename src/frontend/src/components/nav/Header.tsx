@@ -1,4 +1,6 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -17,8 +19,6 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { navigateToLink } from '../../functions/navigation';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
