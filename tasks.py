@@ -1413,7 +1413,7 @@ def frontend_build(c):
         c: Context variable
     """
     info('Building frontend')
-    yarn(c, 'yarn run build --emptyOutDir')
+    yarn(c, 'yarn run build')
 
 
 @task

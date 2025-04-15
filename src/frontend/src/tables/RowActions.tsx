@@ -11,10 +11,10 @@ import {
 import { type ReactNode, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
-import type { ModelType } from '../enums/ModelType';
-import { cancelEvent } from '../functions/events';
-import { navigateToLink } from '../functions/navigation';
-import { getDetailUrl } from '../functions/urls';
+import type { ModelType } from '@lib/enums/ModelType';
+import { cancelEvent } from '@lib/functions/Events';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 
 // Type definition for a table row action
 export type RowAction = {

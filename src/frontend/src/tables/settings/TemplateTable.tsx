@@ -5,6 +5,11 @@ import { IconFileCode } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   CodeEditor,
@@ -15,7 +20,6 @@ import type {
   Editor,
   PreviewArea
 } from '../../components/editors/TemplateEditor/TemplateEditor';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
@@ -27,8 +31,6 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
@@ -40,11 +42,9 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -143,7 +143,12 @@ export function TemplateDrawer({
           ({
             key: preview.options.key,
             name: preview.options.title,
-            icon: <ApiIcon name={preview.options.icon || 'plugin'} size={18} />,
+            icon: (
+              <ApiIcon
+                name={preview.options?.icon?.toString() || 'plugin'}
+                size={18}
+              />
+            ),
             component: getPluginTemplatePreview(preview.func, template)
           }) as PreviewArea
       ) || [])

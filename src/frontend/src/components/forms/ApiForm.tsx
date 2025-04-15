@@ -2,7 +2,6 @@ import { t } from '@lingui/core/macro';
 import {
   Alert,
   Button,
-  type DefaultMantineColor,
   Divider,
   Group,
   LoadingOverlay,
@@ -19,14 +18,17 @@ import {
   FormProvider,
   type SubmitErrorHandler,
   type SubmitHandler,
-  type UseFormReturn,
   useForm
 } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type {
+  ApiFormFieldSet,
+  ApiFormFieldType,
+  ApiFormProps
+} from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import {
   type NestedDict,
   constructField,
@@ -38,74 +40,8 @@ import {
   invalidResponse,
   showTimeoutNotification
 } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
-import type { TableState } from '../../hooks/UseTable';
-import type { PathParams } from '../../states/ApiState';
 import { Boundary } from '../Boundary';
-import {
-  ApiFormField,
-  type ApiFormFieldSet,
-  type ApiFormFieldType
-} from './fields/ApiFormField';
-
-export interface ApiFormAction {
-  text: string;
-  variant?: 'outline';
-  color?: DefaultMantineColor;
-  onClick: () => void;
-}
-
-/**
- * Properties for the ApiForm component
- * @param url : The API endpoint to fetch the form data from
- * @param pk : Optional primary-key value when editing an existing object
- * @param pk_field : Optional primary-key field name (default: pk)
- * @param pathParams : Optional path params for the url
- * @param method : Optional HTTP method to use when submitting the form (default: GET)
- * @param fields : The fields to render in the form
- * @param submitText : Optional custom text to display on the submit button (default: Submit)4
- * @param submitColor : Optional custom color for the submit button (default: green)
- * @param fetchInitialData : Optional flag to fetch initial data from the server (default: true)
- * @param preFormContent : Optional content to render before the form fields
- * @param postFormContent : Optional content to render after the form fields
- * @param successMessage : Optional message to display on successful form submission
- * @param onFormSuccess : A callback function to call when the form is submitted successfully.
- * @param onFormError : A callback function to call when the form is submitted with errors.
- * @param processFormData : A callback function to process the form data before submission
- * @param checkClose: A callback function to check if the form can be closed after submission
- * @param modelType : Define a model type for this form
- * @param follow : Boolean, follow the result of the form (if possible)
- * @param table : Table to update on success (if provided)
- */
-export interface ApiFormProps {
-  url: ApiEndpoints | string;
-  pk?: number | string;
-  pk_field?: string;
-  pathParams?: PathParams;
-  queryParams?: URLSearchParams;
-  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  fields?: ApiFormFieldSet;
-  focus?: string;
-  initialData?: FieldValues;
-  submitText?: string;
-  submitColor?: string;
-  fetchInitialData?: boolean;
-  ignorePermissionCheck?: boolean;
-  preFormContent?: JSX.Element;
-  preFormWarning?: string;
-  preFormSuccess?: string;
-  postFormContent?: JSX.Element;
-  successMessage?: string | null;
-  onFormSuccess?: (data: any, form: UseFormReturn) => void;
-  onFormError?: (response: any, form: UseFormReturn) => void;
-  processFormData?: (data: any, form: UseFormReturn) => any;
-  checkClose?: (data: any, form: UseFormReturn) => boolean;
-  table?: TableState;
-  modelType?: ModelType;
-  follow?: boolean;
-  actions?: ApiFormAction[];
-  timeout?: number;
-}
+import { ApiFormField } from './fields/ApiFormField';
 
 export function OptionsApiForm({
   props: _props,
@@ -219,7 +155,16 @@ export function ApiForm({
 }>) {
   const api = useApi();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+
+  // Accessor for the navigation function (which is used to redirect the user)
+  let navigate: NavigateFunction | null = null;
+
+  try {
+    navigate = useNavigate();
+  } catch (_error) {
+    // Note: If we launch a form within a plugin context, useNavigate() may not be available
+    navigate = null;
+  }
 
   const [fields, setFields] = useState<ApiFormFieldSet>(
     () => props.fields ?? {}
@@ -482,7 +427,9 @@ export function ApiForm({
 
             if (props.follow && props.modelType && response.data?.pk) {
               // If we want to automatically follow the returned data
-              navigate(getDetailUrl(props.modelType, response.data?.pk));
+              if (!!navigate) {
+                navigate(getDetailUrl(props.modelType, response.data?.pk));
+              }
             } else if (props.table) {
               // If we want to automatically update or reload a linked table
               const pk_field = props.pk_field ?? 'pk';

@@ -343,7 +343,7 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@cf3f51a67d2820f7a7cefa0831889fbbef41ca57 # pin@v5.4.1
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -486,7 +486,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@cf3f51a67d2820f7a7cefa0831889fbbef41ca57 # pin@v5.4.1
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -618,7 +618,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@cf3f51a67d2820f7a7cefa0831889fbbef41ca57 # pin@v5.4.1
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
         if: github.event_name != 'pull_request'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
