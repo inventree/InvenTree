@@ -77,6 +77,7 @@ import {
   IconQuestionMark,
   IconRefresh,
   IconRulerMeasure,
+  IconSearch,
   IconSettings,
   IconShoppingCart,
   IconShoppingCartHeart,
@@ -254,7 +255,8 @@ const icons = {
   success: IconCircleCheck,
   plugin: IconPlug,
   history: IconHistory,
-  dashboard: IconLayoutDashboard
+  dashboard: IconLayoutDashboard,
+  search: IconSearch
 };
 
 export type InvenTreeIconType = keyof typeof icons;
