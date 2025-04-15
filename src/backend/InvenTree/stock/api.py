@@ -1228,6 +1228,17 @@ class StockDetail(StockApiMixin, RetrieveUpdateDestroyAPI):
     """API detail endpoint for a single StockItem instance."""
 
 
+class StockItemSerialNumbers(RetrieveAPI):
+    """View extra serial number information for a given stock item.
+
+    Provides information on the "previous" and "next" stock items,
+    based on the serial number of the given stock item.
+    """
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockSerializers.StockItemSerialNumbersSerializer
+
+
 class StockItemTestResultMixin:
     """Mixin class for the StockItemTestResult API endpoints."""
 
@@ -1615,6 +1626,11 @@ stock_api_urls = [
                 'uninstall/',
                 StockItemUninstall.as_view(),
                 name='api-stock-item-uninstall',
+            ),
+            path(
+                'serial-numbers/',
+                StockItemSerialNumbers.as_view(),
+                name='api-stock-item-serial-numbers',
             ),
             path('', StockDetail.as_view(), name='api-stock-detail'),
         ]),
