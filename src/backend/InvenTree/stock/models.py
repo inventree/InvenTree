@@ -692,6 +692,16 @@ class StockItem(
 
         return None
 
+    @property
+    def get_next_stock_item(self):
+        """Return the 'next' stock item (based on serial number)."""
+        return self.get_next_serialized_item()
+
+    @property
+    def get_previous_stock_item(self):
+        """Return the 'previous' stock item (based on serial number)."""
+        return self.get_next_serialized_item(reverse=True)
+
     def save(self, *args, **kwargs):
         """Save this StockItem to the database.
 

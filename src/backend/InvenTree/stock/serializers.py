@@ -32,7 +32,11 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
-from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
+from InvenTree.serializers import (
+    InvenTreeCurrencySerializer,
+    InvenTreeDecimalField,
+    InvenTreeModelSerializer,
+)
 from users.serializers import UserSerializer
 
 from .models import (
@@ -1808,3 +1812,23 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs
                 )
+
+
+class StockItemSerialNumbersSerializer(InvenTreeModelSerializer):
+    """Serializer for extra serial number information about a stock item."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItem
+        fields = ['next', 'previous']
+
+    next = StockItemSerializer(
+        read_only=True, source='get_next_stock_item', label=_('Next Serial Number')
+    )
+
+    previous = StockItemSerializer(
+        read_only=True,
+        source='get_previous_stock_item',
+        label=_('Previous Serial Number'),
+    )
