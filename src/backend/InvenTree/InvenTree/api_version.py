@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 336
+INVENTREE_API_VERSION = 337
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -9,6 +9,9 @@ INVENTREE_API_VERSION = 336
 INVENTREE_API_TEXT = """
 v336 -> 2025-04-10 : https://github.com/inventree/InvenTree/pull/9312
     - Adds "external" flag for BuildOrder
+
+v337 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9505
+    - Adds API endpoint with extra serial number information for a given StockItem object
 
 v336 -> 2025-04-10 : https://github.com/inventree/InvenTree/pull/9492
     - Fixed query and response serialization for units_all and version_text

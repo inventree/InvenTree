@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-08 12:11+0000\n"
-"PO-Revision-Date: 2025-04-08 12:14\n"
+"POT-Creation-Date: 2025-04-13 23:06+0000\n"
+"PO-Revision-Date: 2025-04-13 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -21,35 +21,35 @@ msgstr ""
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr ""
 
-#: InvenTree/api.py:341
+#: InvenTree/api.py:358
 msgid "API endpoint not found"
 msgstr "API endpoint không tồn tại"
 
-#: InvenTree/api.py:417
+#: InvenTree/api.py:434
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:424
+#: InvenTree/api.py:441
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:432
+#: InvenTree/api.py:449
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:438
+#: InvenTree/api.py:455
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:445
+#: InvenTree/api.py:462
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:450
+#: InvenTree/api.py:467
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:698
+#: InvenTree/api.py:710
 msgid "User does not have permission to view this model"
 msgstr "Người dùng không được phân quyền xem mẫu này"
 
@@ -351,7 +351,7 @@ msgstr "Tiếng Trung (Phồn thể)"
 msgid "Log in to the app"
 msgstr ""
 
-#: InvenTree/magic_login.py:41 company/models.py:136 users/serializers.py:236
+#: InvenTree/magic_login.py:41 company/models.py:136 users/serializers.py:247
 msgid "Email"
 msgstr "Email"
 
@@ -685,7 +685,7 @@ msgstr "Có sẵn"
 msgid "Build Order"
 msgstr "Tạo đơn hàng"
 
-#: build/models.py:117 users/models.py:225
+#: build/models.py:117 users/ruleset.py:37
 msgid "Build Orders"
 msgstr "Tạo đơn hàng"
 
@@ -1064,7 +1064,7 @@ msgstr "Nhập vào số sêri cho đầu ra bản dựng"
 #: order/serializers.py:906 order/serializers.py:2010 part/serializers.py:1246
 #: stock/serializers.py:106 stock/serializers.py:639 stock/serializers.py:741
 #: stock/serializers.py:905 stock/serializers.py:1033 stock/serializers.py:1493
-#: stock/serializers.py:1781 users/models.py:1009
+#: stock/serializers.py:1781 users/models.py:551
 msgid "Location"
 msgstr "Địa điểm"
 
@@ -1393,19 +1393,19 @@ msgstr "Đơn đặt bản dựng quá hạn"
 msgid "Build order {bo} is now overdue"
 msgstr "Đặt hàng bản dựng {bo} đang quá hạn"
 
-#: common/api.py:731
+#: common/api.py:734
 msgid "Is Link"
 msgstr "Đường dẫn"
 
-#: common/api.py:739
+#: common/api.py:742
 msgid "Is File"
 msgstr "File"
 
-#: common/api.py:782
+#: common/api.py:785
 msgid "User does not have permission to delete these attachments"
 msgstr "Không có quyền xoá file đính kèm"
 
-#: common/api.py:799
+#: common/api.py:802
 msgid "User does not have permission to delete this attachment"
 msgstr "Không có quyền xoá file đính kèm"
 
@@ -1483,7 +1483,7 @@ msgstr "Chuỗi khóa phải duy nhất"
 #: importer/models.py:97 part/models.py:3376 part/models.py:3463
 #: part/models.py:3537 part/models.py:3565 plugin/models.py:322
 #: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
-#: users/models.py:129 users/models.py:961
+#: users/models.py:130 users/models.py:503
 msgid "User"
 msgstr "Người dùng"
 
@@ -1514,8 +1514,8 @@ msgstr "Tên của webhook này"
 
 #: common/models.py:1330 common/models.py:2156 common/models.py:2263
 #: company/models.py:164 company/models.py:799 machine/models.py:39
-#: part/models.py:1246 plugin/models.py:68 stock/api.py:590 users/models.py:200
-#: users/models.py:1014 users/serializers.py:270
+#: part/models.py:1246 plugin/models.py:68 stock/api.py:590 users/models.py:201
+#: users/models.py:556 users/serializers.py:329
 msgid "Active"
 msgstr "Hoạt động"
 
@@ -1523,7 +1523,7 @@ msgstr "Hoạt động"
 msgid "Is this webhook active"
 msgstr "Webhook có hoạt động không"
 
-#: common/models.py:1346 users/models.py:177
+#: common/models.py:1346 users/models.py:178
 msgid "Token"
 msgstr "Chữ ký số"
 
@@ -1966,37 +1966,37 @@ msgstr "Kết quả"
 msgid "Was the barcode scan successful?"
 msgstr ""
 
-#: common/notifications.py:331
+#: common/notifications.py:332
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr "Mới {verbose_name}"
 
-#: common/notifications.py:333
+#: common/notifications.py:334
 msgid "A new order has been created and assigned to you"
 msgstr "Một đơn đặt hàng mới đã được tạo và phân công cho bạn"
 
-#: common/notifications.py:339
+#: common/notifications.py:340
 #, python-brace-format
 msgid "{verbose_name} canceled"
 msgstr "{verbose_name} đã bị hủy"
 
-#: common/notifications.py:341
+#: common/notifications.py:342
 msgid "A order that is assigned to you was canceled"
 msgstr "Một đơn đặt từng được phân công cho bạn đã bị hủy bỏ"
 
-#: common/notifications.py:347 common/notifications.py:354 order/api.py:559
+#: common/notifications.py:348 common/notifications.py:355 order/api.py:559
 msgid "Items Received"
 msgstr "Mục đã nhận"
 
-#: common/notifications.py:349
+#: common/notifications.py:350
 msgid "Items have been received against a purchase order"
 msgstr "Hàng đã được nhận theo đơn đặt mua"
 
-#: common/notifications.py:356
+#: common/notifications.py:357
 msgid "Items have been received against a return order"
 msgstr "Hàng đã nhận theo đơn hàng trả lại"
 
-#: common/notifications.py:504
+#: common/notifications.py:505
 msgid "Error raised by plugin"
 msgstr "Lỗi được thông báo bởi phần mở rộng"
 
@@ -3543,7 +3543,7 @@ msgid "Contact email address"
 msgstr "Địa chỉ email liên hệ"
 
 #: company/models.py:142 company/models.py:274 order/models.py:500
-#: users/models.py:1021
+#: users/models.py:563
 msgid "Contact"
 msgstr "Liên hệ"
 
@@ -3886,7 +3886,7 @@ msgstr ""
 msgid "Custom status key"
 msgstr ""
 
-#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:118
+#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:119
 msgid "Key"
 msgstr "Khóa"
 
@@ -4375,7 +4375,7 @@ msgid "Order reference"
 msgstr "Mã đặt hàng"
 
 #: order/models.py:611 order/models.py:1165 order/models.py:2428
-#: stock/serializers.py:604 stock/serializers.py:1002 users/models.py:1002
+#: stock/serializers.py:604 stock/serializers.py:1002 users/models.py:544
 msgid "Status"
 msgstr "Trạng thái"
 
@@ -4656,7 +4656,7 @@ msgstr "Số lượng phải là 1 cho hàng hóa sêri"
 msgid "Sales order does not match shipment"
 msgstr "Đơn bán hàng không phù hợp với vận đơn"
 
-#: order/models.py:2247 plugin/base/barcodes/api.py:652
+#: order/models.py:2247 plugin/base/barcodes/api.py:642
 msgid "Shipment does not match sales order"
 msgstr "Vận đơn không phù hợp với đơn bán hàng"
 
@@ -4871,7 +4871,7 @@ msgstr "Chọn vị trí đích cho hàng hóa đã nhận"
 msgid "Enter batch code for incoming stock items"
 msgstr "Nhập mã lô cho hàng trong kho đang đến"
 
-#: order/serializers.py:783 stock/models.py:1073 users/models.py:142
+#: order/serializers.py:783 stock/models.py:1073 users/models.py:143
 msgid "Expiry Date"
 msgstr "Ngày hết hạn"
 
@@ -5155,7 +5155,7 @@ msgstr ""
 msgid "Part Category"
 msgstr "Danh mục sản phẩm"
 
-#: part/models.py:91 users/models.py:220
+#: part/models.py:91 users/ruleset.py:32
 msgid "Part Categories"
 msgstr "Danh mục sản phẩm"
 
@@ -5197,7 +5197,7 @@ msgid "You cannot make this part category structural because some parts are alre
 msgstr "Bạn không thể thay đổi cấu trúc nhóm sản phẩm này vì một số sản phẩm đã được gắn với nó rồi!"
 
 #: part/models.py:458 part/serializers.py:129 part/serializers.py:338
-#: users/models.py:221
+#: users/ruleset.py:33
 msgid "Parts"
 msgstr "Nguyên liệu"
 
@@ -6067,7 +6067,7 @@ msgid "Building"
 msgstr "Đang dựng"
 
 #: part/serializers.py:934 part/stocktake.py:223 stock/serializers.py:1076
-#: stock/serializers.py:1252 users/models.py:224
+#: stock/serializers.py:1252 users/ruleset.py:36
 msgid "Stock Items"
 msgstr "Hàng trong kho"
 
@@ -6362,63 +6362,63 @@ msgstr ""
 msgid "Barcode matches existing item"
 msgstr "Mã vạch phù hợp với hàng hóa hiện có"
 
-#: plugin/base/barcodes/api.py:428
+#: plugin/base/barcodes/api.py:418
 msgid "No matching part data found"
 msgstr "Không tìm thấy thông tin sản phẩm phù hợp"
 
-#: plugin/base/barcodes/api.py:444
+#: plugin/base/barcodes/api.py:434
 msgid "No matching supplier parts found"
 msgstr "Không tìm thấy sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:447
+#: plugin/base/barcodes/api.py:437
 msgid "Multiple matching supplier parts found"
 msgstr "Tìm thấy nhiều sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:460 plugin/base/barcodes/api.py:687
+#: plugin/base/barcodes/api.py:450 plugin/base/barcodes/api.py:677
 msgid "No matching plugin found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:470
+#: plugin/base/barcodes/api.py:460
 msgid "Matched supplier part"
 msgstr "Sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:538
+#: plugin/base/barcodes/api.py:528
 msgid "Item has already been received"
 msgstr "Hàng hóa này đã được nhận"
 
-#: plugin/base/barcodes/api.py:586
+#: plugin/base/barcodes/api.py:576
 msgid "No plugin match for supplier barcode"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:635
+#: plugin/base/barcodes/api.py:625
 msgid "Multiple matching line items found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:638
+#: plugin/base/barcodes/api.py:628
 msgid "No matching line item found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:684
+#: plugin/base/barcodes/api.py:674
 msgid "No sales order provided"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:693
+#: plugin/base/barcodes/api.py:683
 msgid "Barcode does not match an existing stock item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:709
+#: plugin/base/barcodes/api.py:699
 msgid "Stock item does not match line item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:739
+#: plugin/base/barcodes/api.py:729
 msgid "Insufficient stock available"
 msgstr "Kho không đủ hạn mức khả dụng"
 
-#: plugin/base/barcodes/api.py:752
+#: plugin/base/barcodes/api.py:742
 msgid "Stock item allocated to sales order"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:755
+#: plugin/base/barcodes/api.py:745
 msgid "Not enough information"
 msgstr "Không đủ thông tin"
 
@@ -7682,7 +7682,7 @@ msgstr "Biểu tượng mặc định cho vị trí không được đặt biể
 msgid "Stock Location"
 msgstr "Kho hàng"
 
-#: stock/models.py:156 users/models.py:223
+#: stock/models.py:156 users/ruleset.py:35
 msgid "Stock Locations"
 msgstr "Vị trí kho hàng"
 
@@ -7698,7 +7698,7 @@ msgstr "Chọn chủ sở hữu"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Không thể đưa trực tiếp hàng trong kho vào bên trong vị trí kho hàng có cấu trúc, nhưng có thể đặt vào kho con."
 
-#: stock/models.py:221 users/models.py:957
+#: stock/models.py:221 users/models.py:499
 msgid "External"
 msgstr "Bên ngoài"
 
@@ -8048,7 +8048,7 @@ msgstr "Sử dụng kích thước đóng gói khi thêm: Số lượng được
 msgid "Supplier Part Number"
 msgstr "Số hiệu hàng hoá nhà cung cấp"
 
-#: stock/serializers.py:657 users/models.py:192
+#: stock/serializers.py:657 users/models.py:193
 msgid "Expired"
 msgstr "Đã hết hạn"
 
@@ -8479,31 +8479,27 @@ msgstr "Số lượng tối thiểu"
 msgid "You are receiving this email because you are subscribed to notifications for this part or a category that it is part of "
 msgstr ""
 
-#: users/admin.py:100
+#: users/admin.py:101
 msgid "Users"
 msgstr "Người dùng"
 
-#: users/admin.py:101
+#: users/admin.py:102
 msgid "Select which users are assigned to this group"
 msgstr "Chọn người dùng được chỉ định cho nhóm này"
 
-#: users/admin.py:253
-msgid "The following users are members of multiple groups"
-msgstr "Người dùng sau là thành viên của nhiều nhóm"
-
-#: users/admin.py:287
+#: users/admin.py:137
 msgid "Personal info"
 msgstr "Thông tin cá nhân"
 
-#: users/admin.py:289
+#: users/admin.py:139
 msgid "Permissions"
 msgstr "Quyền"
 
-#: users/admin.py:292
+#: users/admin.py:142
 msgid "Important dates"
 msgstr "Ngày quan trọng"
 
-#: users/authentication.py:29 users/models.py:156
+#: users/authentication.py:29 users/models.py:157
 msgid "Token has been revoked"
 msgstr "Mã thông báo đã bị thu hồi"
 
@@ -8511,251 +8507,255 @@ msgstr "Mã thông báo đã bị thu hồi"
 msgid "Token has expired"
 msgstr "Mã thông báo đã hết hạn"
 
-#: users/models.py:99
+#: users/models.py:100
 msgid "API Token"
 msgstr "Mã thông báo API"
 
-#: users/models.py:100
+#: users/models.py:101
 msgid "API Tokens"
 msgstr "Mã thông báo API"
 
-#: users/models.py:136
+#: users/models.py:137
 msgid "Token Name"
 msgstr "Tên mã thông báo"
 
-#: users/models.py:137
+#: users/models.py:138
 msgid "Custom token name"
 msgstr "Tên tùy chỉnh mã thông báo"
 
-#: users/models.py:143
+#: users/models.py:144
 msgid "Token expiry date"
 msgstr "Ngày hết hạn mã thông báo"
 
-#: users/models.py:151
+#: users/models.py:152
 msgid "Last Seen"
 msgstr "Xem lần cuối"
 
-#: users/models.py:152
+#: users/models.py:153
 msgid "Last time the token was used"
 msgstr "Lần cuối mã thông báo được sử dụng"
 
-#: users/models.py:156
+#: users/models.py:157
 msgid "Revoked"
 msgstr "Đã thu hồi"
 
-#: users/models.py:219
-msgid "Admin"
-msgstr "Quản trị"
-
-#: users/models.py:222
-msgid "Stocktake"
-msgstr "Kiểm kê"
-
-#: users/models.py:226
-msgid "Purchase Orders"
-msgstr "Đơn mua hàng"
-
-#: users/models.py:227
-msgid "Sales Orders"
-msgstr "Đơn hàng bán"
-
-#: users/models.py:228
-msgid "Return Orders"
-msgstr "Đơn hàng trả lại"
-
-#: users/models.py:402
+#: users/models.py:235
 msgid "Permission set"
 msgstr "Quyền hạn đã đặt"
 
-#: users/models.py:411
+#: users/models.py:244
 msgid "Group"
 msgstr "Nhóm"
 
-#: users/models.py:415
+#: users/models.py:248
 msgid "View"
 msgstr "Xem"
 
-#: users/models.py:415
+#: users/models.py:248
 msgid "Permission to view items"
 msgstr "Quyền để xem mục"
 
-#: users/models.py:419
+#: users/models.py:252
 msgid "Add"
 msgstr "Thêm"
 
-#: users/models.py:419
+#: users/models.py:252
 msgid "Permission to add items"
 msgstr "Quyền để thêm mục"
 
-#: users/models.py:423
+#: users/models.py:256
 msgid "Change"
 msgstr "Đổi"
 
-#: users/models.py:425
+#: users/models.py:258
 msgid "Permissions to edit items"
 msgstr "Quyển để sửa mục"
 
-#: users/models.py:429
+#: users/models.py:262
 msgid "Delete"
 msgstr "Xóa"
 
-#: users/models.py:431
+#: users/models.py:264
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
-#: users/models.py:955
+#: users/models.py:497
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:956
+#: users/models.py:498
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:958
+#: users/models.py:500
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:967
+#: users/models.py:509
 msgid "Language"
 msgstr ""
 
-#: users/models.py:968
+#: users/models.py:510
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:973
+#: users/models.py:515
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:974
+#: users/models.py:516
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:979
+#: users/models.py:521
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:981
+#: users/models.py:523
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:988
+#: users/models.py:530
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:989
+#: users/models.py:531
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:995
+#: users/models.py:537
 msgid "Position"
 msgstr ""
 
-#: users/models.py:996
+#: users/models.py:538
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:1003
+#: users/models.py:545
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:1010
+#: users/models.py:552
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:1015
+#: users/models.py:557
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:1022
+#: users/models.py:564
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:1028
+#: users/models.py:570
 msgid "User Type"
 msgstr ""
 
-#: users/models.py:1029
+#: users/models.py:571
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:1035
+#: users/models.py:577
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:1036
+#: users/models.py:578
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:1044
+#: users/models.py:586
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:1045
+#: users/models.py:587
 msgid "Primary group for the user"
 msgstr ""
 
-#: users/serializers.py:225
+#: users/ruleset.py:31
+msgid "Admin"
+msgstr "Quản trị"
+
+#: users/ruleset.py:34
+msgid "Stocktake"
+msgstr "Kiểm kê"
+
+#: users/ruleset.py:38
+msgid "Purchase Orders"
+msgstr "Đơn mua hàng"
+
+#: users/ruleset.py:39
+msgid "Sales Orders"
+msgstr "Đơn hàng bán"
+
+#: users/ruleset.py:40
+msgid "Return Orders"
+msgstr "Đơn hàng trả lại"
+
+#: users/serializers.py:236
 msgid "Username"
 msgstr "Tên người dùng"
 
-#: users/serializers.py:228
+#: users/serializers.py:239
 msgid "First Name"
 msgstr "Tên"
 
-#: users/serializers.py:228
+#: users/serializers.py:239
 msgid "First name of the user"
 msgstr "Họ người dùng"
 
-#: users/serializers.py:232
+#: users/serializers.py:243
 msgid "Last Name"
 msgstr "Họ"
 
-#: users/serializers.py:232
+#: users/serializers.py:243
 msgid "Last name of the user"
 msgstr "Tên người dùng"
 
-#: users/serializers.py:236
+#: users/serializers.py:247
 msgid "Email address of the user"
 msgstr "Địa chỉ email của người dùng"
 
-#: users/serializers.py:262
+#: users/serializers.py:319
 msgid "Staff"
 msgstr "Nhân viên"
 
-#: users/serializers.py:262
+#: users/serializers.py:320
 msgid "Does this user have staff permissions"
 msgstr "Người dùng có quyền nhân viên"
 
-#: users/serializers.py:266
+#: users/serializers.py:325
 msgid "Superuser"
 msgstr "Superuser"
 
-#: users/serializers.py:266
+#: users/serializers.py:325
 msgid "Is this user a superuser"
 msgstr "Người dùng này là superuser"
 
-#: users/serializers.py:270
+#: users/serializers.py:329
 msgid "Is this user account active"
 msgstr "Tài khoản người dùng đang hoạt động"
 
-#: users/serializers.py:290
-msgid "You do not have permission to change this user role."
-msgstr "Bạn không có quyền thay đổi vai trò của người dùng này."
+#: users/serializers.py:341
+msgid "Only a superuser can adjust this field"
+msgstr ""
 
-#: users/serializers.py:328
-msgid "Only superusers can create new users"
-msgstr "Chỉ có siêu người dùng là có thể tạo người dùng mới"
+#: users/serializers.py:395
+msgid "Only staff users can create new users"
+msgstr ""
 
-#: users/serializers.py:348
+#: users/serializers.py:400
+msgid "You do not have permission to create users"
+msgstr ""
+
+#: users/serializers.py:421
 msgid "Your account has been created."
 msgstr "Tài khoản của bạn đã được tạo."
 
-#: users/serializers.py:350
+#: users/serializers.py:423
 msgid "Please use the password reset function to login"
 msgstr "Xin hãy sử dụng chức năng tạo lại mật khẩu để đăng nhập"
 
-#: users/serializers.py:356
+#: users/serializers.py:429
 msgid "Welcome to InvenTree"
 msgstr "Chào mừng đến với InvenTree"
 

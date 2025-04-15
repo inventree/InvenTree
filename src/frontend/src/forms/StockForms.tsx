@@ -14,6 +14,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -33,8 +34,10 @@ import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
+import { getDetailUrl } from '../functions/urls';
 import {
   type ApiFormModalProps,
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
@@ -1295,4 +1298,57 @@ export function useTestResultFields({
     templateId,
     includeTestStation
   ]);
+}
+
+/**
+ * Modal form for finding a particular stock item by serial number
+ */
+export function useFindSerialNumberForm({
+  partId
+}: {
+  partId: number;
+}) {
+  const navigate = useNavigate();
+
+  return useApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_item_list),
+    fetchInitialData: false,
+    method: 'GET',
+    title: t`Find Serial Number`,
+    fields: {
+      serial: {},
+      part_tree: {
+        value: partId,
+        hidden: true,
+        field_type: 'integer'
+      }
+    },
+    checkClose: (data, form) => {
+      if (data.length == 0) {
+        form.setError('serial', { message: t`No matching items` });
+        return false;
+      }
+
+      if (data.length > 1) {
+        form.setError('serial', {
+          message: t`Multiple matching items`
+        });
+        return false;
+      }
+
+      if (data[0].pk) {
+        return true;
+      } else {
+        form.setError('serial', {
+          message: t`Invalid response from server`
+        });
+        return false;
+      }
+    },
+    onFormSuccess: (data) => {
+      if (data.length == 1 && data[0].pk) {
+        navigate(getDetailUrl(ModelType.stockitem, data[0].pk));
+      }
+    }
+  });
 }

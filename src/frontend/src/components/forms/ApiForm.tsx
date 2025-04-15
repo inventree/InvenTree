@@ -19,6 +19,7 @@ import {
   FormProvider,
   type SubmitErrorHandler,
   type SubmitHandler,
+  type UseFormReturn,
   useForm
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -71,6 +72,7 @@ export interface ApiFormAction {
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
  * @param processFormData : A callback function to process the form data before submission
+ * @param checkClose: A callback function to check if the form can be closed after submission
  * @param modelType : Define a model type for this form
  * @param follow : Boolean, follow the result of the form (if possible)
  * @param table : Table to update on success (if provided)
@@ -94,9 +96,10 @@ export interface ApiFormProps {
   preFormSuccess?: string;
   postFormContent?: JSX.Element;
   successMessage?: string | null;
-  onFormSuccess?: (data: any) => void;
-  onFormError?: (response: any) => void;
-  processFormData?: (data: any) => any;
+  onFormSuccess?: (data: any, form: UseFormReturn) => void;
+  onFormError?: (response: any, form: UseFormReturn) => void;
+  processFormData?: (data: any, form: UseFormReturn) => any;
+  checkClose?: (data: any, form: UseFormReturn) => boolean;
   table?: TableState;
   modelType?: ModelType;
   follow?: boolean;
@@ -414,7 +417,7 @@ export function ApiForm({
 
     // Optionally pre-process the data before submitting it
     if (props.processFormData) {
-      data = props.processFormData(data);
+      data = props.processFormData(data, form);
     }
 
     const jsonData = { ...data };
@@ -474,7 +477,7 @@ export function ApiForm({
 
             if (props.onFormSuccess) {
               // A custom callback hook is provided
-              props.onFormSuccess(response.data);
+              props.onFormSuccess(response.data, form);
             }
 
             if (props.follow && props.modelType && response.data?.pk) {
@@ -507,7 +510,7 @@ export function ApiForm({
           default:
             // Unexpected state on form success
             invalidResponse(response.status);
-            props.onFormError?.(response);
+            props.onFormError?.(response, form);
             break;
         }
 
@@ -572,18 +575,18 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
-              props.onFormError?.(error);
+              props.onFormError?.(error, form);
 
               break;
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);
-              props.onFormError?.(error);
+              props.onFormError?.(error, form);
               break;
           }
         } else {
           showTimeoutNotification();
-          props.onFormError?.(error);
+          props.onFormError?.(error, form);
         }
 
         return error;
@@ -592,7 +595,7 @@ export function ApiForm({
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(
     (error: any) => {
-      props.onFormError?.(error);
+      props.onFormError?.(error, form);
     },
     [props.onFormError]
   );
