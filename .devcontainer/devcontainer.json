@@ -51,11 +51,6 @@
     }
   },
 
-  "runArgs": [
-    "-p",
-    "8000:8000"
-  ],
-
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
 
