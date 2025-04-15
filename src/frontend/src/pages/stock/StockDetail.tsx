@@ -980,7 +980,7 @@ export default function StockDetail() {
         loading={instanceQuery.isFetching}
       >
         <Stack>
-          {user.hasViewRole(UserRoles.stock_location) && (
+          {user.hasViewRole(UserRoles.stock) && (
             <NavigationTree
               title={t`Stock Locations`}
               modelType={ModelType.stocklocation}
@@ -998,9 +998,7 @@ export default function StockDetail() {
             editEnabled={user.hasChangePermission(ModelType.stockitem)}
             badges={stockBadges}
             breadcrumbs={
-              user.hasViewRole(UserRoles.stock_location)
-                ? breadcrumbs
-                : undefined
+              user.hasViewRole(UserRoles.stock) ? breadcrumbs : undefined
             }
             lastCrumb={[
               {

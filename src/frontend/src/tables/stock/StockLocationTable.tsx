@@ -132,8 +132,8 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   });
 
   const tableActions = useMemo(() => {
-    const can_add = user.hasAddRole(UserRoles.stock_location);
-    const can_edit = user.hasChangeRole(UserRoles.stock_location);
+    const can_add = user.hasAddRole(UserRoles.stock);
+    const can_edit = user.hasChangeRole(UserRoles.stock);
 
     return [
       <ActionDropdown
@@ -164,7 +164,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      const can_edit = user.hasChangeRole(UserRoles.stock_location);
+      const can_edit = user.hasChangeRole(UserRoles.stock);
 
       return [
         RowEditAction({

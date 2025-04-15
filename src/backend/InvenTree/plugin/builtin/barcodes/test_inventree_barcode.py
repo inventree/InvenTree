@@ -209,7 +209,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             data={'barcode': barcode, 'stocklocation': 1}, expected_code=403
         )
 
-        self.assignRole('stock_location.change')
+        self.assignRole('stock.change')
 
         # Assign random barcode data to a StockLocation instance
         response = self.assign(

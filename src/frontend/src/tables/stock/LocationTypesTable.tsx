@@ -84,14 +84,14 @@ export default function LocationTypesTable() {
     (record: any): RowAction[] => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.stock_location),
+          hidden: !user.hasChangeRole(UserRoles.stock),
           onClick: () => {
             setSelectedLocationType(record.pk);
             editLocationType.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.stock_location),
+          hidden: !user.hasDeleteRole(UserRoles.stock),
           onClick: () => {
             setSelectedLocationType(record.pk);
             deleteLocationType.open();
@@ -108,7 +108,7 @@ export default function LocationTypesTable() {
         key='add-location-type'
         tooltip={t`Add Location Type`}
         onClick={() => newLocationType.open()}
-        hidden={!user.hasAddRole(UserRoles.stock_location)}
+        hidden={!user.hasAddRole(UserRoles.stock)}
       />
     ];
   }, [user]);

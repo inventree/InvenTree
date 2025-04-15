@@ -241,12 +241,12 @@ export default function CategoryDetail() {
         tooltip={t`Category Actions`}
         actions={[
           EditItemAction({
-            hidden: !id || !user.hasChangeRole(UserRoles.part_category),
+            hidden: !id || !user.hasChangeRole(UserRoles.part),
             tooltip: t`Edit Part Category`,
             onClick: () => editCategory.open()
           }),
           DeleteItemAction({
-            hidden: !id || !user.hasDeleteRole(UserRoles.part_category),
+            hidden: !id || !user.hasDeleteRole(UserRoles.part),
             tooltip: t`Delete Part Category`,
             onClick: () => deleteCategory.open()
           })
@@ -327,7 +327,7 @@ export default function CategoryDetail() {
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
-        requiredRole={UserRoles.part_category}
+        requiredRole={UserRoles.part}
       >
         <Stack gap='xs'>
           <LoadingOverlay visible={instanceQuery.isFetching} />

@@ -281,7 +281,7 @@ export default function Stock() {
           model={ModelType.stocklocation}
           pk={location.pk}
           hash={location?.barcode_hash}
-          perm={user.hasChangeRole(UserRoles.stock_location)}
+          perm={user.hasChangeRole(UserRoles.stock)}
           actions={[
             {
               name: 'Scan in stock items',
@@ -331,12 +331,12 @@ export default function Stock() {
         tooltip={t`Location Actions`}
         actions={[
           EditItemAction({
-            hidden: !id || !user.hasChangeRole(UserRoles.stock_location),
+            hidden: !id || !user.hasChangeRole(UserRoles.stock),
             tooltip: t`Edit Stock Location`,
             onClick: () => editLocation.open()
           }),
           DeleteItemAction({
-            hidden: !id || !user.hasDeleteRole(UserRoles.stock_location),
+            hidden: !id || !user.hasDeleteRole(UserRoles.stock),
             tooltip: t`Delete Stock Location`,
             onClick: () => deleteLocation.open()
           })
@@ -365,7 +365,7 @@ export default function Stock() {
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
-        requiredRole={UserRoles.stock_location}
+        requiredRole={UserRoles.stock}
       >
         <Stack>
           <NavigationTree

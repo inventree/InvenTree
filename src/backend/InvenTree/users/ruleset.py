@@ -14,10 +14,8 @@ class RuleSetEnum(str, enum.Enum):
         return str(self.value)
 
     ADMIN = 'admin'
-    PART_CATEGORY = 'part_category'
     PART = 'part'
     STOCKTAKE = 'stocktake'
-    STOCK_LOCATION = 'stock_location'
     STOCK = 'stock'
     BUILD = 'build'
     PURCHASE_ORDER = 'purchase_order'
@@ -29,10 +27,8 @@ class RuleSetEnum(str, enum.Enum):
 # These are used to determine the permissions available to a group of users.
 RULESET_CHOICES = [
     (RuleSetEnum.ADMIN, _('Admin')),
-    (RuleSetEnum.PART_CATEGORY, _('Part Categories')),
     (RuleSetEnum.PART, _('Parts')),
     (RuleSetEnum.STOCKTAKE, _('Stocktake')),
-    (RuleSetEnum.STOCK_LOCATION, _('Stock Locations')),
     (RuleSetEnum.STOCK, _('Stock Items')),
     (RuleSetEnum.BUILD, _('Build Orders')),
     (RuleSetEnum.PURCHASE_ORDER, _('Purchase Orders')),
@@ -85,11 +81,6 @@ def get_ruleset_models() -> dict:
             'machine_machineconfig',
             'machine_machinesetting',
         ],
-        RuleSetEnum.PART_CATEGORY: [
-            'part_partcategory',
-            'part_partcategoryparametertemplate',
-            'part_partcategorystar',
-        ],
         RuleSetEnum.PART: [
             'part_part',
             'part_partpricing',
@@ -102,17 +93,20 @@ def get_ruleset_models() -> dict:
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_partcategory',
             'part_partcategorystar',
+            'part_partcategoryparametertemplate',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
         ],
         RuleSetEnum.STOCKTAKE: ['part_partstocktake', 'part_partstocktakereport'],
-        RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
         RuleSetEnum.STOCK: [
             'stock_stockitem',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',
+            'stock_stocklocation',
+            'stock_stocklocationtype',
         ],
         RuleSetEnum.BUILD: [
             'part_part',
