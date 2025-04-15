@@ -34,6 +34,12 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
@@ -44,7 +50,6 @@ import {
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -65,9 +70,6 @@ import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
@@ -76,14 +78,12 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -1071,6 +1071,7 @@ export default function PartDetail() {
             pageKey='part'
             panels={partPanels}
             instance={part}
+            reloadInstance={refreshInstance}
             model={ModelType.part}
             id={part.pk}
           />

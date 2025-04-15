@@ -10,6 +10,10 @@ import {
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
@@ -28,11 +32,7 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -360,6 +360,7 @@ export default function CategoryDetail() {
             panels={panels}
             model={ModelType.partcategory}
             instance={category}
+            reloadInstance={refreshInstance}
             id={category.pk ?? null}
           />
         </Stack>

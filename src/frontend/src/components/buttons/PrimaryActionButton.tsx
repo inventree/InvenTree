@@ -1,6 +1,7 @@
 import { Button, Tooltip } from '@mantine/core';
 
-import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
+import type { InvenTreeIconType } from '@lib/types/Icons';
+import { InvenTreeIcon } from '../../functions/icons';
 
 /**
  * A "primary action" button for display on a page detail, (for example)
@@ -15,7 +16,7 @@ export default function PrimaryActionButton({
 }: Readonly<{
   title: string;
   tooltip?: string;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   color?: string;
   hidden?: boolean;
   onClick: () => void;

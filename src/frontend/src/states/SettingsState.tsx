@@ -3,22 +3,17 @@
  */
 import { create, createStore } from 'zustand';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { PathParams } from '@lib/types/Core';
+import type {
+  Setting,
+  SettingsLookup,
+  SettingsStateProps
+} from '@lib/types/Settings';
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
-import { type PathParams, apiUrl } from './ApiState';
 import { useUserState } from './UserState';
-import type { Setting, SettingsLookup } from './states';
-
-export interface SettingsStateProps {
-  settings: Setting[];
-  lookup: SettingsLookup;
-  fetchSettings: () => Promise<boolean>;
-  endpoint: ApiEndpoints;
-  pathParams?: PathParams;
-  getSetting: (key: string, default_value?: string) => string; // Return a raw setting value
-  isSet: (key: string, default_value?: boolean) => boolean; // Check a "boolean" setting
-}
 
 /**
  * State management for global (server side) settings

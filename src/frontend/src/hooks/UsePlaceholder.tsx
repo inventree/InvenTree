@@ -2,9 +2,9 @@ import { t } from '@lingui/core/macro';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
 
 /**
  * Hook for generating a placeholder text for a serial number input

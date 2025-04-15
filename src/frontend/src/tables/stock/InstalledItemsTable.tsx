@@ -3,17 +3,17 @@ import { Skeleton } from '@mantine/core';
 import { IconUnlink } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   useStockItemInstallFields,
   useStockItemUninstallFields
 } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { PartColumn, StatusColumn } from '../ColumnRenderers';

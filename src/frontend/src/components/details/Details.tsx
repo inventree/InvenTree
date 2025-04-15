@@ -17,14 +17,15 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
@@ -35,7 +36,7 @@ import { StatusRenderer } from '../render/StatusRenderer';
 
 export type DetailsField = {
   hidden?: boolean;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   name: string;
   label?: string;
   badge?: BadgeType;
@@ -464,7 +465,7 @@ export function DetailsTableField({
       <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
         <Group gap='xs' wrap='nowrap'>
           <InvenTreeIcon
-            icon={field.icon ?? (field.name as InvenTreeIconType)}
+            icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
           />
           <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
         </Group>
