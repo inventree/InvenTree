@@ -1,3 +1,5 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -13,8 +15,6 @@ import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconReload } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 
 export interface RuleSet {
   pk?: number;
