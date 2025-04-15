@@ -44,14 +44,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock_tests',
     ]
 
-    roles = [
-        'stock.change',
-        'stock.add',
-        'stock_location.change',
-        'stock_location.add',
-        'stock_location.delete',
-        'stock.delete',
-    ]
+    roles = ['stock.change', 'stock.add', 'stock.delete']
 
 
 class StockLocationTest(StockAPITestCase):
@@ -2362,7 +2355,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
         'stock_tests',
     ]
 
-    roles = ['stock.change', 'stock_location.change']
+    roles = ['stock.change']
 
     def metatester(self, apikey, model):
         """Generic tester."""

@@ -42,13 +42,7 @@ from stock.status_codes import StockStatus
 class PartImageTestMixin:
     """Mixin for testing part images."""
 
-    roles = [
-        'part.change',
-        'part.add',
-        'part.delete',
-        'part_category.change',
-        'part_category.add',
-    ]
+    roles = ['part.change', 'part.add', 'part.delete']
 
     @classmethod
     def setUpTestData(cls):
@@ -98,14 +92,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         'stock',
     ]
 
-    roles = [
-        'part.change',
-        'part.add',
-        'part.delete',
-        'part_category.change',
-        'part_category.add',
-        'part_category.delete',
-    ]
+    roles = ['part.change', 'part.add', 'part.delete']
 
     def test_category_list(self):
         """Test the PartCategoryList API endpoint."""
@@ -636,7 +623,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
     Ensure that the required field details are provided!
     """
 
-    roles = ['part.add', 'part_category.view']
+    roles = ['part.add', 'part.view']
 
     def test_part(self):
         """Test the Part API OPTIONS."""
@@ -724,7 +711,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         # actions should *not* contain 'POST' as we do not have the correct role
         self.assertNotIn('POST', actions)
 
-        self.assignRole('part_category.add')
+        self.assignRole('part.add')
 
         actions = self.getActions(reverse('api-part-category-list'))['POST']
 
@@ -777,13 +764,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'stock',
     ]
 
-    roles = [
-        'part.change',
-        'part.add',
-        'part.delete',
-        'part_category.change',
-        'part_category.add',
-    ]
+    roles = ['part.change', 'part.add', 'part.delete']
 
 
 class PartAPITest(PartAPITestBase):
@@ -2750,14 +2731,7 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
         'stock',
     ]
 
-    roles = [
-        'part.change',
-        'part.add',
-        'part.delete',
-        'part_category.change',
-        'part_category.add',
-        'part_category.delete',
-    ]
+    roles = ['part.change', 'part.add', 'part.delete']
 
     def test_create_price_breaks(self):
         """Test we can create price breaks at various quantities."""
@@ -2975,7 +2949,7 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
         'stock',
     ]
 
-    roles = ['part.change', 'part_category.change']
+    roles = ['part.change']
 
     def setUp(self):
         """Setup unit tets."""
