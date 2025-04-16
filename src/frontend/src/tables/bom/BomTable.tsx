@@ -22,11 +22,11 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
+import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
-import { bomItemFields } from '../../forms/BomForms';
+import { bomItemFields, useEditBomSubstitutesForm } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -145,12 +145,17 @@ export function BomTable({
       },
       {
         accessor: 'substitutes',
-        // TODO: Show hovercard with list of substitutes
         render: (row) => {
           const substitutes = row.substitutes ?? [];
 
           return substitutes.length > 0 ? (
-            row.length
+            <TableHoverCard
+              value={<Text>{substitutes.length}</Text>}
+              title={t`Substitutes`}
+              extra={substitutes.map((sub: any) => (
+                <RenderPart instance={sub.part_detail} />
+              ))}
+            />
           ) : (
             <YesNoButton value={false} />
           );
@@ -363,7 +368,7 @@ export function BomTable({
     ];
   }, [partId, params]);
 
-  const [selectedBomItem, setSelectedBomItem] = useState<number>(0);
+  const [selectedBomItem, setSelectedBomItem] = useState<any>({});
 
   const importSessionFields = useMemo(() => {
     const fields = dataImporterSessionFields();
@@ -401,7 +406,7 @@ export function BomTable({
 
   const editBomItem = useEditApiFormModal({
     url: ApiEndpoints.bom_list,
-    pk: selectedBomItem,
+    pk: selectedBomItem.pk,
     title: t`Edit BOM Item`,
     fields: bomItemFields(),
     successMessage: t`BOM item updated`,
@@ -410,10 +415,18 @@ export function BomTable({
 
   const deleteBomItem = useDeleteApiFormModal({
     url: ApiEndpoints.bom_list,
-    pk: selectedBomItem,
+    pk: selectedBomItem.pk,
     title: t`Delete BOM Item`,
     successMessage: t`BOM item deleted`,
     table: table
+  });
+
+  const editSubstitues = useEditBomSubstitutesForm({
+    bomItemId: selectedBomItem.pk,
+    substitutes: selectedBomItem?.substitutes ?? [],
+    onClose: () => {
+      table.refreshTable();
+    }
   });
 
   const validateBom = useApiFormModal({
@@ -488,21 +501,24 @@ export function BomTable({
         RowEditAction({
           hidden: partLocked || !user.hasChangeRole(UserRoles.part),
           onClick: () => {
-            setSelectedBomItem(record.pk);
+            setSelectedBomItem(record);
             editBomItem.open();
           }
         }),
         {
           title: t`Edit Substitutes`,
           color: 'blue',
-          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
+          hidden: partLocked || !user.hasAddRole(UserRoles.part),
           icon: <IconSwitch3 />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedBomItem(record);
+            editSubstitues.open();
+          }
         },
         RowDeleteAction({
           hidden: partLocked || !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            setSelectedBomItem(record.pk);
+            setSelectedBomItem(record);
             deleteBomItem.open();
           }
         })
@@ -543,6 +559,7 @@ export function BomTable({
       {editBomItem.modal}
       {validateBom.modal}
       {deleteBomItem.modal}
+      {editSubstitues.modal}
       <Stack gap='xs'>
         {partLocked && (
           <Alert
