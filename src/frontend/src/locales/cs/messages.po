@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-11 04:25\n"
+"PO-Revision-Date: 2025-04-15 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -7454,7 +7454,7 @@ msgstr "Základní díl"
 
 #: src/pages/stock/StockDetail.tsx:156
 msgid "Completed Tests"
-msgstr "Dokončené testy"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:161
 #~ msgid "Unlink custom barcode from stock item"
