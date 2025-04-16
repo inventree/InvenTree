@@ -33,7 +33,6 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
-import report.models
 import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
@@ -692,6 +691,16 @@ class StockItem(
                 return item
 
         return None
+
+    @property
+    def get_next_stock_item(self):
+        """Return the 'next' stock item (based on serial number)."""
+        return self.get_next_serialized_item()
+
+    @property
+    def get_previous_stock_item(self):
+        """Return the 'previous' stock item (based on serial number)."""
+        return self.get_next_serialized_item(reverse=True)
 
     def save(self, *args, **kwargs):
         """Save this StockItem to the database.
@@ -1647,6 +1656,7 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
+            commit (boolm optional): If True, save the entry to the database. Defaults to True.
 
         Returns:
             StockItemTracking: The created tracking entry

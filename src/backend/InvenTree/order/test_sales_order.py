@@ -11,6 +11,7 @@ import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
+from InvenTree.unit_test import addUserPermission
 from order.models import (
     SalesOrder,
     SalesOrderAllocation,
@@ -318,7 +319,13 @@ class SalesOrderTest(TestCase):
 
     def test_overdue_notification(self):
         """Test overdue sales order notification."""
-        self.order.created_by = get_user_model().objects.get(pk=3)
+        user = get_user_model().objects.get(pk=3)
+
+        addUserPermission(user, 'order', 'salesorder', 'view')
+        user.is_active = True
+        user.save()
+
+        self.order.created_by = user
         self.order.responsible = Owner.create(obj=Group.objects.get(pk=2))
         self.order.target_date = datetime.now().date() - timedelta(days=1)
         self.order.save()

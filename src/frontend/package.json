@@ -1,11 +1,40 @@
 {
-    "name": "inventreeui",
-    "private": true,
-    "version": "0.1.0",
+    "name": "@inventreedb/ui",
+    "description": "UI components for the InvenTree project",
+    "version": "0.0.8",
+    "private": false,
     "type": "module",
+    "license": "MIT",
+    "keywords": [
+        "inventree"
+    ],
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "files": [
+        "dist",
+        "lib",
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
+    ],
+    "homepage": "https://inventree.org",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/inventree/inventree"
+    },
+    "author": {
+        "name": "InvenTree Developers",
+        "email": "support@inventree.org",
+        "url": "https://inventree.org",
+        "org": "InvenTree"
+    },
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "tsc && vite build --emptyOutDir",
+        "lib": "tsc --p ./tsconfig.lib.json && vite --config vite.lib.config.ts build",
         "preview": "vite preview",
         "extract": "lingui extract",
         "compile": "lingui compile --typescript"
@@ -81,7 +110,7 @@
         "@babel/runtime": "^7.27.0",
         "@codecov/vite-plugin": "^1.9.0",
         "@lingui/babel-plugin-lingui-macro": "^5.3.0",
-        "@lingui/cli": "^5.3.0",
+        "@lingui/cli": "^5.3.1",
         "@lingui/macro": "^5.3.0",
         "@playwright/test": "^1.51.1",
         "@types/node": "^22.14.0",
@@ -99,8 +128,9 @@
         "rollup": "^4.39.0",
         "rollup-plugin-license": "^3.6.0",
         "typescript": "^5.8.2",
-        "vite": "^6.2.5",
+        "vite": "^6.2.6",
         "vite-plugin-babel-macros": "^1.0.6",
+        "vite-plugin-dts": "^4.5.3",
         "vite-plugin-istanbul": "^6.0.2"
     }
 }

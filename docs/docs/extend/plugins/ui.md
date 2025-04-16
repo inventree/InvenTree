@@ -217,3 +217,47 @@ We are working to develop and distribute a library of custom InvenTree component
 ### Examples
 
 Refer to some of the existing InvenTree plugins linked above for examples of building custom UI plugins using the Mantine component library for seamless integration.
+
+## Building a User Interface Plugin
+
+The technology stack which allows custom plugins to hook into the InvenTree user interface utilizes the following components:
+
+- [React](https://react.dev)
+- [Mantine](https://mantine.dev)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/)
+
+While you don't need to be an expert in all of these technologies, it is recommended that you have a basic understanding of how they work together to build the InvenTree user interface. To get started, you should familiarize yourself with the frontend code (at `./src/frontend/`) as well as the vite configuration for the [InvenTree plugin creator](httsps://github.com/inventree/plugin-creator).
+
+### Bundled with InvenTree
+
+If a plugin is bundled with a separate copy of React libraries, issues may arise either due to version mismatches or because the React context is not shared between the InvenTree core and the plugin. This can lead to issues with rendering components, as the React context may not be shared between the two libraries.
+
+To avoid issues, the InvenTree UI provides globally accessible components, which can be used as external modules by the plugin. This allows the plugin to use the same React context as the InvenTree core, and ensures that the plugin is compatible with the InvenTree user interface.
+
+The following modules are provided as global objects at runtime:
+
+- `React`
+- `ReactDOM`
+- `ReactDOMClient`
+
+Additionally, for the Mantine library, the following modules are provided as global objects at runtime:
+
+- `@mantine/core`
+- `@mantine/hooks`
+- `@mantine/notifications`
+
+To use these modules in your plugin, they must be correctly *externalized* in the Vite configuration. Getting this right is crucial to ensure that the plugin is compatible with the InvenTree user interface. The [InvenTree plugin creator](https://github.com/inventree/plugin-creator) provides a good starting point for this configuration, and can be used to generate a new plugin with the correct configuration.
+
+!!! info "Bundled Version"
+    Keep in mind that the version of React and Mantine used in the InvenTree core may differ from the version used in your plugin. It is recommended to use the same version as the InvenTree core to avoid compatibility issues.
+
+### Plugin Creator
+
+The [InvenTree plugin creator](https://github.com/inventree/plugin-creator) provides an out-of-the-box setup for creating InvenTree plugins which integrate into the user interface. This includes a pre-configured Vite setup, which allows you to quickly get started with building your own custom UI plugins.
+
+Using the plugin creator tool is the recommended way to get started with building custom UI plugins for InvenTree, as it provides a solid foundation to build upon. It is also the only method which is officially supported by the InvenTree development team!
+
+### DIY
+
+Of course, you can also build your own custom UI plugins from scratch. This is a more advanced option, and requires a good understanding of the InvenTree codebase, as well as the technologies used to build the user interface. You are free to use other web technologies, however if you choose to do this, don't expect any support from the InvenTree development team. We will only provide support for plugins which are built using the recommended stack, and which follow the guidelines outlined in this documentation.

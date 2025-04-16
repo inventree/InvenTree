@@ -1227,6 +1227,17 @@ class StockDetail(StockApiMixin, RetrieveUpdateDestroyAPI):
     """API detail endpoint for a single StockItem instance."""
 
 
+class StockItemSerialNumbers(RetrieveAPI):
+    """View extra serial number information for a given stock item.
+
+    Provides information on the "previous" and "next" stock items,
+    based on the serial number of the given stock item.
+    """
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockSerializers.StockItemSerialNumbersSerializer
+
+
 class StockItemTestResultMixin:
     """Mixin class for the StockItemTestResult API endpoints."""
 
@@ -1511,8 +1522,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocation},
+                        MetadataView.as_view(model=StockLocation),
                         name='api-location-metadata',
                     ),
                     path('', StockLocationDetail.as_view(), name='api-location-detail'),
@@ -1530,8 +1540,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocationType},
+                        MetadataView.as_view(model=StockLocationType),
                         name='api-location-type-metadata',
                     ),
                     path(
@@ -1561,8 +1570,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockItemTestResult},
+                        MetadataView.as_view(model=StockItemTestResult),
                         name='api-stock-test-result-metadata',
                     ),
                     path(
@@ -1604,8 +1612,7 @@ stock_api_urls = [
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': StockItem},
+                MetadataView.as_view(model=StockItem),
                 name='api-stock-item-metadata',
             ),
             path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),
@@ -1618,6 +1625,11 @@ stock_api_urls = [
                 'uninstall/',
                 StockItemUninstall.as_view(),
                 name='api-stock-item-uninstall',
+            ),
+            path(
+                'serial-numbers/',
+                StockItemSerialNumbers.as_view(),
+                name='api-stock-item-serial-numbers',
             ),
             path('', StockDetail.as_view(), name='api-stock-detail'),
         ]),

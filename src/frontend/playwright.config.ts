@@ -88,6 +88,9 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:5173',
     headless: IS_CI ? true : undefined,
-    trace: 'on-first-retry'
+    trace: 'on-first-retry',
+    contextOptions: {
+      reducedMotion: 'reduce'
+    }
   }
 });
