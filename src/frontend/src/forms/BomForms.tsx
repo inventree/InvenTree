@@ -114,8 +114,7 @@ export function useEditBomSubstitutesForm(props: BomItemSubstituteFormProps) {
       },
       part: {
         filters: {
-          component: true,
-          exclude_id: props.bomItemId
+          component: true
         }
       }
     };
