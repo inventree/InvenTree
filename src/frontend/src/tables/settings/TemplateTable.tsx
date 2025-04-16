@@ -32,7 +32,6 @@ import type {
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
 import { identifierString } from '../../functions/conversion';
-import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -46,12 +45,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export type TemplateI = {
   pk: number;
@@ -273,11 +267,6 @@ export function TemplateTable({
             setSelectedTemplate(record.pk);
             editTemplate.open();
           }
-        }),
-        RowDuplicateAction({
-          hidden: true,
-          // TODO: Duplicate selected template
-          onClick: notYetImplemented
         }),
         RowDeleteAction({
           hidden: !user.hasDeletePermission(templateProps.modelType),
