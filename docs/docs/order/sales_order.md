@@ -6,9 +6,29 @@ title: Sales Orders
 
 Sales orders allow tracking of which stock items are sold to customers, therefore converting stock items / inventory into externally sold items.
 
-To access the sales order page, click on the <span class="badge inventree nav main"><span class='fas fa-truck'></span> Sell</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-list'></span> Sales Orders</span> option in the dropdown list.
+### View Sales Orders
+
+To navigate to the Sales Order display, select *Sales* from the main navigation menu, and *Sales Orders* from the sidebar:
+
+{% with id="sales_order_display", url="order/so_display.png", description="Sales Order Display" %}
+{% include "img.html" %}
+{% endwith %}
+
+The following view modes are available:
+
+#### Table View
+
+*Table View* provides a list of Sales Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
 {% with id="sales_order_list", url="order/so_list.png", description="Sales Order List" %}
+{% include "img.html" %}
+{% endwith %}
+
+#### Calendar View
+
+*Calendar View* shows a calendar display with outstanding sales orders.
+
+{% with id="sales_order_calendar", url="order/so_calendar.png", description="Sales Order Calendar" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -60,7 +80,7 @@ Fill out the rest of the form with the sales order information then click on <sp
 
 Each Sales Order is uniquely identified by its *Reference* field. Read more about [reference fields](../settings/reference.md).
 
-#### Add Line Items
+### Add Line Items
 
 On the sales order detail page, user can link parts to the sales order selecting the <span class="badge inventree nav side"><span class='fas fa-list-ol'></span> Line Items</span> tab then clicking on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> Add Line Item</span> button.
 
@@ -71,7 +91,7 @@ Once the "Add Line Item" form opens, select a part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
-#### Shipments
+## Shipments
 
 After all line items were added to the sales order, user needs to create one or more [shipments](#sales-order-shipments) in order to allocate stock for those parts.
 
@@ -82,7 +102,7 @@ In order to create a new shipment:
 
 Repeat the two steps above to create more shipments.
 
-#### Allocate Stock Items
+### Allocate Stock Items
 
 After shipments were created, user can either:
 
@@ -91,7 +111,7 @@ After shipments were created, user can either:
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
 
-#### Complete Shipment
+### Complete Shipment
 
 To complete a shipment, click on the <span class="badge inventree nav side"><span class='fas fa-truck-loading'></span> Pending Shipments</span> tab then click on <span class='fas fa-truck'></span> button shown in the shipment table.
 
@@ -99,16 +119,31 @@ Fill out the "Complete Shipment" form then click on <span class="badge inventree
 
 To view all the completed shipment, click on the <span class="badge inventree nav side"><span class='fas fa-truck'></span> Completed Shipments</span> tab. In the completed shipments table, click on the <span class='fas fa-plus'></span> icon next to each shipment reference to see the items and quantities which were shipped.
 
-### Complete Order
+## Complete Order
 
 Once all items in the sales order have been shipped, click on <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> to mark the sales order as shipped. Confirm then click on <span class="badge inventree confirm">Submit</span> to complete the order.
 
-### Cancel Order
+## Cancel Order
 
 To cancel the order, click on the <span class='fas fa-tools'></span> menu button next to the <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> button, then click on the "<span class='fas fa-tools'></span> Cancel Order" menu option. Confirm then click on the <span class="badge inventree confirm">Submit</span> to cancel the order.
 
+## Order Scheduling
 
-### Calendar view
+Sales orders can be scheduled for a future date, to allow for order scheduling.
+
+### Start Date
+
+The *Start Date* of the sales order is the date on which the order is scheduled to be issued, allowing work to begin on the order.
+
+### Target Date
+
+The *Target Date* of the sales order is the date on which the order is scheduled to be completed and shipped.
+
+### Overdue Orders
+
+If the *Target Date* of the sales order has passed, the order will be marked as *overdue*.
+
+## Calendar view
 
 Using the button to the top right of the list of Sales Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
 

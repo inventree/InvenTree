@@ -73,7 +73,7 @@ def annotate_on_order_quantity(reference: str = ''):
 
     Note that in addition to the 'quantity' on order, we must also take into account 'pack_quantity'.
     """
-    # Filter only 'active' purhase orders
+    # Filter only 'active' purchase orders
     # Filter only line with outstanding quantity
     order_filter = Q(
         order__status__in=PurchaseOrderStatusGroups.OPEN, quantity__gt=F('received')
@@ -112,8 +112,8 @@ def annotate_total_stock(reference: str = '', filter: Q = None):
     - Aggregates the 'quantity' of each relevant stock item
 
     Args:
-        reference: The relationship reference of the part from the current model e.g. 'part'
-        stock_filter: Q object which defines how to filter the stock items
+        reference (str): The relationship reference of the part from the current model e.g. 'part'
+        filter (Q): Q object which defines how to filter the stock items
     """
     # Stock filter only returns 'in stock' items
     stock_filter = stock.models.StockItem.IN_STOCK_FILTER

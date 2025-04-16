@@ -6,17 +6,16 @@ from copy import deepcopy
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-import tablib
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
@@ -24,6 +23,7 @@ from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
+import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
@@ -45,6 +45,12 @@ class InvenTreeMoneySerializer(MoneyField):
         kwargs['required'] = kwargs.get('required', False)
 
         super().__init__(*args, **kwargs)
+
+    def to_representation(self, obj):
+        """Convert the Money object to a decimal value for representation."""
+        val = super().to_representation(obj)
+
+        return float(val)
 
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
@@ -74,9 +80,14 @@ class InvenTreeMoneySerializer(MoneyField):
         ):
             return Money(amount, currency)
 
-        return amount
+        try:
+            fp_amount = float(amount)
+            return fp_amount
+        except Exception:
+            return amount
 
 
+@extend_schema_field(serializers.CharField())
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
     """Custom serializers for selecting currency option."""
 
@@ -101,6 +112,14 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
         if 'help_text' not in kwargs:
             kwargs['help_text'] = _('Select currency from available options')
+
+        if InvenTree.ready.isGeneratingSchema():
+            kwargs['help_text'] = (
+                kwargs['help_text']
+                + '\n\n'
+                + '\n'.join(f'* `{value}` - {label}' for value, label in choices)
+                + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
+            )
 
         super().__init__(*args, **kwargs)
 
@@ -391,153 +410,6 @@ class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSeria
     """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
 
 
-class UserSerializer(InvenTreeModelSerializer):
-    """Serializer for a User."""
-
-    class Meta:
-        """Metaclass defines serializer fields."""
-
-        model = User
-        fields = ['pk', 'username', 'first_name', 'last_name', 'email']
-
-        read_only_fields = ['username', 'email']
-
-    username = serializers.CharField(label=_('Username'), help_text=_('Username'))
-
-    first_name = serializers.CharField(
-        label=_('First Name'), help_text=_('First name of the user'), allow_blank=True
-    )
-
-    last_name = serializers.CharField(
-        label=_('Last Name'), help_text=_('Last name of the user'), allow_blank=True
-    )
-
-    email = serializers.EmailField(
-        label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
-    )
-
-
-class ExtendedUserSerializer(UserSerializer):
-    """Serializer for a User with a bit more info."""
-
-    from users.serializers import GroupSerializer
-
-    groups = GroupSerializer(read_only=True, many=True)
-
-    class Meta(UserSerializer.Meta):
-        """Metaclass defines serializer fields."""
-
-        fields = [
-            *UserSerializer.Meta.fields,
-            'groups',
-            'is_staff',
-            'is_superuser',
-            'is_active',
-        ]
-
-        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
-
-    is_staff = serializers.BooleanField(
-        label=_('Staff'), help_text=_('Does this user have staff permissions')
-    )
-
-    is_superuser = serializers.BooleanField(
-        label=_('Superuser'), help_text=_('Is this user a superuser')
-    )
-
-    is_active = serializers.BooleanField(
-        label=_('Active'), help_text=_('Is this user account active')
-    )
-
-    def validate(self, attrs):
-        """Expanded validation for changing user role."""
-        # Check if is_staff or is_superuser is in attrs
-        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
-        request_user = self.context['request'].user
-
-        if role_change:
-            if request_user.is_superuser:
-                # Superusers can change any role
-                pass
-            elif request_user.is_staff and 'is_superuser' not in attrs:
-                # Staff can change any role except is_superuser
-                pass
-            else:
-                raise PermissionDenied(
-                    _('You do not have permission to change this user role.')
-                )
-        return super().validate(attrs)
-
-
-class MeUserSerializer(ExtendedUserSerializer):
-    """API serializer specifically for the 'me' endpoint."""
-
-    class Meta(ExtendedUserSerializer.Meta):
-        """Metaclass options.
-
-        Extends the ExtendedUserSerializer.Meta options,
-        but ensures that certain fields are read-only.
-        """
-
-        read_only_fields = [
-            *ExtendedUserSerializer.Meta.read_only_fields,
-            'is_active',
-            'is_staff',
-            'is_superuser',
-        ]
-
-
-class UserCreateSerializer(ExtendedUserSerializer):
-    """Serializer for creating a new User."""
-
-    class Meta(ExtendedUserSerializer.Meta):
-        """Metaclass options for the UserCreateSerializer."""
-
-        # Prevent creation of users with superuser or staff permissions
-        read_only_fields = ['groups', 'is_staff', 'is_superuser']
-
-    def validate(self, attrs):
-        """Expanded valiadation for auth."""
-        # Check that the user trying to create a new user is a superuser
-        if not self.context['request'].user.is_superuser:
-            raise serializers.ValidationError(_('Only superusers can create new users'))
-
-        # Generate a random password
-        password = User.objects.make_random_password(length=14)
-        attrs.update({'password': password})
-        return super().validate(attrs)
-
-    def create(self, validated_data):
-        """Send an e email to the user after creation."""
-        from InvenTree.helpers_model import get_base_url
-        from InvenTree.tasks import email_user, offload_task
-
-        base_url = get_base_url()
-
-        instance = super().create(validated_data)
-
-        # Make sure the user cannot login until they have set a password
-        instance.set_unusable_password()
-
-        message = (
-            _('Your account has been created.')
-            + '\n\n'
-            + _('Please use the password reset function to login')
-        )
-
-        if base_url:
-            message += f'\n\nURL: {base_url}'
-
-        subject = _('Welcome to InvenTree')
-
-        # Send the user an onboarding email (from current site)
-        offload_task(
-            email_user, instance.pk, str(subject), str(message), force_async=True
-        )
-
-        return instance
-
-
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """Override the DRF native FileField serializer, to remove the leading server path.
 
@@ -594,269 +466,6 @@ class InvenTreeDecimalField(serializers.FloatField):
             raise serializers.ValidationError(_('Invalid value'))
 
 
-class DataFileUploadSerializer(serializers.Serializer):
-    """Generic serializer for uploading a data file, and extracting a dataset.
-
-    - Validates uploaded file
-    - Extracts column names
-    - Extracts data rows
-    """
-
-    # Implementing class should register a target model (database model) to be used for import
-    TARGET_MODEL = None
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['data_file']
-
-    data_file = serializers.FileField(
-        label=_('Data File'),
-        help_text=_('Select data file for upload'),
-        required=True,
-        allow_empty_file=False,
-    )
-
-    def validate_data_file(self, data_file):
-        """Perform validation checks on the uploaded data file."""
-        self.filename = data_file.name
-
-        _name, ext = os.path.splitext(data_file.name)
-
-        # Remove the leading . from the extension
-        ext = ext[1:]
-
-        accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
-
-        if ext not in accepted_file_types:
-            raise serializers.ValidationError(_('Unsupported file format'))
-
-        # Impose a 50MB limit on uploaded BOM files
-        max_upload_file_size = 50 * 1024 * 1024
-
-        if data_file.size > max_upload_file_size:
-            raise serializers.ValidationError(_('File is too large'))
-
-        # Read file data into memory (bytes object)
-        try:
-            data = data_file.read()
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
-        if ext in ['csv', 'tsv', 'xml']:
-            try:
-                data = data.decode()
-            except Exception as e:
-                raise serializers.ValidationError(str(e))
-
-        # Convert to a tablib dataset (we expect headers)
-        try:
-            self.dataset = tablib.Dataset().load(data, ext, headers=True)
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
-        if len(self.dataset.headers) == 0:
-            raise serializers.ValidationError(_('No columns found in file'))
-
-        if len(self.dataset) == 0:
-            raise serializers.ValidationError(_('No data rows found in file'))
-
-        return data_file
-
-    def match_column(self, column_name, field_names, exact=False):
-        """Attempt to match a column name (from the file) to a field (defined in the model).
-
-        Order of matching is:
-        - Direct match
-        - Case insensitive match
-        - Fuzzy match
-        """
-        if not column_name:
-            return None
-
-        column_name = str(column_name).strip()
-
-        column_name_lower = column_name.lower()
-
-        if column_name in field_names:
-            return column_name
-
-        for field_name in field_names:
-            if field_name.lower() == column_name_lower:
-                return field_name
-
-        if exact:
-            # Finished available 'exact' matches
-            return None
-
-        # TODO: Fuzzy pattern matching for column names
-
-        # No matches found
-        return None
-
-    def extract_data(self):
-        """Returns dataset extracted from the file."""
-        # Provide a dict of available import fields for the model
-        model_fields = {}
-
-        # Keep track of columns we have already extracted
-        matched_columns = set()
-
-        if self.TARGET_MODEL:
-            try:
-                model_fields = self.TARGET_MODEL.get_import_fields()
-            except Exception:
-                pass
-
-        # Extract a list of valid model field names
-        model_field_names = list(model_fields.keys())
-
-        # Provide a dict of available columns from the dataset
-        file_columns = {}
-
-        for header in self.dataset.headers:
-            column = {}
-
-            # Attempt to "match" file columns to model fields
-            match = self.match_column(header, model_field_names, exact=True)
-
-            if match is not None and match not in matched_columns:
-                matched_columns.add(match)
-                column['value'] = match
-            else:
-                column['value'] = None
-
-            file_columns[header] = column
-
-        return {
-            'file_fields': file_columns,
-            'model_fields': model_fields,
-            'rows': [row.values() for row in self.dataset.dict],
-            'filename': self.filename,
-        }
-
-    def save(self):
-        """Empty overwrite for save."""
-
-
-class DataFileExtractSerializer(serializers.Serializer):
-    """Generic serializer for extracting data from an imported dataset.
-
-    - User provides an array of matched headers
-    - User provides an array of raw data rows
-    """
-
-    # Implementing class should register a target model (database model) to be used for import
-    TARGET_MODEL = None
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['columns', 'rows']
-
-    # Mapping of columns
-    columns = serializers.ListField(child=serializers.CharField(allow_blank=True))
-
-    rows = serializers.ListField(
-        child=serializers.ListField(
-            child=serializers.CharField(allow_blank=True, allow_null=True)
-        )
-    )
-
-    def validate(self, data):
-        """Clean data."""
-        data = super().validate(data)
-
-        self.columns = data.get('columns', [])
-        self.rows = data.get('rows', [])
-
-        if len(self.rows) == 0:
-            raise serializers.ValidationError(_('No data rows provided'))
-
-        if len(self.columns) == 0:
-            raise serializers.ValidationError(_('No data columns supplied'))
-
-        self.validate_extracted_columns()
-
-        return data
-
-    @property
-    def data(self):
-        """Returns current data."""
-        if self.TARGET_MODEL:
-            try:
-                model_fields = self.TARGET_MODEL.get_import_fields()
-            except Exception:
-                model_fields = {}
-
-        rows = []
-
-        for row in self.rows:
-            """Optionally pre-process each row, before sending back to the client."""
-
-            processed_row = self.process_row(self.row_to_dict(row))
-
-            if processed_row:
-                rows.append({'original': row, 'data': processed_row})
-
-        return {'fields': model_fields, 'columns': self.columns, 'rows': rows}
-
-    def process_row(self, row):
-        """Process a 'row' of data, which is a mapped column:value dict.
-
-        Returns either a mapped column:value dict, or None.
-
-        If the function returns None, the column is ignored!
-        """
-        # Default implementation simply returns the original row data
-        return row
-
-    def row_to_dict(self, row):
-        """Convert a "row" to a named data dict."""
-        row_dict = {'errors': {}}
-
-        for idx, value in enumerate(row):
-            if idx < len(self.columns):
-                col = self.columns[idx]
-
-                if col:
-                    row_dict[col] = value
-
-        return row_dict
-
-    def validate_extracted_columns(self):
-        """Perform custom validation of header mapping."""
-        if self.TARGET_MODEL:
-            try:
-                model_fields = self.TARGET_MODEL.get_import_fields()
-            except Exception:
-                model_fields = {}
-
-        cols_seen = set()
-
-        for name, field in model_fields.items():
-            required = field.get('required', False)
-
-            # Check for missing required columns
-            if required and name not in self.columns:
-                raise serializers.ValidationError(
-                    _(f"Missing required column: '{name}'")
-                )
-
-        for col in self.columns:
-            if not col:
-                continue
-
-            # Check for duplicated columns
-            if col in cols_seen:
-                raise serializers.ValidationError(_(f"Duplicate column: '{col}'"))
-
-            cols_seen.add(col)
-
-    def save(self):
-        """No "save" action for this serializer."""
-
-
 class NotesFieldMixin:
     """Serializer mixin for handling 'notes' fields.
 
@@ -870,7 +479,10 @@ class NotesFieldMixin:
 
         if hasattr(self, 'context'):
             if view := self.context.get('view', None):
-                if issubclass(view.__class__, ListModelMixin):
+                if (
+                    issubclass(view.__class__, ListModelMixin)
+                    and not InvenTree.ready.isGeneratingSchema()
+                ):
                     self.fields.pop('notes', None)
 
 

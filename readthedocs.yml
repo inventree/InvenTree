@@ -17,6 +17,6 @@ build:
       - echo "Generating API schema file"
       - pip install -U invoke
       - invoke migrate
-      - invoke int.export-settings-definitions --filename docs/inventree_settings.json --overwrite
+      - invoke int.export-definitions --basedir "docs"
       - invoke dev.schema --filename docs/schema.yml --ignore-warnings
       - python docs/extract_schema.py docs/schema.yml

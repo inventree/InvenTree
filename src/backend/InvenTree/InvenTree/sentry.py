@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import Http404
+from django.template.exceptions import TemplateSyntaxError
 
 import rest_framework.exceptions
 import sentry_sdk
@@ -28,6 +29,7 @@ def sentry_ignore_errors():
     return [
         Http404,
         MissingRate,
+        TemplateSyntaxError,
         ValidationError,
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,
@@ -64,6 +66,10 @@ def init_sentry(dsn, sample_rate, tags):
 
 def report_exception(exc):
     """Report an exception to sentry.io."""
+    if settings.TESTING:
+        # Skip reporting exceptions in testing mode
+        return
+
     if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
         if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
             logger.info('Reporting exception to sentry.io: %s', exc)

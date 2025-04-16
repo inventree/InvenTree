@@ -1,16 +1,18 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderStockLocation } from '../../components/render/Stock';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -23,7 +25,6 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
@@ -32,10 +33,8 @@ import {
   NoteColumn,
   PartColumn,
   ReferenceColumn,
-  TargetDateColumn,
-  TotalPriceColumn
+  TargetDateColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -226,7 +225,11 @@ export function PurchaseOrderLineItemTable({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
-      TotalPriceColumn(),
+      CurrencyColumn({
+        accessor: 'total_price',
+        currency_accessor: 'purchase_price_currency',
+        title: t`Total Price`
+      }),
       TargetDateColumn({}),
       {
         accessor: 'destination',

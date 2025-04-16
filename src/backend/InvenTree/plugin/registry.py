@@ -26,6 +26,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 
+import InvenTree.cache
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
@@ -51,6 +52,22 @@ class PluginsRegistry:
     from .base.integration.UrlsMixin import UrlsMixin
 
     DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
+
+    # This list of plugins are *always* enabled, and are loaded by default
+    # This is because they provide core functionality to the InvenTree system
+    # Other 'builtin' plugins are automatically loaded, but can be disabled by the user
+    MANDATORY_PLUGINS = [
+        'inventreebarcode',
+        'bom-exporter',
+        'inventree-exporter',
+        'inventreecorenotificationsplugin',
+        'inventreecurrencyexchange',
+        'inventreecorenotificationsplugin',
+        'inventreelabel',
+        'inventreelabelmachine',
+        'inventreelabelsheet',
+        'parameter-exporter',
+    ]
 
     def __init__(self) -> None:
         """Initialize registry.
@@ -89,8 +106,17 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug, active=None):
-        """Lookup plugin by slug (unique key)."""
+    def get_plugin(self, slug, active=None, with_mixin=None):
+        """Lookup plugin by slug (unique key).
+
+        Args:
+            slug (str): The slug of the plugin to look up.
+            active (bool, optional): Filter by 'active' status of the plugin. If None, no filtering is applied. Defaults to None.
+            with_mixin (str, optional): Filter by mixin name. If None, no filtering is applied. Defaults to None.
+
+        Returns:
+            InvenTreePlugin or None: The plugin instance if found, otherwise None.
+        """
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -101,6 +127,9 @@ class PluginsRegistry:
         plg = self.plugins[slug]
 
         if active is not None and active != plg.is_active():
+            return None
+
+        if with_mixin is not None and not plg.mixin_enabled(with_mixin):
             return None
 
         return plg
@@ -171,17 +200,28 @@ class PluginsRegistry:
         # Check if the registry needs to be reloaded
         self.check_reload()
 
+        raise_error = kwargs.pop('raise_error', True)
+
         plugin = self.get_plugin(slug)
 
         if not plugin:
+            if raise_error:
+                raise AttributeError(f"Plugin '{slug}' not found")
             return
 
         plugin_func = getattr(plugin, func)
 
+        if not plugin_func or not callable(plugin_func):
+            if raise_error:
+                raise AttributeError(f"Plugin '{slug}' has no callable method '{func}'")
+            return
+
         return plugin_func(*args, **kwargs)
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=True, builtin=None):
+    def with_mixin(
+        self, mixin: str, active: bool = True, builtin: Optional[bool] = None
+    ) -> list:
         """Returns reference to all plugins that have a specified mixin enabled.
 
         Args:
@@ -191,6 +231,8 @@ class PluginsRegistry:
         """
         # Check if the registry needs to be loaded
         self.check_reload()
+
+        mixin = str(mixin).lower().strip()
 
         result = []
 
@@ -495,10 +537,11 @@ class PluginsRegistry:
         if getattr(plugin, 'is_package', False):
             package_name = getattr(plugin, 'package_name', None)
 
-        # Auto-enable builtin plugins
-        if builtin and plg_db and not plg_db.active:
-            plg_db.active = True
-            plg_db.save()
+        # Auto-enable default builtin plugins
+        if builtin and plg_db and plg_db.is_mandatory():
+            if not plg_db.active:
+                plg_db.active = True
+                plg_db.save()
 
         # Save the package_name attribute to the plugin
         if plg_db.package_name != package_name:
@@ -827,14 +870,25 @@ class PluginsRegistry:
         return str(data.hexdigest())
 
     def check_reload(self):
-        """Determine if the registry needs to be reloaded."""
-        if settings.TESTING:
-            # Skip if running during unit testing
-            return
+        """Determine if the registry needs to be reloaded.
 
-        if not canAppAccessDatabase(allow_shell=True):
+        Returns True if the registry has changed and was reloaded.
+        """
+        if settings.TESTING and not settings.PLUGIN_TESTING_RELOAD:
+            # Skip if running during unit testing
+            return False
+
+        if not canAppAccessDatabase(
+            allow_shell=True, allow_test=settings.PLUGIN_TESTING_RELOAD
+        ):
             # Skip check if database cannot be accessed
-            return
+            return False
+
+        if InvenTree.cache.get_session_cache('plugin_registry_checked'):
+            # Return early if the registry has already been checked (for this request)
+            return False
+
+        InvenTree.cache.set_session_cache('plugin_registry_checked', True)
 
         logger.debug('Checking plugin registry hash')
 
@@ -846,11 +900,13 @@ class PluginsRegistry:
             reg_hash = get_global_setting('_PLUGIN_REGISTRY_HASH', '', create=False)
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
-            return
+            return False
 
         if reg_hash and reg_hash != self.registry_hash:
             logger.info('Plugin registry hash has changed - reloading')
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
+            return True
+        return False
 
     # endregion
 

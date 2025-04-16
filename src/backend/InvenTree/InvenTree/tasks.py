@@ -280,14 +280,15 @@ class ScheduledTask:
     interval: str
     minutes: Optional[int] = None
 
-    MINUTES = 'I'
-    HOURLY = 'H'
-    DAILY = 'D'
-    WEEKLY = 'W'
-    MONTHLY = 'M'
-    QUARTERLY = 'Q'
-    YEARLY = 'Y'
-    TYPE = [MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY]
+    MINUTES: str = 'I'
+    HOURLY: str = 'H'
+    DAILY: str = 'D'
+    WEEKLY: str = 'W'
+    MONTHLY: str = 'M'
+    QUARTERLY: str = 'Q'
+    YEARLY: str = 'Y'
+
+    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)
 
 
 class TaskRegister:

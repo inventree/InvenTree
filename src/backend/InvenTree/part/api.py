@@ -2,16 +2,17 @@
 
 import functools
 import re
+from datetime import datetime
 
 from django.db.models import Count, F, Q
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import permissions, serializers, status
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -19,8 +20,8 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
-from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from data_exporter.mixins import DataExportViewMixin
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -68,6 +69,17 @@ class CategoryMixin:
 
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Add additional context based on query parameters."""
+        try:
+            params = self.request.query_params
+
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
+
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryDetail endpoint."""
@@ -226,7 +238,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -247,19 +259,6 @@ class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
 
 class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Add additional context based on query parameters."""
-        try:
-            params = self.request.query_params
-
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs.setdefault('context', self.get_serializer_context())
-
-        return self.serializer_class(*args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)."""
@@ -522,7 +521,10 @@ class PartThumbs(ListAPI):
 
         data = serializer.data
 
-        return Response(data)
+        if page is not None:
+            return self.get_paginated_response(data)
+        else:
+            return Response(data)
 
     filter_backends = [InvenTreeSearchFilter]
 
@@ -566,15 +568,21 @@ class PartScheduling(RetrieveAPI):
 
         schedule = []
 
-        def add_schedule_entry(date, quantity, title, instance, speculative_quantity=0):
+        def add_schedule_entry(
+            date: datetime,
+            quantity: float,
+            title: str,
+            instance,
+            speculative_quantity: float = 0,
+        ):
             """Add a new entry to the schedule list.
 
-            Arguments:
-                - date: The date of the scheduled event
-                - quantity: The quantity of stock to be added or removed
-                - title: The title of the scheduled event
-                - instance: The associated model instance (e.g. SalesOrder object)
-                - speculative_quantity: A speculative quantity to be added or removed
+            Args:
+                date (datetime): The date of the scheduled event.
+                quantity (float): The quantity of stock to be added or removed.
+                title (str): The title of the scheduled event.
+                instance (Model): The associated model instance (e.g., SalesOrder object).
+                speculative_quantity (float, optional): A speculative quantity to be added or removed. Defaults to 0.
             """
             schedule.append({
                 'date': date,
@@ -894,6 +902,14 @@ class PartFilter(rest_filters.FilterSet):
 
         model = Part
         fields = ['revision_of']
+
+    is_variant = rest_filters.BooleanFilter(
+        label=_('Is Variant'), method='filter_is_variant'
+    )
+
+    def filter_is_variant(self, queryset, name, value):
+        """Filter by whether the Part is a variant or not."""
+        return queryset.filter(variant_of__isnull=not str2bool(value))
 
     is_revision = rest_filters.BooleanFilter(
         label=_('Is Revision'), method='filter_is_revision'
@@ -1218,7 +1234,7 @@ class PartMixin:
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_serializer_context(self):
         """Extend serializer context data."""
@@ -1228,7 +1244,7 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
+class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
@@ -1396,13 +1412,6 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
     ]
 
 
-class PartChangeCategory(CreateAPI):
-    """API endpoint to change the location of multiple parts in bulk."""
-
-    serializer_class = part_serializers.PartSetCategorySerializer
-    queryset = Part.objects.none()
-
-
 class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
 
@@ -1439,6 +1448,7 @@ class PartRelatedFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part):
         """Filter queryset to include only PartRelated objects which reference the specified part."""
         return queryset.filter(Q(part_1=part) | Q(part_2=part)).distinct()
@@ -1596,7 +1606,7 @@ class PartParameterAPIMixin:
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class PartParameterFilter(rest_filters.FilterSet):
@@ -1857,13 +1867,12 @@ class BomMixin:
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the queryset object for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = self.get_serializer_class().setup_eager_loading(queryset)
         queryset = self.get_serializer_class().annotate_queryset(queryset)
 
         return queryset
@@ -1923,44 +1932,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
-
-
-class BomImportUpload(CreateAPI):
-    """API endpoint for uploading a complete Bill of Materials.
-
-    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
-    """
-
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.BomImportUploadSerializer
-
-    def create(self, request, *args, **kwargs):
-        """Custom create function to return the extracted data."""
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-
-        data = serializer.extract_data()
-
-        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class BomImportExtract(CreateAPI):
-    """API endpoint for extracting BOM data from a BOM file."""
-
-    queryset = Part.objects.none()
-    serializer_class = part_serializers.BomImportExtractSerializer
-
-
-class BomImportSubmit(CreateAPI):
-    """API endpoint for submitting BOM data from a BOM file."""
-
-    queryset = BomItem.objects.none()
-    serializer_class = part_serializers.BomImportSubmitSerializer
 
 
 class BomItemValidate(UpdateAPI):
@@ -2025,8 +1996,9 @@ part_api_urls = [
                         include([
                             path(
                                 'metadata/',
-                                MetadataView.as_view(),
-                                {'model': PartCategoryParameterTemplate},
+                                MetadataView.as_view(
+                                    model=PartCategoryParameterTemplate
+                                ),
                                 name='api-part-category-parameter-metadata',
                             ),
                             path(
@@ -2049,8 +2021,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartCategory},
+                        MetadataView.as_view(model=PartCategory),
                         name='api-part-category-metadata',
                     ),
                     # PartCategory detail endpoint
@@ -2069,8 +2040,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartTestTemplate},
+                        MetadataView.as_view(model=PartTestTemplate),
                         name='api-part-test-template-metadata',
                     ),
                     path(
@@ -2120,8 +2090,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartRelated},
+                        MetadataView.as_view(model=PartRelated),
                         name='api-part-related-metadata',
                     ),
                     path(
@@ -2144,8 +2113,7 @@ part_api_urls = [
                         include([
                             path(
                                 'metadata/',
-                                MetadataView.as_view(),
-                                {'model': PartParameterTemplate},
+                                MetadataView.as_view(model=PartParameterTemplate),
                                 name='api-part-parameter-template-metadata',
                             ),
                             path(
@@ -2167,8 +2135,7 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': PartParameter},
+                        MetadataView.as_view(model=PartParameter),
                         name='api-part-parameter-metadata',
                     ),
                     path(
@@ -2217,10 +2184,8 @@ part_api_urls = [
         'thumbs/',
         include([
             path('', PartThumbs.as_view(), name='api-part-thumbs'),
-            re_path(
-                r'^(?P<pk>\d+)/?',
-                PartThumbsUpdate.as_view(),
-                name='api-part-thumbs-update',
+            path(
+                '<int:pk>/', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'
             ),
         ]),
     ),
@@ -2248,21 +2213,13 @@ part_api_urls = [
             ),
             # Part metadata
             path(
-                'metadata/',
-                MetadataView.as_view(),
-                {'model': Part},
-                name='api-part-metadata',
+                'metadata/', MetadataView.as_view(model=Part), name='api-part-metadata'
             ),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # Part detail endpoint
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),
-    ),
-    path(
-        'change_category/',
-        PartChangeCategory.as_view(),
-        name='api-part-change-category',
     ),
     path('', PartList.as_view(), name='api-part-list'),
 ]
@@ -2277,8 +2234,7 @@ bom_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': BomItemSubstitute},
+                        MetadataView.as_view(model=BomItemSubstitute),
                         name='api-bom-substitute-metadata',
                     ),
                     path(
@@ -2299,17 +2255,12 @@ bom_api_urls = [
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': BomItem},
+                MetadataView.as_view(model=BomItem),
                 name='api-bom-item-metadata',
             ),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),
-    # API endpoint URLs for importing BOM data
-    path('import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
-    path('import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
-    path('import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
     # Catch-all
     path('', BomList.as_view(), name='api-bom-list'),
 ]

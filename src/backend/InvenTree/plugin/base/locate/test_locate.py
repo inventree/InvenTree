@@ -3,7 +3,7 @@
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
-from plugin import InvenTreePlugin, MixinNotImplementedError, registry
+from plugin import InvenTreePlugin, MixinNotImplementedError, PluginMixinEnum, registry
 from plugin.base.locate.mixins import LocateMixin
 from stock.models import StockItem, StockLocation
 
@@ -24,7 +24,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
 
     def test_installed(self):
         """Test that a locate plugin is actually installed."""
-        plugins = registry.with_mixin('locate')
+        plugins = registry.with_mixin(PluginMixinEnum.LOCATE)
 
         self.assertGreater(len(plugins), 0)
 

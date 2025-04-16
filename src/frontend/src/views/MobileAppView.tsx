@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -23,7 +23,7 @@ export default function MobileAppView() {
             </Title>
             <Text>
               <Trans>
-                Platform UI is optimized for Tablets and Desktops, you can use
+                InvenTree UI is optimized for Tablets and Desktops, you can use
                 the official app for a mobile experience.
               </Trans>
             </Text>

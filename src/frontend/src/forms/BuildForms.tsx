@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
@@ -11,24 +11,22 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
@@ -276,7 +274,13 @@ export function useCompleteBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Build Output`, t`Batch`, t`Status`]
+        headers: [
+          { title: t`Part` },
+          { title: t`Build Output` },
+          { title: t`Batch` },
+          { title: t`Status` },
+          { title: '', style: { width: '50px' } }
+        ]
       },
       status_custom_key: {},
       location: {
@@ -344,7 +348,13 @@ export function useScrapBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
+        headers: [
+          { title: t`Part` },
+          { title: t`Stock Item` },
+          { title: t`Batch` },
+          { title: t`Status` },
+          { title: '', style: { width: '50px' } }
+        ]
       },
       location: {
         value: location,
@@ -392,7 +402,13 @@ export function useCancelBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
+        headers: [
+          { title: t`Part` },
+          { title: t`Stock Item` },
+          { title: t`Batch` },
+          { title: t`Status` },
+          { title: '', style: { width: '50px' } }
+        ]
       }
     };
   }, [outputs]);
@@ -522,7 +538,13 @@ export function useAllocateStockToBuildForm({
       items: {
         field_type: 'table',
         value: [],
-        headers: [t`Part`, t`Allocated`, t`Stock Item`, t`Quantity`],
+        headers: [
+          { title: t`Part`, style: { minWidth: '175px' } },
+          { title: t`Allocated`, style: { minWidth: '175px' } },
+          { title: t`Stock Item`, style: { width: '100%' } },
+          { title: t`Quantity`, style: { minWidth: '175px' } },
+          { title: '', style: { width: '50px' } }
+        ],
         modelRenderer: (row: TableFieldRowProps) => {
           // Find the matching record from the passed 'lineItems'
           const record =

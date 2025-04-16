@@ -26,6 +26,11 @@ Refer to the [invoke guide](./start/invoke.md#cant-find-any-collection-named-tas
 
 If the installed version of invoke is too old, users may see error messages during the installation procedure. Refer to the [invoke guide](./start/invoke.md#minimum-version) for more information.
 
+### INVE-E1 - No frontend included
+
+Make sure you are running a stable or production release of InvenTree. The frontend panel is not included in development releases.
+More Information: [Error Codes - INVE-E1](./settings/error_codes.md#inve-e1)
+
 ### No module named <xxx>
 
 During the install or update process, you may be presented with an error like:

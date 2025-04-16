@@ -4,7 +4,6 @@ import decimal
 import math
 from typing import Optional
 
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -21,14 +20,6 @@ def currency_code_default():
     from common.settings import get_global_setting
 
     try:
-        cached_value = cache.get('currency_code_default', '')
-    except Exception:
-        cached_value = None
-
-    if cached_value:
-        return cached_value
-
-    try:
         code = get_global_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
@@ -36,12 +27,6 @@ def currency_code_default():
 
     if code not in CURRENCIES:
         code = 'USD'  # pragma: no cover
-
-    # Cache the value for a short amount of time
-    try:
-        cache.set('currency_code_default', code, 30)
-    except Exception:
-        pass
 
     return code
 
@@ -147,9 +132,9 @@ def validate_currency_codes(value):
 def currency_exchange_plugins() -> Optional[list]:
     """Return a list of plugin choices which can be used for currency exchange."""
     try:
-        from plugin import registry
+        from plugin import PluginMixinEnum, registry
 
-        plugs = registry.with_mixin('currencyexchange', active=True)
+        plugs = registry.with_mixin(PluginMixinEnum.CURRENCY_EXCHANGE, active=True)
     except Exception:
         plugs = []
 

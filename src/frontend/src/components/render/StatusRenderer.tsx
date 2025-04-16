@@ -1,7 +1,7 @@
 import { Badge, Center, type MantineSize } from '@mantine/core';
 
+import type { ModelType } from '@lib/enums/ModelType';
 import { statusColorMap } from '../../defaults/backendMappings';
-import type { ModelType } from '../../enums/ModelType';
 import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/StatusState';
 
@@ -86,6 +86,26 @@ export function getStatusCodes(
   }
 
   return statusCodes;
+}
+
+/**
+ * Return a list of status codes select options for a given model type
+ * returns an array of objects with keys "value" and "display_name"
+ *
+ */
+export function getStatusCodeOptions(type: ModelType | string): any[] {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return [];
+  }
+
+  return Object.values(statusCodes?.values ?? []).map((entry) => {
+    return {
+      value: entry.key,
+      display_name: entry.label
+    };
+  });
 }
 
 /*

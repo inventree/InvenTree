@@ -1,7 +1,7 @@
 import { Stack } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import type { InvenTreeContext } from './PluginContext';
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import type { PluginUIFeature } from './PluginUIFeature';
 import RemoteComponent from './RemoteComponent';
 
@@ -23,7 +23,7 @@ export default function PluginPanelContent({
   pluginContext
 }: Readonly<{
   pluginFeature: PluginUIFeature;
-  pluginContext: InvenTreeContext;
+  pluginContext: InvenTreePluginContext;
 }>): ReactNode {
   return (
     <Stack gap='xs'>

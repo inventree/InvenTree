@@ -31,8 +31,8 @@ import common.serializers
 import InvenTree.conversion
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
@@ -54,7 +54,7 @@ class CsrfExemptMixin:
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
-        """Overwrites dispatch to be extempt from csrf checks."""
+        """Overwrites dispatch to be exempt from CSRF checks."""
         return super().dispatch(*args, **kwargs)
 
 
@@ -262,6 +262,9 @@ class UserSettingsList(SettingsList):
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
 
+    # Note: Any user can view and edit their own settings
+    permission_classes = [permissions.IsAuthenticated]
+
     def list(self, request, *args, **kwargs):
         """Ensure all user settings are created."""
         common.models.InvenTreeUserSetting.build_default_values(user=request.user)
@@ -463,6 +466,9 @@ class ConfigList(ListAPI):
     serializer_class = common.serializers.ConfigSerializer
     permission_classes = [IsSuperuser]
 
+    # Specifically disable pagination for this view
+    pagination_class = None
+
 
 class ConfigDetail(RetrieveAPI):
     """Detail view for an individual configuration."""
@@ -535,7 +541,7 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
-class AllUnitList(ListAPI):
+class AllUnitList(RetrieveAPI):
     """List of all defined units."""
 
     serializer_class = common.serializers.AllUnitListResponseSerializer
@@ -696,7 +702,6 @@ class ContentTypeDetail(RetrieveAPI):
     permission_classes = [permissions.IsAuthenticated]
 
 
-@extend_schema(operation_id='contenttype_retrieve_model')
 class ContentTypeModelDetail(ContentTypeDetail):
     """Detail view for a ContentType model."""
 
@@ -710,6 +715,11 @@ class ContentTypeModelDetail(ContentTypeDetail):
             except ContentType.DoesNotExist:
                 raise NotFound()
         raise NotFound()
+
+    @extend_schema(operation_id='contenttype_retrieve_model')
+    def get(self, request, *args, **kwargs):
+        """Detail view for a ContentType model."""
+        return super().get(request, *args, **kwargs)
 
 
 class AttachmentFilter(rest_filters.FilterSet):
@@ -764,7 +774,7 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
         - Ensure that the user has correct 'delete' permissions for each model
         """
         from common.validators import attachment_model_class_from_label
-        from users.models import check_user_permission
+        from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
@@ -804,7 +814,7 @@ class IconList(ListAPI):
 
     def get_queryset(self):
         """Return a list of all available icon packages."""
-        return get_icon_packs().values()
+        return list(get_icon_packs().values())
 
 
 class SelectionListList(ListCreateAPI):
@@ -849,6 +859,25 @@ class SelectionEntryList(EntryMixin, ListCreateAPI):
 
 class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
+
+
+class DataOutputEndpoint:
+    """Mixin class for DataOutput endpoints."""
+
+    queryset = common.models.DataOutput.objects.all()
+    serializer_class = common.serializers.DataOutputSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class DataOutputList(DataOutputEndpoint, BulkDeleteMixin, ListAPI):
+    """List view for DataOutput objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
+
+
+class DataOutputDetail(DataOutputEndpoint, RetrieveAPI):
+    """Detail view for a DataOutput object."""
 
 
 selection_urls = [
@@ -960,8 +989,7 @@ common_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': common.models.Attachment},
+                        MetadataView.as_view(model=common.models.Attachment),
                         name='api-attachment-metadata',
                     ),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
@@ -986,8 +1014,7 @@ common_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': common.models.ProjectCode},
+                        MetadataView.as_view(model=common.models.ProjectCode),
                         name='api-project-code-metadata',
                     ),
                     path(
@@ -1093,6 +1120,16 @@ common_api_urls = [
     path('icons/', IconList.as_view(), name='api-icon-list'),
     # Selection lists
     path('selection/', include(selection_urls)),
+    # Data output
+    path(
+        'data-output/',
+        include([
+            path(
+                '<int:pk>/', DataOutputDetail.as_view(), name='api-data-output-detail'
+            ),
+            path('', DataOutputList.as_view(), name='api-data-output-list'),
+        ]),
+    ),
 ]
 
 admin_api_urls = [

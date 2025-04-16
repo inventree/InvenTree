@@ -69,7 +69,7 @@ from plugin.mixins import ValidationMixin
 import part.models
 
 
-class MyValidationMixin(Validationixin, InvenTreePlugin):
+class MyValidationMixin(ValidationMixin, InvenTreePlugin):
     """Custom validation plugin."""
 
     def validate_model_instance(self, instance, deltas=None):

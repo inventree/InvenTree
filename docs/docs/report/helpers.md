@@ -33,6 +33,8 @@ Result: {{ myvar }}
 {% endraw %}
 ```
 
+Note the use of the `as` keyword to assign the output of the function to a variable. This can be used to assign the result of a function to a named variable, which can then be used later in the template.
+
 ## Data Structure Access
 
 A number of helper functions are available for accessing data contained in a particular structure format:
@@ -85,8 +87,6 @@ A number of helper functions are available for accessing database objects:
 ### filter_queryset
 
 The `filter_queryset` function allows for arbitrary filtering of the provided querysert. It takes a queryset and a list of filter arguments, and returns a filtered queryset.
-
-
 
 ::: report.templatetags.report.filter_queryset
     options:
@@ -512,3 +512,29 @@ A [Part Parameter](../part/parameter.md) has the following available attributes:
 | Data | The *value* of the parameter (e.g. "123.4") |
 | Units | The *units* of the parameter (e.g. "km") |
 | Template | A reference to a [PartParameterTemplate](../part/parameter.md#parameter-templates) |
+
+## Rendering Markdown
+
+Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+
+To render markdown content in a report, consider the following simplified example:
+
+```html
+{% raw %}
+
+{% load markdownify %}
+
+<h3>Part Notes</h3>
+<p>
+    {{ part.notes | markdownify }}
+</p>
+{% endraw %}
+```
+
+You can read further details in the [django-markdownify documentation](https://django-markdownify.readthedocs.io/en/latest/).
+
+## List of tags and filters
+
+The following tags and filters are available.
+
+{{ tags_and_filters() }}

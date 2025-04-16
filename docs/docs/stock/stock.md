@@ -8,7 +8,7 @@ A stock location represents a physical real-world location where *Stock Items* a
 
 ### Icons
 
-Stock locations can be assigned custom icons (either directly or through [Stock Location Types](#stock-location-type)). When using PUI there is a custom icon picker component available that can help to select the right icon. However in CUI the icon needs to be entered manually.
+Stock locations can be assigned custom icons (either directly or through [Stock Location Types](#stock-location-type)). In the web interface there is a custom icon picker component available that can help to select the right icon. However in CUI the icon needs to be entered manually.
 
 By default, the tabler icons package (with prefix: `ti`) is available. To manually select an item, search on the [tabler icons](https://tabler.io/icons) page for an icon and copy its name e.g. `bookmark`. Some icons have a filled and an outline version (if no variants are specified, it's an outline variant). Now these values can be put into the format: `<package-prefix>:<icon-name>:<variant>`. E.g. `ti:bookmark:outline` or `ti:bookmark:filled`.
 

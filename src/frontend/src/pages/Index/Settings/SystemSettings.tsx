@@ -1,11 +1,12 @@
-import { t } from '@lingui/macro';
-import { Skeleton, Stack } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
+  IconInfoCircle,
   IconPackages,
   IconQrcode,
   IconServerCog,
@@ -18,7 +19,6 @@ import {
 import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
-import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
@@ -42,10 +42,13 @@ export default function SystemSettings() {
             keys={[
               'INVENTREE_BASE_URL',
               'INVENTREE_COMPANY_NAME',
+              'INVENTREE_INSTANCE_ID',
+              'INVENTREE_ANNOUNCE_ID',
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
               'INVENTREE_RESTRICT_ABOUT',
               'DISPLAY_FULL_NAMES',
+              'DISPLAY_PROFILE_INFO',
               'INVENTREE_UPDATE_CHECK_INTERVAL',
               'INVENTREE_DOWNLOAD_FROM_URL',
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
@@ -61,8 +64,8 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'login',
-        label: t`Login`,
+        name: 'authentication',
+        label: t`Authentication`,
         icon: <IconFingerprint />,
         content: (
           <GlobalSettingList
@@ -108,7 +111,17 @@ export default function SystemSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <PlaceholderPanel />
+        content: (
+          <Stack>
+            <Alert
+              color='teal'
+              title={t`This panel is a placeholder.`}
+              icon={<IconInfoCircle />}
+            >
+              <Text c='gray'>This panel has not yet been implemented</Text>
+            </Alert>
+          </Stack>
+        )
       },
       {
         name: 'pricing',
@@ -182,19 +195,19 @@ export default function SystemSettings() {
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
-              'PART_CREATE_SUPPLIER', // TODO: Break here
+              'PART_CREATE_SUPPLIER',
               'PART_TEMPLATE',
               'PART_ASSEMBLY',
               'PART_COMPONENT',
               'PART_TRACKABLE',
               'PART_PURCHASEABLE',
               'PART_SALABLE',
-              'PART_VIRTUAL', // TODO: Break here
+              'PART_VIRTUAL',
               'PART_COPY_BOM',
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON' // TODO: Move to part category settings page
+              'PART_CATEGORY_DEFAULT_ICON'
             ]}
           />
         )
@@ -252,6 +265,7 @@ export default function SystemSettings() {
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
+              'PURCHASEORDER_CONVERT_CURRENCY',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
               'PURCHASEORDER_AUTO_COMPLETE'
             ]}

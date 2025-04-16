@@ -1,22 +1,18 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import {
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CreatedByColumn,
@@ -27,6 +23,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   ShipmentDateColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -45,7 +42,8 @@ import {
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
-  type TableFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
@@ -61,10 +59,6 @@ export function SalesOrderTable({
   const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
   const user = useUserState();
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const responsibleFilters = useOwnerFilters();
-  const createdByFilters = useUserFilters();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OrderStatusFilter({ model: ModelType.salesorder }),
@@ -77,12 +71,26 @@ export function SalesOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
+      {
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
+      },
+      {
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
+      },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
       HasProjectCodeFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
-      ResponsibleFilter({ choices: responsibleFilters.choices }),
-      CreatedByFilter({ choices: createdByFilters.choices })
+      ProjectCodeFilter(),
+      ResponsibleFilter(),
+      CreatedByFilter()
     ];
 
     if (!!partId) {
@@ -95,12 +103,7 @@ export function SalesOrderTable({
     }
 
     return filters;
-  }, [
-    partId,
-    projectCodeFilters.choices,
-    responsibleFilters.choices,
-    createdByFilters.choices
-  ]);
+  }, [partId]);
 
   const salesOrderFields = useSalesOrderFields({});
 
@@ -166,6 +169,7 @@ export function SalesOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
       ResponsibleColumn({}),
@@ -175,7 +179,7 @@ export function SalesOrderTable({
         sortable: true,
         render: (record: any) => {
           return formatCurrency(record.total_price, {
-            currency: record.order_currency ?? record.customer_detail?.currency
+            currency: record.order_currency || record.customer_detail?.currency
           });
         }
       }

@@ -14,8 +14,8 @@ export const ApiIcon = ({ name: _name, size = 22 }: ApiIconProps) => {
 
   const unicode = icon ? String.fromCodePoint(Number.parseInt(icon, 16)) : '';
 
-  if (!unicode) {
-    console.warn(`ApiIcon not found: ${_name}`);
+  if (!unicode && _name !== '') {
+    console.warn(`ApiIcon not found: '${_name}'`);
   }
 
   return (

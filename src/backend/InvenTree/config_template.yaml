@@ -176,11 +176,6 @@ login_default_protocol: http
 remote_login_enabled: False
 remote_login_header: HTTP_REMOTE_USER
 
-# JWT tokens
-# JWT can be used optionally to authenticate users. Turned off by default.
-# Alternatively, use the environment variable INVENTREE_USE_JWT
-# use_jwt: True
-
 # Logout redirect configuration
 # This setting may be required if using remote / proxy login to redirect requests
 # during the logout process (default is 'index'). Please read the docs for more details

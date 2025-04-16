@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, HoverCard, Paper, Space, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
@@ -9,18 +9,19 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { cancelEvent } from '../../functions/events';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../../tables/Column';
-import type { TableFilter } from '../../tables/Filter';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import {
   type RowAction,
@@ -29,7 +30,6 @@ import {
 } from '../../tables/RowActions';
 import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ProgressBar } from '../items/ProgressBar';
 import { RenderRemoteInstance } from '../render/Instance';
 

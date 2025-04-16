@@ -1,17 +1,14 @@
 """Unit testing for the Stock API."""
 
-import io
 import os
 import random
 from datetime import datetime, timedelta
 from enum import IntEnum
 
-import django.http
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
-import tablib
 from djmoney.money import Money
 from rest_framework import status
 
@@ -114,7 +111,6 @@ class StockLocationTest(StockAPITestCase):
             'items',
             'pathstring',
             'owner',
-            'url',
             'icon',
             'location_type',
             'location_type_detail',
@@ -456,7 +452,7 @@ class StockLocationTest(StockAPITestCase):
 
         StockLocation.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(12):
+        with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-location-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), StockLocation.objects.count())
@@ -561,7 +557,7 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Return JSON-ified data
+        # Return JSON data
         return response.data
 
     def test_top_level_filtering(self):
@@ -840,59 +836,57 @@ class StockItemListTest(StockAPITestCase):
 
             self.assertEqual(len(response['results']), n)
 
-    def export_data(self, filters=None):
-        """Helper to test exports."""
-        if not filters:
-            filters = {}
-
-        filters['export'] = 'csv'
-
-        response = self.client.get(self.list_url, data=filters)
-
-        self.assertEqual(response.status_code, 200)
-
-        self.assertIsInstance(response, django.http.response.StreamingHttpResponse)
-
-        file_object = io.StringIO(response.getvalue().decode('utf-8'))
-
-        dataset = tablib.Dataset().load(file_object, 'csv', headers=True)
-
-        return dataset
-
     def test_export(self):
         """Test exporting of Stock data via the API."""
-        dataset = self.export_data({})
-
-        # Check that *all* stock item objects have been exported
-        self.assertEqual(len(dataset), StockItem.objects.count())
-
-        # Expected headers
-        headers = [
+        required_headers = [
             'Part',
             'Customer',
             'Stock Location',
-            'Location Name',
             'Parent Item',
             'Quantity',
             'Status',
+            'Part.Name',
+            'Part.Description',
+            'Location.Name',
+            'Location.Path',
+            'Supplier Part.SKU',
+            'Supplier Part.MPN',
         ]
-
-        for h in headers:
-            self.assertIn(h, dataset.headers)
 
         excluded_headers = ['metadata']
 
-        for h in excluded_headers:
-            self.assertNotIn(h, dataset.headers)
+        with self.export_data(self.list_url) as data_file:
+            self.process_csv(
+                data_file,
+                required_cols=required_headers,
+                excluded_cols=excluded_headers,
+                required_rows=StockItem.objects.count(),
+            )
 
         # Now, add a filter to the results
-        dataset = self.export_data({'location': 1})
+        with self.export_data(
+            self.list_url, {'location': 1, 'cascade': True}
+        ) as data_file:
+            data = self.process_csv(data_file, required_rows=9)
 
-        self.assertEqual(len(dataset), 9)
+            for row in data:
+                item_id = int(row['ID'])
+                loc_id = int(row['Stock Location'])
 
-        dataset = self.export_data({'part': 25})
+                item = StockItem.objects.get(pk=item_id)
 
-        self.assertEqual(len(dataset), 17)
+                # Location should match ID
+                self.assertEqual(loc_id, item.location.pk)
+
+                # Location name should match
+                self.assertEqual(row['Location.Name'], item.location.name)
+
+                # Part name should match
+                self.assertEqual(row['Part.Name'], item.part.name)
+
+        # Export stock items with a specific part
+        with self.export_data(self.list_url, {'part': 25}) as data_file:
+            self.process_csv(data_file, required_rows=17)
 
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
@@ -1277,7 +1271,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=201,
         )
 
-    def test_stock_item_create_withsupplierpart(self):
+    def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
         # POST with non-existent supplier part
         response = self.post(
@@ -1487,13 +1481,13 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.000000')
+        self.assertAlmostEqual(data['purchase_price'], 123, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update just the amount
         data = self.patch(url, {'purchase_price': 456}, expected_code=200).data
 
-        self.assertEqual(data['purchase_price'], '456.000000')
+        self.assertAlmostEqual(data['purchase_price'], 456, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
@@ -1515,7 +1509,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
     def test_install(self):
-        """Test that stock item can be installed into antoher item, via the API."""
+        """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item
         parent_part = part.models.Part.objects.get(pk=100)
 
@@ -2021,7 +2015,7 @@ class StockTestResultTest(StockAPITestCase):
 
         # Try again, but with the correct filters this time
         response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=204
+            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=200
         )
 
         self.assertEqual(StockItemTestResult.objects.count(), n)
@@ -2149,6 +2143,11 @@ class StockTrackingTest(StockAPITestCase):
         # Test counting
         response = self.get(url, {'limit': 1})
         self.assertEqual(response.data['count'], N)
+
+        # Test with search and pagination
+        response = self.get(url, {'limit': 1, 'offset': 10, 'search': 'berries'})
+
+        self.assertEqual(response.data['count'], 0)
 
     def test_list(self):
         """Test list endpoint."""

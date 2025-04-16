@@ -1,12 +1,30 @@
-import { Trans } from '@lingui/macro';
-import { Divider, Group, Select, Text, Title } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import {
+  ActionIcon,
+  Divider,
+  Group,
+  Select,
+  Table,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { IconCheck } from '@tabler/icons-react';
+import {
+  IconApi,
+  IconCircleCheck,
+  IconEdit,
+  IconInfoCircle,
+  IconPlugConnected,
+  IconServer,
+  IconServerSpark
+} from '@tabler/icons-react';
 
+import type { HostList } from '@lib/types/Server';
+import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import type { HostList } from '../../states/states';
-import { EditButton } from '../buttons/EditButton';
+import { ActionButton } from '../buttons/ActionButton';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({
@@ -18,7 +36,7 @@ export function InstanceOptions({
   ChangeHost: (newHost: string | null) => void;
   setHostEdit: () => void;
 }>) {
-  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
+  const [hostListEdit, setHostListEdit] = useToggle([false, true] as const);
   const [setHost, setHostList, hostList] = useLocalState((state) => [
     state.setHost,
     state.setHostList,
@@ -38,37 +56,41 @@ export function InstanceOptions({
   }
 
   return (
-    <>
-      <Title order={3}>
-        <Trans>Select destination instance</Trans>
-      </Title>
-      <Group>
-        <Group>
-          <Select
-            value={hostKey}
-            onChange={ChangeHost}
-            data={hostListData}
-            disabled={HostListEdit}
-          />
-          <EditButton
-            setEditing={setHostListEdit}
-            editing={HostListEdit}
-            disabled={HostListEdit}
-          />
-        </Group>
-        <EditButton
-          setEditing={setHostEdit}
-          editing={true}
-          disabled={HostListEdit}
-          saveIcon={<IconCheck />}
+    <Wrapper titleText={t`Select Server`} smallPadding>
+      <Group gap='xs' justify='space-between' wrap='nowrap'>
+        <Select
+          style={{ width: '100%' }}
+          value={hostKey}
+          onChange={ChangeHost}
+          data={hostListData}
+          disabled={hostListEdit}
         />
+        <Group gap='xs' wrap='nowrap'>
+          <Tooltip label={t`Edit host options`} position='top'>
+            <ActionButton
+              variant='transparent'
+              disabled={hostListEdit}
+              onClick={setHostListEdit}
+              icon={<IconEdit />}
+            />
+          </Tooltip>
+          <Tooltip label={t`Save host selection`} position='top'>
+            <ActionButton
+              variant='transparent'
+              onClick={setHostEdit}
+              disabled={hostListEdit}
+              icon={<IconCircleCheck />}
+              color='green'
+            />
+          </Tooltip>
+        </Group>
       </Group>
 
-      {HostListEdit ? (
+      {hostListEdit ? (
         <>
           <Divider my={'sm'} />
           <Text>
-            <Trans>Edit possible host options</Trans>
+            <Trans>Edit host options</Trans>
           </Text>
           <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
         </>
@@ -78,7 +100,7 @@ export function InstanceOptions({
           <ServerInfo hostList={hostList} hostKey={hostKey} />
         </>
       )}
-    </>
+    </Wrapper>
   );
 }
 
@@ -91,27 +113,66 @@ function ServerInfo({
 }>) {
   const [server] = useServerApiState((state) => [state.server]);
 
+  const items: any[] = [
+    {
+      key: 'server',
+      label: t`Server`,
+      value: hostList[hostKey]?.host,
+      icon: <IconServer />
+    },
+    {
+      key: 'name',
+      label: t`Name`,
+      value: server.instance,
+      icon: <IconInfoCircle />
+    },
+    {
+      key: 'version',
+      label: t`Version`,
+      value: server.version,
+      icon: <IconInfoCircle />
+    },
+    {
+      key: 'api',
+      label: t`API Version`,
+      value: server.apiVersion,
+      icon: <IconApi />
+    },
+    {
+      key: 'plugins',
+      label: t`Plugins`,
+      value: server.plugins_enabled ? t`Enabled` : t`Disabled`,
+      icon: <IconPlugConnected />,
+      color: server.plugins_enabled ? 'green' : 'red'
+    },
+    {
+      key: 'worker',
+      label: t`Worker`,
+      value: server.worker_running ? t`Running` : t`Stopped`,
+      icon: <IconServerSpark />,
+      color: server.worker_running ? 'green' : 'red'
+    }
+  ];
+
   return (
-    <Text>
-      {hostList[hostKey]?.host}
-      <br />
-      <Trans>Version: {server.version}</Trans>
-      <br />
-      <Trans>API:{server.apiVersion}</Trans>
-      <br />
-      <Trans>Name: {server.instance}</Trans>
-      <br />
-      <Trans>
-        State:{' '}
-        <Text span c={server.worker_running ? 'green' : 'red'}>
-          worker
-        </Text>{' '}
-        ({server.worker_pending_tasks}),{' '}
-        <Text span c={server.plugins_enabled ? 'green' : 'red'}>
-          plugins
-        </Text>
-        {server.plugins_enabled ? ` (${server.active_plugins.length})` : null}
-      </Trans>
-    </Text>
+    <Table striped p='xs'>
+      <Table.Tbody>
+        {items.map((item) => (
+          <Table.Tr key={item.key} p={2}>
+            <Table.Td>
+              <ActionIcon size='xs' variant='transparent' color={item.color}>
+                {item.icon}
+              </ActionIcon>
+            </Table.Td>
+            <Table.Td>
+              <Text size='sm'>{item.label}</Text>
+            </Table.Td>
+            <Table.Td>
+              <Text size='sm'>{item.value}</Text>
+            </Table.Td>
+          </Table.Tr>
+        ))}
+      </Table.Tbody>
+    </Table>
   );
 }

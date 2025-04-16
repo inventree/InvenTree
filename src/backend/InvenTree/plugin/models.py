@@ -13,8 +13,9 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 import InvenTree.models
 import plugin.staticfiles
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePlugin
 from plugin.events import PluginEvents, trigger_event
+from plugin.registry import registry
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
@@ -146,8 +147,8 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         super().save(force_insert, force_update, *args, **kwargs)
 
-        if self.is_builtin():
-            # Force active if builtin
+        if self.is_mandatory():
+            # Force active if mandatory plugin
             self.active = True
 
         if not no_reload and self.active != self.__org_active:
@@ -179,6 +180,11 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             return False
 
         return self.plugin.check_is_builtin()
+
+    @admin.display(boolean=True, description=_('Mandatory Plugin'))
+    def is_mandatory(self) -> bool:
+        """Return True if this plugin is mandatory."""
+        return self.key in registry.MANDATORY_PLUGINS
 
     @admin.display(boolean=True, description=_('Package Plugin'))
     def is_package(self) -> bool:

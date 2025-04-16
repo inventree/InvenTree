@@ -1,5 +1,5 @@
 import { i18n } from '@lingui/core';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';

@@ -20,6 +20,9 @@ To quickly jump to a specific installation method, refer to the following links:
 !!! success "Docker Recommended"
     The recommended method of installing InvenTree is to follow our [docker setup guide](./docker.md). InvenTree provides out-of-the-box support for docker and docker compose, which provides a simple, reliable and repeatable pipeline for integration into your production environment.
 
+!!! warning "Important Security Considerations"
+    We provide documentation around the security posture that is assumed by the InvenTree project in the software design. Assessing this is a *critical* part of the setup process, and should be read carefully before deploying InvenTree in a production environment. You can read more about the [threat modelling inputs here](../concepts/threat_model.md).
+
 !!! info "Further Reading"
     For more information on the InvenTree tech stack, continue reading below!
 
@@ -122,9 +125,9 @@ Running in DEBUG mode provides many handy development features, however it is st
 
 So, for a production setup, you should set `INVENTREE_DEBUG=false` in the [configuration options](./config.md).
 
-### Potential Issues
+### Turning Debug Mode off
 
-Turning off DEBUG mode creates further work for the system administrator. In particular, when running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that when DEBUG mode is *disabled*, the InvenTree server can no longer run as a monolithic process.
+When running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that when DEBUG mode is *disabled*, the proxy setup has to be configured to handle this.
 
 !!! info "Read More"
     Refer to the [proxy server documentation](./processes.md#proxy-server) for more details

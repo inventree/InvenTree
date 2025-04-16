@@ -100,6 +100,11 @@ In addition to the InvenTree server, you will need a method of delivering static
 !!! info "Read More"
     Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
+### Check your security posture
+
+It is recommended to check the [threat modelling inputs](../concepts/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
+
+
 ### Next Steps
 
 You (or your system administrator) may wish to perform further steps such as placing the InvenTree server behind a [reverse proxy](./processes.md#proxy-server) such as [caddy](https://caddyserver.com/), or [nginx](https://www.nginx.com/).

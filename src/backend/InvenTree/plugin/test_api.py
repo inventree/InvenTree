@@ -135,6 +135,21 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
         assert_plugin_active(self, True)
 
+    def test_pluginCfg_delete(self):
+        """Test deleting a config."""
+        test_plg = self.plugin_confs.first()
+        assert test_plg is not None
+
+        self.user.is_superuser = True
+        self.user.save()
+
+        url = reverse('api-plugin-detail', kwargs={'plugin': test_plg.key})
+        response = self.delete(url, {}, expected_code=400)
+        self.assertIn(
+            'Plugin cannot be deleted as it is currently active',
+            str(response.data['detail']),
+        )
+
     def test_admin_action(self):
         """Test the PluginConfig action commands."""
         url = reverse('admin:plugin_pluginconfig_changelist')
@@ -302,3 +317,24 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         url = reverse('api-plugin-metadata', kwargs={'plugin': cfg.key})
         self.get(url, expected_code=200)
+
+    def test_settings(self):
+        """Test settings endpoint for plugin."""
+        from plugin.registry import registry
+
+        registry.set_plugin_state('sample', True)
+        url = reverse('api-plugin-settings', kwargs={'plugin': 'sample'})
+        self.get(url, expected_code=200)
+
+    def test_registry(self):
+        """Test registry endpoint for plugin."""
+        url = reverse('api-plugin-registry-status')
+        self.get(url, expected_code=403)
+
+        self.user.is_superuser = True
+        self.user.save()
+
+        self.get(url, expected_code=200)
+
+        self.user.is_superuser = False
+        self.user.save()

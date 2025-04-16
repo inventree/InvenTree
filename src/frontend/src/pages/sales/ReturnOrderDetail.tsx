@@ -1,9 +1,13 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -30,9 +34,6 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
   useCreateApiFormModal,
@@ -40,7 +41,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
@@ -155,7 +155,7 @@ export default function ReturnOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
-            currency: order?.order_currency ?? order?.customer_detail?.currency
+            currency: order?.order_currency || order?.customer_detail?.currency
           });
         }
       }
@@ -171,14 +171,28 @@ export default function ReturnOrderDetail() {
         hidden: !order.link
       },
       {
-        type: 'link',
-        model: ModelType.contact,
-        link: false,
-        name: 'contact',
+        type: 'text',
+        name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.email',
+        label: t`Contact Email`,
+        icon: 'email',
+        copy: true,
+        hidden: !order.contact_detail?.email
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.phone',
+        label: t`Contact Phone`,
+        icon: 'phone',
+        copy: true,
+        hidden: !order.contact_detail?.phone
       },
       {
         type: 'text',
@@ -213,6 +227,14 @@ export default function ReturnOrderDetail() {
         icon: 'calendar',
         copy: true,
         hidden: !order.issue_date
+      },
+      {
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.start_date
       },
       {
         type: 'date',
@@ -336,14 +358,20 @@ export default function ReturnOrderDetail() {
     }
   });
 
+  const duplicateReturnOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
     fields: duplicateReturnOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicateReturnOrderInitialData,
     modelType: ModelType.returnorder,
     follow: true
   });
@@ -481,6 +509,9 @@ export default function ReturnOrderDetail() {
             badges={orderBadges}
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            lastCrumb={[
+              { name: order.reference, url: `/sales/return-order/${order.pk}` }
+            ]}
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
@@ -488,6 +519,7 @@ export default function ReturnOrderDetail() {
             pageKey='returnorder'
             panels={orderPanels}
             model={ModelType.returnorder}
+            reloadInstance={instanceQuery.refetch}
             instance={order}
             id={order.pk}
           />

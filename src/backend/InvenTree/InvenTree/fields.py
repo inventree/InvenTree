@@ -33,7 +33,7 @@ class InvenTreeRestURLField(RestURLField):
         self.validators[-1].schemes = allowable_url_schemes()
 
     def run_validation(self, data=empty):
-        """Override default validation behaviour for this field type."""
+        """Override default validation behavior for this field type."""
         strict_urls = get_global_setting('INVENTREE_STRICT_URLS', cache=False)
 
         if not strict_urls and data is not empty and '://' not in data:
@@ -50,8 +50,8 @@ class InvenTreeURLField(models.URLField):
 
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField."""
-        # Max length for InvenTreeURLField is set to 200
-        kwargs['max_length'] = 200
+        # Max length for InvenTreeURLField is set to 2000
+        kwargs['max_length'] = 2000
         super().__init__(**kwargs)
 
 

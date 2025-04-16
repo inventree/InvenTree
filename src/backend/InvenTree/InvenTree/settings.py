@@ -18,9 +18,10 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
-from django.http import Http404
+from django.http import Http404, HttpResponseGone
 
 import structlog
+from corsheaders.defaults import default_headers as default_cors_headers
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
@@ -47,15 +48,6 @@ if TESTING:
     TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
     NUM_SLOW_TESTS = 25
 
-    # Note: The following fix is "required" for docker build workflow
-    # Note: 2022-12-12 still unsure why...
-    if os.getenv('INVENTREE_DOCKER'):
-        # Ensure that sys.path includes global python libs
-        site_packages = '/usr/local/lib/python3.9/site-packages'
-
-        if site_packages not in sys.path:
-            print('Adding missing site-packages path:', site_packages)
-            sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
@@ -70,9 +62,8 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.joinpath('VERSION')
+version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
 if version_file.exists():
-    print('load version from file')
     load_dotenv(version_file)
 
 # Default action is to run the system in Debug mode
@@ -171,7 +162,7 @@ SECRET_KEY = config.get_secret_key()
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 
-# The filesystem location for uploaded meadia files
+# The filesystem location for uploaded media files
 MEDIA_ROOT = config.get_media_dir()
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -205,6 +196,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
+PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
 
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
@@ -255,17 +247,19 @@ INVENTREE_ADMIN_URL = get_setting(
 INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
+    'django.contrib.admindocs',
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
-    'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    'company.apps.CompanyConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
+    'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
     'web',
     'generic',
@@ -273,7 +267,8 @@ INSTALLED_APPS = [
     # Core django modules
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'user_sessions',  # db user sessions
+    'django.contrib.sessions',
+    'django.contrib.humanize',
     'whitenoise.runserver_nostatic',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -297,13 +292,13 @@ INSTALLED_APPS = [
     'django_structlog',  # Structured logging
     'allauth',  # Base app for SSO
     'allauth.account',  # Extend user with accounts
+    'allauth.headless',  # APIs for auth
     'allauth.socialaccount',  # Use 'social' providers
+    'allauth.mfa',  # MFA for for allauth
+    'allauth.usersessions',  # DB sessions
     'django_otp',  # OTP is needed for MFA - base package
     'django_otp.plugins.otp_totp',  # Time based OTP
     'django_otp.plugins.otp_static',  # Backup codes
-    'allauth_2fa',  # MFA flow for allauth
-    'dj_rest_auth',  # Authentication APIs - dj-rest-auth
-    'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
 ]
@@ -313,7 +308,8 @@ MIDDLEWARE = CONFIG.get(
     [
         'django.middleware.security.SecurityMiddleware',
         'x_forwarded_for.middleware.XForwardedForMiddleware',
-        'user_sessions.middleware.SessionMiddleware',  # db user sessions
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
@@ -321,8 +317,6 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
-        'django_otp.middleware.OTPMiddleware',  # MFA support
-        'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',  # Flow control for allauth
         'allauth.account.middleware.AccountMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -330,6 +324,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
+        'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
@@ -542,7 +537,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'InvenTree.schema.ExtendedAutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
@@ -554,30 +549,12 @@ if DEBUG:
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
 
-# JWT switch
-USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
-REST_USE_JWT = USE_JWT
-
-# dj-rest-auth
-REST_AUTH = {
-    'SESSION_LOGIN': True,
-    'TOKEN_MODEL': 'users.models.ApiToken',
-    'TOKEN_CREATOR': 'users.models.default_create_token',
-    'USE_JWT': USE_JWT,
-    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
-}
-
-OLD_PASSWORD_FIELD_ENABLED = True
-
 # JWT settings - rest_framework_simplejwt
+USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
 if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
-    )
     INSTALLED_APPS.append('rest_framework_simplejwt')
-
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -817,7 +794,7 @@ SENTRY_SAMPLE_RATE = float(
     get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
 )
 
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # OpenTelemetry tracing
@@ -917,13 +894,8 @@ if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
 
-# database user sessions
-SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = get_setting(
-    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
-)
 
-SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
+SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -1117,6 +1089,7 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://*localhost:4173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
@@ -1198,6 +1171,7 @@ USE_X_FORWARDED_PORT = get_boolean_setting(
 # Refer to the django-cors-headers documentation for more information
 # Ref: https://github.com/adamchainz/django-cors-headers
 
+
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
     'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
@@ -1230,6 +1204,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     typecast=list,
 )
 
+# Allow extra CORS headers in DEBUG mode
+# Required for serving /static/ and /media/ files
+if DEBUG:
+    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
+
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server
 if DEBUG:
@@ -1244,6 +1223,11 @@ else:
     if CORS_ALLOWED_ORIGIN_REGEXES:
         logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
 
+# Load settings for the frontend interface
+FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
+FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
+
+# region auth
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
@@ -1268,6 +1252,9 @@ SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
     'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
 )
+ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
+ACCOUNT_EMAIL_NOTIFICATIONS = True
+USERSESSIONS_TRACK_ACTIVITY = True
 
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
 # The default login rate limit is "5/m/user,5/m/ip,5/m/key"
@@ -1288,7 +1275,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
 
 if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
     if SITE_URL and SITE_URL.startswith('https://'):
-        # auto-detect HTTPS prtoocol
+        # auto-detect HTTPS protocol
         ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
     else:
         # default to http
@@ -1312,12 +1299,27 @@ ACCOUNT_FORMS = {
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
 
-ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.auth_overrides.CustomTOTPDeviceForm'}
-# Determine if multi-factor authentication is enabled for this server (default = True)
-MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
-
 SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
+HEADLESS_ADAPTER = 'InvenTree.auth_overrides.CustomHeadlessAdapter'
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+HEADLESS_ONLY = True
+HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
+MFA_ENABLED = get_boolean_setting(
+    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
+)  # TODO re-implement
+MFA_SUPPORTED_TYPES = get_setting(
+    'INVENTREE_MFA_SUPPORTED_TYPES',
+    'mfa_supported_types',
+    ['totp', 'recovery_codes'],
+    typecast=list,
+)
+
+LOGOUT_REDIRECT_URL = get_setting(
+    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
+)
+# endregion auth
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
@@ -1359,8 +1361,8 @@ MARKDOWNIFY = {
     }
 }
 
-# Ignore these error typeps for in-database error logging
-IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
+# Ignore these error types for in-database error logging
+IGNORED_ERRORS = [Http404, HttpResponseGone, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 10
@@ -1383,10 +1385,6 @@ CUSTOM_SPLASH = get_custom_file(
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
 )
-
-# Load settings for the frontend interface
-FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
-FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')
@@ -1418,7 +1416,7 @@ if CUSTOM_FLAGS:
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
-# Configuratino for API schema generation
+# Configuration for API schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
@@ -1433,6 +1431,20 @@ SPECTACULAR_SETTINGS = {
     'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/',
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+        'InvenTree.schema.postprocess_required_nullable',
+        'InvenTree.schema.postprocess_print_stats',
+    ],
+    'ENUM_NAME_OVERRIDES': {
+        'UserTypeEnum': 'users.models.UserProfile.UserType',
+        'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
+        'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
+        'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
+        # Allauth
+        'UnauthorizedStatus': [[401, 401]],
+        'IsTrueEnum': [[True, True]],
+    },
 }
 
 if SITE_URL and not TESTING:

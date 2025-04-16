@@ -78,12 +78,18 @@ nav:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
       - Custom States: concepts/custom_states.md
+      - Pricing: concepts/pricing.md
+      - Threat Model: concepts/threat_model.md
     - Development:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
+    - Project:
+      - Governance: project/governance.md
+      - Project Security: project/security.md
+      - Resources: project/resources.md
     - Security: security.md
   - Install:
     - Introduction: start/intro.md
@@ -129,8 +135,6 @@ nav:
     - Allocating Stock: build/allocate.md
     - Example Build Order: build/example.md
     - Bill of Materials: build/bom.md
-    - Importing BOM Data: build/bom_import.md
-    - Exporting BOM Data: build/bom_export.md
   - Orders:
     - Companies: order/company.md
     - Purchase Orders: order/purchase_order.md
@@ -152,15 +156,17 @@ nav:
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
     - Admin Interface: settings/admin.md
-    - User Permissions: settings/permissions.md
-    - Single Sign on: settings/SSO.md
-    - Multi Factor Authentication: settings/MFA.md
+    - Setup:
+      - User Permissions: settings/permissions.md
+      - Single Sign on: settings/SSO.md
+      - Multi Factor Authentication: settings/MFA.md
+      - Email: settings/email.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
-    - Error Logs: settings/logs.md
-    - Email: settings/email.md
-    - Background Tasks: settings/tasks.md
-    - Currency Support: settings/currency.md
+    - Operations:
+      - Background Tasks: settings/tasks.md
+      - Error Logs: settings/logs.md
+      - Error Codes: settings/error_codes.md
   - App:
     - InvenTree App: app/app.md
     - Connect: app/connect.md
@@ -205,6 +211,7 @@ nav:
       - App Mixin: extend/plugins/app.md
       - Barcode Mixin: extend/plugins/barcode.md
       - Currency Mixin: extend/plugins/currency.md
+      - Data Export Mixin: extend/plugins/export.md
       - Event Mixin: extend/plugins/event.md
       - Icon Pack Mixin: extend/plugins/icon.md
       - Label Printing Mixin: extend/plugins/label.md
@@ -219,7 +226,6 @@ nav:
     - Machines:
       - Overview: extend/machines/overview.md
       - Label Printer: extend/machines/label_printer.md
-    - Themes: extend/themes.md
     - Third-Party: extend/integrate.md
 
 # Plugins
@@ -283,6 +289,7 @@ extra:
   min_python_version: 3.9
   min_invoke_version: 2.0.0
   django_version: 4.2
+  docker_postgres_version: 16
 
   version:
     default: stable

@@ -38,6 +38,7 @@ Customize settings for search results:
 | ---- | ----------- | ------- | ----- |
 {{ usersetting("SEARCH_WHOLE") }}
 {{ usersetting("SEARCH_REGEX") }}
+{{ usersetting("SEARCH_NOTES") }}
 {{ usersetting("SEARCH_PREVIEW_RESULTS") }}
 {{ usersetting("SEARCH_PREVIEW_SHOW_PARTS") }}
 {{ usersetting("SEARCH_HIDE_INACTIVE_PARTS") }}
@@ -53,6 +54,7 @@ Customize settings for search results:
 {{ usersetting("SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS") }}
 {{ usersetting("SEARCH_PREVIEW_SHOW_SALES_ORDERS") }}
 {{ usersetting("SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS") }}
 {{ usersetting("SEARCH_PREVIEW_SHOW_RETURN_ORDERS") }}
 {{ usersetting("SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS") }}
 

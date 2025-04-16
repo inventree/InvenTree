@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   ActionIcon,
@@ -17,12 +18,12 @@ import { IconExclamationCircle, IconRefresh } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { InfoItem } from '../../components/items/InfoItem';
 import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
@@ -85,9 +86,9 @@ function MachineTypeDrawer({
     <>
       <Stack>
         <Group wrap='nowrap'>
-          <Title order={4}>
+          <StylishText size='md'>
             {machineType ? machineType.name : machineTypeSlug}
-          </Title>
+          </StylishText>
         </Group>
 
         {!machineType && (

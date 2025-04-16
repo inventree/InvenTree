@@ -14,6 +14,11 @@ updates:
     schedule:
       interval: weekly
 
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    schedule:
+      interval: weekly
+
   - package-ecosystem: pip
     directories:
     - /docs
@@ -47,7 +52,6 @@ updates:
   - package-ecosystem: npm
     directories:
     - /src/frontend
-    - /src/backend
     schedule:
       interval: weekly
     groups:

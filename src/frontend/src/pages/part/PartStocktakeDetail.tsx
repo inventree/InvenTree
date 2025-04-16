@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
   Center,
@@ -10,10 +10,12 @@ import {
 } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import dayjs from 'dayjs';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import {
   generateStocktakeReportFields,
   partStocktakeFields
@@ -24,7 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
@@ -36,7 +37,7 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   const formattedLabel: string = useMemo(() => {
     if (label && typeof label === 'number') {
-      return formatDate(new Date(label).toISOString()) ?? label;
+      return formatDate(dayjs().format('YYYY-MM-DD')) ?? label;
     } else if (!!label) {
       return label.toString();
     } else {
@@ -107,18 +108,19 @@ export default function PartStocktakeDetail({
     return [
       {
         accessor: 'quantity',
-        sortable: true,
+        sortable: false,
         switchable: false
       },
       {
         accessor: 'item_count',
         title: t`Stock Items`,
         switchable: true,
-        sortable: true
+        sortable: false
       },
       {
         accessor: 'cost',
         title: t`Stock Value`,
+        sortable: false,
         render: (record: any) => {
           return formatPriceRange(record.cost_min, record.cost_max, {
             currency: record.cost_min_currency
@@ -127,10 +129,11 @@ export default function PartStocktakeDetail({
       },
       {
         accessor: 'date',
-        sortable: true
+        sortable: false
       },
       {
-        accessor: 'note'
+        accessor: 'note',
+        sortable: false
       }
     ];
   }, []);
@@ -174,17 +177,15 @@ export default function PartStocktakeDetail({
         return {
           date: new Date(record.date).valueOf(),
           quantity: record.quantity,
-          value_min: record.cost_min,
-          value_max: record.cost_max
+          value_min: Number.parseFloat(record.cost_min),
+          value_max: Number.parseFloat(record.cost_max)
         };
       }) ?? [];
 
     // Sort records to ensure correct date order
-    records.sort((a, b) => {
+    return records.sort((a, b) => {
       return a < b ? -1 : 1;
     });
-
-    return records;
   }, [table.records]);
 
   // Calculate the date limits of the chart
@@ -216,7 +217,8 @@ export default function PartStocktakeDetail({
           columns={tableColumns}
           props={{
             params: {
-              part: partId
+              part: partId,
+              ordering: 'date'
             },
             rowActions: rowActions,
             tableActions: tableActions
@@ -241,12 +243,18 @@ export default function PartStocktakeDetail({
                 <ChartTooltip label={label} payload={payload} />
               )
             }}
+            yAxisProps={{
+              allowDataOverflow: false
+            }}
+            rightYAxisProps={{
+              allowDataOverflow: false
+            }}
             xAxisProps={{
               scale: 'time',
               type: 'number',
               domain: chartLimits,
               tickFormatter: (value: number) => {
-                return formatDate(new Date(value).toISOString());
+                return formatDate(dayjs().format('YYYY-MM-DD'));
               }
             }}
             series={[

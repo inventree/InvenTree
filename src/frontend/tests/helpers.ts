@@ -1,3 +1,5 @@
+import { baseUrl } from './defaults';
+
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
@@ -35,6 +37,7 @@ export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
   await closeFilterDrawer(page);
+  await page.waitForLoadState('networkidle');
 };
 
 export const setTableChoiceFilter = async (page, filter, value) => {
@@ -52,6 +55,7 @@ export const setTableChoiceFilter = async (page, filter, value) => {
   await page.getByPlaceholder('Select filter value').click();
   await page.getByRole('option', { name: value }).click();
 
+  await page.waitForLoadState('networkidle');
   await closeFilterDrawer(page);
 };
 
@@ -61,4 +65,59 @@ export const setTableChoiceFilter = async (page, filter, value) => {
  */
 export const getRowFromCell = async (cell) => {
   return cell.locator('xpath=ancestor::tr').first();
+};
+
+export const clickOnRowMenu = async (cell) => {
+  const row = await getRowFromCell(cell);
+
+  await row.getByLabel(/row-action-menu-/i).click();
+};
+
+/**
+ * Navigate to the provided page, and wait for loading to complete
+ * @param page
+ * @param url
+ */
+export const navigate = async (page, url: string) => {
+  if (!url.startsWith(baseUrl)) {
+    if (url.startsWith('/')) {
+      url = url.slice(1);
+    }
+
+    url = `${baseUrl}/${url}`;
+  }
+
+  await page.goto(url);
+};
+
+/**
+ * CLick on the 'tab' element with the provided name
+ */
+export const loadTab = async (page, tabName) => {
+  await page
+    .getByLabel(/panel-tabs-/)
+    .getByRole('tab', { name: tabName })
+    .click();
+};
+
+// Activate "table" view in certain contexts
+export const activateTableView = async (page) => {
+  await page.getByLabel('segmented-icon-control-table').click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Activate "calendar" view in certain contexts
+export const activateCalendarView = async (page) => {
+  await page.getByLabel('segmented-icon-control-calendar').click();
+  await page.waitForLoadState('networkidle');
+};
+
+/**
+ * Perform a 'global search' on the provided page, for the provided query text
+ */
+export const globalSearch = async (page, query) => {
+  await page.getByLabel('open-search').click();
+  await page.getByLabel('global-search-input').clear();
+  await page.getByPlaceholder('Enter search text').fill(query);
+  await page.waitForTimeout(300);
 };

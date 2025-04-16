@@ -7,11 +7,7 @@ import os
 import random
 import shutil
 import string
-import warnings
 from pathlib import Path
-
-from django.core.files.base import ContentFile
-from django.core.files.storage import Storage
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -77,6 +73,9 @@ def ensure_dir(path: Path, storage=None) -> None:
 
     If it does not exist, create it.
     """
+    from django.core.files.base import ContentFile
+    from django.core.files.storage import Storage
+
     if storage and isinstance(storage, Storage):
         if not storage.exists(str(path)):
             storage.save(str(path / '.empty'), ContentFile(''))
@@ -150,7 +149,7 @@ def do_typecast(value, type, var_name=None):
         var_name: Name that should be logged e.g. 'INVENTREE_STATIC_ROOT'. Set if logging is required.
 
     Returns:
-        Typecasted value or original value if typecasting failed.
+        Typecast value or original value if typecasting failed.
     """
     # Force 'list' of strings
     if type is list:
@@ -238,12 +237,15 @@ def get_boolean_setting(env_var=None, config_key=None, default_value=False):
     return is_true(get_setting(env_var, config_key, default_value))
 
 
-def get_media_dir(create=True):
+def get_media_dir(create=True, error=True):
     """Return the absolute path for the 'media' directory (where uploaded files are stored)."""
     md = get_setting('INVENTREE_MEDIA_ROOT', 'media_root')
 
     if not md:
-        raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
+        else:
+            return None
 
     md = Path(md).resolve()
 
@@ -253,12 +255,15 @@ def get_media_dir(create=True):
     return md
 
 
-def get_static_dir(create=True):
+def get_static_dir(create=True, error=True):
     """Return the absolute path for the 'static' directory (where static files are stored)."""
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
     if not sd:
-        raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
+        else:
+            return None
 
     sd = Path(sd).resolve()
 
@@ -268,12 +273,15 @@ def get_static_dir(create=True):
     return sd
 
 
-def get_backup_dir(create=True):
+def get_backup_dir(create=True, error=True):
     """Return the absolute path for the backup directory."""
     bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
-        raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+        else:
+            return None
 
     bd = Path(bd).resolve()
 
@@ -392,51 +400,42 @@ def get_custom_file(
 
 
 def get_frontend_settings(debug=True):
-    """Return a dictionary of settings for the frontend interface.
-
-    Note that the new config settings use the 'FRONTEND' key,
-    whereas the legacy key was 'PUI' (platform UI) which is now deprecated
-    """
-    # Legacy settings
-    pui_settings = get_setting(
-        'INVENTREE_PUI_SETTINGS', 'pui_settings', {}, typecast=dict
-    )
-
-    if len(pui_settings) > 0:
-        warnings.warn(
-            "The 'INVENTREE_PUI_SETTINGS' key is deprecated. Please use 'INVENTREE_FRONTEND_SETTINGS' instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
+    """Return a dictionary of settings for the frontend interface."""
     # New settings
     frontend_settings = get_setting(
         'INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict
     )
 
-    # Merge settings
-    settings = {**pui_settings, **frontend_settings}
-
-    # Set the base URL
-    if 'base_url' not in settings:
-        settings['base_url'] = get_setting(
-            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
+    # Set the base URL for the user interface
+    # This is the UI path e.g. '/web/'
+    if 'base_url' not in frontend_settings:
+        frontend_settings['base_url'] = (
+            get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web')
+            or 'web'
         )
 
+    # If provided, specify the API host
+    api_host = frontend_settings.get('api_host', None) or get_setting(
+        'INVENTREE_FRONTEND_API_HOST', 'frontend_api_host', None
+    )
+
+    if api_host:
+        frontend_settings['api_host'] = api_host
+
     # Set the server list
-    settings['server_list'] = settings.get('server_list', [])
+    frontend_settings['server_list'] = frontend_settings.get('server_list', [])
 
     # Set the debug flag
-    settings['debug'] = debug
+    frontend_settings['debug'] = debug
 
-    if 'environment' not in settings:
-        settings['environment'] = 'development' if debug else 'production'
+    if 'environment' not in frontend_settings:
+        frontend_settings['environment'] = 'development' if debug else 'production'
 
-    if (debug and 'show_server_selector' not in settings) or len(
-        settings['server_list']
+    if (debug and 'show_server_selector' not in frontend_settings) or len(
+        frontend_settings['server_list']
     ) == 0:
         # In debug mode, show server selector by default
         # If no servers are specified, show server selector
-        settings['show_server_selector'] = True
+        frontend_settings['show_server_selector'] = True
 
-    return settings
+    return frontend_settings

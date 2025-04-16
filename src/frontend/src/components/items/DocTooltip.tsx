@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Anchor, Container, HoverCard, ScrollArea, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 

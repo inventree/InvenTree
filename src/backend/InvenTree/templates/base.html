@@ -92,37 +92,5 @@
     </div>
 </div>
 
-<script defer type='text/javascript'>
-
-$(document).ready(function () {
-
-{% block js_ready %}
-{% endblock js_ready %}
-
-    inventreeDocReady();
-
-    {% if barcodes %}
-    $('#barcode-scan').click(function() {
-        barcodeScanDialog();
-    });
-    {% endif %}
-
-    moment.locale('{{ request.LANGUAGE_CODE }}');
-
-    // Account notifications
-    {% if messages %}
-    {% for message in messages %}
-    showMessage(
-        '{{ message }}',
-        {
-            style: 'info',
-        }
-    );
-    {% endfor %}
-    {% endif %}
-});
-
-</script>
-
 </body>
 </html>

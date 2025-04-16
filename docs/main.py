@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import textwrap
+from typing import Literal
 
 import requests
 import yaml
@@ -31,6 +32,9 @@ for key in [
 # Cached settings dict values
 global GLOBAL_SETTINGS
 global USER_SETTINGS
+global TAGS
+global FILTERS
+global REPORT_CONTEXT
 
 # Read in the InvenTree settings file
 here = os.path.dirname(__file__)
@@ -41,6 +45,16 @@ with open(settings_file, encoding='utf-8') as sf:
 
     GLOBAL_SETTINGS = settings['global']
     USER_SETTINGS = settings['user']
+
+# Tags
+with open(os.path.join(here, 'inventree_tags.yml'), encoding='utf-8') as f:
+    TAGS = yaml.load(f, yaml.BaseLoader)
+# Filters
+with open(os.path.join(here, 'inventree_filters.yml'), encoding='utf-8') as f:
+    FILTERS = yaml.load(f, yaml.BaseLoader)
+# Report context
+with open(os.path.join(here, 'inventree_report_context.json'), encoding='utf-8') as f:
+    REPORT_CONTEXT = json.load(f)
 
 
 def get_repo_url(raw=False):
@@ -93,7 +107,7 @@ def check_link(url) -> bool:
     return False
 
 
-def get_build_enviroment() -> str:
+def get_build_environment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
@@ -112,20 +126,21 @@ def define_env(env):
     """Define custom environment variables for the documentation build process."""
 
     @env.macro
-    def sourcedir(dirname, branch=None):
+    def sourcedir(dirname: str, branch=None):
         """Return a link to a directory within the source code repository.
 
         Arguments:
-            - dirname: The name of the directory to link to (relative to the top-level directory)
+            dirname: The name of the directory to link to (relative to the top-level directory)
+            branch: The branch of the repository to link to (defaults to the current build environment)
 
         Returns:
-            - A fully qualified URL to the source code directory on GitHub
+            A fully qualified URL to the source code directory on GitHub
 
         Raises:
-            - FileNotFoundError: If the directory does not exist, or the generated URL is invalid
+            FileNotFoundError: If the directory does not exist, or the generated URL is invalid
         """
         if branch == None:
-            branch = get_build_enviroment()
+            branch = get_build_environment()
 
         if dirname.startswith('/'):
             dirname = dirname[1:]
@@ -155,16 +170,18 @@ def define_env(env):
         """Return a link to a file within the source code repository.
 
         Arguments:
-            - filename: The name of the file to link to (relative to the top-level directory)
+            filename: The name of the file to link to (relative to the top-level directory)
+            branch: The branch of the repository to link to (defaults to the current build environment)
+            raw: If True, return the raw URL to the file (defaults to False)
 
         Returns:
-            - A fully qualified URL to the source code file on GitHub
+            A fully qualified URL to the source code file on GitHub
 
         Raises:
-            - FileNotFoundError: If the file does not exist, or the generated URL is invalid
+            FileNotFoundError: If the file does not exist, or the generated URL is invalid
         """
         if branch == None:
-            branch = get_build_enviroment()
+            branch = get_build_environment()
 
         if filename.startswith('/'):
             filename = filename[1:]
@@ -233,9 +250,9 @@ def define_env(env):
         """Include a file in the documentation, in a 'collapse' block.
 
         Arguments:
-            - filename: The name of the file to include (relative to the top-level directory)
-            - title:
-            - fmt:
+            filename: The name of the file to include (relative to the top-level directory)
+            title: The title of the collapse block in the documentation
+            fmt: The format of the included file (e.g., 'python', 'html', etc.)
         """
         here = os.path.dirname(__file__)
         path = os.path.join(here, '..', filename)
@@ -285,7 +302,7 @@ def define_env(env):
         """Extract information on a particular global setting.
 
         Arguments:
-            - key: The name of the global setting to extract information for.
+            key: The name of the global setting to extract information for.
         """
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
@@ -297,9 +314,44 @@ def define_env(env):
         """Extract information on a particular user setting.
 
         Arguments:
-            - key: The name of the user setting to extract information for.
+            key: The name of the user setting to extract information for.
         """
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
 
         return rendersetting(key, setting)
+
+    @env.macro
+    def tags_and_filters():
+        """Return a list of all tags and filters."""
+        global TAGS
+        global FILTERS
+
+        ret_data = ''
+        for ref in [['Tags', TAGS], ['Filters', FILTERS]]:
+            ret_data += f'### {ref[0]}\n\n| Namespace | Name | Description |\n| --- | --- | --- |\n'
+            for value in ref[1]:
+                title = (
+                    value['title']
+                    .replace('\n', ' ')
+                    .replace('<', '&lt;')
+                    .replace('>', '&gt;')
+                )
+                ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
+            ret_data += '\n'
+        ret_data += '\n'
+
+        return ret_data
+
+    @env.macro
+    def report_context(type_: Literal['models', 'base'], model: str):
+        """Extract information on a particular report context."""
+        global REPORT_CONTEXT
+
+        context = REPORT_CONTEXT.get(type_).get(model)
+
+        ret_data = '| Variable | Type | Description |\n| --- | --- | --- |\n'
+        for k, v in context['context'].items():
+            ret_data += f'| {k} | `{v["type"]}` | {v["description"]} |\n'
+
+        return ret_data

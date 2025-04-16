@@ -1,11 +1,103 @@
 import test from 'playwright/test';
 
-import { baseUrl } from './defaults.js';
-import { doQuickLogin } from './login.js';
+import {
+  clearTableFilters,
+  clickOnRowMenu,
+  loadTab,
+  navigate,
+  setTableChoiceFilter
+} from './helpers.js';
+import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
-test('Plugins - Panels', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+// Unit test for plugin settings
+test('Plugins - Settings', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
+
+  // Ensure that the SampleIntegration plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'sample',
+    state: true
+  });
+
+  // Navigate and select the plugin
+  await navigate(page, 'settings/admin/plugin/');
+  await clearTableFilters(page);
+  await page.getByLabel('table-search-input').fill('integration');
+
+  await page
+    .getByRole('row', { name: 'SampleIntegrationPlugin' })
+    .getByRole('paragraph')
+    .click();
+  await page.getByRole('button', { name: 'Plugin Information' }).click();
+  await page
+    .getByLabel('Plugin Detail -')
+    .getByRole('button', { name: 'Plugin Settings' })
+    .waitFor();
+
+  // Edit numerical value
+  await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
+  const originalValue = await page.getByLabel('number-field-value').innerText();
+  await page
+    .getByLabel('number-field-value')
+    .fill(originalValue == '999' ? '1000' : '999');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.waitForTimeout(500);
+
+  // Change it back
+  await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
+  await page.getByLabel('number-field-value').fill(originalValue);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Select supplier
+  await page.getByLabel('edit-setting-SELECT_COMPANY').click();
+  await page.getByLabel('related-field-value').fill('mouser');
+  await page.getByText('Mouser Electronics').click();
+});
+
+// Test base plugin functionality
+test('Plugins - Functionality', async ({ browser }) => {
+  // Navigate and select the plugin
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree',
+    url: 'settings/admin/plugin/'
+  });
+
+  // Filter plugins first
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Sample', 'Yes');
+  await setTableChoiceFilter(page, 'Builtin', 'No');
+
+  // Activate the plugin
+  const cell = await page.getByText('Sample API Caller', { exact: true });
+  await clickOnRowMenu(cell);
+
+  // Activate the plugin (unless already activated)
+  if ((await page.getByRole('menuitem', { name: 'Deactivate' }).count()) == 0) {
+    await page.getByRole('menuitem', { name: 'Activate' }).click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('The plugin was activated').waitFor();
+    await page.waitForTimeout(250);
+  }
+
+  // Deactivate the plugin again
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Deactivate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('The plugin was deactivated').waitFor();
+});
+
+test('Plugins - Panels', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that UI plugins are enabled
   await setSettingState({
@@ -26,22 +118,21 @@ test('Plugins - Panels', async ({ page, request }) => {
   await page.waitForTimeout(500);
 
   // Navigate to the "part" page
-  await page.goto(`${baseUrl}/part/69/`);
+  await navigate(page, 'part/69/');
 
   // Ensure basic part tab is available
-  await page.getByRole('tab', { name: 'Part Details' }).waitFor();
+  await loadTab(page, 'Part Details');
 
   // Allow time for the plugin panels to load (they are loaded asynchronously)
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
 
   // Check out each of the plugin panels
-
-  await page.getByRole('tab', { name: 'Broken Panel' }).click();
+  await loadTab(page, 'Broken Panel');
   await page.waitForTimeout(500);
 
   await page.getByText('Error occurred while loading plugin content').waitFor();
 
-  await page.getByRole('tab', { name: 'Dynamic Panel' }).click();
+  await loadTab(page, 'Dynamic Panel');
   await page.waitForTimeout(500);
 
   await page.getByText('Instance ID: 69');
@@ -49,7 +140,7 @@ test('Plugins - Panels', async ({ page, request }) => {
     .getByText('This panel has been dynamically rendered by the plugin system')
     .waitFor();
 
-  await page.getByRole('tab', { name: 'Part Panel', exact: true }).click();
+  await loadTab(page, 'Part Panel');
   await page.waitForTimeout(500);
   await page.getByText('This content has been rendered by a custom plugin');
 
@@ -64,8 +155,11 @@ test('Plugins - Panels', async ({ page, request }) => {
 /**
  * Unit test for custom admin integration for plugins
  */
-test('Plugins - Custom Admin', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('Plugins - Custom Admin', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that the SampleUI plugin is enabled
   await setPluginState({
@@ -75,7 +169,7 @@ test('Plugins - Custom Admin', async ({ page, request }) => {
   });
 
   // Navigate to the "admin" page
-  await page.goto(`${baseUrl}/settings/admin/plugin/`);
+  await navigate(page, 'settings/admin/plugin/');
 
   // Open the plugin drawer, and ensure that the custom admin elements are visible
   await page.getByText('SampleUI').click();
@@ -95,8 +189,11 @@ test('Plugins - Custom Admin', async ({ page, request }) => {
   await page.getByText('hello: world').waitFor();
 });
 
-test('Plugins - Locate Item', async ({ page, request }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('Plugins - Locate Item', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that the sample location plugin is enabled
   await setPluginState({
@@ -108,7 +205,8 @@ test('Plugins - Locate Item', async ({ page, request }) => {
   await page.waitForTimeout(500);
 
   // Navigate to the "stock item" page
-  await page.goto(`${baseUrl}/stock/item/287/`);
+  await navigate(page, 'stock/item/287/');
+  await page.waitForLoadState('networkidle');
 
   // "Locate" this item
   await page.getByLabel('action-button-locate-item').click();

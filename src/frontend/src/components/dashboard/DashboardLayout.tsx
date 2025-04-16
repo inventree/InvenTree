@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Card, Center, Loader, Text } from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { IconInfoCircle } from '@tabler/icons-react';

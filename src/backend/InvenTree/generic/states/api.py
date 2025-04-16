@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 import common.models
 import common.serializers
-from importer.mixins import DataExportViewMixin
+from data_exporter.mixins import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.permissions import IsStaffOrReadOnly
@@ -99,6 +99,7 @@ class AllStatusViews(StatusView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = EmptySerializer
 
+    @extend_schema(operation_id='generic_status_retrieve_all')
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
         from InvenTree.helpers import inheritors
@@ -115,7 +116,6 @@ class AllStatusViews(StatusView):
             for item in cls.custom_values():
                 label = str(item.name)
                 if label not in cls_data['values']:
-                    print('custom value:', item)
                     cls_data['values'][label] = {
                         'color': item.color,
                         'logical_key': item.logical_key,

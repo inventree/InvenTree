@@ -8,6 +8,8 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from drf_spectacular.utils import extend_schema_field
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 import build.admin
@@ -16,8 +18,8 @@ import common.models
 import part.models as part_models
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter
 from InvenTree.helpers import isNull, str2bool
@@ -103,6 +105,7 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Category'),
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Category')))
     def filter_category(self, queryset, name, category):
         """Filter by part category (including sub-categories)."""
         categories = category.get_descendants(include_self=True)
@@ -114,6 +117,7 @@ class BuildFilter(rest_filters.FilterSet):
         method='filter_ancestor',
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Ancestor Build')))
     def filter_ancestor(self, queryset, name, parent):
         """Filter by 'parent' build order."""
         builds = parent.get_descendants(include_self=False)
@@ -242,6 +246,66 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Completed after'), field_name='completion_date', lookup_expr='gt'
     )
 
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include orders *after* a specified date.
+
+        This filter is used in combination with filter_max_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+
+        So, we are interested in orders which are active *after* this date:
+
+        - creation_date is set *after* this date (but there is no start date)
+        - start_date is set *after* this date
+        - target_date is set *after* this date
+
+        """
+        q1 = Q(creation_date__gte=value, start_date__isnull=True)
+        q2 = Q(start_date__gte=value)
+        q3 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include orders *before* a specified date.
+
+        This filter is used in combination with filter_min_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+
+        So, we are interested in orders which are active *before* this date:
+
+        - creation_date is set *before* this date (but there is no start date)
+        - start_date is set *before* this date
+        - target_date is set *before* this date
+        """
+        q1 = Q(creation_date__lte=value, start_date__isnull=True)
+        q2 = Q(start_date__lte=value)
+        q3 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
+    exclude_tree = rest_filters.ModelChoiceFilter(
+        queryset=Build.objects.all(),
+        method='filter_exclude_tree',
+        label=_('Exclude Tree'),
+    )
+
+    @extend_schema_field(serializers.IntegerField(help_text=_('Exclude Tree')))
+    def filter_exclude_tree(self, queryset, name, value):
+        """Filter by excluding a tree of Build objects."""
+        queryset = queryset.exclude(
+            pk__in=[bld.pk for bld in value.get_descendants(include_self=True)]
+        )
+
+        return queryset
+
 
 class BuildMixin:
     """Mixin class for Build API endpoints."""
@@ -319,35 +383,6 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
 
         return queryset
 
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BuildList endpoint."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # exclude parent tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                build = Build.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[bld.pk for bld in build.get_descendants(include_self=True)]
-                )
-
-            except (ValueError, Build.DoesNotExist):
-                pass
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = Build.filterByDate(queryset, min_date, max_date)
-
-        return queryset
-
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
         try:
@@ -358,7 +393,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         kwargs['part_detail'] = part_detail
         kwargs['create'] = True
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class BuildDetail(BuildMixin, RetrieveUpdateDestroyAPI):
@@ -499,7 +534,7 @@ class BuildLineEndpoint:
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_source_build(self) -> Build:
         """Return the source Build object for the BuildLine queryset.
@@ -808,7 +843,7 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         """Override the queryset method, to perform custom prefetch."""
@@ -885,8 +920,7 @@ build_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': BuildItem},
+                        MetadataView.as_view(model=BuildItem),
                         name='api-build-item-metadata',
                     ),
                     path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
@@ -932,8 +966,7 @@ build_api_urls = [
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': Build},
+                MetadataView.as_view(model=Build),
                 name='api-build-metadata',
             ),
             path('', BuildDetail.as_view(), name='api-build-detail'),

@@ -6,9 +6,29 @@ title: Purchase Order
 
 Purchase orders allow to track which parts are bought from suppliers and manufacturers, therefore converting externally bought items into stock items / inventory.
 
-To access the purchase order page, click on the <span class="badge inventree nav main"><span class='fas fa-shopping-cart'></span> Buy</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-list'></span> Purchase Orders</span> option in the dropdown list.
+### View Purchase Orders
+
+To navigate to the Purchase Order display, select *Purchasing* from the main navigation menu, and *Build Orders* from the sidebar:
+
+{% with id="purchase_order_display", url="order/po_display.png", description="Purchase Order Display" %}
+{% include "img.html" %}
+{% endwith %}
+
+The following view modes are available:
+
+#### Table View
+
+*Table View* provides a list of Purchase Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
 {% with id="purchase_order_list", url="order/po_list.png", description="Purchase Order List" %}
+{% include "img.html" %}
+{% endwith %}
+
+#### Calendar View
+
+*Calendar View* shows a calendar display with outstanding purchase orders, based on the various dates specified for each order.
+
+{% with id="purchase_order_calendar", url="order/po_calendar.png", description="Purchase Order Calendar" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -42,7 +62,14 @@ Purchase Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Purchase Order Currency
 
-The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used.
+The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used. Additionally, the currency can be specified separately for each line item.
+
+So, when determining the cost of each line item in the purchase order, the following order of precedence is used:
+
+1. Line item currency
+2. Purchase order currency
+3. Supplier currency
+4. Default (base) currency
 
 ## Create Purchase Order
 
@@ -77,11 +104,11 @@ It is possible to upload an exported purchase order from the supplier instead of
 !!! info "Supported Formats"
 	This process only supports tabular data and the following formats are supported: CSV, TSV, XLS, XLSX, JSON and YAML
 
-### Issue Order
+## Issue Order
 
 Once all the line items were added, click on the <span class='fas fa-paper-plane'></span> button on the main purchase order detail panel and confirm the order has been submitted.
 
-### Receive Line Items
+## Receive Line Items
 
 After receiving all the items from the order, the purchase order will convert the line items into stock items / inventory.
 
@@ -107,19 +134,25 @@ Each item marked as "received" is automatically converted into a stock item.
 
 To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side"><span class='fas fa-sign-in-alt'></span> Received Items</span> tab.
 
-### Complete Order
+### Item Value Currency
+
+The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.
+
+However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/pricing.md#default-currency) of the system. This may be useful when ordering stock in a different currency, to ensure that the unit cost of the stock item is converted to the base currency at the time of receipt.
+
+## Complete Order
 
 Once the quantity of all __received__ items is equal or above the quantity of all line items, the order will be automatically marked as __complete__.
 
 It is also possible to complete the order before all items were received (or if there were missing items).
 To do so, click on the <span class='fas fa-check-circle'></span> button on the main purchase order detail panel and confirm the order was completed.
 
-### Cancel Order
+## Cancel Order
 
 In the event that the order won't be processed, user has the option of cancelling the order instead.
 To do so, simply click on the <span class='fas fa-times-circle'></span> button on the main purchase order detail panel and confirm the purchase order has been cancelled.
 
-### Duplicate Purchase Order
+## Duplicate Purchase Order
 
 Duplicating a Purchase Order allows the user to quickly create a new *copy* of an existing order, using the same supplier and line item information.
 
@@ -141,7 +174,23 @@ A new purchase order is then created based on the currently selected order:
 {% include "img.html" %}
 {% endwith %}
 
-### Calendar view
+## Order Scheduling
+
+Purchase orders can be scheduled for a future date, to allow for planning of future orders.
+
+### Start Date
+
+The *Start Date* of the purchase order is the date on which the order is scheduled to be issued to the supplier.
+
+### Target Date
+
+The *Target Date* of the purchase order is the date on which the order is expected to be completed / received from the supplier.
+
+### Overdue Orders
+
+If the *Target Date* of the purchase order is reached but the order has not been completed, the order will be marked as *overdue*.
+
+## Calendar view
 
 Using the button to the top right of the list of Purchase Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
 
@@ -158,5 +207,6 @@ The following [global settings](../settings/global.md) are available for purchas
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("PURCHASEORDER_CONVERT_CURRENCY") }}
 {{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}

@@ -1,23 +1,17 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { shortenString } from '../../functions/tables';
-import {
-  useFilters,
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CreationDateColumn,
@@ -26,6 +20,7 @@ import {
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -36,14 +31,17 @@ import {
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasProjectCodeFilter,
+  IssuedByFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
+  PartCategoryFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
-  type TableFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
@@ -107,11 +105,7 @@ export function BuildOrderTable({
         sortable: true
       },
       CreationDateColumn({}),
-      DateColumn({
-        accessor: 'start_date',
-        title: t`Start Date`,
-        sortable: true
-      }),
+      StartDateColumn({}),
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',
@@ -129,21 +123,6 @@ export function BuildOrderTable({
     ];
   }, [parentBuildId]);
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const ownerFilters = useOwnerFilters();
-  const userFilters = useUserFilters();
-
-  const categoryFilters = useFilters({
-    url: apiUrl(ApiEndpoints.category_list),
-    transform: (item) => ({
-      value: item.pk,
-      label: shortenString({
-        str: item.pathstring,
-        len: 50
-      })
-    })
-  });
-
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OutstandingFilter(),
@@ -156,18 +135,8 @@ export function BuildOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
-      {
-        name: 'start_date_before',
-        type: 'date',
-        label: t`Start Date Before`,
-        description: t`Show items with a start date before this date`
-      },
-      {
-        name: 'start_date_after',
-        type: 'date',
-        label: t`Start Date After`,
-        description: t`Show items with a start date after this date`
-      },
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
       {
         name: 'has_target_date',
         type: 'boolean',
@@ -182,21 +151,11 @@ export function BuildOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ProjectCodeFilter(),
       HasProjectCodeFilter(),
-      {
-        name: 'issued_by',
-        label: t`Issued By`,
-        description: t`Filter by user who issued this order`,
-        choices: userFilters.choices
-      },
-      ResponsibleFilter({ choices: ownerFilters.choices }),
-      {
-        name: 'category',
-        label: t`Category`,
-        description: t`Filter by part category`,
-        choices: categoryFilters.choices
-      }
+      IssuedByFilter(),
+      ResponsibleFilter(),
+      PartCategoryFilter()
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter
@@ -210,13 +169,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [
-    partId,
-    categoryFilters.choices,
-    projectCodeFilters.choices,
-    ownerFilters.choices,
-    userFilters.choices
-  ]);
+  }, [partId]);
 
   const user = useUserState();
 

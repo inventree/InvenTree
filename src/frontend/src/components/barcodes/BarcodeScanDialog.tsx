@@ -1,16 +1,16 @@
-import { t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import { extractErrorMessage } from '../../functions/api';
-import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
-import { ModelInformationDict } from '../render/ModelType';
 import { BarcodeInput } from './BarcodeInput';
 
 export default function BarcodeScanDialog({

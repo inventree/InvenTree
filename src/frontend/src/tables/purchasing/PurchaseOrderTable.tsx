@@ -1,21 +1,17 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import {
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CompletionDateColumn,
@@ -26,6 +22,7 @@ import {
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -44,7 +41,8 @@ import {
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
-  type TableFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
@@ -63,10 +61,6 @@ export function PurchaseOrderTable({
   const table = useTable('purchase-order');
   const user = useUserState();
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const responsibleFilters = useOwnerFilters();
-  const createdByFilters = useUserFilters();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       OrderStatusFilter({ model: ModelType.purchaseorder }),
@@ -79,18 +73,28 @@ export function PurchaseOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
+      {
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
+      },
+      {
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
+      },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ProjectCodeFilter(),
       HasProjectCodeFilter(),
-      ResponsibleFilter({ choices: responsibleFilters.choices }),
-      CreatedByFilter({ choices: createdByFilters.choices })
+      ResponsibleFilter(),
+      CreatedByFilter()
     ];
-  }, [
-    projectCodeFilters.choices,
-    responsibleFilters.choices,
-    createdByFilters.choices
-  ]);
+  }, []);
 
   const tableColumns = useMemo(() => {
     return [
@@ -120,6 +124,7 @@ export function PurchaseOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
@@ -130,7 +135,7 @@ export function PurchaseOrderTable({
         sortable: true,
         render: (record: any) => {
           return formatCurrency(record.total_price, {
-            currency: record.order_currency ?? record.supplier_detail?.currency
+            currency: record.order_currency || record.supplier_detail?.currency
           });
         }
       },

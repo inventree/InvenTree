@@ -12,11 +12,15 @@ A *Build Order* uses the BOM to allocate stock items to the assembly process. As
 
 ### View Build Orders
 
-To navigate to the Build Order display, select *Build* from the main navigation menu:
+To navigate to the Build Order display, select *Manufacturing* from the main navigation menu, and *Build Orders* from the sidebar.
+
+The *Build Order Index Page* allows the user to view all build orders:
 
 {% with id="build_display", url="build/build_display.png", description="Display Builds" %}
 {% include "img.html" %}
 {% endwith %}
+
+The following view modes are available:
 
 #### Table View
 
@@ -28,7 +32,13 @@ To navigate to the Build Order display, select *Build* from the main navigation 
 
 #### Calendar View
 
-*Calendar View* shows a calendar display with upcoming build orders, based on the various dates specified for each build.
+*Calendar View* shows a calendar display with outstanding build orders, based on the various dates specified for each order.
+
+{% with id="build_calendar", url="build/build_calendar.png", description="Build Calendar" %}
+{% include "img.html" %}
+{% endwith %}
+
+The build calendar allows the user to navigate month-by-month and display the filtered build orders
 
 ## Build Order Details
 
@@ -96,7 +106,7 @@ When a *Build Order* is created, we then have the ability to *allocate* stock it
 !!! info "Example - Stock Allocation"
 	Let's say that to assembly a single "Widget", we require 2 "flanges". So, to complete a build of 10 "Widgets", 20 "flanges" will be required. We *allocate* 20 flanged against this build order.
 
-Allocating stock to a build does not actually subtrack the stock from the database. Allocations signal an *intent* to take that stock for the purpose of this build. Stock allocations are actioned at the completion of a build.
+Allocating stock to a build does not actually subtract the stock from the database. Allocations signal an *intent* to take that stock for the purpose of this build. Stock allocations are subtracted from stock at the completion of a build.
 
 !!! info "Part Allocation Information"
     Any part which has stock allocated to a build order will indicate this on the part information page.
@@ -243,7 +253,7 @@ The form will validate the build order is ready to be completed, and will preven
 	If you wish to complete the build despite the missing parts, toggle the `Accept Unallocated` option to true to override the warning and allow completion with unallocated parts.
 
 !!! info "Overallocated Stock Items"
-	If the warning message `Some stock items have been overallocated` is shown, you have more stock than required by the BOM for the part being built allocated to the build order. By default the `Not permissted` option is selected and you will need to return to the allocation screen and remove the extra items before the build can be completed.
+	If the warning message `Some stock items have been overallocated` is shown, you have more stock than required by the BOM for the part being built allocated to the build order. By default the `Not permitted` option is selected and you will need to return to the allocation screen and remove the extra items before the build can be completed.
 
 	Alternatively, you can select `Accept as consumed by this build order` to continue with the allocation and remove the extra items from stock (e.g. if they were destroyed during build), or select `Deallocate before completing this build order` if you would like the extra items to be returned to stock for use in future builds.
 
@@ -265,16 +275,21 @@ The `Cancel Build` form will be displayed, click on the confirmation switch then
 
 ## Build Scheduling
 
+Build orders can be scheduled for a future date, to allow for planning of production schedules.
+
 ### Start Date
 
-Build orders can be optionally scheduled to *start* at a specified date. This may be useful for planning production schedules.
+Build orders can be optionally scheduled to *start* at a specified date, by setting the *Start Date* field. This field can be left blank if the build is to start immediately.
+
+### Target Date
+
+Build orders can be optionally scheduled to be completed by a certain date, by setting the *Target Date* field. This field can be left blank if the build has no specific deadline.
 
 ### Overdue Builds
 
-Build orders may (optionally) have a target completion date specified. If this date is reached but the build order remains incomplete, then the build is considered *overdue*.
+If the *Target Date* is reached but the build order remains incomplete, then the build is considered *overdue*.
 
 This can be useful for tracking production delays, and can be used to generate reports on build order performance.
-
 
 ## Build Order Settings
 

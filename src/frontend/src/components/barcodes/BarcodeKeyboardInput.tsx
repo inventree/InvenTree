@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Button, FocusTrap, Stack, TextInput } from '@mantine/core';
 import { IconQrcode } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';

@@ -18,6 +18,7 @@ import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
@@ -27,13 +28,13 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.permissions import IsSuperuser, IsSuperuserOrReadOnly
-from plugin import registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.base.ui.api import ui_plugins_api_urls
 from plugin.models import PluginConfig, PluginSetting
 from plugin.plugin import InvenTreePlugin
+from plugin.registry import registry
 
 
 class PluginFilter(rest_filters.FilterSet):
@@ -75,7 +76,7 @@ class PluginFilter(rest_filters.FilterSet):
         return queryset.filter(pk__in=matches)
 
     builtin = rest_filters.BooleanFilter(
-        field_name='builtin', label='Builtin', method='filter_builtin'
+        field_name='builtin', label=_('Builtin'), method='filter_builtin'
     )
 
     def filter_builtin(self, queryset, name, value):
@@ -88,8 +89,19 @@ class PluginFilter(rest_filters.FilterSet):
 
         return queryset.filter(pk__in=matches)
 
+    mandatory = rest_filters.BooleanFilter(
+        field_name='mandatory', label=_('Mandatory'), method='filter_mandatory'
+    )
+
+    def filter_mandatory(self, queryset, name, value):
+        """Filter by 'mandatory' flag."""
+        if str2bool(value):
+            return queryset.filter(key__in=registry.MANDATORY_PLUGINS)
+        else:
+            return queryset.exclude(key__in=registry.MANDATORY_PLUGINS)
+
     sample = rest_filters.BooleanFilter(
-        field_name='sample', label='Sample', method='filter_sample'
+        field_name='sample', label=_('Sample'), method='filter_sample'
     )
 
     def filter_sample(self, queryset, name, value):
@@ -103,7 +115,7 @@ class PluginFilter(rest_filters.FilterSet):
         return queryset.filter(pk__in=matches)
 
     installed = rest_filters.BooleanFilter(
-        field_name='installed', label='Installed', method='filter_installed'
+        field_name='installed', label=_('Installed'), method='filter_installed'
     )
 
     def filter_installed(self, queryset, name, value):
@@ -134,8 +146,6 @@ class PluginList(ListAPI):
     queryset = PluginConfig.objects.all()
 
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['active']
 
     ordering_fields = ['key', 'name', 'active']
 
@@ -281,6 +291,15 @@ class PluginSettingList(ListAPI):
     filter_backends = [DjangoFilterBackend]
 
     filterset_fields = ['plugin__active', 'plugin__key']
+
+    @extend_schema(operation_id='plugins_settings_list_all')
+    def get(self, request, *args, **kwargs):
+        """List endpoint for all plugin related settings.
+
+        - read only
+        - only accessible by staff users
+        """
+        return super().get(request, *args, **kwargs)
 
 
 def check_plugin(
@@ -483,8 +502,9 @@ plugin_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        PluginMetadataView.as_view(),
-                        {'model': PluginConfig, 'lookup_field': 'key'},
+                        PluginMetadataView.as_view(
+                            model=PluginConfig, lookup_field='key'
+                        ),
                         name='api-plugin-metadata',
                     ),
                     path(

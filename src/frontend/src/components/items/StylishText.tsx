@@ -1,16 +1,44 @@
-import { Text } from '@mantine/core';
+import {
+  type MantineSize,
+  Text,
+  darken,
+  getThemeColor,
+  useMantineTheme
+} from '@mantine/core';
+import { useMemo } from 'react';
 
-import * as classes from '../../main.css';
+// Hook that memoizes the gradient color based on the primary color of the theme
+const useThematicGradient = () => {
+  const theme = useMantineTheme();
 
+  const primary = useMemo(() => {
+    return getThemeColor(theme.primaryColor, theme);
+  }, [theme]);
+
+  const secondary = useMemo(() => darken(primary, 0.25), [primary]);
+
+  return useMemo(() => {
+    return { primary, secondary };
+  }, [primary, secondary]);
+};
+
+// A stylish text component that uses the primary color of the theme
 export function StylishText({
   children,
-  size = 'md'
+  size
 }: Readonly<{
   children: JSX.Element | string;
-  size?: string;
+  size?: MantineSize;
 }>) {
+  const { primary, secondary } = useThematicGradient();
+
   return (
-    <Text size={size} className={classes.signText} variant='gradient'>
+    <Text
+      fw={700}
+      size={size ?? 'xl'}
+      variant='gradient'
+      gradient={{ from: primary.toString(), to: secondary.toString() }}
+    >
       {children}
     </Text>
   );

@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -86,11 +87,11 @@ class PluginValidationMixin(DiffMixin):
 
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         deltas = self.get_field_deltas()
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 if plugin.validate_model_instance(self, deltas=deltas) is True:
                     return
@@ -129,9 +130,9 @@ class PluginValidationMixin(DiffMixin):
         Note: Each plugin may raise a ValidationError to prevent deletion.
         """
         from InvenTree.exceptions import log_error
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 plugin.validate_model_deletion(self)
             except ValidationError as e:
@@ -223,61 +224,6 @@ class MetadataMixin(models.Model):
 
         if commit:
             self.save()
-
-
-class DataImportMixin:
-    """Model mixin class which provides support for 'data import' functionality.
-
-    Models which implement this mixin should provide information on the fields available for import
-    """
-
-    # TODO: This mixin should be removed after https://github.com/inventree/InvenTree/pull/6911 is implemented
-    # TODO: This approach to data import functionality is *outdated*
-
-    # Define a map of fields available for import
-    IMPORT_FIELDS = {}
-
-    @classmethod
-    def get_import_fields(cls):
-        """Return all available import fields.
-
-        Where information on a particular field is not explicitly provided,
-        introspect the base model to (attempt to) find that information.
-        """
-        fields = cls.IMPORT_FIELDS
-
-        for name, field in fields.items():
-            # Attempt to extract base field information from the model
-            base_field = None
-
-            for f in cls._meta.fields:
-                if f.name == name:
-                    base_field = f
-                    break
-
-            if base_field:
-                if 'label' not in field:
-                    field['label'] = base_field.verbose_name
-
-                if 'help_text' not in field:
-                    field['help_text'] = base_field.help_text
-
-            fields[name] = field
-
-        return fields
-
-    @classmethod
-    def get_required_import_fields(cls):
-        """Return all *required* import fields."""
-        fields = {}
-
-        for name, field in cls.get_import_fields().items():
-            required = field.get('required', False)
-
-            if required:
-                fields[name] = field
-
-        return fields
 
 
 class ReferenceIndexingMixin(models.Model):
@@ -820,26 +766,20 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         """
         raise NotImplementedError(f'items() method not implemented for {type(self)}')
 
-    def getUniqueParents(self):
-        """Return a flat set of all parent items that exist above this node.
-
-        If any parents are repeated (which would be very bad!), the process is halted
-        """
+    def getUniqueParents(self) -> QuerySet:
+        """Return a flat set of all parent items that exist above this node."""
         return self.get_ancestors()
 
-    def getUniqueChildren(self, include_self=True):
-        """Return a flat set of all child items that exist under this node.
-
-        If any child items are repeated, the repetitions are omitted.
-        """
+    def getUniqueChildren(self, include_self=True) -> QuerySet:
+        """Return a flat set of all child items that exist under this node."""
         return self.get_descendants(include_self=include_self)
 
     @property
-    def has_children(self):
+    def has_children(self) -> bool:
         """True if there are any children under this item."""
         return self.getUniqueChildren(include_self=False).count() > 0
 
-    def getAcceptableParents(self):
+    def getAcceptableParents(self) -> list:
         """Returns a list of acceptable parent items within this model Acceptable parents are ones which are not underneath this item.
 
         Setting the parent of an item to its own child results in recursion.
@@ -860,7 +800,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return acceptable
 
     @property
-    def parentpath(self):
+    def parentpath(self) -> list:
         """Get the parent path of this category.
 
         Returns:
@@ -869,7 +809,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return list(self.get_ancestors())
 
     @property
-    def path(self):
+    def path(self) -> list:
         """Get the complete part of this category.
 
         e.g. ["Top", "Second", "Third", "This"]
@@ -879,7 +819,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         """
         return [*self.parentpath, self]
 
-    def get_path(self):
+    def get_path(self) -> list:
         """Return a list of element in the item tree.
 
         Contains the full path to this item, with each entry containing the following data:
@@ -1007,7 +947,7 @@ class InvenTreeBarcodeMixin(models.Model):
         )
 
     def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a QR code for this model instance."""
+        """Return a string for formatting a QR code for this model instance."""
         from plugin.base.barcodes.helper import generate_barcode
 
         return generate_barcode(self)
@@ -1026,7 +966,7 @@ class InvenTreeBarcodeMixin(models.Model):
         return data
 
     @property
-    def barcode(self):
+    def barcode(self) -> str:
         """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode()
 

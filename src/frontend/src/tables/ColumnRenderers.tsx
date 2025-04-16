@@ -1,19 +1,19 @@
 /**
  * Common rendering functions for table column data.
  */
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
+import type { ModelType } from '@lib/enums/ModelType';
+import { cancelEvent } from '@lib/functions/Events';
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
-import { cancelEvent } from '../functions/events';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
@@ -66,11 +66,14 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
 
       if (!location) {
         return (
-          <Text style={{ fontStyle: 'italic' }}>{t`No location set`}</Text>
+          <Text
+            size='sm'
+            style={{ fontStyle: 'italic' }}
+          >{t`No location set`}</Text>
         );
       }
 
-      return <Text>{location.name}</Text>;
+      return <Text size='sm'>{location.name}</Text>;
     },
     ...props
   };
@@ -241,6 +244,14 @@ export function DateColumn(props: TableColumnProps): TableColumn {
       formatDate(resolveItem(record, props.accessor ?? 'date')),
     ...props
   };
+}
+
+export function StartDateColumn(props: TableColumnProps): TableColumn {
+  return DateColumn({
+    accessor: 'start_date',
+    title: t`Start Date`,
+    ...props
+  });
 }
 
 export function TargetDateColumn(props: TableColumnProps): TableColumn {
