@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-06 02:35\n"
+"PO-Revision-Date: 2025-04-15 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -615,17 +615,17 @@ msgid "There are no unread news items"
 msgstr ""
 
 #: src/components/details/Details.tsx:116
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
-#: src/pages/core/UserDetail.tsx:154
-#: src/tables/core/UserTable.tsx:29
-#: src/tables/settings/UserTable.tsx:294
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
+#: src/pages/core/UserDetail.tsx:93
+#: src/pages/core/UserDetail.tsx:203
+#: src/tables/settings/UserTable.tsx:360
 msgid "Superuser"
 msgstr "超级用户"
 
 #: src/components/details/Details.tsx:117
-#: src/pages/core/UserDetail.tsx:151
-#: src/tables/core/UserTable.tsx:24
-#: src/tables/settings/UserTable.tsx:289
+#: src/pages/core/UserDetail.tsx:87
+#: src/pages/core/UserDetail.tsx:200
+#: src/tables/settings/UserTable.tsx:355
 msgid "Staff"
 msgstr "工作人员"
 
@@ -969,6 +969,7 @@ msgstr "更新"
 
 #: src/components/forms/ApiForm.tsx:760
 #: src/components/items/ActionDropdown.tsx:255
+#: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:162
 #: src/pages/Notifications.tsx:109
 #: src/tables/RowActions.tsx:75
@@ -1035,7 +1036,7 @@ msgstr "或继续使用其他方法"
 #: src/components/forms/AuthenticationForm.tsx:127
 #: src/components/forms/AuthenticationForm.tsx:278
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:64
-#: src/pages/core/UserDetail.tsx:52
+#: src/pages/core/UserDetail.tsx:48
 msgid "Username"
 msgstr "用户名"
 
@@ -1067,7 +1068,7 @@ msgstr "重置密码"
 #: src/components/forms/AuthenticationForm.tsx:157
 #: src/components/forms/AuthenticationForm.tsx:285
 #: src/pages/Auth/Reset.tsx:17
-#: src/pages/core/UserDetail.tsx:46
+#: src/pages/core/UserDetail.tsx:71
 msgid "Email"
 msgstr "邮箱"
 
@@ -1155,7 +1156,9 @@ msgstr "主机"
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:32
 #: src/tables/settings/ApiTokenTable.tsx:56
-#: src/tables/settings/GroupTable.tsx:150
+#: src/tables/settings/GroupTable.tsx:90
+#: src/tables/settings/GroupTable.tsx:143
+#: src/tables/settings/GroupTable.tsx:184
 #: src/tables/settings/PendingTasksTable.tsx:32
 #: src/tables/stock/LocationTypesTable.tsx:69
 msgid "Name"
@@ -1170,6 +1173,9 @@ msgid "Add Host"
 msgstr "添加主机"
 
 #: src/components/forms/HostOptionsForm.tsx:91
+#: src/components/items/RoleTable.tsx:224
+#: src/components/items/TransferList.tsx:215
+#: src/components/items/TransferList.tsx:223
 msgid "Save"
 msgstr "保存"
 
@@ -1230,7 +1236,7 @@ msgstr "API 版本"
 
 #: src/components/forms/InstanceOptions.tsx:143
 #: src/components/nav/NavigationDrawer.tsx:205
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:215
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:213
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 msgid "Plugins"
 msgstr "插件"
@@ -1468,7 +1474,7 @@ msgstr "数据已成功导入"
 
 #: src/components/importer/ImporterDrawer.tsx:112
 #: src/components/importer/ImporterDrawer.tsx:121
-#: src/components/modals/AboutInvenTreeModal.tsx:183
+#: src/components/modals/AboutInvenTreeModal.tsx:182
 #: src/components/modals/ServerInfoModal.tsx:131
 msgid "Close"
 msgstr "关闭"
@@ -1611,6 +1617,76 @@ msgstr "此信息仅供员工使用"
 #~ msgid "PLH"
 #~ msgstr "PLH"
 
+#: src/components/items/RoleTable.tsx:81
+msgid "Updating"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:82
+msgid "Updating group roles"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:118
+#: src/pages/part/pricing/BomPricingPanel.tsx:193
+#: src/pages/part/pricing/VariantPricingPanel.tsx:53
+#: src/tables/purchasing/SupplierPartTable.tsx:151
+msgid "Updated"
+msgstr "已更新"
+
+#: src/components/items/RoleTable.tsx:119
+msgid "Group roles updated"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:135
+msgid "Role"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:140
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:412
+msgid "View"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:145
+msgid "Change"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:150
+#: src/forms/StockForms.tsx:788
+#: src/pages/stock/StockDetail.tsx:719
+#: src/tables/stock/StockItemTestResultTable.tsx:350
+msgid "Add"
+msgstr "添加"
+
+#: src/components/items/RoleTable.tsx:203
+msgid "Reset group roles"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:212
+msgid "Reset"
+msgstr ""
+
+#: src/components/items/RoleTable.tsx:215
+msgid "Save group roles"
+msgstr ""
+
+#: src/components/items/TransferList.tsx:65
+msgid "No items"
+msgstr ""
+
+#: src/components/items/TransferList.tsx:161
+#: src/pages/part/PartDetail.tsx:755
+#: src/pages/stock/StockDetail.tsx:191
+#: src/pages/stock/StockDetail.tsx:849
+#: src/tables/build/BuildLineTable.tsx:186
+#: src/tables/part/PartTable.tsx:122
+#: src/tables/stock/StockItemTable.tsx:172
+#: src/tables/stock/StockItemTable.tsx:327
+msgid "Available"
+msgstr "可用的"
+
+#: src/components/items/TransferList.tsx:162
+msgid "Selected"
+msgstr ""
+
 #: src/components/modals/AboutInvenTreeModal.tsx:101
 msgid "InvenTree Version"
 msgstr "InvenTree 版本"
@@ -1658,14 +1734,14 @@ msgid "Source Code"
 msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:165
-msgid "Credits"
-msgstr "致谢"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:166
 msgid "Mobile App"
 msgstr "手机 App"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:167
+#: src/components/modals/AboutInvenTreeModal.tsx:165
+#~ msgid "Credits"
+#~ msgstr "Credits"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:166
 msgid "Submit Bug Report"
 msgstr "提交问题报告"
 
@@ -1677,7 +1753,7 @@ msgstr "提交问题报告"
 #~ msgid "View Code on GitHub"
 #~ msgstr "View Code on GitHub"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:176
+#: src/components/modals/AboutInvenTreeModal.tsx:175
 msgid "Copy version information"
 msgstr "复制版本信息"
 
@@ -1686,15 +1762,15 @@ msgstr "复制版本信息"
 #~ msgid "Dismiss"
 #~ msgstr "Dismiss"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:193
+#: src/components/modals/AboutInvenTreeModal.tsx:192
 msgid "Development Version"
 msgstr "开发版"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:195
+#: src/components/modals/AboutInvenTreeModal.tsx:194
 msgid "Up to Date"
 msgstr "已是最新版本"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:197
+#: src/components/modals/AboutInvenTreeModal.tsx:196
 msgid "Update Available"
 msgstr "有可用更新"
 
@@ -1747,7 +1823,7 @@ msgid "Database"
 msgstr "数据库"
 
 #: src/components/modals/ServerInfoModal.tsx:52
-#: src/components/nav/Alerts.tsx:39
+#: src/components/nav/Alerts.tsx:40
 msgid "Debug Mode"
 msgstr "调试模式"
 
@@ -1788,7 +1864,7 @@ msgid "Issues detected"
 msgstr "检测到问题"
 
 #: src/components/modals/ServerInfoModal.tsx:103
-#: src/components/nav/Alerts.tsx:48
+#: src/components/nav/Alerts.tsx:49
 msgid "Background Worker"
 msgstr "后台工作者"
 
@@ -1801,7 +1877,7 @@ msgid "Email Settings"
 msgstr "电子邮件设置"
 
 #: src/components/modals/ServerInfoModal.tsx:118
-#: src/components/nav/Alerts.tsx:59
+#: src/components/nav/Alerts.tsx:60
 msgid "Email settings not configured."
 msgstr ""
 
@@ -1809,39 +1885,39 @@ msgstr ""
 #~ msgid "Email settings not configured"
 #~ msgstr "Email settings not configured"
 
-#: src/components/nav/Alerts.tsx:41
+#: src/components/nav/Alerts.tsx:42
 msgid "The server is running in debug mode."
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:50
+#: src/components/nav/Alerts.tsx:51
 msgid "The background worker process is not running."
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:57
+#: src/components/nav/Alerts.tsx:58
 msgid "Email settings"
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:66
+#: src/components/nav/Alerts.tsx:67
 msgid "Server Restart"
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:68
+#: src/components/nav/Alerts.tsx:69
 msgid "The server requires a restart to apply changes."
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:78
+#: src/components/nav/Alerts.tsx:79
 msgid "Database Migrations"
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:80
+#: src/components/nav/Alerts.tsx:81
 msgid "There are pending database migrations."
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:91
+#: src/components/nav/Alerts.tsx:97
 msgid "Alerts"
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:127
+#: src/components/nav/Alerts.tsx:140
 msgid "Learn more about {code}"
 msgstr ""
 
@@ -1866,7 +1942,7 @@ msgstr "无结果..."
 
 #: src/components/nav/MainMenu.tsx:52
 #: src/components/nav/NavigationDrawer.tsx:193
-#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:31
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
 msgid "Settings"
 msgstr "设置"
 
@@ -1929,6 +2005,7 @@ msgstr "登出"
 #: src/components/nav/NavigationDrawer.tsx:77
 #: src/components/render/ModelType.tsx:30
 #: src/defaults/links.tsx:36
+#: src/enums/Roles.tsx:36
 #: src/pages/Index/Settings/SystemSettings.tsx:184
 #: src/pages/part/CategoryDetail.tsx:131
 #: src/pages/part/CategoryDetail.tsx:274
@@ -1981,7 +2058,7 @@ msgstr "销售"
 #: src/components/render/ModelType.tsx:215
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:21
-#: src/pages/core/UserDetail.tsx:177
+#: src/pages/core/UserDetail.tsx:226
 msgid "Users"
 msgstr "用户"
 
@@ -1989,10 +2066,9 @@ msgstr "用户"
 #: src/components/render/ModelType.tsx:222
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:27
-#: src/pages/core/GroupDetail.tsx:81
-#: src/tables/core/UserTable.tsx:58
-#: src/tables/settings/UserTable.tsx:138
-#: src/tables/settings/UserTable.tsx:201
+#: src/pages/core/GroupDetail.tsx:82
+#: src/pages/core/UserDetail.tsx:99
+#: src/tables/settings/UserTable.tsx:265
 msgid "Groups"
 msgstr "群组"
 
@@ -2193,14 +2269,13 @@ msgstr "日期"
 
 #: src/components/plugins/PluginDrawer.tsx:93
 #: src/forms/selectionListFields.tsx:107
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:86
-#: src/pages/core/UserDetail.tsx:89
-#: src/pages/core/UserDetail.tsx:160
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
+#: src/pages/core/UserDetail.tsx:81
+#: src/pages/core/UserDetail.tsx:209
 #: src/pages/part/PartDetail.tsx:332
 #: src/tables/bom/UsedInTable.tsx:85
 #: src/tables/company/CompanyTable.tsx:62
 #: src/tables/company/CompanyTable.tsx:96
-#: src/tables/core/UserTable.tsx:19
 #: src/tables/machine/MachineListTable.tsx:335
 #: src/tables/machine/MachineListTable.tsx:605
 #: src/tables/part/ParametricPartTable.tsx:224
@@ -2211,7 +2286,7 @@ msgstr "日期"
 #: src/tables/purchasing/SupplierPartTable.tsx:101
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 #: src/tables/settings/ApiTokenTable.tsx:61
-#: src/tables/settings/UserTable.tsx:284
+#: src/tables/settings/UserTable.tsx:350
 #: src/tables/stock/StockItemTable.tsx:306
 msgid "Active"
 msgstr "激活"
@@ -2388,6 +2463,7 @@ msgid "Part Category"
 msgstr "零件类别"
 
 #: src/components/render/ModelType.tsx:71
+#: src/enums/Roles.tsx:38
 #: src/pages/part/CategoryDetail.tsx:336
 #: src/pages/part/PartDetail.tsx:988
 msgid "Part Categories"
@@ -2405,6 +2481,7 @@ msgid "Stock Item"
 msgstr "库存项"
 
 #: src/components/render/ModelType.tsx:80
+#: src/enums/Roles.tsx:46
 #: src/pages/company/CompanyDetail.tsx:205
 #: src/pages/part/CategoryDetail.tsx:288
 #: src/pages/part/PartStocktakeDetail.tsx:116
@@ -2415,6 +2492,7 @@ msgid "Stock Items"
 msgstr "库存项"
 
 #: src/components/render/ModelType.tsx:88
+#: src/enums/Roles.tsx:48
 msgid "Stock Location"
 msgstr "库存地点"
 
@@ -2488,7 +2566,7 @@ msgid "Project Code"
 msgstr "项目编码"
 
 #: src/components/render/ModelType.tsx:141
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:156
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:150
 msgid "Project Codes"
 msgstr "项目编码"
 
@@ -2504,6 +2582,7 @@ msgid "Purchase Order"
 msgstr "采购订单"
 
 #: src/components/render/ModelType.tsx:148
+#: src/enums/Roles.tsx:40
 #: src/pages/Index/Settings/SystemSettings.tsx:261
 #: src/pages/company/CompanyDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:266
@@ -2534,6 +2613,7 @@ msgid "Sales Order"
 msgstr "销售订单"
 
 #: src/components/render/ModelType.tsx:163
+#: src/enums/Roles.tsx:44
 #: src/pages/Index/Settings/SystemSettings.tsx:277
 #: src/pages/company/CompanyDetail.tsx:218
 #: src/pages/part/PartDetail.tsx:586
@@ -2557,6 +2637,7 @@ msgid "Return Order"
 msgstr "退货订单"
 
 #: src/components/render/ModelType.tsx:179
+#: src/enums/Roles.tsx:42
 #: src/pages/Index/Settings/SystemSettings.tsx:293
 #: src/pages/company/CompanyDetail.tsx:225
 #: src/pages/part/PartDetail.tsx:593
@@ -2584,7 +2665,7 @@ msgstr "地址"
 
 #: src/components/render/ModelType.tsx:200
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
-#: src/pages/core/UserDetail.tsx:95
+#: src/pages/core/UserDetail.tsx:135
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:212
 #: src/pages/sales/ReturnOrderDetail.tsx:176
 #: src/pages/sales/SalesOrderDetail.tsx:188
@@ -2607,7 +2688,7 @@ msgstr "所有者"
 
 #: src/components/render/ModelType.tsx:214
 #: src/pages/Auth/ChangePassword.tsx:36
-#: src/pages/core/UserDetail.tsx:171
+#: src/pages/core/UserDetail.tsx:220
 #: src/tables/Filter.tsx:314
 #: src/tables/settings/ApiTokenTable.tsx:101
 #: src/tables/settings/ApiTokenTable.tsx:119
@@ -2622,7 +2703,7 @@ msgid "User"
 msgstr "用户"
 
 #: src/components/render/ModelType.tsx:221
-#: src/pages/core/GroupDetail.tsx:76
+#: src/pages/core/GroupDetail.tsx:78
 msgid "Group"
 msgstr "群组"
 
@@ -2643,7 +2724,7 @@ msgid "Label Template"
 msgstr "标签模板"
 
 #: src/components/render/ModelType.tsx:238
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:197
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:194
 msgid "Label Templates"
 msgstr "标签模板"
 
@@ -2652,7 +2733,7 @@ msgid "Report Template"
 msgstr "报告模板"
 
 #: src/components/render/ModelType.tsx:246
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:203
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:200
 msgid "Report Templates"
 msgstr "报告模板"
 
@@ -2704,7 +2785,7 @@ msgstr "配送"
 #: src/components/render/Plugin.tsx:17
 #: src/pages/company/CompanyDetail.tsx:312
 #: src/pages/company/SupplierPartDetail.tsx:366
-#: src/pages/core/UserDetail.tsx:162
+#: src/pages/core/UserDetail.tsx:211
 #: src/pages/part/PartDetail.tsx:785
 msgid "Inactive"
 msgstr "未激活"
@@ -2889,10 +2970,6 @@ msgstr "未指定设置"
 #: src/components/tables/company/ContactTable.tsx:41
 #~ msgid "Phone"
 #~ msgstr "Phone"
-
-#: src/components/tables/company/ContactTable.tsx:53
-#~ msgid "Role"
-#~ msgstr "Role"
 
 #: src/components/tables/company/ContactTable.tsx:78
 #~ msgid "Contact updated"
@@ -3682,6 +3759,23 @@ msgstr ""
 #~ msgid "Combusken battles with the intensely hot flames it spews"
 #~ msgstr "Combusken battles with the intensely hot flames it spews"
 
+#: src/enums/Roles.tsx:32
+msgid "Admin"
+msgstr ""
+
+#: src/enums/Roles.tsx:34
+#: src/pages/Index/Settings/SystemSettings.tsx:243
+#: src/pages/build/BuildIndex.tsx:63
+#: src/pages/part/PartDetail.tsx:541
+#: src/pages/sales/SalesOrderDetail.tsx:393
+msgid "Build Orders"
+msgstr "生产订单"
+
+#: src/enums/Roles.tsx:50
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:187
+msgid "Stocktake"
+msgstr "库存盘点"
+
 #: src/forms/AttachmentForms.tsx:57
 #~ msgid "Add File"
 #~ msgstr "Add File"
@@ -3741,9 +3835,9 @@ msgstr "生产产出"
 #: src/forms/ReturnOrderForms.tsx:193
 #: src/forms/ReturnOrderForms.tsx:240
 #: src/forms/StockForms.tsx:625
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:83
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:115
-#: src/pages/core/UserDetail.tsx:109
+#: src/pages/core/UserDetail.tsx:151
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:151
 #: src/pages/sales/ReturnOrderDetail.tsx:116
 #: src/pages/sales/SalesOrderDetail.tsx:125
@@ -3931,8 +4025,8 @@ msgstr "添加备注"
 #: src/forms/StockForms.tsx:901
 #: src/forms/StockForms.tsx:949
 #: src/forms/StockForms.tsx:993
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:84
-#: src/pages/core/UserDetail.tsx:115
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
+#: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:222
 #: src/tables/ColumnRenderers.tsx:61
 #: src/tables/stock/StockTrackingTable.tsx:96
@@ -4118,12 +4212,6 @@ msgstr "移动"
 #: src/tables/stock/StockItemTable.tsx:342
 msgid "In Stock"
 msgstr "入库"
-
-#: src/forms/StockForms.tsx:788
-#: src/pages/stock/StockDetail.tsx:719
-#: src/tables/stock/StockItemTestResultTable.tsx:350
-msgid "Add"
-msgstr "添加"
 
 #: src/forms/StockForms.tsx:824
 #: src/pages/Index/Scan.tsx:182
@@ -4977,10 +5065,6 @@ msgstr ""
 #~ msgstr "User Actions"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
-#~ msgid "Edit User"
-#~ msgstr "Edit User"
-
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
 #~ msgid "First name"
 #~ msgstr "First name"
 
@@ -5014,12 +5098,12 @@ msgstr ""
 #~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:65
-#: src/pages/core/UserDetail.tsx:59
+#: src/pages/core/UserDetail.tsx:55
 msgid "First Name"
 msgstr "名"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:66
-#: src/pages/core/UserDetail.tsx:66
+#: src/pages/core/UserDetail.tsx:63
 msgid "Last Name"
 msgstr "姓"
 
@@ -5027,22 +5111,22 @@ msgstr "姓"
 #~ msgid "First name:"
 #~ msgstr "First name:"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
-msgid "Staff Access"
-msgstr "工作人员访问"
-
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:71
 #~ msgid "Last name:"
 #~ msgstr "Last name:"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:81
-#: src/pages/core/UserDetail.tsx:76
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
+msgid "Staff Access"
+msgstr "工作人员访问"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:85
+#: src/pages/core/UserDetail.tsx:119
 #: src/tables/settings/CustomStateTable.tsx:101
 msgid "Display Name"
 msgstr "显示名称"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:82
-#: src/pages/core/UserDetail.tsx:83
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:86
+#: src/pages/core/UserDetail.tsx:127
 msgid "Position"
 msgstr ""
 
@@ -5052,7 +5136,7 @@ msgid "Type"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:91
-#: src/pages/core/UserDetail.tsx:102
+#: src/pages/core/UserDetail.tsx:143
 msgid "Organisation"
 msgstr ""
 
@@ -5225,10 +5309,6 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:321
 msgid "Remove Provider Link"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:412
-msgid "View"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:437
@@ -5409,69 +5489,65 @@ msgstr "上次获取时间"
 msgid "Base currency"
 msgstr "基准货币"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:114
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 msgid "User Management"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:120
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:114
 msgid "Data Import"
 msgstr "数据导入"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:126
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:120
 msgid "Data Export"
 msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:126
+msgid "Barcode Scans"
+msgstr "扫描条码"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 #~ msgid "Templates"
 #~ msgstr "Templates"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:132
-msgid "Barcode Scans"
-msgstr "扫描条码"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:138
 msgid "Background Tasks"
 msgstr "后台任务"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:144
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:138
 msgid "Error Reports"
 msgstr "错误报告"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:150
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:144
 msgid "Currencies"
 msgstr "币种"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:167
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:161
 msgid "Custom States"
 msgstr "自定状态"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:167
+#: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:57
+msgid "Custom Units"
+msgstr "自定义单位"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:170
 #~ msgid "Location types"
 #~ msgstr "Location types"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:173
-#: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:57
-msgid "Custom Units"
-msgstr "自定义单位"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:179
 #: src/pages/part/CategoryDetail.tsx:303
 msgid "Part Parameters"
 msgstr "零件参数"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:185
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:180
 msgid "Category Parameters"
 msgstr "类别参数"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:191
-msgid "Stocktake"
-msgstr "库存盘点"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:209
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:206
 msgid "Location Types"
 msgstr "位置类型"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:221
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:220
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:48
 #: src/tables/machine/MachineTypeTable.tsx:309
 msgid "Machines"
@@ -5530,7 +5606,7 @@ msgid "There are no machine registry errors"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
-#: src/tables/settings/UserTable.tsx:119
+#: src/tables/settings/UserTable.tsx:184
 msgid "Info"
 msgstr "信息"
 
@@ -5645,6 +5721,10 @@ msgstr "无尺寸"
 msgid "All units"
 msgstr "所有单位"
 
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:31
+msgid "Tokens"
+msgstr ""
+
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:32
 #~ msgid "Select settings relevant for user lifecycle. More available in"
 #~ msgstr "Select settings relevant for user lifecycle. More available in"
@@ -5652,10 +5732,6 @@ msgstr "所有单位"
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:37
 #~ msgid "System settings"
 #~ msgstr "System settings"
-
-#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:41
-msgid "Tokens"
-msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:68
 msgid "Authentication"
@@ -5689,13 +5765,6 @@ msgstr "标签"
 #: src/pages/Index/Settings/UserSettings.tsx:105
 msgid "Reporting"
 msgstr "报告"
-
-#: src/pages/Index/Settings/SystemSettings.tsx:243
-#: src/pages/build/BuildIndex.tsx:63
-#: src/pages/part/PartDetail.tsx:541
-#: src/pages/sales/SalesOrderDetail.tsx:393
-msgid "Build Orders"
-msgstr "生产订单"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
@@ -6319,24 +6388,44 @@ msgid "No Stock"
 msgstr "无库存"
 
 #: src/pages/core/CoreIndex.tsx:46
-#: src/pages/core/GroupDetail.tsx:80
-#: src/pages/core/UserDetail.tsx:175
+#: src/pages/core/GroupDetail.tsx:81
+#: src/pages/core/UserDetail.tsx:224
 msgid "System Overview"
 msgstr ""
 
-#: src/pages/core/GroupDetail.tsx:41
+#: src/pages/core/GroupDetail.tsx:45
 msgid "Group Name"
 msgstr ""
 
-#: src/pages/core/GroupDetail.tsx:61
+#: src/pages/core/GroupDetail.tsx:52
+#: src/pages/core/GroupDetail.tsx:67
+#: src/tables/settings/GroupTable.tsx:80
 msgid "Group Details"
 msgstr ""
 
-#: src/pages/core/UserDetail.tsx:139
+#: src/pages/core/GroupDetail.tsx:55
+#: src/tables/settings/GroupTable.tsx:107
+msgid "Group Roles"
+msgstr ""
+
+#: src/pages/core/UserDetail.tsx:175
+msgid "User Information"
+msgstr ""
+
+#: src/pages/core/UserDetail.tsx:176
+msgid "User Permissions"
+msgstr ""
+
+#: src/pages/core/UserDetail.tsx:178
+msgid "User Profile"
+msgstr ""
+
+#: src/pages/core/UserDetail.tsx:188
+#: src/tables/settings/UserTable.tsx:153
 msgid "User Details"
 msgstr "用户详情"
 
-#: src/pages/core/UserDetail.tsx:157
+#: src/pages/core/UserDetail.tsx:206
 msgid "Basic user"
 msgstr ""
 
@@ -6633,16 +6722,6 @@ msgstr "测试模板"
 msgid "Related Parts"
 msgstr "关联零件"
 
-#: src/pages/part/PartDetail.tsx:755
-#: src/pages/stock/StockDetail.tsx:191
-#: src/pages/stock/StockDetail.tsx:849
-#: src/tables/build/BuildLineTable.tsx:186
-#: src/tables/part/PartTable.tsx:122
-#: src/tables/stock/StockItemTable.tsx:172
-#: src/tables/stock/StockItemTable.tsx:327
-msgid "Available"
-msgstr "可用的"
-
 #: src/pages/part/PartDetail.tsx:767
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:387
@@ -6883,12 +6962,6 @@ msgstr "最高价格"
 #: src/tables/stock/StockItemTable.tsx:246
 msgid "Unit Price"
 msgstr "单价"
-
-#: src/pages/part/pricing/BomPricingPanel.tsx:193
-#: src/pages/part/pricing/VariantPricingPanel.tsx:53
-#: src/tables/purchasing/SupplierPartTable.tsx:151
-msgid "Updated"
-msgstr "已更新"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:258
 msgid "Pie Chart"
@@ -8526,21 +8599,6 @@ msgstr "删除联系人"
 msgid "Add contact"
 msgstr "添加联系人"
 
-#: src/tables/core/UserTable.tsx:20
-#: src/tables/settings/UserTable.tsx:285
-msgid "Show active users"
-msgstr "显示活跃用户"
-
-#: src/tables/core/UserTable.tsx:25
-#: src/tables/settings/UserTable.tsx:290
-msgid "Show staff users"
-msgstr "显示工作人员用户"
-
-#: src/tables/core/UserTable.tsx:30
-#: src/tables/settings/UserTable.tsx:295
-msgid "Show superusers"
-msgstr "显示超级用户"
-
 #: src/tables/general/AttachmentTable.tsx:104
 msgid "Uploading file {filename}"
 msgstr ""
@@ -10009,38 +10067,50 @@ msgstr ""
 msgid "No error details are available for this task"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:91
+#: src/tables/settings/GroupTable.tsx:66
 msgid "Group with id {id} not found"
 msgstr "未找到 ID 为 {id} 的群组"
 
-#: src/tables/settings/GroupTable.tsx:93
+#: src/tables/settings/GroupTable.tsx:68
 msgid "An error occurred while fetching group details"
 msgstr "获取群组详细信息时出错"
 
-#: src/tables/settings/GroupTable.tsx:117
-msgid "Permission set"
-msgstr "权限设置"
+#: src/tables/settings/GroupTable.tsx:91
+#: src/tables/settings/GroupTable.tsx:185
+msgid "Name of the user group"
+msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:180
+#: src/tables/settings/GroupTable.tsx:117
+#~ msgid "Permission set"
+#~ msgstr "Permission set"
+
+#: src/tables/settings/GroupTable.tsx:173
 msgid "Delete group"
 msgstr "删除群组"
 
-#: src/tables/settings/GroupTable.tsx:181
+#: src/tables/settings/GroupTable.tsx:174
 msgid "Group deleted"
 msgstr "群组已删除"
 
-#: src/tables/settings/GroupTable.tsx:183
+#: src/tables/settings/GroupTable.tsx:176
 msgid "Are you sure you want to delete this group?"
 msgstr "确定要删除这个群组吗？"
 
-#: src/tables/settings/GroupTable.tsx:188
-#: src/tables/settings/GroupTable.tsx:200
+#: src/tables/settings/GroupTable.tsx:181
+msgid "Add Group"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:198
 msgid "Add group"
 msgstr "添加群组"
 
 #: src/tables/settings/GroupTable.tsx:213
-msgid "Edit group"
-msgstr "编辑群组"
+#~ msgid "Edit group"
+#~ msgstr "Edit group"
+
+#: src/tables/settings/GroupTable.tsx:219
+msgid "Edit Group"
+msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:37
 msgid "Delete Import Session"
@@ -10170,73 +10240,105 @@ msgstr "按启用状态筛选"
 #~ msgid "Report Output"
 #~ msgstr "Report Output"
 
-#: src/tables/settings/UserTable.tsx:82
+#: src/tables/settings/UserTable.tsx:112
+msgid "Groups updated"
+msgstr ""
+
+#: src/tables/settings/UserTable.tsx:113
+msgid "User groups updated successfully"
+msgstr ""
+
+#: src/tables/settings/UserTable.tsx:120
+msgid "Error updating user groups"
+msgstr ""
+
+#: src/tables/settings/UserTable.tsx:139
 msgid "User with id {id} not found"
 msgstr "未找到 ID 为 {id} 的用户"
 
-#: src/tables/settings/UserTable.tsx:84
+#: src/tables/settings/UserTable.tsx:141
 msgid "An error occurred while fetching user details"
 msgstr "获取用户详细信息时出错"
 
-#: src/tables/settings/UserTable.tsx:102
+#: src/tables/settings/UserTable.tsx:154
+#~ msgid "No groups"
+#~ msgstr "No groups"
+
+#: src/tables/settings/UserTable.tsx:167
 msgid "Is Active"
 msgstr "激活"
 
-#: src/tables/settings/UserTable.tsx:103
+#: src/tables/settings/UserTable.tsx:168
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr "指定是否将此用户视为激活用户。取消选择此选项将不会删除账户。"
 
-#: src/tables/settings/UserTable.tsx:107
+#: src/tables/settings/UserTable.tsx:172
 msgid "Is Staff"
 msgstr "员工"
 
-#: src/tables/settings/UserTable.tsx:108
+#: src/tables/settings/UserTable.tsx:173
 msgid "Designates whether the user can log into the django admin site."
 msgstr "指定用户是否可以登录 django 管理页面。"
 
-#: src/tables/settings/UserTable.tsx:112
+#: src/tables/settings/UserTable.tsx:177
 msgid "Is Superuser"
 msgstr "超级用户"
 
-#: src/tables/settings/UserTable.tsx:113
+#: src/tables/settings/UserTable.tsx:178
 msgid "Designates that this user has all permissions without explicitly assigning them."
 msgstr "指定该用户拥有所有权限，而无需明确分配。"
 
-#: src/tables/settings/UserTable.tsx:123
+#: src/tables/settings/UserTable.tsx:188
 msgid "You cannot edit the rights for the currently logged-in user."
 msgstr "您不能编辑当前登录用户的权限。"
 
-#: src/tables/settings/UserTable.tsx:154
-msgid "No groups"
-msgstr "没有群组"
+#: src/tables/settings/UserTable.tsx:207
+msgid "User Groups"
+msgstr ""
 
-#: src/tables/settings/UserTable.tsx:245
+#: src/tables/settings/UserTable.tsx:305
+#~ msgid "Edit user"
+#~ msgstr "Edit user"
+
+#: src/tables/settings/UserTable.tsx:310
 msgid "Delete user"
 msgstr "删除用户"
 
-#: src/tables/settings/UserTable.tsx:246
+#: src/tables/settings/UserTable.tsx:311
 msgid "User deleted"
 msgstr "用户已删除"
 
-#: src/tables/settings/UserTable.tsx:248
+#: src/tables/settings/UserTable.tsx:313
 msgid "Are you sure you want to delete this user?"
 msgstr "您确定要删除该用户吗？"
 
-#: src/tables/settings/UserTable.tsx:254
+#: src/tables/settings/UserTable.tsx:319
 msgid "Add User"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:262
+#: src/tables/settings/UserTable.tsx:327
 msgid "Added user"
 msgstr "已添加用户"
 
-#: src/tables/settings/UserTable.tsx:272
+#: src/tables/settings/UserTable.tsx:338
 msgid "Add user"
 msgstr "添加用户"
 
-#: src/tables/settings/UserTable.tsx:305
-msgid "Edit user"
-msgstr "编辑用户"
+#: src/tables/settings/UserTable.tsx:351
+msgid "Show active users"
+msgstr "显示活跃用户"
+
+#: src/tables/settings/UserTable.tsx:356
+msgid "Show staff users"
+msgstr "显示工作人员用户"
+
+#: src/tables/settings/UserTable.tsx:361
+msgid "Show superusers"
+msgstr "显示超级用户"
+
+#: src/tables/settings/UserTable.tsx:379
+msgid "Edit User"
+msgstr ""
 
 #: src/tables/stock/InstalledItemsTable.tsx:37
 #: src/tables/stock/InstalledItemsTable.tsx:91
