@@ -97,10 +97,11 @@ def get_email_for_user(user) -> str | None:
     if user.email:
         return user.email
 
-    # Next, check for a primary email address
-    if email := EmailAddress.objects.filter(user=user, primary=True).first():
-        return email.email
-
-    # Finally, check for any email address associated with the user
-    if email := EmailAddress.objects.filter(user=user).first():
+    # Otherwise, find first matching email
+    # Priority is given to primary or verified email addresses
+    if (
+        email := EmailAddress.objects.filter(user=user)
+        .order_by('-primary', '-verified')
+        .first()
+    ):
         return email.email
