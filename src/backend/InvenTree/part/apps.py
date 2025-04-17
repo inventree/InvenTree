@@ -6,6 +6,7 @@ from django.db.utils import OperationalError, ProgrammingError
 import structlog
 
 import InvenTree.ready
+from InvenTree.apps import InvenTreeConfig
 
 logger = structlog.get_logger('inventree')
 
@@ -26,6 +27,9 @@ class PartConfig(AppConfig):
 
         if InvenTree.ready.isRunningMigrations():
             return
+
+        # Ensure there are no open migrations
+        InvenTreeConfig.ensure_migrations_done()
 
         if InvenTree.ready.canAppAccessDatabase():
             self.update_trackable_status()

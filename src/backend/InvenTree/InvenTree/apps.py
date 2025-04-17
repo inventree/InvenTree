@@ -1,5 +1,6 @@
 """AppConfig for InvenTree app."""
 
+import sys
 from importlib import import_module
 from pathlib import Path
 
@@ -20,6 +21,7 @@ from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
 
 logger = structlog.get_logger('inventree')
+MIGRATIONS_CHECK_DONE = False
 
 
 class InvenTreeConfig(AppConfig):
@@ -54,6 +56,9 @@ class InvenTreeConfig(AppConfig):
         # Skip if running migrations
         if InvenTree.ready.isRunningMigrations():
             return
+
+        # Ensure there are no open migrations
+        self.ensure_migrations_done()
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.remove_obsolete_tasks()
@@ -382,3 +387,14 @@ class InvenTreeConfig(AppConfig):
         from generic.states import storage
 
         storage.collect()
+
+    def ensure_migrations_done(self=None):
+        """Ensures there are no open migrations, stop if inconsistent state."""
+        global MIGRATIONS_CHECK_DONE
+        if MIGRATIONS_CHECK_DONE:
+            return
+
+        if not InvenTree.tasks.check_for_migrations():
+            logger.error('INVE-W8: Database Migrations required')
+            sys.exit(1)
+        MIGRATIONS_CHECK_DONE = True
