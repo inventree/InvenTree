@@ -15,21 +15,21 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { ModelType } from '@lib/enums/ModelType';
+import { cancelEvent } from '@lib/functions/Events';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableState } from '@lib/types/Tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconArrowRight } from '@tabler/icons-react';
 import { Boundary } from '../components/Boundary';
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
-import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
-import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
-import { navigateToLink } from '../functions/navigation';
-import { getDetailUrl } from '../functions/urls';
-import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import type { TableColumn } from './Column';
-import type { TableFilter } from './Filter';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 
@@ -138,7 +138,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableColumnNames,
     getTableSorting,
     setTableSorting,
-    usertheme
+    userTheme
   } = useLocalState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
@@ -746,7 +746,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               withColumnBorders
               striped
               highlightOnHover
-              loaderType={usertheme.loader}
+              loaderType={userTheme.loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}

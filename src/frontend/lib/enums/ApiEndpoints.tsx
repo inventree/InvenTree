@@ -102,6 +102,7 @@ export enum ApiEndpoints {
   bom_list = 'bom/',
   bom_item_validate = 'bom/:id/validate/',
   bom_validate = 'part/:id/bom-validate/',
+  bom_substitute_list = 'bom/substitute/',
 
   // Part API endpoints
   part_list = 'part/',
@@ -152,6 +153,7 @@ export enum ApiEndpoints {
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
   stock_return = 'stock/:id/return/',
+  stock_serial_info = 'stock/:id/serial-numbers/',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
