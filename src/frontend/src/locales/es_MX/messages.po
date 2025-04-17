@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_MX\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-11 04:25\n"
+"PO-Revision-Date: 2025-04-15 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -200,11 +200,11 @@ msgstr "Copiar"
 
 #: src/components/buttons/PrintingActions.tsx:51
 msgid "Printing Labels"
-msgstr ""
+msgstr "Imprimir etiquetas"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Reports"
-msgstr ""
+msgstr "Imprimir reportes"
 
 #: src/components/buttons/PrintingActions.tsx:77
 #~ msgid "Printing"
@@ -289,7 +289,7 @@ msgstr "Abrir Escáner de código de barras"
 
 #: src/components/buttons/SpotlightButton.tsx:12
 msgid "Open spotlight"
-msgstr ""
+msgstr "Abrir spotlight"
 
 #: src/components/buttons/StarredToggleButton.tsx:57
 #~ msgid "Unsubscribe from part"
@@ -297,11 +297,11 @@ msgstr ""
 
 #: src/components/buttons/StarredToggleButton.tsx:59
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Desuscribirse de las notificaciones"
 
 #: src/components/buttons/StarredToggleButton.tsx:60
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "Suscribirse a las notificaciones"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -324,28 +324,28 @@ msgstr "No"
 #: src/components/calendar/Calendar.tsx:93
 #: src/components/calendar/Calendar.tsx:156
 msgid "Calendar Filters"
-msgstr ""
+msgstr "Filtros de calendario"
 
 #: src/components/calendar/Calendar.tsx:108
 msgid "Previous month"
-msgstr ""
+msgstr "Mes anterior"
 
 #: src/components/calendar/Calendar.tsx:117
 msgid "Select month"
-msgstr ""
+msgstr "Seleccione el mes"
 
 #: src/components/calendar/Calendar.tsx:138
 msgid "Next month"
-msgstr ""
+msgstr "Siguiente mes"
 
 #: src/components/calendar/Calendar.tsx:169
 #: src/tables/InvenTreeTableHeader.tsx:248
 msgid "Download data"
-msgstr ""
+msgstr "Descargar datos"
 
 #: src/components/calendar/OrderCalendar.tsx:133
 msgid "Order Updated"
-msgstr ""
+msgstr "Orden actualizada"
 
 #: src/components/calendar/OrderCalendar.tsx:143
 msgid "Error updating order"
@@ -2218,7 +2218,7 @@ msgstr "Complemento inactivo"
 
 #: src/components/plugins/PluginDrawer.tsx:50
 msgid "Plugin is not active"
-msgstr "Este complemento no está activo"
+msgstr "El plugin no está activo"
 
 #: src/components/plugins/PluginDrawer.tsx:59
 msgid "Plugin Information"
@@ -3761,7 +3761,7 @@ msgstr "Acerca del proyecto InvenTree"
 
 #: src/enums/Roles.tsx:32
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: src/enums/Roles.tsx:34
 #: src/pages/Index/Settings/SystemSettings.tsx:243
@@ -5847,7 +5847,7 @@ msgstr "Revisión"
 #: src/pages/sales/SalesOrderDetail.tsx:131
 #: src/pages/stock/StockDetail.tsx:146
 msgid "Custom Status"
-msgstr "Estado del Cliente"
+msgstr "Estado Personalizado"
 
 #: src/pages/build/BuildDetail.tsx:130
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:124
@@ -6744,7 +6744,7 @@ msgstr "Eliminar pieza"
 
 #: src/pages/part/PartDetail.tsx:856
 msgid "Deleting this part cannot be reversed"
-msgstr "La eliminación de esta pieza no se puede revertir"
+msgstr "La eliminación de esta parte no puede ser revertida"
 
 #: src/pages/part/PartDetail.tsx:907
 #: src/pages/stock/LocationDetail.tsx:309
@@ -7454,7 +7454,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:156
 msgid "Completed Tests"
-msgstr "Pruebas completadas"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:161
 #~ msgid "Unlink custom barcode from stock item"
