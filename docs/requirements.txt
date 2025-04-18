@@ -300,7 +300,7 @@ mkdocs==1.6.1 \
     --hash=sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2 \
     --hash=sha256:db91759624d1647f3f34aa0c3f327dd2601beae39a366d6e064c03468d35c20e
     # via
-    #   -r docs/requirements.in
+    #   -r requirements.in
     #   mkdocs-autorefs
     #   mkdocs-git-revision-date-localized-plugin
     #   mkdocs-include-markdown-plugin
@@ -322,19 +322,19 @@ mkdocs-get-deps==0.2.0 \
 mkdocs-git-revision-date-localized-plugin==1.4.5 \
     --hash=sha256:395ae0b9eec565c78a76fffc938b70f52774bf2971245482d31aba47018c5fa9 \
     --hash=sha256:9e37f1343d314c9cd8f9cbbf117c4bdc1d2d24a0653c5bbd7059d072f2cd0972
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-include-markdown-plugin==7.1.5 \
     --hash=sha256:a986967594da6789226798e3c41c70bc17130fadb92b4313f42bd3defdac0adc \
     --hash=sha256:d0b96edee45e7fda5eb189e63331cfaf1bf1fbdbebbd08371f1daa77045d3ae9
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-macros-plugin==1.3.7 \
     --hash=sha256:02432033a5b77fb247d6ec7924e72fc4ceec264165b1644ab8d0dc159c22ce59 \
     --hash=sha256:17c7fd1a49b94defcdb502fd453d17a1e730f8836523379d21292eb2be4cb523
-    # via -r docs/requirements.in
-mkdocs-material==9.6.11 \
-    --hash=sha256:0b7f4a0145c5074cdd692e4362d232fb25ef5b23328d0ec1ab287af77cc0deff \
-    --hash=sha256:47f21ef9cbf4f0ebdce78a2ceecaa5d413581a55141e4464902224ebbc0b1263
-    # via -r docs/requirements.in
+    # via -r requirements.in
+mkdocs-material==9.6.12 \
+    --hash=sha256:92b4fbdc329e4febc267ca6e2c51e8501fa97b2225c5f4deb4d4e43550f8e61e \
+    --hash=sha256:add6a6337b29f9ea7912cb1efc661de2c369060b040eb5119855d794ea85b473
+    # via -r requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
     --hash=sha256:adff8b62700b25cb77b53358dad940f3ef973dd6db797907c49e3c2ef3ab4e31
@@ -342,21 +342,21 @@ mkdocs-material-extensions==1.3.1 \
 mkdocs-simple-hooks==0.1.5 \
     --hash=sha256:dddbdf151a18723c9302a133e5cf79538be8eb9d274e8e07d2ac3ac34890837c \
     --hash=sha256:efeabdbb98b0850a909adee285f3404535117159d5cb3a34f541d6eaa644d50a
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocstrings[python]==0.29.1 \
     --hash=sha256:37a9736134934eea89cbd055a513d40a020d87dfcae9e3052c2a6b8cd4af09b6 \
     --hash=sha256:8722f8f8c5cd75da56671e0a0c1bbed1df9946c0cef74794d6141b34011abd42
     # via
-    #   -r docs/requirements.in
+    #   -r requirements.in
     #   mkdocstrings-python
 mkdocstrings-python==1.16.5 \
     --hash=sha256:0899a12e356eab8e83720c63e15d0ff51cd96603216c837618de346e086b39ba \
     --hash=sha256:706b28dd0f59249a7c22cc5d517c9521e06c030b57e2a5478e1928a58f900abb
     # via mkdocstrings
-neoteroi-mkdocs==1.1.0 \
-    --hash=sha256:609aae655e781c7aec517ab14759c34ce896b8132d1df4b9c2e504779c2e48ef \
-    --hash=sha256:9c59aebf83ca09d1d486bf8c0351e6ddfa912f09413d153ecabc5cd268a3155a
-    # via -r docs/requirements.in
+neoteroi-mkdocs==1.1.1 \
+    --hash=sha256:5015640fd8a435626e537107811eccbeb6e4b31d200c8e812ec3143e03447dac \
+    --hash=sha256:5f7053b69e1d3be1cc9338a6bef17150d1a755a22d7dec3f927652d11fe491b7
+    # via -r requirements.in
 packaging==24.2 \
     --hash=sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759 \
     --hash=sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f
