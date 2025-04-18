@@ -82,6 +82,15 @@ def info(*args):
     print(wrap_color(msg, '94'))
 
 
+def state_marker(name, state):
+    """Print a state marker message to the console."""
+    if not os.environ.get('RUNNER_DEBUG'):
+        return
+
+    msg = f'# {name}| {state}'
+    print(wrap_color(msg, '94'))
+
+
 def checkInvokeVersion():
     """Check that the installed invoke version meets minimum requirements."""
     MIN_INVOKE_VERSION = '2.0.0'
@@ -337,6 +346,7 @@ def check_file_existence(filename: Path, overwrite: bool = False):
 @task(help={'uv': 'Use UV (experimental package manager)'})
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
+    state_marker('TSK01', 'start')
     from src.backend.InvenTree.InvenTree.config import get_plugin_file
 
     plugin_file = get_plugin_file()
@@ -353,6 +363,8 @@ def plugins(c, uv=False):
     # Collect plugin static files
     manage(c, 'collectplugins')
 
+    state_marker('TSK01', 'done')
+
 
 @task(
     help={
@@ -362,6 +374,7 @@ def plugins(c, uv=False):
 )
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
+    state_marker('TSK02', 'start')
     # Ensure path is relative to *this* directory
     INSTALL_FILE = localDir().joinpath('src/backend/requirements.txt')
 
@@ -399,6 +412,7 @@ def install(c, uv=False, skip_plugins=False):
     )
 
     success('Dependency installation complete')
+    state_marker('TSK02', 'done')
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
