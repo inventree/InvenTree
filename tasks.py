@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import sys
+from functools import wraps
 from pathlib import Path
 from platform import python_version
 from typing import Optional
@@ -93,11 +94,42 @@ def info(*args):
 
 def state_marker(name, state):
     """Print a state marker message to the console."""
-    if not is_deb_environment():
-        return
+    if is_deb_environment():
+        info(f'# {name}| {state}')
 
-    msg = f'# {name}| {state}'
-    print(wrap_color(msg, '94'))
+
+def optional_arg_decorator(fn):
+    """Decorator to make optional decorator.
+
+    See CC BY-SA-3.0 by https://stackoverflow.com/users/143295/nicole
+    https://stackoverflow.com/a/20966822/17860466.
+    """
+
+    def wrapped_decorator(*args):
+        if len(args) == 1 and callable(args[0]):
+            return fn(args[0])
+        else:
+
+            def real_decorator(decoratee):
+                return fn(decoratee, *args)
+
+            return real_decorator
+
+    return wrapped_decorator
+
+
+@optional_arg_decorator
+def state_logger(fn, method_name=None):
+    """Decorator to log state markers before/after markers."""
+    fn.method_name = method_name or fn.__name__
+
+    @wraps(fn)
+    def wrapped_wrapper(c, *args, **kwargs):
+        state_marker(fn.method_name, 'start')
+        fn(c, *args, **kwargs)
+        state_marker(fn.method_name, 'done')
+
+    return wrapped_wrapper
 
 
 def checkInvokeVersion():
@@ -353,9 +385,9 @@ def check_file_existence(filename: Path, overwrite: bool = False):
 
 # Install tasks
 @task(help={'uv': 'Use UV (experimental package manager)'})
+@state_logger('TSK01')
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
-    state_marker('TSK01', 'start')
     from src.backend.InvenTree.InvenTree.config import get_plugin_file
 
     plugin_file = get_plugin_file()
@@ -372,8 +404,6 @@ def plugins(c, uv=False):
     # Collect plugin static files
     manage(c, 'collectplugins')
 
-    state_marker('TSK01', 'done')
-
 
 @task(
     help={
@@ -381,9 +411,9 @@ def plugins(c, uv=False):
         'skip_plugins': 'Skip plugin installation',
     }
 )
+@state_logger('TSK02')
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
-    state_marker('TSK02', 'start')
     # Ensure path is relative to *this* directory
     INSTALL_FILE = localDir().joinpath('src/backend/requirements.txt')
 
@@ -421,7 +451,6 @@ def install(c, uv=False, skip_plugins=False):
     )
 
     success('Dependency installation complete')
-    state_marker('TSK02', 'done')
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
@@ -470,13 +499,12 @@ def rebuild_thumbnails(c):
 
 
 @task
+@state_logger('TSK09')
 def clean_settings(c):
     """Clean the setting tables of old settings."""
-    state_marker('TSK09', 'start')
     info('Cleaning old settings from the database')
     manage(c, 'clean_settings')
     success('Settings cleaned successfully')
-    state_marker('TSK09', 'done')
 
 
 @task(help={'mail': "mail of the user who's MFA should be disabled"})
@@ -496,9 +524,9 @@ def remove_mfa(c, mail=''):
         'skip_plugins': 'Ignore collection of plugin static files',
     }
 )
+@state_logger('TSK08')
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
-    state_marker('TSK08', 'start')
     if frontend and node_available():
         frontend_compile(c)
 
@@ -516,7 +544,6 @@ def static(c, frontend=False, clear=True, skip_plugins=False):
         manage(c, 'collectplugins')
 
     success('Static files collected successfully')
-    state_marker('TSK08', 'done')
 
 
 @task
@@ -548,9 +575,9 @@ def translate(c, ignore_static=False, no_frontend=False):
         'path': 'Specify path for generated backup files (leave blank for default path)',
     }
 )
+@state_logger('TSK04')
 def backup(c, clean=False, path=None):
     """Backup the database and media files."""
-    state_marker('TSK04', 'start')
     info('Backing up InvenTree database...')
 
     cmd = '--noinput --compress -v 2'
@@ -571,7 +598,6 @@ def backup(c, clean=False, path=None):
     manage(c, f'mediabackup {cmd}')
 
     success('Backup completed successfully')
-    state_marker('TSK04', 'done')
 
 
 @task(
@@ -626,12 +652,12 @@ def restore(
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
+@state_logger('TSK05')
 def migrate(c):
     """Performs database migrations.
 
     This is a critical step if the database schema have been altered!
     """
-    state_marker('TSK05', 'start')
     info('Running InvenTree database migrations...')
 
     # Run custom management command which wraps migrations in "maintenance mode"
@@ -641,7 +667,6 @@ def migrate(c):
     manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
     success('InvenTree database migrations completed')
-    state_marker('TSK05', 'done')
 
 
 @task(help={'app': 'Specify an app to show migrations for (leave blank for all apps)'})
@@ -660,6 +685,7 @@ def showmigrations(c, app=''):
         'uv': 'Use UV (experimental package manager)',
     },
 )
+@state_logger('TSK03')
 def update(
     c,
     skip_backup: bool = False,
@@ -682,7 +708,6 @@ def update(
     - static (optional)
     - clean_settings
     """
-    state_marker('TSK03', 'start')
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
@@ -720,7 +745,6 @@ def update(
         static(c, frontend=False)
 
     success('InvenTree update complete!')
-    state_marker('TSK03', 'done')
 
 
 # Data tasks
@@ -968,6 +992,7 @@ def import_fixtures(c):
 
 # Execution tasks
 @task
+@state_logger('TSK10')
 def wait(c):
     """Wait until the database connection is ready."""
     info('Waiting for database connection...')
@@ -1257,6 +1282,7 @@ def setup_test(
         'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
+@state_logger('TSK11')
 def schema(
     c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
 ):
@@ -1399,19 +1425,18 @@ def frontend_check(c):
 
 
 @task
+@state_logger('TSK06')
 def frontend_compile(c):
     """Generate react frontend.
 
     Args:
         c: Context variable
     """
-    state_marker('TSK06', 'start')
     info('Compiling frontend code...')
     frontend_install(c)
     frontend_trans(c, extract=False)
     frontend_build(c)
     success('Frontend compilation complete')
-    state_marker('TSK06', 'done')
 
 
 @task
@@ -1472,6 +1497,7 @@ def frontend_server(c):
         'clean': 'Delete old files from InvenTree/web/static/web first, default: True',
     }
 )
+@state_logger('TSK07')
 def frontend_download(
     c,
     ref=None,
@@ -1494,7 +1520,6 @@ def frontend_download(
     3. invoke frontend-download --file /home/vscode/Downloads/frontend-build.zip
        This will extract your zip file and place the contents at the correct destination
     """
-    state_marker('TSK07', 'start')
     import functools
     import subprocess
     from tempfile import NamedTemporaryFile
@@ -1679,7 +1704,6 @@ via your signed in browser, or consider using a point release download via invok
     Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
     continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>"""
         )
-    state_marker('TSK07', 'done')
 
 
 @task(
