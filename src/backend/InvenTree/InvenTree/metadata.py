@@ -116,14 +116,7 @@ class InvenTreeMetadata(SimpleMetadata):
                 actions = {}
 
             # Map the request method to a permission type
-            rolemap = {
-                'OPTIONS': 'view',
-                'GET': 'view',
-                'POST': 'add',
-                'PUT': 'change',
-                'PATCH': 'change',
-                'DELETE': 'delete',
-            }
+            rolemap = {**InvenTree.permissions.ACTION_MAP, 'OPTIONS': 'view'}
 
             # let the view define a custom rolemap
             if hasattr(view, 'rolemap'):
