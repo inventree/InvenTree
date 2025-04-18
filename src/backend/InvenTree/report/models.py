@@ -170,10 +170,12 @@ class ReportContextExtension(TypedDict):
     Attributes:
         page_size: The page size of the report
         landscape: Boolean value, True if the report is in landscape mode
+        merge: Boolean value, True if the a single report is generated against multiple items
     """
 
     page_size: str
     landscape: bool
+    merge: bool
 
 
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
@@ -366,6 +368,12 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         help_text=_('Render report in landscape orientation'),
     )
 
+    merge = models.BooleanField(
+        default=False,
+        verbose_name=_('Merge'),
+        help_text=_('Render a single report against selected items'),
+    )
+
     def get_report_size(self) -> str:
         """Return the printable page size for this report."""
         try:
@@ -382,13 +390,20 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return page_size
 
-    def get_context(self, instance, request=None, **kwargs):
-        """Supply context data to the report template for rendering."""
-        base_context = super().get_context(instance, request)
+    def get_report_context(self):
+        """Return report template context."""
         report_context: ReportContextExtension = {
             'page_size': self.get_report_size(),
             'landscape': self.landscape,
+            'merge': self.merge,
         }
+
+        return report_context
+
+    def get_context(self, instance, request=None, **kwargs):
+        """Supply context data to the report template for rendering."""
+        base_context = super().get_context(instance, request)
+        report_context: ReportContextExtension = self.get_report_context()
 
         context = {**base_context, **report_context}
 
@@ -455,21 +470,23 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             output.save()
 
         try:
-            for instance in items:
-                context = self.get_context(instance, request)
+            if self.merge:
+                base_context = super().base_context(request)
+                report_context = self.get_report_context()
+                item_contexts = []
+                for instance in items:
+                    item_contexts.append(instance.report_context())
+                contexts = {
+                    **base_context,
+                    **report_context,
+                    'instances': item_contexts,
+                }
 
                 if report_name is None:
-                    report_name = self.generate_filename(context)
+                    report_name = self.generate_filename(contexts)
 
-                # Render the report output
-                try:
-                    if debug_mode:
-                        report = self.render_as_string(instance, request)
-                    else:
-                        report = self.render(instance, request)
-                except TemplateDoesNotExist as e:
-                    t_name = str(e) or self.template
-                    raise ValidationError(f'Template file {t_name} does not exist')
+                html = render_to_string(self.template_name, contexts, request)
+                report = HTML(string=html).write_pdf()
 
                 outputs.append(report)
 
@@ -495,6 +512,47 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 # Update the progress of the report generation
                 output.progress += 1
                 output.save()
+            else:
+                for instance in items:
+                    context = self.get_context(instance, request)
+
+                    if report_name is None:
+                        report_name = self.generate_filename(context)
+
+                    # Render the report output
+                    try:
+                        if debug_mode:
+                            report = self.render_as_string(instance, request)
+                        else:
+                            report = self.render(instance, request)
+                    except TemplateDoesNotExist as e:
+                        t_name = str(e) or self.template
+                        raise ValidationError(f'Template file {t_name} does not exist')
+
+                    outputs.append(report)
+
+                    # Attach the generated report to the model instance (if required)
+                    if self.attach_to_model and not debug_mode:
+                        instance.create_attachment(
+                            attachment=ContentFile(report, report_name),
+                            comment=_(f'Report generated from template {self.name}'),
+                            upload_user=request.user
+                            if request and request.user.is_authenticated
+                            else None,
+                        )
+
+                    # Provide generated report to any interested plugins
+                    for plugin in report_plugins:
+                        try:
+                            plugin.report_callback(self, instance, report, request)
+                        except Exception:
+                            InvenTree.exceptions.log_error(
+                                f'plugins.{plugin.slug}.report_callback'
+                            )
+
+                    # Update the progress of the report generation
+                    output.progress += 1
+                    output.save()
 
         except Exception as exc:
             # Something went wrong during the report generation process
