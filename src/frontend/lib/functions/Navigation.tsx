@@ -49,7 +49,7 @@ export const navigateToLink = (
 
   const base = `/${getBaseUrl()}`;
 
-  if (event?.ctrlKey || event?.shiftKey || event?.metaKey) {
+  if (eventModified(event)) {
     // Open the link in a new tab
     let url = link;
     if (link.startsWith('/') && !link.startsWith(base)) {
@@ -67,4 +67,15 @@ export const navigateToLink = (
 
     navigate(url);
   }
+};
+
+/**
+ * Check if the event is modified (e.g. ctrl, shift, or meta key pressed)
+ * @param event - The event to check
+ * @returns true if the event was modified
+ */
+export const eventModified = (
+  event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+) => {
+  return event?.ctrlKey || event?.shiftKey || event?.metaKey;
 };

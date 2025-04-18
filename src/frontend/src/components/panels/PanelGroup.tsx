@@ -30,7 +30,7 @@ import {
 
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import { identifierString } from '../../functions/conversion';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
@@ -124,7 +124,7 @@ function BasePanelGroup({
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
-      if (event && (event?.ctrlKey || event?.shiftKey || event?.metaKey)) {
+      if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
         cancelEvent(event);
         navigateToLink(url, navigate, event);

@@ -24,8 +24,11 @@ import { useNavigate } from 'react-router-dom';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import { useApi } from '../../contexts/ApiContext';
 import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';
@@ -73,7 +76,7 @@ export default function NavigationTree({
   const follow = useCallback(
     (node: TreeNodeData, event?: any) => {
       const url = getDetailUrl(modelType, node.value);
-      if (event?.shiftKey || event?.ctrlKey) {
+      if (eventModified(event)) {
         navigateToLink(url, navigate, event);
       } else {
         onClose();
