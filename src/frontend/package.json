@@ -110,7 +110,7 @@
         "@babel/runtime": "^7.27.0",
         "@codecov/vite-plugin": "^1.9.0",
         "@lingui/babel-plugin-lingui-macro": "^5.3.0",
-        "@lingui/cli": "^5.3.0",
+        "@lingui/cli": "^5.3.1",
         "@lingui/macro": "^5.3.0",
         "@playwright/test": "^1.49.1",
         "@types/node": "^22.13.14",

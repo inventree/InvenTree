@@ -705,7 +705,10 @@ def email_user(user_id: int, subject: str, message: str) -> None:
         logger.warning('User <%s> not found - cannot send welcome message', user_id)
         return
 
-    user.email_user(subject=subject, message=message)
+    from InvenTree.helpers_email import get_email_for_user, send_email
+
+    if email := get_email_for_user(user):
+        send_email(subject, message, [email])
 
 
 @scheduled_task(ScheduledTask.DAILY)
