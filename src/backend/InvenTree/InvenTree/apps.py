@@ -57,10 +57,10 @@ class InvenTreeConfig(AppConfig):
         if InvenTree.ready.isRunningMigrations():
             return
 
-        # Ensure there are no open migrations
-        self.ensure_migrations_done()
-
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
+            # Ensure there are no open migrations
+            self.ensure_migrations_done()
+
             self.remove_obsolete_tasks()
             self.collect_tasks()
             self.start_background_tasks()

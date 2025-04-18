@@ -28,10 +28,10 @@ class PartConfig(AppConfig):
         if InvenTree.ready.isRunningMigrations():
             return
 
-        # Ensure there are no open migrations
-        InvenTreeConfig.ensure_migrations_done()
-
         if InvenTree.ready.canAppAccessDatabase():
+            # Ensure there are no open migrations
+            InvenTreeConfig.ensure_migrations_done()
+
             self.update_trackable_status()
             self.reset_part_pricing_flags()
 
