@@ -30,6 +30,15 @@ def is_rtd_environment():
     return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
+def is_deb_environment():
+    """Check if the InvenTree environment is running in a debug environment."""
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('INVENTREE_DEBUG', 'False')) or is_true(
+        os.environ.get('RUNNER_DEBUG', 'False')
+    )
+
+
 def task_exception_handler(t, v, tb):
     """Handle exceptions raised by tasks.
 
@@ -84,7 +93,7 @@ def info(*args):
 
 def state_marker(name, state):
     """Print a state marker message to the console."""
-    if not os.environ.get('RUNNER_DEBUG'):
+    if not is_deb_environment():
         return
 
     msg = f'# {name}| {state}'
@@ -463,9 +472,11 @@ def rebuild_thumbnails(c):
 @task
 def clean_settings(c):
     """Clean the setting tables of old settings."""
+    state_marker('TSK09', 'start')
     info('Cleaning old settings from the database')
     manage(c, 'clean_settings')
     success('Settings cleaned successfully')
+    state_marker('TSK09', 'done')
 
 
 @task(help={'mail': "mail of the user who's MFA should be disabled"})
@@ -487,6 +498,7 @@ def remove_mfa(c, mail=''):
 )
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
+    state_marker('TSK08', 'start')
     if frontend and node_available():
         frontend_compile(c)
 
@@ -504,6 +516,7 @@ def static(c, frontend=False, clear=True, skip_plugins=False):
         manage(c, 'collectplugins')
 
     success('Static files collected successfully')
+    state_marker('TSK08', 'done')
 
 
 @task
@@ -537,6 +550,7 @@ def translate(c, ignore_static=False, no_frontend=False):
 )
 def backup(c, clean=False, path=None):
     """Backup the database and media files."""
+    state_marker('TSK04', 'start')
     info('Backing up InvenTree database...')
 
     cmd = '--noinput --compress -v 2'
@@ -557,6 +571,7 @@ def backup(c, clean=False, path=None):
     manage(c, f'mediabackup {cmd}')
 
     success('Backup completed successfully')
+    state_marker('TSK04', 'done')
 
 
 @task(
@@ -616,6 +631,7 @@ def migrate(c):
 
     This is a critical step if the database schema have been altered!
     """
+    state_marker('TSK05', 'start')
     info('Running InvenTree database migrations...')
 
     # Run custom management command which wraps migrations in "maintenance mode"
@@ -625,6 +641,7 @@ def migrate(c):
     manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
     success('InvenTree database migrations completed')
+    state_marker('TSK05', 'done')
 
 
 @task(help={'app': 'Specify an app to show migrations for (leave blank for all apps)'})
@@ -665,6 +682,7 @@ def update(
     - static (optional)
     - clean_settings
     """
+    state_marker('TSK03', 'start')
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
@@ -702,6 +720,7 @@ def update(
         static(c, frontend=False)
 
     success('InvenTree update complete!')
+    state_marker('TSK03', 'done')
 
 
 # Data tasks
@@ -1386,11 +1405,13 @@ def frontend_compile(c):
     Args:
         c: Context variable
     """
+    state_marker('TSK06', 'start')
     info('Compiling frontend code...')
     frontend_install(c)
     frontend_trans(c, extract=False)
     frontend_build(c)
     success('Frontend compilation complete')
+    state_marker('TSK06', 'done')
 
 
 @task
@@ -1473,6 +1494,7 @@ def frontend_download(
     3. invoke frontend-download --file /home/vscode/Downloads/frontend-build.zip
        This will extract your zip file and place the contents at the correct destination
     """
+    state_marker('TSK07', 'start')
     import functools
     import subprocess
     from tempfile import NamedTemporaryFile
@@ -1657,6 +1679,7 @@ via your signed in browser, or consider using a point release download via invok
     Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
     continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>"""
         )
+    state_marker('TSK07', 'done')
 
 
 @task(
