@@ -233,17 +233,21 @@ class BaseMachineType(
         # always fetch the machine_config if needed to ensure we get the newest reference
         from .models import MachineConfig
 
-        return MachineConfig.objects.get(pk=self.pk)
+        return MachineConfig.objects.filter(pk=self.pk).first()
 
     @property
     def name(self):
         """The machines name."""
-        return self.machine_config.name
+        if config := self.machine_config:
+            return config.name
 
     @property
     def active(self):
         """The machines active status."""
-        return self.machine_config.active
+        if config := self.machine_config:
+            return config.active
+
+        return False
 
     # --- hook functions
     def initialize(self):

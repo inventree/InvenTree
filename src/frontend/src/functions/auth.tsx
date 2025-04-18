@@ -1,15 +1,18 @@
-import { t } from '@lingui/macro';
-import { notifications } from '@mantine/notifications';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
+import { t } from '@lingui/core/macro';
+import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
-import type { NavigateFunction } from 'react-router-dom';
-
+import type { AxiosRequestConfig } from 'axios';
+import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
+import { generateUrl } from './urls';
 
 export function followRedirect(navigate: NavigateFunction, redirect: any) {
   let url = redirect?.redirectUrl ?? '/home';
@@ -59,24 +62,32 @@ function post(path: string, params: any, method = 'post') {
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
-export const doBasicLogin = async (username: string, password: string) => {
-  const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+export const doBasicLogin = async (
+  username: string,
+  password: string,
+  navigate: NavigateFunction
+) => {
+  const { getHost } = useLocalState.getState();
+  const { clearUserState, setAuthenticated, fetchUserState } =
+    useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
   }
 
   clearCsrfCookie();
+  await ensureCsrf();
 
-  const login_url = apiUrl(ApiEndpoints.user_login);
+  let loginDone = false;
+  let success = false;
 
-  let result = false;
+  const host: string = getHost();
 
   // Attempt login with
   await api
     .post(
-      login_url,
+      apiUrl(ApiEndpoints.auth_login),
       {
         username: username,
         password: password
@@ -86,33 +97,42 @@ export const doBasicLogin = async (username: string, password: string) => {
       }
     )
     .then((response) => {
-      if (response.status == 200) {
-        if (response.data.key) {
-          setToken(response.data.key);
-          result = true;
-        }
+      setAuthContext(response.data?.data);
+      if (response.status == 200 && response.data?.meta?.is_authenticated) {
+        setAuthenticated(true);
+        loginDone = true;
+        success = true;
       }
     })
     .catch((err) => {
-      if (
-        err?.response?.status == 403 &&
-        err?.response?.data?.detail == 'MFA required for this user'
-      ) {
-        post(apiUrl(ApiEndpoints.user_login), {
-          username: username,
-          password: password,
-          csrfmiddlewaretoken: getCsrfCookie(),
-          mfa: true
+      if (err?.response?.status == 401) {
+        setAuthContext(err.response.data?.data);
+        const mfa_flow = err.response.data.data.flows.find(
+          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
+        );
+        if (mfa_flow && mfa_flow.is_pending == true) {
+          success = true;
+          navigate('/mfa');
+        }
+      } else if (err?.response?.status == 409) {
+        notifications.show({
+          title: t`Already logged in`,
+          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          color: 'red',
+          autoClose: false
         });
       }
     });
 
-  if (result) {
+  if (loginDone) {
     await fetchUserState();
-    fetchGlobalStates();
-  } else {
+    // see if mfa registration is required
+    await fetchGlobalStates(navigate);
+    observeProfile();
+  } else if (!success) {
     clearUserState();
   }
+  return success;
 };
 
 /**
@@ -125,8 +145,9 @@ export const doLogout = async (navigate: NavigateFunction) => {
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
-    await api.post(apiUrl(ApiEndpoints.user_logout)).catch(() => {});
-
+    await authApi(apiUrl(ApiEndpoints.auth_session), undefined, 'delete').catch(
+      () => {}
+    );
     showLoginNotification({
       title: t`Logged Out`,
       message: t`Successfully logged out`
@@ -139,7 +160,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 };
 
 export const doSimpleLogin = async (email: string) => {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const mail = await axios
     .post(
       apiUrl(ApiEndpoints.user_simple_login),
@@ -147,7 +168,7 @@ export const doSimpleLogin = async (email: string) => {
         email: email
       },
       {
-        baseURL: host,
+        baseURL: getHost(),
         timeout: 2000
       }
     )
@@ -158,26 +179,115 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
-export function handleReset(navigate: any, values: { email: string }) {
-  api
-    .post(apiUrl(ApiEndpoints.user_reset), values, {
-      headers: { Authorization: '' }
+function observeProfile() {
+  // overwrite language and theme info in session with profile info
+
+  const user = useUserState.getState().getUser();
+  const { language, setLanguage, userTheme, setTheme } =
+    useLocalState.getState();
+  if (user) {
+    if (user.profile?.language && language != user.profile.language) {
+      showNotification({
+        title: t`Language changed`,
+        message: t`Your active language has been changed to the one set in your profile`,
+        color: 'blue',
+        icon: 'language'
+      });
+      setLanguage(user.profile.language, true);
+    }
+
+    if (user.profile?.theme) {
+      // extract keys of usertheme and set them to the values of user.profile.theme
+      const newTheme = Object.keys(userTheme).map((key) => {
+        return {
+          key: key as keyof typeof userTheme,
+          value: user.profile.theme[key] as string
+        };
+      });
+      const diff = newTheme.filter(
+        (item) => userTheme[item.key] !== item.value
+      );
+      if (diff.length > 0) {
+        showNotification({
+          title: t`Theme changed`,
+          message: t`Your active theme has been changed to the one set in your profile`,
+          color: 'blue'
+        });
+        setTheme(newTheme);
+      }
+    }
+  }
+}
+
+export async function ensureCsrf() {
+  const cookie = getCsrfCookie();
+  if (cookie == undefined) {
+    await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
+  }
+}
+
+export function handleReset(
+  navigate: NavigateFunction,
+  values: { email: string }
+) {
+  ensureCsrf();
+  api.post(apiUrl(ApiEndpoints.user_reset), values).then((val) => {
+    if (val.status === 200) {
+      notifications.show({
+        title: t`Mail delivery successful`,
+        message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
+        color: 'green',
+        autoClose: false
+      });
+      navigate('/login');
+    } else {
+      notifications.show({
+        title: t`Reset failed`,
+        message: t`Check your input and try again.`,
+        color: 'red'
+      });
+    }
+  });
+}
+
+export function handleMfaLogin(
+  navigate: NavigateFunction,
+  location: Location<any>,
+  values: { code: string },
+  setError: (message: string | undefined) => void
+) {
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
+
+  authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
+    code: values.code
+  })
+    .then((response) => {
+      setError(undefined);
+      setAuthContext(response.data?.data);
+      setAuthenticated();
+
+      fetchUserState().finally(() => {
+        observeProfile();
+        followRedirect(navigate, location?.state);
+      });
     })
-    .then((val) => {
-      if (val.status === 200) {
+    .catch((err) => {
+      if (err?.response?.status == 409) {
         notifications.show({
-          title: t`Mail delivery successful`,
-          message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
-          color: 'green',
+          title: t`Already logged in`,
+          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          color: 'red',
           autoClose: false
         });
-        navigate('/login');
       } else {
-        notifications.show({
-          title: t`Reset failed`,
-          message: t`Check your input and try again.`,
-          color: 'red'
-        });
+        const errors = err.response?.data?.errors;
+        let msg = t`An error occurred`;
+
+        if (errors) {
+          msg = errors.map((e: any) => e.message).join(', ');
+        }
+        setError(msg);
       }
     });
 }
@@ -209,16 +319,10 @@ export const checkLoginState = async (
       message: t`Successfully logged in`
     });
 
-    fetchGlobalStates();
+    observeProfile();
 
+    fetchGlobalStates(navigate);
     followRedirect(navigate, redirect);
-  };
-
-  // Callback function when login fails
-  const loginFailure = () => {
-    if (!no_redirect) {
-      navigate('/login', { state: redirect });
-    }
   };
 
   if (isLoggedIn()) {
@@ -233,8 +337,8 @@ export const checkLoginState = async (
 
   if (isLoggedIn()) {
     loginSuccess();
-  } else {
-    loginFailure();
+  } else if (!no_redirect) {
+    navigate('/login', { state: redirect });
   }
 };
 
@@ -256,4 +360,215 @@ export function getCsrfCookie() {
 export function clearCsrfCookie() {
   document.cookie =
     'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+}
+
+export async function ProviderLogin(
+  provider: AuthProvider,
+  process: 'login' | 'connect' = 'login'
+) {
+  await ensureCsrf();
+  post(generateUrl(apiUrl(ApiEndpoints.auth_provider_redirect)), {
+    provider: provider.id,
+    callback_url: generateUrl('/logged-in'),
+    process: process,
+    csrfmiddlewaretoken: getCsrfCookie()
+  });
+}
+
+/**
+ * Makes an API request with session tokens using the provided URL, configuration, method, and data.
+ *
+ * @param url - The URL to which the request is sent.
+ * @param config - Optional Axios request configuration.
+ * @param method - The HTTP method to use for the request. Defaults to 'get'.
+ * @param data - Optional data to be sent with the request.
+ * @returns A promise that resolves to the response of the API request.
+ */
+export function authApi(
+  url: string,
+  config: AxiosRequestConfig | undefined = undefined,
+  method: 'get' | 'patch' | 'post' | 'put' | 'delete' = 'get',
+  data?: any
+) {
+  const requestConfig = config || {};
+
+  // set method
+  requestConfig.method = method;
+
+  // set data
+  if (data) {
+    requestConfig.data = data;
+  }
+
+  // use normal api
+  return api(url, requestConfig);
+}
+
+export const getTotpSecret = async (setTotpQr: any) => {
+  await authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'get').catch(
+    (err) => {
+      if (err.status == 404 && err.response.data.meta.secret) {
+        setTotpQr(err.response.data.meta);
+      } else {
+        const msg = err.response.data.errors[0].message;
+        showNotification({
+          title: t`Failed to set up MFA`,
+          message: msg,
+          color: 'red'
+        });
+      }
+    }
+  );
+};
+
+export function handleVerifyTotp(
+  value: string,
+  navigate: NavigateFunction,
+  location: Location<any>
+) {
+  return () => {
+    authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
+      code: value
+    }).then(() => {
+      followRedirect(navigate, location?.state);
+    });
+  };
+}
+
+export function handlePasswordReset(
+  key: string | null,
+  password: string,
+  navigate: NavigateFunction
+) {
+  function success() {
+    notifications.show({
+      title: t`Password set`,
+      message: t`The password was set successfully. You can now login with your new password`,
+      color: 'green',
+      autoClose: false
+    });
+    navigate('/login');
+  }
+
+  function passwordError(values: any) {
+    notifications.show({
+      title: t`Reset failed`,
+      message: values?.errors.map((e: any) => e.message).join('\n'),
+      color: 'red'
+    });
+  }
+
+  // Set password with call to backend
+  api
+    .post(
+      apiUrl(ApiEndpoints.user_reset_set),
+      {
+        key: key,
+        password: password
+      },
+      { headers: { Authorization: '' } }
+    )
+    .then((val) => {
+      if (val.status === 200) {
+        success();
+      } else {
+        passwordError(val.data);
+      }
+    })
+    .catch((err) => {
+      if (err.response?.status === 400) {
+        passwordError(err.response.data);
+      } else if (err.response?.status === 401) {
+        success();
+      } else {
+        passwordError(err.response.data);
+      }
+    });
+}
+
+export function handleVerifyEmail(
+  key: string | undefined,
+  navigate: NavigateFunction
+) {
+  // Set password with call to backend
+  api
+    .post(apiUrl(ApiEndpoints.auth_email_verify), {
+      key: key
+    })
+    .then((val) => {
+      if (val.status === 200) {
+        navigate('/login');
+      }
+    });
+}
+
+export function handleChangePassword(
+  pwd1: string,
+  pwd2: string,
+  current: string,
+  navigate: NavigateFunction
+) {
+  const { clearUserState } = useUserState.getState();
+
+  function passwordError(values: any) {
+    let message: any =
+      values?.new_password ||
+      values?.new_password2 ||
+      values?.new_password1 ||
+      values?.current_password ||
+      values?.error ||
+      t`Password could not be changed`;
+
+    // If message is array
+    if (!Array.isArray(message)) {
+      message = [message];
+    }
+
+    message.forEach((msg: string) => {
+      notifications.show({
+        title: t`Error`,
+        message: msg,
+        color: 'red'
+      });
+    });
+  }
+
+  // check if passwords match
+  if (pwd1 !== pwd2) {
+    passwordError({ new_password2: t`The two password fields didn’t match` });
+    return;
+  }
+
+  // Set password with call to backend
+  api
+    .post(apiUrl(ApiEndpoints.auth_pwd_change), {
+      current_password: current,
+      new_password: pwd2
+    })
+    .then((val) => {
+      passwordError(val.data);
+    })
+    .catch((err) => {
+      if (err.status === 401) {
+        notifications.show({
+          title: t`Password Changed`,
+          message: t`The password was set successfully. You can now login with your new password`,
+          color: 'green',
+          autoClose: false
+        });
+        clearUserState();
+        clearCsrfCookie();
+        navigate('/login');
+      } else {
+        // compile errors
+        const errors: { [key: string]: string[] } = {};
+        for (const val of err.response.data.errors) {
+          if (!errors[val.param]) {
+            errors[val.param] = [];
+          }
+          errors[val.param].push(val.message);
+        }
+        passwordError(errors);
+      }
+    });
 }

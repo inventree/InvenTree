@@ -155,7 +155,7 @@ class StockTest(StockTestBase):
             item.full_clean()
 
         # A long URL should fail
-        long_url = 'https://website.co.uk?query=' + 'a' * 173
+        long_url = 'https://website.co.uk?query=' + 'a' * 1973
 
         with self.assertRaises(ValidationError):
             item.link = long_url
@@ -262,8 +262,8 @@ class StockTest(StockTestBase):
     def test_url(self):
         """Test get_absolute_url function."""
         it = StockItem.objects.get(pk=2)
-        self.assertEqual(it.get_absolute_url(), '/platform/stock/item/2')
-        self.assertEqual(self.home.get_absolute_url(), '/platform/stock/location/1')
+        self.assertEqual(it.get_absolute_url(), '/web/stock/item/2')
+        self.assertEqual(self.home.get_absolute_url(), '/web/stock/location/1')
 
     def test_strings(self):
         """Test str function."""

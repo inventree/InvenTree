@@ -4,7 +4,7 @@ export function getTemplatePreview({ featureContext, pluginContext }) {
 
     featureContext.registerHandlers({
       updatePreview: (...args) => {
-        console.log("updatePreview", args);
+        console.log("updatePreview", args[0]);
       }
     });
 

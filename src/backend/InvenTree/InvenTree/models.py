@@ -87,11 +87,11 @@ class PluginValidationMixin(DiffMixin):
 
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         deltas = self.get_field_deltas()
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 if plugin.validate_model_instance(self, deltas=deltas) is True:
                     return
@@ -130,9 +130,9 @@ class PluginValidationMixin(DiffMixin):
         Note: Each plugin may raise a ValidationError to prevent deletion.
         """
         from InvenTree.exceptions import log_error
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 plugin.validate_model_deletion(self)
             except ValidationError as e:
@@ -224,61 +224,6 @@ class MetadataMixin(models.Model):
 
         if commit:
             self.save()
-
-
-class DataImportMixin:
-    """Model mixin class which provides support for 'data import' functionality.
-
-    Models which implement this mixin should provide information on the fields available for import
-    """
-
-    # TODO: This mixin should be removed after https://github.com/inventree/InvenTree/pull/6911 is implemented
-    # TODO: This approach to data import functionality is *outdated*
-
-    # Define a map of fields available for import
-    IMPORT_FIELDS = {}
-
-    @classmethod
-    def get_import_fields(cls):
-        """Return all available import fields.
-
-        Where information on a particular field is not explicitly provided,
-        introspect the base model to (attempt to) find that information.
-        """
-        fields = cls.IMPORT_FIELDS
-
-        for name, field in fields.items():
-            # Attempt to extract base field information from the model
-            base_field = None
-
-            for f in cls._meta.fields:
-                if f.name == name:
-                    base_field = f
-                    break
-
-            if base_field:
-                if 'label' not in field:
-                    field['label'] = base_field.verbose_name
-
-                if 'help_text' not in field:
-                    field['help_text'] = base_field.help_text
-
-            fields[name] = field
-
-        return fields
-
-    @classmethod
-    def get_required_import_fields(cls):
-        """Return all *required* import fields."""
-        fields = {}
-
-        for name, field in cls.get_import_fields().items():
-            required = field.get('required', False)
-
-            if required:
-                fields[name] = field
-
-        return fields
 
 
 class ReferenceIndexingMixin(models.Model):
@@ -1002,7 +947,7 @@ class InvenTreeBarcodeMixin(models.Model):
         )
 
     def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a QR code for this model instance."""
+        """Return a string for formatting a QR code for this model instance."""
         from plugin.base.barcodes.helper import generate_barcode
 
         return generate_barcode(self)
@@ -1021,7 +966,7 @@ class InvenTreeBarcodeMixin(models.Model):
         return data
 
     @property
-    def barcode(self):
+    def barcode(self) -> str:
         """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode()
 

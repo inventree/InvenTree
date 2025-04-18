@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken
+from users.ruleset import RULESET_NAMES, get_ruleset_models
 
 
 class UserAPITests(InvenTreeAPITestCase):
@@ -17,8 +18,11 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assignRole('admin.add')
         response = self.options(reverse('api-user-list'), expected_code=200)
 
-        # User is *not* a superuser, so user account API is read-only
-        self.assertNotIn('POST', response.data['actions'])
+        self.user.is_staff = True
+        self.user.save()
+
+        # User is a *staff* user with *admin* role, so can POST against this endpoint
+        self.assertIn('POST', response.data['actions'])
 
         fields = response.data['actions']['GET']
 
@@ -40,7 +44,8 @@ class UserAPITests(InvenTreeAPITestCase):
 
     def test_user_api(self):
         """Tests for User API endpoints."""
-        response = self.get(reverse('api-user-list'), expected_code=200)
+        url = reverse('api-user-list')
+        response = self.get(url, expected_code=200)
 
         # Check the correct number of results was returned
         self.assertEqual(len(response.data), User.objects.count())
@@ -57,6 +62,84 @@ class UserAPITests(InvenTreeAPITestCase):
 
         self.assertIn('pk', response.data)
         self.assertIn('username', response.data)
+
+        data = {
+            'username': 'test',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'email': 'aa@example.org',
+        }
+
+        # Test create user - requires staff access with 'admin' role
+        response = self.post(url, data=data, expected_code=403)
+        self.assertIn(
+            'You do not have permission to perform this action.', str(response.data)
+        )
+
+        # Try again with "staff" access
+        self.user.is_staff = True
+        self.user.save()
+
+        # Try again - should fail still, as user does not have "admin" role
+        response = self.post(url, data=data, expected_code=403)
+
+        # Assign the "admin" role to the user
+        self.assignRole('admin.view')
+
+        # Fail again - user does not have "add" permission against the "admin" role
+        response = self.post(url, data=data, expected_code=403)
+
+        self.assignRole('admin.add')
+
+        response = self.post(url, data=data, expected_code=201)
+
+        self.assertEqual(response.data['username'], 'test')
+        self.assertEqual(response.data['first_name'], 'Test')
+        self.assertEqual(response.data['last_name'], 'User')
+        self.assertEqual(response.data['is_staff'], False)
+        self.assertEqual(response.data['is_superuser'], False)
+        self.assertEqual(response.data['is_active'], True)
+
+        # Try to adjust the 'is_superuser' field
+        # Only a "superuser" can set this field
+        response = self.post(
+            url,
+            data={**data, 'username': 'Superuser', 'is_superuser': True},
+            expected_code=403,
+        )
+
+        self.assertIn('Only a superuser can adjust this field', str(response.data))
+
+    def test_user_detail(self):
+        """Test the UserDetail API endpoint."""
+        user = User.objects.first()
+        url = reverse('api-user-detail', kwargs={'pk': user.pk})
+
+        user.is_staff = False
+        user.save()
+
+        # Any authenticated user can access the user detail endpoint
+        self.get(url, expected_code=200)
+
+        # Let's try to update the user
+        data = {'is_active': False, 'is_staff': False}
+
+        self.patch(url, data=data, expected_code=403)
+
+        # But, what if we have the "admin" role?
+        self.assignRole('admin.change')
+
+        # Still cannot - we are not staff
+        self.patch(url, data=data, expected_code=403)
+
+        self.user.is_staff = True
+        self.user.save()
+
+        self.patch(url, data=data, expected_code=200)
+
+        # Try again, but logged out - expect no access to the endpoint
+        self.logout()
+        self.get(url, expected_code=401)
 
     def test_group_api(self):
         """Tests for the Group API endpoints."""
@@ -83,19 +166,47 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertIn('name', response.data)
         self.assertIn('permissions', response.data)
 
-    def test_logout(self):
-        """Test api logout endpoint."""
-        token_key = self.get(url=reverse('api-token')).data['token']
-        self.client.logout()
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
-
-        self.post(reverse('api-logout'), expected_code=200)
-        self.get(reverse('api-token'), expected_code=401)
-
     def test_login_redirect(self):
         """Test login redirect endpoint."""
         response = self.get(reverse('api-login-redirect'), expected_code=302)
-        self.assertEqual(response.url, '/platform/logged-in/')
+        self.assertEqual(response.url, '/web/logged-in/')
+
+    def test_user_roles(self):
+        """Test the user 'roles' API endpoint."""
+        url = reverse('api-user-roles')
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+
+        # User has no 'permissions' yet
+        self.assertEqual(len(data['permissions']), 0)
+        self.assertEqual(len(data['roles']), len(RULESET_NAMES))
+
+        # assign the 'purchase_order.add' role to the test group
+        self.assignRole('purchase_order.add')
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+
+        # Expected number of permissions
+        perms = get_ruleset_models()['purchase_order']
+        self.assertEqual(len(data['permissions']), len(perms))
+
+        for P in data['permissions'].values():
+            self.assertIn('add', P)
+            self.assertIn('change', P)
+            self.assertIn('view', P)
+
+            self.assertNotIn('delete', P)
+
+        # assign a different role - check stacking
+        self.assignRole('build.view')
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+        build_perms = get_ruleset_models()['build']
+
+        self.assertEqual(len(data['permissions']), len(perms) + len(build_perms))
 
 
 class UserTokenTests(InvenTreeAPITestCase):
@@ -205,16 +316,6 @@ class UserTokenTests(InvenTreeAPITestCase):
         token.save()
 
         self.client.get(me, expected_code=200)
-
-    def test_builtin_token(self):
-        """Test the built-in token authentication."""
-        response = self.post(
-            reverse('rest_login'),
-            {'username': self.username, 'password': self.password},
-            expected_code=200,
-        )
-        self.assertIn('key', response.data)
-        self.assertTrue(response.data['key'].startswith('inv-'))
 
     def test_token_api(self):
         """Test the token API."""

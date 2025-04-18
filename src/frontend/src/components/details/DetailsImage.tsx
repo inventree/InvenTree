@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   AspectRatio,
   Button,
@@ -20,10 +21,10 @@ import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
+import type { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/Events';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import type { UserRoles } from '../../enums/Roles';
-import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';
@@ -39,7 +40,7 @@ import { StylishText } from '../items/StylishText';
  * Props for detail image
  */
 export type DetailImageProps = {
-  appRole: UserRoles;
+  appRole?: UserRoles;
   src: string;
   apiPath: string;
   refresh?: () => void;
@@ -305,7 +306,7 @@ function ImageActionButtons({
 
                 modals.open({
                   title: <StylishText size='xl'>{t`Select Image`}</StylishText>,
-                  size: 'xxl',
+                  size: '80%',
                   children: <PartThumbTable pk={pk} setImage={setImage} />
                 });
               }}
@@ -437,7 +438,8 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
               maw={IMAGE_DIMENSION}
               onClick={expandImage}
             />
-            {permissions.hasChangeRole(props.appRole) &&
+            {props.appRole &&
+              permissions.hasChangeRole(props.appRole) &&
               hasOverlay &&
               hovered && (
                 <Overlay color='black' opacity={0.8} onClick={expandImage}>

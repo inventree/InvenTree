@@ -1,13 +1,15 @@
 """API for location plugins."""
 
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ParseError, ValidationError
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+import InvenTree.permissions
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
-from plugin.registry import call_plugin_function, registry
+from plugin import PluginMixinEnum, registry
+from plugin.registry import call_plugin_function
 from stock.models import StockItem, StockLocation
 
 
@@ -26,7 +28,7 @@ class LocatePluginSerializer(serializers.Serializer):
 class LocatePluginView(GenericAPIView):
     """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = LocatePluginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -39,7 +41,7 @@ class LocatePluginView(GenericAPIView):
             raise ParseError("'plugin' field must be supplied")
 
         # Check that the plugin exists, and supports the 'locate' mixin
-        plugins = registry.with_mixin('locate')
+        plugins = registry.with_mixin(PluginMixinEnum.LOCATE)
 
         if plugin not in [p.slug for p in plugins]:
             raise ParseError(

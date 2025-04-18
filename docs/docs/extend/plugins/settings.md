@@ -50,13 +50,27 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
         },
         'NUMBER': {
             'name': _('A Name'),
-            'description': _('Descripe me here'),
+            'description': _('Describe me here'),
             'default': 6,
             'validator': [
                 int,
                 MinValueValidator(2),
                 MaxValueValidator(25)
             ]
+        },
+        'ASSEMBLY': {
+            'name': _('Assembled Part'),
+            'description': _('Settings can point to internal database models'),
+            'model': 'part.part',
+            'model_filters': {
+                'active': True,
+                'assembly': True
+            }
+        },
+        'GROUP': {
+            'name': _('User Group'),
+            'description': _('Select a group of users'),
+            'model': 'auth.group'
         },
         'HIDDEN_SETTING': {
             'name': _('Hidden Setting'),

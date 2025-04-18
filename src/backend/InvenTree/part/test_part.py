@@ -15,7 +15,7 @@ from common.notifications import UIMessageNotification, storage
 from common.settings import get_global_setting, set_global_setting
 from InvenTree import version
 from InvenTree.templatetags import inventree_extras
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
 
 from .models import (
     Part,
@@ -245,7 +245,7 @@ class PartTest(TestCase):
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
-        self.assertEqual(self.r1.get_absolute_url(), '/platform/part/3')
+        self.assertEqual(self.r1.get_absolute_url(), '/web/part/3')
 
     def test_category(self):
         """Test PartCategory path."""
@@ -805,6 +805,9 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Subscribe and run again
+        addUserPermission(self.user, 'part', 'part', 'view')
+        self.user.is_active = True
+        self.user.save()
         self.part.set_starred(self.user, True)
         self.part.save()
 

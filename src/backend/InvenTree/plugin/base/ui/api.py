@@ -3,20 +3,20 @@
 from django.urls import path
 
 from drf_spectacular.utils import extend_schema
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import InvenTree.permissions
 import plugin.base.ui.serializers as UIPluginSerializers
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 
 
 class PluginUIFeatureList(APIView):
     """API endpoint for listing all available plugin ui features."""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = UIPluginSerializers.PluginUIFeatureSerializer
 
     @extend_schema(
@@ -28,7 +28,9 @@ class PluginUIFeatureList(APIView):
 
         if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
             # Extract all plugins from the registry which provide custom ui features
-            for _plugin in registry.with_mixin('ui', active=True):
+            for _plugin in registry.with_mixin(
+                PluginMixinEnum.USER_INTERFACE, active=True
+            ):
                 # Allow plugins to fill this data out
 
                 try:

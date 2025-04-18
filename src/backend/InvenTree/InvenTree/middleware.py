@@ -6,16 +6,15 @@ from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import Resolver404, include, path, resolve, reverse_lazy
+from django.urls import resolve, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 
 import structlog
-from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
+from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
 from InvenTree.cache import create_session_cache, delete_session_cache
-from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
@@ -87,6 +86,11 @@ class AuthRequiredMiddleware:
             response = self.get_response(request)
             return response
 
+        # oAuth2 requests are handled by the oAuth2 library
+        if request.path_info.startswith('/o/'):
+            response = self.get_response(request)
+            return response
+
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
 
@@ -137,32 +141,12 @@ class AuthRequiredMiddleware:
         return response
 
 
-url_matcher = path('', include(frontendpatterns))
+class Check2FAMiddleware(AllUserRequire2FAMiddleware):
+    """Ensure that mfa is enforced if set so."""
 
-
-class Check2FAMiddleware(BaseRequire2FAMiddleware):
-    """Check if user is required to have MFA enabled."""
-
-    def require_2fa(self, request):
-        """Use setting to check if MFA should be enforced for frontend page."""
-        try:
-            if url_matcher.resolve(request.path[1:]):
-                return get_global_setting('LOGIN_ENFORCE_MFA')
-        except Resolver404:
-            pass
-        return False
-
-
-class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
-    """This function ensures only frontend code triggers the MFA auth cycle."""
-
-    def process_request(self, request):
-        """Check if requested url is frontend and enforce MFA check."""
-        try:
-            if not url_matcher.resolve(request.path[1:]):
-                super().process_request(request)
-        except Resolver404:
-            pass
+    def enforce_2fa(self, request):
+        """Use setting to check if MFA should be enforced."""
+        return get_global_setting('LOGIN_ENFORCE_MFA')
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):

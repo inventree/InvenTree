@@ -17,7 +17,7 @@ repos:
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.2
+    rev: v0.11.0
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -28,7 +28,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.5.20
+    rev: 0.6.6
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -55,7 +55,7 @@ repos:
     hooks:
       - id: djlint-django
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.3.0
+  rev: v2.4.1
   hooks:
   - id: codespell
     additional_dependencies:
@@ -70,15 +70,16 @@ repos:
           src/frontend/vite.config.ts |
       )$
 -   repo: https://github.com/biomejs/pre-commit
-    rev: "v0.6.1"
+    rev: v1.9.4
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         files: ^src/frontend/.*\.(js|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.23.1
+    rev: v8.24.0
     hooks:
     -   id: gitleaks
+        language_version: 1.23.6
 #-   repo: https://github.com/jumanjihouse/pre-commit-hooks
 #    rev: 3.0.0
 #    hooks:

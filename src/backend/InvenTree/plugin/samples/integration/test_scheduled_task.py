@@ -65,12 +65,13 @@ class ExampleScheduledTaskPluginTests(TestCase):
         self.assertEqual(len(scheduled_plugin_tasks), 0)
 
     def test_calling(self):
-        """Check if a function can be called without errors."""
+        """Test calling of plugin functions by name."""
         # Check with right parameters
         self.assertEqual(call_plugin_function('schedule', 'member_func'), False)
 
         # Check with wrong key
-        self.assertEqual(call_plugin_function('does_not_exist', 'member_func'), None)
+        with self.assertRaises(AttributeError):
+            call_plugin_function('does_not_exist', 'member_func'), None
 
 
 class ScheduledTaskPluginTests(TestCase):

@@ -18,12 +18,16 @@ from invoke.exceptions import UnexpectedExit
 
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
-    return os.environ.get('INVENTREE_DOCKER', 'False')
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
 
 
 def is_rtd_environment():
     """Check if the InvenTree environment is running on ReadTheDocs."""
-    return os.environ.get('READTHEDOCS', 'False') == 'True'
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
 def task_exception_handler(t, v, tb):
@@ -97,11 +101,14 @@ def chceckInvokePath():
         return
 
     invoke_path = Path(invoke.__file__)
+    env_path = Path(sys.prefix).resolve()
     loc_path = Path(__file__).parent.resolve()
-    if not invoke_path.is_relative_to(loc_path):
+    if not invoke_path.is_relative_to(loc_path) and not invoke_path.is_relative_to(
+        env_path
+    ):
         error('INVE-E2 - Wrong Invoke Path')
         error(
-            f'The currently used invoke `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` !'
+            f'The invoke tool `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` or `{env_path}`'
         )
         sys.exit(1)
 
@@ -162,12 +169,13 @@ def content_excludes(
     allow_plugins: bool = True,
     allow_sso: bool = True,
 ):
-    """Returns a list of content types to exclude from import/export.
+    """Returns a list of content types to exclude from import / export.
 
     Arguments:
-        allow_tokens (bool): Allow tokens to be exported/importe
-        allow_plugins (bool): Allow plugin information to be exported/imported
-        allow_sso (bool): Allow SSO tokens to be exported/imported
+        allow_auth (bool): Allow user authentication data to be exported / imported
+        allow_tokens (bool): Allow tokens to be exported / imported
+        allow_plugins (bool): Allow plugin information to be exported / imported
+        allow_sso (bool): Allow SSO tokens to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -179,14 +187,12 @@ def content_excludes(
         'django_q.ormq',
         'exchange.rate',
         'exchange.exchangebackend',
+        'common.dataoutput',
         'common.notificationentry',
         'common.notificationmessage',
-        'user_sessions.session',
         'importer.dataimportsession',
         'importer.dataimportcolumnmap',
         'importer.dataimportrow',
-        'report.labeloutput',
-        'report.reportoutput',
     ]
 
     # Optionally exclude user auth data
@@ -238,6 +244,7 @@ def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
         cmd: Command to run.
         path: Path to run the command in.
         pty (bool, optional): Run an interactive session. Defaults to False.
+        env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
     env = env or {}
     path = path or localDir()
@@ -467,8 +474,7 @@ def remove_mfa(c, mail=''):
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
-        frontend_trans(c, extract=False)
-        frontend_build(c)
+        frontend_compile(c)
 
     info('Collecting static files...')
 
@@ -500,9 +506,7 @@ def translate(c, ignore_static=False, no_frontend=False):
     manage(c, 'compilemessages')
 
     if not no_frontend and node_available():
-        frontend_install(c)
-        frontend_trans(c)
-        frontend_build(c)
+        frontend_compile(c)
 
     # Update static files
     if not ignore_static:
@@ -679,7 +683,9 @@ def update(
             frontend_download(c)
 
     if not skip_static:
-        static(c, frontend=not no_frontend)
+        # Collect static files
+        # Note: frontend has already been compiled if required
+        static(c, frontend=False)
 
     success('InvenTree update complete!')
 
@@ -1077,7 +1083,8 @@ def test(
 ):
     """Run unit-tests for InvenTree codebase.
 
-    Arguments:
+    Args:
+        c: Command line context.
         disable_pty (bool): Disable PTY (default = False)
         runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
         migrations (bool): Run migration unit tests (default = False)
@@ -1226,7 +1233,7 @@ def schema(
 
     info(f"Exporting schema file to '{filename}'")
 
-    cmd = f'spectacular --file {filename} --validate --color'
+    cmd = f'schema --file {filename} --validate --color'
 
     if not ignore_warnings:
         cmd += ' --fail-on-warn'
@@ -1270,6 +1277,7 @@ def export_definitions(c, basedir: str = ''):
         Path(basedir + 'inventree_settings.json').resolve(),
         Path(basedir + 'inventree_tags.yml').resolve(),
         Path(basedir + 'inventree_filters.yml').resolve(),
+        Path(basedir + 'inventree_report_context.json').resolve(),
     ]
 
     info('Exporting definitions...')
@@ -1280,6 +1288,9 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[2], overwrite=True)
     manage(c, f'export_filters {filenames[2]}', pty=True)
+
+    check_file_existence(filenames[3], overwrite=True)
+    manage(c, f'export_report_context {filenames[3]}', pty=True)
 
     info('Exporting definitions complete')
 
@@ -1292,11 +1303,14 @@ def version(c):
         get_backup_dir,
         get_config_file,
         get_media_dir,
+        get_plugin_file,
         get_static_dir,
     )
 
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
+
+    invoke_path = Path(invoke.__file__).resolve()
 
     # Special output messages
     NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
@@ -1310,10 +1324,12 @@ The Open-Source Inventory Management System\n
 Python paths:
 Executable  {sys.executable}
 Environment {sys.prefix}
+Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {localDir()}
 Config      {get_config_file()}
+Plugin File {get_plugin_file() or NOT_SPECIFIED}
 Media       {get_media_dir(error=False) or NOT_SPECIFIED}
 Static      {get_static_dir(error=False) or NOT_SPECIFIED}
 Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
@@ -1325,6 +1341,10 @@ InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
+
+Environment:
+Docker      {is_docker_environment()}
+RTD         {is_rtd_environment()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
@@ -1376,6 +1396,7 @@ def frontend_trans(c, extract: bool = True):
 
     Args:
         c: Context variable
+        extract (bool): Whether to extract translations from source code. Defaults to True.
     """
     info('Compiling frontend translations')
     if extract:
@@ -1391,7 +1412,7 @@ def frontend_build(c):
         c: Context variable
     """
     info('Building frontend')
-    yarn(c, 'yarn run build --emptyOutDir')
+    yarn(c, 'yarn run build')
 
 
 @task
@@ -1403,7 +1424,7 @@ def frontend_server(c):
     """
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
-    yarn(c, 'yarn run dev')
+    yarn(c, 'yarn run dev --host')
 
 
 @task(

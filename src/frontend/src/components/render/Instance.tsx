@@ -1,13 +1,14 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { useApi } from '../../contexts/ApiContext';
-import { ModelType } from '../../enums/ModelType';
-import { navigateToLink } from '../../functions/navigation';
 import { shortenString } from '../../functions/tables';
-import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -24,7 +25,6 @@ import {
   RenderProjectCode,
   RenderSelectionList
 } from './Generic';
-import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -235,5 +235,6 @@ export function UnknownRenderer({
 }: Readonly<{
   model: ModelType | undefined;
 }>): ReactNode {
-  return <Alert color='red' title={t`Unknown model: ${model}`} />;
+  const model_name = model ? model.toString() : 'undefined';
+  return <Alert color='red' title={t`Unknown model: ${model_name}`} />;
 }

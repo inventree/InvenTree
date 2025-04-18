@@ -5,6 +5,9 @@
 # Secret key for backend
 # Use the environment variable INVENTREE_SECRET_KEY_FILE
 #secret_key_file: '/etc/inventree/secret_key.txt'
+# Use the environment variable INVENTREE_OIDC_PRIVATE_KEY or INVENTREE_OIDC_PRIVATE_KEY_FILE
+#oidc_private_key: '-----BEGIN PRIVATE KEY-----aaa'
+#oidc_private_key_file: '/etc/inventree/oidc.key'
 
 # Database backend selection - Configure backend database settings
 # Documentation: https://docs.inventree.org/en/latest/start/config/
@@ -175,11 +178,6 @@ login_default_protocol: http
 # https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.META
 remote_login_enabled: False
 remote_login_header: HTTP_REMOTE_USER
-
-# JWT tokens
-# JWT can be used optionally to authenticate users. Turned off by default.
-# Alternatively, use the environment variable INVENTREE_USE_JWT
-# use_jwt: True
 
 # Logout redirect configuration
 # This setting may be required if using remote / proxy login to redirect requests

@@ -4,17 +4,15 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../../contexts/ApiContext';
-import type { ModelType } from '../../../enums/ModelType';
-import {
-  InvenTreeIcon,
-  type InvenTreeIconType
-} from '../../../functions/icons';
-import { navigateToLink } from '../../../functions/navigation';
-import { apiUrl } from '../../../states/ApiState';
+import { InvenTreeIcon } from '../../../functions/icons';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
-import { ModelInformationDict } from '../../render/ModelType';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**
@@ -28,7 +26,7 @@ function QueryCountWidget({
 }: Readonly<{
   modelType: ModelType;
   title: string;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   params: any;
 }>): ReactNode {
   const api = useApi();
@@ -72,18 +70,24 @@ function QueryCountWidget({
     [modelProperties, params]
   );
 
-  // TODO: Improve visual styling
-
   return (
-    <Group gap='xs' wrap='nowrap'>
-      <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-      <Group gap='xs' wrap='nowrap' justify='space-between'>
+    <Group
+      gap='xs'
+      wrap='nowrap'
+      justify='space-between'
+      align='center'
+      style={{ height: '100%' }}
+    >
+      <Group gap='xs'>
+        <InvenTreeIcon icon={icon ?? modelProperties.icon} />
         <StylishText size='md'>{title}</StylishText>
+      </Group>
+      <Group gap='xs' wrap='nowrap' justify='space-apart'>
         <Group gap='xs' wrap='nowrap' justify='right'>
           {query.isFetching ? (
             <Loader size='sm' />
           ) : (
-            <StylishText size='sm'>{query.data?.count ?? '-'}</StylishText>
+            <StylishText size='md'>{query.data?.count ?? '-'}</StylishText>
           )}
           {modelProperties?.url_overview && (
             <ActionIcon size='sm' variant='transparent' onClick={onFollowLink}>

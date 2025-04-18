@@ -18,6 +18,7 @@ import importer.registry
 import importer.tasks
 import importer.validators
 import InvenTree.helpers
+from common.models import RenderChoices
 from importer.status_codes import DataImportStatusCode
 
 logger = structlog.get_logger('inventree')
@@ -37,6 +38,11 @@ class DataImportSession(models.Model):
         field_overrides: JSONField for field override values - used to force a value for a field
         field_filters: JSONField for field filter values - optional field API filters
     """
+
+    class ModelChoices(RenderChoices):
+        """Model choices for data import sessions."""
+
+        choice_fnc = importer.registry.supported_models
 
     @staticmethod
     def get_api_url():
@@ -77,6 +83,8 @@ class DataImportSession(models.Model):
         blank=False,
         max_length=100,
         validators=[importer.validators.validate_importer_model_type],
+        verbose_name=_('Model Type'),
+        help_text=_('Target model type for this import session'),
     )
 
     status = models.PositiveIntegerField(
@@ -111,17 +119,13 @@ class DataImportSession(models.Model):
     )
 
     @property
-    def field_mapping(self):
+    def field_mapping(self) -> dict:
         """Construct a dict of field mappings for this import session.
 
-        Returns: A dict of field: column mappings
+        Returns:
+            A dict of field -> column mappings
         """
-        mapping = {}
-
-        for i in self.column_mappings.all():
-            mapping[i.field] = i.column
-
-        return mapping
+        return {mapping.field: mapping.column for mapping in self.column_mappings.all()}
 
     @property
     def model_class(self):
@@ -138,7 +142,7 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
-    def extract_columns(self):
+    def extract_columns(self) -> None:
         """Run initial column extraction and mapping.
 
         This method is called when the import session is first created.
@@ -211,7 +215,7 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.MAPPING.value
         self.save()
 
-    def accept_mapping(self):
+    def accept_mapping(self) -> None:
         """Accept current mapping configuration.
 
         - Validate that the current column mapping is correct
@@ -250,7 +254,7 @@ class DataImportSession(models.Model):
         # No errors, so trigger the data import process
         self.trigger_data_import()
 
-    def trigger_data_import(self):
+    def trigger_data_import(self) -> None:
         """Trigger the data import process for this session.
 
         Offloads the task to the background worker process.
@@ -263,7 +267,7 @@ class DataImportSession(models.Model):
 
         offload_task(importer.tasks.import_data, self.pk)
 
-    def import_data(self):
+    def import_data(self) -> None:
         """Perform the data import process for this session."""
         # Clear any existing data rows
         self.rows.all().delete()
@@ -323,12 +327,12 @@ class DataImportSession(models.Model):
         return True
 
     @property
-    def row_count(self):
+    def row_count(self) -> int:
         """Return the number of rows in the import session."""
         return self.rows.count()
 
     @property
-    def completed_row_count(self):
+    def completed_row_count(self) -> int:
         """Return the number of completed rows for this session."""
         return self.rows.filter(complete=True).count()
 
@@ -356,7 +360,7 @@ class DataImportSession(models.Model):
         self._available_fields = fields
         return fields
 
-    def required_fields(self):
+    def required_fields(self) -> dict:
         """Returns information on which fields are *required* for import."""
         fields = self.available_fields()
 
@@ -598,7 +602,7 @@ class DataImportRow(models.Model):
                 value = value or None
 
             # Use the default value, if provided
-            if value in [None, ''] and field in default_values:
+            if value is None and field in default_values:
                 value = default_values[field]
 
             data[field] = value
@@ -614,7 +618,9 @@ class DataImportRow(models.Model):
         - If available, we use the "default" values provided by the import session
         - If available, we use the "override" values provided by the import session
         """
-        data = self.default_values
+        data = {}
+
+        data.update(self.default_values)
 
         if self.data:
             data.update(self.data)

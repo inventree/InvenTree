@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -32,7 +33,6 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
-import report.models
 import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
@@ -114,6 +114,24 @@ class StockLocationManager(TreeManager):
         return super().get_queryset()
 
 
+class StockLocationReportContext(report.mixins.BaseReportContext):
+    """Report context for the StockLocation model.
+
+    Attributes:
+        location: The StockLocation object itself
+        qr_data: Formatted QR code data for the StockLocation
+        parent: The parent StockLocation object
+        stock_location: The StockLocation object itself (shadow of 'location')
+        stock_items: Query set of all StockItem objects which are located in the StockLocation
+    """
+
+    location: StockLocation
+    qr_data: str
+    parent: Optional[StockLocation]
+    stock_location: StockLocation
+    stock_items: report.mixins.QuerySet[StockItem]
+
+
 class StockLocation(
     InvenTree.models.InvenTreeBarcodeMixin,
     report.mixins.InvenTreeReportMixin,
@@ -159,7 +177,7 @@ class StockLocation(
         """Return the associated barcode model type code for this model."""
         return 'SL'
 
-    def report_context(self):
+    def report_context(self) -> StockLocationReportContext:
         """Return report context data for this StockLocation."""
         return {
             'location': self,
@@ -171,6 +189,7 @@ class StockLocation(
 
     custom_icon = models.CharField(
         blank=True,
+        null=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
@@ -337,6 +356,56 @@ def default_delete_on_deplete():
         return True
 
 
+class StockItemReportContext(report.mixins.BaseReportContext):
+    """Report context for the StockItem model.
+
+    Attributes:
+        barcode_data: Generated barcode data for the StockItem
+        barcode_hash: Hash of the barcode data
+        batch: The batch code for the StockItem
+        child_items: Query set of all StockItem objects which are children of this StockItem
+        ipn: The IPN (internal part number) of the associated Part
+        installed_items: Query set of all StockItem objects which are installed in this StockItem
+        item: The StockItem object itself
+        name: The name of the associated Part
+        part: The Part object which is associated with the StockItem
+        qr_data: Generated QR code data for the StockItem
+        qr_url: Generated URL for embedding in a QR code
+        parameters: Dict object containing the parameters associated with the base Part
+        quantity: The quantity of the StockItem
+        result_list: FLattened list of TestResult data associated with the stock item
+        results: Dict object of TestResult data associated with the StockItem
+        serial: The serial number of the StockItem
+        stock_item: The StockItem object itself (shadow of 'item')
+        tests: Dict object of TestResult data associated with the StockItem (shadow of 'results')
+        test_keys: List of test keys associated with the StockItem
+        test_template_list: List of test templates associated with the StockItem
+        test_templates: Dict object of test templates associated with the StockItem
+    """
+
+    barcode_data: str
+    barcode_hash: str
+    batch: str
+    child_items: report.mixins.QuerySet[StockItem]
+    ipn: Optional[str]
+    installed_items: set[StockItem]
+    item: StockItem
+    name: str
+    part: PartModels.Part
+    qr_data: str
+    qr_url: str
+    parameters: dict[str, str]
+    quantity: Decimal
+    result_list: list[StockItemTestResult]
+    results: dict[str, StockItemTestResult]
+    serial: Optional[str]
+    stock_item: StockItem
+    tests: dict[str, StockItemTestResult]
+    test_keys: list[str]
+    test_template_list: report.mixins.QuerySet[PartModels.PartTestTemplate]
+    test_templates: dict[str, PartModels.PartTestTemplate]
+
+
 class StockItem(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -414,7 +483,7 @@ class StockItem(
 
         return list(keys)
 
-    def report_context(self):
+    def report_context(self) -> StockItemReportContext:
         """Generate custom report context data for this StockItem."""
         return {
             'barcode_data': self.barcode_data,
@@ -442,7 +511,7 @@ class StockItem(
 
     tags = TaggableManager(blank=True)
 
-    # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    # A Query filter which will be reused in multiple places to determine if a StockItem is actually "in stock"
     # See also: StockItem.in_stock() method
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
@@ -529,12 +598,12 @@ class StockItem(
 
         This function hooks into the plugin system to allow for custom serial number conversion.
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         # First, let any plugins convert this serial number to an integer value
         # If a non-null value is returned (by any plugin) we will use that
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 serial_int = plugin.convert_serial_to_int(serial)
             except Exception:
@@ -622,6 +691,16 @@ class StockItem(
                 return item
 
         return None
+
+    @property
+    def get_next_stock_item(self):
+        """Return the 'next' stock item (based on serial number)."""
+        return self.get_next_serialized_item()
+
+    @property
+    def get_previous_stock_item(self):
+        """Return the 'previous' stock item (based on serial number)."""
+        return self.get_next_serialized_item(reverse=True)
 
     def save(self, *args, **kwargs):
         """Save this StockItem to the database.
@@ -720,9 +799,9 @@ class StockItem(
         - Validation is performed by custom plugins.
         - By default, no validation checks are performed
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
@@ -934,7 +1013,10 @@ class StockItem(
     serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
-        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     batch = models.CharField(
@@ -1278,13 +1360,7 @@ class StockItem(
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
-        # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
-        # TODO - In future, once the "build" is working better, check this too
-
-        if self.allocations.count() > 0:
-            return True
-
-        return self.sales_order_allocations.count() > 0
+        return self.allocation_count() > 0
 
     def build_allocation_count(self, **kwargs):
         """Return the total quantity allocated to builds, with optional filters."""
@@ -1469,8 +1545,6 @@ class StockItem(
         if self.belongs_to is None:
             return False
 
-        # TODO - Are there any other checks that need to be performed at this stage?
-
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
             StockHistoryCode.REMOVED_CHILD_ITEM,
@@ -1582,6 +1656,7 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
+            commit (boolm optional): If True, save the entry to the database. Defaults to True.
 
         Returns:
             StockItemTracking: The created tracking entry
@@ -2403,9 +2478,6 @@ class StockItem(
         """Remove all test results."""
         # All test results
         results = self.test_results.all()
-
-        # TODO - Perhaps some filtering options supplied by kwargs?
-
         results.delete()
 
     def getTestResults(self, template=None, test=None, result=None, user=None):

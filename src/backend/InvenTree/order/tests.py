@@ -14,7 +14,7 @@ import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
 from company.models import Company, SupplierPart
-from InvenTree.unit_test import ExchangeRateMixin
+from InvenTree.unit_test import ExchangeRateMixin, addUserPermission
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockItem, StockLocation
@@ -43,7 +43,7 @@ class OrderTest(TestCase, ExchangeRateMixin):
         for pk in range(1, 8):
             order = PurchaseOrder.objects.get(pk=pk)
             self.assertEqual(
-                order.get_absolute_url(), f'/platform/purchasing/purchase-order/{pk}'
+                order.get_absolute_url(), f'/web/purchasing/purchase-order/{pk}'
             )
 
             self.assertEqual(order.reference, f'PO-{pk:04d}')
@@ -60,6 +60,72 @@ class OrderTest(TestCase, ExchangeRateMixin):
         order.reference = '12345XYZ'
         order.save()
         self.assertEqual(order.reference_int, 12345)
+
+    def test_locking(self):
+        """Test the (auto)locking functionality of the (Purchase)Order model."""
+        order = PurchaseOrder.objects.get(pk=1)
+
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+        self.assertFalse(order.check_locked())
+
+        order.status = PurchaseOrderStatus.COMPLETE
+        order.save()
+        self.assertFalse(order.check_locked())
+
+        order.add_line_item(SupplierPart.objects.get(pk=100), 100)
+        last_line = order.lines.last()
+        self.assertEqual(last_line.quantity, 100)
+
+        # Reset
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+
+        # Turn on auto-locking
+        set_global_setting(PurchaseOrder.LOCK_SETTING, True)
+        # still not locked
+        self.assertFalse(order.check_locked())
+
+        order.status = PurchaseOrderStatus.COMPLETE
+        # the instance is locked, the db instance is not
+        self.assertFalse(order.check_locked(True))
+        self.assertTrue(order.check_locked())
+        order.save()
+        # now everything is locked
+        self.assertTrue(order.check_locked(True))
+        self.assertTrue(order.check_locked())
+
+        # No editing allowed
+        with self.assertRaises(django_exceptions.ValidationError):
+            order.description = 'test1'
+            order.save()
+        order.refresh_from_db()
+        self.assertEqual(order.description, 'Ordering some screws')
+
+        # Also no adding of line items
+        with self.assertRaises(django_exceptions.ValidationError):
+            order.add_line_item(SupplierPart.objects.get(pk=100), 100)
+        # or deleting
+        with self.assertRaises(django_exceptions.ValidationError):
+            last_line.delete()
+
+        # Still can create a completed item
+        PurchaseOrder.objects.create(
+            supplier=Company.objects.get(pk=1),
+            reference='PO-99999',
+            status=PurchaseOrderStatus.COMPLETE,
+        )
+
+        # No editing (except status ;-) ) allowed
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+
+        # Now it is a free for all again
+        order.description = 'test2'
+        order.save()
+
+        order.refresh_from_db()
+        self.assertEqual(order.description, 'test2')
 
     def test_overdue(self):
         """Test overdue status functionality."""
@@ -351,6 +417,13 @@ class OrderTest(TestCase, ExchangeRateMixin):
         Ensure that a notification is sent when a PurchaseOrder becomes overdue
         """
         po = PurchaseOrder.objects.get(pk=1)
+
+        # Ensure that the right users have the right permissions
+        for user_id in [2, 4]:
+            user = get_user_model().objects.get(pk=user_id)
+            addUserPermission(user, 'order', 'purchaseorder', 'view')
+            user.is_active = True
+            user.save()
 
         # Created by 'sam'
         po.created_by = get_user_model().objects.get(pk=4)

@@ -1,4 +1,4 @@
-"""Generic event enumerations for InevnTree."""
+"""Generic event enumerations for InvenTree."""
 
 import enum
 

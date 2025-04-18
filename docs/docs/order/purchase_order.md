@@ -6,9 +6,29 @@ title: Purchase Order
 
 Purchase orders allow to track which parts are bought from suppliers and manufacturers, therefore converting externally bought items into stock items / inventory.
 
-To access the purchase order page, click on the <span class="badge inventree nav main"><span class='fas fa-shopping-cart'></span> Buy</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-list'></span> Purchase Orders</span> option in the dropdown list.
+### View Purchase Orders
+
+To navigate to the Purchase Order display, select *Purchasing* from the main navigation menu, and *Build Orders* from the sidebar:
+
+{% with id="purchase_order_display", url="order/po_display.png", description="Purchase Order Display" %}
+{% include "img.html" %}
+{% endwith %}
+
+The following view modes are available:
+
+#### Table View
+
+*Table View* provides a list of Purchase Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
 {% with id="purchase_order_list", url="order/po_list.png", description="Purchase Order List" %}
+{% include "img.html" %}
+{% endwith %}
+
+#### Calendar View
+
+*Calendar View* shows a calendar display with outstanding purchase orders, based on the various dates specified for each order.
+
+{% with id="purchase_order_calendar", url="order/po_calendar.png", description="Purchase Order Calendar" %}
 {% include "img.html" %}
 {% endwith %}
 

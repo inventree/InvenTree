@@ -4,6 +4,7 @@ import datetime
 
 from django.utils.translation import gettext_lazy as _
 
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 
@@ -37,3 +38,7 @@ class ApiTokenAuthentication(TokenAuthentication):
             token.save()
 
         return (user, token)
+
+
+class ExtendedOAuth2Authentication(OAuth2Authentication):
+    """Custom implementation of OAuth2Authentication class to support custom scope rendering."""

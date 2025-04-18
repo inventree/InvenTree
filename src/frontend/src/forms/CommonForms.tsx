@@ -1,7 +1,7 @@
 import { IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface

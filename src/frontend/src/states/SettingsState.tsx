@@ -3,22 +3,17 @@
  */
 import { create, createStore } from 'zustand';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { PathParams } from '@lib/types/Core';
+import type {
+  Setting,
+  SettingsLookup,
+  SettingsStateProps
+} from '@lib/types/Settings';
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
-import { type PathParams, apiUrl } from './ApiState';
 import { useUserState } from './UserState';
-import type { Setting, SettingsLookup } from './states';
-
-export interface SettingsStateProps {
-  settings: Setting[];
-  lookup: SettingsLookup;
-  fetchSettings: () => void;
-  endpoint: ApiEndpoints;
-  pathParams?: PathParams;
-  getSetting: (key: string, default_value?: string) => string; // Return a raw setting value
-  isSet: (key: string, default_value?: boolean) => boolean; // Check a "boolean" setting
-}
 
 /**
  * State management for global (server side) settings
@@ -29,10 +24,11 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
     lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
+      let success = true;
       const { isLoggedIn } = useUserState.getState();
 
       if (!isLoggedIn()) {
-        return;
+        return success;
       }
 
       await api
@@ -45,7 +41,10 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
         })
         .catch((_error) => {
           console.error('ERR: Error fetching global settings');
+          success = false;
         });
+
+      return success;
     },
     getSetting: (key: string, default_value?: string) => {
       return get().lookup[key] ?? default_value ?? '';
@@ -65,10 +64,11 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   lookup: {},
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
+    let success = true;
     const { isLoggedIn } = useUserState.getState();
 
     if (!isLoggedIn()) {
-      return;
+      return success;
     }
 
     await api
@@ -81,7 +81,10 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
       })
       .catch((_error) => {
         console.error('ERR: Error fetching user settings');
+        success = false;
       });
+
+    return success;
   },
   getSetting: (key: string, default_value?: string) => {
     return get().lookup[key] ?? default_value ?? '';
@@ -110,6 +113,8 @@ export const createPluginSettingsState = ({
     endpoint: ApiEndpoints.plugin_setting_list,
     pathParams,
     fetchSettings: async () => {
+      let success = true;
+
       await api
         .get(apiUrl(ApiEndpoints.plugin_setting_list, undefined, { plugin }))
         .then((response) => {
@@ -121,7 +126,10 @@ export const createPluginSettingsState = ({
         })
         .catch((_error) => {
           console.error(`Error fetching plugin settings for plugin ${plugin}`);
+          success = false;
         });
+
+      return success;
     },
     getSetting: (key: string, default_value?: string) => {
       return get().lookup[key] ?? default_value ?? '';
@@ -153,6 +161,8 @@ export const createMachineSettingsState = ({
     endpoint: ApiEndpoints.machine_setting_detail,
     pathParams,
     fetchSettings: async () => {
+      let success = true;
+
       await api
         .get(apiUrl(ApiEndpoints.machine_setting_list, undefined, { machine }))
         .then((response) => {
@@ -169,7 +179,10 @@ export const createMachineSettingsState = ({
             `Error fetching machine settings for machine ${machine} with type ${configType}:`,
             error
           );
+          success = false;
         });
+
+      return success;
     },
     getSetting: (key: string, default_value?: string) => {
       return get().lookup[key] ?? default_value ?? '';

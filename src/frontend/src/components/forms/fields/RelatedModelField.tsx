@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Input,
   darken,
@@ -15,10 +15,10 @@ import {
 } from 'react-hook-form';
 import Select from 'react-select';
 
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
 import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
-import type { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type

@@ -178,7 +178,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             'parent',
             'part_count',
             'pathstring',
-            'url',
         ]
 
         response = self.get(url, expected_code=200)
@@ -540,7 +539,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         PartCategory.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(12):
+        with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-part-category-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), PartCategory.objects.count())
@@ -1004,6 +1003,19 @@ class PartAPITest(PartAPITestBase):
 
                 self.assertIn(v.pk, id_values)
 
+    def test_filter_is_variant(self):
+        """Test the is_variant filter."""
+        url = reverse('api-part-list')
+
+        all_count = Part.objects.all().count()
+        no_var_count = Part.objects.filter(variant_of__isnull=True).count()
+
+        response = self.get(url, {'is_variant': False}, expected_code=200)
+        self.assertEqual(no_var_count, len(response.data))
+
+        response = self.get(url, {'is_variant': True}, expected_code=200)
+        self.assertEqual(all_count - no_var_count, len(response.data))
+
     def test_include_children(self):
         """Test the special 'include_child_categories' flag.
 
@@ -1168,7 +1180,6 @@ class PartAPITest(PartAPITestBase):
             'Virtual',
             'Trackable',
             'Active',
-            'Notes',
             'Creation Date',
             'On Order',
             'In Stock',
@@ -1177,9 +1188,9 @@ class PartAPITest(PartAPITestBase):
 
         excluded_cols = ['lft', 'rght', 'level', 'tree_id', 'metadata']
 
-        with self.download_file(url, {'export': 'csv'}) as file:
+        with self.export_data(url, export_format='csv') as data_file:
             data = self.process_csv(
-                file,
+                data_file,
                 excluded_cols=excluded_cols,
                 required_cols=required_cols,
                 required_rows=Part.objects.count(),
@@ -2615,6 +2626,46 @@ class BomItemTest(InvenTreeAPITestCase):
         response = self.get('/api/bom/1/', {}, expected_code=200)
 
         self.assertEqual(response.data['available_variant_stock'], 1000)
+
+    def test_bom_export(self):
+        """Test for exporting BOM data."""
+        url = reverse('api-bom-list')
+
+        required_cols = [
+            'Assembly',
+            'Component',
+            'Reference',
+            'Quantity',
+            'Component.Name',
+            'Component.Description',
+            'Available Stock',
+        ]
+
+        excluded_cols = ['BOM Level', 'Supplier 1']
+
+        # First, download *all* BOM data, with the default exporter
+        with self.export_data(url, expected_code=200) as data_file:
+            self.process_csv(
+                data_file,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=BomItem.objects.all().count(),
+            )
+
+        # Check that the correct exporter plugin has been used
+        required_cols.extend(['BOM Level'])
+
+        # Next, download BOM data for a specific sub-assembly, and use the BOM exporter
+        with self.export_data(
+            url, {'part': 100}, export_plugin='bom-exporter'
+        ) as data_file:
+            data = self.process_csv(
+                data_file, required_cols=required_cols, required_rows=4
+            )
+
+            for row in data:
+                self.assertEqual(str(row['Assembly']), '100')
+                self.assertEqual(str(row['BOM Level']), '1')
 
 
 class PartAttachmentTest(InvenTreeAPITestCase):

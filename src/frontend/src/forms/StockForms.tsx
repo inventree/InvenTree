@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Flex, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
@@ -13,16 +13,23 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/index';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+  ApiFormFieldSet,
+  ApiFormModalProps
+} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -30,11 +37,9 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import {
-  type ApiFormModalProps,
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
@@ -43,7 +48,6 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 
@@ -115,7 +119,9 @@ export function useStockFields({
 
           if (expiry_days && expiry_days > 0) {
             // Adjust the expiry date based on the part default expiry
-            setExpiryDate(dayjs().add(expiry_days, 'days').toISOString());
+            setExpiryDate(
+              dayjs().add(expiry_days, 'days').format('YYYY-MM-DD')
+            );
           }
         }
       },
@@ -205,9 +211,6 @@ export function useStockFields({
       },
       delete_on_deplete: {}
     };
-
-    // TODO: Handle custom field management based on provided options
-    // TODO: refer to stock.py in original codebase
 
     // Remove the expiry date field if it is not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
@@ -386,7 +389,7 @@ function StockItemDefaultMove({
         />
       </Flex>
       <Flex direction='column' gap='sm' align='center'>
-        <Text>{stockItem.location_detail.pathstring}</Text>
+        <Text>{stockItem.location_detail?.pathstring ?? '-'}</Text>
         <InvenTreeIcon icon='arrow_down' />
         <Suspense fallback={<Skeleton width='150px' />}>
           <Text>{data?.pathstring}</Text>
@@ -549,6 +552,7 @@ function StockOperationsRow({
         <Table.Td>
           {record.location ? record.location_detail?.pathstring : '-'}
         </Table.Td>
+        <Table.Td>{record.batch ? record.batch : '-'}</Table.Td>
         <Table.Td>
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
@@ -697,7 +701,14 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`Stock`, t`Move`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`Stock` },
+        { title: t`Move`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     location: {
       filters: {
@@ -734,7 +745,14 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Remove`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Remove`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -766,7 +784,14 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Add`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Add`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -795,7 +820,14 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Count`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Count`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -826,7 +858,13 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     status: {},
     note: {}
@@ -862,7 +900,13 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Actions` }
+      ]
     },
     location: {
       default: items[0]?.part_detail.default_location,
@@ -904,7 +948,13 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     customer: {
       filters: {
@@ -942,7 +992,13 @@ function stockDeleteFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     }
   };
 
@@ -1243,4 +1299,57 @@ export function useTestResultFields({
     templateId,
     includeTestStation
   ]);
+}
+
+/**
+ * Modal form for finding a particular stock item by serial number
+ */
+export function useFindSerialNumberForm({
+  partId
+}: {
+  partId: number;
+}) {
+  const navigate = useNavigate();
+
+  return useApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_item_list),
+    fetchInitialData: false,
+    method: 'GET',
+    title: t`Find Serial Number`,
+    fields: {
+      serial: {},
+      part_tree: {
+        value: partId,
+        hidden: true,
+        field_type: 'integer'
+      }
+    },
+    checkClose: (data, form) => {
+      if (data.length == 0) {
+        form.setError('serial', { message: t`No matching items` });
+        return false;
+      }
+
+      if (data.length > 1) {
+        form.setError('serial', {
+          message: t`Multiple matching items`
+        });
+        return false;
+      }
+
+      if (data[0].pk) {
+        return true;
+      } else {
+        form.setError('serial', {
+          message: t`Invalid response from server`
+        });
+        return false;
+      }
+    },
+    onFormSuccess: (data) => {
+      if (data.length == 1 && data[0].pk) {
+        navigate(getDetailUrl(ModelType.stockitem, data[0].pk));
+      }
+    }
+  });
 }

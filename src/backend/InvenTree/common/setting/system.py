@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import uuid
 
 from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
@@ -109,15 +110,20 @@ def reload_plugin_registry(setting):
 def barcode_plugins() -> list:
     """Return a list of plugin choices which can be used for barcode generation."""
     try:
-        from plugin import registry
+        from plugin import PluginMixinEnum, registry
 
-        plugins = registry.with_mixin('barcode', active=True)
+        plugins = registry.with_mixin(PluginMixinEnum.BARCODE, active=True)
     except Exception:  # pragma: no cover
         plugins = []
 
     return [
         (plug.slug, plug.human_name) for plug in plugins if plug.has_barcode_generation
     ]
+
+
+def default_uuid4() -> str:
+    """Return a default UUID4 value."""
+    return str(uuid.uuid4())
 
 
 class BaseURLValidator(URLValidator):
@@ -169,6 +175,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+    },
+    'INVENTREE_INSTANCE_ID': {
+        'name': _('Instance ID'),
+        'description': _('Unique identifier for this InvenTree instance'),
+        'default': default_uuid4,
+        'hidden': True,
+    },
+    'INVENTREE_ANNOUNCE_ID': {
+        'name': _('Announce ID'),
+        'description': _(
+            'Announce the instance ID of the server in the server status info (unauthenticated)'
+        ),
+        'default': False,
+        'validator': bool,
     },
     'INVENTREE_INSTANCE': {
         'name': _('Server Instance Name'),
@@ -1052,6 +1072,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Display Users full names'),
         'description': _('Display Users full names instead of usernames'),
         'default': False,
+        'validator': bool,
+    },
+    'DISPLAY_PROFILE_INFO': {
+        'name': _('Display User Profiles'),
+        'description': _('Display Users Profiles on their profile page'),
+        'default': True,
         'validator': bool,
     },
     'TEST_STATION_DATA': {

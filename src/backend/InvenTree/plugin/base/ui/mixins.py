@@ -8,6 +8,8 @@ from typing import Literal, TypedDict
 import structlog
 from rest_framework.request import Request
 
+from plugin import PluginMixinEnum
+
 logger = structlog.get_logger('inventree')
 
 
@@ -79,7 +81,7 @@ class UserInterfaceMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('ui', True, __class__)  # type: ignore
+        self.add_mixin(PluginMixinEnum.USER_INTERFACE, True, __class__)  # type: ignore
 
     def get_ui_features(
         self, feature_type: FeatureType, context: dict, request: Request, **kwargs
@@ -115,6 +117,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom panels to be injected into the UI
@@ -129,6 +132,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom dashboard items to be injected into the UI
@@ -143,6 +147,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom template editors to be injected into the UI
@@ -157,6 +162,7 @@ class UserInterfaceMixin:
 
         Args:
             request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
 
         Returns:
             list: A list of custom template previews to be injected into the UI

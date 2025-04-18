@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
@@ -9,6 +9,11 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -29,18 +34,13 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
@@ -122,7 +122,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    const tr: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         name: 'supplier',
@@ -165,7 +165,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    const bl: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'packaging',
@@ -183,7 +183,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    const br: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'in_stock',
@@ -232,9 +232,9 @@ export default function SupplierPartDetail() {
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable title={t`Supplier`} fields={tr} item={data} />
-        <DetailsTable title={t`Packaging`} fields={bl} item={data} />
-        <DetailsTable title={t`Availability`} fields={br} item={data} />
+        <DetailsTable title={t`Supplier`} fields={bl} item={data} />
+        <DetailsTable title={t`Packaging`} fields={br} item={data} />
+        <DetailsTable title={t`Availability`} fields={tr} item={data} />
       </ItemDetailsGrid>
     );
   }, [supplierPart, instanceQuery.isFetching]);
@@ -276,7 +276,7 @@ export default function SupplierPartDetail() {
         label: t`Supplier Pricing`,
         icon: <IconCurrencyDollar />,
         content: supplierPart?.pk ? (
-          <SupplierPriceBreakTable supplierPartId={supplierPart.pk} />
+          <SupplierPriceBreakTable supplierPart={supplierPart} />
         ) : (
           <Skeleton />
         )
@@ -423,6 +423,7 @@ export default function SupplierPartDetail() {
             pageKey='supplierpart'
             panels={panels}
             instance={supplierPart}
+            reloadInstance={refreshInstance}
             model={ModelType.supplierpart}
             id={supplierPart.pk}
           />

@@ -18,11 +18,16 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "RUF", "UP", "W"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "RUF", "UP", "W",
+#"DOC201", "DOC202", # enforce return docs
+"DOC402","DOC403", # enforce yield docs
+#"DOC501","DOC502", # enforce raise
+]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
+# - D401 - Imperative docstrings
 
 ignore = [
     "PLE1205",
@@ -51,10 +56,11 @@ ignore = [
 	"N806",
 	# - N812 - lowercase imported as non-lowercase
 	"N812",
-    # - D417 Missing argument descriptions in the docstring
-    "D417",
     # - RUF032 - decimal-from-float-literal
     "RUF032",
+    "RUF045",
+    # - UP045 - Use `X | None` instead of `Optional[X]`
+    "UP045",
 
     # TODO These should be followed up and fixed
     # - B904 Within an `except` clause, raise exceptions
@@ -66,6 +72,7 @@ ignore = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+ignore-var-parameters = true
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
@@ -89,7 +96,7 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.uv.pip]
-python-version = "3.9"
+python-version = "3.9.2"
 no-strip-extras=true
 generate-hashes=true
 

@@ -8,11 +8,14 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import sesame.utils
+import structlog
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 import InvenTree.version
+
+logger = structlog.get_logger('inventree')
 
 
 def send_simple_login_email(user, link):
@@ -55,7 +58,7 @@ class GetSimpleLoginView(GenericAPIView):
         """Notify user about link."""
         user = self.get_user(email)
         if user is None:
-            print('user not found:', email)
+            logger.warning('User email not found: %s', email)
             return
         link = self.create_link(user)
         send_simple_login_email(user, link)

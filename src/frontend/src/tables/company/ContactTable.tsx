@@ -1,17 +1,21 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { RenderInlineModel } from '../../components/render/Instance';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -21,15 +25,16 @@ export function ContactTable({
   companyId,
   params
 }: Readonly<{
-  companyId: number;
+  companyId?: number;
   params?: any;
 }>) {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const table = useTable('contact');
 
   const columns: TableColumn[] = useMemo(() => {
-    return [
+    const corecols: TableColumn[] = [
       {
         accessor: 'name',
         sortable: true,
@@ -51,6 +56,25 @@ export function ContactTable({
         sortable: false
       }
     ];
+    if (companyId === undefined) {
+      // Add company column if not in company detail view
+      corecols.unshift({
+        accessor: 'company_name',
+        title: t`Company`,
+        sortable: false,
+        switchable: true,
+        render: (record: any) => {
+          return (
+            <RenderInlineModel
+              primary={record.company_name}
+              url={getDetailUrl(ModelType.company, record.company)}
+              navigate={navigate}
+            />
+          );
+        }
+      });
+    }
+    return corecols;
   }, []);
 
   const contactFields: ApiFormFieldSet = useMemo(() => {

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
@@ -49,6 +49,7 @@ export default function UserSettings() {
         content: (
           <UserSettingList
             keys={[
+              'ICONS_IN_NAVBAR',
               'STICKY_HEADER',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
@@ -70,6 +71,7 @@ export default function UserSettings() {
             keys={[
               'SEARCH_WHOLE',
               'SEARCH_REGEX',
+              'SEARCH_NOTES',
               'SEARCH_PREVIEW_RESULTS',
               'SEARCH_PREVIEW_SHOW_PARTS',
               'SEARCH_HIDE_INACTIVE_PARTS',

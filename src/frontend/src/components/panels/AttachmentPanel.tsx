@@ -1,8 +1,8 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Skeleton } from '@mantine/core';
 import { IconPaperclip } from '@tabler/icons-react';
 
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import type { PanelType } from './Panel';
 

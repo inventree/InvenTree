@@ -95,10 +95,11 @@ The frontend codebase it tested using [Playwright](https://playwright.dev/). The
 
 ### Install Playwright
 
-To install the required packages to run the tests, you can use the following command:
+To install the required packages to run the tests, you can use the following commands:
 
 ```bash
 cd src/frontend
+sudo npx playwright install-deps
 npx playwright install
 ```
 
