@@ -92,41 +92,28 @@ def info(*args):
     print(wrap_color(msg, '94'))
 
 
-def optional_arg_decorator(fn):
-    """Decorator to make optional decorator.
+def state_logger(fn=None, method_name=None):
+    """Decorator to log state markers before/after function execution, optionally accepting arguments."""
 
-    See CC BY-SA-3.0 by https://stackoverflow.com/users/143295/nicole
-    https://stackoverflow.com/a/20966822/17860466.
-    """
+    def decorator(func):
+        func.method_name = method_name or f'invoke task named `{func.__name__}`'
 
-    def wrapped_decorator(*args):
-        if len(args) == 1 and callable(args[0]):
-            return fn(args[0])
-        else:
+        @wraps(func)
+        def wrapped(c, *args, **kwargs):
+            do_log = is_deb_environment()
+            if do_log:
+                info(f'# {func.method_name}| start')
+            func(c, *args, **kwargs)
+            if do_log:
+                info(f'# {func.method_name}| done')
 
-            def real_decorator(decoratee):
-                return fn(decoratee, *args)
+        return wrapped
 
-            return real_decorator
-
-    return wrapped_decorator
-
-
-@optional_arg_decorator
-def state_logger(fn, method_name=None):
-    """Decorator to log state markers before/after markers."""
-    fn.method_name = method_name or fn.__name__
-
-    @wraps(fn)
-    def wrapped_wrapper(c, *args, **kwargs):
-        log = is_deb_environment()
-        if log:
-            info(f'# {fn.method_name}| start')
-        fn(c, *args, **kwargs)
-        if log:
-            info(f'# {fn.method_name}| done')
-
-    return wrapped_wrapper
+    if fn and callable(fn):
+        return decorator(fn)
+    elif fn and isinstance(fn, str):
+        method_name = fn
+    return decorator
 
 
 def checkInvokeVersion():
@@ -362,6 +349,7 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
     return ret(yarn_passes and node_version, node_version, yarn_version)
 
 
+@state_logger
 def check_file_existence(filename: Path, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
