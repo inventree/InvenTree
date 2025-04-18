@@ -1,4 +1,4 @@
-"""Check if there are any pending database migrations, and run them."""
+"""Extended schema generator."""
 
 from pathlib import Path
 from typing import TypeVar

@@ -705,4 +705,17 @@ def email_user(user_id: int, subject: str, message: str) -> None:
         logger.warning('User <%s> not found - cannot send welcome message', user_id)
         return
 
-    user.email_user(subject=subject, message=message)
+    from InvenTree.helpers_email import get_email_for_user, send_email
+
+    if email := get_email_for_user(user):
+        send_email(subject, message, [email])
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def run_oauth_maintenance():
+    """Run the OAuth maintenance task(s)."""
+    from oauth2_provider.models import clear_expired
+
+    logger.info('Starting OAuth maintenance task')
+    clear_expired()
+    logger.info('Completed OAuth maintenance task')
