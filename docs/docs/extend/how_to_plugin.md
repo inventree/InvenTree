@@ -18,7 +18,8 @@ If you add a lot of code (over ~1000 LOC) maybe split it into multiple plugins t
 Great. Now please read the [plugin documentation](./plugins.md) to get an overview of the architecture. It is rather short as a the (builtin) mixins come with extensive docstrings.
 
 ### Pick your building blocks
-Consider the usecase for your plugin and define the exact function of the plugin, maybe write it down in a short readme. Then pick the mixins you need (they help reduce custom code and keep the system reliable if internal calls change).
+
+Consider the use-case for your plugin and define the exact function of the plugin, maybe write it down in a short readme. Then pick the mixins you need (they help reduce custom code and keep the system reliable if internal calls change).
 
 - Is it just a simple REST-endpoint that runs a function ([ActionMixin](./plugins/action.md)) or a parser for a custom barcode format ([BarcodeMixin](./plugins/barcode.md))?
 - How does the user interact with the plugin? Is it a UI separate from the main InvenTree UI ([UrlsMixin](./plugins/urls.md)), does it need multiple pages with navigation-links ([NavigationMixin](./plugins/navigation.md)).
@@ -30,7 +31,7 @@ Consider the usecase for your plugin and define the exact function of the plugin
 - Do you need the full power of Django with custom models and all the complexity that comes with that – welcome to the danger zone and [AppMixin](./plugins/app.md). The plugin will be treated as a app by django and can maybe rack the whole instance.
 
 ### Define the metadata
-Do not forget to [declare the metadata](./plugins.md#plugin-options) for your plugin, those will be used in the settings. At least provide a weblink so users can file issues / reach you.
+Do not forget to [declare the metadata](./plugins.md#plugin-options) for your plugin, those will be used in the settings. At least provide a web link so users can file issues / reach you.
 
 ### Development guidelines
 If you want to make your life easier, try to follow these guidelines; break where it makes sense for your use case.
@@ -139,9 +140,7 @@ from plugin.mixins import ActionMixin
 
 
 class SampleActionPlugin(ActionMixin, InvenTreePlugin):
-    """
-    Use docstrings for everything... pls
-    """
+    """Use docstrings for everything."""
 
     NAME = "SampleActionPlugin"
     ACTION_NAME = "sample"

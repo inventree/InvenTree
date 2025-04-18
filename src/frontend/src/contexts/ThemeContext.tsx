@@ -15,14 +15,14 @@ import { colorSchema } from './colorSchema';
 export function ThemeContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
-  const [usertheme] = useLocalState((state) => [state.usertheme]);
+  const [userTheme] = useLocalState((state) => [state.userTheme]);
 
   // Theme
   const myTheme = createTheme({
-    primaryColor: usertheme.primaryColor,
-    white: usertheme.whiteColor,
-    black: usertheme.blackColor,
-    defaultRadius: usertheme.radius,
+    primaryColor: userTheme.primaryColor,
+    white: userTheme.whiteColor,
+    black: userTheme.blackColor,
+    defaultRadius: userTheme.radius,
     breakpoints: {
       xs: '30em',
       sm: '48em',
