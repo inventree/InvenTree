@@ -6,12 +6,11 @@ import license from 'rollup-plugin-license';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
+import { __INVENTREE_VERSION_INFO__ } from './version-info';
+
 // Detect if the current environment is WSL
 // Required for enabling file system polling
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
-
-// Detect if code coverage is enabled (runs in GitHub CI)
-const IS_COVERAGE = !!process.env.VITE_COVERAGE_BUILD;
 
 if (IS_IN_WSL) {
   console.log('WSL detected: using polling for file system events');
@@ -37,7 +36,7 @@ export default defineConfig(({ command, mode }) => {
           includePrivate: true,
           multipleVersions: true,
           output: {
-            file: '../backend/InvenTree/web/static/web/.vite/dependencies.json',
+            file: `${OUTPUT_DIR}/.vite/dependencies.json`,
             template(dependencies) {
               return JSON.stringify(dependencies);
             }
@@ -45,7 +44,7 @@ export default defineConfig(({ command, mode }) => {
         }
       }),
       istanbul({
-        include: 'src/*',
+        include: ['src/*', 'lib/*'],
         exclude: ['node_modules', 'test/'],
         extension: ['.js', '.ts', '.tsx'],
         requireEnv: true
@@ -62,11 +61,21 @@ export default defineConfig(({ command, mode }) => {
     build: {
       manifest: true,
       outDir: OUTPUT_DIR,
-      sourcemap: IS_COVERAGE
+      sourcemap: true
+    },
+    resolve: {
+      alias: {
+        '@lib': '/lib'
+      }
     },
     server: {
       proxy: {
         '/media': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+          secure: true
+        },
+        '/static': {
           target: 'http://localhost:8000',
           changeOrigin: true,
           secure: true
@@ -77,6 +86,9 @@ export default defineConfig(({ command, mode }) => {
         // Ref: https://github.com/vitejs/vite/issues/1153#issuecomment-785467271
         usePolling: IS_IN_WSL
       }
+    },
+    define: {
+      ...__INVENTREE_VERSION_INFO__
     }
   };
 });

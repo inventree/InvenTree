@@ -1,10 +1,10 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { apiUrl } from '../../states/ApiState';
 import { ActionButton } from './ActionButton';
 
 export default function StarredToggleButton({
@@ -54,7 +54,11 @@ export default function StarredToggleButton({
       color={instance.starred ? 'green' : 'blue'}
       size='lg'
       variant={instance.starred ? 'filled' : 'outline'}
-      tooltip={t`Unsubscribe from part`}
+      tooltip={
+        instance.starred
+          ? t`Unsubscribe from notifications`
+          : t`Subscribe to notifications`
+      }
       onClick={() => change(instance.starred, instance.pk)}
       tooltipAlignment='bottom'
     />

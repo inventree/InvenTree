@@ -265,6 +265,7 @@ def notify_responsible(
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
     exclude=None,
+    extra_users: Optional[list] = None,
 ):
     """Notify all responsible parties of a change in an instance.
 
@@ -276,15 +277,19 @@ def notify_responsible(
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
+        extra_users (list, optional): List of extra users to notify. Defaults to None.
     """
     import InvenTree.ready
 
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
 
-    notify_users(
-        [instance.responsible], instance, sender, content=content, exclude=exclude
-    )
+    users = [instance.responsible]
+
+    if extra_users:
+        users.extend(extra_users)
+
+    notify_users(users, instance, sender, content=content, exclude=exclude)
 
 
 def notify_users(

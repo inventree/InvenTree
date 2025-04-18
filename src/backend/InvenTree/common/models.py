@@ -40,15 +40,11 @@ from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
-import common.currency
 import common.validators
-import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
-import InvenTree.tasks
-import InvenTree.validators
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from generic.states import ColorEnum
@@ -57,6 +53,24 @@ from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 
 logger = structlog.get_logger('inventree')
+
+
+class RenderMeta(models.enums.ChoicesMeta):
+    """Metaclass for rendering choices."""
+
+    choice_fnc = None
+
+    @property
+    def choices(self):
+        """Return a list of choices for the enum class."""
+        fnc = getattr(self, 'choice_fnc', None)
+        if fnc:
+            return fnc()
+        return []
+
+
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+    """Class for creating enumerated string choices for schema rendering."""
 
 
 class MetaMixin(models.Model):
@@ -1766,15 +1780,15 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     reload_unit_registry()
 
 
-def rename_attachment(instance, filename):
+def rename_attachment(instance, filename: str):
     """Callback function to rename an uploaded attachment file.
 
-    Arguments:
-        - instance: The Attachment instance
-        - filename: The original filename of the uploaded file
+    Args:
+        instance (Attachment): The Attachment instance for which the file is being renamed.
+        filename (str): The original filename of the uploaded file.
 
     Returns:
-        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
+        str: The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'.
     """
     # Remove any illegal characters from the filename
     illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
@@ -1810,6 +1824,11 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         """Metaclass options."""
 
         verbose_name = _('Attachment')
+
+    class ModelChoices(RenderChoices):
+        """Model choices for attachments."""
+
+        choice_fnc = common.validators.attachment_model_options
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
@@ -1859,7 +1878,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     model_type = models.CharField(
         max_length=100,
         validators=[common.validators.validate_attachment_model_type],
-        help_text=_('Target model type for this image'),
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for image'),
     )
 
     model_id = models.PositiveIntegerField()

@@ -27,7 +27,7 @@ import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
-from common.models import DataOutput
+from common.models import DataOutput, RenderChoices
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
@@ -181,6 +181,11 @@ class ReportContextExtension(TypedDict):
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     """Base class for reports, labels."""
 
+    class ModelChoices(RenderChoices):
+        """Model choices for report templates."""
+
+        choice_fnc = report.helpers.report_model_options
+
     class Meta:
         """Metaclass options."""
 
@@ -271,6 +276,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     model_type = models.CharField(
         max_length=100,
         validators=[report.validators.validate_report_model_type],
+        verbose_name=_('Model Type'),
         help_text=_('Target model type for template'),
     )
 

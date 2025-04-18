@@ -1,7 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Box, Stack } from '@mantine/core';
+import { Box, type MantineStyleProp, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useContextMenu } from 'mantine-contextmenu';
+import {
+  type ContextMenuItemOptions,
+  useContextMenu
+} from 'mantine-contextmenu';
 import {
   DataTable,
   type DataTableCellClickHandler,
@@ -12,20 +15,21 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { ModelType } from '@lib/enums/ModelType';
+import { cancelEvent } from '@lib/functions/Events';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableState } from '@lib/types/Tables';
 import { hideNotification, showNotification } from '@mantine/notifications';
+import { IconArrowRight } from '@tabler/icons-react';
 import { Boundary } from '../components/Boundary';
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
-import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
-import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
-import { navigateToLink } from '../functions/navigation';
-import { getDetailUrl } from '../functions/urls';
-import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import type { TableColumn } from './Column';
-import type { TableFilter } from './Filter';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 
@@ -86,7 +90,7 @@ export type InvenTreeTableProps<T = any> = {
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
-  rowStyle?: (record: T, index: number) => any;
+  rowStyle?: (record: T, index: number) => MantineStyleProp | undefined;
   modelField?: string;
   onCellContextMenu?: (record: T, event: any) => void;
   minHeight?: number;
@@ -134,7 +138,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableColumnNames,
     getTableSorting,
     setTableSorting,
-    usertheme
+    userTheme
   } = useLocalState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
@@ -597,6 +601,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
     [props.onRowClick, props.onCellClick]
   );
 
+  const supportsContextMenu = useMemo(() => {
+    return !!props.onCellContextMenu || !!props.rowActions || !!props.modelType;
+  }, [props.onCellContextMenu, props.rowActions, props.modelType]);
+
   // Callback when a cell is right-clicked
   const handleCellContextMenu = ({
     record,
@@ -612,9 +620,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     }
     if (props.onCellContextMenu) {
       return props.onCellContextMenu(record, event);
-    } else if (props.rowActions) {
-      const empty = () => {};
-      const items = props.rowActions(record).map((action) => ({
+    }
+
+    const empty = () => {};
+    let items: ContextMenuItemOptions[] = [];
+
+    if (props.rowActions) {
+      items = props.rowActions(record).map((action) => ({
         key: action.title ?? '',
         title: action.title ?? '',
         color: action.color,
@@ -623,10 +635,25 @@ export function InvenTreeTable<T extends Record<string, any>>({
         hidden: action.hidden,
         disabled: action.disabled
       }));
-      return showContextMenu(items)(event);
-    } else {
-      return showContextMenu([])(event);
     }
+
+    if (props.modelType) {
+      // Add action to navigate to the detail view
+      const accessor = props.modelField ?? 'pk';
+      const pk = resolveItem(record, accessor);
+      const url = getDetailUrl(props.modelType, pk);
+      items.push({
+        key: 'detail',
+        title: t`View details`,
+        icon: <IconArrowRight />,
+        onClick: (event: any) => {
+          cancelEvent(event);
+          navigateToLink(url, navigate, event);
+        }
+      });
+    }
+
+    return showContextMenu(items)(event);
   };
 
   // pagination refresh table if pageSize changes
@@ -688,6 +715,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
     updatePageSize
   ]);
 
+  const supportsCellClick = useMemo(() => {
+    return !!(
+      tableProps.onCellClick ||
+      tableProps.onRowClick ||
+      tableProps.modelType
+    );
+  }, [tableProps.onCellClick, tableProps.onRowClick, tableProps.modelType]);
+
   return (
     <>
       <Stack gap='xs'>
@@ -711,7 +746,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               withColumnBorders
               striped
               highlightOnHover
-              loaderType={usertheme.loader}
+              loaderType={userTheme.loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}
@@ -724,12 +759,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
                 enableSelection ? onSelectedRecordsChange : undefined
               }
               rowExpansion={rowExpansion}
-              rowStyle={tableProps.rowStyle}
+              // rowStyle={rowStyleCallback}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
               records={tableState.records}
               columns={dataColumns}
-              onCellClick={handleCellClick}
+              onCellClick={supportsCellClick ? handleCellClick : undefined}
               noHeader={tableProps.noHeader ?? false}
               defaultColumnProps={{
                 noWrap: true,
@@ -739,7 +774,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   overflow: 'hidden'
                 })
               }}
-              onCellContextMenu={handleCellContextMenu}
+              onCellContextMenu={
+                supportsContextMenu ? handleCellContextMenu : undefined
+              }
               {...optionalParams}
             />
           </Box>

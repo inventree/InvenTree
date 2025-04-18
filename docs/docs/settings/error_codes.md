@@ -32,6 +32,18 @@ As the `django.db.models.QuerySet` is not a generic class, we would loose type i
 
 Models that implement the `InvenTreeReportMixin` must have an explicit return type annotation for the `report_context` function.
 
+#### INVE-E5
+**Rulesets have issues - Backend**
+
+The rulesets used for managing user/group/oAuth permissions have an issue.
+This might be caused by an addition or removal of models to the code base. Running the test suit should surface more logs with the error code indicating the exact infractions.
+
+#### INVE-E6
+**Scopes have issues - Backend**
+
+The scopes used for oAuth permissions have an issue and do not match the rulesets.
+This might be caused by an addition or removal of models to the code base or changes to the rulesets. Running the test suit should surface more logs with the error code indicating the exact infractions.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
@@ -52,6 +64,40 @@ See [INVE-W1](#inve-w1)
 
 See [INVE-W1](#inve-w1)
 
+#### INVE-W4
+**Server is running in debug mode - Backend**
+
+InvenTree is running in debug mode. This is **not** recommended for production use, as it exposes sensitive information and makes the server more vulnerable to attacks. Debug mode is not intended for production/exposed instances, **even for short duration**.
+
+It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/intro.md#debug-mode).
+
+#### INVE-W5
+**Background worker process not running - Backend**
+
+The background worker seems to not be running. This is detected by a heartbeat that runs all 5 minutes - this error triggers after not being run in the last 10 minutes.
+Check if the process for background workers is running and reaching the database. Steps vary between deployment methods.
+See [Background Worker Information](../start/processes.md#background-worker).
+
+#### INVE-W6
+**Server restart required - Backend**
+
+The server needs a restart due to changes in settings. Steps very between deployment methods.
+
+
+#### INVE-W7
+**Email settings not configured - Backend**
+
+Not all required settings for sending emails are configured. Not having an email provider configured might lead to degraded processes as password reset, update notifications and user notifications can not work. Setting up email is recommended.
+See [Email information](../start/config.md#email-settings).
+
+
+#### INVE-W8
+**Database Migrations required - Backend**
+
+There are database migrations waiting to be applied. This might lead to integrity and availability issues. Applying migrations as soon as possible is recommended.
+
+Some deployment methods support [auto applying of updates](../start/config.md#auto-update). See also [Perform Database Migrations](../start/install.md#perform-database-migrations).
+Steps very between deployment methods.
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.

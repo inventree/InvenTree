@@ -628,8 +628,13 @@ class Build(
         self.allocated_stock.delete()
 
     @transaction.atomic
-    def complete_build(self, user, trim_allocated_stock=False):
-        """Mark this build as complete."""
+    def complete_build(self, user: User, trim_allocated_stock: bool = False):
+        """Mark this build as complete.
+
+        Arguments:
+            user: The user who is completing the build
+            trim_allocated_stock: If True, trim any allocated stock
+        """
         return self.handle_transition(
             self.status,
             BuildStatus.COMPLETE.value,
@@ -680,6 +685,9 @@ class Build(
 
         # Notify users that this build has been completed
         targets = [self.issued_by, self.responsible]
+
+        # Also inform anyone subscribed to the assembly part
+        targets.extend(self.part.get_subscribers())
 
         # Notify those users interested in the parent build
         if self.parent:
@@ -817,6 +825,7 @@ class Build(
             Build,
             exclude=self.issued_by,
             content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.part.get_subscribers(),
         )
 
         trigger_event(BuildEvents.CANCELLED, id=self.pk)
@@ -1470,7 +1479,10 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(
-                instance, sender, exclude=instance.issued_by
+                instance,
+                sender,
+                exclude=instance.issued_by,
+                extra_users=instance.part.get_subscribers(),
             )
 
         else:

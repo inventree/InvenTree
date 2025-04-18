@@ -7,12 +7,17 @@ import '@mantine/spotlight/styles.css';
 import * as Sentry from '@sentry/react';
 import 'mantine-contextmenu/styles.css';
 import 'mantine-datatable/styles.css';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import * as MantineCore from '@mantine/core';
+import * as MantineNotifications from '@mantine/notifications';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as ReactDOMClient from 'react-dom/client';
+import './styles/overrides.css';
 
-import type { HostList } from './states/states';
+import { getBaseUrl } from '@lib/functions/Navigation';
+import type { HostList } from '@lib/types/Server';
 import MainView from './views/MainView';
 
 // define settings
@@ -27,7 +32,12 @@ declare global {
       sentry_dsn?: string;
       environment?: string;
     };
+    react: typeof React;
     React: typeof React;
+    ReactDOM: typeof ReactDOM;
+    ReactDOMClient: typeof ReactDOMClient;
+    MantineCore: typeof MantineCore;
+    MantineNotifications: typeof MantineNotifications;
   }
 }
 
@@ -92,18 +102,21 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
-export const getBaseUrl = (): string =>
-  window.INVENTREE_SETTINGS?.base_url || 'web';
-
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <MainView />
-  </React.StrictMode>
-);
+(window as any).React = React;
+(window as any).ReactDOM = ReactDOM;
+(window as any).ReactDOMClient = ReactDOMClient;
+(window as any).MantineCore = MantineCore;
+(window as any).MantineNotifications = MantineNotifications;
 
 // Redirect to base url if on /
 if (window.location.pathname === '/') {
   window.location.replace(`/${getBaseUrl()}`);
 }
 
-window.React = React;
+ReactDOMClient.createRoot(
+  document.getElementById('root') as HTMLElement
+).render(
+  <React.StrictMode>
+    <MainView />
+  </React.StrictMode>
+);

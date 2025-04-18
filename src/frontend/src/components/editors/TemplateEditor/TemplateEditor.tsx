@@ -24,14 +24,14 @@ import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../App';
-import { ModelType } from '../../../enums/ModelType';
-import { apiUrl } from '../../../states/ApiState';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { Boundary } from '../../Boundary';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
-import { ModelInformationDict } from '../../render/ModelType';
 
 type EditorProps = {
   template: TemplateI;
@@ -131,8 +131,17 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
 
     api.get(templateUrl).then((response: any) => {
       if (response.data?.template) {
+        // Fetch the raw template file from the server
+        // Request that it is provided without any caching,
+        // to ensure that we always get the latest version
         api
-          .get(response.data.template)
+          .get(response.data.template, {
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+              Expires: '0'
+            }
+          })
           .then((res) => {
             codeRef.current = res.data;
             loadCodeToEditor(res.data);

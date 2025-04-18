@@ -286,8 +286,15 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
         return prefetch.filter(category=self.id)
 
-    def get_subscribers(self, include_parents=True):
-        """Return a list of users who subscribe to this PartCategory."""
+    def get_subscribers(self, include_parents: bool = True) -> list[User]:
+        """Return a list of users who subscribe to this PartCategory.
+
+        Arguments:
+            include_parents (bool): If True, include users who subscribe to parent categories.
+
+        Returns:
+            list[User]: List of users who subscribe to this category.
+        """
         subscribers = set()
 
         if include_parents:
@@ -746,6 +753,7 @@ class Part(
         Arguments:
             serial: The proposed serial number
             stock_item: (optional) A StockItem instance which has this serial number assigned (e.g. testing for duplicates)
+            check_duplicates: If True, checks for duplicate serial numbers in the database.
             raise_error: If False, and ValidationError(s) will be handled
 
         Returns:
@@ -1429,8 +1437,17 @@ class Part(
         """
         return self.total_stock - self.allocation_count() + self.on_order
 
-    def get_subscribers(self, include_variants=True, include_categories=True):
+    def get_subscribers(
+        self, include_variants: bool = True, include_categories: bool = True
+    ) -> list[User]:
         """Return a list of users who are 'subscribed' to this part.
+
+        Arguments:
+            include_variants: If True, include users who are subscribed to a variant part
+            include_categories: If True, include users who are subscribed to the category
+
+        Returns:
+            list[User]: A list of users who are subscribed to this part
 
         A user may 'subscribe' to this part in the following ways:
 
@@ -2328,15 +2345,20 @@ class Part(
             parameter.save()
 
     def getTestTemplates(
-        self, required=None, include_parent=True, enabled=None
+        self, required=None, include_parent: bool = True, enabled=None
     ) -> QuerySet[PartTestTemplate]:
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
 
+
         Args:
-            required: Set to True or False to filter by "required" status
-            include_parent: Set to True to traverse upwards
+            required (bool, optional): Filter templates by whether they are required. Defaults to None.
+            include_parent (bool, optional): Include templates from parent parts. Defaults to True.
+            enabled (bool, optional): Filter templates by their enabled status. Defaults to None.
+
+        Returns:
+            QuerySet: A queryset of matching test templates.
         """
         if include_parent:
             tests = PartTestTemplate.objects.filter(
