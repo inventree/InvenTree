@@ -92,12 +92,6 @@ def info(*args):
     print(wrap_color(msg, '94'))
 
 
-def state_marker(name, state):
-    """Print a state marker message to the console."""
-    if is_deb_environment():
-        info(f'# {name}| {state}')
-
-
 def optional_arg_decorator(fn):
     """Decorator to make optional decorator.
 
@@ -125,9 +119,12 @@ def state_logger(fn, method_name=None):
 
     @wraps(fn)
     def wrapped_wrapper(c, *args, **kwargs):
-        state_marker(fn.method_name, 'start')
+        log = is_deb_environment()
+        if log:
+            info(f'# {fn.method_name}| start')
         fn(c, *args, **kwargs)
-        state_marker(fn.method_name, 'done')
+        if log:
+            info(f'# {fn.method_name}| done')
 
     return wrapped_wrapper
 
