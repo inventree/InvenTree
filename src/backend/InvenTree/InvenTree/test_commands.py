@@ -1,4 +1,4 @@
-"""Testts for custom InvenTree management commands."""
+"""Tests for custom InvenTree management commands."""
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -9,5 +9,5 @@ class CommandTestCase(TestCase):
 
     def test_schema(self):
         """Test the schema generation command."""
-        output = call_command('schema', verbosity=0)
+        output = call_command('schema', file='schema.yml', verbosity=0)
         self.assertEqual(output, 'done')
