@@ -13,13 +13,27 @@ import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
 import { BarcodeInput } from './BarcodeInput';
 
+export type BarcodeScanResult = {
+  success: boolean;
+  error: string;
+};
+
+// Callback function for handling a barcode scan
+// This function should return true if the barcode was handled successfully
+export type BarcodeScanCallback = (
+  barcode: string,
+  response: any
+) => Promise<BarcodeScanResult>;
+
 export default function BarcodeScanDialog({
   title,
   opened,
+  callback,
   onClose
 }: Readonly<{
   title?: string;
   opened: boolean;
+  callback?: BarcodeScanCallback;
   onClose: () => void;
 }>) {
   const navigate = useNavigate();
@@ -38,15 +52,21 @@ export default function BarcodeScanDialog({
     </Modal>
   );
 }
+
 export function ScanInputHandler({
+  callback,
   onClose,
   navigate
-}: Readonly<{ onClose: () => void; navigate: NavigateFunction }>) {
+}: Readonly<{
+  callback?: BarcodeScanCallback;
+  onClose: () => void;
+  navigate: NavigateFunction;
+}>) {
   const [error, setError] = useState<string>('');
   const [processing, setProcessing] = useState<boolean>(false);
   const user = useUserState();
 
-  const onScan = useCallback((barcode: string) => {
+  const defaultScan = useCallback((barcode: string) => {
     if (!barcode || barcode.length === 0) {
       return;
     }
@@ -96,6 +116,32 @@ export function ScanInputHandler({
         setProcessing(false);
       });
   }, []);
+
+  const onScan = useCallback(
+    (barcode: string) => {
+      if (callback) {
+        // If a callback is provided, use it to handle the scan
+        setProcessing(true);
+        setError('');
+
+        callback(barcode, {})
+          .then((result) => {
+            if (result.success) {
+              onClose();
+            } else {
+              setError(result.error);
+            }
+          })
+          .finally(() => {
+            setProcessing(false);
+          });
+      } else {
+        // If no callback is provided, use the default scan function
+        defaultScan(barcode);
+      }
+    },
+    [callback, defaultScan]
+  );
 
   return <BarcodeInput onScan={onScan} error={error} processing={processing} />;
 }
