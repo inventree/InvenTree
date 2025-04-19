@@ -3,11 +3,11 @@
 from django.urls import include, path, re_path
 
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import InvenTree.permissions
 import machine.serializers as MachineSerializers
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateAPI, RetrieveUpdateDestroyAPI
@@ -78,7 +78,7 @@ class MachineSettingList(APIView):
     - GET: return all settings for a machine config
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(
         responses={200: MachineSerializers.MachineSettingSerializer(many=True)}
@@ -142,7 +142,7 @@ class MachineRestart(APIView):
     - POST: restart machine by pk
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(
         request=None, responses={200: MachineSerializers.MachineRestartSerializer()}
@@ -162,7 +162,7 @@ class MachineTypesList(APIView):
     - GET: List all machine types
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(responses={200: MachineSerializers.MachineTypeSerializer(many=True)})
     def get(self, request):
@@ -180,7 +180,7 @@ class MachineDriverList(APIView):
     - GET: List all machine drivers
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(
         responses={200: MachineSerializers.MachineDriverSerializer(many=True)}
@@ -203,7 +203,7 @@ class RegistryStatusView(APIView):
     - GET: Provide status data for the machine registry
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     serializer_class = MachineSerializers.MachineRegistryStatusSerializer
 

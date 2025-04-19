@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import sys
+from functools import wraps
 from pathlib import Path
 from platform import python_version
 from typing import Optional
@@ -28,6 +29,15 @@ def is_rtd_environment():
     from src.backend.InvenTree.InvenTree.config import is_true
 
     return is_true(os.environ.get('READTHEDOCS', 'False'))
+
+
+def is_deb_environment():
+    """Check if the InvenTree environment is running in a debug environment."""
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('INVENTREE_DEBUG', 'False')) or is_true(
+        os.environ.get('RUNNER_DEBUG', 'False')
+    )
 
 
 def task_exception_handler(t, v, tb):
@@ -80,6 +90,30 @@ def info(*args):
     """Print an informational message to the console."""
     msg = ' '.join(map(str, args))
     print(wrap_color(msg, '94'))
+
+
+def state_logger(fn=None, method_name=None):
+    """Decorator to log state markers before/after function execution, optionally accepting arguments."""
+
+    def decorator(func):
+        func.method_name = method_name or f'invoke task named `{func.__name__}`'
+
+        @wraps(func)
+        def wrapped(c, *args, **kwargs):
+            do_log = is_deb_environment()
+            if do_log:
+                info(f'# {func.method_name}| start')
+            func(c, *args, **kwargs)
+            if do_log:
+                info(f'# {func.method_name}| done')
+
+        return wrapped
+
+    if fn and callable(fn):
+        return decorator(fn)
+    elif fn and isinstance(fn, str):
+        method_name = fn
+    return decorator
 
 
 def checkInvokeVersion():
@@ -315,6 +349,7 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
     return ret(yarn_passes and node_version, node_version, yarn_version)
 
 
+@state_logger
 def check_file_existence(filename: Path, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
@@ -335,6 +370,7 @@ def check_file_existence(filename: Path, overwrite: bool = False):
 
 # Install tasks
 @task(help={'uv': 'Use UV (experimental package manager)'})
+@state_logger('TSK01')
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import get_plugin_file
@@ -360,6 +396,7 @@ def plugins(c, uv=False):
         'skip_plugins': 'Skip plugin installation',
     }
 )
+@state_logger('TSK02')
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
     # Ensure path is relative to *this* directory
@@ -447,6 +484,7 @@ def rebuild_thumbnails(c):
 
 
 @task
+@state_logger('TSK09')
 def clean_settings(c):
     """Clean the setting tables of old settings."""
     info('Cleaning old settings from the database')
@@ -471,11 +509,11 @@ def remove_mfa(c, mail=''):
         'skip_plugins': 'Ignore collection of plugin static files',
     }
 )
+@state_logger('TSK08')
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
-        frontend_trans(c, extract=False)
-        frontend_build(c)
+        frontend_compile(c)
 
     info('Collecting static files...')
 
@@ -507,9 +545,7 @@ def translate(c, ignore_static=False, no_frontend=False):
     manage(c, 'compilemessages')
 
     if not no_frontend and node_available():
-        frontend_install(c)
-        frontend_trans(c)
-        frontend_build(c)
+        frontend_compile(c)
 
     # Update static files
     if not ignore_static:
@@ -524,6 +560,7 @@ def translate(c, ignore_static=False, no_frontend=False):
         'path': 'Specify path for generated backup files (leave blank for default path)',
     }
 )
+@state_logger('TSK04')
 def backup(c, clean=False, path=None):
     """Backup the database and media files."""
     info('Backing up InvenTree database...')
@@ -600,6 +637,7 @@ def restore(
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
+@state_logger('TSK05')
 def migrate(c):
     """Performs database migrations.
 
@@ -632,6 +670,7 @@ def showmigrations(c, app=''):
         'uv': 'Use UV (experimental package manager)',
     },
 )
+@state_logger('TSK03')
 def update(
     c,
     skip_backup: bool = False,
@@ -686,7 +725,9 @@ def update(
             frontend_download(c)
 
     if not skip_static:
-        static(c, frontend=not no_frontend)
+        # Collect static files
+        # Note: frontend has already been compiled if required
+        static(c, frontend=False)
 
     success('InvenTree update complete!')
 
@@ -936,6 +977,7 @@ def import_fixtures(c):
 
 # Execution tasks
 @task
+@state_logger('TSK10')
 def wait(c):
     """Wait until the database connection is ready."""
     info('Waiting for database connection...')
@@ -1225,6 +1267,7 @@ def setup_test(
         'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
+@state_logger('TSK11')
 def schema(
     c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
 ):
@@ -1367,6 +1410,7 @@ def frontend_check(c):
 
 
 @task
+@state_logger('TSK06')
 def frontend_compile(c):
     """Generate react frontend.
 
@@ -1438,6 +1482,7 @@ def frontend_server(c):
         'clean': 'Delete old files from InvenTree/web/static/web first, default: True',
     }
 )
+@state_logger('TSK07')
 def frontend_download(
     c,
     ref=None,

@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 import importer.models
 import importer.registry
 import importer.serializers
+import InvenTree.permissions
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
@@ -28,7 +29,7 @@ class DataImporterPermission(permissions.BasePermission):
     """Mixin class for determining if the user has correct permissions."""
 
     def has_permission(self, request, view):
-        """Class level permission checks are handled via permissions.IsAuthenticated."""
+        """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
         return True
 
     def has_object_permission(self, request, view, obj):
@@ -53,7 +54,10 @@ class DataImporterPermissionMixin:
     """Mixin class for checking permissions on DataImporter objects."""
 
     # Default permissions: User must be authenticated
-    permission_classes = [permissions.IsAuthenticated, DataImporterPermission]
+    permission_classes = [
+        InvenTree.permissions.IsAuthenticatedOrReadScope,
+        DataImporterPermission,
+    ]
 
 
 class DataImporterModelSerializer(serializers.Serializer):
@@ -67,7 +71,7 @@ class DataImporterModelSerializer(serializers.Serializer):
 class DataImporterModelList(APIView):
     """API endpoint for displaying a list of models available for import."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = DataImporterModelSerializer(many=True)
 
     def get(self, request):
@@ -110,7 +114,7 @@ class DataImportSessionDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
 class DataImportSessionAcceptFields(APIView):
     """API endpoint to accept the field mapping for a DataImportSession."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = None
 
     @extend_schema(
