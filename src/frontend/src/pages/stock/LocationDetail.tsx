@@ -311,7 +311,7 @@ export default function Stock() {
     callback: async (barcode, response) => {
       const pk = response.stocklocation.pk;
 
-      // Set the parent  location
+      // Set the parent location
       return api
         .patch(apiUrl(ApiEndpoints.stock_location_list, pk), {
           parent: location.pk
@@ -344,13 +344,13 @@ export default function Stock() {
             {
               name: 'Scan in stock items',
               icon: <InvenTreeIcon icon='stock' />,
-              tooltip: 'Scan items',
+              tooltip: 'Scan item into this location',
               onClick: scanInStockItem.open
             },
             {
               name: 'Scan in container',
               icon: <InvenTreeIcon icon='unallocated_stock' />,
-              tooltip: 'Scan container',
+              tooltip: 'Scan container into this location',
               onClick: scanInStockLocation.open
             }
           ]}
