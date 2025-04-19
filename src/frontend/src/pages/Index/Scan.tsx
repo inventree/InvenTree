@@ -30,10 +30,7 @@ import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
-import {
-  notYetImplemented,
-  showApiErrorMessage
-} from '../../functions/notifications';
+import { showApiErrorMessage } from '../../functions/notifications';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {
@@ -177,11 +174,7 @@ export default function Scan() {
           <Trans>Actions ... </Trans>
         </Text>
         <Group>
-          <ActionIcon
-            onClick={notYetImplemented}
-            title={t`Count`}
-            variant='default'
-          >
+          <ActionIcon onClick={() => {}} title={t`Count`} variant='default'>
             <IconNumber />
           </ActionIcon>
         </Group>

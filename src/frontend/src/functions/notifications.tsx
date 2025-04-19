@@ -4,20 +4,6 @@ import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { extractErrorMessage } from './api';
 
 /**
- * Show a notification that the feature is not yet implemented
- */
-export function notYetImplemented() {
-  notifications.hide('not-implemented');
-
-  notifications.show({
-    title: t`Not implemented`,
-    message: t`This feature is not yet implemented`,
-    color: 'red',
-    id: 'not-implemented'
-  });
-}
-
-/**
  * Show a notification that the user does not have permission to perform the action
  */
 export function permissionDenied() {
