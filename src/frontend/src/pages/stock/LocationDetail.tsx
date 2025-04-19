@@ -390,8 +390,8 @@ export default function Stock() {
             selectedId={location?.pk}
           />
           <PageDetail
-            title={t`Stock Items`}
-            subtitle={location?.name}
+            title={location?.name ?? t`Stock Location`}
+            subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
             editAction={editLocation.open}
