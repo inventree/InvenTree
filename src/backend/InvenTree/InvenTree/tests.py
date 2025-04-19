@@ -434,16 +434,26 @@ class ValidatorTest(TestCase):
             link='www.google.com',
         )
 
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 1}', description='Missing link', category=cat, link=''
+        )
+
         # With strict URL validation
         InvenTreeSetting.set_setting('INVENTREE_STRICT_URLS', True, None)
 
         with self.assertRaises(ValidationError):
             Part.objects.create(
-                name=f'Part {n + 1}',
+                name=f'Part {n + 2}',
                 description='Link without schema',
                 category=cat,
                 link='www.google.com',
             )
+
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 3}', description='Missing link', category=cat, link=''
+        )
 
 
 class FormatTest(TestCase):
