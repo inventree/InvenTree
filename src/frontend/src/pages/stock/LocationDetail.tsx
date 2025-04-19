@@ -38,7 +38,6 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -275,7 +274,7 @@ export default function Stock() {
   const transferStockItems = useTransferStockItem(stockItemActionProps);
   const countStockItems = useCountStockItem(stockItemActionProps);
 
-  const scanInStockItems = useBarcodeScanDialog({
+  const scanInStockItem = useBarcodeScanDialog({
     title: t`Scan Stock Item`,
     modelType: ModelType.stockitem,
     callback: async (barcode, response) => {
@@ -306,6 +305,31 @@ export default function Stock() {
     }
   });
 
+  const scanInStockLocation = useBarcodeScanDialog({
+    title: t`Scan Stock Location`,
+    modelType: ModelType.stocklocation,
+    callback: async (barcode, response) => {
+      const pk = response.stocklocation.pk;
+
+      // Set the parent  location
+      return api
+        .patch(apiUrl(ApiEndpoints.stock_location_list, pk), {
+          parent: location.pk
+        })
+        .then(() => {
+          return {
+            success: t`Scanned stock location into location`
+          };
+        })
+        .catch((error) => {
+          console.error('Error scanning stock location:', error);
+          return {
+            error: t`Error scanning stock location`
+          };
+        });
+    }
+  });
+
   const locationActions = useMemo(
     () => [
       <AdminButton model={ModelType.stocklocation} id={location.pk} />,
@@ -321,13 +345,13 @@ export default function Stock() {
               name: 'Scan in stock items',
               icon: <InvenTreeIcon icon='stock' />,
               tooltip: 'Scan items',
-              onClick: scanInStockItems.open
+              onClick: scanInStockItem.open
             },
             {
               name: 'Scan in container',
               icon: <InvenTreeIcon icon='unallocated_stock' />,
               tooltip: 'Scan container',
-              onClick: notYetImplemented
+              onClick: scanInStockLocation.open
             }
           ]}
         />
@@ -396,7 +420,8 @@ export default function Stock() {
     <>
       {editLocation.modal}
       {deleteLocation.modal}
-      {scanInStockItems.dialog}
+      {scanInStockItem.dialog}
+      {scanInStockLocation.dialog}
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
