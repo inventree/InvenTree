@@ -70,79 +70,79 @@ export function ScanInputHandler({
   const [processing, setProcessing] = useState<boolean>(false);
   const user = useUserState();
 
-  const defaultScan = useCallback((barcode: string) => {
-    if (!barcode || barcode.length === 0) {
-      return;
-    }
+  const defaultScan = useCallback(
+    (data: any) => {
+      let match = false;
 
-    setProcessing(true);
-
-    api
-      .post(apiUrl(ApiEndpoints.barcode), {
-        barcode: barcode
-      })
-      .then((response) => {
-        setError('');
-
-        const data = response.data ?? {};
-        let match = false;
-
-        // Find the matching model type
-        for (const model_type of Object.keys(ModelInformationDict)) {
-          if (data[model_type]?.['pk']) {
-            if (user.hasViewPermission(model_type as ModelType)) {
-              const url = getDetailUrl(
-                model_type as ModelType,
-                data[model_type]['pk']
-              );
-              onClose();
-              navigate(url);
-              match = true;
-              break;
-            }
+      // Find the matching model type
+      for (const model_type of Object.keys(ModelInformationDict)) {
+        if (data[model_type]?.['pk']) {
+          if (user.hasViewPermission(model_type as ModelType)) {
+            const url = getDetailUrl(
+              model_type as ModelType,
+              data[model_type]['pk']
+            );
+            onClose();
+            navigate(url);
+            match = true;
+            break;
           }
         }
+      }
 
-        if (!match) {
-          setError(t`No matching item found`);
-        }
-      })
-      .catch((error) => {
-        const _error = extractErrorMessage({
-          error: error,
-          field: 'error',
-          defaultMessage: t`Failed to scan barcode`
-        });
-
-        setError(_error);
-      })
-      .finally(() => {
-        setProcessing(false);
-      });
-  }, []);
+      if (!match) {
+        setError(t`No matching item found`);
+      }
+    },
+    [navigate, onClose, user]
+  );
 
   const onScan = useCallback(
     (barcode: string) => {
-      if (callback) {
-        // If a callback is provided, use it to handle the scan
-        setProcessing(true);
-        setError('');
-
-        callback(barcode, {})
-          .then((result) => {
-            if (result.success) {
-              onClose();
-            } else {
-              setError(result.error);
-            }
-          })
-          .finally(() => {
-            setProcessing(false);
-          });
-      } else {
-        // If no callback is provided, use the default scan function
-        defaultScan(barcode);
+      if (!barcode || barcode.length === 0) {
+        return;
       }
+
+      setProcessing(true);
+      setError('');
+
+      api
+        .post(apiUrl(ApiEndpoints.barcode), {
+          barcode: barcode
+        })
+        .then((response: any) => {
+          const data = response.data ?? {};
+
+          if (callback && data.success && response.status === 200) {
+            callback(barcode, data)
+              .then((result: BarcodeScanResult) => {
+                if (result.success) {
+                  onClose();
+                } else {
+                  setError(result.error);
+                }
+              })
+              .finally(() => {
+                setProcessing(false);
+              });
+          } else {
+            // If no callback is provided, use the default scan function
+            defaultScan(data);
+            setProcessing(false);
+          }
+        })
+        .catch((error) => {
+          const _error = extractErrorMessage({
+            error: error,
+            field: 'error',
+            defaultMessage: t`Failed to scan barcode`
+          });
+
+          setError(_error);
+        })
+        .finally(() => {
+          setProcessing(false);
+        });
     },
     [callback, defaultScan]
   );
