@@ -7,6 +7,7 @@ import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -272,6 +273,17 @@ export default function Stock() {
   const transferStockItems = useTransferStockItem(stockItemActionProps);
   const countStockItems = useCountStockItem(stockItemActionProps);
 
+  const scanInStockItems = useBarcodeScanDialog({
+    title: t`Scan Stock Item`,
+    callback: async (barcode, response) => {
+      console.log('response:', response);
+      return {
+        success: true,
+        error: ''
+      };
+    }
+  });
+
   const locationActions = useMemo(
     () => [
       <AdminButton model={ModelType.stocklocation} id={location.pk} />,
@@ -287,7 +299,7 @@ export default function Stock() {
               name: 'Scan in stock items',
               icon: <InvenTreeIcon icon='stock' />,
               tooltip: 'Scan items',
-              onClick: notYetImplemented
+              onClick: scanInStockItems.open
             },
             {
               name: 'Scan in container',
@@ -362,6 +374,7 @@ export default function Stock() {
     <>
       {editLocation.modal}
       {deleteLocation.modal}
+      {scanInStockItems.dialog}
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}

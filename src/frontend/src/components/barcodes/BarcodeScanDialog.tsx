@@ -47,7 +47,11 @@ export default function BarcodeScanDialog({
     >
       <Divider />
       <Box>
-        <ScanInputHandler navigate={navigate} onClose={onClose} />
+        <ScanInputHandler
+          navigate={navigate}
+          onClose={onClose}
+          callback={callback}
+        />
       </Box>
     </Modal>
   );
@@ -144,4 +148,32 @@ export function ScanInputHandler({
   );
 
   return <BarcodeInput onScan={onScan} error={error} processing={processing} />;
+}
+
+export function useBarcodeScanDialog({
+  title,
+  callback
+}: Readonly<{
+  title: string;
+  callback: BarcodeScanCallback;
+}>) {
+  const [opened, setOpened] = useState(false);
+
+  const open = useCallback((callback?: BarcodeScanCallback) => {
+    setOpened(true);
+  }, []);
+
+  const dialog = (
+    <BarcodeScanDialog
+      title={title}
+      opened={opened}
+      callback={callback}
+      onClose={() => setOpened(false)}
+    />
+  );
+
+  return {
+    open,
+    dialog
+  };
 }
