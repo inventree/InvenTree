@@ -5,6 +5,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { Box, Divider, Modal } from '@mantine/core';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
@@ -14,8 +15,8 @@ import { StylishText } from '../items/StylishText';
 import { BarcodeInput } from './BarcodeInput';
 
 export type BarcodeScanResult = {
-  success: boolean;
-  error: string;
+  success?: string;
+  error?: string;
 };
 
 // Callback function for handling a barcode scan
@@ -29,10 +30,12 @@ export default function BarcodeScanDialog({
   title,
   opened,
   callback,
+  modelType,
   onClose
 }: Readonly<{
   title?: string;
   opened: boolean;
+  modelType?: ModelType;
   callback?: BarcodeScanCallback;
   onClose: () => void;
 }>) {
@@ -50,6 +53,7 @@ export default function BarcodeScanDialog({
         <ScanInputHandler
           navigate={navigate}
           onClose={onClose}
+          modelType={modelType}
           callback={callback}
         />
       </Box>
@@ -59,11 +63,13 @@ export default function BarcodeScanDialog({
 
 export function ScanInputHandler({
   callback,
+  modelType,
   onClose,
   navigate
 }: Readonly<{
   callback?: BarcodeScanCallback;
   onClose: () => void;
+  modelType?: ModelType;
   navigate: NavigateFunction;
 }>) {
   const [error, setError] = useState<string>('');
@@ -76,6 +82,11 @@ export function ScanInputHandler({
 
       // Find the matching model type
       for (const model_type of Object.keys(ModelInformationDict)) {
+        // If a specific model type is provided, check if it matches
+        if (modelType && model_type !== modelType) {
+          continue;
+        }
+
         if (data[model_type]?.['pk']) {
           if (user.hasViewPermission(model_type as ModelType)) {
             const url = getDetailUrl(
@@ -94,7 +105,7 @@ export function ScanInputHandler({
         setError(t`No matching item found`);
       }
     },
-    [navigate, onClose, user]
+    [navigate, onClose, user, modelType]
   );
 
   const onScan = useCallback(
@@ -114,12 +125,30 @@ export function ScanInputHandler({
           const data = response.data ?? {};
 
           if (callback && data.success && response.status === 200) {
+            const instance = null;
+
+            // If the caller is expecting a specific model type, check if it matches
+            if (modelType) {
+              const pk: number = data[modelType]?.['pk'];
+              if (!pk) {
+                setError(t`Barcode does not match the expected model type`);
+                return;
+              }
+            }
+
             callback(barcode, data)
               .then((result: BarcodeScanResult) => {
                 if (result.success) {
+                  hideNotification('barcode-scan');
+                  showNotification({
+                    id: 'barcode-scan',
+                    title: t`Success`,
+                    message: result.success,
+                    color: 'green'
+                  });
                   onClose();
                 } else {
-                  setError(result.error);
+                  setError(result.error ?? t`Failed to handle barcode`);
                 }
               })
               .finally(() => {
@@ -144,7 +173,7 @@ export function ScanInputHandler({
           setProcessing(false);
         });
     },
-    [callback, defaultScan]
+    [callback, defaultScan, modelType, onClose]
   );
 
   return <BarcodeInput onScan={onScan} error={error} processing={processing} />;
@@ -152,14 +181,16 @@ export function ScanInputHandler({
 
 export function useBarcodeScanDialog({
   title,
-  callback
+  callback,
+  modelType
 }: Readonly<{
   title: string;
+  modelType?: ModelType;
   callback: BarcodeScanCallback;
 }>) {
   const [opened, setOpened] = useState(false);
 
-  const open = useCallback((callback?: BarcodeScanCallback) => {
+  const open = useCallback(() => {
     setOpened(true);
   }, []);
 
@@ -168,6 +199,7 @@ export function useBarcodeScanDialog({
       title={title}
       opened={opened}
       callback={callback}
+      modelType={modelType}
       onClose={() => setOpened(false)}
     />
   );

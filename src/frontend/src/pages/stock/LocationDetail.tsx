@@ -2,11 +2,13 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { api } from '../../App';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -275,12 +277,32 @@ export default function Stock() {
 
   const scanInStockItems = useBarcodeScanDialog({
     title: t`Scan Stock Item`,
+    modelType: ModelType.stockitem,
     callback: async (barcode, response) => {
-      console.log('response:', response);
-      return {
-        success: true,
-        error: ''
-      };
+      const item = response.stockitem.instance;
+
+      // Scan the stock item into the current location
+      return api
+        .post(apiUrl(ApiEndpoints.stock_transfer), {
+          location: location.pk,
+          items: [
+            {
+              pk: item.pk,
+              quantity: item.quantity
+            }
+          ]
+        })
+        .then(() => {
+          return {
+            success: t`Scanned stock item into location`
+          };
+        })
+        .catch((error) => {
+          console.error('Error scanning stock item:', error);
+          return {
+            error: t`Error scanning stock item`
+          };
+        });
     }
   });
 
