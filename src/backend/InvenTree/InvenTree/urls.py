@@ -28,6 +28,7 @@ import report.api
 import stock.api
 import users.api
 from plugin.urls import get_plugin_urls
+from web.urls import cui_compatibility_urls
 from web.urls import urlpatterns as platform_urls
 
 from .api import (
@@ -171,6 +172,9 @@ urlpatterns.append(
         RedirectView.as_view(url=f'{settings.STATIC_URL}img/favicon/favicon.ico'),
     )
 )
+
+# Compatibility layer for old (CUI) URLs
+urlpatterns += cui_compatibility_urls(settings.FRONTEND_URL_BASE)
 
 # Send any unknown URLs to the index page
 urlpatterns += [
