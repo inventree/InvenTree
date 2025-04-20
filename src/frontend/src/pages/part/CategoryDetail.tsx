@@ -342,8 +342,8 @@ export default function CategoryDetail() {
             selectedId={category?.pk}
           />
           <PageDetail
-            title={t`Part Category`}
-            subtitle={category?.name}
+            title={category?.name ?? t`Part Category`}
+            subtitle={category?.description}
             icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
