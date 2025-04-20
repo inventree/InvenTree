@@ -337,9 +337,9 @@ packaging==24.2 \
     # via
     #   -c src/backend/requirements.txt
     #   build
-pdfminer-six==20250327 \
-    --hash=sha256:57f6c34c2702df04cfa3191622a3db0a922ced686d35283232b00094f8914aa1 \
-    --hash=sha256:5af494c85b1ecb7c28df5e3a26bb5234a8226a307503d9a09f4958bc154b16a9
+pdfminer-six==20250416 \
+    --hash=sha256:30956a85f9d0add806a4e460ed0d67c2b6a48b53323c7ac87de23174596d3acd \
+    --hash=sha256:dd2a9ad7bc7dd6b62d009aaa9c101ac9d069a47937724569c375a6a9078da303
     # via -r src/backend/requirements-dev.in
 pip==25.0.1 \
     --hash=sha256:88f96547ea48b940a3a385494e181e29fb8637898f88d88737c5049780f196ea \
