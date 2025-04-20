@@ -183,12 +183,6 @@ To complete a shipment, press the *Complete Shipment* button associated with the
 {% include "img.html" %}
 {% endwith %}
 
-Alternatively, pending shipments can be completed by selecting the *Complete Shipments* action from the sales order actions menu:
-
-{% with id="complete-shipment-action", url="order/complete_shipment_action.png", description="Complete shipment" %}
-{% include "img.html" %}
-{% endwith %}
-
 ### Completed Shipments
 
 {% with id="completed-shipments", url="order/completed_shipments.png", description="Completed shipments" %}
