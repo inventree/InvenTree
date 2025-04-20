@@ -12,7 +12,7 @@ Stock locations can be assigned custom icons (either directly or through [Stock 
 
 By default, the tabler icons package (with prefix: `ti`) is available. To manually select an item, search on the [tabler icons](https://tabler.io/icons) page for an icon and copy its name e.g. `bookmark`. Some icons have a filled and an outline version (if no variants are specified, it's an outline variant). Now these values can be put into the format: `<package-prefix>:<icon-name>:<variant>`. E.g. `ti:bookmark:outline` or `ti:bookmark:filled`.
 
-If there are some icons missing in the tabler icons package, users can even install their own custom icon packs through a plugin. See [`IconPackMixin`](../extend/plugins/icon.md).
+If there are some icons missing in the tabler icons package, users can even install their own custom icon packs through a plugin. See [`IconPackMixin`](../plugins/mixins/icon.md).
 
 ## Stock Location Type
 

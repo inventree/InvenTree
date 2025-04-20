@@ -73,7 +73,7 @@ By default, the InvenTree container expects the secret key file to exist as `sec
 
 #### Plugins
 
-Plugins are supported natively when running under docker. There are two ways to [install plugins](../extend/plugins/install.md) when using docker:
+Plugins are supported natively when running under docker. There are two ways to [install plugins](../plugins/install.md) when using docker:
 
 - Install via the `plugins.txt` file provided in the external data directory
 - Install into the `plugins/` subdirectory in the external data directory

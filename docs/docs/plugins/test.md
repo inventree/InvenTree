@@ -8,7 +8,7 @@ that plugins work correctly and are compatible with future versions too.
 You can run these tests as part of your ci against the current stable and
 latest tag to get notified when something breaks before it gets released as
 part of stable. InvenTree offers a framework for testing. Please refer
-to [Unit Tests](../../develop/contributing.md) for more information.
+to [Unit Tests](../develop/contributing.md) for more information.
 
 ### Prerequisites
 For plugin testing the following environment variables must be set to True:

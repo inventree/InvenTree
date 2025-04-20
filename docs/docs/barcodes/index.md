@@ -11,7 +11,7 @@ InvenTree has native support for barcodes, which provides powerful functionality
 - Barcodes integrate natively [with the mobile app](../app/barcode.md)
 - Custom barcodes can be assigned to items
 - Barcodes can be embedded in [labels or reports](../report/barcodes.md)
-- Barcode functionality can be [extended via plugins](../extend/plugins/barcode.md)
+- Barcode functionality can be [extended via plugins](../plugins/mixins/barcode.md)
 
 ### Barcode Formats
 

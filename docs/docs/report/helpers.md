@@ -148,7 +148,7 @@ Generate a list of all active customers:
 
 ### Advanced Database Queries
 
-More advanced database filtering should be achieved using a [report plugin](../extend/plugins/report.md), and adding custom context data to the report template.
+More advanced database filtering should be achieved using a [report plugin](../plugins/mixins/report.md), and adding custom context data to the report template.
 
 ## Number Formatting
 

@@ -13,7 +13,7 @@ Installing plugins can be complex! Some common issues are outlined below:
 
 #### Enable Plugin Support
 
-To enable custom plugins, plugin support must be activated in the [server configuration](../../start/config.md#plugin-options). This step must be performed by a system administrator before the InvenTree server is started.
+To enable custom plugins, plugin support must be activated in the [server configuration](../start/config.md#plugin-options). This step must be performed by a system administrator before the InvenTree server is started.
 
 #### Restart Server
 
@@ -59,7 +59,7 @@ Installation via PIP (using the *plugins.txt* file) provides a number of advanta
     When the server installation is updated via the `invoke update` command, the plugins (as specified in *plugins.txt*) will also be updated automatically.
 
 !!! info "Plugin File Location"
-    The location of your plugin configuration file will depend on your [server configuration](../../start/config.md)
+    The location of your plugin configuration file will depend on your [server configuration](../start/config.md)
 
 #### Web Interface
 
@@ -86,7 +86,7 @@ Custom plugins can be placed in the `data/plugins/` directory, where they will b
 
 If you wish to install plugins from local source, rather than PIP, it is better to place your plugins in a directory outside the InvenTree source directory.
 
-To achieve this, set the `INVENTREE_PLUGIN_DIR` environment variable to the directory where locally sourced plugins are located. Refer to the [configuration options](../../start/config.md#plugin-options) for further information.
+To achieve this, set the `INVENTREE_PLUGIN_DIR` environment variable to the directory where locally sourced plugins are located. Refer to the [configuration options](../start/config.md#plugin-options) for further information.
 
 !!! info "Docker"
     When running InvenTree in docker, a *plugins* directory is automatically created in the mounted data volume. Any plugins can be placed there, and will be automatically loaded when the server is started.

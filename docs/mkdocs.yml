@@ -83,7 +83,7 @@ nav:
       - Pricing: concepts/pricing.md
       - Project Codes: concepts/project_codes.md
       - Barcodes:
-        - Overview: barcodes/barcodes.md
+        - Barcode Support: barcodes/index.md
         - Internal Barcodes: barcodes/internal.md
         - External Barcodes: barcodes/external.md
         - Custom Barcodes: barcodes/custom.md
@@ -205,35 +205,34 @@ nav:
       - Error Logs: settings/logs.md
       - Error Codes: settings/error_codes.md
   - Plugins:
-    - Plugin System:
-      - Overview: extend/plugins.md
-      - Installation: extend/plugins/install.md
-      - Developing a Plugin: extend/how_to_plugin.md
-      - Model Metadata: extend/plugins/metadata.md
-      - Tags: extend/plugins/tags.md
-      - Unit Test: extend/plugins/test.md
+    - Overview: plugins/index.md
+    - Installation: plugins/install.md
+    - Developing a Plugin: plugins/how_to.md
+    - Model Metadata: plugins/metadata.md
+    - Tags: plugins/tags.md
+    - Unit Test: plugins/test.md
     - Plugin Mixins:
-      - Action Mixin: extend/plugins/action.md
-      - API Mixin: extend/plugins/api.md
-      - App Mixin: extend/plugins/app.md
-      - Barcode Mixin: extend/plugins/barcode.md
-      - Currency Mixin: extend/plugins/currency.md
-      - Data Export Mixin: extend/plugins/export.md
-      - Event Mixin: extend/plugins/event.md
-      - Icon Pack Mixin: extend/plugins/icon.md
-      - Label Printing Mixin: extend/plugins/label.md
-      - Locate Mixin: extend/plugins/locate.md
-      - Navigation Mixin: extend/plugins/navigation.md
-      - Report Mixin: extend/plugins/report.md
-      - Schedule Mixin: extend/plugins/schedule.md
-      - Settings Mixin: extend/plugins/settings.md
-      - URL Mixin: extend/plugins/urls.md
-      - User Interface Mixin: extend/plugins/ui.md
-      - Validation Mixin: extend/plugins/validation.md
+      - Action Mixin: plugins/mixins/action.md
+      - API Mixin: plugins/mixins/api.md
+      - App Mixin: plugins/mixins/app.md
+      - Barcode Mixin: plugins/mixins/barcode.md
+      - Currency Mixin: plugins/mixins/currency.md
+      - Event Mixin: plugins/mixins/event.md
+      - Data Export Mixin: plugins/mixins/export.md
+      - Icon Pack Mixin: plugins/mixins/icon.md
+      - Label Printing Mixin: plugins/mixins/label.md
+      - Locate Mixin: plugins/mixins/locate.md
+      - Navigation Mixin: plugins/mixins/navigation.md
+      - Report Mixin: plugins/mixins/report.md
+      - Schedule Mixin: plugins/mixins/schedule.md
+      - Settings Mixin: plugins/mixins/settings.md
+      - URL Mixin: plugins/mixins/urls.md
+      - User Interface Mixin: plugins/mixins/ui.md
+      - Validation Mixin: plugins/mixins/validation.md
     - Machines:
-      - Overview: extend/machines/overview.md
-      - Label Printer: extend/machines/label_printer.md
-    - Third-Party: extend/integrate.md
+      - Overview: plugins/machines/overview.md
+      - Label Printer: plugins/machines/label_printer.md
+    - Third-Party: plugins/integrate.md
 
 # Plugins
 plugins:

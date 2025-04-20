@@ -145,7 +145,7 @@ class XYZDriver(ABCBaseDriver):
 
 ### Settings
 
-Each machine can have different settings configured. There are machine settings that are specific to that machine type and driver settings that are specific to the driver, but both can be specified individually for each machine. Define them by adding a `MACHINE_SETTINGS` dictionary attribute to either the driver or the machine type. The format follows the same pattern as the `SETTINGS` for normal plugins documented on the [`SettingsMixin`](../plugins/settings.md)
+Each machine can have different settings configured. There are machine settings that are specific to that machine type and driver settings that are specific to the driver, but both can be specified individually for each machine. Define them by adding a `MACHINE_SETTINGS` dictionary attribute to either the driver or the machine type. The format follows the same pattern as the `SETTINGS` for normal plugins documented on the [`SettingsMixin`](../mixins/settings.md)
 
 ```py
 class MyXYZDriver(ABCBaseDriver):

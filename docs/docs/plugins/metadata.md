@@ -4,9 +4,9 @@ title: Model Metadata
 
 ## Model Metadata
 
-Plugins have access to internal database models (such at [Parts](../../part/index.md)), and any associated data associated with these models. It may be the case that a particular plugin needs to store some extra information about a particular model instance, to be able to perform custom functionality.
+Plugins have access to internal database models (such at [Parts](../part/index.md)), and any associated data associated with these models. It may be the case that a particular plugin needs to store some extra information about a particular model instance, to be able to perform custom functionality.
 
-One way of achieving this would be to create an entirely new database model to keep track of this information, using the [app plugin mixin](./app.md). However, this is a very heavy-handed (and complicated) approach!
+One way of achieving this would be to create an entirely new database model to keep track of this information, using the [app plugin mixin](./mixins/app.md). However, this is a very heavy-handed (and complicated) approach!
 
 A much simpler and more accessible method of recording custom information against a given model instance is provided "out of the box" - using *Model Metadata*.
 
@@ -83,7 +83,7 @@ An important note with regard to metadata access via the API is the behaviour of
 
 ### Python API Access
 
-The [Python API library](../../api/python/python.md) provides similar support for accessing model metadata. Use the `setMetadata` method to retrieve metadata information from the server:
+The [Python API library](../api/python/python.md) provides similar support for accessing model metadata. Use the `setMetadata` method to retrieve metadata information from the server:
 
 ```python
 from inventree.api import InvenTreeAPI
@@ -128,4 +128,4 @@ There is no guarantee that the data added to a particular model will *not* be ov
 
 ### Structured Data
 
-If you need to store data which is more "structured" than JSON objects, consider using the (more complex) [app mixin](../plugins/app.md) to develop custom database tables for your data.
+If you need to store data which is more "structured" than JSON objects, consider using the (more complex) [app mixin](./mixins/app.md) to develop custom database tables for your data.

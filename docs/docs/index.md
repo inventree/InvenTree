@@ -62,4 +62,4 @@ The core InvenTree software is implemented on top of a RESTful API, which can be
 
 InvenTree is designed to be highly extensible. If the core InvenTree functionality does not meet your particular need, InvenTree provides a powerful plugin system which can be used to extend on base functions as required.
 
-[Read more...](./extend/plugins.md)
+[Read more...](./plugins/index.md)

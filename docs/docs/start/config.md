@@ -455,7 +455,7 @@ If you want to remove the InvenTree branding as far as possible from your end-us
 
 ## Plugin Options
 
-The following [plugin](../extend/plugins.md) configuration options are available:
+The following [plugin](../plugins/index.md) configuration options are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |

@@ -1,6 +1,6 @@
 ## Label printer
 
-Label printer machines can directly print labels for various items in InvenTree. They replace standard [`LabelPrintingMixin`](../plugins/label.md) plugins that are used to connect to physical printers. Using machines rather than a standard `LabelPrintingMixin` plugin has the advantage that machines can be created multiple times using different settings but the same driver. That way multiple label printers of the same brand can be connected.
+Label printer machines can directly print labels for various items in InvenTree. They replace standard [`LabelPrintingMixin`](../mixins/label.md) plugins that are used to connect to physical printers. Using machines rather than a standard `LabelPrintingMixin` plugin has the advantage that machines can be created multiple times using different settings but the same driver. That way multiple label printers of the same brand can be connected.
 
 ### Writing your own printing driver
 

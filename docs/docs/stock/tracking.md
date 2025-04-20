@@ -45,7 +45,7 @@ The following context variables are available by default when generating a batch
 
 #### Plugin Support
 
-To implement custom batch code functionality, refer to the details on the [Validation Plugin Mixin](../extend/plugins/validation.md#batch-codes).
+To implement custom batch code functionality, refer to the details on the [Validation Plugin Mixin](../plugins/mixins/validation.md#batch-codes).
 
 ### Serial Numbers
 
@@ -146,7 +146,7 @@ If a provided serial number (or group of numbers) is not considered valid, an er
 
 #### Plugin Support
 
-Custom serial number functionality, with any arbitrary requirements or level of complexity, can be implemented using the [Validation Plugin Mixin class](../extend/plugins/validation.md#serial-numbers). Refer to the documentation for this plugin for technical details.
+Custom serial number functionality, with any arbitrary requirements or level of complexity, can be implemented using the [Validation Plugin Mixin class](../plugins/mixins/validation.md#serial-numbers). Refer to the documentation for this plugin for technical details.
 
 A custom plugin allows the user to determine how a "valid" serial number is defined, and (crucially) how any given serial number value is incremented to provide the next value in the sequence.
 

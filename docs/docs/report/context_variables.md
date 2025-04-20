@@ -232,7 +232,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | is_building | Boolean field indicating if this stock item is currently being built (or is "in production") |
 | purchase_order | Link to a [PurchaseOrder](#purchase-order) (if this stock item was created from a PurchaseOrder) |
 | infinite | If True this [StockItem](#stock-item) can never be exhausted |
-| sales_order | Link to a [SalesOrder](#salesorder) object (if the StockItem has been assigned to a SalesOrder) |
+| sales_order | Link to a [SalesOrder](#sales-order) object (if the StockItem has been assigned to a SalesOrder) |
 | purchase_price | The unit purchase price for this [StockItem](#stock-item) - this is the unit price at time of purchase (if this item was purchased from an external supplier) |
 | packaging | Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc) |
 

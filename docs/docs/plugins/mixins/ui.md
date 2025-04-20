@@ -179,7 +179,7 @@ When distributing a custom UI plugin, the plugin should include the necessary fr
 
 The simplest (and recommended) way to achieve this is to distribute the compiled javascript files with the plugin package, in a top-level `static` directory. This directory will be automatically collected by InvenTree when the plugin is installed, and the files will be copied to the appropriate location.
 
-Read more about [static plugin files](../plugins.md#static-files) for more information.
+Read more about [static plugin files](../index.md#static-files) for more information.
 
 ## Sample Plugin
 

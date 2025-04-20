@@ -91,7 +91,7 @@ Configuration of barcode functionality:
 {{ globalsetting("BARCODE_STORE_RESULTS") }}
 {{ globalsetting("BARCODE_RESULTS_MAX_NUM") }}
 
-Read more about [barcode scanning](../barcodes/barcodes.md).
+Read more about [barcode scanning](../barcodes/index.md).
 
 ### Pricing and Currency
 

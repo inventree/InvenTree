@@ -12,7 +12,7 @@ Plugins can be added from multiple sources:
 - Plugins can be placed in the external [plugins directory](../start/config.md#plugin-options)
 - InvenTree built-in plugins are located within the InvenTree source code
 
-For further information, read more about [installing plugins](./plugins/install.md).
+For further information, read more about [installing plugins](./install.md).
 
 ### Configuration Options
 
@@ -69,7 +69,7 @@ Mixins are split up internally to keep the source tree clean and enable better t
     The APIs outside of the `plugin` namespace are not structured for public usage and require a more in-depth knowledge of the Django framework. Please ask in GitHub discussions of the `InvenTree` org if you are not sure you are using something the intended way.
 
 We do not provide stable interfaces to models or any other internal python APIs. If you need to integrate into these parts please make yourself familiar with the codebase. We follow general Django patterns and only stray from them in limited, special cases.
-If you need to react to state changes please use the [EventMixin](./plugins/event.md).
+If you need to react to state changes please use the [EventMixin](./mixins/event.md).
 
 ### Plugin Options
 
@@ -108,22 +108,22 @@ Supported mixin classes are:
 
 | Mixin | Description |
 | --- | --- |
-| [ActionMixin](./plugins/action.md) | Run custom actions |
-| [APICallMixin](./plugins/api.md) | Perform calls to external APIs |
-| [AppMixin](./plugins/app.md) | Integrate additional database tables |
-| [BarcodeMixin](./plugins/barcode.md) | Support custom barcode actions |
-| [CurrencyExchangeMixin](./plugins/currency.md) | Custom interfaces for currency exchange rates |
-| [DataExport](./plugins/export.md) | Customize data export functionality |
-| [EventMixin](./plugins/event.md) | Respond to events |
-| [LabelPrintingMixin](./plugins/label.md) | Custom label printing support |
-| [LocateMixin](./plugins/locate.md) | Locate and identify stock items |
-| [NavigationMixin](./plugins/navigation.md) | Add custom pages to the web interface |
-| [ReportMixin](./plugins/report.md) | Add custom context data to reports |
-| [ScheduleMixin](./plugins/schedule.md) | Schedule periodic tasks |
-| [SettingsMixin](./plugins/settings.md) | Integrate user configurable settings |
-| [UserInterfaceMixin](./plugins/ui.md) | Add custom user interface features |
-| [UrlsMixin](./plugins/urls.md) | Respond to custom URL endpoints |
-| [ValidationMixin](./plugins/validation.md) | Provide custom validation of database models |
+| [ActionMixin](./mixins/action.md) | Run custom actions |
+| [APICallMixin](./mixins/api.md) | Perform calls to external APIs |
+| [AppMixin](./mixins/app.md) | Integrate additional database tables |
+| [BarcodeMixin](./mixins/barcode.md) | Support custom barcode actions |
+| [CurrencyExchangeMixin](./mixins/currency.md) | Custom interfaces for currency exchange rates |
+| [DataExport](./mixins/export.md) | Customize data export functionality |
+| [EventMixin](./mixins/event.md) | Respond to events |
+| [LabelPrintingMixin](./mixins/label.md) | Custom label printing support |
+| [LocateMixin](./mixins/locate.md) | Locate and identify stock items |
+| [NavigationMixin](./mixins/navigation.md) | Add custom pages to the web interface |
+| [ReportMixin](./mixins/report.md) | Add custom context data to reports |
+| [ScheduleMixin](./mixins/schedule.md) | Schedule periodic tasks |
+| [SettingsMixin](./mixins/settings.md) | Integrate user configurable settings |
+| [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
+| [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
+| [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
 
 ## Static Files
 

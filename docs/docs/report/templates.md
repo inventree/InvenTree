@@ -43,7 +43,7 @@ InvenTree is supplied with a number of default templates "out of the box" - for 
 
 ### Extending with Plugins
 
-The [ReportMixin plugin class](../extend/plugins/report.md) allows reporting functionality to be extended with custom features.
+The [ReportMixin plugin class](../plugins/mixins/report.md) allows reporting functionality to be extended with custom features.
 
 ## WeasyPrint Template Rendering
 
@@ -110,7 +110,7 @@ If you enter an invalid option for the filter field, an error message will be di
 
 ### Metadata
 
-A JSON field made available to any [plugins](../extend/plugins.md) - but not used by internal code.
+A JSON field made available to any [plugins](../plugins/index.md) - but not used by internal code.
 
 ## Reporting Options
 
