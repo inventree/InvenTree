@@ -174,7 +174,7 @@ urlpatterns.append(
 )
 
 # Compatibility layer for old (CUI) URLs
-if settings.FRONTEND_SETTINGS.get('url_compatibility', True):
+if settings.FRONTEND_SETTINGS.get('url_compatibility'):
     urlpatterns += cui_compatibility_urls(settings.FRONTEND_URL_BASE)
 
 # Send any unknown URLs to the index page
