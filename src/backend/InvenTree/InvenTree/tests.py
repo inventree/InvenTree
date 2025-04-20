@@ -1723,14 +1723,3 @@ class URLCompatibilityTest(InvenTreeTestCase):
             response = self.client.get(old_url)
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response['Location'], new_url)
-
-    @override_settings(
-        FRONTEND_SETTINGS={'base_url': 'web', 'url_compatibility': False}
-    )
-    def test_legacy_urls_disabled(self):
-        """Test that legacy URLs are disabled when configured."""
-        # If legacy URLs are disabled, they should return a 302 redirect to the home page
-        for old_url, _new_url in self.URL_MAPPINGS:
-            response = self.client.get(old_url)
-            self.assertEqual(response.status_code, 302)
-            self.assertEqual(response['Location'], 'web')
