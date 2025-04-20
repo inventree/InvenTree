@@ -11,12 +11,12 @@ External companies are represented by the *Company* database model. Each company
 - [Supplier](../purchasing/supplier.md)
 - [Manufacturer](../purchasing/manufacturer.md)
 
-!!! tip Multi Purpose
+!!! tip "Multi Purpose"
     A company may be allocated to multiple categories, for example, a company may be both a supplier and a customer.
 
 ### Edit Company
 
-To edit a company, click on the <span class='fas fa-edit'>Edit Company</span> icon in the actions menu. Edit the company information, and then click on <span class='badge inventree confirm'>Submit</span>.
+To edit a company, click on the {{ icon("edit", color="blue", title="Edit Company") }} icon in the actions menu. Edit the company information, and then click on <span class='badge inventree confirm'>Submit</span>.
 
 !!! warning "Permission Required"
     The edit button will not be available to users who do not have the required permissions to edit the company
@@ -37,7 +37,7 @@ To re-enable a company, simply follow the same process and set the `active` attr
 
 ### Delete Company
 
-To delete a company, click on the <span class='fas fa-trash-alt'></span> icon under the actions menu. Confirm the deletion using the checkbox then click on <span class="badge inventree confirm">Submit</span>
+To delete a company, click on the {{ icon("trash", color="red", title="Delete") }} icon under the actions menu. Confirm the deletion using the checkbox then click on <span class="badge inventree confirm">Submit</span>
 
 !!! warning "Permission Required"
     The edit button will not be available to users who do not have the required permissions to delete the company

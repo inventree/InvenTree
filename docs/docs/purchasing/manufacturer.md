@@ -52,4 +52,4 @@ After the manufacturer part details are loaded, click on the <span class='fas fa
 
 To delete a manufacturer part, first access the manufacturer part detail page like in the [Edit Manufacturer Part](#edit-manufacturer-part) section.
 
-After the manufacturer part details are loaded, click on the <span class='fas fa-trash-alt'></span> icon next to the manufacturer part image. Review the the information for the manufacturer part to be deleted, confirm the deletion using the checkbox then click on <span class="badge inventree confirm">Submit</span>
+After the manufacturer part details are loaded, click on the {{ icon("trash", color="red", title="Delete") }} icon next to the manufacturer part image. Review the the information for the manufacturer part to be deleted, confirm the deletion using the checkbox then click on <span class="badge inventree confirm">Submit</span>

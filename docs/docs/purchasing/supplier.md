@@ -72,7 +72,7 @@ It is recommended to disable a supplier part rather than deleting it, as this wi
 
 To delete a supplier part, first access the supplier part detail page like in the [Edit Supplier Part](#edit-supplier-part) section.
 
-After the supplier part details are loaded, click on the <span class='fas fa-trash-alt'></span> icon next to the supplier part image. Review the the information for the supplier part to be deleted, confirm the deletion using the checkbox then click on <span class="badge inventree confirm">Submit</span>
+After the supplier part details are loaded, click on the {{ icon("trash", color="red", title="Delete") }} icon next to the supplier part image. Review the the information for the supplier part to be deleted, confirm the deletion using the checkbox then click on <span class="badge inventree confirm">Submit</span>
 
 #### Supplier Part Availability
 

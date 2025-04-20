@@ -58,6 +58,7 @@ extra_css:
   - stylesheets/splide.min.css
   - stylesheets/extra.css
   - stylesheets/neoteroi-mkdocs.css
+  - https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css
 extra_javascript:
   - javascripts/extra.js
   - javascripts/fontawesome.js
