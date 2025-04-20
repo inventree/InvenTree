@@ -83,7 +83,7 @@ An important note with regard to metadata access via the API is the behaviour of
 
 ### Python API Access
 
-The [Python API library](../api/python/python.md) provides similar support for accessing model metadata. Use the `setMetadata` method to retrieve metadata information from the server:
+The [Python API library](../api/python/index.md) provides similar support for accessing model metadata. Use the `setMetadata` method to retrieve metadata information from the server:
 
 ```python
 from inventree.api import InvenTreeAPI

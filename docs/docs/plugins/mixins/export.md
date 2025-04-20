@@ -4,7 +4,7 @@ title: Data Export Mixin
 
 ## DataExportMixin
 
-The `DataExportMixin` class provides a plugin with the ability to customize the data export process. The [InvenTree API](../../api/api.md) provides an integrated method to export a dataset to a tabulated file. The default export process is generic, and simply exports the data presented via the API in a tabulated file format.
+The `DataExportMixin` class provides a plugin with the ability to customize the data export process. The [InvenTree API](../../api/index.md) provides an integrated method to export a dataset to a tabulated file. The default export process is generic, and simply exports the data presented via the API in a tabulated file format.
 
 Custom data export plugins allow this process to be adjusted:
 

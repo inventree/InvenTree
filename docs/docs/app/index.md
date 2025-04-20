@@ -8,7 +8,7 @@ title: InvenTree Mobile App
 
 -----
 
-The InvenTree Mobile App brings stock control to your pocket. Integrating seamlessly with the [InvenTree API](../api/api.md), the app provides immediate access to inventory data without requiring physical access to a computer.
+The InvenTree Mobile App brings stock control to your pocket. Integrating seamlessly with the [InvenTree API](../api/index.md), the app provides immediate access to inventory data without requiring physical access to a computer.
 
 Native barcode support provides a multitude of context-sensitive stock control actions, allowing streamlined inventory management at your fingertips. The app has been optimized for speed, providing instant access to stock knowledge and handy on-site functionality.
 

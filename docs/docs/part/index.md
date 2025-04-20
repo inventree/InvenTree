@@ -147,7 +147,7 @@ In the web interface, part images can be uploaded directly from the [part view](
 
 #### API
 
-Image upload is supported via the [InvenTree API](../api/api.md), allowing images to be associated with parts programmatically. Further, this means that the [Python interface](../api/python/python.md) also supports image upload.
+Image upload is supported via the [InvenTree API](../api/index.md), allowing images to be associated with parts programmatically. Further, this means that the [Python interface](../api/python/index.md) also supports image upload.
 
 #### Mobile App
 

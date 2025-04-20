@@ -32,7 +32,7 @@ InvenTree allows you to easily create, modify or delete suppliers and supplier i
 
 Instantly view current stock for a certain part, in a particular location, or required for an individual build. Stock items are organized in cascading locations and sub-locations, allowing flexible inspection of stock under any location. Stock items can be serialized for tracking of individual items, and test results can be stored against a serialized stock item for the purpose of acceptance testing and commissioning.
 
-[Read more...](./stock/stock.md)
+[Read more...](./stock/index.md)
 
 ### BOM Management
 
@@ -56,7 +56,7 @@ Generate a wide range of reports using custom templates. [Read more...](./report
 
 The core InvenTree software is implemented on top of a RESTful API, which can be used by external applications. Additionally, a native Python binding library is provided, for rapid development of programs to integrate with InvenTree.
 
-[Read more...](./api/api.md)
+[Read more...](./api/index.md)
 
 ### Extend and Customize
 

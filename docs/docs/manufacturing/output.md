@@ -74,7 +74,7 @@ The following options are available when completing a build output:
 | Option | Description |
 | --- | --- |
 | Status | The [stock status](../stock/status.md) for the completed outputs |
-| Location | The [stock location](../stock/stock.md#stock-location) where the outputs will be located |
+| Location | The [stock location](../stock/index.md#stock-location) where the outputs will be located |
 | Notes | Any additional notes associated with the completion of these outputs |
 | Accept Incomplete Allocation | If selected, this option allows [tracked build outputs](./allocate.md#tracked-build-outputs) to be completed in the case where required BOM items have not been fully allocated |
 

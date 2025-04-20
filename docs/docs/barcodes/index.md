@@ -6,7 +6,7 @@ title: Barcodes
 
 InvenTree has native support for barcodes, which provides powerful functionality "out of the box", and can be easily extended:
 
-- Barcodes can be scanned [via the API](../api/api.md)
+- Barcodes can be scanned [via the API](../api/index.md)
 - The web interface supports barcode scanning
 - Barcodes integrate natively [with the mobile app](../app/barcode.md)
 - Custom barcodes can be assigned to items
@@ -26,8 +26,8 @@ InvenTree supports the following barcode formats:
 Barcodes can be linked with the following data model types:
 
 - [Part](../part/index.md#part)
-- [Stock Item](../stock/stock.md#stock-item)
-- [Stock Location](../stock/stock.md#stock-location)
+- [Stock Item](../stock/index.md#stock-item)
+- [Stock Location](../stock/index.md#stock-location)
 - [Supplier Part](../purchasing/supplier.md#supplier-parts)
 - [Purchase Order](../purchasing/purchase_order.md#purchase-orders)
 - [Sales Order](../sales/sales_order.md#sales-orders)

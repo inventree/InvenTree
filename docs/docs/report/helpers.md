@@ -466,7 +466,7 @@ If you have a custom logo, but explicitly wish to load the InvenTree logo itself
 
 ## Report Assets
 
-[Report Assets](./templates.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
+[Report Assets](./index.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
 
 You can add asset images to the reports and labels by using the `{% raw %}{% asset ... %}{% endraw %}` template tag:
 

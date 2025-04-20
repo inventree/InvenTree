@@ -139,7 +139,7 @@ While [line items](#line-items) must reference a particular stock item, extra li
 
 ## Return Order Reports
 
-Custom [reports](../report/templates.md) can be generated against each Return Order.
+Custom [reports](../report/index.md) can be generated against each Return Order.
 
 ## Order Scheduling
 

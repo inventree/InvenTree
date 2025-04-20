@@ -20,8 +20,8 @@ The following report templates are provided "out of the box" and can be used as 
 | [Return Order](#return-order) | [ReturnOrder](../sales/return_order.md) | Return Order report |
 | [Sales Order](#sales-order) | [SalesOrder](../sales/sales_order.md) | Sales Order report |
 | [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../sales/sales_order.md) | Sales Order Shipment report |
-| [Stock Location](#stock-location) | [StockLocation](../stock/stock.md#stock-location) | Stock Location report |
-| [Test Report](#test-report) | [StockItem](../stock/stock.md#stock-item) | Test Report |
+| [Stock Location](#stock-location) | [StockLocation](../stock/index.md#stock-location) | Stock Location report |
+| [Test Report](#test-report) | [StockItem](../stock/index.md#stock-item) | Test Report |
 
 ### Bill of Materials Report
 
@@ -63,8 +63,8 @@ The following label templates are provided "out of the box" and can be used as a
 | --- | --- | --- |
 | [Build Line](#build-line-label) | [Build line item](../manufacturing/build.md) | Build Line label |
 | [Part](#part-label) | [Part](../part/index.md) | Part label |
-| [Stock Item](#stock-item-label) | [StockItem](../stock/stock.md#stock-item) | Stock Item label |
-| [Stock Location](#stock-location-label) | [StockLocation](../stock/stock.md#stock-location) | Stock Location label |
+| [Stock Item](#stock-item-label) | [StockItem](../stock/index.md#stock-item) | Stock Item label |
+| [Stock Location](#stock-location-label) | [StockLocation](../stock/index.md#stock-location) | Stock Location label |
 
 ### Build Line Label
 

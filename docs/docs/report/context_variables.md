@@ -52,8 +52,8 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 | [salesorder](#sales-order) | A [Sales Order](../sales/sales_order.md) instance |
 | [returnorder](#return-order) | A [Return Order](../sales/return_order.md) instance |
 | [purchaseorder](#purchase-order) | A [Purchase Order](../purchasing/purchase_order.md) instance |
-| [stockitem](#stock-item) | A [StockItem](../stock/stock.md#stock-item) instance |
-| [stocklocation](#stock-location) | A [StockLocation](../stock/stock.md#stock-location) instance |
+| [stockitem](#stock-item) | A [StockItem](../stock/index.md#stock-item) instance |
+| [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-location) instance |
 | [part](#part) | A [Part](../part/index.md) instance |
 
 ### Build Order
@@ -110,7 +110,7 @@ When printing a report or label against a [PurchaseOrder](../purchasing/purchase
 
 ### Stock Item
 
-When printing a report or label against a [StockItem](../stock/stock.md#stock-item) object, the following context variables are available:
+When printing a report or label against a [StockItem](../stock/index.md#stock-item) object, the following context variables are available:
 
 {{ report_context("models", "stockitem") }}
 
@@ -120,7 +120,7 @@ When printing a report or label against a [StockItem](../stock/stock.md#stock-it
 
 ### Stock Location
 
-When printing a report or label against a [StockLocation](../stock/stock.md#stock-location) object, the following context variables are available:
+When printing a report or label against a [StockLocation](../stock/index.md#stock-location) object, the following context variables are available:
 
 {{ report_context("models", "stocklocation") }}
 

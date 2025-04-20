@@ -11,8 +11,8 @@ The following models can be tagged:
 - [Parts](../part/index.md)
 - [Supplier Parts](../purchasing/supplier.md#supplier-parts)
 - [Manufacturer Part](../purchasing/manufacturer.md#manufacturer-parts)
-- [Stock Items](../stock/stock.md#stock-item)
-- [Stock Location](../stock/stock.md#stock-location)
+- [Stock Items](../stock/index.md#stock-item)
+- [Stock Location](../stock/index.md#stock-location)
 
 
 ## Accessing Tags

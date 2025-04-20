@@ -92,7 +92,7 @@ nav:
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
     - Mobile App:
-      - Mobile App: app/app.md
+      - Mobile App: app/index.md
       - Connect: app/connect.md
       - Navigation: app/navigation.md
       - Search: app/search.md
@@ -106,14 +106,14 @@ nav:
       - Translation: app/translation.md
       - Suggestions: app/issues.md
     - InvenTree API:
-      - Overview: api/api.md
+      - Overview: api/index.md
       - API Schema: api/schema.md
       - Model Metadata: api/metadata.md
       - Download Data: api/download.md
       - Bulk Delete: api/bulk_delete.md
       - Interactive API: api/browse.md
     - Python Interface:
-      - Overview: api/python/python.md
+      - Overview: api/python/index.md
       - Currency Support: api/python/currency.md
       - Examples: api/python/examples.md
     - Project Details:
@@ -123,7 +123,7 @@ nav:
       - Privacy: project/privacy.md
       - Threat Model: project/threat_model.md
   - Install:
-    - Introduction: start/intro.md
+    - Introduction: start/index.md
     - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
@@ -153,7 +153,7 @@ nav:
     - Stocktake: part/stocktake.md
     - Notifications: part/notification.md
   - Stock:
-    - Stock Items: stock/stock.md
+    - Stock Items: stock/index.md
     - Stock Status: stock/status.md
     - Stock Tracking: stock/tracking.md
     - Adjusting Stock: stock/adjust.md
@@ -178,7 +178,7 @@ nav:
     - Sales Orders: sales/sales_order.md
     - Return Orders: sales/return_order.md
   - Report:
-    - Templates: report/templates.md
+    - Templates: report/index.md
     - Template Rendering: report/weasyprint.md
     - Template Editor: report/template_editor.md
     - Reports: report/report.md

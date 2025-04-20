@@ -4,7 +4,7 @@ title: Model Metadata
 
 ## Model Metadata
 
-The API is *self describing* in that it provides metadata about the various fields available at any given endpoint. External applications (such as the [python interface](../api/python/python.md)) can introspect the API to determine information about the model fields.
+The API is *self describing* in that it provides metadata about the various fields available at any given endpoint. External applications (such as the [python interface](../api/python/index.md)) can introspect the API to determine information about the model fields.
 
 !!! tip "API Forms"
     The various forms implemented in the InvenTree web interface make heavy use of this metadata feature

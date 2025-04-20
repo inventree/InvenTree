@@ -44,7 +44,7 @@ For any information regarding the reporting architecture, please refer to the [R
 
 ### Automated Test Integration
 
-The stock item testing framework is especially useful when integrating with an automated acceptance testing framework. Test results can be uploaded using the [InvenTree API](../api/api.md) or the [InvenTree Python Interface](../api/python/python.md).
+The stock item testing framework is especially useful when integrating with an automated acceptance testing framework. Test results can be uploaded using the [InvenTree API](../api/index.md) or the [InvenTree Python Interface](../api/python/index.md).
 
 !!! info "Example"
 	You design and sell a temperature sensor which needs to be calibrated before it can be sold. An automated calibration tool sets the offset in the device, and uploads a test result to the InvenTree database.
