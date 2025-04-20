@@ -62,7 +62,7 @@ Purchase Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Purchase Order Currency
 
-The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used. Additionally, the currency can be specified separately for each line item.
+The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./supplier.md) will be used. Additionally, the currency can be specified separately for each line item.
 
 So, when determining the cost of each line item in the purchase order, the following order of precedence is used:
 

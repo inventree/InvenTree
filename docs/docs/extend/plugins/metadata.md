@@ -4,7 +4,7 @@ title: Model Metadata
 
 ## Model Metadata
 
-Plugins have access to internal database models (such at [Parts](../../part/part.md)), and any associated data associated with these models. It may be the case that a particular plugin needs to store some extra information about a particular model instance, to be able to perform custom functionality.
+Plugins have access to internal database models (such at [Parts](../../part/index.md)), and any associated data associated with these models. It may be the case that a particular plugin needs to store some extra information about a particular model instance, to be able to perform custom functionality.
 
 One way of achieving this would be to create an entirely new database model to keep track of this information, using the [app plugin mixin](./app.md). However, this is a very heavy-handed (and complicated) approach!
 

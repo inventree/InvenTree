@@ -93,7 +93,7 @@ The filename pattern allows custom rendering with any context variables which ar
 
 Each template instance provides a *filters* field, which can be used to filter which items a report or label template can be generated against. The target of the *filters* field depends on the model type associated with the particular template.
 
-As an example, let's say that a certain `StockItem` report should only be generated for "trackable" stock items. A filter could easily be constructed to accommodate this, by limiting available items to those where the associated [Part](../part/part.md) is *trackable*:
+As an example, let's say that a certain `StockItem` report should only be generated for "trackable" stock items. A filter could easily be constructed to accommodate this, by limiting available items to those where the associated [Part](../part/index.md) is *trackable*:
 
 {% with id="report-filter-valid", url="report/filters_valid.png", description="Report filter  selection" %}
 {% include 'img.html' %}

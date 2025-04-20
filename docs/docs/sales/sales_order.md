@@ -63,7 +63,7 @@ Sales Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Sales Order Currency
 
-The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./company.md#customers) will be used.
+The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./customer.md) will be used.
 
 ## Create a Sales Order
 

@@ -19,7 +19,7 @@ The main part view is divided into 4 different panels:
 ## Categories
 
 The categories of each part is displayed on the top navigation bar as show in the above screenshot.
-[Click here](./part.md#part-category) for more information about categories.
+[Click here](./index.md#part-category) for more information about categories.
 
 ## Part Details
 
@@ -93,7 +93,7 @@ The *Allocated* tab displays how many units of this part have been allocated to 
 
 ### Bill of Materials
 
-The *BOM* tab displays the [Bill of Materials](../build/bom.md) - a list of sub-components used to build an assembly. Each row in the BOM specifies a quantity of another Part which is required to build the assembly. This tab is only visible if the Part is an *assembly* (meaning it can be build from other parts).
+The *BOM* tab displays the [Bill of Materials](../manufacturing/bom.md) - a list of sub-components used to build an assembly. Each row in the BOM specifies a quantity of another Part which is required to build the assembly. This tab is only visible if the Part is an *assembly* (meaning it can be build from other parts).
 
 ### Build Orders
 

@@ -4,7 +4,7 @@ title: Stock Test Result
 
 ## Stock Test Result
 
-Stock items which are associated with a [testable part](../part/part.md#testable) can have associated test data - this is particularly useful for tracking unit testing / commissioning / acceptance data against a serialized stock item.
+Stock items which are associated with a [testable part](../part/index.md#testable) can have associated test data - this is particularly useful for tracking unit testing / commissioning / acceptance data against a serialized stock item.
 
 The master "Part" record for the stock item can define multiple [test templates](../part/test.md), against which test data can be uploaded. Additionally, arbitrary test information can be assigned to the stock item.
 

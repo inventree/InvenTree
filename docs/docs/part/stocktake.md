@@ -9,7 +9,7 @@ A *Stocktake* refers to a "snapshot" of stock levels for a particular part, at a
 In particular, an individual *Stocktake* record tracks the following information:
 
 - The date of the Stocktake event
-- A reference to the [part](./part.md) which is being counted
+- A reference to the [part](./index.md) which is being counted
 - The total number of individual [stock items](../stock/stock.md) available
 - The total stock quantity of available stock
 - The total cost of stock on hand
@@ -107,8 +107,8 @@ When performing a stocktake, various options are presented to the user:
 
 | Option | Description |
 | --- | --- |
-| Part | Limit stocktake context to a part. If the selected part is a [template part](./part.md#template), any variant parts will also be included in the stocktake |
-| Category | Limit stocktake context to a single [part category](./part.md#part-category). Parts which exist in child categories (under the selected parent category) will also be included. |
+| Part | Limit stocktake context to a part. If the selected part is a [template part](./index.md#template), any variant parts will also be included in the stocktake |
+| Category | Limit stocktake context to a single [part category](./index.md#part-category). Parts which exist in child categories (under the selected parent category) will also be included. |
 | Location | Limit stocktake context to a single [stock location](../stock/stock.md#stock-location). Any parts which have stock items contained in this location (or any child locations) will be included in the stocktake |
 | Generate Report | Select this option to generate a [stocktake report](#stocktake-reports) for the selected parts. |
 | Update Parts | Select this option to save a new stocktake record for each selected part. |

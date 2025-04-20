@@ -218,7 +218,7 @@ You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, o
 !!! info "Administrator Account"
     Providing `INVENTREE_ADMIN` credentials will result in the provided account being created with *superuser* permissions when InvenTree is started.
 
-## Secret Key material
+## Secret Key Material
 
 InvenTree requires secret keys for providing cryptographic signing and oidc private keys- this should be a secret (and unpredictable) value.
 

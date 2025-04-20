@@ -64,7 +64,7 @@ By default, this file will be created as `config.yaml` in the external data volu
 
 InvenTree uses a secret key to provide cryptographic signing for the application.
 
-As specified in the [configuration documentation](./config.md#secret-key) this can be passed to the InvenTree application directly as an environment variable, or provided via a file.
+As specified in the [configuration documentation](./config.md#secret-key-material) this can be passed to the InvenTree application directly as an environment variable, or provided via a file.
 
 By default, the InvenTree container expects the secret key file to exist as `secret_key.txt` (within the external data volume). If this file does not exist, it will be created and a new key will be randomly generated.
 

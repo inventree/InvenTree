@@ -50,7 +50,7 @@ Any users who are subscribed to notifications for the part in question will rece
 
 ### Build Order Notification
 
-When a new [Build Order](../build/build.md) is created, the InvenTree software checks to see if any of the parts required to complete the order are low on stock.
+When a new [Build Order](../manufacturing/build.md) is created, the InvenTree software checks to see if any of the parts required to complete the order are low on stock.
 
 If there are any parts with low stock, a notification is generated for any users subscribed to notifications for the part being built.
 

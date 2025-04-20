@@ -6,7 +6,7 @@ title: Project Codes
 
 A project code is a unique identifier assigned to a specific  project, which helps in tracking and organizing project-related activities and resources. It enables easy retrieval of project-related data and facilitates project management and reporting.
 
-Individual orders (such as [Purchase Orders](./purchase_order.md) or [Sales Orders](./sales_order.md)) can be assigned a *Project Code* to allocate the order against a particular internal project.
+Individual orders (such as [Purchase Orders](../purchasing/purchase_order.md) or [Sales Orders](../sales/sales_order.md)) can be assigned a *Project Code* to allocate the order against a particular internal project.
 
 ### Managing Project Codes
 

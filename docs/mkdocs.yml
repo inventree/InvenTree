@@ -72,25 +72,56 @@ extra_javascript:
 nav:
   - InvenTree:
     - InvenTree: index.md
-    - Features: features.md
     - FAQ: faq.md
+    - Demo: demo.md
+    - Release Notes: releases/release_notes.md
     - Core Concepts:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
+      - Companies: concepts/company.md
       - Custom States: concepts/custom_states.md
       - Pricing: concepts/pricing.md
-      - Threat Model: concepts/threat_model.md
+      - Project Codes: concepts/project_codes.md
+      - Barcodes:
+        - Overview: barcodes/barcodes.md
+        - Internal Barcodes: barcodes/internal.md
+        - External Barcodes: barcodes/external.md
+        - Custom Barcodes: barcodes/custom.md
     - Development:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
-    - Privacy: privacy.md
-    - Release Notes: releases/release_notes.md
-    - Project:
+    - Mobile App:
+      - Mobile App: app/app.md
+      - Connect: app/connect.md
+      - Navigation: app/navigation.md
+      - Search: app/search.md
+      - Barcodes: app/barcode.md
+      - Parts: app/part.md
+      - Stock: app/stock.md
+      - Purchase Orders: app/po.md
+      - Sales Orders: app/so.md
+      - Settings: app/settings.md
+      - Privacy: app/privacy.md
+      - Translation: app/translation.md
+      - Suggestions: app/issues.md
+    - InvenTree API:
+      - Overview: api/api.md
+      - API Schema: api/schema.md
+      - Model Metadata: api/metadata.md
+      - Download Data: api/download.md
+      - Bulk Delete: api/bulk_delete.md
+      - Interactive API: api/browse.md
+    - Python Interface:
+      - Overview: api/python/python.md
+      - Currency Support: api/python/currency.md
+      - Examples: api/python/examples.md
+    - Project Details:
       - Governance: project/governance.md
       - Project Security: project/security.md
       - Resources: project/resources.md
-    - Security: security.md
+      - Privacy: project/privacy.md
+      - Threat Model: project/threat_model.md
   - Install:
     - Introduction: start/intro.md
     - Processes: start/processes.md
@@ -109,7 +140,7 @@ nav:
     - Migrating Data: start/migrate.md
     - Advanced Topics: start/advanced.md
   - Parts:
-    - Parts: part/part.md
+    - Parts: part/index.md
     - Creating Parts: part/create.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
@@ -129,18 +160,23 @@ nav:
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md
-  - Build:
-    - Build Orders: build/build.md
-    - Build Outputs: build/output.md
-    - Allocating Stock: build/allocate.md
-    - Example Build Order: build/example.md
-    - Bill of Materials: build/bom.md
-  - Orders:
-    - Companies: order/company.md
-    - Purchase Orders: order/purchase_order.md
-    - Sales Orders: order/sales_order.md
-    - Return Orders: order/return_order.md
-    - Project Codes: order/project_codes.md
+  - Manufacturing:
+    - Manufacturing: manufacturing/index.md
+    - Bill of Materials: manufacturing/bom.md
+    - Build Orders: manufacturing/build.md
+    - Build Outputs: manufacturing/output.md
+    - Allocating Stock: manufacturing/allocate.md
+    - Example Build Order: manufacturing/example.md
+  - Purchasing:
+    - Purchasing: purchasing/index.md
+    - Suppliers: purchasing/supplier.md
+    - Manufacturers: purchasing/manufacturer.md
+    - Purchase Orders: purchasing/purchase_order.md
+  - Sales:
+    - Sales: sales/index.md
+    - Customers: sales/customer.md
+    - Sales Orders: sales/sales_order.md
+    - Return Orders: sales/return_order.md
   - Report:
     - Templates: report/templates.md
     - Template Rendering: report/weasyprint.md
@@ -151,7 +187,7 @@ nav:
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
     - Sample Templates: report/samples.md
-  - Admin:
+  - Administration:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
@@ -168,38 +204,8 @@ nav:
       - Background Tasks: settings/tasks.md
       - Error Logs: settings/logs.md
       - Error Codes: settings/error_codes.md
-  - App:
-    - InvenTree App: app/app.md
-    - Connect: app/connect.md
-    - Navigation: app/navigation.md
-    - Search: app/search.md
-    - Barcodes: app/barcode.md
-    - Parts: app/part.md
-    - Stock: app/stock.md
-    - Purchase Orders: app/po.md
-    - Sales Orders: app/so.md
-    - Settings: app/settings.md
-    - Privacy: app/privacy.md
-    - Translation: app/translation.md
-    - Suggestions: app/issues.md
-  - Extend:
-    - InvenTree API:
-      - Overview: api/api.md
-      - API Schema: api/schema.md
-      - Model Metadata: api/metadata.md
-      - Download Data: api/download.md
-      - Bulk Delete: api/bulk_delete.md
-      - Interactive API: api/browse.md
-    - Python Interface:
-      - Overview: api/python/python.md
-      - Currency Support: api/python/currency.md
-      - Examples: api/python/examples.md
-    - Barcodes:
-      - Overview: barcodes/barcodes.md
-      - Internal Barcodes: barcodes/internal.md
-      - External Barcodes: barcodes/external.md
-      - Custom Barcodes: barcodes/custom.md
-    - Plugins:
+  - Plugins:
+    - Plugin System:
       - Overview: extend/plugins.md
       - Installation: extend/plugins/install.md
       - Developing a Plugin: extend/how_to_plugin.md

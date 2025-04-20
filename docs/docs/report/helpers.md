@@ -489,7 +489,7 @@ If you need to load a part parameter for a particular Part, within the context o
 
 ### Example
 
-The following example assumes that you have a report or label which contains a valid [Part](../part/part.md) instance:
+The following example assumes that you have a report or label which contains a valid [Part](../part/index.md) instance:
 
 ```
 {% raw %}

@@ -199,19 +199,19 @@ Configuration of stock item options
 
 ### Build Orders
 
-Refer to the [build order settings](../build/build.md#build-order-settings).
+Refer to the [build order settings](../manufacturing/build.md#build-order-settings).
 
 ### Purchase Orders
 
-Refer to the [purchase order settings](../order/purchase_order.md#purchase-order-settings).
+Refer to the [purchase order settings](../purchasing/purchase_order.md#purchase-order-settings).
 
 ### Sales Orders
 
-Refer to the [sales order settings](../order/sales_order.md#sales-order-settings).
+Refer to the [sales order settings](../sales/sales_order.md#sales-order-settings).
 
 ### Return Orders
 
-Refer to the [return order settings](../order/return_order.md#return-order-settings).
+Refer to the [return order settings](../sales/return_order.md#return-order-settings).
 
 ### Plugin Settings
 

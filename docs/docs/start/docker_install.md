@@ -187,7 +187,7 @@ This will export database records to the file `data.json` in your mounted volume
 
 ### Check your security posture
 
-It is recommended to check the [threat modelling inputs](../concepts/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
+It is recommended to check the [threat modelling inputs](../project/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
 
 ### Custom Domain
 

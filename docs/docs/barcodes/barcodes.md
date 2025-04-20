@@ -25,14 +25,14 @@ InvenTree supports the following barcode formats:
 
 Barcodes can be linked with the following data model types:
 
-- [Part](../part/part.md#part)
+- [Part](../part/index.md#part)
 - [Stock Item](../stock/stock.md#stock-item)
 - [Stock Location](../stock/stock.md#stock-location)
-- [Supplier Part](../order/company.md#supplier-parts)
-- [Purchase Order](../order/purchase_order.md#purchase-orders)
-- [Sales Order](../order/sales_order.md#sales-orders)
-- [Return Order](../order/return_order.md#return-orders)
-- [Build Order](../build/build.md#build-orders)
+- [Supplier Part](../purchasing/supplier.md#supplier-parts)
+- [Purchase Order](../purchasing/purchase_order.md#purchase-orders)
+- [Sales Order](../sales/sales_order.md#sales-orders)
+- [Return Order](../sales/return_order.md#return-orders)
+- [Build Order](../manufacturing/build.md#build-orders)
 
 ### Configuration Options
 

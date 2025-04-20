@@ -53,7 +53,7 @@ A serial "number" is used to uniquely identify a single, unique stock item. Note
 
 #### Uniqueness Requirements
 
-By default, serial numbers must be unique across any given [Part](../part/part.md) instance (including any variants of that part).
+By default, serial numbers must be unique across any given [Part](../part/index.md) instance (including any variants of that part).
 
 However, it is also possible to specify that serial numbers must be globally unique across all types of parts. This is configurable in the settings display (see below):
 

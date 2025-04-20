@@ -14,12 +14,12 @@ The following report templates are provided "out of the box" and can be used as 
 
 | Template | Model Type | Description |
 | --- | --- | --- |
-| [Bill of Materials](#bill-of-materials-report) | [Part](../part/part.md) | Bill of Materials report |
-| [Build Order](#build-order) | [BuildOrder](../build/build.md) | Build Order report |
-| [Purchase Order](#purchase-order) | [PurchaseOrder](../order/purchase_order.md) | Purchase Order report |
-| [Return Order](#return-order) | [ReturnOrder](../order/return_order.md) | Return Order report |
-| [Sales Order](#sales-order) | [SalesOrder](../order/sales_order.md) | Sales Order report |
-| [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../order/sales_order.md) | Sales Order Shipment report |
+| [Bill of Materials](#bill-of-materials-report) | [Part](../part/index.md) | Bill of Materials report |
+| [Build Order](#build-order) | [BuildOrder](../manufacturing/build.md) | Build Order report |
+| [Purchase Order](#purchase-order) | [PurchaseOrder](../purchasing/purchase_order.md) | Purchase Order report |
+| [Return Order](#return-order) | [ReturnOrder](../sales/return_order.md) | Return Order report |
+| [Sales Order](#sales-order) | [SalesOrder](../sales/sales_order.md) | Sales Order report |
+| [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../sales/sales_order.md) | Sales Order Shipment report |
 | [Stock Location](#stock-location) | [StockLocation](../stock/stock.md#stock-location) | Stock Location report |
 | [Test Report](#test-report) | [StockItem](../stock/stock.md#stock-item) | Test Report |
 
@@ -61,8 +61,8 @@ The following label templates are provided "out of the box" and can be used as a
 
 | Template | Model Type | Description |
 | --- | --- | --- |
-| [Build Line](#build-line-label) | [Build line item](../build/build.md) | Build Line label |
-| [Part](#part-label) | [Part](../part/part.md) | Part label |
+| [Build Line](#build-line-label) | [Build line item](../manufacturing/build.md) | Build Line label |
+| [Part](#part-label) | [Part](../part/index.md) | Part label |
 | [Stock Item](#stock-item-label) | [StockItem](../stock/stock.md#stock-item) | Stock Item label |
 | [Stock Location](#stock-location-label) | [StockLocation](../stock/stock.md#stock-location) | Stock Location label |
 

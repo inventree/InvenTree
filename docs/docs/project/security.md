@@ -53,3 +53,7 @@ We also follow OpenSSF recommendations where applicable and take part in multipl
 
 - OSSF Best Practices, currently at a [level of passing](https://www.bestpractices.dev/de/projects/7179)
 - OSSF Scorecard, running with each merge [check current state](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
+
+## Security Policy
+
+The official [Security Policy]({{ sourcefile("SECURITY.md") }}) is available in the code repository.

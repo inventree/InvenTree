@@ -13,7 +13,7 @@ The API is *self describing* in that it provides metadata about the various fiel
 
 To request metadata about a particular API endpoint, simply perform an `OPTIONS` method request against the API URL.
 
-For example, to view the metadata available for creating a new [Part Category](../part/part.md#part-category), an `OPTIONS` request to `/api/part/category/` yields:
+For example, to view the metadata available for creating a new [Part Category](../part/index.md#part-category), an `OPTIONS` request to `/api/part/category/` yields:
 
 {% with id="api_cat_options", url="api/api_category_options.png", description="Part category options" %}
 {% include 'img.html' %}

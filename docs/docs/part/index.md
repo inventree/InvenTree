@@ -41,11 +41,11 @@ A *Template* part is one which can have *variants* which exist underneath it. [R
 
 ### Assembly
 
-If a part is designated as an *Assembly* it can be created (or built) from other component parts. As an example, a circuit board assembly is made using multiple electronic components, which are tracked in the system. An *Assembly* Part has a Bill of Materials (BOM) which lists all the required sub-components. [Read further information about BOM management here](../build/bom.md).
+If a part is designated as an *Assembly* it can be created (or built) from other component parts. As an example, a circuit board assembly is made using multiple electronic components, which are tracked in the system. An *Assembly* Part has a Bill of Materials (BOM) which lists all the required sub-components. [Read further information about BOM management here](../manufacturing/bom.md).
 
 ### Component
 
-If a part is designated as a *Component* it can be used as a sub-component of an *Assembly*. [Read further information about BOM management here](../build/bom.md)
+If a part is designated as a *Component* it can be used as a sub-component of an *Assembly*. [Read further information about BOM management here](../manufacturing/bom.md)
 
 ### Testable
 
@@ -63,15 +63,15 @@ If a part is designated as *Purchaseable* it can be purchased from external supp
 
 #### Suppliers
 
-A [Supplier](../order/company.md#suppliers) is an external vendor who provides goods or services.
+A [Supplier](../purchasing/supplier.md) is an external vendor who provides goods or services.
 
 #### Supplier Parts
 
-Purchaseable parts can be linked to [Supplier Parts](../order/company.md#supplier-parts). A supplier part represents an individual piece or unit that is procured from an external vendor.
+Purchaseable parts can be linked to [Supplier Parts](../purchasing/supplier.md#supplier-parts). A supplier part represents an individual piece or unit that is procured from an external vendor.
 
 #### Purchase Orders
 
-A [Purchase Order](../order/purchase_order.md) allows parts to be ordered from an external supplier.
+A [Purchase Order](../purchasing/purchase_order.md) allows parts to be ordered from an external supplier.
 
 ### Salable
 
@@ -106,7 +106,7 @@ It is possible to track parts using physical quantity values, such as *metres* o
 
 ### Supplier Part Units
 
-By default, units of measure for [supplier parts](../order/company.md#supplier-parts) are specified in the same unit as their base part. However, supplier part units can be changed to any unit *which is compatible with the base unit*.
+By default, units of measure for [supplier parts](../purchasing/supplier.md#supplier-parts) are specified in the same unit as their base part. However, supplier part units can be changed to any unit *which is compatible with the base unit*.
 
 !!! info "Example: Supplier Part Units"
     If the base part has a unit of `metres` then valid units for any supplier parts would include `feet`, `cm`, `inches` (etc)

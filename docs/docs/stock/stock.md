@@ -33,7 +33,7 @@ The external flag does not get inherited to sublocations.
 
 ## Stock Item
 
-A *Stock Item* is an actual instance of a [*Part*](../part/part.md) item. It represents a physical quantity of the *Part* in a specific location.
+A *Stock Item* is an actual instance of a [*Part*](../part/index.md) item. It represents a physical quantity of the *Part* in a specific location.
 
 ### Stock Item Details
 

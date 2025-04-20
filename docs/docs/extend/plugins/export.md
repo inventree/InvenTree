@@ -105,7 +105,7 @@ A generic exporter class which simply serializes the API output into a data file
 
 ### BOM Exporter
 
-A custom exporter which only supports [bill of materials](../../build/bom.md) exporting.
+A custom exporter which only supports [bill of materials](../../manufacturing/bom.md) exporting.
 
 ::: plugin.builtin.exporter.bom_exporter.BomExporterPlugin
     options:
