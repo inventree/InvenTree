@@ -484,4 +484,13 @@ def get_frontend_settings(debug=True):
         # If no servers are specified, show server selector
         frontend_settings['show_server_selector'] = True
 
+    # Support compatibility with "legacy" URLs?
+    try:
+        frontend_settings['url_compatibility'] = bool(
+            frontend_settings.get('url_compatibility', True)
+        )
+    except Exception:
+        # If the value is not a boolean, set it to True
+        frontend_settings['url_compatibility'] = True
+
     return frontend_settings
