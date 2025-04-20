@@ -4,19 +4,9 @@ title: Part Views
 
 ## Part Views
 
-The main part view is divided into 4 different panels:
+The Part detail view page provides a detailed view of a single part in the system. The page is divided into several sections, which are described in this document.
 
-1. Categories
-2. Details
-3. Tabs
-4. Content of each tab
-
-{% with id="part_view_intro", url="part/part_view_intro.png", description="Part View Introduction" %}
-{% include 'img.html' %}
-{% endwith %}
-<p></p>
-
-## Categories
+### Category Breadcrumb List
 
 The categories of each part is displayed on the top navigation bar as show in the above screenshot.
 [Click here](./index.md#part-category) for more information about categories.
@@ -145,11 +135,7 @@ Related parts can be added and are shown under a table of the same name in the "
 {% include 'img.html' %}
 {% endwith %}
 
-This feature can be enabled or disabled in the global part settings:
-
-{% with id="related_parts_setting", url="part/part_related_setting.png", description="Related Parts Example View" %}
-{% include 'img.html' %}
-{% endwith %}
+This feature can be enabled or disabled in the global part settings.
 
 ### Attachments
 

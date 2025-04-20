@@ -32,14 +32,6 @@ All past notification are listed in the history. They can be deleted one-by-one 
 {% include 'img.html' %}
 {% endwith %}
 
-## Subscription List
-
-Users can view the parts and categories they are subscribed to on the InvenTree home page:
-
-{% with id="cat_subs", url="part/cat_subs.png", description="Category subscription list" %}
-{% include 'img.html' %}
-{% endwith %}
-
 ## Part Notification Events
 
 ### Low Stock Notification
@@ -88,8 +80,4 @@ When subscribed to a *Part Category*, a user will receive notifications when par
 - Any parts contained in the category
 - Any parts contained in the lower level categories
 
-Subscribing to a part category operates in the same manner as for a part - simply click on the notification icon:
-
-{% with id="cat_sub", url="part/category_notification.png", description="Subscribe to part category" %}
-{% include 'img.html' %}
-{% endwith %}
+Subscribing to a part category operates in the same manner as for a part - simply click on the notification icon.

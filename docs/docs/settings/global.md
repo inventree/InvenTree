@@ -157,6 +157,7 @@ Configuration of report generation:
 {{ globalsetting("PART_COPY_TESTS") }}
 {{ globalsetting("PART_CATEGORY_PARAMETERS") }}
 {{ globalsetting("PART_CATEGORY_DEFAULT_ICON") }}
+{{ globalsetting("PART_PARAMETER_ENFORCE_UNITS") }}
 
 #### Part Parameter Templates
 

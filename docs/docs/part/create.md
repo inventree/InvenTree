@@ -9,7 +9,7 @@ New parts can be created from the *Part Category* view, by pressing the *New Par
 !!! info "Permissions"
     If the user does not have "create" permission for the *Part* permission group, the *New Part* button will not be available.
 
-{% with id="new", url="part/new_part.png", descript="New Part" %}
+{% with id="new", url="part/new_part.png", description="New Part" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -17,7 +17,7 @@ New parts can be created from the *Part Category* view, by pressing the *New Par
 A part creation form is opened as shown below:
 
 
-{% with id="newform", url="part/part_create_form.png", descript="New Part Form" %}
+{% with id="newform", url="part/part_create_form.png", description="New Part Form" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -29,10 +29,6 @@ Once the form is completed, the browser window is redirected to the new part det
 ### Initial Stock
 
 If the *Create Initial Stock* setting is enabled, then an extra section is available in the part creation form to create an initial quantity of stock for the newly created part:
-
-{% with id="setting", url="part/create_initial_stock_option.png", description="Create stock option" %}
-{% include "img.html" %}
-{% endwith %}
 
 If this setting is enabled, the following elements are available in the form:
 
