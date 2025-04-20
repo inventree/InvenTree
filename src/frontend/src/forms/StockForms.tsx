@@ -11,7 +11,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -491,15 +491,19 @@ function StockOperationsRow({
     props.removeFn(props.idx);
   };
 
+  const callChangeFn = (idx: number, key: string, value: any) => {
+    setTimeout(() => props.changeFn(idx, key, value), 0);
+  };
+
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
     onOpen: () => {
       if (transfer) {
-        props.changeFn(props.idx, 'packaging', record?.packaging || undefined);
+        callChangeFn(props.idx, 'packaging', record?.packaging || undefined);
       }
     },
     onClose: () => {
       if (transfer) {
-        props.changeFn(props.idx, 'packaging', undefined);
+        callChangeFn(props.idx, 'packaging', undefined);
       }
     }
   });
@@ -511,7 +515,7 @@ function StockOperationsRow({
     },
     onClose: () => {
       setStatus(undefined);
-      props.changeFn(props.idx, 'status', undefined);
+      callChangeFn(props.idx, 'status', undefined);
     }
   });
 

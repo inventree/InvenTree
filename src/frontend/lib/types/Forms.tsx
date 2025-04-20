@@ -1,6 +1,6 @@
 import type { DefaultMantineColor, MantineStyleProp } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
-import type { ReactNode } from 'react';
+import type { JSX, ReactNode } from 'react';
 import type { FieldValues, UseFormReturn } from 'react-hook-form';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import type { ModelType } from '../enums/ModelType';

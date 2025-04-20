@@ -18,6 +18,8 @@ import type { AuthProvider } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { ProviderLogin } from '../../functions/auth';
 
+import type { JSX } from 'react';
+
 const brandIcons: { [key: string]: JSX.Element } = {
   google: <IconBrandGoogle />,
   github: <IconBrandGithub />,

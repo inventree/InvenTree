@@ -4,6 +4,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
+import type { JSX } from 'react';
 import { useApi } from '../../contexts/ApiContext';
 import { ActionButton } from './ActionButton';
 

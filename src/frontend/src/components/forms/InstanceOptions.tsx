@@ -21,6 +21,7 @@ import {
 } from '@tabler/icons-react';
 
 import type { HostList } from '@lib/types/Server';
+import { useShallow } from 'zustand/react/shallow';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -36,12 +37,10 @@ export function InstanceOptions({
   ChangeHost: (newHost: string | null) => void;
   setHostEdit: () => void;
 }>) {
-  const [hostListEdit, setHostListEdit] = useToggle([false, true] as const);
-  const [setHost, setHostList, hostList] = useLocalState((state) => [
-    state.setHost,
-    state.setHostList,
-    state.hostList
-  ]);
+  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
+  const [setHost, setHostList, hostList] = useLocalState(
+    useShallow((state) => [state.setHost, state.setHostList, state.hostList])
+  );
   const hostListData = Object.keys(hostList).map((key) => ({
     value: key,
     label: hostList[key]?.name
@@ -63,13 +62,13 @@ export function InstanceOptions({
           value={hostKey}
           onChange={ChangeHost}
           data={hostListData}
-          disabled={hostListEdit}
+          disabled={HostListEdit}
         />
         <Group gap='xs' wrap='nowrap'>
           <Tooltip label={t`Edit host options`} position='top'>
             <ActionButton
               variant='transparent'
-              disabled={hostListEdit}
+              disabled={HostListEdit}
               onClick={setHostListEdit}
               icon={<IconEdit />}
             />
@@ -78,7 +77,7 @@ export function InstanceOptions({
             <ActionButton
               variant='transparent'
               onClick={setHostEdit}
-              disabled={hostListEdit}
+              disabled={HostListEdit}
               icon={<IconCircleCheck />}
               color='green'
             />
@@ -86,7 +85,7 @@ export function InstanceOptions({
         </Group>
       </Group>
 
-      {hostListEdit ? (
+      {HostListEdit ? (
         <>
           <Divider my={'sm'} />
           <Text>
@@ -111,7 +110,7 @@ function ServerInfo({
   hostList: HostList;
   hostKey: string;
 }>) {
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   const items: any[] = [
     {

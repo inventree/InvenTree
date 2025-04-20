@@ -30,7 +30,7 @@ export default function RemoteComponent({
   defaultFunctionName: string;
   context: InvenTreePluginContext;
 }>) {
-  const componentRef = useRef<HTMLDivElement>();
+  const componentRef = useRef<HTMLDivElement>(undefined);
   const [rootElement, setRootElement] = useState<Root | null>(null);
 
   useEffect(() => {
