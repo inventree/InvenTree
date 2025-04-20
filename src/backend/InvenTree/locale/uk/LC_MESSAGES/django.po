@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 02:43+0000\n"
-"PO-Revision-Date: 2025-04-15 02:46\n"
+"POT-Creation-Date: 2025-04-19 14:23+0000\n"
+"PO-Revision-Date: 2025-04-19 14:25\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Language: uk_UA\n"
@@ -19,37 +19,37 @@ msgstr ""
 
 #: InvenTree/AllUserRequire2FAMiddleware.py:42
 msgid "You must enable two-factor authentication before doing anything else."
-msgstr ""
+msgstr "Необхідно увімкнути двофакторну автентифікацію, перед тим як робити будь-що інше."
 
-#: InvenTree/api.py:358
+#: InvenTree/api.py:357
 msgid "API endpoint not found"
 msgstr "Кінцева точка API не знайдена"
 
-#: InvenTree/api.py:434
+#: InvenTree/api.py:433
 msgid "List of items or filters must be provided for bulk operation"
-msgstr ""
+msgstr "Для масових операцій необхідно надати перелік сутностей або фільтрів"
 
-#: InvenTree/api.py:441
+#: InvenTree/api.py:440
 msgid "Items must be provided as a list"
-msgstr ""
+msgstr "Сутності необхідно надати списком"
 
-#: InvenTree/api.py:449
+#: InvenTree/api.py:448
 msgid "Invalid items list provided"
-msgstr ""
+msgstr "Надано неправильний список сутностей"
 
-#: InvenTree/api.py:455
+#: InvenTree/api.py:454
 msgid "Filters must be provided as a dict"
-msgstr ""
+msgstr "Фільтри необхідно надавати у вигляді словника"
 
-#: InvenTree/api.py:462
+#: InvenTree/api.py:461
 msgid "Invalid filters provided"
-msgstr ""
+msgstr "Надано неправильні фільтри"
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:466
 msgid "No items match the provided criteria"
-msgstr ""
+msgstr "Немає сутностей що відповідають наданим критеріям"
 
-#: InvenTree/api.py:710
+#: InvenTree/api.py:709
 msgid "User does not have permission to view this model"
 msgstr "У користувача немає дозволу на перегляд цієї моделі"
 
@@ -76,7 +76,7 @@ msgstr "Наданий домен електронної пошти не зат�
 #: InvenTree/conversion.py:162
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Надано неправильну одиницю виміру ({unit})"
 
 #: InvenTree/conversion.py:179
 msgid "No value provided"
@@ -96,15 +96,15 @@ msgstr "Невірна кількість"
 msgid "Error details can be found in the admin panel"
 msgstr "Деталі помилки можна знайти на панелі адміністратора"
 
-#: InvenTree/fields.py:136
+#: InvenTree/fields.py:138
 msgid "Enter date"
 msgstr "Введіть дату"
 
-#: InvenTree/fields.py:159
+#: InvenTree/fields.py:161
 msgid "Invalid decimal value"
-msgstr ""
+msgstr "Неправильне десяткове значення"
 
-#: InvenTree/fields.py:208 InvenTree/models.py:887 build/serializers.py:526
+#: InvenTree/fields.py:210 InvenTree/models.py:887 build/serializers.py:526
 #: build/serializers.py:597 company/models.py:834 order/models.py:1579
 #: part/models.py:3366
 #: report/templates/report/inventree_build_order_report.html:172
@@ -118,15 +118,15 @@ msgstr "Нотатки"
 #: InvenTree/format.py:166
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Значення '{name}' не відповідає шаблону формату"
 
 #: InvenTree/format.py:177
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Надане значення не відповідає обов'язковому шаблону: "
 
 #: InvenTree/helpers.py:552
 msgid "Cannot serialize more than 1000 items at once"
-msgstr ""
+msgstr "Неможливо серіалізувати більше ніж 1000 сутностей за раз"
 
 #: InvenTree/helpers.py:558
 msgid "Empty serial number string"
@@ -297,7 +297,7 @@ msgstr ""
 
 #: InvenTree/locales.py:45
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Португальська (Бразилія)"
 
 #: InvenTree/locales.py:46
 msgid "Romanian"
@@ -409,7 +409,7 @@ msgstr ""
 #: part/models.py:1039 part/models.py:3837 plugin/models.py:53
 #: report/models.py:203 stock/models.py:83
 msgid "Name"
-msgstr ""
+msgstr "Назва"
 
 #: InvenTree/models.py:740 build/models.py:242 common/models.py:123
 #: common/models.py:2143 common/models.py:2256 company/models.py:521
@@ -419,11 +419,11 @@ msgstr ""
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/models.py:89
 msgid "Description"
-msgstr ""
+msgstr "Опис"
 
 #: InvenTree/models.py:741 stock/models.py:90
 msgid "Description (optional)"
-msgstr ""
+msgstr "Опис (опціонально)"
 
 #: InvenTree/models.py:756 common/models.py:2309
 msgid "Path"
@@ -431,7 +431,7 @@ msgstr "Шлях"
 
 #: InvenTree/models.py:887
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "Примітки в Markdown (опціонально)"
 
 #: InvenTree/models.py:918
 msgid "Barcode Data"
@@ -464,7 +464,7 @@ msgstr ""
 
 #: InvenTree/models.py:1102
 msgid "Server Error"
-msgstr ""
+msgstr "Помилка сервера"
 
 #: InvenTree/models.py:1103
 msgid "An error has been logged by the server."
@@ -510,15 +510,15 @@ msgstr ""
 msgid "Not a valid currency code"
 msgstr ""
 
-#: InvenTree/validators.py:113 InvenTree/validators.py:129
+#: InvenTree/validators.py:116 InvenTree/validators.py:132
 msgid "Overage value must not be negative"
 msgstr ""
 
-#: InvenTree/validators.py:131
+#: InvenTree/validators.py:134
 msgid "Overage must not exceed 100%"
 msgstr ""
 
-#: InvenTree/validators.py:137
+#: InvenTree/validators.py:140
 msgid "Invalid value for overage"
 msgstr ""
 
@@ -531,7 +531,7 @@ msgid "Parent Build"
 msgstr ""
 
 #: build/api.py:69 build/api.py:768 order/api.py:512 order/api.py:732
-#: order/api.py:1106 order/api.py:1334 stock/api.py:521
+#: order/api.py:1106 order/api.py:1334 stock/api.py:522
 msgid "Include Variants"
 msgstr ""
 
@@ -541,7 +541,7 @@ msgstr ""
 #: order/api.py:291 order/api.py:295 order/api.py:880 order/api.py:1119
 #: order/api.py:1122 order/models.py:1704 order/models.py:1863
 #: order/models.py:1864 part/api.py:1448 part/api.py:1451 part/api.py:1517
-#: part/api.py:1824 part/models.py:457 part/models.py:3195 part/models.py:3339
+#: part/api.py:1827 part/models.py:457 part/models.py:3195 part/models.py:3339
 #: part/models.py:3487 part/models.py:3508 part/models.py:3530
 #: part/models.py:3666 part/models.py:4027 part/models.py:4299
 #: part/models.py:4665 part/serializers.py:1226 part/serializers.py:1887
@@ -553,7 +553,7 @@ msgstr ""
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:534 stock/serializers.py:119 stock/serializers.py:167
+#: stock/api.py:535 stock/serializers.py:119 stock/serializers.py:167
 #: stock/serializers.py:477 stock/serializers.py:639 stock/serializers.py:944
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -565,7 +565,7 @@ msgstr "Деталь"
 
 #: build/api.py:105 build/api.py:108 part/api.py:1531 part/models.py:1080
 #: part/models.py:3558 part/models.py:4136 part/serializers.py:1236
-#: stock/api.py:817
+#: stock/api.py:818
 msgid "Category"
 msgstr ""
 
@@ -644,14 +644,14 @@ msgstr ""
 
 #: build/api.py:453 build/serializers.py:1392 part/models.py:4333
 msgid "Consumable"
-msgstr ""
+msgstr "Розхідний матеріал"
 
 #: build/api.py:456 build/serializers.py:1395 part/models.py:4327
 msgid "Optional"
 msgstr ""
 
 #: build/api.py:459 common/setting/system.py:429 part/models.py:1211
-#: part/serializers.py:1634 part/serializers.py:1643 stock/api.py:587
+#: part/serializers.py:1634 part/serializers.py:1643 stock/api.py:588
 msgid "Assembly"
 msgstr ""
 
@@ -943,7 +943,7 @@ msgstr ""
 #: stock/serializers.py:135 stock/serializers.py:175 stock/serializers.py:714
 #: templates/email/build_order_completed.html:18
 msgid "Quantity"
-msgstr ""
+msgstr "Кількість"
 
 #: build/models.py:1571
 msgid "Required quantity for build order"
@@ -1066,7 +1066,7 @@ msgstr ""
 #: stock/serializers.py:909 stock/serializers.py:1037 stock/serializers.py:1497
 #: stock/serializers.py:1785 users/models.py:551
 msgid "Location"
-msgstr ""
+msgstr "Місце"
 
 #: build/serializers.py:390
 msgid "Stock location for build output"
@@ -1080,7 +1080,7 @@ msgstr ""
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:440 order/serializers.py:884 stock/api.py:1076
+#: build/serializers.py:440 order/serializers.py:884 stock/api.py:1077
 #: stock/models.py:1753
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
@@ -1318,10 +1318,10 @@ msgstr ""
 
 #: build/serializers.py:1407 part/models.py:4381
 msgid "Allow Variants"
-msgstr ""
+msgstr "Дозволити варіанти"
 
 #: build/serializers.py:1412 build/serializers.py:1416 part/models.py:4179
-#: part/models.py:4657 stock/api.py:830
+#: part/models.py:4657 stock/api.py:831
 msgid "BOM Item"
 msgstr ""
 
@@ -1393,19 +1393,19 @@ msgstr ""
 msgid "Build order {bo} is now overdue"
 msgstr ""
 
-#: common/api.py:734
+#: common/api.py:710
 msgid "Is Link"
 msgstr ""
 
-#: common/api.py:742
+#: common/api.py:718
 msgid "Is File"
 msgstr ""
 
-#: common/api.py:785
+#: common/api.py:761
 msgid "User does not have permission to delete these attachments"
 msgstr ""
 
-#: common/api.py:802
+#: common/api.py:778
 msgid "User does not have permission to delete this attachment"
 msgstr ""
 
@@ -1494,7 +1494,7 @@ msgstr ""
 #: common/models.py:1263 company/serializers.py:567 order/models.py:1632
 #: order/models.py:2734
 msgid "Price"
-msgstr ""
+msgstr "Ціна"
 
 #: common/models.py:1264
 msgid "Unit price at specified quantity"
@@ -1514,7 +1514,7 @@ msgstr ""
 
 #: common/models.py:1330 common/models.py:2156 common/models.py:2263
 #: company/models.py:164 company/models.py:799 machine/models.py:39
-#: part/models.py:1246 plugin/models.py:68 stock/api.py:590 users/models.py:201
+#: part/models.py:1246 plugin/models.py:68 stock/api.py:591 users/models.py:201
 #: users/models.py:556 users/serializers.py:329
 msgid "Active"
 msgstr ""
@@ -1697,7 +1697,7 @@ msgstr ""
 
 #: common/models.py:1906
 msgid "Comment"
-msgstr ""
+msgstr "Коментар"
 
 #: common/models.py:1907
 msgid "Attachment comment"
@@ -1705,19 +1705,19 @@ msgstr ""
 
 #: common/models.py:1923
 msgid "Upload date"
-msgstr ""
+msgstr "Дата завантаження"
 
 #: common/models.py:1924
 msgid "Date the file was uploaded"
-msgstr ""
+msgstr "Дата завантаження файлу"
 
 #: common/models.py:1928
 msgid "File size"
-msgstr ""
+msgstr "Розмір файлу"
 
 #: common/models.py:1928
 msgid "File size in bytes"
-msgstr ""
+msgstr "Розмір файлу в байтах"
 
 #: common/models.py:1966 common/serializers.py:637
 msgid "Invalid model type specified for attachment"
@@ -1771,7 +1771,7 @@ msgstr ""
 
 #: common/models.py:2029 generic/states/serializers.py:24
 msgid "Color"
-msgstr ""
+msgstr "Колір"
 
 #: common/models.py:2030
 msgid "Color that will be displayed in the frontend"
@@ -1779,7 +1779,7 @@ msgstr ""
 
 #: common/models.py:2038 part/serializers.py:281
 msgid "Model"
-msgstr ""
+msgstr "Модель"
 
 #: common/models.py:2039
 msgid "Model this state is associated with"
@@ -2064,7 +2064,7 @@ msgstr ""
 msgid "Filename"
 msgstr ""
 
-#: common/serializers.py:612 importer/models.py:86 report/api.py:45
+#: common/serializers.py:612 importer/models.py:86 report/api.py:41
 #: report/models.py:277 report/serializers.py:53
 msgid "Model Type"
 msgstr ""
@@ -2417,7 +2417,7 @@ msgstr ""
 #: report/models.py:563 report/serializers.py:90 report/serializers.py:131
 #: stock/serializers.py:243
 msgid "Template"
-msgstr ""
+msgstr "Шаблон"
 
 #: common/setting/system.py:424
 msgid "Parts are templates by default"
@@ -2430,7 +2430,7 @@ msgstr ""
 #: common/setting/system.py:435 part/models.py:1217 part/serializers.py:1648
 #: part/serializers.py:1654
 msgid "Component"
-msgstr ""
+msgstr "Компонент"
 
 #: common/setting/system.py:436
 msgid "Parts can be used as sub-components by default"
@@ -2444,7 +2444,7 @@ msgstr ""
 msgid "Parts are purchaseable by default"
 msgstr ""
 
-#: common/setting/system.py:447 part/models.py:1241 stock/api.py:591
+#: common/setting/system.py:447 part/models.py:1241 stock/api.py:592
 msgid "Salable"
 msgstr ""
 
@@ -3502,7 +3502,7 @@ msgid "Manufacturer"
 msgstr ""
 
 #: company/api.py:306 company/models.py:97 company/models.py:370
-#: stock/api.py:848
+#: stock/api.py:849
 msgid "Company"
 msgstr ""
 
@@ -3750,7 +3750,7 @@ msgstr ""
 #: order/models.py:626 part/serializers.py:554
 #: plugin/builtin/suppliers/digikey.py:25 plugin/builtin/suppliers/lcsc.py:26
 #: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:26
-#: stock/api.py:515 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:516 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr ""
 
@@ -5058,7 +5058,7 @@ msgstr ""
 msgid "Filter by starred categories"
 msgstr ""
 
-#: part/api.py:134 stock/api.py:254
+#: part/api.py:134 stock/api.py:255
 msgid "Depth"
 msgstr ""
 
@@ -5066,7 +5066,7 @@ msgstr ""
 msgid "Filter by category depth"
 msgstr ""
 
-#: part/api.py:152 stock/api.py:272
+#: part/api.py:152 stock/api.py:273
 msgid "Top Level"
 msgstr ""
 
@@ -5074,7 +5074,7 @@ msgstr ""
 msgid "Filter by top-level categories"
 msgstr ""
 
-#: part/api.py:167 stock/api.py:287
+#: part/api.py:167 stock/api.py:288
 msgid "Cascade"
 msgstr ""
 
@@ -5138,15 +5138,15 @@ msgstr ""
 msgid "BOM Valid"
 msgstr ""
 
-#: part/api.py:1772
+#: part/api.py:1775
 msgid "Assembly part is testable"
 msgstr ""
 
-#: part/api.py:1781
+#: part/api.py:1784
 msgid "Component part is testable"
 msgstr ""
 
-#: part/api.py:1832
+#: part/api.py:1835
 msgid "Uses"
 msgstr ""
 
@@ -6314,31 +6314,31 @@ msgstr ""
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr ""
 
-#: plugin/api.py:79
+#: plugin/api.py:78
 msgid "Builtin"
 msgstr ""
 
-#: plugin/api.py:93
+#: plugin/api.py:92
 msgid "Mandatory"
 msgstr ""
 
-#: plugin/api.py:104
+#: plugin/api.py:103
 msgid "Sample"
 msgstr ""
 
-#: plugin/api.py:118 plugin/models.py:159
+#: plugin/api.py:117 plugin/models.py:159
 msgid "Installed"
 msgstr ""
 
-#: plugin/api.py:185
+#: plugin/api.py:184
 msgid "Plugin cannot be deleted as it is currently active"
 msgstr ""
 
-#: plugin/base/action/api.py:33
+#: plugin/base/action/api.py:34
 msgid "No action specified"
 msgstr ""
 
-#: plugin/base/action/api.py:45
+#: plugin/base/action/api.py:46
 msgid "No matching action found"
 msgstr ""
 
@@ -7245,27 +7245,27 @@ msgstr ""
 msgid "Delete the plugin configuration from the database"
 msgstr ""
 
-#: report/api.py:48 report/serializers.py:98 report/serializers.py:148
+#: report/api.py:44 report/serializers.py:98 report/serializers.py:148
 msgid "Items"
 msgstr ""
 
-#: report/api.py:125
+#: report/api.py:121
 msgid "Plugin not found"
 msgstr ""
 
-#: report/api.py:127
+#: report/api.py:123
 msgid "Plugin is not active"
 msgstr ""
 
-#: report/api.py:129
+#: report/api.py:125
 msgid "Plugin does not support label printing"
 msgstr ""
 
-#: report/api.py:177
+#: report/api.py:173
 msgid "Invalid label dimensions"
 msgstr ""
 
-#: report/api.py:192 report/api.py:271
+#: report/api.py:188 report/api.py:267
 msgid "No valid items provided to template"
 msgstr ""
 
@@ -7546,123 +7546,123 @@ msgstr ""
 msgid "company_image tag requires a Company instance"
 msgstr ""
 
-#: stock/api.py:254
+#: stock/api.py:255
 msgid "Filter by location depth"
 msgstr ""
 
-#: stock/api.py:274
+#: stock/api.py:275
 msgid "Filter by top-level locations"
 msgstr ""
 
-#: stock/api.py:289
+#: stock/api.py:290
 msgid "Include sub-locations in filtered results"
 msgstr ""
 
-#: stock/api.py:310 stock/serializers.py:1252
+#: stock/api.py:311 stock/serializers.py:1252
 msgid "Parent Location"
 msgstr ""
 
-#: stock/api.py:311
+#: stock/api.py:312
 msgid "Filter by parent location"
 msgstr ""
 
-#: stock/api.py:553
+#: stock/api.py:554
 msgid "Part name (case insensitive)"
 msgstr ""
 
-#: stock/api.py:559
+#: stock/api.py:560
 msgid "Part name contains (case insensitive)"
 msgstr ""
 
-#: stock/api.py:565
+#: stock/api.py:566
 msgid "Part name (regex)"
 msgstr ""
 
-#: stock/api.py:570
+#: stock/api.py:571
 msgid "Part IPN (case insensitive)"
 msgstr ""
 
-#: stock/api.py:576
+#: stock/api.py:577
 msgid "Part IPN contains (case insensitive)"
 msgstr ""
 
-#: stock/api.py:582
+#: stock/api.py:583
 msgid "Part IPN (regex)"
 msgstr ""
 
-#: stock/api.py:594
+#: stock/api.py:595
 msgid "Minimum stock"
 msgstr ""
 
-#: stock/api.py:598
+#: stock/api.py:599
 msgid "Maximum stock"
 msgstr ""
 
-#: stock/api.py:601
+#: stock/api.py:602
 msgid "Status Code"
 msgstr ""
 
-#: stock/api.py:641
+#: stock/api.py:642
 msgid "External Location"
 msgstr ""
 
-#: stock/api.py:740
+#: stock/api.py:741
 msgid "Consumed by Build Order"
 msgstr ""
 
-#: stock/api.py:750
+#: stock/api.py:751
 msgid "Installed in other stock item"
 msgstr ""
 
-#: stock/api.py:839
+#: stock/api.py:840
 msgid "Part Tree"
 msgstr ""
 
-#: stock/api.py:861
+#: stock/api.py:862
 msgid "Updated before"
 msgstr ""
 
-#: stock/api.py:865
+#: stock/api.py:866
 msgid "Updated after"
 msgstr ""
 
-#: stock/api.py:869
+#: stock/api.py:870
 msgid "Stocktake Before"
 msgstr ""
 
-#: stock/api.py:873
+#: stock/api.py:874
 msgid "Stocktake After"
 msgstr ""
 
-#: stock/api.py:878
+#: stock/api.py:879
 msgid "Expiry date before"
 msgstr ""
 
-#: stock/api.py:882
+#: stock/api.py:883
 msgid "Expiry date after"
 msgstr ""
 
-#: stock/api.py:885 stock/serializers.py:669
+#: stock/api.py:886 stock/serializers.py:669
 msgid "Stale"
 msgstr ""
 
-#: stock/api.py:986
+#: stock/api.py:987
 msgid "Quantity is required"
 msgstr ""
 
-#: stock/api.py:991
+#: stock/api.py:992
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:1018
+#: stock/api.py:1019
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:1028
+#: stock/api.py:1029
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:1055
+#: stock/api.py:1056
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -8507,11 +8507,11 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/authentication.py:29 users/models.py:157
+#: users/authentication.py:30 users/models.py:157
 msgid "Token has been revoked"
 msgstr ""
 
-#: users/authentication.py:32
+#: users/authentication.py:33
 msgid "Token has expired"
 msgstr ""
 
