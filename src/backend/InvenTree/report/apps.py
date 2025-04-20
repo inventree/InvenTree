@@ -2,7 +2,6 @@
 
 import logging
 import os
-from pathlib import Path
 
 from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
@@ -15,6 +14,7 @@ from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.exceptions
 import InvenTree.ready
+from InvenTree.config import get_base_dir
 
 logger = structlog.getLogger('inventree')
 
@@ -74,16 +74,21 @@ class ReportConfig(AppConfig):
             pass
 
     def file_from_template(self, dir_name: str, file_name: str) -> ContentFile:
-        """Construct a new ContentFile from a template file."""
-        logger.info('Creating %s template file: %s', dir_name, file_name)
+        """Construct a new ContentFile from a template file.
 
-        return ContentFile(
-            Path(__file__)
-            .parent.joinpath('templates', dir_name, file_name)
-            .open('r')
-            .read(),
-            os.path.basename(file_name),
-        )
+        Args:
+            dir_name (str): The name of the directory containing the template
+            file_name (str): The name of the template file
+        Returns:
+            ContentFile: The ContentFile object containing the template
+        """
+        logger.info('Creating %s template file: %s', dir_name, file_name)
+        file = get_base_dir().joinpath('report', 'templates', dir_name, file_name)
+        if not file.exists():
+            raise FileNotFoundError(
+                'Template file %s does not exist in %s', file_name, file
+            )
+        return ContentFile(file.open('r').read(), os.path.basename(file_name))
 
     def create_default_labels(self):
         """Create default label templates."""
@@ -239,6 +244,7 @@ class ReportConfig(AppConfig):
                     existing_template.template = self.file_from_template(
                         'report', filename
                     )
+
                     existing_template.save()
                 continue
 
