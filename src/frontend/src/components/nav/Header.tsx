@@ -5,7 +5,8 @@ import {
   Indicator,
   Tabs,
   Text,
-  Tooltip
+  Tooltip,
+  UnstyledButton
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
@@ -15,10 +16,11 @@ import { useMatch, useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { api } from '../../App';
 import { getNavTabs } from '../../defaults/links';
+import { generateUrl } from '../../functions/urls';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -202,7 +204,12 @@ function NavTabs() {
             navigateToLink(`/${tab.name}`, navigate, event)
           }
         >
-          {tab.title}
+          <UnstyledButton
+            component={'a'}
+            href={generateUrl(`/${getBaseUrl()}/${tab.name}`)}
+          >
+            {tab.title}
+          </UnstyledButton>
         </Tabs.Tab>
       );
     });
