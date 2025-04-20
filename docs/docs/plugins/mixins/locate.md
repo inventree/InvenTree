@@ -20,7 +20,7 @@ The possibilities are endless!
 
 ### App Integration
 
-If a locate plugin is installed and activated, the [InvenTree mobile app](../../app/app.md) displays a button for locating a StockItem or StockLocation (see below):
+If a locate plugin is installed and activated, the [InvenTree mobile app](../../app/index.md) displays a button for locating a StockItem or StockLocation (see below):
 
 {% with id="app_locate", url="plugin/app_locate.png", description="Locate stock item from app", maxheight="400px" %}
 {% include 'img.html' %}

@@ -8,6 +8,10 @@ A Bill of Materials (BOM) defines the list of component parts required to make a
 
 A part which can be built from other sub components is called an *Assembly*.
 
+{% with id="bom_flat", url="build/bom_flat.png", description="Flat BOM Table" %}
+{% include 'img.html' %}
+{% endwith %}
+
 ## BOM Line Items
 
 A BOM for a particular assembly is comprised of a number (zero or more) of BOM "Line Items", each of which has the following properties:
@@ -33,11 +37,7 @@ In the example below, see that the *Wood Screw* line item is marked as consumabl
 {% include 'img.html' %}
 {% endwith %}
 
-Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*:
-
-{% with id="build_item_consumable", url="build/build_consumable_item.png", description="Consumable Build Item" %}
-{% include 'img.html' %}
-{% endwith %}
+Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*.
 
 ### Substitute BOM Line Items
 
@@ -116,32 +116,6 @@ The `Edit BOM Item Substitutes` form will be displayed:
 
 Select a part in the list and click on "Add Substitute" button to confirm.
 
-
-### Validate BOM
-
-After [adding BOM items manually](#add-bom-item) or uploading a BOM file, you should see the following view:
-{% with id="bom_invalid", url="build/bom_invalid.png", description="Invalid BOM View" %}
-{% include 'img.html' %}
-{% endwith %}
-
-The first message in the red box `The BOM for PCBA TEST has changed, and must be validated.` points out that InvenTree BOM needs to be "validated". BOM validation is a way to ensure a BOM does not have duplicate items/parts.
-
-To process with BOM validation, click on the <span class='fas fa-clipboard-check'></span> icon and the `Validate BOM` form will be displayed. Click one the "Validate" switch then click on <span class="badge inventree confirm">Submit</span>
-
-{% with id="bom_valid", url="build/bom_valid.png", description="Valid BOM View" %}
-{% include 'img.html' %}
-{% endwith %}
-
 ## Multi Level BOMs
 
 Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
-
-When viewing a BOM table, sub-assemblies are not loaded by default, but can be loaded "on demand" by pressing the <span class='fas fa-sync-alt'></span> icon associated with the particular subassembly:
-
-{% with id="bom_flat", url="build/bom_flat.png", description="Flat BOM Table" %}
-{% include 'img.html' %}
-{% endwith %}
-
-{% with id="bom_expanded", url="build/bom_expanded.png", description="Expanded BOM Table" %}
-{% include 'img.html' %}
-{% endwith %}
