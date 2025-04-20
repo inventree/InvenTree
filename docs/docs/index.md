@@ -13,8 +13,15 @@ It is designed to be lightweight and easy to use for SME or hobbyist application
 
 InvenTree is a [Python](https://www.python.org/) and [Django](https://www.djangoproject.com/) application which stores data in a relational database, and serves this data to the user(s) via a web browser, and (optionally) can be integrated into custom applications via an API.
 
-## Features
+------
 
+{% with directory="indexgallery", per_page=1 %}
+{% include "carousel.html" %}
+{% endwith %}
+
+------
+
+## Features
 
 ### Organize Parts
 
