@@ -8,7 +8,6 @@ from django.views.decorators.cache import never_cache
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
@@ -30,10 +29,7 @@ class TemplatePermissionMixin:
     """Permission mixin for report and label templates."""
 
     # Read only for non-staff users
-    permission_classes = [
-        permissions.IsAuthenticated,
-        InvenTree.permissions.IsStaffOrReadOnly,
-    ]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
 class ReportFilterBase(rest_filters.FilterSet):
@@ -100,7 +96,7 @@ class LabelPrint(GenericAPIView):
     """API endpoint for printing labels."""
 
     # Any authenticated user can print labels
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = report.serializers.LabelPrintSerializer
 
     def get_plugin_class(self, plugin_slug: str, raise_error=False):
@@ -253,7 +249,7 @@ class ReportPrint(GenericAPIView):
     """API endpoint for printing reports."""
 
     # Any authenticated user can print reports
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = report.serializers.ReportPrintSerializer
 
     @method_decorator(never_cache)
@@ -362,8 +358,7 @@ label_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.LabelTemplate},
+                        MetadataView.as_view(model=report.models.LabelTemplate),
                         name='api-label-template-metadata',
                     ),
                     path(
@@ -390,8 +385,7 @@ report_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.ReportTemplate},
+                        MetadataView.as_view(model=report.models.ReportTemplate),
                         name='api-report-template-metadata',
                     ),
                     path(

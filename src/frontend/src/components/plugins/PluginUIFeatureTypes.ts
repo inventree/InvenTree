@@ -1,8 +1,8 @@
-import type { ModelType } from '../../enums/ModelType';
-import type { InvenTreeIconType } from '../../functions/icons';
+import type { ModelType } from '@lib/enums/ModelType';
+import type { InvenTreeIconType } from '@lib/types/Icons';
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import type { TemplateI } from '../../tables/settings/TemplateTable';
 import type { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
-import type { InvenTreeContext } from './PluginContext';
 import type { PluginUIFeature } from './PluginUIFeature';
 
 // #region  Type Helpers
@@ -19,7 +19,7 @@ export type PluginUIGetFeatureType<
   ServerContext extends Record<string, unknown>
 > = (params: {
   featureContext: T['featureContext'];
-  inventreeContext: InvenTreeContext;
+  inventreeContext: InvenTreePluginContext;
   serverContext: ServerContext;
 }) => T['featureReturnType'];
 
@@ -74,5 +74,13 @@ export type TemplatePreviewUIFeature = {
       ) => void | Promise<void>;
     }) => void;
   };
+  featureReturnType: undefined;
+};
+
+export type NavigationUIFeature = {
+  featureType: 'navigation';
+  requestContext: {};
+  responseOptions: PluginUIFeature;
+  featureContext: {};
   featureReturnType: undefined;
 };

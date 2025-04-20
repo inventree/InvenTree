@@ -25,10 +25,16 @@ from corsheaders.defaults import default_headers as default_cors_headers
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.config import (
+    get_boolean_setting,
+    get_custom_file,
+    get_oidc_private_key,
+    get_setting,
+)
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
+from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
 
@@ -299,6 +305,7 @@ INSTALLED_APPS = [
     'django_otp',  # OTP is needed for MFA - base package
     'django_otp.plugins.otp_totp',  # Time based OTP
     'django_otp.plugins.otp_static',  # Backup codes
+    'oauth2_provider',  # OAuth2 provider and API access
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
 ]
@@ -322,6 +329,7 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
+        'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
@@ -354,6 +362,7 @@ QUERYCOUNT = {
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
     [
+        'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
         'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
         'django.contrib.auth.backends.ModelBackend',
         'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
@@ -523,6 +532,15 @@ TEMPLATES = [
     }
 ]
 
+OAUTH2_PROVIDER = {
+    # default scopes
+    'SCOPES': oauth2_scopes,
+    # OIDC
+    'OIDC_ENABLED': True,
+    'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
+    'PKCE_REQUIRED': False,
+}
+
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
@@ -530,12 +548,14 @@ REST_FRAMEWORK = {
         'users.authentication.ApiTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'users.authentication.ExtendedOAuth2Authentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
+        'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
     ],
     'DEFAULT_SCHEMA_CLASS': 'InvenTree.schema.ExtendedAutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
@@ -1401,6 +1421,7 @@ FLAGS = {
     'NEXT_GEN': [
         {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
+    'OIDC': [{'condition': 'parameter', 'value': 'oidc='}],
 }
 
 # Get custom flags from environment/yaml
@@ -1434,7 +1455,22 @@ SPECTACULAR_SETTINGS = {
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
         'InvenTree.schema.postprocess_required_nullable',
+        'InvenTree.schema.postprocess_print_stats',
     ],
+    'ENUM_NAME_OVERRIDES': {
+        'UserTypeEnum': 'users.models.UserProfile.UserType',
+        'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
+        'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
+        'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
+        # Allauth
+        'UnauthorizedStatus': [[401, 401]],
+        'IsTrueEnum': [[True, True]],
+    },
+    # oAuth2
+    'OAUTH2_FLOWS': ['authorizationCode', 'clientCredentials'],
+    'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
+    'OAUTH2_TOKEN_URL': '/o/token/',
+    'OAUTH2_REFRESH_URL': '/o/revoke_token/',
 }
 
 if SITE_URL and not TESTING:

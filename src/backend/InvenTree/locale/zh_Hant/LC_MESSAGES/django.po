@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-31 23:39+0000\n"
-"PO-Revision-Date: 2025-03-31 23:41\n"
+"POT-Creation-Date: 2025-04-19 14:23+0000\n"
+"PO-Revision-Date: 2025-04-19 14:25\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Language: zh_TW\n"
@@ -21,35 +21,35 @@ msgstr ""
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr ""
 
-#: InvenTree/api.py:340
+#: InvenTree/api.py:357
 msgid "API endpoint not found"
 msgstr "未找到 API 端點"
 
-#: InvenTree/api.py:416
+#: InvenTree/api.py:433
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:423
+#: InvenTree/api.py:440
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:431
+#: InvenTree/api.py:448
 msgid "Invalid items list provided"
 msgstr "提供了無效的單位"
 
-#: InvenTree/api.py:437
+#: InvenTree/api.py:454
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:444
+#: InvenTree/api.py:461
 msgid "Invalid filters provided"
 msgstr "提供了無效的過濾器"
 
-#: InvenTree/api.py:449
+#: InvenTree/api.py:466
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:695
+#: InvenTree/api.py:709
 msgid "User does not have permission to view this model"
 msgstr "用户沒有權限查閲當前模型。"
 
@@ -88,7 +88,7 @@ msgid "Could not convert {original} to {unit}"
 msgstr "不能將 {original} 轉換到 {unit}"
 
 #: InvenTree/conversion.py:208 InvenTree/conversion.py:222
-#: InvenTree/helpers.py:501 order/models.py:605 order/models.py:871
+#: InvenTree/helpers.py:548 order/models.py:707 order/models.py:975
 msgid "Invalid quantity provided"
 msgstr "提供的數量無效"
 
@@ -96,22 +96,22 @@ msgstr "提供的數量無效"
 msgid "Error details can be found in the admin panel"
 msgstr "在管理面板中可以找到錯誤詳細信息"
 
-#: InvenTree/fields.py:136
+#: InvenTree/fields.py:138
 msgid "Enter date"
 msgstr "輸入日期"
 
-#: InvenTree/fields.py:159
+#: InvenTree/fields.py:161
 msgid "Invalid decimal value"
 msgstr ""
 
-#: InvenTree/fields.py:208 InvenTree/models.py:887 build/serializers.py:522
-#: build/serializers.py:597 company/models.py:834 order/models.py:1452
-#: part/models.py:3309
+#: InvenTree/fields.py:210 InvenTree/models.py:887 build/serializers.py:526
+#: build/serializers.py:597 company/models.py:834 order/models.py:1579
+#: part/models.py:3366
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:2629 stock/models.py:2753 stock/serializers.py:747
-#: stock/serializers.py:909 stock/serializers.py:1014 stock/serializers.py:1068
-#: stock/serializers.py:1387 stock/serializers.py:1476
-#: stock/serializers.py:1654
+#: stock/models.py:2708 stock/models.py:2832 stock/serializers.py:752
+#: stock/serializers.py:914 stock/serializers.py:1044 stock/serializers.py:1096
+#: stock/serializers.py:1415 stock/serializers.py:1504
+#: stock/serializers.py:1680
 msgid "Notes"
 msgstr "備註"
 
@@ -124,42 +124,42 @@ msgstr "值' {name}' 未出現在模式格式中"
 msgid "Provided value does not match required pattern: "
 msgstr "提供的值與所需模式不匹配："
 
-#: InvenTree/helpers.py:505
+#: InvenTree/helpers.py:552
 msgid "Cannot serialize more than 1000 items at once"
 msgstr ""
 
-#: InvenTree/helpers.py:511
+#: InvenTree/helpers.py:558
 msgid "Empty serial number string"
 msgstr "序號為空白"
 
-#: InvenTree/helpers.py:540
+#: InvenTree/helpers.py:587
 msgid "Duplicate serial"
 msgstr "複製序列號"
 
-#: InvenTree/helpers.py:572 InvenTree/helpers.py:615 InvenTree/helpers.py:633
-#: InvenTree/helpers.py:640 InvenTree/helpers.py:659
+#: InvenTree/helpers.py:619 InvenTree/helpers.py:662 InvenTree/helpers.py:680
+#: InvenTree/helpers.py:687 InvenTree/helpers.py:706
 #, python-brace-format
 msgid "Invalid group: {group}"
 msgstr ""
 
-#: InvenTree/helpers.py:603
+#: InvenTree/helpers.py:650
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "組範圍 {group} 超出了允許的數量 ({expected_quantity})"
 
-#: InvenTree/helpers.py:669
+#: InvenTree/helpers.py:716
 msgid "No serial numbers found"
 msgstr "未找到序列號"
 
-#: InvenTree/helpers.py:674
+#: InvenTree/helpers.py:721
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
 msgstr "唯一序列號的數量 ({len(serials)}) 必須與數量匹配 ({expected_quantity})"
 
-#: InvenTree/helpers.py:793
+#: InvenTree/helpers.py:840
 msgid "Remove HTML tags from this value"
 msgstr "從這個值中刪除 HTML 標籤"
 
-#: InvenTree/helpers.py:872
+#: InvenTree/helpers.py:919
 msgid "Data contains prohibited markdown content"
 msgstr ""
 
@@ -351,7 +351,7 @@ msgstr "中文 (繁體)"
 msgid "Log in to the app"
 msgstr ""
 
-#: InvenTree/magic_login.py:41 company/models.py:136 users/serializers.py:236
+#: InvenTree/magic_login.py:41 company/models.py:136 users/serializers.py:247
 msgid "Email"
 msgstr "電子郵件"
 
@@ -403,19 +403,19 @@ msgstr "同一個上層元件下不能有重複的名字"
 msgid "Invalid choice"
 msgstr "無效的選項"
 
-#: InvenTree/models.py:734 common/models.py:1311 common/models.py:1738
-#: common/models.py:1991 common/models.py:2116 common/serializers.py:485
+#: InvenTree/models.py:734 common/models.py:1325 common/models.py:1752
+#: common/models.py:2011 common/models.py:2136 common/serializers.py:488
 #: company/models.py:593 generic/states/serializers.py:20 machine/models.py:24
-#: part/models.py:998 part/models.py:3780 plugin/models.py:53
-#: report/models.py:145 stock/models.py:83
+#: part/models.py:1039 part/models.py:3837 plugin/models.py:53
+#: report/models.py:203 stock/models.py:83
 msgid "Name"
 msgstr "名稱"
 
-#: InvenTree/models.py:740 build/models.py:218 common/models.py:109
-#: common/models.py:2123 common/models.py:2236 company/models.py:521
-#: company/models.py:825 order/models.py:342 order/models.py:1488
-#: part/models.py:1021 part/models.py:3795 report/models.py:151
-#: report/models.py:650 report/models.py:676
+#: InvenTree/models.py:740 build/models.py:242 common/models.py:123
+#: common/models.py:2143 common/models.py:2256 company/models.py:521
+#: company/models.py:825 order/models.py:429 order/models.py:1615
+#: part/models.py:1062 part/models.py:3852 report/models.py:209
+#: report/models.py:714 report/models.py:740
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/models.py:89
 msgid "Description"
@@ -425,7 +425,7 @@ msgstr "描述"
 msgid "Description (optional)"
 msgstr "描述（選填）"
 
-#: InvenTree/models.py:756 common/models.py:2289
+#: InvenTree/models.py:756 common/models.py:2309
 msgid "Path"
 msgstr "路徑"
 
@@ -470,35 +470,35 @@ msgstr "伺服器錯誤"
 msgid "An error has been logged by the server."
 msgstr "伺服器紀錄了一個錯誤。"
 
-#: InvenTree/serializers.py:68 part/models.py:4398
+#: InvenTree/serializers.py:69 part/models.py:4455
 msgid "Must be a valid number"
 msgstr "必須是有效的數字"
 
-#: InvenTree/serializers.py:109 company/models.py:187 part/models.py:3127
+#: InvenTree/serializers.py:111 company/models.py:187 part/models.py:3184
 msgid "Currency"
 msgstr "貨幣"
 
-#: InvenTree/serializers.py:112
+#: InvenTree/serializers.py:114 part/serializers.py:1306
 msgid "Select currency from available options"
 msgstr "從可用選項中選擇貨幣"
 
-#: InvenTree/serializers.py:456
+#: InvenTree/serializers.py:466
 msgid "Invalid value"
 msgstr "無效值"
 
-#: InvenTree/serializers.py:493
+#: InvenTree/serializers.py:503
 msgid "Remote Image"
 msgstr "遠程圖片"
 
-#: InvenTree/serializers.py:494
+#: InvenTree/serializers.py:504
 msgid "URL of remote image file"
 msgstr "遠程圖片文件的 URL"
 
-#: InvenTree/serializers.py:512
+#: InvenTree/serializers.py:522
 msgid "Downloading images from remote URL is not enabled"
 msgstr "未啓用從遠程 URL下載圖片"
 
-#: InvenTree/serializers.py:519
+#: InvenTree/serializers.py:529
 msgid "Failed to download image from remote URL"
 msgstr "從遠程URL下載圖像失敗"
 
@@ -510,40 +510,41 @@ msgstr "無效的物理單位"
 msgid "Not a valid currency code"
 msgstr "無效的貨幣代碼"
 
-#: InvenTree/validators.py:113 InvenTree/validators.py:129
+#: InvenTree/validators.py:116 InvenTree/validators.py:132
 msgid "Overage value must not be negative"
 msgstr "損失值不能為負"
 
-#: InvenTree/validators.py:131
+#: InvenTree/validators.py:134
 msgid "Overage must not exceed 100%"
 msgstr "損失率不能超過100%"
 
-#: InvenTree/validators.py:137
+#: InvenTree/validators.py:140
 msgid "Invalid value for overage"
 msgstr "無效的損失值"
 
-#: build/api.py:37 order/api.py:101 order/api.py:260 order/serializers.py:126
+#: build/api.py:39 order/api.py:104 order/api.py:263 order/serializers.py:126
 msgid "Order Status"
 msgstr "訂單狀態"
 
-#: build/api.py:63 build/models.py:230
+#: build/api.py:65 build/models.py:254
 msgid "Parent Build"
 msgstr "上層生產工單"
 
-#: build/api.py:67 build/api.py:763 order/api.py:505 order/api.py:722
-#: order/api.py:1095 order/api.py:1322 stock/api.py:521
+#: build/api.py:69 build/api.py:768 order/api.py:512 order/api.py:732
+#: order/api.py:1106 order/api.py:1334 stock/api.py:522
 msgid "Include Variants"
 msgstr "包含變體"
 
-#: build/api.py:83 build/api.py:465 build/api.py:777 build/models.py:236
+#: build/api.py:85 build/api.py:470 build/api.py:782 build/models.py:260
 #: build/serializers.py:1254 build/serializers.py:1376
 #: build/serializers.py:1427 company/models.py:1044 company/serializers.py:432
-#: order/api.py:288 order/api.py:869 order/api.py:1108 order/models.py:1577
-#: order/models.py:1736 order/models.py:1737 part/api.py:1441 part/api.py:1509
-#: part/api.py:1816 part/models.py:417 part/models.py:3138 part/models.py:3282
-#: part/models.py:3430 part/models.py:3451 part/models.py:3473
-#: part/models.py:3609 part/models.py:3970 part/models.py:4242
-#: part/models.py:4608 part/serializers.py:1225 part/serializers.py:1871
+#: order/api.py:291 order/api.py:295 order/api.py:880 order/api.py:1119
+#: order/api.py:1122 order/models.py:1704 order/models.py:1863
+#: order/models.py:1864 part/api.py:1448 part/api.py:1451 part/api.py:1517
+#: part/api.py:1827 part/models.py:457 part/models.py:3195 part/models.py:3339
+#: part/models.py:3487 part/models.py:3508 part/models.py:3530
+#: part/models.py:3666 part/models.py:4027 part/models.py:4299
+#: part/models.py:4665 part/serializers.py:1226 part/serializers.py:1887
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -552,8 +553,8 @@ msgstr "包含變體"
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:534 stock/serializers.py:114 stock/serializers.py:162
-#: stock/serializers.py:472 stock/serializers.py:634 stock/serializers.py:939
+#: stock/api.py:535 stock/serializers.py:119 stock/serializers.py:167
+#: stock/serializers.py:477 stock/serializers.py:639 stock/serializers.py:944
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
@@ -562,166 +563,167 @@ msgstr "包含變體"
 msgid "Part"
 msgstr "零件"
 
-#: build/api.py:103 part/api.py:1523 part/models.py:1039 part/models.py:3501
-#: part/models.py:4079 part/serializers.py:1235 stock/api.py:817
+#: build/api.py:105 build/api.py:108 part/api.py:1531 part/models.py:1080
+#: part/models.py:3558 part/models.py:4136 part/serializers.py:1236
+#: stock/api.py:818
 msgid "Category"
 msgstr "類別"
 
-#: build/api.py:113
+#: build/api.py:116 build/api.py:120
 msgid "Ancestor Build"
 msgstr "可測試部分"
 
-#: build/api.py:133 order/api.py:119
+#: build/api.py:137 order/api.py:122
 msgid "Assigned to me"
 msgstr "分配給我"
 
-#: build/api.py:148
+#: build/api.py:152
 #: report/templates/report/inventree_build_order_report.html:152
 msgid "Issued By"
 msgstr "發佈者"
 
-#: build/api.py:163
+#: build/api.py:167
 msgid "Assigned To"
 msgstr "負責人"
 
-#: build/api.py:198
+#: build/api.py:202
 msgid "Created before"
 msgstr ""
 
-#: build/api.py:202
+#: build/api.py:206
 msgid "Created after"
 msgstr ""
 
-#: build/api.py:206
+#: build/api.py:210
 msgid "Has start date"
 msgstr ""
 
-#: build/api.py:214
+#: build/api.py:218
 msgid "Start date before"
 msgstr ""
 
-#: build/api.py:218
+#: build/api.py:222
 msgid "Start date after"
 msgstr ""
 
-#: build/api.py:222
+#: build/api.py:226
 msgid "Has target date"
 msgstr ""
 
-#: build/api.py:230
+#: build/api.py:234
 msgid "Target date before"
 msgstr ""
 
-#: build/api.py:234
+#: build/api.py:238
 msgid "Target date after"
 msgstr ""
 
-#: build/api.py:238
+#: build/api.py:242
 msgid "Completed before"
 msgstr ""
 
-#: build/api.py:242
+#: build/api.py:246
 msgid "Completed after"
 msgstr ""
 
-#: build/api.py:245 order/api.py:216
+#: build/api.py:249 order/api.py:219
 msgid "Min Date"
 msgstr ""
 
-#: build/api.py:268 order/api.py:235
+#: build/api.py:272 order/api.py:238
 msgid "Max Date"
 msgstr ""
 
-#: build/api.py:293 part/api.py:223
+#: build/api.py:297 build/api.py:300 part/api.py:224
 msgid "Exclude Tree"
 msgstr "排除樹"
 
-#: build/api.py:404
+#: build/api.py:409
 msgid "Build must be cancelled before it can be deleted"
 msgstr "工單必須被取消才能被刪除"
 
-#: build/api.py:448 build/serializers.py:1392 part/models.py:4276
+#: build/api.py:453 build/serializers.py:1392 part/models.py:4333
 msgid "Consumable"
 msgstr "耗材"
 
-#: build/api.py:451 build/serializers.py:1395 part/models.py:4270
+#: build/api.py:456 build/serializers.py:1395 part/models.py:4327
 msgid "Optional"
 msgstr "非必須項目"
 
-#: build/api.py:454 common/setting/system.py:429 part/models.py:1170
-#: part/serializers.py:1618 part/serializers.py:1627 stock/api.py:587
+#: build/api.py:459 common/setting/system.py:429 part/models.py:1211
+#: part/serializers.py:1634 part/serializers.py:1643 stock/api.py:588
 msgid "Assembly"
 msgstr "裝配"
 
-#: build/api.py:457
+#: build/api.py:462
 msgid "Tracked"
 msgstr "追蹤中"
 
-#: build/api.py:460 build/serializers.py:1398 part/models.py:1188
+#: build/api.py:465 build/serializers.py:1398 part/models.py:1229
 msgid "Testable"
 msgstr "可測試"
 
-#: build/api.py:470 order/api.py:914
+#: build/api.py:475 order/api.py:925
 msgid "Order Outstanding"
 msgstr ""
 
-#: build/api.py:480 order/api.py:873
+#: build/api.py:485 order/api.py:884
 msgid "Allocated"
 msgstr "已分配"
 
-#: build/api.py:490 company/models.py:889 company/serializers.py:427
+#: build/api.py:495 company/models.py:889 company/serializers.py:427
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "可用數量"
 
-#: build/api.py:800 build/models.py:92
+#: build/api.py:805 build/models.py:116
 #: report/templates/report/inventree_build_order_report.html:105
-#: stock/serializers.py:87 templates/email/build_order_completed.html:16
+#: stock/serializers.py:92 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "生產工單"
 
-#: build/models.py:93 users/models.py:225
+#: build/models.py:117 users/ruleset.py:37
 msgid "Build Orders"
 msgstr "生產工單"
 
-#: build/models.py:138
+#: build/models.py:162
 msgid "Assembly BOM has not been validated"
 msgstr "裝配物料清單尚未驗證"
 
-#: build/models.py:145
+#: build/models.py:169
 msgid "Build order cannot be created for an inactive part"
 msgstr "無法為未激活的零件創建生產訂單"
 
-#: build/models.py:152
+#: build/models.py:176
 msgid "Build order cannot be created for an unlocked part"
 msgstr "無法為已解鎖的零件創建生產訂單"
 
-#: build/models.py:164
+#: build/models.py:188
 msgid "Invalid choice for parent build"
 msgstr "無效的上層生產工單選擇"
 
-#: build/models.py:173 order/models.py:276
+#: build/models.py:197 order/models.py:363
 msgid "Responsible user or group must be specified"
 msgstr "必須指定負責的用户或組"
 
-#: build/models.py:178
+#: build/models.py:202
 msgid "Build order part cannot be changed"
 msgstr "無法更改生產工單"
 
-#: build/models.py:183 order/models.py:289
+#: build/models.py:207 order/models.py:376
 msgid "Target date must be after start date"
 msgstr ""
 
-#: build/models.py:211
+#: build/models.py:235
 msgid "Build Order Reference"
 msgstr "生產工單代號"
 
-#: build/models.py:212 build/serializers.py:1389 order/models.py:499
-#: order/models.py:1020 order/models.py:1445 order/models.py:2241
-#: part/models.py:4291
+#: build/models.py:236 build/serializers.py:1389 order/models.py:601
+#: order/models.py:1140 order/models.py:1572 order/models.py:2403
+#: part/models.py:4348
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:28
 #: report/templates/report/inventree_return_order_report.html:26
@@ -729,206 +731,206 @@ msgstr "生產工單代號"
 msgid "Reference"
 msgstr "參考代號"
 
-#: build/models.py:221
+#: build/models.py:245
 msgid "Brief description of the build (optional)"
 msgstr "關於生產工單的簡單説明（選填）"
 
-#: build/models.py:231
+#: build/models.py:255
 msgid "BuildOrder to which this build is allocated"
 msgstr "這張生產工單對應的上層生產工單"
 
-#: build/models.py:240
+#: build/models.py:264
 msgid "Select part to build"
 msgstr "選擇要生產的零件"
 
-#: build/models.py:245
+#: build/models.py:269
 msgid "Sales Order Reference"
 msgstr "銷售訂單代號"
 
-#: build/models.py:250
+#: build/models.py:274
 msgid "SalesOrder to which this build is allocated"
 msgstr "這張生產工單對應的銷售訂單"
 
-#: build/models.py:255 build/serializers.py:1104
+#: build/models.py:279 build/serializers.py:1104
 msgid "Source Location"
 msgstr "來源倉儲地點"
 
-#: build/models.py:261
+#: build/models.py:285
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "選擇領取料件的倉儲地點（留白表示可以從任何地點領取）"
 
-#: build/models.py:267
+#: build/models.py:291
 msgid "Destination Location"
 msgstr "目標倉儲地點"
 
-#: build/models.py:272
+#: build/models.py:296
 msgid "Select location where the completed items will be stored"
 msgstr "選擇已完成項目庫存地點"
 
-#: build/models.py:276
+#: build/models.py:300
 msgid "Build Quantity"
 msgstr "生產數量"
 
-#: build/models.py:279
+#: build/models.py:303
 msgid "Number of stock items to build"
 msgstr "要生產的項目數量"
 
-#: build/models.py:283
+#: build/models.py:307
 msgid "Completed items"
 msgstr "已完成項目"
 
-#: build/models.py:285
+#: build/models.py:309
 msgid "Number of stock items which have been completed"
 msgstr "已經完成的庫存品數量"
 
-#: build/models.py:289
+#: build/models.py:313
 msgid "Build Status"
 msgstr "生產狀態"
 
-#: build/models.py:294
+#: build/models.py:318
 msgid "Build status code"
 msgstr "生產狀態代碼"
 
-#: build/models.py:303 build/serializers.py:372 order/serializers.py:775
-#: stock/models.py:945 stock/serializers.py:79 stock/serializers.py:1619
+#: build/models.py:327 build/serializers.py:376 order/serializers.py:775
+#: stock/models.py:1023 stock/serializers.py:84 stock/serializers.py:1647
 msgid "Batch Code"
 msgstr "批號"
 
-#: build/models.py:307 build/serializers.py:373
+#: build/models.py:331 build/serializers.py:377
 msgid "Batch code for this build output"
 msgstr "此產出的批號"
 
-#: build/models.py:311 order/models.py:379 order/serializers.py:164
-#: part/models.py:1245
+#: build/models.py:335 order/models.py:466 order/serializers.py:164
+#: part/models.py:1286
 msgid "Creation Date"
 msgstr "建立日期"
 
-#: build/models.py:317
+#: build/models.py:341
 msgid "Build start date"
 msgstr ""
 
-#: build/models.py:318
+#: build/models.py:342
 msgid "Scheduled start date for this build order"
 msgstr ""
 
-#: build/models.py:324
+#: build/models.py:348
 msgid "Target completion date"
 msgstr "目標完成日期"
 
-#: build/models.py:326
+#: build/models.py:350
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "生產的預計完成日期。若超過此日期則工單會逾期。"
 
-#: build/models.py:331 order/models.py:552 order/models.py:2280
+#: build/models.py:355 order/models.py:654 order/models.py:2442
 msgid "Completion Date"
 msgstr "完成日期"
 
-#: build/models.py:339
+#: build/models.py:363
 msgid "completed by"
 msgstr "完成者"
 
-#: build/models.py:348
+#: build/models.py:372
 msgid "Issued by"
 msgstr "發布者"
 
-#: build/models.py:349
+#: build/models.py:373
 msgid "User who issued this build order"
 msgstr "發布此生產工單的使用者"
 
-#: build/models.py:358 common/models.py:118 order/api.py:169
-#: order/models.py:404 part/models.py:1262
+#: build/models.py:382 common/models.py:132 order/api.py:172
+#: order/models.py:491 part/models.py:1303
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "負責人"
 
-#: build/models.py:359
+#: build/models.py:383
 msgid "User or group responsible for this build order"
 msgstr "負責此生產工單的使用者或羣組"
 
-#: build/models.py:364 stock/models.py:938
+#: build/models.py:388 stock/models.py:1016
 msgid "External Link"
 msgstr "外部連結"
 
-#: build/models.py:366 common/models.py:1879 part/models.py:1073
-#: stock/models.py:940
+#: build/models.py:390 common/models.py:1899 part/models.py:1114
+#: stock/models.py:1018
 msgid "Link to external URL"
 msgstr "外部URL連結"
 
-#: build/models.py:371
+#: build/models.py:395
 msgid "Build Priority"
 msgstr "製造優先度"
 
-#: build/models.py:374
+#: build/models.py:398
 msgid "Priority of this build order"
 msgstr "此生產工單的優先程度"
 
-#: build/models.py:382 common/models.py:88 common/models.py:102
-#: order/api.py:155 order/models.py:351
+#: build/models.py:406 common/models.py:102 common/models.py:116
+#: order/api.py:158 order/models.py:438
 msgid "Project Code"
 msgstr "專案代碼"
 
-#: build/models.py:383
+#: build/models.py:407
 msgid "Project code for this build order"
 msgstr "此生產工單隸屬的專案代碼"
 
-#: build/models.py:651 build/models.py:771
+#: build/models.py:680 build/models.py:803
 msgid "Failed to offload task to complete build allocations"
 msgstr "未能卸載任務以完成生產分配"
 
-#: build/models.py:671
+#: build/models.py:703
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "生產工單 {build} 已經完成"
 
-#: build/models.py:677
+#: build/models.py:709
 msgid "A build order has been completed"
 msgstr "一張生產工單已經完成"
 
-#: build/models.py:848 build/serializers.py:420
+#: build/models.py:881 build/serializers.py:424
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "對於可跟蹤的零件，必須提供序列號"
 
-#: build/models.py:958 build/models.py:1043
+#: build/models.py:991 build/models.py:1076
 msgid "No build output specified"
 msgstr "未指定產出"
 
-#: build/models.py:961
+#: build/models.py:994
 msgid "Build output is already completed"
 msgstr "產出已完成"
 
-#: build/models.py:964
+#: build/models.py:997
 msgid "Build output does not match Build Order"
 msgstr "產出與生產訂單不匹配"
 
-#: build/models.py:1046 build/serializers.py:299 build/serializers.py:348
-#: build/serializers.py:972 order/models.py:602 order/serializers.py:599
-#: order/serializers.py:770 part/serializers.py:1612 stock/models.py:785
-#: stock/models.py:1651 stock/serializers.py:718
+#: build/models.py:1079 build/serializers.py:303 build/serializers.py:352
+#: build/serializers.py:972 order/models.py:704 order/serializers.py:599
+#: order/serializers.py:770 part/serializers.py:1628 stock/models.py:863
+#: stock/models.py:1730 stock/serializers.py:723
 msgid "Quantity must be greater than zero"
 msgstr "數量必須大於零"
 
-#: build/models.py:1050 build/serializers.py:303
+#: build/models.py:1083 build/serializers.py:307
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "數量不能大於輸出數量"
 
-#: build/models.py:1115 build/serializers.py:615
+#: build/models.py:1148 build/serializers.py:615
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "產出 {serial} 未通過所有必要測試"
 
-#: build/models.py:1476
+#: build/models.py:1534
 msgid "Build Order Line Item"
 msgstr "生產訂單行項目"
 
-#: build/models.py:1500
+#: build/models.py:1558
 msgid "Build object"
 msgstr "生產對象"
 
-#: build/models.py:1512 build/models.py:1771 build/serializers.py:287
-#: build/serializers.py:333 build/serializers.py:1410 common/models.py:1241
-#: order/models.py:1428 order/models.py:2141 order/serializers.py:1662
-#: order/serializers.py:2128 part/models.py:3296 part/models.py:4264
-#: part/serializers.py:270
+#: build/models.py:1570 build/models.py:1829 build/serializers.py:291
+#: build/serializers.py:337 build/serializers.py:1410 common/models.py:1255
+#: order/models.py:1555 order/models.py:2288 order/serializers.py:1658
+#: order/serializers.py:2119 part/models.py:3353 part/models.py:4321
+#: part/serializers.py:271
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:29
@@ -938,181 +940,174 @@ msgstr "生產對象"
 #: report/templates/report/inventree_stock_location_report.html:104
 #: report/templates/report/inventree_test_report.html:90
 #: report/templates/report/inventree_test_report.html:169
-#: stock/serializers.py:130 stock/serializers.py:170 stock/serializers.py:709
+#: stock/serializers.py:135 stock/serializers.py:175 stock/serializers.py:714
 #: templates/email/build_order_completed.html:18
 msgid "Quantity"
 msgstr "數量"
 
-#: build/models.py:1513
+#: build/models.py:1571
 msgid "Required quantity for build order"
 msgstr "生產工單所需數量"
 
-#: build/models.py:1597
+#: build/models.py:1655
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "生產項必須指定產出，因為主零件已經被標記為可追蹤的"
 
-#: build/models.py:1608
+#: build/models.py:1666
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "分配的數量（{q}）不能超過可用的庫存數量（{a}）"
 
-#: build/models.py:1629 order/models.py:2090
+#: build/models.py:1687 order/models.py:2237
 msgid "Stock item is over-allocated"
 msgstr "庫存品項超額分配"
 
-#: build/models.py:1634 order/models.py:2093
+#: build/models.py:1692 order/models.py:2240
 msgid "Allocation quantity must be greater than zero"
 msgstr "分配的數量必須大於零"
 
-#: build/models.py:1640
+#: build/models.py:1698
 msgid "Quantity must be 1 for serialized stock"
 msgstr "有序號的品項數量必須為1"
 
-#: build/models.py:1700
+#: build/models.py:1758
 msgid "Selected stock item does not match BOM line"
 msgstr "選擇的庫存品項和BOM的項目不符"
 
-#: build/models.py:1761 build/serializers.py:955 build/serializers.py:1263
-#: order/serializers.py:1499 order/serializers.py:1520
+#: build/models.py:1819 build/serializers.py:955 build/serializers.py:1263
+#: order/serializers.py:1495 order/serializers.py:1516
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
-#: stock/models.py:384 stock/serializers.py:96 stock/serializers.py:816
-#: stock/serializers.py:1325 stock/serializers.py:1437
+#: stock/models.py:452 stock/serializers.py:101 stock/serializers.py:821
+#: stock/serializers.py:1353 stock/serializers.py:1465
 msgid "Stock Item"
 msgstr "庫存品項"
 
-#: build/models.py:1762
+#: build/models.py:1820
 msgid "Source stock item"
 msgstr "來源庫存項目"
 
-#: build/models.py:1772
+#: build/models.py:1830
 msgid "Stock quantity to allocate to build"
 msgstr "要分配的庫存數量"
 
-#: build/models.py:1781
+#: build/models.py:1839
 msgid "Install into"
 msgstr "安裝到"
 
-#: build/models.py:1782
+#: build/models.py:1840
 msgid "Destination stock item"
 msgstr "目的庫存品項"
 
-#: build/serializers.py:112
+#: build/serializers.py:116
 msgid "Build Level"
 msgstr "構建等級"
 
-#: build/serializers.py:121 part/stocktake.py:219
+#: build/serializers.py:125 part/stocktake.py:219
 msgid "Part Name"
 msgstr "零件名稱"
 
-#: build/serializers.py:139
+#: build/serializers.py:143
 msgid "Project Code Label"
 msgstr "項目編碼標籤"
 
-#: build/serializers.py:151
+#: build/serializers.py:155
 msgid "Create Child Builds"
 msgstr "新建子生產項目"
 
-#: build/serializers.py:152
+#: build/serializers.py:156
 msgid "Automatically generate child build orders"
 msgstr "自動生成子生成工單"
 
-#: build/serializers.py:235 build/serializers.py:981
+#: build/serializers.py:239 build/serializers.py:981
 msgid "Build Output"
 msgstr "產出"
 
-#: build/serializers.py:247
+#: build/serializers.py:251
 msgid "Build output does not match the parent build"
 msgstr "產出與之前的生產不匹配"
 
-#: build/serializers.py:251
+#: build/serializers.py:255
 msgid "Output part does not match BuildOrder part"
 msgstr "產出零件與生產訂單零件不匹配"
 
-#: build/serializers.py:255
+#: build/serializers.py:259
 msgid "This build output has already been completed"
 msgstr "此產出已經完成"
 
-#: build/serializers.py:269
+#: build/serializers.py:273
 msgid "This build output is not fully allocated"
 msgstr "此產出尚未完全分配"
 
-#: build/serializers.py:288 build/serializers.py:334
+#: build/serializers.py:292 build/serializers.py:338
 msgid "Enter quantity for build output"
 msgstr "輸入產出數量"
 
-#: build/serializers.py:356
+#: build/serializers.py:360
 msgid "Integer quantity required for trackable parts"
 msgstr "可追蹤的零件數量必須為整數"
 
-#: build/serializers.py:362
+#: build/serializers.py:366
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "因為BOM包含可追蹤的零件，所以數量必須為整數"
 
-#: build/serializers.py:379 order/serializers.py:791 order/serializers.py:1666
-#: stock/serializers.py:729
+#: build/serializers.py:383 order/serializers.py:791 order/serializers.py:1662
+#: stock/serializers.py:734
 msgid "Serial Numbers"
 msgstr "序號"
 
-#: build/serializers.py:380
+#: build/serializers.py:384
 msgid "Enter serial numbers for build outputs"
 msgstr "輸出產出的序列號"
 
-#: build/serializers.py:385 build/serializers.py:510 build/serializers.py:580
+#: build/serializers.py:389 build/serializers.py:514 build/serializers.py:584
 #: build/serializers.py:1267 build/serializers.py:1271 order/serializers.py:759
-#: order/serializers.py:910 order/serializers.py:2019 part/serializers.py:1245
-#: stock/serializers.py:105 stock/serializers.py:638 stock/serializers.py:740
-#: stock/serializers.py:904 stock/serializers.py:1000 stock/serializers.py:1469
-#: stock/serializers.py:1759 users/models.py:1009
+#: order/serializers.py:906 order/serializers.py:2010 part/serializers.py:1246
+#: stock/serializers.py:110 stock/serializers.py:643 stock/serializers.py:745
+#: stock/serializers.py:909 stock/serializers.py:1037 stock/serializers.py:1497
+#: stock/serializers.py:1785 users/models.py:551
 msgid "Location"
 msgstr "地點"
 
-#: build/serializers.py:386
+#: build/serializers.py:390
 msgid "Stock location for build output"
 msgstr "生產輸出的庫存地點"
 
-#: build/serializers.py:401
+#: build/serializers.py:405
 msgid "Auto Allocate Serial Numbers"
 msgstr "自動分配序號"
 
-#: build/serializers.py:403
+#: build/serializers.py:407
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "自動為需要項目分配對應的序號"
 
-#: build/serializers.py:436 order/serializers.py:888 stock/api.py:1076
-#: stock/models.py:1674
+#: build/serializers.py:440 order/serializers.py:884 stock/api.py:1077
+#: stock/models.py:1753
 msgid "The following serial numbers already exist or are invalid"
 msgstr "序號已存在或無效"
 
-#: build/serializers.py:478 build/serializers.py:534 build/serializers.py:622
+#: build/serializers.py:482 build/serializers.py:538 build/serializers.py:622
 msgid "A list of build outputs must be provided"
 msgstr "必須提供產出清單"
 
-#: build/serializers.py:511
+#: build/serializers.py:515
 msgid "Stock location for scrapped outputs"
 msgstr "廢品產出的庫存位置"
 
-#: build/serializers.py:517
+#: build/serializers.py:521
 msgid "Discard Allocations"
 msgstr "放棄分配"
 
-#: build/serializers.py:518
+#: build/serializers.py:522
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "取消對廢品產出的任何庫存分配"
 
-#: build/serializers.py:523
+#: build/serializers.py:527
 msgid "Reason for scrapping build output(s)"
 msgstr "廢品產出的原因"
 
-#: build/serializers.py:581
+#: build/serializers.py:585
 msgid "Location for completed build outputs"
 msgstr "已完成刪除的庫存地點"
-
-#: build/serializers.py:587 order/models.py:509 order/models.py:1045
-#: order/models.py:2266 order/serializers.py:801 order/serializers.py:1987
-#: stock/serializers.py:603 stock/serializers.py:1007 stock/serializers.py:1064
-#: stock/serializers.py:1626 users/models.py:1002
-msgid "Status"
-msgstr "狀態"
 
 #: build/serializers.py:593
 msgid "Accept Incomplete Allocation"
@@ -1174,7 +1169,7 @@ msgstr "接受庫存項未被完全分配至生產訂單"
 msgid "Required stock has not been fully allocated"
 msgstr "所需庫存尚未完全分配"
 
-#: build/serializers.py:810 order/serializers.py:442 order/serializers.py:1567
+#: build/serializers.py:810 order/serializers.py:442 order/serializers.py:1563
 msgid "Accept Incomplete"
 msgstr "接受不完整"
 
@@ -1218,11 +1213,11 @@ msgstr "生產行項目"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part 必須與生產訂單零件相同"
 
-#: build/serializers.py:961 stock/serializers.py:1338
+#: build/serializers.py:961 stock/serializers.py:1366
 msgid "Item must be in stock"
 msgstr "商品必須有庫存"
 
-#: build/serializers.py:1004 order/serializers.py:1553
+#: build/serializers.py:1004 order/serializers.py:1549
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "可用量 ({q}) 超出限制"
@@ -1235,7 +1230,7 @@ msgstr "對於被追蹤的零件的分配，必須指定生產產出"
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "對於未被追蹤的零件，無法指定生產產出"
 
-#: build/serializers.py:1042 order/serializers.py:1826
+#: build/serializers.py:1042 order/serializers.py:1822
 msgid "Allocation items must be provided"
 msgstr "必須提供分配項目"
 
@@ -1295,13 +1290,13 @@ msgstr "物料清單零件名稱"
 msgid "Build"
 msgstr ""
 
-#: build/serializers.py:1286 company/models.py:662 order/api.py:300
-#: order/api.py:501 order/serializers.py:591 stock/models.py:881
-#: stock/serializers.py:622
+#: build/serializers.py:1286 company/models.py:662 order/api.py:304
+#: order/api.py:309 order/api.py:508 order/serializers.py:591
+#: stock/models.py:959 stock/serializers.py:627
 msgid "Supplier Part"
 msgstr "供應商零件"
 
-#: build/serializers.py:1294 stock/serializers.py:653
+#: build/serializers.py:1294 stock/serializers.py:658
 msgid "Allocated Quantity"
 msgstr "已分配數量"
 
@@ -1313,7 +1308,7 @@ msgstr "構建參考"
 msgid "Part Category Name"
 msgstr "零件類別名稱"
 
-#: build/serializers.py:1401 common/setting/system.py:453 part/models.py:1182
+#: build/serializers.py:1401 common/setting/system.py:453 part/models.py:1223
 msgid "Trackable"
 msgstr "可追蹤"
 
@@ -1321,12 +1316,12 @@ msgstr "可追蹤"
 msgid "Inherited"
 msgstr "已繼承的"
 
-#: build/serializers.py:1407 part/models.py:4324
+#: build/serializers.py:1407 part/models.py:4381
 msgid "Allow Variants"
 msgstr "允許變體"
 
-#: build/serializers.py:1412 build/serializers.py:1416 part/models.py:4122
-#: part/models.py:4600 stock/api.py:830
+#: build/serializers.py:1412 build/serializers.py:1416 part/models.py:4179
+#: part/models.py:4657 stock/api.py:831
 msgid "BOM Item"
 msgstr "物料清單項"
 
@@ -1335,19 +1330,19 @@ msgid "Allocated Stock"
 msgstr "分配庫存"
 
 #: build/serializers.py:1442 company/serializers.py:424
-#: order/serializers.py:1263 part/serializers.py:930 part/serializers.py:1644
+#: order/serializers.py:1259 part/serializers.py:931 part/serializers.py:1660
 msgid "On Order"
 msgstr "已訂購"
 
-#: build/serializers.py:1444 order/serializers.py:1264 part/serializers.py:1646
+#: build/serializers.py:1444 order/serializers.py:1260 part/serializers.py:1662
 msgid "In Production"
 msgstr "生產中"
 
-#: build/serializers.py:1446 part/serializers.py:937
+#: build/serializers.py:1446 part/serializers.py:938
 msgid "External Stock"
 msgstr "外部庫存"
 
-#: build/serializers.py:1447 part/serializers.py:1671
+#: build/serializers.py:1447 part/serializers.py:1687
 msgid "Available Stock"
 msgstr "可用庫存"
 
@@ -1379,7 +1374,7 @@ msgstr "被掛起"
 msgid "Cancelled"
 msgstr "已取消"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:521
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:529
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:83
 msgid "Complete"
@@ -1389,28 +1384,28 @@ msgstr "完成"
 msgid "Stock required for build order"
 msgstr "生產訂單所需庫存"
 
-#: build/tasks.py:265
+#: build/tasks.py:267
 msgid "Overdue Build Order"
 msgstr "逾期的生產訂單"
 
-#: build/tasks.py:270
+#: build/tasks.py:272
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "生產訂單 {bo} 現已逾期"
 
-#: common/api.py:727
+#: common/api.py:710
 msgid "Is Link"
 msgstr "是否鏈接"
 
-#: common/api.py:735
+#: common/api.py:718
 msgid "Is File"
 msgstr "是否為文件"
 
-#: common/api.py:778
+#: common/api.py:761
 msgid "User does not have permission to delete these attachments"
 msgstr "用户沒有權限刪除此附件"
 
-#: common/api.py:795
+#: common/api.py:778
 msgid "User does not have permission to delete this attachment"
 msgstr "用户沒有權限刪除此附件"
 
@@ -1430,646 +1425,655 @@ msgstr "未提供有效的貨幣代碼"
 msgid "No plugin"
 msgstr "暫無插件"
 
-#: common/models.py:75
+#: common/models.py:89
 msgid "Updated"
 msgstr "已是最新"
 
-#: common/models.py:76
+#: common/models.py:90
 msgid "Timestamp of last update"
 msgstr "最後更新時間戳"
 
-#: common/models.py:103
+#: common/models.py:117
 msgid "Unique project code"
 msgstr "唯一項目編碼"
 
-#: common/models.py:110
+#: common/models.py:124
 msgid "Project description"
 msgstr "項目描述"
 
-#: common/models.py:119
+#: common/models.py:133
 msgid "User or group responsible for this project"
 msgstr "負責此項目的用户或羣組"
 
-#: common/models.py:707 common/models.py:1173 common/models.py:1211
+#: common/models.py:721 common/models.py:1187 common/models.py:1225
 msgid "Settings key"
 msgstr ""
 
-#: common/models.py:711
+#: common/models.py:725
 msgid "Settings value"
 msgstr "設定值"
 
-#: common/models.py:766
+#: common/models.py:780
 msgid "Chosen value is not a valid option"
 msgstr "所選值不是一個有效的選項"
 
-#: common/models.py:782
+#: common/models.py:796
 msgid "Value must be a boolean value"
 msgstr "該值必須是布爾值"
 
-#: common/models.py:790
+#: common/models.py:804
 msgid "Value must be an integer value"
 msgstr "該值必須為整數"
 
-#: common/models.py:798
+#: common/models.py:812
 msgid "Value must be a valid number"
 msgstr ""
 
-#: common/models.py:823
+#: common/models.py:837
 msgid "Value does not pass validation checks"
 msgstr ""
 
-#: common/models.py:845
+#: common/models.py:859
 msgid "Key string must be unique"
 msgstr "鍵字符串必須是唯一的"
 
-#: common/models.py:1219 common/models.py:1220 common/models.py:1324
-#: common/models.py:1325 common/models.py:1570 common/models.py:1571
-#: common/models.py:1895 common/models.py:1896 common/models.py:2277
-#: importer/models.py:89 part/models.py:3319 part/models.py:3406
-#: part/models.py:3480 part/models.py:3508 plugin/models.py:322
+#: common/models.py:1233 common/models.py:1234 common/models.py:1338
+#: common/models.py:1339 common/models.py:1584 common/models.py:1585
+#: common/models.py:1915 common/models.py:1916 common/models.py:2297
+#: importer/models.py:97 part/models.py:3376 part/models.py:3463
+#: part/models.py:3537 part/models.py:3565 plugin/models.py:322
 #: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
-#: users/models.py:129 users/models.py:961
+#: users/models.py:130 users/models.py:503
 msgid "User"
 msgstr "使用者"
 
-#: common/models.py:1242
+#: common/models.py:1256
 msgid "Price break quantity"
 msgstr "批發價數量"
 
-#: common/models.py:1249 company/serializers.py:567 order/models.py:1505
-#: order/models.py:2561
+#: common/models.py:1263 company/serializers.py:567 order/models.py:1632
+#: order/models.py:2734
 msgid "Price"
 msgstr "價格"
 
-#: common/models.py:1250
+#: common/models.py:1264
 msgid "Unit price at specified quantity"
 msgstr "指定數量的單位價格"
 
-#: common/models.py:1301 common/models.py:1486
+#: common/models.py:1315 common/models.py:1500
 msgid "Endpoint"
 msgstr "端點"
 
-#: common/models.py:1302
+#: common/models.py:1316
 msgid "Endpoint at which this webhook is received"
 msgstr "接收此網絡鈎子的端點"
 
-#: common/models.py:1312
+#: common/models.py:1326
 msgid "Name for this webhook"
 msgstr "此網絡鈎子的名稱"
 
-#: common/models.py:1316 common/models.py:2136 common/models.py:2243
+#: common/models.py:1330 common/models.py:2156 common/models.py:2263
 #: company/models.py:164 company/models.py:799 machine/models.py:39
-#: part/models.py:1205 plugin/models.py:68 stock/api.py:590 users/models.py:200
-#: users/models.py:1014 users/serializers.py:270
+#: part/models.py:1246 plugin/models.py:68 stock/api.py:591 users/models.py:201
+#: users/models.py:556 users/serializers.py:329
 msgid "Active"
 msgstr "激活"
 
-#: common/models.py:1316
+#: common/models.py:1330
 msgid "Is this webhook active"
 msgstr "網絡鈎子是否已啓用"
 
-#: common/models.py:1332 users/models.py:177
+#: common/models.py:1346 users/models.py:178
 msgid "Token"
 msgstr "令牌"
 
-#: common/models.py:1333
+#: common/models.py:1347
 msgid "Token for access"
 msgstr "訪問令牌"
 
-#: common/models.py:1341
+#: common/models.py:1355
 msgid "Secret"
 msgstr "密鑰"
 
-#: common/models.py:1342
+#: common/models.py:1356
 msgid "Shared secret for HMAC"
 msgstr "HMAC共享密鑰"
 
-#: common/models.py:1450
+#: common/models.py:1464
 msgid "Message ID"
 msgstr "消息ID"
 
-#: common/models.py:1451
+#: common/models.py:1465
 msgid "Unique identifier for this message"
 msgstr "此郵件的唯一標識符"
 
-#: common/models.py:1459
+#: common/models.py:1473
 msgid "Host"
 msgstr "主機"
 
-#: common/models.py:1460
+#: common/models.py:1474
 msgid "Host from which this message was received"
 msgstr "接收此消息的主機"
 
-#: common/models.py:1468
+#: common/models.py:1482
 msgid "Header"
 msgstr "標題"
 
-#: common/models.py:1469
+#: common/models.py:1483
 msgid "Header of this message"
 msgstr "此消息的標題"
 
-#: common/models.py:1476
+#: common/models.py:1490
 msgid "Body"
 msgstr "正文"
 
-#: common/models.py:1477
+#: common/models.py:1491
 msgid "Body of this message"
 msgstr "此消息的正文"
 
-#: common/models.py:1487
+#: common/models.py:1501
 msgid "Endpoint on which this message was received"
 msgstr "接收此消息的終點"
 
-#: common/models.py:1492
+#: common/models.py:1506
 msgid "Worked on"
 msgstr "工作於"
 
-#: common/models.py:1493
+#: common/models.py:1507
 msgid "Was the work on this message finished?"
 msgstr "這條消息的工作完成了嗎？"
 
-#: common/models.py:1619
+#: common/models.py:1633
 msgid "Id"
 msgstr "標識"
 
-#: common/models.py:1621 part/serializers.py:276
+#: common/models.py:1635 part/serializers.py:277
 msgid "Title"
 msgstr "標題"
 
-#: common/models.py:1623 common/models.py:1878 company/models.py:149
+#: common/models.py:1637 common/models.py:1898 company/models.py:149
 #: company/models.py:445 company/models.py:512 company/models.py:816
-#: order/models.py:357 order/models.py:1458 order/models.py:1909
-#: part/models.py:1072
+#: order/models.py:444 order/models.py:1585 order/models.py:2056
+#: part/models.py:1113
 #: report/templates/report/inventree_build_order_report.html:164
 msgid "Link"
 msgstr "連結"
 
-#: common/models.py:1625
+#: common/models.py:1639
 msgid "Published"
 msgstr "已發佈"
 
-#: common/models.py:1627
+#: common/models.py:1641
 msgid "Author"
 msgstr "作者"
 
-#: common/models.py:1629
+#: common/models.py:1643
 msgid "Summary"
 msgstr "摘要"
 
-#: common/models.py:1632
+#: common/models.py:1646
 msgid "Read"
 msgstr "閲讀"
 
-#: common/models.py:1632
+#: common/models.py:1646
 msgid "Was this news item read?"
 msgstr "這條新聞被閲讀了嗎？"
 
-#: common/models.py:1649 company/models.py:160 part/models.py:1083
+#: common/models.py:1663 company/models.py:160 part/models.py:1124
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:35
 msgid "Image"
 msgstr "圖像"
 
-#: common/models.py:1649
+#: common/models.py:1663
 msgid "Image file"
 msgstr "圖像文件"
 
-#: common/models.py:1661 common/models.py:1862
+#: common/models.py:1675
 msgid "Target model type for this image"
 msgstr "此圖像的目標模型類型"
 
-#: common/models.py:1665
+#: common/models.py:1679
 msgid "Target model ID for this image"
 msgstr "此圖像的目標型號ID"
 
-#: common/models.py:1687
+#: common/models.py:1701
 msgid "Custom Unit"
 msgstr "自定義單位"
 
-#: common/models.py:1705
+#: common/models.py:1719
 msgid "Unit symbol must be unique"
 msgstr "單位符號必須唯一"
 
-#: common/models.py:1720
+#: common/models.py:1734
 msgid "Unit name must be a valid identifier"
 msgstr "單位名稱必須是有效的標識符"
 
-#: common/models.py:1739
+#: common/models.py:1753
 msgid "Unit name"
 msgstr "單位名稱"
 
-#: common/models.py:1746
+#: common/models.py:1760
 msgid "Symbol"
 msgstr "符號"
 
-#: common/models.py:1747
+#: common/models.py:1761
 msgid "Optional unit symbol"
 msgstr "可選單位符號"
 
-#: common/models.py:1753
+#: common/models.py:1767
 msgid "Definition"
 msgstr "定義"
 
-#: common/models.py:1754
+#: common/models.py:1768
 msgid "Unit definition"
 msgstr "單位定義"
 
-#: common/models.py:1812 common/models.py:1869 stock/models.py:2748
-#: stock/serializers.py:249
+#: common/models.py:1826 common/models.py:1889 stock/models.py:2827
+#: stock/serializers.py:254
 msgid "Attachment"
 msgstr "附件"
 
-#: common/models.py:1824
+#: common/models.py:1843
 msgid "Missing file"
 msgstr "缺少檔案"
 
-#: common/models.py:1825
+#: common/models.py:1844
 msgid "Missing external link"
 msgstr "缺少外部連結"
 
-#: common/models.py:1870
+#: common/models.py:1881
+msgid "Model type"
+msgstr ""
+
+#: common/models.py:1882
+msgid "Target model type for image"
+msgstr ""
+
+#: common/models.py:1890
 msgid "Select file to attach"
 msgstr "選擇附件"
 
-#: common/models.py:1886
+#: common/models.py:1906
 msgid "Comment"
 msgstr "註解"
 
-#: common/models.py:1887
+#: common/models.py:1907
 msgid "Attachment comment"
 msgstr "附件評論"
 
-#: common/models.py:1903
+#: common/models.py:1923
 msgid "Upload date"
 msgstr "上傳日期"
 
-#: common/models.py:1904
+#: common/models.py:1924
 msgid "Date the file was uploaded"
 msgstr "上傳文件的日期"
 
-#: common/models.py:1908
+#: common/models.py:1928
 msgid "File size"
 msgstr "文件大小"
 
-#: common/models.py:1908
+#: common/models.py:1928
 msgid "File size in bytes"
 msgstr "文件大小，以字節為單位"
 
-#: common/models.py:1946 common/serializers.py:634
+#: common/models.py:1966 common/serializers.py:637
 msgid "Invalid model type specified for attachment"
 msgstr "為附件指定的模型類型無效"
 
-#: common/models.py:1967
+#: common/models.py:1987
 msgid "Custom State"
 msgstr "自定狀態"
 
-#: common/models.py:1968
+#: common/models.py:1988
 msgid "Custom States"
 msgstr "定製狀態"
 
-#: common/models.py:1973
+#: common/models.py:1993
 msgid "Reference Status Set"
 msgstr "參考狀態設定"
 
-#: common/models.py:1974
+#: common/models.py:1994
 msgid "Status set that is extended with this custom state"
 msgstr "使用此自定義狀態擴展狀態的狀態集"
 
-#: common/models.py:1978 generic/states/serializers.py:18
+#: common/models.py:1998 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "邏輯密鑰"
 
-#: common/models.py:1980
+#: common/models.py:2000
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "等同於商業邏輯中自定義狀態的狀態邏輯鍵"
 
-#: common/models.py:1985 common/models.py:2224 company/models.py:600
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2740
+#: common/models.py:2005 common/models.py:2244 company/models.py:600
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:2819
 msgid "Value"
 msgstr "值"
 
-#: common/models.py:1986
+#: common/models.py:2006
 msgid "Numerical value that will be saved in the models database"
 msgstr ""
 
-#: common/models.py:1992
+#: common/models.py:2012
 msgid "Name of the state"
 msgstr "狀態名"
 
-#: common/models.py:2001 common/models.py:2230 generic/states/serializers.py:22
-#: part/serializers.py:278
+#: common/models.py:2021 common/models.py:2250 generic/states/serializers.py:22
+#: part/serializers.py:279
 msgid "Label"
 msgstr "標籤"
 
-#: common/models.py:2002
+#: common/models.py:2022
 msgid "Label that will be displayed in the frontend"
 msgstr "在前端顯示的標籤"
 
-#: common/models.py:2009 generic/states/serializers.py:24
+#: common/models.py:2029 generic/states/serializers.py:24
 msgid "Color"
 msgstr "顏色"
 
-#: common/models.py:2010
+#: common/models.py:2030
 msgid "Color that will be displayed in the frontend"
 msgstr "將在前端顯示顏色"
 
-#: common/models.py:2018 part/serializers.py:280
+#: common/models.py:2038 part/serializers.py:281
 msgid "Model"
 msgstr "模式"
 
-#: common/models.py:2019
+#: common/models.py:2039
 msgid "Model this state is associated with"
 msgstr "該狀態關聯的模型"
 
-#: common/models.py:2034
+#: common/models.py:2054
 msgid "Model must be selected"
 msgstr "必須選定模型"
 
-#: common/models.py:2037
+#: common/models.py:2057
 msgid "Key must be selected"
 msgstr "必須選取密鑰"
 
-#: common/models.py:2040
+#: common/models.py:2060
 msgid "Logical key must be selected"
 msgstr "必須選中邏輯密鑰"
 
-#: common/models.py:2044
+#: common/models.py:2064
 msgid "Key must be different from logical key"
 msgstr "密鑰必須不同於邏輯密鑰"
 
-#: common/models.py:2051
+#: common/models.py:2071
 msgid "Valid reference status class must be provided"
 msgstr ""
 
-#: common/models.py:2057
+#: common/models.py:2077
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "密鑰必須不同於參考狀態的邏輯密鑰"
 
-#: common/models.py:2064
+#: common/models.py:2084
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "邏輯密鑰必須在參考狀態的邏輯鍵中"
 
-#: common/models.py:2071
+#: common/models.py:2091
 msgid "Name must be different from the names of the reference status"
 msgstr ""
 
-#: common/models.py:2111 common/models.py:2218 part/models.py:3819
+#: common/models.py:2131 common/models.py:2238 part/models.py:3876
 msgid "Selection List"
 msgstr ""
 
-#: common/models.py:2112
+#: common/models.py:2132
 msgid "Selection Lists"
 msgstr ""
 
-#: common/models.py:2117
+#: common/models.py:2137
 msgid "Name of the selection list"
 msgstr ""
 
-#: common/models.py:2124
+#: common/models.py:2144
 msgid "Description of the selection list"
 msgstr ""
 
-#: common/models.py:2130 part/models.py:1210
+#: common/models.py:2150 part/models.py:1251
 msgid "Locked"
 msgstr "已鎖定"
 
-#: common/models.py:2131
+#: common/models.py:2151
 msgid "Is this selection list locked?"
 msgstr ""
 
-#: common/models.py:2137
+#: common/models.py:2157
 msgid "Can this selection list be used?"
 msgstr ""
 
-#: common/models.py:2145
+#: common/models.py:2165
 msgid "Source Plugin"
 msgstr ""
 
-#: common/models.py:2146
+#: common/models.py:2166
 msgid "Plugin which provides the selection list"
 msgstr ""
 
-#: common/models.py:2151
+#: common/models.py:2171
 msgid "Source String"
 msgstr ""
 
-#: common/models.py:2152
+#: common/models.py:2172
 msgid "Optional string identifying the source used for this list"
 msgstr ""
 
-#: common/models.py:2161
+#: common/models.py:2181
 msgid "Default Entry"
 msgstr ""
 
-#: common/models.py:2162
+#: common/models.py:2182
 msgid "Default entry for this selection list"
 msgstr ""
 
-#: common/models.py:2167
+#: common/models.py:2187
 msgid "Created"
 msgstr "已創建"
 
-#: common/models.py:2168
+#: common/models.py:2188
 msgid "Date and time that the selection list was created"
 msgstr ""
 
-#: common/models.py:2173
+#: common/models.py:2193
 msgid "Last Updated"
 msgstr "最近更新"
 
-#: common/models.py:2174
+#: common/models.py:2194
 msgid "Date and time that the selection list was last updated"
 msgstr ""
 
-#: common/models.py:2208
+#: common/models.py:2228
 msgid "Selection List Entry"
 msgstr ""
 
-#: common/models.py:2209
+#: common/models.py:2229
 msgid "Selection List Entries"
 msgstr ""
 
-#: common/models.py:2219
+#: common/models.py:2239
 msgid "Selection list to which this entry belongs"
 msgstr ""
 
-#: common/models.py:2225
+#: common/models.py:2245
 msgid "Value of the selection list entry"
 msgstr ""
 
-#: common/models.py:2231
+#: common/models.py:2251
 msgid "Label for the selection list entry"
 msgstr ""
 
-#: common/models.py:2237
+#: common/models.py:2257
 msgid "Description of the selection list entry"
 msgstr ""
 
-#: common/models.py:2244
+#: common/models.py:2264
 msgid "Is this selection list entry active?"
 msgstr ""
 
-#: common/models.py:2262
+#: common/models.py:2282
 msgid "Barcode Scan"
 msgstr "掃描條碼"
 
-#: common/models.py:2266 importer/models.py:515 part/models.py:3984
+#: common/models.py:2286 importer/models.py:523 part/models.py:4041
 msgid "Data"
 msgstr "數據"
 
-#: common/models.py:2267
+#: common/models.py:2287
 msgid "Barcode data"
 msgstr "條碼數據"
 
-#: common/models.py:2278
+#: common/models.py:2298
 msgid "User who scanned the barcode"
 msgstr "掃描條碼"
 
-#: common/models.py:2283 importer/models.py:60
+#: common/models.py:2303 importer/models.py:66
 msgid "Timestamp"
 msgstr "時間戳"
 
-#: common/models.py:2284
+#: common/models.py:2304
 msgid "Date and time of the barcode scan"
 msgstr "掃描條碼的日期和時間"
 
-#: common/models.py:2290
+#: common/models.py:2310
 msgid "URL endpoint which processed the barcode"
 msgstr "處理條碼的 URL 終點"
 
-#: common/models.py:2297 order/models.py:1495 plugin/serializers.py:91
+#: common/models.py:2317 order/models.py:1622 plugin/serializers.py:93
 msgid "Context"
 msgstr "上下文"
 
-#: common/models.py:2298
+#: common/models.py:2318
 msgid "Context data for the barcode scan"
 msgstr "掃描條碼的上下文數據"
 
-#: common/models.py:2305
+#: common/models.py:2325
 msgid "Response"
 msgstr "響應"
 
-#: common/models.py:2306
+#: common/models.py:2326
 msgid "Response data from the barcode scan"
 msgstr "掃描條碼的響應數據"
 
-#: common/models.py:2312 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2734
+#: common/models.py:2332 report/templates/report/inventree_test_report.html:103
+#: stock/models.py:2813
 msgid "Result"
 msgstr "結果"
 
-#: common/models.py:2313
+#: common/models.py:2333
 msgid "Was the barcode scan successful?"
 msgstr "條碼掃描成功嗎？"
 
-#: common/notifications.py:330
+#: common/notifications.py:332
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr "新建{verbose_name}"
 
-#: common/notifications.py:332
+#: common/notifications.py:334
 msgid "A new order has been created and assigned to you"
 msgstr "新訂單已創建並分配給您"
 
-#: common/notifications.py:338
+#: common/notifications.py:340
 #, python-brace-format
 msgid "{verbose_name} canceled"
 msgstr "{verbose_name} 已取消"
 
-#: common/notifications.py:340
+#: common/notifications.py:342
 msgid "A order that is assigned to you was canceled"
 msgstr "分配給您的訂單已取消"
 
-#: common/notifications.py:346 common/notifications.py:353 order/api.py:549
+#: common/notifications.py:348 common/notifications.py:355 order/api.py:559
 msgid "Items Received"
 msgstr "收到的物品"
 
-#: common/notifications.py:348
+#: common/notifications.py:350
 msgid "Items have been received against a purchase order"
 msgstr "已根據採購訂單收到物品"
 
-#: common/notifications.py:355
+#: common/notifications.py:357
 msgid "Items have been received against a return order"
 msgstr "已收到退貨訂單中的物品"
 
-#: common/notifications.py:480
+#: common/notifications.py:505
 msgid "Error raised by plugin"
 msgstr "插件引發的錯誤"
 
-#: common/serializers.py:448
+#: common/serializers.py:451
 msgid "Is Running"
 msgstr "正在運行"
 
-#: common/serializers.py:454
+#: common/serializers.py:457
 msgid "Pending Tasks"
 msgstr "等待完成的任務"
 
-#: common/serializers.py:460
+#: common/serializers.py:463
 msgid "Scheduled Tasks"
 msgstr "預定的任務"
 
-#: common/serializers.py:466
+#: common/serializers.py:469
 msgid "Failed Tasks"
 msgstr "失敗的任務"
 
-#: common/serializers.py:481
+#: common/serializers.py:484
 msgid "Task ID"
 msgstr "任務ID"
 
-#: common/serializers.py:481
+#: common/serializers.py:484
 msgid "Unique task ID"
 msgstr "唯一任務ID"
 
-#: common/serializers.py:483
+#: common/serializers.py:486
 msgid "Lock"
 msgstr "鎖定"
 
-#: common/serializers.py:483
+#: common/serializers.py:486
 msgid "Lock time"
 msgstr "鎖定時間"
 
-#: common/serializers.py:485
+#: common/serializers.py:488
 msgid "Task name"
 msgstr "任務名稱"
 
-#: common/serializers.py:487
+#: common/serializers.py:490
 msgid "Function"
 msgstr "功能"
 
-#: common/serializers.py:487
+#: common/serializers.py:490
 msgid "Function name"
 msgstr "功能名稱"
 
-#: common/serializers.py:489
+#: common/serializers.py:492
 msgid "Arguments"
 msgstr "參數"
 
-#: common/serializers.py:489
+#: common/serializers.py:492
 msgid "Task arguments"
 msgstr "任務參數"
 
-#: common/serializers.py:492
+#: common/serializers.py:495
 msgid "Keyword Arguments"
 msgstr "關鍵字參數"
 
-#: common/serializers.py:492
+#: common/serializers.py:495
 msgid "Task keyword arguments"
 msgstr "任務關鍵詞參數"
 
-#: common/serializers.py:602
+#: common/serializers.py:605
 msgid "Filename"
 msgstr "檔案名稱"
 
-#: common/serializers.py:609 report/api.py:45 report/serializers.py:53
+#: common/serializers.py:612 importer/models.py:86 report/api.py:41
+#: report/models.py:277 report/serializers.py:53
 msgid "Model Type"
 msgstr "模型類型"
 
-#: common/serializers.py:637
+#: common/serializers.py:640
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "用户無權為此模式創建或編輯附件"
 
-#: common/serializers.py:681 common/serializers.py:784
+#: common/serializers.py:684 common/serializers.py:787
 msgid "Selection list is locked"
 msgstr ""
 
@@ -2409,9 +2413,9 @@ msgstr "複製類別參數模板"
 msgid "Copy category parameter templates when creating a part"
 msgstr "創建零件時複製類別參數模板"
 
-#: common/setting/system.py:423 part/models.py:3978 report/models.py:298
-#: report/models.py:502 report/serializers.py:90 report/serializers.py:131
-#: stock/serializers.py:238
+#: common/setting/system.py:423 part/models.py:4035 report/models.py:357
+#: report/models.py:563 report/serializers.py:90 report/serializers.py:131
+#: stock/serializers.py:243
 msgid "Template"
 msgstr "模板"
 
@@ -2423,8 +2427,8 @@ msgstr "零件默認為模板"
 msgid "Parts can be assembled from other components by default"
 msgstr "默認情況下，元件可由其他零件組裝而成"
 
-#: common/setting/system.py:435 part/models.py:1176 part/serializers.py:1632
-#: part/serializers.py:1638
+#: common/setting/system.py:435 part/models.py:1217 part/serializers.py:1648
+#: part/serializers.py:1654
 msgid "Component"
 msgstr "組件"
 
@@ -2432,7 +2436,7 @@ msgstr "組件"
 msgid "Parts can be used as sub-components by default"
 msgstr "默認情況下，零件可用作子部件"
 
-#: common/setting/system.py:441 part/models.py:1194
+#: common/setting/system.py:441 part/models.py:1235
 msgid "Purchaseable"
 msgstr "可購買"
 
@@ -2440,7 +2444,7 @@ msgstr "可購買"
 msgid "Parts are purchaseable by default"
 msgstr "默認情況下可購買零件"
 
-#: common/setting/system.py:447 part/models.py:1200 stock/api.py:591
+#: common/setting/system.py:447 part/models.py:1241 stock/api.py:592
 msgid "Salable"
 msgstr "可銷售"
 
@@ -2452,7 +2456,7 @@ msgstr "零件默認為可銷售"
 msgid "Parts are trackable by default"
 msgstr "默認情況下可跟蹤零件"
 
-#: common/setting/system.py:459 part/models.py:1216
+#: common/setting/system.py:459 part/models.py:1257
 msgid "Virtual"
 msgstr "虛擬的"
 
@@ -2645,7 +2649,7 @@ msgid "Log errors which occur when generating reports"
 msgstr "記錄生成報告時出現的錯誤"
 
 #: common/setting/system.py:638 plugin/builtin/labels/label_sheet.py:29
-#: report/models.py:306
+#: report/models.py:365
 msgid "Page Size"
 msgstr "頁面大小"
 
@@ -3344,90 +3348,98 @@ msgid "Search queries return results for whole word matches"
 msgstr "搜索查詢返回整詞匹配的結果"
 
 #: common/setting/user.py:169
+msgid "Search Notes"
+msgstr ""
+
+#: common/setting/user.py:171
+msgid "Search queries return results for matches from the item's notes"
+msgstr ""
+
+#: common/setting/user.py:177
 msgid "Show Quantity in Forms"
 msgstr "在表格中顯示數量"
 
-#: common/setting/user.py:170
+#: common/setting/user.py:178
 msgid "Display available part quantity in some forms"
 msgstr "以某些形式顯示可用零件數量"
 
-#: common/setting/user.py:175
+#: common/setting/user.py:183
 msgid "Escape Key Closes Forms"
 msgstr "Esc鍵關閉窗體"
 
-#: common/setting/user.py:176
+#: common/setting/user.py:184
 msgid "Use the escape key to close modal forms"
 msgstr "使用ESC鍵關閉模態窗體"
 
-#: common/setting/user.py:181
+#: common/setting/user.py:189
 msgid "Fixed Navbar"
 msgstr "固定導航欄"
 
-#: common/setting/user.py:182
+#: common/setting/user.py:190
 msgid "The navbar position is fixed to the top of the screen"
 msgstr "導航欄位置固定在屏幕頂部"
 
-#: common/setting/user.py:187
+#: common/setting/user.py:195
 msgid "Navigation Icons"
 msgstr ""
 
-#: common/setting/user.py:188
+#: common/setting/user.py:196
 msgid "Display icons in the navigation bar"
 msgstr ""
 
-#: common/setting/user.py:193
+#: common/setting/user.py:201
 msgid "Date Format"
 msgstr "時間格式"
 
-#: common/setting/user.py:194
+#: common/setting/user.py:202
 msgid "Preferred format for displaying dates"
 msgstr "顯示時間的首選格式"
 
-#: common/setting/user.py:207
+#: common/setting/user.py:215
 msgid "Part Scheduling"
 msgstr "零件調度"
 
-#: common/setting/user.py:208
+#: common/setting/user.py:216
 msgid "Display part scheduling information"
 msgstr "顯示零件排程信息"
 
-#: common/setting/user.py:213
+#: common/setting/user.py:221
 msgid "Part Stocktake"
 msgstr "零件盤點"
 
-#: common/setting/user.py:215
+#: common/setting/user.py:223
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "顯示零件盤點信息 (如果啓用了盤點功能)"
 
-#: common/setting/user.py:221
+#: common/setting/user.py:229
 msgid "Table String Length"
 msgstr "表字符串長度"
 
-#: common/setting/user.py:222
+#: common/setting/user.py:230
 msgid "Maximum length limit for strings displayed in table views"
 msgstr "表視圖中顯示的字符串的最大長度限制"
 
-#: common/setting/user.py:227
+#: common/setting/user.py:235
 msgid "Show Last Breadcrumb"
 msgstr ""
 
-#: common/setting/user.py:228
+#: common/setting/user.py:236
 msgid "Show the current page in breadcrumbs"
 msgstr ""
 
-#: common/setting/user.py:233
+#: common/setting/user.py:241
 msgid "Receive error reports"
 msgstr "接收錯誤報告"
 
-#: common/setting/user.py:234
+#: common/setting/user.py:242
 msgid "Receive notifications for system errors"
 msgstr "接收系統錯誤通知"
 
-#: common/setting/user.py:239
+#: common/setting/user.py:247
 msgid "Last used printing machines"
 msgstr "上次使用的打印設備"
 
-#: common/setting/user.py:240
+#: common/setting/user.py:248
 msgid "Save the last used printing machines for a user"
 msgstr "為用户保存上次使用的打印設備"
 
@@ -3485,12 +3497,12 @@ msgid "Supplier is Active"
 msgstr "供應商已激活"
 
 #: company/api.py:299 company/models.py:498 company/serializers.py:444
-#: part/serializers.py:569
+#: part/serializers.py:570
 msgid "Manufacturer"
 msgstr "製造商"
 
 #: company/api.py:306 company/models.py:97 company/models.py:370
-#: stock/api.py:848
+#: stock/api.py:849
 msgid "Company"
 msgstr "公司"
 
@@ -3530,8 +3542,8 @@ msgstr "聯繫電話"
 msgid "Contact email address"
 msgstr "聯繫人電子郵箱地址"
 
-#: company/models.py:142 company/models.py:274 order/models.py:413
-#: users/models.py:1021
+#: company/models.py:142 company/models.py:274 order/models.py:500
+#: users/models.py:563
 msgid "Contact"
 msgstr "聯繫人"
 
@@ -3575,7 +3587,7 @@ msgstr "這家公司生產零件嗎？"
 msgid "Default currency used for this company"
 msgstr "此公司使用的默認貨幣"
 
-#: company/models.py:313 order/models.py:423
+#: company/models.py:313 order/models.py:510
 msgid "Address"
 msgstr "地址"
 
@@ -3672,8 +3684,8 @@ msgstr "鏈接地址信息 (外部)"
 msgid "Manufacturer Part"
 msgstr "製造商零件"
 
-#: company/models.py:487 company/models.py:777 stock/models.py:870
-#: stock/serializers.py:471
+#: company/models.py:487 company/models.py:777 stock/models.py:948
+#: stock/serializers.py:476
 msgid "Base Part"
 msgstr "基礎零件"
 
@@ -3686,11 +3698,11 @@ msgid "Select manufacturer"
 msgstr "選擇製造商"
 
 #: company/models.py:505 company/serializers.py:466 order/serializers.py:658
-#: part/serializers.py:579
+#: part/serializers.py:580
 msgid "MPN"
 msgstr "製造商零件編號"
 
-#: company/models.py:506 stock/serializers.py:616
+#: company/models.py:506 stock/serializers.py:621
 msgid "Manufacturer Part Number"
 msgstr "製造商零件編號"
 
@@ -3714,7 +3726,7 @@ msgstr "參數名稱"
 msgid "Parameter value"
 msgstr "參數值"
 
-#: company/models.py:608 part/models.py:1163 part/models.py:3787
+#: company/models.py:608 part/models.py:1204 part/models.py:3844
 msgid "Units"
 msgstr "單位"
 
@@ -3735,10 +3747,10 @@ msgid "Linked manufacturer part must reference the same base part"
 msgstr "鏈接的製造商零件必須引用相同的基礎零件"
 
 #: company/models.py:787 company/serializers.py:436 company/serializers.py:454
-#: order/models.py:524 part/serializers.py:553
+#: order/models.py:626 part/serializers.py:554
 #: plugin/builtin/suppliers/digikey.py:25 plugin/builtin/suppliers/lcsc.py:26
 #: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:26
-#: stock/api.py:515 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:516 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "供應商"
 
@@ -3746,7 +3758,7 @@ msgstr "供應商"
 msgid "Select supplier"
 msgstr "選擇供應商"
 
-#: company/models.py:794 part/serializers.py:564
+#: company/models.py:794 part/serializers.py:565
 msgid "Supplier stock keeping unit"
 msgstr "供應商庫存管理單位"
 
@@ -3766,27 +3778,27 @@ msgstr "外部供應商零件鏈接的URL"
 msgid "Supplier part description"
 msgstr "供應商零件説明"
 
-#: company/models.py:833 order/serializers.py:813 order/serializers.py:2024
-#: part/models.py:4299 part/models.py:4640
+#: company/models.py:833 order/serializers.py:809 order/serializers.py:2015
+#: part/models.py:4356 part/models.py:4697
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:32
 #: report/templates/report/inventree_return_order_report.html:27
 #: report/templates/report/inventree_sales_order_report.html:32
 #: report/templates/report/inventree_stock_location_report.html:105
-#: stock/serializers.py:829
+#: stock/serializers.py:834
 msgid "Note"
 msgstr "備註"
 
-#: company/models.py:842 part/models.py:2132
+#: company/models.py:842 part/models.py:2182
 msgid "base cost"
 msgstr "基本費用"
 
-#: company/models.py:843 part/models.py:2133
+#: company/models.py:843 part/models.py:2183
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "最低費用(例如庫存費)"
 
-#: company/models.py:850 order/serializers.py:805 stock/models.py:901
-#: stock/serializers.py:1636
+#: company/models.py:850 order/serializers.py:801 stock/models.py:979
+#: stock/serializers.py:1662
 msgid "Packaging"
 msgstr "打包"
 
@@ -3802,7 +3814,7 @@ msgstr "包裝數量"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "單包供應的總數量。為單個項目留空。"
 
-#: company/models.py:877 part/models.py:2139
+#: company/models.py:877 part/models.py:2189
 msgid "multiple"
 msgstr "多個"
 
@@ -3838,7 +3850,7 @@ msgstr "此供應商使用的默認貨幣"
 msgid "Company Name"
 msgstr "公司名稱"
 
-#: company/serializers.py:420 part/serializers.py:929 stock/serializers.py:489
+#: company/serializers.py:420 part/serializers.py:930 stock/serializers.py:494
 msgid "In Stock"
 msgstr "有庫存"
 
@@ -3866,15 +3878,15 @@ msgstr ""
 msgid "Select export plugin"
 msgstr ""
 
-#: generic/states/fields.py:143
-msgid "Custom status key"
-msgstr "自定義狀態密鑰"
-
-#: generic/states/fields.py:144
+#: generic/states/fields.py:146
 msgid "Additional status information for this item"
 msgstr "此項目的附加狀態信息"
 
-#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:118
+#: generic/states/fields.py:160
+msgid "Custom status key"
+msgstr "自定義狀態密鑰"
+
+#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:119
 msgid "Key"
 msgstr "鍵"
 
@@ -3898,87 +3910,91 @@ msgstr "放置"
 msgid "Invalid status code"
 msgstr ""
 
-#: importer/models.py:64
+#: importer/models.py:70
 msgid "Data File"
 msgstr "數據文件"
 
-#: importer/models.py:65
+#: importer/models.py:71
 msgid "Data file to import"
 msgstr "要導入的數據文件"
 
-#: importer/models.py:74
+#: importer/models.py:80
 msgid "Columns"
 msgstr "列"
 
-#: importer/models.py:85
+#: importer/models.py:87
+msgid "Target model type for this import session"
+msgstr ""
+
+#: importer/models.py:93
 msgid "Import status"
 msgstr "導入狀態"
 
-#: importer/models.py:95
+#: importer/models.py:103
 msgid "Field Defaults"
 msgstr "字段默認值"
 
-#: importer/models.py:102
+#: importer/models.py:110
 msgid "Field Overrides"
 msgstr "字段覆蓋"
 
-#: importer/models.py:109
+#: importer/models.py:117
 msgid "Field Filters"
 msgstr "字段篩選器"
 
-#: importer/models.py:242
+#: importer/models.py:250
 msgid "Some required fields have not been mapped"
 msgstr "某些必填字段尚未映射"
 
-#: importer/models.py:399
+#: importer/models.py:407
 msgid "Column is already mapped to a database field"
 msgstr "列已映射到數據庫字段"
 
-#: importer/models.py:404
+#: importer/models.py:412
 msgid "Field is already mapped to a data column"
 msgstr "字段已映射到數據列"
 
-#: importer/models.py:413
+#: importer/models.py:421
 msgid "Column mapping must be linked to a valid import session"
 msgstr "列映射必須鏈接到有效的導入會話"
 
-#: importer/models.py:418
+#: importer/models.py:426
 msgid "Column does not exist in the data file"
 msgstr "數據文件中不存在列"
 
-#: importer/models.py:425
+#: importer/models.py:433
 msgid "Field does not exist in the target model"
 msgstr "目標模型中不存在字段"
 
-#: importer/models.py:429
+#: importer/models.py:437
 msgid "Selected field is read-only"
 msgstr "所選字段為只讀"
 
-#: importer/models.py:434 importer/models.py:505
+#: importer/models.py:442 importer/models.py:513
 msgid "Import Session"
 msgstr "導入會話"
 
-#: importer/models.py:438
+#: importer/models.py:446
 msgid "Field"
 msgstr "字段"
 
-#: importer/models.py:440
+#: importer/models.py:448
 msgid "Column"
 msgstr "列"
 
-#: importer/models.py:509
+#: importer/models.py:517
 msgid "Row Index"
 msgstr "行索引"
 
-#: importer/models.py:512
+#: importer/models.py:520
 msgid "Original row data"
 msgstr "原始行數據"
 
-#: importer/models.py:517 machine/models.py:110
+#: importer/models.py:525 machine/models.py:110
 msgid "Errors"
 msgstr "錯誤"
 
-#: importer/models.py:519 part/api.py:857
+#: importer/models.py:527 part/api.py:864
 msgid "Valid"
 msgstr "有效"
 
@@ -4078,7 +4094,7 @@ msgstr "每個標籤要打印的份數"
 msgid "Connected"
 msgstr "已連接"
 
-#: machine/machine_types/label_printer.py:229 order/api.py:1666
+#: machine/machine_types/label_printer.py:229 order/api.py:1679
 msgid "Unknown"
 msgstr "未知"
 
@@ -4166,101 +4182,101 @@ msgstr "設備配置"
 msgid "Config type"
 msgstr "配置類型"
 
-#: order/api.py:115
+#: order/api.py:118
 msgid "Order Reference"
 msgstr "訂單參考"
 
-#: order/api.py:143 order/api.py:1127
+#: order/api.py:146 order/api.py:1139
 msgid "Outstanding"
 msgstr "未完成"
 
-#: order/api.py:159
+#: order/api.py:162
 msgid "Has Project Code"
 msgstr "有項目編碼"
 
-#: order/api.py:173 order/models.py:388
+#: order/api.py:176 order/models.py:475
 msgid "Created By"
 msgstr "創建人"
 
-#: order/api.py:177
+#: order/api.py:180
 msgid "Created Before"
 msgstr ""
 
-#: order/api.py:181
+#: order/api.py:184
 msgid "Created After"
 msgstr ""
 
-#: order/api.py:185
+#: order/api.py:188
 msgid "Has Start Date"
 msgstr ""
 
-#: order/api.py:193
+#: order/api.py:196
 msgid "Start Date Before"
 msgstr ""
 
-#: order/api.py:197
+#: order/api.py:200
 msgid "Start Date After"
 msgstr ""
 
-#: order/api.py:201
+#: order/api.py:204
 msgid "Has Target Date"
 msgstr ""
 
-#: order/api.py:209
+#: order/api.py:212
 msgid "Target Date Before"
 msgstr ""
 
-#: order/api.py:213
+#: order/api.py:216
 msgid "Target Date After"
 msgstr ""
 
-#: order/api.py:264
+#: order/api.py:267
 msgid "Has Pricing"
 msgstr "有定價"
 
-#: order/api.py:313 order/api.py:763 order/api.py:1362
+#: order/api.py:320 order/api.py:774 order/api.py:1375
 msgid "Completed Before"
 msgstr ""
 
-#: order/api.py:317 order/api.py:767 order/api.py:1366
+#: order/api.py:324 order/api.py:778 order/api.py:1379
 msgid "Completed After"
 msgstr ""
 
-#: order/api.py:484 order/api.py:865 order/api.py:1091 order/models.py:1558
-#: order/models.py:1676 order/models.py:1727 order/models.py:1855
-#: order/models.py:2021 order/models.py:2517 order/models.py:2583
+#: order/api.py:491 order/api.py:876 order/api.py:1102 order/models.py:1685
+#: order/models.py:1803 order/models.py:1854 order/models.py:2002
+#: order/models.py:2168 order/models.py:2690 order/models.py:2756
 msgid "Order"
 msgstr "訂單"
 
-#: order/api.py:488 order/api.py:903
+#: order/api.py:495 order/api.py:914
 msgid "Order Complete"
 msgstr "訂單完成"
 
-#: order/api.py:520 order/serializers.py:666
+#: order/api.py:527 order/api.py:531 order/serializers.py:666
 msgid "Internal Part"
 msgstr "內部零件"
 
-#: order/api.py:539
+#: order/api.py:549
 msgid "Order Pending"
 msgstr "訂單待定"
 
-#: order/api.py:888
+#: order/api.py:899
 msgid "Completed"
 msgstr "已完成"
 
-#: order/api.py:1143
+#: order/api.py:1155
 msgid "Has Shipment"
 msgstr ""
 
-#: order/api.py:1660 order/models.py:452 order/models.py:1559
-#: order/models.py:1677
+#: order/api.py:1673 order/models.py:539 order/models.py:1686
+#: order/models.py:1804
 #: report/templates/report/inventree_purchase_order_report.html:14
-#: stock/serializers.py:123 templates/email/overdue_purchase_order.html:15
+#: stock/serializers.py:128 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "採購訂單"
 
-#: order/api.py:1662 order/models.py:975 order/models.py:1728
-#: order/models.py:1856 order/models.py:2022
+#: order/api.py:1675 order/models.py:1080 order/models.py:1855
+#: order/models.py:2003 order/models.py:2169
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
 #: report/templates/report/inventree_sales_order_shipment_report.html:15
@@ -4268,452 +4284,459 @@ msgstr "採購訂單"
 msgid "Sales Order"
 msgstr "銷售訂單"
 
-#: order/api.py:1664 order/models.py:2193 order/models.py:2518
-#: order/models.py:2584
+#: order/api.py:1677 order/models.py:2340 order/models.py:2691
+#: order/models.py:2757
 #: report/templates/report/inventree_return_order_report.html:13
+#: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "退貨訂單"
 
-#: order/models.py:88
+#: order/models.py:89
 #: report/templates/report/inventree_purchase_order_report.html:31
 #: report/templates/report/inventree_sales_order_report.html:31
 msgid "Total Price"
 msgstr "總價格"
 
-#: order/models.py:89
+#: order/models.py:90
 msgid "Total price for this order"
 msgstr "此訂單的總價"
 
-#: order/models.py:94 order/serializers.py:75
+#: order/models.py:95 order/serializers.py:75
 msgid "Order Currency"
 msgstr "訂單貨幣"
 
-#: order/models.py:97 order/serializers.py:76
+#: order/models.py:98 order/serializers.py:76
 msgid "Currency for this order (leave blank to use company default)"
 msgstr "此訂單的貨幣 (留空以使用公司默認值)"
 
-#: order/models.py:236
+#: order/models.py:323
 msgid "This order is locked and cannot be modified"
 msgstr ""
 
-#: order/models.py:283
+#: order/models.py:370
 msgid "Contact does not match selected company"
 msgstr "聯繫人與所選公司不匹配"
 
-#: order/models.py:290
+#: order/models.py:377
 msgid "Start date must be before target date"
 msgstr ""
 
-#: order/models.py:343
+#: order/models.py:430
 msgid "Order description (optional)"
 msgstr "訂單描述 (可選)"
 
-#: order/models.py:352
+#: order/models.py:439
 msgid "Select project code for this order"
 msgstr "為此訂單選擇項目編碼"
 
-#: order/models.py:358 order/models.py:1459 order/models.py:1910
+#: order/models.py:445 order/models.py:1586 order/models.py:2057
 msgid "Link to external page"
 msgstr "鏈接到外部頁面"
 
-#: order/models.py:365
+#: order/models.py:452
 msgid "Start date"
 msgstr ""
 
-#: order/models.py:366
+#: order/models.py:453
 msgid "Scheduled start date for this order"
 msgstr ""
 
-#: order/models.py:372 order/models.py:1466 order/serializers.py:267
+#: order/models.py:459 order/models.py:1593 order/serializers.py:267
 #: report/templates/report/inventree_build_order_report.html:125
 msgid "Target Date"
 msgstr "預計日期"
 
-#: order/models.py:374
+#: order/models.py:461
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr "訂單交付的預期日期。訂單將在此日期後過期。"
 
-#: order/models.py:394
+#: order/models.py:481
 msgid "Issue Date"
 msgstr "簽發日期"
 
-#: order/models.py:395
+#: order/models.py:482
 msgid "Date order was issued"
 msgstr "訂單發出日期"
 
-#: order/models.py:403
+#: order/models.py:490
 msgid "User or group responsible for this order"
 msgstr "負責此訂單的用户或組"
 
-#: order/models.py:414
+#: order/models.py:501
 msgid "Point of contact for this order"
 msgstr "此訂單的聯繫人"
 
-#: order/models.py:424
+#: order/models.py:511
 msgid "Company address for this order"
 msgstr "此訂單的公司地址"
 
-#: order/models.py:500 order/models.py:1021
+#: order/models.py:602 order/models.py:1141
 msgid "Order reference"
 msgstr "訂單參考"
 
-#: order/models.py:510
+#: order/models.py:611 order/models.py:1165 order/models.py:2428
+#: stock/serializers.py:608 stock/serializers.py:1006 users/models.py:544
+msgid "Status"
+msgstr "狀態"
+
+#: order/models.py:612
 msgid "Purchase order status"
 msgstr "採購訂單狀態"
 
-#: order/models.py:525
+#: order/models.py:627
 msgid "Company from which the items are being ordered"
 msgstr "訂購物品的公司"
 
-#: order/models.py:536
+#: order/models.py:638
 msgid "Supplier Reference"
 msgstr "供應商參考"
 
-#: order/models.py:537
+#: order/models.py:639
 msgid "Supplier order reference code"
 msgstr "供應商訂單參考代碼"
 
-#: order/models.py:546
+#: order/models.py:648
 msgid "received by"
 msgstr "接收人"
 
-#: order/models.py:553 order/models.py:2281
+#: order/models.py:655 order/models.py:2443
 msgid "Date order was completed"
 msgstr "訂單完成日期"
 
-#: order/models.py:562 order/models.py:1606
+#: order/models.py:664 order/models.py:1733
 msgid "Destination"
 msgstr "目的地"
 
-#: order/models.py:563 order/models.py:1610
+#: order/models.py:665 order/models.py:1737
 msgid "Destination for received items"
 msgstr ""
 
-#: order/models.py:609
+#: order/models.py:711
 msgid "Part supplier must match PO supplier"
 msgstr "零件供應商必須與採購訂單供應商匹配"
 
-#: order/models.py:867
+#: order/models.py:971
 msgid "Quantity must be a positive number"
 msgstr "數量必須是正數"
 
-#: order/models.py:1032 order/models.py:2253 stock/models.py:923
-#: stock/models.py:924 stock/serializers.py:1373
+#: order/models.py:1152 order/models.py:2415 stock/models.py:1001
+#: stock/models.py:1002 stock/serializers.py:1401
+#: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
 msgstr "客户"
 
-#: order/models.py:1033
+#: order/models.py:1153
 msgid "Company to which the items are being sold"
 msgstr "出售物品的公司"
 
-#: order/models.py:1046
+#: order/models.py:1166
 msgid "Sales order status"
 msgstr "銷售訂單狀態"
 
-#: order/models.py:1057 order/models.py:2273
+#: order/models.py:1177 order/models.py:2435
 msgid "Customer Reference "
 msgstr "客户參考 "
 
-#: order/models.py:1058 order/models.py:2274
+#: order/models.py:1178 order/models.py:2436
 msgid "Customer order reference code"
 msgstr "客户訂單參考代碼"
 
-#: order/models.py:1062 order/models.py:1862
+#: order/models.py:1182 order/models.py:2009
 msgid "Shipment Date"
 msgstr "發貨日期"
 
-#: order/models.py:1071
+#: order/models.py:1191
 msgid "shipped by"
 msgstr "發貨人"
 
-#: order/models.py:1110
+#: order/models.py:1230
 msgid "Order is already complete"
 msgstr "訂單已完成"
 
-#: order/models.py:1113
+#: order/models.py:1233
 msgid "Order is already cancelled"
 msgstr "訂單已取消"
 
-#: order/models.py:1117
+#: order/models.py:1237
 msgid "Only an open order can be marked as complete"
 msgstr "只有未結訂單才能標記為已完成"
 
-#: order/models.py:1121
+#: order/models.py:1241
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr "由於發貨不完整，訂單無法完成"
 
-#: order/models.py:1126
+#: order/models.py:1246
 msgid "Order cannot be completed as there are incomplete allocations"
 msgstr ""
 
-#: order/models.py:1131
+#: order/models.py:1251
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr "訂單無法完成，因為行項目不完整"
 
-#: order/models.py:1408 order/models.py:1421
+#: order/models.py:1535 order/models.py:1548
 msgid "The order is locked and cannot be modified"
 msgstr ""
 
-#: order/models.py:1429
+#: order/models.py:1556
 msgid "Item quantity"
 msgstr "項目數量"
 
-#: order/models.py:1446
+#: order/models.py:1573
 msgid "Line item reference"
 msgstr "行項目參考"
 
-#: order/models.py:1453
+#: order/models.py:1580
 msgid "Line item notes"
 msgstr "行項目註釋"
 
-#: order/models.py:1468
+#: order/models.py:1595
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr "此行項目的目標日期 (留空以使用訂單中的目標日期)"
 
-#: order/models.py:1489
+#: order/models.py:1616
 msgid "Line item description (optional)"
 msgstr "行項目描述 (可選)"
 
-#: order/models.py:1496
+#: order/models.py:1623
 msgid "Additional context for this line"
 msgstr "此行的附加上下文"
 
-#: order/models.py:1506
+#: order/models.py:1633
 msgid "Unit price"
 msgstr "單位價格"
 
-#: order/models.py:1520
+#: order/models.py:1647
 msgid "Purchase Order Line Item"
 msgstr "採購訂單行項目"
 
-#: order/models.py:1544
+#: order/models.py:1671
 msgid "Supplier part must match supplier"
 msgstr "供應商零件必須與供應商匹配"
 
-#: order/models.py:1578
+#: order/models.py:1705
 msgid "Supplier part"
 msgstr "供應商零件"
 
-#: order/models.py:1585
+#: order/models.py:1712
 msgid "Received"
 msgstr "已接收"
 
-#: order/models.py:1586
+#: order/models.py:1713
 msgid "Number of items received"
 msgstr "收到的物品數量"
 
-#: order/models.py:1594 stock/models.py:1046 stock/serializers.py:670
+#: order/models.py:1721 stock/models.py:1124 stock/serializers.py:675
 msgid "Purchase Price"
 msgstr "採購價格"
 
-#: order/models.py:1595
+#: order/models.py:1722
 msgid "Unit purchase price"
 msgstr "每單位的採購價格"
 
-#: order/models.py:1665
+#: order/models.py:1792
 msgid "Purchase Order Extra Line"
 msgstr "採購訂單附加行"
 
-#: order/models.py:1694
+#: order/models.py:1821
 msgid "Sales Order Line Item"
 msgstr "銷售訂單行項目"
 
-#: order/models.py:1715
+#: order/models.py:1842
 msgid "Virtual part cannot be assigned to a sales order"
 msgstr "虛擬零件不能分配給銷售訂單"
 
-#: order/models.py:1720
+#: order/models.py:1847
 msgid "Only salable parts can be assigned to a sales order"
 msgstr "只有可銷售的零件才能分配給銷售訂單"
 
-#: order/models.py:1746
+#: order/models.py:1873
 msgid "Sale Price"
 msgstr "售出價格"
 
-#: order/models.py:1747
+#: order/models.py:1874
 msgid "Unit sale price"
 msgstr "單位售出價格"
 
-#: order/models.py:1756 order/status_codes.py:50
+#: order/models.py:1883 order/status_codes.py:50
 msgid "Shipped"
 msgstr "已配送"
 
-#: order/models.py:1757
+#: order/models.py:1884
 msgid "Shipped quantity"
 msgstr "發貨數量"
 
-#: order/models.py:1831
+#: order/models.py:1978
 msgid "Sales Order Shipment"
 msgstr "銷售訂單發貨"
 
-#: order/models.py:1863
+#: order/models.py:2010
 msgid "Date of shipment"
 msgstr "發貨日期"
 
-#: order/models.py:1869
+#: order/models.py:2016
 msgid "Delivery Date"
 msgstr "送達日期"
 
-#: order/models.py:1870
+#: order/models.py:2017
 msgid "Date of delivery of shipment"
 msgstr "裝運交貨日期"
 
-#: order/models.py:1878
+#: order/models.py:2025
 msgid "Checked By"
 msgstr "審核人"
 
-#: order/models.py:1879
+#: order/models.py:2026
 msgid "User who checked this shipment"
 msgstr "檢查此裝運的用户"
 
-#: order/models.py:1886 order/models.py:2118 order/serializers.py:1677
-#: order/serializers.py:1801
+#: order/models.py:2033 order/models.py:2265 order/serializers.py:1673
+#: order/serializers.py:1797
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 msgid "Shipment"
 msgstr "配送"
 
-#: order/models.py:1887
+#: order/models.py:2034
 msgid "Shipment number"
 msgstr "配送單號"
 
-#: order/models.py:1895
+#: order/models.py:2042
 msgid "Tracking Number"
 msgstr "跟蹤單號"
 
-#: order/models.py:1896
+#: order/models.py:2043
 msgid "Shipment tracking information"
 msgstr "配送跟蹤信息"
 
-#: order/models.py:1903
+#: order/models.py:2050
 msgid "Invoice Number"
 msgstr "發票編號"
 
-#: order/models.py:1904
+#: order/models.py:2051
 msgid "Reference number for associated invoice"
 msgstr "相關發票的參考號"
 
-#: order/models.py:1927
+#: order/models.py:2074
 msgid "Shipment has already been sent"
 msgstr "貨物已發出"
 
-#: order/models.py:1930
+#: order/models.py:2077
 msgid "Shipment has no allocated stock items"
 msgstr "發貨沒有分配庫存項目"
 
-#: order/models.py:2010
+#: order/models.py:2157
 msgid "Sales Order Extra Line"
 msgstr "銷售訂單加行"
 
-#: order/models.py:2039
+#: order/models.py:2186
 msgid "Sales Order Allocation"
 msgstr "銷售訂單分配"
 
-#: order/models.py:2062 order/models.py:2064
+#: order/models.py:2209 order/models.py:2211
 msgid "Stock item has not been assigned"
 msgstr "庫存項目尚未分配"
 
-#: order/models.py:2071
+#: order/models.py:2218
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "無法將庫存項目分配給具有不同零件的行"
 
-#: order/models.py:2074
+#: order/models.py:2221
 msgid "Cannot allocate stock to a line without a part"
 msgstr "無法將庫存分配給沒有零件的生產線"
 
-#: order/models.py:2077
+#: order/models.py:2224
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "分配數量不能超過庫存數量"
 
-#: order/models.py:2096 order/serializers.py:1547
+#: order/models.py:2243 order/serializers.py:1543
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "序列化庫存項目的數量必須為1"
 
-#: order/models.py:2099
+#: order/models.py:2246
 msgid "Sales order does not match shipment"
 msgstr "銷售訂單與發貨不匹配"
 
-#: order/models.py:2100 plugin/base/barcodes/api.py:651
+#: order/models.py:2247 plugin/base/barcodes/api.py:642
 msgid "Shipment does not match sales order"
 msgstr "發貨與銷售訂單不匹配"
 
-#: order/models.py:2108
+#: order/models.py:2255
 msgid "Line"
 msgstr "行"
 
-#: order/models.py:2119
+#: order/models.py:2266
 msgid "Sales order shipment reference"
 msgstr "銷售訂單發貨參考"
 
-#: order/models.py:2132 order/models.py:2525
+#: order/models.py:2279 order/models.py:2698
 msgid "Item"
 msgstr "項目"
 
-#: order/models.py:2133
+#: order/models.py:2280
 msgid "Select stock item to allocate"
 msgstr "選擇要分配的庫存項目"
 
-#: order/models.py:2142
+#: order/models.py:2289
 msgid "Enter stock allocation quantity"
 msgstr "輸入庫存分配數量"
 
-#: order/models.py:2242
+#: order/models.py:2404
 msgid "Return Order reference"
 msgstr "退貨訂單參考"
 
-#: order/models.py:2254
+#: order/models.py:2416
 msgid "Company from which items are being returned"
 msgstr "退回物品的公司"
 
-#: order/models.py:2267
+#: order/models.py:2429
 msgid "Return order status"
 msgstr "退貨訂單狀態"
 
-#: order/models.py:2483
+#: order/models.py:2656
 msgid "Return Order Line Item"
 msgstr "退貨訂單行項目"
 
-#: order/models.py:2496
+#: order/models.py:2669
 msgid "Stock item must be specified"
 msgstr ""
 
-#: order/models.py:2500
+#: order/models.py:2673
 msgid "Return quantity exceeds stock quantity"
 msgstr ""
 
-#: order/models.py:2505
+#: order/models.py:2678
 msgid "Return quantity must be greater than zero"
 msgstr ""
 
-#: order/models.py:2510
+#: order/models.py:2683
 msgid "Invalid quantity for serialized stock item"
 msgstr ""
 
-#: order/models.py:2526
+#: order/models.py:2699
 msgid "Select item to return from customer"
 msgstr "選擇要從客户處退回的商品"
 
-#: order/models.py:2541
+#: order/models.py:2714
 msgid "Received Date"
 msgstr "接收日期"
 
-#: order/models.py:2542
+#: order/models.py:2715
 msgid "The date this this return item was received"
 msgstr "收到此退貨的日期"
 
-#: order/models.py:2554
+#: order/models.py:2727
 msgid "Outcome"
 msgstr "結果"
 
-#: order/models.py:2555
+#: order/models.py:2728
 msgid "Outcome for this line item"
 msgstr "該行項目的結果"
 
-#: order/models.py:2562
+#: order/models.py:2735
 msgid "Cost associated with return or repair for this line item"
 msgstr "與此行項目的退貨或維修相關的成本"
 
-#: order/models.py:2572
+#: order/models.py:2745
 msgid "Return Order Extra Line"
 msgstr "退貨訂單附加行"
 
@@ -4772,11 +4795,11 @@ msgstr "供應商名稱"
 msgid "Order cannot be cancelled"
 msgstr "訂單不能取消"
 
-#: order/serializers.py:443 order/serializers.py:1568
+#: order/serializers.py:443 order/serializers.py:1564
 msgid "Allow order to be closed with incomplete line items"
 msgstr "允許關閉行項目不完整的訂單"
 
-#: order/serializers.py:453 order/serializers.py:1578
+#: order/serializers.py:453 order/serializers.py:1574
 msgid "Order has incomplete line items"
 msgstr "訂單中的行項目不完整"
 
@@ -4804,11 +4827,11 @@ msgstr "合併項目"
 msgid "Merge items with the same part, destination and target date into one line item"
 msgstr "將具有相同零件、目的地和目標日期的項目合併到一個行項目中"
 
-#: order/serializers.py:655 part/serializers.py:563
+#: order/serializers.py:655 part/serializers.py:564
 msgid "SKU"
 msgstr "庫存量單位"
 
-#: order/serializers.py:662 part/models.py:1048 part/serializers.py:404
+#: order/serializers.py:662 part/models.py:1089 part/serializers.py:405
 msgid "Internal Part Number"
 msgstr "內部零件編號"
 
@@ -4832,7 +4855,7 @@ msgstr "供應商必須匹配採購訂單"
 msgid "Purchase order must match supplier"
 msgstr "採購訂單必須與供應商匹配"
 
-#: order/serializers.py:744 order/serializers.py:1648
+#: order/serializers.py:744 order/serializers.py:1644
 msgid "Line Item"
 msgstr "行項目"
 
@@ -4840,7 +4863,7 @@ msgstr "行項目"
 msgid "Line item does not match purchase order"
 msgstr "行項目與採購訂單不匹配"
 
-#: order/serializers.py:760 order/serializers.py:911 order/serializers.py:2020
+#: order/serializers.py:760 order/serializers.py:907 order/serializers.py:2011
 msgid "Select destination location for received items"
 msgstr "為收到的物品選擇目的地位置"
 
@@ -4848,7 +4871,7 @@ msgstr "為收到的物品選擇目的地位置"
 msgid "Enter batch code for incoming stock items"
 msgstr "輸入入庫項目的批號"
 
-#: order/serializers.py:783 stock/models.py:1005 users/models.py:142
+#: order/serializers.py:783 stock/models.py:1083 users/models.py:143
 msgid "Expiry Date"
 msgstr "有效期至"
 
@@ -4860,116 +4883,111 @@ msgstr ""
 msgid "Enter serial numbers for incoming stock items"
 msgstr "輸入入庫庫存項目的序列號"
 
-#: order/serializers.py:806
+#: order/serializers.py:802
 msgid "Override packaging information for incoming stock items"
 msgstr "覆蓋傳入庫存項目的包裝資料"
 
-#: order/serializers.py:814 order/serializers.py:2025
+#: order/serializers.py:810 order/serializers.py:2016
 msgid "Additional note for incoming stock items"
 msgstr "傳入庫存項目的附加説明"
 
-#: order/serializers.py:821
+#: order/serializers.py:817
 msgid "Barcode"
 msgstr "條形碼"
 
-#: order/serializers.py:822
+#: order/serializers.py:818
 msgid "Scanned barcode"
 msgstr "掃描條形碼"
 
-#: order/serializers.py:838
+#: order/serializers.py:834
 msgid "Barcode is already in use"
 msgstr "條形碼已被使用"
 
-#: order/serializers.py:861
+#: order/serializers.py:857
 msgid "An integer quantity must be provided for trackable parts"
 msgstr "必須為可跟蹤零件提供整數數量"
 
-#: order/serializers.py:928 order/serializers.py:2044
+#: order/serializers.py:924 order/serializers.py:2035
 msgid "Line items must be provided"
 msgstr "必須提供行項目"
 
-#: order/serializers.py:944
+#: order/serializers.py:940
 msgid "Destination location must be specified"
 msgstr "必須指定目標位置"
 
-#: order/serializers.py:955
+#: order/serializers.py:951
 msgid "Supplied barcode values must be unique"
 msgstr "提供的條形碼值必須是唯一的"
 
-#: order/serializers.py:1085
+#: order/serializers.py:1081
 msgid "Shipments"
 msgstr ""
 
-#: order/serializers.py:1088
+#: order/serializers.py:1084
 msgid "Completed Shipments"
 msgstr "完成配送"
 
-#: order/serializers.py:1275
+#: order/serializers.py:1271
 msgid "Sale price currency"
 msgstr "售出價格貨幣"
 
-#: order/serializers.py:1323
+#: order/serializers.py:1319
 msgid "Allocated Items"
 msgstr ""
 
-#: order/serializers.py:1450
+#: order/serializers.py:1446
 msgid "No shipment details provided"
 msgstr "未提供裝運詳細信息"
 
-#: order/serializers.py:1511 order/serializers.py:1657
+#: order/serializers.py:1507 order/serializers.py:1653
 msgid "Line item is not associated with this order"
 msgstr "行項目與此訂單不關聯"
 
-#: order/serializers.py:1530
+#: order/serializers.py:1526
 msgid "Quantity must be positive"
 msgstr "數量必須為正"
 
-#: order/serializers.py:1667
+#: order/serializers.py:1663
 msgid "Enter serial numbers to allocate"
 msgstr "輸入要分配的序列號"
 
-#: order/serializers.py:1689 order/serializers.py:1809
+#: order/serializers.py:1685 order/serializers.py:1805
 msgid "Shipment has already been shipped"
 msgstr "貨物已發出"
 
-#: order/serializers.py:1692 order/serializers.py:1812
+#: order/serializers.py:1688 order/serializers.py:1808
 msgid "Shipment is not associated with this order"
 msgstr "發貨與此訂單無關"
 
-#: order/serializers.py:1747
+#: order/serializers.py:1743
 msgid "No match found for the following serial numbers"
 msgstr "未找到以下序列號的匹配項"
 
-#: order/serializers.py:1754
+#: order/serializers.py:1750
 msgid "The following serial numbers are unavailable"
 msgstr "以下序列號不可用"
 
-#: order/serializers.py:1981
+#: order/serializers.py:1977
 msgid "Return order line item"
 msgstr "退貨訂單行項目"
 
-#: order/serializers.py:1988 stock/serializers.py:1008
-#: stock/serializers.py:1627
-msgid "Stock item status code"
-msgstr "庫存項狀態代碼"
-
-#: order/serializers.py:1996
+#: order/serializers.py:1987
 msgid "Line item does not match return order"
 msgstr "行項目與退貨訂單不匹配"
 
-#: order/serializers.py:1999
+#: order/serializers.py:1990
 msgid "Line item has already been received"
 msgstr "行項目已收到"
 
-#: order/serializers.py:2036
+#: order/serializers.py:2027
 msgid "Items can only be received against orders which are in progress"
 msgstr "只能根據正在進行的訂單接收物品"
 
-#: order/serializers.py:2128
+#: order/serializers.py:2119
 msgid "Quantity to return"
 msgstr ""
 
-#: order/serializers.py:2140
+#: order/serializers.py:2131
 msgid "Line price currency"
 msgstr "行價格貨幣"
 
@@ -5005,1244 +5023,1253 @@ msgstr "退款"
 msgid "Reject"
 msgstr "拒絕"
 
-#: order/tasks.py:32
+#: order/tasks.py:44
 msgid "Overdue Purchase Order"
 msgstr "逾期採購訂單"
 
-#: order/tasks.py:37
+#: order/tasks.py:49
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
 msgstr "採購訂單 {po} 已逾期"
 
-#: order/tasks.py:82
+#: order/tasks.py:112
 msgid "Overdue Sales Order"
 msgstr "逾期銷售訂單"
 
-#: order/tasks.py:87
+#: order/tasks.py:117
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
 msgstr "銷售訂單 {so} 已逾期"
 
-#: part/api.py:114
+#: order/tasks.py:177
+msgid "Overdue Return Order"
+msgstr ""
+
+#: order/tasks.py:182
+#, python-brace-format
+msgid "Return order {ro} is now overdue"
+msgstr ""
+
+#: part/api.py:115
 msgid "Starred"
 msgstr "已加星標"
 
-#: part/api.py:116
+#: part/api.py:117
 msgid "Filter by starred categories"
 msgstr "按星標類別篩選"
 
-#: part/api.py:133 stock/api.py:254
+#: part/api.py:134 stock/api.py:255
 msgid "Depth"
 msgstr "深度"
 
-#: part/api.py:133
+#: part/api.py:134
 msgid "Filter by category depth"
 msgstr "按類別深度篩選"
 
-#: part/api.py:151 stock/api.py:272
+#: part/api.py:152 stock/api.py:273
 msgid "Top Level"
 msgstr "頂級"
 
-#: part/api.py:153
+#: part/api.py:154
 msgid "Filter by top-level categories"
 msgstr "按頂級類別篩選"
 
-#: part/api.py:166 stock/api.py:287
+#: part/api.py:167 stock/api.py:288
 msgid "Cascade"
 msgstr "級聯"
 
-#: part/api.py:168
+#: part/api.py:169
 msgid "Include sub-categories in filtered results"
 msgstr "在篩選結果中包含子類別"
 
-#: part/api.py:188
+#: part/api.py:189
 msgid "Parent"
 msgstr "父類"
 
-#: part/api.py:190
+#: part/api.py:191
 msgid "Filter by parent category"
 msgstr "按父類別篩選"
 
-#: part/api.py:225
+#: part/api.py:226
 msgid "Exclude sub-categories under the specified category"
 msgstr "排除指定類別下的子類別"
 
-#: part/api.py:437
+#: part/api.py:438
 msgid "Has Results"
 msgstr "有結果"
 
-#: part/api.py:604
+#: part/api.py:611
 msgid "Incoming Purchase Order"
 msgstr "收到的採購訂單"
 
-#: part/api.py:618
+#: part/api.py:625
 msgid "Outgoing Sales Order"
 msgstr "外發銷售訂單"
 
-#: part/api.py:630
+#: part/api.py:637
 msgid "Stock produced by Build Order"
 msgstr "建造生產訂單產生的庫存"
 
-#: part/api.py:712
+#: part/api.py:719
 msgid "Stock required for Build Order"
 msgstr "生產訂單所需的庫存"
 
-#: part/api.py:858
+#: part/api.py:865
 msgid "Validate entire Bill of Materials"
 msgstr "驗證整個物料清單"
 
-#: part/api.py:864
+#: part/api.py:871
 msgid "This option must be selected"
 msgstr "必須選擇此項"
 
-#: part/api.py:900
+#: part/api.py:907
 msgid "Is Variant"
 msgstr ""
 
-#: part/api.py:908
+#: part/api.py:915
 msgid "Is Revision"
 msgstr "是修訂版本"
 
-#: part/api.py:918
+#: part/api.py:925
 msgid "Has Revisions"
 msgstr "有修訂版本"
 
-#: part/api.py:1109
+#: part/api.py:1116
 msgid "BOM Valid"
 msgstr "物料清單合規"
 
-#: part/api.py:1764
+#: part/api.py:1775
 msgid "Assembly part is testable"
 msgstr "裝配部份是可測試的"
 
-#: part/api.py:1773
+#: part/api.py:1784
 msgid "Component part is testable"
 msgstr "組件部份是可測試的"
 
-#: part/api.py:1824
+#: part/api.py:1835
 msgid "Uses"
 msgstr "使用"
 
-#: part/models.py:89 part/models.py:4080
+#: part/models.py:90 part/models.py:4137
 #: templates/email/part_event_notification.html:16
 msgid "Part Category"
 msgstr "零件類別"
 
-#: part/models.py:90 users/models.py:220
+#: part/models.py:91 users/ruleset.py:32
 msgid "Part Categories"
 msgstr "零件類別"
 
-#: part/models.py:108 part/models.py:1093
+#: part/models.py:109 part/models.py:1134
 msgid "Default Location"
 msgstr "默認位置"
 
-#: part/models.py:109
+#: part/models.py:110
 msgid "Default location for parts in this category"
 msgstr "此類別零件的默認庫存地點"
 
-#: part/models.py:114 stock/models.py:194
+#: part/models.py:115 stock/models.py:212
 msgid "Structural"
 msgstr "結構性"
 
-#: part/models.py:116
+#: part/models.py:117
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
 msgstr "零件可能無法直接分配到結構類別，但可以分配到子類別。"
 
-#: part/models.py:125
+#: part/models.py:126
 msgid "Default keywords"
 msgstr "默認關鍵字"
 
-#: part/models.py:126
+#: part/models.py:127
 msgid "Default keywords for parts in this category"
 msgstr "此類別零件的默認關鍵字"
 
-#: part/models.py:133 stock/models.py:96 stock/models.py:176
+#: part/models.py:134 stock/models.py:96 stock/models.py:194
 msgid "Icon"
 msgstr "圖標"
 
-#: part/models.py:134 part/serializers.py:147 part/serializers.py:166
-#: stock/models.py:177
+#: part/models.py:135 part/serializers.py:148 part/serializers.py:167
+#: stock/models.py:195
 msgid "Icon (optional)"
 msgstr "圖標(可選)"
 
-#: part/models.py:178
+#: part/models.py:179
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
 msgstr "您不能使這個零件類別結構化，因為有些零件已經分配給了它！"
 
-#: part/models.py:418 part/serializers.py:128 part/serializers.py:337
-#: users/models.py:221
+#: part/models.py:458 part/serializers.py:129 part/serializers.py:338
+#: users/ruleset.py:33
 msgid "Parts"
 msgstr "零件"
 
-#: part/models.py:470
+#: part/models.py:510
 msgid "Cannot delete this part as it is locked"
 msgstr "無法刪除這個零件，因為它已被鎖定"
 
-#: part/models.py:473
+#: part/models.py:513
 msgid "Cannot delete this part as it is still active"
 msgstr "無法刪除這個零件，因為它仍然處於活動狀態"
 
-#: part/models.py:478
+#: part/models.py:518
 msgid "Cannot delete this part as it is used in an assembly"
 msgstr "無法刪除這個零件，因為它被使用在了裝配中"
 
-#: part/models.py:516
+#: part/models.py:556
 msgid "Invalid choice for parent part"
 msgstr "無效的上級零件選擇"
 
-#: part/models.py:564 part/models.py:571
+#: part/models.py:604 part/models.py:611
 #, python-brace-format
 msgid "Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
 msgstr "零件 \"{self}\" 不能用在 \"{parent}\" 的物料清單 (遞歸)"
 
-#: part/models.py:583
+#: part/models.py:623
 #, python-brace-format
 msgid "Part '{parent}' is  used in BOM for '{self}' (recursive)"
 msgstr "零件 \"{parent}\" 被使用在了 \"{self}\" 的物料清單 (遞歸)"
 
-#: part/models.py:650
+#: part/models.py:690
 #, python-brace-format
 msgid "IPN must match regex pattern {pattern}"
 msgstr "內部零件號必須匹配正則表達式 {pattern}"
 
-#: part/models.py:658
+#: part/models.py:698
 msgid "Part cannot be a revision of itself"
 msgstr "零件不能是對自身的修訂"
 
-#: part/models.py:665
+#: part/models.py:705
 msgid "Cannot make a revision of a part which is already a revision"
 msgstr "無法對已經是修訂版本的零件進行修訂"
 
-#: part/models.py:672
+#: part/models.py:712
 msgid "Revision code must be specified"
 msgstr "必須指定修訂代碼"
 
-#: part/models.py:679
+#: part/models.py:719
 msgid "Revisions are only allowed for assembly parts"
 msgstr "修訂僅對裝配零件允許"
 
-#: part/models.py:686
+#: part/models.py:726
 msgid "Cannot make a revision of a template part"
 msgstr "無法對模版零件進行修訂"
 
-#: part/models.py:692
+#: part/models.py:732
 msgid "Parent part must point to the same template"
 msgstr "上級零件必須指向相同的模版"
 
-#: part/models.py:788
+#: part/models.py:829
 msgid "Stock item with this serial number already exists"
 msgstr "該序列號庫存項己存在"
 
-#: part/models.py:930
+#: part/models.py:971
 msgid "Duplicate IPN not allowed in part settings"
 msgstr "在零件設置中不允許重複的內部零件號"
 
-#: part/models.py:942
+#: part/models.py:983
 msgid "Duplicate part revision already exists."
 msgstr "重複的零件修訂版本已經存在。"
 
-#: part/models.py:951
+#: part/models.py:992
 msgid "Part with this Name, IPN and Revision already exists."
 msgstr "有這個名字，內部零件號，和修訂版本的零件已經存在"
 
-#: part/models.py:966
+#: part/models.py:1007
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "零件不能分配到結構性零件類別！"
 
-#: part/models.py:998
+#: part/models.py:1039
 msgid "Part name"
 msgstr "零件名稱"
 
-#: part/models.py:1003
+#: part/models.py:1044
 msgid "Is Template"
 msgstr "是模板"
 
-#: part/models.py:1004
+#: part/models.py:1045
 msgid "Is this part a template part?"
 msgstr "這個零件是一個模版零件嗎?"
 
-#: part/models.py:1014
+#: part/models.py:1055
 msgid "Is this part a variant of another part?"
 msgstr "這個零件是另一零件的變體嗎？"
 
-#: part/models.py:1015
+#: part/models.py:1056
 msgid "Variant Of"
 msgstr "變體"
 
-#: part/models.py:1022
+#: part/models.py:1063
 msgid "Part description (optional)"
 msgstr "零件描述(可選)"
 
-#: part/models.py:1029
+#: part/models.py:1070
 msgid "Keywords"
 msgstr "關鍵詞"
 
-#: part/models.py:1030
+#: part/models.py:1071
 msgid "Part keywords to improve visibility in search results"
 msgstr "提高搜索結果可見性的零件關鍵字"
 
-#: part/models.py:1040
+#: part/models.py:1081
 msgid "Part category"
 msgstr "零件類別"
 
-#: part/models.py:1047 part/serializers.py:918
+#: part/models.py:1088 part/serializers.py:919
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
 msgstr "內部零件號 IPN"
 
-#: part/models.py:1055
+#: part/models.py:1096
 msgid "Part revision or version number"
 msgstr "零件修訂版本或版本號"
 
-#: part/models.py:1056 report/models.py:157
+#: part/models.py:1097 report/models.py:215
 msgid "Revision"
 msgstr "版本"
 
-#: part/models.py:1065
+#: part/models.py:1106
 msgid "Is this part a revision of another part?"
 msgstr "這零件是另一零件的修訂版本嗎？"
 
-#: part/models.py:1066
+#: part/models.py:1107
 msgid "Revision Of"
 msgstr "修訂版本"
 
-#: part/models.py:1091
+#: part/models.py:1132
 msgid "Where is this item normally stored?"
 msgstr "該物品通常存放在哪裏？"
 
-#: part/models.py:1137
+#: part/models.py:1178
 msgid "Default Supplier"
 msgstr "默認供應商"
 
-#: part/models.py:1138
+#: part/models.py:1179
 msgid "Default supplier part"
 msgstr "默認供應商零件"
 
-#: part/models.py:1145
+#: part/models.py:1186
 msgid "Default Expiry"
 msgstr "默認到期"
 
-#: part/models.py:1146
+#: part/models.py:1187
 msgid "Expiry time (in days) for stock items of this part"
 msgstr "此零件庫存項的過期時間 (天)"
 
-#: part/models.py:1154 part/serializers.py:947
+#: part/models.py:1195 part/serializers.py:948
 msgid "Minimum Stock"
 msgstr "最低庫存"
 
-#: part/models.py:1155
+#: part/models.py:1196
 msgid "Minimum allowed stock level"
 msgstr "允許的最小庫存量"
 
-#: part/models.py:1164
+#: part/models.py:1205
 msgid "Units of measure for this part"
 msgstr "此零件的計量單位"
 
-#: part/models.py:1171
+#: part/models.py:1212
 msgid "Can this part be built from other parts?"
 msgstr "這個零件可由其他零件加工而成嗎？"
 
-#: part/models.py:1177
+#: part/models.py:1218
 msgid "Can this part be used to build other parts?"
 msgstr "這個零件可用於創建其他零件嗎？"
 
-#: part/models.py:1183
+#: part/models.py:1224
 msgid "Does this part have tracking for unique items?"
 msgstr "此零件是否有唯一物品的追蹤功能"
 
-#: part/models.py:1189
+#: part/models.py:1230
 msgid "Can this part have test results recorded against it?"
 msgstr "這一部分能否記錄到測試結果？"
 
-#: part/models.py:1195
+#: part/models.py:1236
 msgid "Can this part be purchased from external suppliers?"
 msgstr "這個零件可從外部供應商購買嗎？"
 
-#: part/models.py:1201
+#: part/models.py:1242
 msgid "Can this part be sold to customers?"
 msgstr "此零件可以銷售給客户嗎?"
 
-#: part/models.py:1205
+#: part/models.py:1246
 msgid "Is this part active?"
 msgstr "這個零件是否已激活？"
 
-#: part/models.py:1211
+#: part/models.py:1252
 msgid "Locked parts cannot be edited"
 msgstr "無法編輯鎖定的零件"
 
-#: part/models.py:1217
+#: part/models.py:1258
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr "這是一個虛擬零件，例如一個軟件產品或許可證嗎？"
 
-#: part/models.py:1223
+#: part/models.py:1264
 msgid "BOM checksum"
 msgstr "物料清單校驗和"
 
-#: part/models.py:1224
+#: part/models.py:1265
 msgid "Stored BOM checksum"
 msgstr "保存的物料清單校驗和"
 
-#: part/models.py:1232
+#: part/models.py:1273
 msgid "BOM checked by"
 msgstr "物料清單檢查人"
 
-#: part/models.py:1237
+#: part/models.py:1278
 msgid "BOM checked date"
 msgstr "物料清單檢查日期"
 
-#: part/models.py:1253
+#: part/models.py:1294
 msgid "Creation User"
 msgstr "新建用户"
 
-#: part/models.py:1263
+#: part/models.py:1304
 msgid "Owner responsible for this part"
 msgstr "此零件的負責人"
 
-#: part/models.py:1268
+#: part/models.py:1309
 msgid "Last Stocktake"
 msgstr "最近庫存盤點"
 
-#: part/models.py:2140
+#: part/models.py:2190
 msgid "Sell multiple"
 msgstr "出售多個"
 
-#: part/models.py:3128
+#: part/models.py:3185
 msgid "Currency used to cache pricing calculations"
 msgstr "用於緩存定價計算的貨幣"
 
-#: part/models.py:3144
+#: part/models.py:3201
 msgid "Minimum BOM Cost"
 msgstr "最低物料清單成本"
 
-#: part/models.py:3145
+#: part/models.py:3202
 msgid "Minimum cost of component parts"
 msgstr "元件的最低成本"
 
-#: part/models.py:3151
+#: part/models.py:3208
 msgid "Maximum BOM Cost"
 msgstr "物料清單的最高成本"
 
-#: part/models.py:3152
+#: part/models.py:3209
 msgid "Maximum cost of component parts"
 msgstr "元件的最高成本"
 
-#: part/models.py:3158
+#: part/models.py:3215
 msgid "Minimum Purchase Cost"
 msgstr "最低購買成本"
 
-#: part/models.py:3159
+#: part/models.py:3216
 msgid "Minimum historical purchase cost"
 msgstr "最高歷史購買成本"
 
-#: part/models.py:3165
+#: part/models.py:3222
 msgid "Maximum Purchase Cost"
 msgstr "最大購買成本"
 
-#: part/models.py:3166
+#: part/models.py:3223
 msgid "Maximum historical purchase cost"
 msgstr "最高歷史購買成本"
 
-#: part/models.py:3172
+#: part/models.py:3229
 msgid "Minimum Internal Price"
 msgstr "最低內部價格"
 
-#: part/models.py:3173
+#: part/models.py:3230
 msgid "Minimum cost based on internal price breaks"
 msgstr "基於內部批發價的最低成本"
 
-#: part/models.py:3179
+#: part/models.py:3236
 msgid "Maximum Internal Price"
 msgstr "最大內部價格"
 
-#: part/models.py:3180
+#: part/models.py:3237
 msgid "Maximum cost based on internal price breaks"
 msgstr "基於內部批發價的最高成本"
 
-#: part/models.py:3186
+#: part/models.py:3243
 msgid "Minimum Supplier Price"
 msgstr "供應商最低價格"
 
-#: part/models.py:3187
+#: part/models.py:3244
 msgid "Minimum price of part from external suppliers"
 msgstr "外部供應商零件的最低價格"
 
-#: part/models.py:3193
+#: part/models.py:3250
 msgid "Maximum Supplier Price"
 msgstr "供應商最高價格"
 
-#: part/models.py:3194
+#: part/models.py:3251
 msgid "Maximum price of part from external suppliers"
 msgstr "來自外部供應商的商零件的最高價格"
 
-#: part/models.py:3200
+#: part/models.py:3257
 msgid "Minimum Variant Cost"
 msgstr "最小變體成本"
 
-#: part/models.py:3201
+#: part/models.py:3258
 msgid "Calculated minimum cost of variant parts"
 msgstr "計算出的變體零件的最低成本"
 
-#: part/models.py:3207
+#: part/models.py:3264
 msgid "Maximum Variant Cost"
 msgstr "最大變體成本"
 
-#: part/models.py:3208
+#: part/models.py:3265
 msgid "Calculated maximum cost of variant parts"
 msgstr "計算出的變體零件的最大成本"
 
-#: part/models.py:3214 part/models.py:3228
+#: part/models.py:3271 part/models.py:3285
 msgid "Minimum Cost"
 msgstr "最低成本"
 
-#: part/models.py:3215
+#: part/models.py:3272
 msgid "Override minimum cost"
 msgstr "覆蓋最低成本"
 
-#: part/models.py:3221 part/models.py:3235
+#: part/models.py:3278 part/models.py:3292
 msgid "Maximum Cost"
 msgstr "最高成本"
 
-#: part/models.py:3222
+#: part/models.py:3279
 msgid "Override maximum cost"
 msgstr "覆蓋最大成本"
 
-#: part/models.py:3229
+#: part/models.py:3286
 msgid "Calculated overall minimum cost"
 msgstr "計算總最低成本"
 
-#: part/models.py:3236
+#: part/models.py:3293
 msgid "Calculated overall maximum cost"
 msgstr "計算總最大成本"
 
-#: part/models.py:3242
+#: part/models.py:3299
 msgid "Minimum Sale Price"
 msgstr "最低售出價格"
 
-#: part/models.py:3243
+#: part/models.py:3300
 msgid "Minimum sale price based on price breaks"
 msgstr "基於批發價的最低售出價格"
 
-#: part/models.py:3249
+#: part/models.py:3306
 msgid "Maximum Sale Price"
 msgstr "最高售出價格"
 
-#: part/models.py:3250
+#: part/models.py:3307
 msgid "Maximum sale price based on price breaks"
 msgstr "基於批發價的最大售出價格"
 
-#: part/models.py:3256
+#: part/models.py:3313
 msgid "Minimum Sale Cost"
 msgstr "最低銷售成本"
 
-#: part/models.py:3257
+#: part/models.py:3314
 msgid "Minimum historical sale price"
 msgstr "歷史最低售出價格"
 
-#: part/models.py:3263
+#: part/models.py:3320
 msgid "Maximum Sale Cost"
 msgstr "最高銷售成本"
 
-#: part/models.py:3264
+#: part/models.py:3321
 msgid "Maximum historical sale price"
 msgstr "歷史最高售出價格"
 
-#: part/models.py:3283
+#: part/models.py:3340
 msgid "Part for stocktake"
 msgstr "用於盤點的零件"
 
-#: part/models.py:3288
+#: part/models.py:3345
 msgid "Item Count"
 msgstr "物品數量"
 
-#: part/models.py:3289
+#: part/models.py:3346
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "盤點時的個別庫存條目數"
 
-#: part/models.py:3297
+#: part/models.py:3354
 msgid "Total available stock at time of stocktake"
 msgstr "盤點時可用庫存總額"
 
-#: part/models.py:3301 part/models.py:3384 part/serializers.py:268
+#: part/models.py:3358 part/models.py:3441 part/serializers.py:269
 #: report/templates/report/inventree_test_report.html:106
 msgid "Date"
 msgstr "日期"
 
-#: part/models.py:3302
+#: part/models.py:3359
 msgid "Date stocktake was performed"
 msgstr "進行盤點的日期"
 
-#: part/models.py:3310
+#: part/models.py:3367
 msgid "Additional notes"
 msgstr "附加註釋"
 
-#: part/models.py:3320
+#: part/models.py:3377
 msgid "User who performed this stocktake"
 msgstr "進行此盤點的用户"
 
-#: part/models.py:3326
+#: part/models.py:3383
 msgid "Minimum Stock Cost"
 msgstr "最低庫存成本"
 
-#: part/models.py:3327
+#: part/models.py:3384
 msgid "Estimated minimum cost of stock on hand"
 msgstr "現有存庫存最低成本估算"
 
-#: part/models.py:3333
+#: part/models.py:3390
 msgid "Maximum Stock Cost"
 msgstr "最高庫存成本"
 
-#: part/models.py:3334
+#: part/models.py:3391
 msgid "Estimated maximum cost of stock on hand"
 msgstr "目前庫存最高成本估算"
 
-#: part/models.py:3390
+#: part/models.py:3447
 msgid "Report"
 msgstr "報告"
 
-#: part/models.py:3391
+#: part/models.py:3448
 msgid "Stocktake report file (generated internally)"
 msgstr "盤點報告文件(內部生成)"
 
-#: part/models.py:3396
+#: part/models.py:3453
 msgid "Part Count"
 msgstr "零件計數"
 
-#: part/models.py:3397
+#: part/models.py:3454
 msgid "Number of parts covered by stocktake"
 msgstr "盤點涵蓋的零件數量"
 
-#: part/models.py:3407
+#: part/models.py:3464
 msgid "User who requested this stocktake report"
 msgstr "請求此盤點報告的用户"
 
-#: part/models.py:3417
+#: part/models.py:3474
 msgid "Part Sale Price Break"
 msgstr "零件售出價格折扣"
 
-#: part/models.py:3529
+#: part/models.py:3586
 msgid "Part Test Template"
 msgstr "零件測試模板"
 
-#: part/models.py:3555
+#: part/models.py:3612
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr "模板名稱無效 - 必須包含至少一個字母或者數字"
 
-#: part/models.py:3576 part/models.py:3746
+#: part/models.py:3633 part/models.py:3803
 msgid "Choices must be unique"
 msgstr "選擇必須是唯一的"
 
-#: part/models.py:3587
+#: part/models.py:3644
 msgid "Test templates can only be created for testable parts"
 msgstr "測試模板只能為可拆分的部件創建"
 
-#: part/models.py:3598
+#: part/models.py:3655
 msgid "Test template with the same key already exists for part"
 msgstr "零件已存在具有相同主鍵的測試模板"
 
-#: part/models.py:3615
+#: part/models.py:3672
 msgid "Test Name"
 msgstr "測試名"
 
-#: part/models.py:3616
+#: part/models.py:3673
 msgid "Enter a name for the test"
 msgstr "輸入測試的名稱"
 
-#: part/models.py:3622
+#: part/models.py:3679
 msgid "Test Key"
 msgstr "測試主鍵"
 
-#: part/models.py:3623
+#: part/models.py:3680
 msgid "Simplified key for the test"
 msgstr "簡化測試主鍵"
 
-#: part/models.py:3630
+#: part/models.py:3687
 msgid "Test Description"
 msgstr "測試説明"
 
-#: part/models.py:3631
+#: part/models.py:3688
 msgid "Enter description for this test"
 msgstr "輸入測試的描述"
 
-#: part/models.py:3635 report/models.py:213
+#: part/models.py:3692 report/models.py:271
 msgid "Enabled"
 msgstr "已啓用"
 
-#: part/models.py:3635
+#: part/models.py:3692
 msgid "Is this test enabled?"
 msgstr "此測試是否已啓用？"
 
-#: part/models.py:3640
+#: part/models.py:3697
 msgid "Required"
 msgstr "必須的"
 
-#: part/models.py:3641
+#: part/models.py:3698
 msgid "Is this test required to pass?"
 msgstr "需要此測試才能通過嗎？"
 
-#: part/models.py:3646
+#: part/models.py:3703
 msgid "Requires Value"
 msgstr "需要值"
 
-#: part/models.py:3647
+#: part/models.py:3704
 msgid "Does this test require a value when adding a test result?"
 msgstr "添加測試結果時是否需要一個值？"
 
-#: part/models.py:3652
+#: part/models.py:3709
 msgid "Requires Attachment"
 msgstr "需要附件"
 
-#: part/models.py:3654
+#: part/models.py:3711
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "添加測試結果時是否需要文件附件？"
 
-#: part/models.py:3660 part/models.py:3808
+#: part/models.py:3717 part/models.py:3865
 msgid "Choices"
 msgstr "選項"
 
-#: part/models.py:3661
+#: part/models.py:3718
 msgid "Valid choices for this test (comma-separated)"
 msgstr "此測試的有效選擇 (逗號分隔)"
 
-#: part/models.py:3694
+#: part/models.py:3751
 msgid "Part Parameter Template"
 msgstr "零件參數模板"
 
-#: part/models.py:3721
+#: part/models.py:3778
 msgid "Checkbox parameters cannot have units"
 msgstr "勾選框參數不能有單位"
 
-#: part/models.py:3726
+#: part/models.py:3783
 msgid "Checkbox parameters cannot have choices"
 msgstr "複選框參數不能有選項"
 
-#: part/models.py:3763
+#: part/models.py:3820
 msgid "Parameter template name must be unique"
 msgstr "參數模板名稱必須是唯一的"
 
-#: part/models.py:3781
+#: part/models.py:3838
 msgid "Parameter Name"
 msgstr "參數名稱"
 
-#: part/models.py:3788
+#: part/models.py:3845
 msgid "Physical units for this parameter"
 msgstr "此參數的物理單位"
 
-#: part/models.py:3796
+#: part/models.py:3853
 msgid "Parameter description"
 msgstr "參數説明"
 
-#: part/models.py:3802
+#: part/models.py:3859
 msgid "Checkbox"
 msgstr "勾選框"
 
-#: part/models.py:3803
+#: part/models.py:3860
 msgid "Is this parameter a checkbox?"
 msgstr "此參數是否為勾選框？"
 
-#: part/models.py:3809
+#: part/models.py:3866
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "此參數的有效選擇 (逗號分隔)"
 
-#: part/models.py:3820
+#: part/models.py:3877
 msgid "Selection list for this parameter"
 msgstr ""
 
-#: part/models.py:3856
+#: part/models.py:3913
 msgid "Part Parameter"
 msgstr "零件參數"
 
-#: part/models.py:3882
+#: part/models.py:3939
 msgid "Parameter cannot be modified - part is locked"
 msgstr "參數不能被修改 - 零件被鎖定"
 
-#: part/models.py:3920
+#: part/models.py:3977
 msgid "Invalid choice for parameter value"
 msgstr "無效的參數值選擇"
 
-#: part/models.py:3971
+#: part/models.py:4028
 msgid "Parent Part"
 msgstr "父零件"
 
-#: part/models.py:3979 part/models.py:4087 part/models.py:4088
+#: part/models.py:4036 part/models.py:4144 part/models.py:4145
 msgid "Parameter Template"
 msgstr "參數模板"
 
-#: part/models.py:3985
+#: part/models.py:4042
 msgid "Parameter Value"
 msgstr "參數值"
 
-#: part/models.py:4035
+#: part/models.py:4092
 msgid "Part Category Parameter Template"
 msgstr "零件類別參數模板"
 
-#: part/models.py:4094
+#: part/models.py:4151
 msgid "Default Value"
 msgstr "默認值"
 
-#: part/models.py:4095
+#: part/models.py:4152
 msgid "Default Parameter Value"
 msgstr "默認參數值"
 
-#: part/models.py:4226
+#: part/models.py:4283
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "物料清單項目不能被修改 - 裝配已鎖定"
 
-#: part/models.py:4233
+#: part/models.py:4290
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr "物料清單項目不能修改 - 變體裝配已鎖定"
 
-#: part/models.py:4243
+#: part/models.py:4300
 msgid "Select parent part"
 msgstr "選擇父零件"
 
-#: part/models.py:4253
+#: part/models.py:4310
 msgid "Sub part"
 msgstr "子零件"
 
-#: part/models.py:4254
+#: part/models.py:4311
 msgid "Select part to be used in BOM"
 msgstr "選擇要用於物料清單的零件"
 
-#: part/models.py:4265
+#: part/models.py:4322
 msgid "BOM quantity for this BOM item"
 msgstr "此物料清單項目的數量"
 
-#: part/models.py:4271
+#: part/models.py:4328
 msgid "This BOM item is optional"
 msgstr "此物料清單項目是可選的"
 
-#: part/models.py:4277
+#: part/models.py:4334
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "這個物料清單項目是耗材 (它沒有在生產訂單中被追蹤)"
 
-#: part/models.py:4284
+#: part/models.py:4341
 msgid "Overage"
 msgstr "超量"
 
-#: part/models.py:4285
+#: part/models.py:4342
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "估計生產物浪費量(絕對值或百分比)"
 
-#: part/models.py:4292
+#: part/models.py:4349
 msgid "BOM item reference"
 msgstr "物料清單項目引用"
 
-#: part/models.py:4300
+#: part/models.py:4357
 msgid "BOM item notes"
 msgstr "物料清單項目註釋"
 
-#: part/models.py:4306
+#: part/models.py:4363
 msgid "Checksum"
 msgstr "校驗和"
 
-#: part/models.py:4307
+#: part/models.py:4364
 msgid "BOM line checksum"
 msgstr "物料清單行校驗和"
 
-#: part/models.py:4312
+#: part/models.py:4369
 msgid "Validated"
 msgstr "已驗證"
 
-#: part/models.py:4313
+#: part/models.py:4370
 msgid "This BOM item has been validated"
 msgstr "此物料清單項目已驗證"
 
-#: part/models.py:4318
+#: part/models.py:4375
 msgid "Gets inherited"
 msgstr "獲取繼承的"
 
-#: part/models.py:4319
+#: part/models.py:4376
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "此物料清單項目是由物料清單繼承的變體零件"
 
-#: part/models.py:4325
+#: part/models.py:4382
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "變體零件的庫存項可以用於此物料清單項目"
 
-#: part/models.py:4410 stock/models.py:770
+#: part/models.py:4467 stock/models.py:848
 msgid "Quantity must be integer value for trackable parts"
 msgstr "可追蹤零件的數量必須是整數"
 
-#: part/models.py:4420 part/models.py:4422
+#: part/models.py:4477 part/models.py:4479
 msgid "Sub part must be specified"
 msgstr "必須指定子零件"
 
-#: part/models.py:4567
+#: part/models.py:4624
 msgid "BOM Item Substitute"
 msgstr "物料清單項目替代品"
 
-#: part/models.py:4588
+#: part/models.py:4645
 msgid "Substitute part cannot be the same as the master part"
 msgstr "替代品零件不能與主零件相同"
 
-#: part/models.py:4601
+#: part/models.py:4658
 msgid "Parent BOM item"
 msgstr "上級物料清單項目"
 
-#: part/models.py:4609
+#: part/models.py:4666
 msgid "Substitute part"
 msgstr "替代品零件"
 
-#: part/models.py:4625
+#: part/models.py:4682
 msgid "Part 1"
 msgstr "零件 1"
 
-#: part/models.py:4633
+#: part/models.py:4690
 msgid "Part 2"
 msgstr "零件2"
 
-#: part/models.py:4634
+#: part/models.py:4691
 msgid "Select Related Part"
 msgstr "選擇相關的零件"
 
-#: part/models.py:4641
+#: part/models.py:4698
 msgid "Note for this relationship"
 msgstr ""
 
-#: part/models.py:4660
+#: part/models.py:4717
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "零件關係不能在零件和自身之間創建"
 
-#: part/models.py:4665
+#: part/models.py:4722
 msgid "Duplicate relationship already exists"
 msgstr "複製關係已經存在"
 
-#: part/serializers.py:124
+#: part/serializers.py:125
 msgid "Parent Category"
 msgstr "上級類別"
 
-#: part/serializers.py:125
+#: part/serializers.py:126
 msgid "Parent part category"
 msgstr "上級零件類別"
 
-#: part/serializers.py:130 part/serializers.py:163
+#: part/serializers.py:131 part/serializers.py:164
 msgid "Subcategories"
 msgstr "子類別"
 
-#: part/serializers.py:202
+#: part/serializers.py:203
 msgid "Results"
 msgstr "結果"
 
-#: part/serializers.py:203
+#: part/serializers.py:204
 msgid "Number of results recorded against this template"
 msgstr "根據該模板記錄的結果數量"
 
-#: part/serializers.py:230 part/serializers.py:248 stock/serializers.py:676
+#: part/serializers.py:231 part/serializers.py:249 stock/serializers.py:681
 msgid "Purchase currency of this stock item"
 msgstr "購買此庫存項的貨幣"
 
-#: part/serializers.py:273
+#: part/serializers.py:274
 msgid "Speculative Quantity"
 msgstr "投機數量"
 
-#: part/serializers.py:282
+#: part/serializers.py:283
 msgid "Model ID"
 msgstr "型號ID"
 
-#: part/serializers.py:308
+#: part/serializers.py:309
 msgid "File is not an image"
 msgstr ""
 
-#: part/serializers.py:338
+#: part/serializers.py:339
 msgid "Number of parts using this template"
 msgstr "使用此模板的零件數"
 
-#: part/serializers.py:481
+#: part/serializers.py:482
 msgid "Original Part"
 msgstr "原始零件"
 
-#: part/serializers.py:482
+#: part/serializers.py:483
 msgid "Select original part to duplicate"
 msgstr "選擇要複製的原始零件"
 
-#: part/serializers.py:487
+#: part/serializers.py:488
 msgid "Copy Image"
 msgstr "複製圖片"
 
-#: part/serializers.py:488
+#: part/serializers.py:489
 msgid "Copy image from original part"
 msgstr "從原零件複製圖片"
 
-#: part/serializers.py:494
+#: part/serializers.py:495
 msgid "Copy BOM"
 msgstr "複製物料清單"
 
-#: part/serializers.py:495
+#: part/serializers.py:496
 msgid "Copy bill of materials from original part"
 msgstr "從原始零件複製材料清單"
 
-#: part/serializers.py:501
+#: part/serializers.py:502
 msgid "Copy Parameters"
 msgstr "複製參數"
 
-#: part/serializers.py:502
+#: part/serializers.py:503
 msgid "Copy parameter data from original part"
 msgstr "從原始零件複製參數數據"
 
-#: part/serializers.py:508
+#: part/serializers.py:509
 msgid "Copy Notes"
 msgstr "複製備註"
 
-#: part/serializers.py:509
+#: part/serializers.py:510
 msgid "Copy notes from original part"
 msgstr "從原始零件複製備註"
 
-#: part/serializers.py:527
+#: part/serializers.py:528
 msgid "Initial Stock Quantity"
 msgstr "初始化庫存數量"
 
-#: part/serializers.py:529
+#: part/serializers.py:530
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
 msgstr "指定此零件的初始庫存數量。如果數量為零，則不添加任何庫存。"
 
-#: part/serializers.py:536
+#: part/serializers.py:537
 msgid "Initial Stock Location"
 msgstr "初始化庫存地點"
 
-#: part/serializers.py:537
+#: part/serializers.py:538
 msgid "Specify initial stock location for this Part"
 msgstr "初始化指定此零件的庫存地點"
 
-#: part/serializers.py:554
+#: part/serializers.py:555
 msgid "Select supplier (or leave blank to skip)"
 msgstr "選擇供應商(或為空以跳過)"
 
-#: part/serializers.py:570
+#: part/serializers.py:571
 msgid "Select manufacturer (or leave blank to skip)"
 msgstr "選擇製造商(或為空)"
 
-#: part/serializers.py:580
+#: part/serializers.py:581
 msgid "Manufacturer part number"
 msgstr "製造商零件號"
 
-#: part/serializers.py:587
+#: part/serializers.py:588
 msgid "Selected company is not a valid supplier"
 msgstr "所選公司不是一個有效的供應商"
 
-#: part/serializers.py:596
+#: part/serializers.py:597
 msgid "Selected company is not a valid manufacturer"
 msgstr "所選公司不是一個有效的製造商"
 
-#: part/serializers.py:607
+#: part/serializers.py:608
 msgid "Manufacturer part matching this MPN already exists"
 msgstr "與此製造商零件編號 (MPN) 的相匹配的製造商零件已存在"
 
-#: part/serializers.py:614
+#: part/serializers.py:615
 msgid "Supplier part matching this SKU already exists"
 msgstr "匹配此庫存單位 (SKU) 的供應商零件已存在"
 
-#: part/serializers.py:903 part/stocktake.py:222
+#: part/serializers.py:904 part/stocktake.py:222
 msgid "Category Name"
 msgstr "類別名稱"
 
-#: part/serializers.py:928
+#: part/serializers.py:929
 msgid "Building"
 msgstr "正在生產"
 
-#: part/serializers.py:933 part/stocktake.py:223 stock/serializers.py:1050
-#: stock/serializers.py:1228 users/models.py:224
+#: part/serializers.py:934 part/stocktake.py:223 stock/serializers.py:1080
+#: stock/serializers.py:1256 users/ruleset.py:36
 msgid "Stock Items"
 msgstr "庫存項"
 
-#: part/serializers.py:934
+#: part/serializers.py:935
 msgid "Revisions"
 msgstr "修訂"
 
-#: part/serializers.py:935
+#: part/serializers.py:936
 msgid "Suppliers"
 msgstr "供應商"
 
-#: part/serializers.py:936 templates/email/low_stock_notification.html:16
+#: part/serializers.py:937 templates/email/low_stock_notification.html:16
 #: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "庫存總量"
 
-#: part/serializers.py:939
+#: part/serializers.py:940
 msgid "Unallocated Stock"
 msgstr "未分配的庫存"
 
-#: part/serializers.py:944
+#: part/serializers.py:945
 msgid "Variant Stock"
 msgstr "變體庫存"
 
-#: part/serializers.py:976
+#: part/serializers.py:977
 msgid "Duplicate Part"
 msgstr "重複零件"
 
-#: part/serializers.py:977
+#: part/serializers.py:978
 msgid "Copy initial data from another Part"
 msgstr "從另一個零件複製初始數據"
 
-#: part/serializers.py:983
+#: part/serializers.py:984
 msgid "Initial Stock"
 msgstr "初始庫存"
 
-#: part/serializers.py:984
+#: part/serializers.py:985
 msgid "Create Part with initial stock quantity"
 msgstr "創建具有初始庫存數量的零件"
 
-#: part/serializers.py:990
+#: part/serializers.py:991
 msgid "Supplier Information"
 msgstr "供應商信息"
 
-#: part/serializers.py:991
+#: part/serializers.py:992
 msgid "Add initial supplier information for this part"
 msgstr "添加此零件的初始供應商信息"
 
-#: part/serializers.py:999
+#: part/serializers.py:1000
 msgid "Copy Category Parameters"
 msgstr "複製類別參數"
 
-#: part/serializers.py:1000
+#: part/serializers.py:1001
 msgid "Copy parameter templates from selected part category"
 msgstr "從選擇的零件複製參數模版"
 
-#: part/serializers.py:1005
+#: part/serializers.py:1006
 msgid "Existing Image"
 msgstr "現有的圖片"
 
-#: part/serializers.py:1006
+#: part/serializers.py:1007
 msgid "Filename of an existing part image"
 msgstr "現有零件圖片的文件名"
 
-#: part/serializers.py:1023
+#: part/serializers.py:1024
 msgid "Image file does not exist"
 msgstr "圖片不存在"
 
-#: part/serializers.py:1227
+#: part/serializers.py:1228
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr "限制盤點報告到某個特定零件以及任何變體零件"
 
-#: part/serializers.py:1237
+#: part/serializers.py:1238
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr "限制盤點報告到某個特定零件類別以及任何子類別"
 
-#: part/serializers.py:1247
+#: part/serializers.py:1248
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr "限制盤點報告到某個特定零件庫存地點以及任何子位置"
 
-#: part/serializers.py:1253
+#: part/serializers.py:1254
 msgid "Exclude External Stock"
 msgstr "排除外部庫存"
 
-#: part/serializers.py:1254
+#: part/serializers.py:1255
 msgid "Exclude stock items in external locations"
 msgstr "排除外部位置的庫存項"
 
-#: part/serializers.py:1259
+#: part/serializers.py:1260
 msgid "Generate Report"
 msgstr "生成報告"
 
-#: part/serializers.py:1260
+#: part/serializers.py:1261
 msgid "Generate report file containing calculated stocktake data"
 msgstr "生成包含計算出來的盤點數據的報告文件"
 
-#: part/serializers.py:1265
+#: part/serializers.py:1266
 msgid "Update Parts"
 msgstr "更新零件"
 
-#: part/serializers.py:1266
+#: part/serializers.py:1267
 msgid "Update specified parts with calculated stocktake data"
 msgstr "使用計算出的盤點數據更新指定零件"
 
-#: part/serializers.py:1274
+#: part/serializers.py:1275
 msgid "Stocktake functionality is not enabled"
 msgstr "盤點功能未啓用"
 
-#: part/serializers.py:1279
+#: part/serializers.py:1280
 msgid "Background worker check failed"
 msgstr "後台執行器檢查失敗"
 
-#: part/serializers.py:1380
+#: part/serializers.py:1396
 msgid "Minimum Price"
 msgstr "最低價格"
 
-#: part/serializers.py:1381
+#: part/serializers.py:1397
 msgid "Override calculated value for minimum price"
 msgstr "覆蓋已計算的最低價格值"
 
-#: part/serializers.py:1388
+#: part/serializers.py:1404
 msgid "Minimum price currency"
 msgstr "最低價格貨幣"
 
-#: part/serializers.py:1395
+#: part/serializers.py:1411
 msgid "Maximum Price"
 msgstr "最高價格"
 
-#: part/serializers.py:1396
+#: part/serializers.py:1412
 msgid "Override calculated value for maximum price"
 msgstr "覆蓋已計算的最高價格值"
 
-#: part/serializers.py:1403
+#: part/serializers.py:1419
 msgid "Maximum price currency"
 msgstr "最高價格貨幣"
 
-#: part/serializers.py:1432
+#: part/serializers.py:1448
 msgid "Update"
 msgstr "更新"
 
-#: part/serializers.py:1433
+#: part/serializers.py:1449
 msgid "Update pricing for this part"
 msgstr "更新這個零件的價格"
 
-#: part/serializers.py:1456
+#: part/serializers.py:1472
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr "無法將所提供的貨幣轉換為 {default_currency}"
 
-#: part/serializers.py:1463
+#: part/serializers.py:1479
 msgid "Minimum price must not be greater than maximum price"
 msgstr "最低價格不能高於最高價格。"
 
-#: part/serializers.py:1466
+#: part/serializers.py:1482
 msgid "Maximum price must not be less than minimum price"
 msgstr "最高價格不能低於最低價格"
 
-#: part/serializers.py:1619
+#: part/serializers.py:1635
 msgid "Select the parent assembly"
 msgstr "選擇父裝配"
 
-#: part/serializers.py:1633
+#: part/serializers.py:1649
 msgid "Select the component part"
 msgstr "選擇零部件"
 
-#: part/serializers.py:1648
+#: part/serializers.py:1664
 msgid "Can Build"
 msgstr "可以創建"
 
-#: part/serializers.py:1872
+#: part/serializers.py:1888
 msgid "Select part to copy BOM from"
 msgstr "選擇要複製物料清單的零件"
 
-#: part/serializers.py:1880
+#: part/serializers.py:1896
 msgid "Remove Existing Data"
 msgstr "移除現有數據"
 
-#: part/serializers.py:1881
+#: part/serializers.py:1897
 msgid "Remove existing BOM items before copying"
 msgstr "複製前刪除現有的物料清單項目"
 
-#: part/serializers.py:1886
+#: part/serializers.py:1902
 msgid "Include Inherited"
 msgstr "包含繼承的"
 
-#: part/serializers.py:1887
+#: part/serializers.py:1903
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "包含從模板零件繼承的物料清單項目"
 
-#: part/serializers.py:1892
+#: part/serializers.py:1908
 msgid "Skip Invalid Rows"
 msgstr "跳過無效行"
 
-#: part/serializers.py:1893
+#: part/serializers.py:1909
 msgid "Enable this option to skip invalid rows"
 msgstr "啓用此選項以跳過無效行"
 
-#: part/serializers.py:1898
+#: part/serializers.py:1914
 msgid "Copy Substitute Parts"
 msgstr "複製替代品零件"
 
-#: part/serializers.py:1899
+#: part/serializers.py:1915
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "複製物料清單項目時複製替代品零件"
 
@@ -6287,111 +6314,111 @@ msgstr "低庫存通知"
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "可用的 {part.name}庫存已經跌到設置的最低值"
 
-#: plugin/api.py:79
+#: plugin/api.py:78
 msgid "Builtin"
 msgstr ""
 
-#: plugin/api.py:93
+#: plugin/api.py:92
 msgid "Mandatory"
 msgstr ""
 
-#: plugin/api.py:104
+#: plugin/api.py:103
 msgid "Sample"
 msgstr ""
 
-#: plugin/api.py:118 plugin/models.py:159
+#: plugin/api.py:117 plugin/models.py:159
 msgid "Installed"
 msgstr "已安裝"
 
-#: plugin/api.py:185
+#: plugin/api.py:184
 msgid "Plugin cannot be deleted as it is currently active"
 msgstr "插件不能被刪除，因為它當前處於激活狀態"
 
-#: plugin/base/action/api.py:33
+#: plugin/base/action/api.py:34
 msgid "No action specified"
 msgstr "未指定操作"
 
-#: plugin/base/action/api.py:45
+#: plugin/base/action/api.py:46
 msgid "No matching action found"
 msgstr "未找到指定操作"
 
-#: plugin/base/barcodes/api.py:210
+#: plugin/base/barcodes/api.py:211
 msgid "No match found for barcode data"
 msgstr "未找到匹配條形碼數據"
 
-#: plugin/base/barcodes/api.py:214
+#: plugin/base/barcodes/api.py:215
 msgid "Match found for barcode data"
 msgstr "找到匹配條形碼數據"
 
-#: plugin/base/barcodes/api.py:252 plugin/base/barcodes/serializers.py:77
+#: plugin/base/barcodes/api.py:253 plugin/base/barcodes/serializers.py:77
 msgid "Model is not supported"
 msgstr "不支持模型"
 
-#: plugin/base/barcodes/api.py:257
+#: plugin/base/barcodes/api.py:258
 msgid "Model instance not found"
 msgstr "找不到模型實例"
 
-#: plugin/base/barcodes/api.py:286
+#: plugin/base/barcodes/api.py:287
 msgid "Barcode matches existing item"
 msgstr "條形碼匹配現有項目"
 
-#: plugin/base/barcodes/api.py:427
+#: plugin/base/barcodes/api.py:418
 msgid "No matching part data found"
 msgstr "沒有找到匹配的零件數據"
 
-#: plugin/base/barcodes/api.py:443
+#: plugin/base/barcodes/api.py:434
 msgid "No matching supplier parts found"
 msgstr "沒有找到匹配的供應商零件"
 
-#: plugin/base/barcodes/api.py:446
+#: plugin/base/barcodes/api.py:437
 msgid "Multiple matching supplier parts found"
 msgstr "找到多個匹配的供應商零件"
 
-#: plugin/base/barcodes/api.py:459 plugin/base/barcodes/api.py:686
+#: plugin/base/barcodes/api.py:450 plugin/base/barcodes/api.py:677
 msgid "No matching plugin found for barcode data"
 msgstr "沒有找到匹配條碼數據的插件"
 
-#: plugin/base/barcodes/api.py:469
+#: plugin/base/barcodes/api.py:460
 msgid "Matched supplier part"
 msgstr "匹配的供應商零件"
 
-#: plugin/base/barcodes/api.py:537
+#: plugin/base/barcodes/api.py:528
 msgid "Item has already been received"
 msgstr "項目已被接收"
 
-#: plugin/base/barcodes/api.py:585
+#: plugin/base/barcodes/api.py:576
 msgid "No plugin match for supplier barcode"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:634
+#: plugin/base/barcodes/api.py:625
 msgid "Multiple matching line items found"
 msgstr "找到多個匹配的行項目"
 
-#: plugin/base/barcodes/api.py:637
+#: plugin/base/barcodes/api.py:628
 msgid "No matching line item found"
 msgstr "未找到匹配的行項目"
 
-#: plugin/base/barcodes/api.py:683
+#: plugin/base/barcodes/api.py:674
 msgid "No sales order provided"
 msgstr "未提供銷售訂單"
 
-#: plugin/base/barcodes/api.py:692
+#: plugin/base/barcodes/api.py:683
 msgid "Barcode does not match an existing stock item"
 msgstr "條形碼與現有的庫存項不匹配"
 
-#: plugin/base/barcodes/api.py:708
+#: plugin/base/barcodes/api.py:699
 msgid "Stock item does not match line item"
 msgstr "庫存項與行項目不匹配"
 
-#: plugin/base/barcodes/api.py:738
+#: plugin/base/barcodes/api.py:729
 msgid "Insufficient stock available"
 msgstr "可用庫存不足"
 
-#: plugin/base/barcodes/api.py:751
+#: plugin/base/barcodes/api.py:742
 msgid "Stock item allocated to sales order"
 msgstr "庫存項已分配到銷售訂單"
 
-#: plugin/base/barcodes/api.py:754
+#: plugin/base/barcodes/api.py:745
 msgid "Not enough information"
 msgstr "沒有足夠的信息"
 
@@ -6834,7 +6861,7 @@ msgstr "邊框"
 msgid "Print a border around each label"
 msgstr "打印每個標籤的邊框"
 
-#: plugin/builtin/labels/label_sheet.py:48 report/models.py:312
+#: plugin/builtin/labels/label_sheet.py:48 report/models.py:371
 msgid "Landscape"
 msgstr "橫屏模式"
 
@@ -6971,7 +6998,7 @@ msgstr "插件的鍵"
 msgid "PluginName of the plugin"
 msgstr "插件名稱"
 
-#: plugin/models.py:61 plugin/serializers.py:117
+#: plugin/models.py:61 plugin/serializers.py:119
 msgid "Package Name"
 msgstr "軟件包名"
 
@@ -7011,17 +7038,17 @@ msgstr "方法"
 msgid "No author found"
 msgstr "未找到作者"
 
-#: plugin/registry.py:608
+#: plugin/registry.py:611
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "插件 '{p}' 與當前 InvenTree 版本{v} 不兼容"
 
-#: plugin/registry.py:611
+#: plugin/registry.py:614
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "插件所需最低版本 {v}"
 
-#: plugin/registry.py:613
+#: plugin/registry.py:616
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "插件所需最高版本 {v}"
@@ -7130,115 +7157,115 @@ msgstr ""
 msgid "This is an admin-only dashboard item."
 msgstr ""
 
-#: plugin/serializers.py:84
+#: plugin/serializers.py:86
 msgid "Source File"
 msgstr ""
 
-#: plugin/serializers.py:85
+#: plugin/serializers.py:87
 msgid "Path to the source file for admin integration"
 msgstr ""
 
-#: plugin/serializers.py:92
+#: plugin/serializers.py:94
 msgid "Optional context data for the admin integration"
 msgstr ""
 
-#: plugin/serializers.py:108
+#: plugin/serializers.py:110
 msgid "Source URL"
 msgstr "源URL"
 
-#: plugin/serializers.py:110
+#: plugin/serializers.py:112
 msgid "Source for the package - this can be a custom registry or a VCS path"
 msgstr "軟件包的來源 - 這可以是自定義註冊表或 VCS 路徑"
 
-#: plugin/serializers.py:119
+#: plugin/serializers.py:121
 msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr "插件包名稱 - 也可以包含版本指示器"
 
-#: plugin/serializers.py:126
+#: plugin/serializers.py:128
 msgid "Version"
 msgstr "版本"
 
-#: plugin/serializers.py:128
+#: plugin/serializers.py:130
 msgid "Version specifier for the plugin. Leave blank for latest version."
 msgstr "插件版本説明。新版請留白。"
 
-#: plugin/serializers.py:133
+#: plugin/serializers.py:135
 msgid "Confirm plugin installation"
 msgstr "確認插件安裝"
 
-#: plugin/serializers.py:135
+#: plugin/serializers.py:137
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr "這將把這個插件安裝到當前實例中。這個實例將進行維護。"
 
-#: plugin/serializers.py:148
+#: plugin/serializers.py:150
 msgid "Installation not confirmed"
 msgstr "安裝尚未確認"
 
-#: plugin/serializers.py:150
+#: plugin/serializers.py:152
 msgid "Either packagename of URL must be provided"
 msgstr "必須提供軟件包名稱或者URL"
 
-#: plugin/serializers.py:186
+#: plugin/serializers.py:188
 msgid "Full reload"
 msgstr "完全重載"
 
-#: plugin/serializers.py:187
+#: plugin/serializers.py:189
 msgid "Perform a full reload of the plugin registry"
 msgstr "執行插件庫的完整重載"
 
-#: plugin/serializers.py:193
+#: plugin/serializers.py:195
 msgid "Force reload"
 msgstr "強制重載"
 
-#: plugin/serializers.py:195
+#: plugin/serializers.py:197
 msgid "Force a reload of the plugin registry, even if it is already loaded"
 msgstr "強制重載插件庫，即使已經加載"
 
-#: plugin/serializers.py:202
+#: plugin/serializers.py:204
 msgid "Collect plugins"
 msgstr "收集插件"
 
-#: plugin/serializers.py:203
+#: plugin/serializers.py:205
 msgid "Collect plugins and add them to the registry"
 msgstr "收集插件並添加到註冊表中"
 
-#: plugin/serializers.py:230
+#: plugin/serializers.py:232
 msgid "Activate Plugin"
 msgstr "激活插件"
 
-#: plugin/serializers.py:231
+#: plugin/serializers.py:233
 msgid "Activate this plugin"
 msgstr "激活此插件"
 
-#: plugin/serializers.py:251
+#: plugin/serializers.py:253
 msgid "Delete configuration"
 msgstr "刪除配置"
 
-#: plugin/serializers.py:252
+#: plugin/serializers.py:254
 msgid "Delete the plugin configuration from the database"
 msgstr "從數據庫中刪除插件配置"
 
-#: report/api.py:48 report/serializers.py:98 report/serializers.py:148
+#: report/api.py:44 report/serializers.py:98 report/serializers.py:148
 msgid "Items"
 msgstr "項目"
 
-#: report/api.py:125
+#: report/api.py:121
 msgid "Plugin not found"
 msgstr "插件未找到"
 
-#: report/api.py:127
+#: report/api.py:123
 msgid "Plugin is not active"
 msgstr "插件未激活"
 
-#: report/api.py:129
+#: report/api.py:125
 msgid "Plugin does not support label printing"
 msgstr "插件不支持標籤打印"
 
-#: report/api.py:177
+#: report/api.py:173
 msgid "Invalid label dimensions"
 msgstr "無效的標籤尺寸"
 
-#: report/api.py:192 report/api.py:271
+#: report/api.py:188 report/api.py:267
 msgid "No valid items provided to template"
 msgstr "沒有有效的項目提供到模板"
 
@@ -7258,116 +7285,116 @@ msgstr "法律"
 msgid "Letter"
 msgstr "字母"
 
-#: report/models.py:114
+#: report/models.py:117
 msgid "Template file with this name already exists"
 msgstr "已存在具有此名稱的模板"
 
-#: report/models.py:146
+#: report/models.py:204
 msgid "Template name"
 msgstr "模版名稱"
 
-#: report/models.py:152
+#: report/models.py:210
 msgid "Template description"
 msgstr "模板説明"
 
-#: report/models.py:158
+#: report/models.py:216
 msgid "Revision number (auto-increments)"
 msgstr "修訂編號 (自動增量)"
 
-#: report/models.py:164
+#: report/models.py:222
 msgid "Attach to Model on Print"
 msgstr "打印時附加到模型"
 
-#: report/models.py:166
+#: report/models.py:224
 msgid "Save report output as an attachment against linked model instance when printing"
 msgstr "打印時將報告輸出保存為附件與鏈接模型實例"
 
-#: report/models.py:207
+#: report/models.py:265
 msgid "Filename Pattern"
 msgstr "文件名樣式"
 
-#: report/models.py:208
+#: report/models.py:266
 msgid "Pattern for generating filenames"
 msgstr "生成文件名模式"
 
-#: report/models.py:213
+#: report/models.py:271
 msgid "Template is enabled"
 msgstr "模板已啓用"
 
-#: report/models.py:219
+#: report/models.py:278
 msgid "Target model type for template"
 msgstr "模版的目標模型類型"
 
-#: report/models.py:239
+#: report/models.py:298
 msgid "Filters"
 msgstr "篩選器"
 
-#: report/models.py:240
+#: report/models.py:299
 msgid "Template query filters (comma-separated list of key=value pairs)"
 msgstr "模版查詢篩選器 (逗號分隔的鍵值對列表)"
 
-#: report/models.py:299 report/models.py:503
+#: report/models.py:358 report/models.py:564
 msgid "Template file"
 msgstr "模板包文件"
 
-#: report/models.py:307
+#: report/models.py:366
 msgid "Page size for PDF reports"
 msgstr "PDF 報告的頁面大小"
 
-#: report/models.py:313
+#: report/models.py:372
 msgid "Render report in landscape orientation"
 msgstr "橫向渲染報告"
 
-#: report/models.py:425
+#: report/models.py:486
 #, python-brace-format
 msgid "Report generated from template {self.name}"
 msgstr ""
 
-#: report/models.py:450
+#: report/models.py:511
 msgid "Error generating report"
 msgstr ""
 
-#: report/models.py:509
+#: report/models.py:570
 msgid "Width [mm]"
 msgstr "寬度 [mm]"
 
-#: report/models.py:510
+#: report/models.py:571
 msgid "Label width, specified in mm"
 msgstr "標籤寬度，以毫米為單位。"
 
-#: report/models.py:516
+#: report/models.py:577
 msgid "Height [mm]"
 msgstr "高度 [mm]"
 
-#: report/models.py:517
+#: report/models.py:578
 msgid "Label height, specified in mm"
 msgstr "標籤高度，以毫米為單位。"
 
-#: report/models.py:624
+#: report/models.py:688
 msgid "Error printing labels"
 msgstr ""
 
-#: report/models.py:643
+#: report/models.py:707
 msgid "Snippet"
 msgstr "代碼片段"
 
-#: report/models.py:644
+#: report/models.py:708
 msgid "Report snippet file"
 msgstr "報告代碼片段文件"
 
-#: report/models.py:651
+#: report/models.py:715
 msgid "Snippet file description"
 msgstr "代碼片段文件描述"
 
-#: report/models.py:669
+#: report/models.py:733
 msgid "Asset"
 msgstr "資產"
 
-#: report/models.py:670
+#: report/models.py:734
 msgid "Report asset file"
 msgstr "報告資產文件"
 
-#: report/models.py:677
+#: report/models.py:741
 msgid "Asset file description"
 msgstr "資產文件描述"
 
@@ -7449,8 +7476,8 @@ msgstr "總計"
 
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:928
-#: stock/serializers.py:154
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:1006
+#: stock/serializers.py:159
 msgid "Serial Number"
 msgstr "序列號"
 
@@ -7495,7 +7522,7 @@ msgid "No result"
 msgstr "沒有結果"
 
 #: report/templates/report/inventree_test_report.html:153
-#: stock/serializers.py:659
+#: stock/serializers.py:664
 msgid "Installed Items"
 msgstr "已安裝的項目"
 
@@ -7519,123 +7546,123 @@ msgstr "parpart_image 標籤需要一個零件實例"
 msgid "company_image tag requires a Company instance"
 msgstr "公司_圖片標籤需要一個公司實例"
 
-#: stock/api.py:254
+#: stock/api.py:255
 msgid "Filter by location depth"
 msgstr "按位置深度篩選"
 
-#: stock/api.py:274
+#: stock/api.py:275
 msgid "Filter by top-level locations"
 msgstr "按頂級位置篩選"
 
-#: stock/api.py:289
+#: stock/api.py:290
 msgid "Include sub-locations in filtered results"
 msgstr "在篩選結果中包含子地點"
 
-#: stock/api.py:310 stock/serializers.py:1224
+#: stock/api.py:311 stock/serializers.py:1252
 msgid "Parent Location"
 msgstr "上級地點"
 
-#: stock/api.py:311
+#: stock/api.py:312
 msgid "Filter by parent location"
 msgstr "按上級位置篩選"
 
-#: stock/api.py:553
+#: stock/api.py:554
 msgid "Part name (case insensitive)"
 msgstr ""
 
-#: stock/api.py:559
+#: stock/api.py:560
 msgid "Part name contains (case insensitive)"
 msgstr ""
 
-#: stock/api.py:565
+#: stock/api.py:566
 msgid "Part name (regex)"
 msgstr ""
 
-#: stock/api.py:570
+#: stock/api.py:571
 msgid "Part IPN (case insensitive)"
 msgstr ""
 
-#: stock/api.py:576
+#: stock/api.py:577
 msgid "Part IPN contains (case insensitive)"
 msgstr ""
 
-#: stock/api.py:582
+#: stock/api.py:583
 msgid "Part IPN (regex)"
 msgstr ""
 
-#: stock/api.py:594
+#: stock/api.py:595
 msgid "Minimum stock"
 msgstr ""
 
-#: stock/api.py:598
+#: stock/api.py:599
 msgid "Maximum stock"
 msgstr ""
 
-#: stock/api.py:601
+#: stock/api.py:602
 msgid "Status Code"
 msgstr "狀態代碼"
 
-#: stock/api.py:641
+#: stock/api.py:642
 msgid "External Location"
 msgstr "外部地點"
 
-#: stock/api.py:740
+#: stock/api.py:741
 msgid "Consumed by Build Order"
 msgstr ""
 
-#: stock/api.py:750
+#: stock/api.py:751
 msgid "Installed in other stock item"
 msgstr ""
 
-#: stock/api.py:839
+#: stock/api.py:840
 msgid "Part Tree"
 msgstr "零件樹"
 
-#: stock/api.py:861
+#: stock/api.py:862
 msgid "Updated before"
 msgstr ""
 
-#: stock/api.py:865
+#: stock/api.py:866
 msgid "Updated after"
 msgstr ""
 
-#: stock/api.py:869
+#: stock/api.py:870
 msgid "Stocktake Before"
 msgstr ""
 
-#: stock/api.py:873
+#: stock/api.py:874
 msgid "Stocktake After"
 msgstr ""
 
-#: stock/api.py:878
+#: stock/api.py:879
 msgid "Expiry date before"
 msgstr "過期日期前"
 
-#: stock/api.py:882
+#: stock/api.py:883
 msgid "Expiry date after"
 msgstr "過期日期後"
 
-#: stock/api.py:885 stock/serializers.py:664
+#: stock/api.py:886 stock/serializers.py:669
 msgid "Stale"
 msgstr "過期"
 
-#: stock/api.py:986
+#: stock/api.py:987
 msgid "Quantity is required"
 msgstr "請先輸入數量"
 
-#: stock/api.py:991
+#: stock/api.py:992
 msgid "Valid part must be supplied"
 msgstr "必須提供有效的零件"
 
-#: stock/api.py:1018
+#: stock/api.py:1019
 msgid "The given supplier part does not exist"
 msgstr "給定的供應商零件不存在"
 
-#: stock/api.py:1028
+#: stock/api.py:1029
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "供應商零件有定義的包裝大小，但 use_pack_size 標誌未設置"
 
-#: stock/api.py:1055
+#: stock/api.py:1056
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "不能為不可跟蹤的零件提供序列號"
 
@@ -7651,557 +7678,569 @@ msgstr "庫存地點類型"
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "為所有沒有圖標的位置設置默認圖標(可選)"
 
-#: stock/models.py:137 stock/models.py:890
+#: stock/models.py:155 stock/models.py:968
 msgid "Stock Location"
 msgstr "庫存地點"
 
-#: stock/models.py:138 users/models.py:223
+#: stock/models.py:156 users/ruleset.py:35
 msgid "Stock Locations"
 msgstr "庫存地點"
 
-#: stock/models.py:187 stock/models.py:1055
+#: stock/models.py:205 stock/models.py:1133
 msgid "Owner"
 msgstr "所有者"
 
-#: stock/models.py:188 stock/models.py:1056
+#: stock/models.py:206 stock/models.py:1134
 msgid "Select Owner"
 msgstr "選擇所有者"
 
-#: stock/models.py:196
+#: stock/models.py:214
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "庫存項可能不直接位於結構庫存地點，但可能位於其子地點。"
 
-#: stock/models.py:203 users/models.py:957
+#: stock/models.py:221 users/models.py:499
 msgid "External"
 msgstr "外部"
 
-#: stock/models.py:204
+#: stock/models.py:222
 msgid "This is an external stock location"
 msgstr "這是一個外部庫存地點"
 
-#: stock/models.py:210
+#: stock/models.py:228
 msgid "Location type"
 msgstr "位置類型"
 
-#: stock/models.py:214
+#: stock/models.py:232
 msgid "Stock location type of this location"
 msgstr "該位置的庫存地點類型"
 
-#: stock/models.py:286
+#: stock/models.py:304
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr "您不能將此庫存地點設置為結構性，因為某些庫存項已經位於它！"
 
-#: stock/models.py:494
+#: stock/models.py:562
 msgid "Part must be specified"
 msgstr ""
 
-#: stock/models.py:749
+#: stock/models.py:827
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "庫存項不能存放在結構性庫存地點！"
 
-#: stock/models.py:776 stock/serializers.py:507
+#: stock/models.py:854 stock/serializers.py:512
 msgid "Stock item cannot be created for virtual parts"
 msgstr "無法為虛擬零件創建庫存項"
 
-#: stock/models.py:793
+#: stock/models.py:871
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr "零件類型 ('{self.supplier_part.part}') 必須為 {self.part}"
 
-#: stock/models.py:803 stock/models.py:816
+#: stock/models.py:881 stock/models.py:894
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "有序列號的項目的數量必須是1"
 
-#: stock/models.py:806
+#: stock/models.py:884
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr "如果數量大於1，則不能設置序列號"
 
-#: stock/models.py:828
+#: stock/models.py:906
 msgid "Item cannot belong to itself"
 msgstr "項目不能屬於其自身"
 
-#: stock/models.py:833
+#: stock/models.py:911
 msgid "Item must have a build reference if is_building=True"
 msgstr "如果is_building=True，則項必須具有構建引用"
 
-#: stock/models.py:846
+#: stock/models.py:924
 msgid "Build reference does not point to the same part object"
 msgstr "構建引用未指向同一零件對象"
 
-#: stock/models.py:860
+#: stock/models.py:938
 msgid "Parent Stock Item"
 msgstr "母庫存項目"
 
-#: stock/models.py:872
+#: stock/models.py:950
 msgid "Base part"
 msgstr "基礎零件"
 
-#: stock/models.py:882
+#: stock/models.py:960
 msgid "Select a matching supplier part for this stock item"
 msgstr "為此庫存項目選擇匹配的供應商零件"
 
-#: stock/models.py:894
+#: stock/models.py:972
 msgid "Where is this stock item located?"
 msgstr "這個庫存物品在哪裏？"
 
-#: stock/models.py:902 stock/serializers.py:1637
+#: stock/models.py:980 stock/serializers.py:1663
 msgid "Packaging this stock item is stored in"
 msgstr "包裝此庫存物品存儲在"
 
-#: stock/models.py:908
+#: stock/models.py:986
 msgid "Installed In"
 msgstr "安裝於"
 
-#: stock/models.py:913
+#: stock/models.py:991
 msgid "Is this item installed in another item?"
 msgstr "此項目是否安裝在另一個項目中？"
 
-#: stock/models.py:932
+#: stock/models.py:1010
 msgid "Serial number for this item"
 msgstr "此項目的序列號"
 
-#: stock/models.py:949 stock/serializers.py:1620
+#: stock/models.py:1027 stock/serializers.py:1648
 msgid "Batch code for this stock item"
 msgstr "此庫存項的批號"
 
-#: stock/models.py:954
+#: stock/models.py:1032
 msgid "Stock Quantity"
 msgstr "庫存數量"
 
-#: stock/models.py:964
+#: stock/models.py:1042
 msgid "Source Build"
 msgstr "源代碼構建"
 
-#: stock/models.py:967
+#: stock/models.py:1045
 msgid "Build for this stock item"
 msgstr "為此庫存項目構建"
 
-#: stock/models.py:974
+#: stock/models.py:1052
 msgid "Consumed By"
 msgstr "消費者"
 
-#: stock/models.py:977
+#: stock/models.py:1055
 msgid "Build order which consumed this stock item"
 msgstr "構建消耗此庫存項的生產訂單"
 
-#: stock/models.py:986
+#: stock/models.py:1064
 msgid "Source Purchase Order"
 msgstr "採購訂單來源"
 
-#: stock/models.py:990
+#: stock/models.py:1068
 msgid "Purchase order for this stock item"
 msgstr "此庫存商品的採購訂單"
 
-#: stock/models.py:996
+#: stock/models.py:1074
 msgid "Destination Sales Order"
 msgstr "目的地銷售訂單"
 
-#: stock/models.py:1007
+#: stock/models.py:1085
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "庫存物品的到期日。在此日期之後，庫存將被視為過期"
 
-#: stock/models.py:1025
+#: stock/models.py:1103
 msgid "Delete on deplete"
 msgstr "耗盡時刪除"
 
-#: stock/models.py:1026
+#: stock/models.py:1104
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "當庫存耗盡時刪除此庫存項"
 
-#: stock/models.py:1047
+#: stock/models.py:1125
 msgid "Single unit purchase price at time of purchase"
 msgstr "購買時一個單位的價格"
 
-#: stock/models.py:1078
+#: stock/models.py:1156
 msgid "Converted to part"
 msgstr "轉換為零件"
 
-#: stock/models.py:1642
+#: stock/models.py:1721
 msgid "Part is not set as trackable"
 msgstr "零件未設置為可跟蹤"
 
-#: stock/models.py:1648
+#: stock/models.py:1727
 msgid "Quantity must be integer"
 msgstr "數量必須是整數"
 
-#: stock/models.py:1656
+#: stock/models.py:1735
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "數量不得超過現有庫存量 ({self.quantity})"
 
-#: stock/models.py:1662
+#: stock/models.py:1741
 msgid "Serial numbers must be provided as a list"
 msgstr ""
 
-#: stock/models.py:1667
+#: stock/models.py:1746
 msgid "Quantity does not match serial numbers"
 msgstr "數量不匹配序列號"
 
-#: stock/models.py:1789 stock/models.py:2698
+#: stock/models.py:1868 stock/models.py:2777
 msgid "Test template does not exist"
 msgstr "測試模板不存在"
 
-#: stock/models.py:1807
+#: stock/models.py:1886
 msgid "Stock item has been assigned to a sales order"
 msgstr "庫存項已分配到銷售訂單"
 
-#: stock/models.py:1811
+#: stock/models.py:1890
 msgid "Stock item is installed in another item"
 msgstr "庫存項已安裝在另一個項目中"
 
-#: stock/models.py:1814
+#: stock/models.py:1893
 msgid "Stock item contains other items"
 msgstr "庫存項包含其他項目"
 
-#: stock/models.py:1817
+#: stock/models.py:1896
 msgid "Stock item has been assigned to a customer"
 msgstr "庫存項已分配給客户"
 
-#: stock/models.py:1820 stock/models.py:1994
+#: stock/models.py:1899 stock/models.py:2073
 msgid "Stock item is currently in production"
 msgstr "庫存項目前正在生產"
 
-#: stock/models.py:1823
+#: stock/models.py:1902
 msgid "Serialized stock cannot be merged"
 msgstr "序列化的庫存不能合併"
 
-#: stock/models.py:1830 stock/serializers.py:1513
+#: stock/models.py:1909 stock/serializers.py:1541
 msgid "Duplicate stock items"
 msgstr "複製庫存項"
 
-#: stock/models.py:1834
+#: stock/models.py:1913
 msgid "Stock items must refer to the same part"
 msgstr "庫存項必須指相同零件"
 
-#: stock/models.py:1842
+#: stock/models.py:1921
 msgid "Stock items must refer to the same supplier part"
 msgstr "庫存項必須是同一供應商的零件"
 
-#: stock/models.py:1847
+#: stock/models.py:1926
 msgid "Stock status codes must match"
 msgstr "庫存狀態碼必須匹配"
 
-#: stock/models.py:2117
+#: stock/models.py:2196
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "庫存項不能移動，因為它沒有庫存"
 
-#: stock/models.py:2599
+#: stock/models.py:2678
 msgid "Stock Item Tracking"
 msgstr "庫存項跟蹤"
 
-#: stock/models.py:2630
+#: stock/models.py:2709
 msgid "Entry notes"
 msgstr "條目註釋"
 
-#: stock/models.py:2670
+#: stock/models.py:2749
 msgid "Stock Item Test Result"
 msgstr "庫存項測試結果"
 
-#: stock/models.py:2701
+#: stock/models.py:2780
 msgid "Value must be provided for this test"
 msgstr "必須為此測試提供值"
 
-#: stock/models.py:2705
+#: stock/models.py:2784
 msgid "Attachment must be uploaded for this test"
 msgstr "測試附件必須上傳"
 
-#: stock/models.py:2710
+#: stock/models.py:2789
 msgid "Invalid value for this test"
 msgstr "此測試的值無效"
 
-#: stock/models.py:2734
+#: stock/models.py:2813
 msgid "Test result"
 msgstr "測試結果"
 
-#: stock/models.py:2741
+#: stock/models.py:2820
 msgid "Test output value"
 msgstr "測試輸出值"
 
-#: stock/models.py:2749 stock/serializers.py:250
+#: stock/models.py:2828 stock/serializers.py:255
 msgid "Test result attachment"
 msgstr "測驗結果附件"
 
-#: stock/models.py:2753
+#: stock/models.py:2832
 msgid "Test notes"
 msgstr "測試備註"
 
-#: stock/models.py:2761
+#: stock/models.py:2840
 msgid "Test station"
 msgstr "測試站"
 
-#: stock/models.py:2762
+#: stock/models.py:2841
 msgid "The identifier of the test station where the test was performed"
 msgstr "進行測試的測試站的標識符"
 
-#: stock/models.py:2768
+#: stock/models.py:2847
 msgid "Started"
 msgstr "已開始"
 
-#: stock/models.py:2769
+#: stock/models.py:2848
 msgid "The timestamp of the test start"
 msgstr "測試開始的時間戳"
 
-#: stock/models.py:2775
+#: stock/models.py:2854
 msgid "Finished"
 msgstr "已完成"
 
-#: stock/models.py:2776
+#: stock/models.py:2855
 msgid "The timestamp of the test finish"
 msgstr "測試結束的時間戳"
 
-#: stock/serializers.py:79
+#: stock/serializers.py:84
 msgid "Generated batch code"
 msgstr "生成批量代碼"
 
-#: stock/serializers.py:88
+#: stock/serializers.py:93
 msgid "Select build order"
 msgstr "選擇生產訂單"
 
-#: stock/serializers.py:97
+#: stock/serializers.py:102
 msgid "Select stock item to generate batch code for"
 msgstr "選擇要生成批量代碼的庫存項"
 
-#: stock/serializers.py:106
+#: stock/serializers.py:111
 msgid "Select location to generate batch code for"
 msgstr "選擇要生成批量代碼的位置"
 
-#: stock/serializers.py:115
+#: stock/serializers.py:120
 msgid "Select part to generate batch code for"
 msgstr "選擇要生成批量代碼的零件"
 
-#: stock/serializers.py:124
+#: stock/serializers.py:129
 msgid "Select purchase order"
 msgstr "選擇採購訂單"
 
-#: stock/serializers.py:131
+#: stock/serializers.py:136
 msgid "Enter quantity for batch code"
 msgstr "輸入批量代碼的數量"
 
-#: stock/serializers.py:154
+#: stock/serializers.py:159
 msgid "Generated serial number"
 msgstr "生成的序列號"
 
-#: stock/serializers.py:163
+#: stock/serializers.py:168
 msgid "Select part to generate serial number for"
 msgstr "選擇要生成序列號的零件"
 
-#: stock/serializers.py:171
+#: stock/serializers.py:176
 msgid "Quantity of serial numbers to generate"
 msgstr "要生成的序列號的數量"
 
-#: stock/serializers.py:239
+#: stock/serializers.py:244
 msgid "Test template for this result"
 msgstr "此結果的測試模板"
 
-#: stock/serializers.py:263
+#: stock/serializers.py:268
 msgid "Template ID or test name must be provided"
 msgstr "必須提供模板 ID 或測試名稱"
 
-#: stock/serializers.py:295
+#: stock/serializers.py:300
 msgid "The test finished time cannot be earlier than the test started time"
 msgstr "測試完成時間不能早於測試開始時間"
 
-#: stock/serializers.py:332
+#: stock/serializers.py:337
 msgid "Serial number is too large"
 msgstr "序列號太大"
 
-#: stock/serializers.py:478
+#: stock/serializers.py:483
 msgid "Parent Item"
 msgstr "父項"
 
-#: stock/serializers.py:479
+#: stock/serializers.py:484
 msgid "Parent stock item"
 msgstr "父庫存項"
 
-#: stock/serializers.py:499
+#: stock/serializers.py:504
 msgid "Use pack size when adding: the quantity defined is the number of packs"
 msgstr "添加時使用包裝尺寸：定義的數量是包裝的數量"
 
-#: stock/serializers.py:609
+#: stock/serializers.py:614
 msgid "Supplier Part Number"
 msgstr "供應商零件編號"
 
-#: stock/serializers.py:656 users/models.py:192
+#: stock/serializers.py:661 users/models.py:193
 msgid "Expired"
 msgstr "已過期"
 
-#: stock/serializers.py:662
+#: stock/serializers.py:667
 msgid "Child Items"
 msgstr "子項目"
 
-#: stock/serializers.py:666
+#: stock/serializers.py:671
 msgid "Tracking Items"
 msgstr "跟蹤項目"
 
-#: stock/serializers.py:672
+#: stock/serializers.py:677
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "此庫存商品的購買價格，單位或包裝"
 
-#: stock/serializers.py:710
+#: stock/serializers.py:715
 msgid "Enter number of stock items to serialize"
 msgstr "輸入要序列化的庫存項目數量"
 
-#: stock/serializers.py:723
+#: stock/serializers.py:728
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "數量不得超過現有庫存量 ({q})"
 
-#: stock/serializers.py:730
+#: stock/serializers.py:735
 msgid "Enter serial numbers for new items"
 msgstr "輸入新項目的序列號"
 
-#: stock/serializers.py:741 stock/serializers.py:1470 stock/serializers.py:1760
+#: stock/serializers.py:746 stock/serializers.py:1498 stock/serializers.py:1786
 msgid "Destination stock location"
 msgstr "目標庫存位置"
 
-#: stock/serializers.py:748
+#: stock/serializers.py:753
 msgid "Optional note field"
 msgstr "可選註釋字段"
 
-#: stock/serializers.py:758
+#: stock/serializers.py:763
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "此零件不能分配序列號"
 
-#: stock/serializers.py:778
+#: stock/serializers.py:783
 msgid "Serial numbers already exist"
 msgstr "序列號已存在"
 
-#: stock/serializers.py:817
+#: stock/serializers.py:822
 msgid "Select stock item to install"
 msgstr "選擇要安裝的庫存項目"
 
-#: stock/serializers.py:824
+#: stock/serializers.py:829
 msgid "Quantity to Install"
 msgstr "安裝數量"
 
-#: stock/serializers.py:825
+#: stock/serializers.py:830
 msgid "Enter the quantity of items to install"
 msgstr "輸入要安裝的項目數量"
 
-#: stock/serializers.py:830 stock/serializers.py:910 stock/serializers.py:1015
-#: stock/serializers.py:1069
+#: stock/serializers.py:835 stock/serializers.py:915 stock/serializers.py:1045
+#: stock/serializers.py:1097
 msgid "Add transaction note (optional)"
 msgstr "添加交易記錄 (可選)"
 
-#: stock/serializers.py:838
+#: stock/serializers.py:843
 msgid "Quantity to install must be at least 1"
 msgstr "安裝數量必須至少為1"
 
-#: stock/serializers.py:846
+#: stock/serializers.py:851
 msgid "Stock item is unavailable"
 msgstr "庫存項不可用"
 
-#: stock/serializers.py:857
+#: stock/serializers.py:862
 msgid "Selected part is not in the Bill of Materials"
 msgstr "所選零件不在物料清單中"
 
-#: stock/serializers.py:870
+#: stock/serializers.py:875
 msgid "Quantity to install must not exceed available quantity"
 msgstr "安裝數量不得超過可用數量"
 
-#: stock/serializers.py:905
+#: stock/serializers.py:910
 msgid "Destination location for uninstalled item"
 msgstr "已卸載項目的目標位置"
 
-#: stock/serializers.py:940
+#: stock/serializers.py:945
 msgid "Select part to convert stock item into"
 msgstr "選擇要將庫存項目轉換為的零件"
 
-#: stock/serializers.py:953
+#: stock/serializers.py:958
 msgid "Selected part is not a valid option for conversion"
 msgstr "所選零件不是有效的轉換選項"
 
-#: stock/serializers.py:970
+#: stock/serializers.py:975
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "無法轉換已分配供應商零件的庫存項"
 
-#: stock/serializers.py:1001
+#: stock/serializers.py:1009
+msgid "Stock item status code"
+msgstr "庫存項狀態代碼"
+
+#: stock/serializers.py:1038
 msgid "Destination location for returned item"
 msgstr "退回物品的目的地位置"
 
-#: stock/serializers.py:1051
+#: stock/serializers.py:1081
 msgid "Select stock items to change status"
 msgstr "選擇要更改狀態的庫存項目"
 
-#: stock/serializers.py:1057
+#: stock/serializers.py:1087
 msgid "No stock items selected"
 msgstr "未選擇庫存商品"
 
-#: stock/serializers.py:1153 stock/serializers.py:1230
+#: stock/serializers.py:1181 stock/serializers.py:1258
 msgid "Sublocations"
 msgstr "轉租"
 
-#: stock/serializers.py:1225
+#: stock/serializers.py:1253
 msgid "Parent stock location"
 msgstr "上級庫存地點"
 
-#: stock/serializers.py:1342
+#: stock/serializers.py:1370
 msgid "Part must be salable"
 msgstr "零件必須可銷售"
 
-#: stock/serializers.py:1346
+#: stock/serializers.py:1374
 msgid "Item is allocated to a sales order"
 msgstr "物料已分配到銷售訂單"
 
-#: stock/serializers.py:1350
+#: stock/serializers.py:1378
 msgid "Item is allocated to a build order"
 msgstr "項目被分配到生產訂單中"
 
-#: stock/serializers.py:1374
+#: stock/serializers.py:1402
 msgid "Customer to assign stock items"
 msgstr "客户分配庫存項目"
 
-#: stock/serializers.py:1380
+#: stock/serializers.py:1408
 msgid "Selected company is not a customer"
 msgstr "所選公司不是客户"
 
-#: stock/serializers.py:1388
+#: stock/serializers.py:1416
 msgid "Stock assignment notes"
 msgstr "庫存分配説明"
 
-#: stock/serializers.py:1398 stock/serializers.py:1665
+#: stock/serializers.py:1426 stock/serializers.py:1691
 msgid "A list of stock items must be provided"
 msgstr "必須提供庫存物品清單"
 
-#: stock/serializers.py:1477
+#: stock/serializers.py:1505
 msgid "Stock merging notes"
 msgstr "庫存合併説明"
 
-#: stock/serializers.py:1482
+#: stock/serializers.py:1510
 msgid "Allow mismatched suppliers"
 msgstr "允許不匹配的供應商"
 
-#: stock/serializers.py:1483
+#: stock/serializers.py:1511
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "允許合併具有不同供應商零件的庫存項目"
 
-#: stock/serializers.py:1488
+#: stock/serializers.py:1516
 msgid "Allow mismatched status"
 msgstr "允許不匹配的狀態"
 
-#: stock/serializers.py:1489
+#: stock/serializers.py:1517
 msgid "Allow stock items with different status codes to be merged"
 msgstr "允許合併具有不同狀態代碼的庫存項目"
 
-#: stock/serializers.py:1499
+#: stock/serializers.py:1527
 msgid "At least two stock items must be provided"
 msgstr "必須提供至少兩件庫存物品"
 
-#: stock/serializers.py:1566
+#: stock/serializers.py:1594
 msgid "No Change"
 msgstr "無更改"
 
-#: stock/serializers.py:1595
+#: stock/serializers.py:1623
 msgid "StockItem primary key value"
 msgstr "庫存項主鍵值"
 
-#: stock/serializers.py:1607
+#: stock/serializers.py:1635
 msgid "Stock item is not in stock"
 msgstr ""
 
-#: stock/serializers.py:1655
+#: stock/serializers.py:1681
 msgid "Stock transaction notes"
 msgstr "庫存交易記錄"
+
+#: stock/serializers.py:1827
+msgid "Next Serial Number"
+msgstr ""
+
+#: stock/serializers.py:1833
+msgid "Previous Serial Number"
+msgstr ""
 
 #: stock/status_codes.py:11
 msgid "OK"
@@ -8401,6 +8440,7 @@ msgstr "有一些待處理的數據庫遷移需要注意"
 #: templates/email/new_order_assigned.html:9
 #: templates/email/overdue_build_order.html:9
 #: templates/email/overdue_purchase_order.html:9
+#: templates/email/overdue_return_order.html:9
 #: templates/email/overdue_sales_order.html:9
 #: templates/email/purchase_order_received.html:9
 #: templates/email/return_order_received.html:9
@@ -8447,283 +8487,283 @@ msgstr "最小數量"
 msgid "You are receiving this email because you are subscribed to notifications for this part or a category that it is part of "
 msgstr ""
 
-#: users/admin.py:100
+#: users/admin.py:101
 msgid "Users"
 msgstr "用户"
 
-#: users/admin.py:101
+#: users/admin.py:102
 msgid "Select which users are assigned to this group"
 msgstr "選擇分配給此組的用户"
 
-#: users/admin.py:245
-msgid "The following users are members of multiple groups"
-msgstr "以下用户是多個組的成員"
-
-#: users/admin.py:279
+#: users/admin.py:137
 msgid "Personal info"
 msgstr "個人信息"
 
-#: users/admin.py:281
+#: users/admin.py:139
 msgid "Permissions"
 msgstr "權限"
 
-#: users/admin.py:284
+#: users/admin.py:142
 msgid "Important dates"
 msgstr "重要日期"
 
-#: users/authentication.py:29 users/models.py:156
+#: users/authentication.py:30 users/models.py:157
 msgid "Token has been revoked"
 msgstr "令牌已被撤銷"
 
-#: users/authentication.py:32
+#: users/authentication.py:33
 msgid "Token has expired"
 msgstr "令牌已過期"
 
-#: users/models.py:99
+#: users/models.py:100
 msgid "API Token"
 msgstr "API 令牌"
 
-#: users/models.py:100
+#: users/models.py:101
 msgid "API Tokens"
 msgstr "API 令牌"
 
-#: users/models.py:136
+#: users/models.py:137
 msgid "Token Name"
 msgstr "令牌名稱"
 
-#: users/models.py:137
+#: users/models.py:138
 msgid "Custom token name"
 msgstr "自定義令牌名稱"
 
-#: users/models.py:143
+#: users/models.py:144
 msgid "Token expiry date"
 msgstr "令牌過期日期"
 
-#: users/models.py:151
+#: users/models.py:152
 msgid "Last Seen"
 msgstr "最近一次在線"
 
-#: users/models.py:152
+#: users/models.py:153
 msgid "Last time the token was used"
 msgstr "最近使用令牌的時間"
 
-#: users/models.py:156
+#: users/models.py:157
 msgid "Revoked"
 msgstr "撤銷"
 
-#: users/models.py:219
-msgid "Admin"
-msgstr "管理員"
-
-#: users/models.py:222
-msgid "Stocktake"
-msgstr "庫存盤點"
-
-#: users/models.py:226
-msgid "Purchase Orders"
-msgstr "採購訂單"
-
-#: users/models.py:227
-msgid "Sales Orders"
-msgstr "銷售訂單"
-
-#: users/models.py:228
-msgid "Return Orders"
-msgstr "退貨訂單"
-
-#: users/models.py:402
+#: users/models.py:235
 msgid "Permission set"
 msgstr "權限設置"
 
-#: users/models.py:411
+#: users/models.py:244
 msgid "Group"
 msgstr "組"
 
-#: users/models.py:415
+#: users/models.py:248
 msgid "View"
 msgstr "查看"
 
-#: users/models.py:415
+#: users/models.py:248
 msgid "Permission to view items"
 msgstr "查看項目的權限"
 
-#: users/models.py:419
+#: users/models.py:252
 msgid "Add"
 msgstr "添加"
 
-#: users/models.py:419
+#: users/models.py:252
 msgid "Permission to add items"
 msgstr "添加項目的權限"
 
-#: users/models.py:423
+#: users/models.py:256
 msgid "Change"
 msgstr "更改"
 
-#: users/models.py:425
+#: users/models.py:258
 msgid "Permissions to edit items"
 msgstr "編輯項目的權限"
 
-#: users/models.py:429
+#: users/models.py:262
 msgid "Delete"
 msgstr "刪除"
 
-#: users/models.py:431
+#: users/models.py:264
 msgid "Permission to delete items"
 msgstr "刪除項目的權限"
 
-#: users/models.py:955
+#: users/models.py:497
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:956
+#: users/models.py:498
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:958
+#: users/models.py:500
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:967
+#: users/models.py:509
 msgid "Language"
 msgstr ""
 
-#: users/models.py:968
+#: users/models.py:510
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:973
+#: users/models.py:515
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:974
+#: users/models.py:516
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:979
+#: users/models.py:521
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:981
+#: users/models.py:523
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:988
+#: users/models.py:530
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:989
+#: users/models.py:531
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:995
+#: users/models.py:537
 msgid "Position"
 msgstr ""
 
-#: users/models.py:996
+#: users/models.py:538
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:1003
+#: users/models.py:545
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:1010
+#: users/models.py:552
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:1015
+#: users/models.py:557
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:1022
+#: users/models.py:564
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:1028
-msgid "Type"
+#: users/models.py:570
+msgid "User Type"
 msgstr ""
 
-#: users/models.py:1029
+#: users/models.py:571
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:1035
+#: users/models.py:577
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:1036
+#: users/models.py:578
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:1044
+#: users/models.py:586
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:1045
+#: users/models.py:587
 msgid "Primary group for the user"
 msgstr ""
 
-#: users/serializers.py:225
+#: users/ruleset.py:31
+msgid "Admin"
+msgstr "管理員"
+
+#: users/ruleset.py:34
+msgid "Stocktake"
+msgstr "庫存盤點"
+
+#: users/ruleset.py:38
+msgid "Purchase Orders"
+msgstr "採購訂單"
+
+#: users/ruleset.py:39
+msgid "Sales Orders"
+msgstr "銷售訂單"
+
+#: users/ruleset.py:40
+msgid "Return Orders"
+msgstr "退貨訂單"
+
+#: users/serializers.py:236
 msgid "Username"
 msgstr "用户名"
 
-#: users/serializers.py:228
+#: users/serializers.py:239
 msgid "First Name"
 msgstr "名"
 
-#: users/serializers.py:228
+#: users/serializers.py:239
 msgid "First name of the user"
 msgstr "用户的名字（不包括姓氏）"
 
-#: users/serializers.py:232
+#: users/serializers.py:243
 msgid "Last Name"
 msgstr "姓"
 
-#: users/serializers.py:232
+#: users/serializers.py:243
 msgid "Last name of the user"
 msgstr "用户的姓氏"
 
-#: users/serializers.py:236
+#: users/serializers.py:247
 msgid "Email address of the user"
 msgstr "用户的電子郵件地址"
 
-#: users/serializers.py:262
+#: users/serializers.py:319
 msgid "Staff"
 msgstr "職員"
 
-#: users/serializers.py:262
+#: users/serializers.py:320
 msgid "Does this user have staff permissions"
 msgstr "此用户是否擁有員工權限"
 
-#: users/serializers.py:266
+#: users/serializers.py:325
 msgid "Superuser"
 msgstr "超級用户"
 
-#: users/serializers.py:266
+#: users/serializers.py:325
 msgid "Is this user a superuser"
 msgstr "此用户是否為超級用户"
 
-#: users/serializers.py:270
+#: users/serializers.py:329
 msgid "Is this user account active"
 msgstr "此用户帳户是否已激活"
 
-#: users/serializers.py:290
-msgid "You do not have permission to change this user role."
-msgstr "您沒有更改這個使用者角色的權限"
+#: users/serializers.py:341
+msgid "Only a superuser can adjust this field"
+msgstr ""
 
-#: users/serializers.py:328
-msgid "Only superusers can create new users"
-msgstr "只有管理員帳户可以建立新的使用者"
+#: users/serializers.py:395
+msgid "Only staff users can create new users"
+msgstr ""
 
-#: users/serializers.py:348
+#: users/serializers.py:400
+msgid "You do not have permission to create users"
+msgstr ""
+
+#: users/serializers.py:421
 msgid "Your account has been created."
 msgstr "您的帳號已經建立完成。"
 
-#: users/serializers.py:350
+#: users/serializers.py:423
 msgid "Please use the password reset function to login"
 msgstr "請使用重設密碼功能來登入"
 
-#: users/serializers.py:356
+#: users/serializers.py:429
 msgid "Welcome to InvenTree"
 msgstr "歡迎使用 InvenTree"
 

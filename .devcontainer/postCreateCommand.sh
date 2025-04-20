@@ -27,7 +27,7 @@ python3 -m pip install --upgrade pip
 pip3 install --ignore-installed --upgrade invoke Pillow
 
 # install base level packages
-pip3 install -Ur --require-hashes contrib/container/requirements.txt
+pip3 install -Ur contrib/container/requirements.txt --require-hashes
 
 # Run initial InvenTree server setup
 invoke update -s
