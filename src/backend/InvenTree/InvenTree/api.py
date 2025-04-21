@@ -229,11 +229,11 @@ class InfoApiSerializer(serializers.Serializer):
 
         logo = serializers.CharField()
         splash = serializers.CharField()
-        login_message = serializers.CharField()
-        navbar_message = serializers
+        login_message = serializers.CharField(allow_null=True)
+        navbar_message = serializers.CharField(allow_null=True)
 
     server = serializers.CharField(read_only=True)
-    id = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True, allow_null=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -246,15 +246,13 @@ class InfoApiSerializer(serializers.Serializer):
     email_configured = serializers.BooleanField(read_only=True)
     debug_mode = serializers.BooleanField(read_only=True)
     docker_mode = serializers.BooleanField(read_only=True)
-    default_locale = serializers.ChoiceField(
-        choices=settings.LOCALE_CODES, read_only=True
-    )
+    default_locale = serializers.CharField(read_only=True)
     customize = CustomizeSerializer(read_only=True)
     system_health = serializers.BooleanField(read_only=True)
     database = serializers.CharField(read_only=True)
     platform = serializers.CharField(read_only=True)
     installer = serializers.CharField(read_only=True)
-    target = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True, allow_null=True)
     django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
 
