@@ -4,7 +4,7 @@ title: Interactive API
 
 ## Interactive API
 
-If the server is running in [Debug Mode](../start/intro.md#debug-mode) then an interactive version of the API is available using a browser.
+If the server is running in [Debug Mode](../start/index.md#debug-mode) then an interactive version of the API is available using a browser.
 
 !!! info "Debug Mode"
     This interactive API is only available when running the server in debug mode

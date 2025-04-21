@@ -142,6 +142,7 @@ export default function NavigationTree({
     (payload: RenderTreeNodePayload) => {
       return (
         <Group
+          p={3}
           justify='left'
           key={payload.node.value}
           wrap='nowrap'
@@ -151,7 +152,7 @@ export default function NavigationTree({
             }
           }}
         >
-          <Space w={5 * payload.level} />
+          <Space w={3 * payload.level} />
           <ActionIcon
             size='sm'
             variant='transparent'

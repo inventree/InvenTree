@@ -68,7 +68,7 @@ then the merge would not be possible.
 
 If the conditions are met, the process of merging will add up the stock quantity for all items involved in the merge and create a new stock item with the final calculated quantity.
 
-To merge stock items, check two or more items in a stock table and click on the <span class='fas fa-boxes'></span> icon above the table, then click on "<span class='fas fa-object-group'></span> Merge Stock" menu option.
+To merge stock items, check two or more items in a stock table and click on the {{ icon("packages", title="Stock Actions") }} icon above the table, then click on {{ icon("arrow-merge", title="Merge") }} menu option.
 
 In the Merge Stock Items form, user can decide to allow mismatched suppliers or status to be merged together (disabled by default).
 

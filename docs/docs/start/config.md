@@ -91,7 +91,7 @@ The following debugging / logging options are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | False |
+| INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
 | INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
@@ -101,7 +101,7 @@ The following debugging / logging options are available:
 
 ### Debug Mode
 
-Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./intro.md#debug-mode).
+Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./index.md#debug-mode).
 
 ### Query Count Logging
 
@@ -143,7 +143,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 
 ### Debug Mode
 
-Note that in [debug mode](./intro.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development. The following settings are internally overridden in debug mode with the values specified below:
+Note that in [debug mode](./index.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development. The following settings are internally overridden in debug mode with the values specified below:
 
 | Setting | Value in Debug Mode | Description |
 | --- | --- | --- |
@@ -218,7 +218,7 @@ You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, o
 !!! info "Administrator Account"
     Providing `INVENTREE_ADMIN` credentials will result in the provided account being created with *superuser* permissions when InvenTree is started.
 
-## Secret Key material
+## Secret Key Material
 
 InvenTree requires secret keys for providing cryptographic signing and oidc private keys- this should be a secret (and unpredictable) value.
 
@@ -455,7 +455,7 @@ If you want to remove the InvenTree branding as far as possible from your end-us
 
 ## Plugin Options
 
-The following [plugin](../extend/plugins.md) configuration options are available:
+The following [plugin](../plugins/index.md) configuration options are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
