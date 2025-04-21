@@ -1432,7 +1432,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
     build_detail = BuildSerializer(
-        label=_('Build'), source='build', part_detail=False, many=False, read_only=True
+        label=_('Build'),
+        source='build',
+        part_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     # Annotated (calculated) fields

@@ -113,11 +113,13 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     import_exclude_fields = ['notes', 'duplicate']
 
     # Number of line items in this order
-    line_items = serializers.IntegerField(read_only=True, label=_('Line Items'))
+    line_items = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Line Items')
+    )
 
     # Number of completed line items (this is an annotated field)
     completed_lines = serializers.IntegerField(
-        read_only=True, label=_('Completed Lines')
+        read_only=True, allow_null=True, label=_('Completed Lines')
     )
 
     # Human-readable status text (read-only)
@@ -157,7 +159,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     )
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
     barcode_hash = serializers.CharField(read_only=True)
 
@@ -612,7 +614,7 @@ class PurchaseOrderLineItemSerializer(
 
     received = serializers.FloatField(default=0, read_only=True)
 
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
     total_price = serializers.FloatField(read_only=True)
 
@@ -635,7 +637,7 @@ class PurchaseOrderLineItemSerializer(
     )
 
     destination_detail = stock.serializers.LocationBriefSerializer(
-        source='get_destination', read_only=True
+        source='get_destination', read_only=True, allow_null=True
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(
@@ -659,14 +661,22 @@ class PurchaseOrderLineItemSerializer(
         write_only=True,
     )
 
-    sku = serializers.CharField(source='part.SKU', read_only=True, label=_('SKU'))
+    sku = serializers.CharField(
+        source='part.SKU', read_only=True, allow_null=True, label=_('SKU')
+    )
 
     mpn = serializers.CharField(
-        source='part.manufacturer_part.MPN', read_only=True, label=_('MPN')
+        source='part.manufacturer_part.MPN',
+        read_only=True,
+        allow_null=True,
+        label=_('MPN'),
     )
 
     ipn = serializers.CharField(
-        source='part.part.IPN', read_only=True, label=_('Internal Part Number')
+        source='part.part.IPN',
+        read_only=True,
+        allow_null=True,
+        label=_('Internal Part Number'),
     )
 
     internal_part = serializers.PrimaryKeyRelatedField(
@@ -1085,10 +1095,12 @@ class SalesOrderSerializer(
         source='customer', many=False, read_only=True, allow_null=True
     )
 
-    shipments_count = serializers.IntegerField(read_only=True, label=_('Shipments'))
+    shipments_count = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Shipments')
+    )
 
     completed_shipments_count = serializers.IntegerField(
-        read_only=True, label=_('Completed Shipments')
+        read_only=True, allow_null=True, label=_('Completed Shipments')
     )
 
 
@@ -1260,7 +1272,7 @@ class SalesOrderLineItemSerializer(
     )
 
     # Annotated fields
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
     available_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
@@ -1323,7 +1335,7 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
         return queryset
 
     allocated_items = serializers.IntegerField(
-        read_only=True, label=_('Allocated Items')
+        read_only=True, allow_null=True, label=_('Allocated Items')
     )
 
     order_detail = SalesOrderSerializer(
@@ -1396,7 +1408,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     order = serializers.PrimaryKeyRelatedField(
         source='line.order', many=False, read_only=True
     )
-    serial = serializers.CharField(source='get_serial', read_only=True)
+    serial = serializers.CharField(source='get_serial', read_only=True, allow_null=True)
     quantity = serializers.FloatField(read_only=False)
     location = serializers.PrimaryKeyRelatedField(
         source='item.location', many=False, read_only=True

@@ -236,6 +236,17 @@ test('Stock - Stock Actions', async ({ browser }) => {
     .waitFor();
   await page.getByText('123').first().waitFor();
 
+  // Check barcode actions
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page
+    .getByLabel('action-menu-barcode-actions-scan-into-location')
+    .click();
+  await page
+    .getByPlaceholder('Enter barcode data')
+    .fill('{"stocklocation": 12}');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('Scanned stock item into location').waitFor();
+
   // Add stock, and change status
   await launchStockAction('add');
   await page.getByLabel('number-field-quantity').fill('12');
@@ -283,4 +294,35 @@ test('Stock - Tracking', async ({ browser }) => {
   await page.getByText('- - Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
+});
+
+test('Stock - Location', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/12/' });
+
+  await loadTab(page, 'Default Parts');
+  await loadTab(page, 'Stock Items');
+  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Location Details');
+
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page
+    .getByLabel('action-menu-barcode-actions-scan-in-stock-items')
+    .waitFor();
+  await page
+    .getByLabel('action-menu-barcode-actions-scan-in-container')
+    .click();
+
+  // Attempt to scan in the same location (should fail)
+  await page
+    .getByPlaceholder('Enter barcode data')
+    .fill('{"stocklocation": 12}');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('Error scanning stock location').waitFor();
+
+  // Attempt to scan bad data (no match)
+  await page
+    .getByPlaceholder('Enter barcode data')
+    .fill('{"stocklocation": 1234}');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('No match found for barcode data').waitFor();
 });

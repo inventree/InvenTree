@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 339
+INVENTREE_API_VERSION = 340
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -9,6 +9,9 @@ INVENTREE_API_VERSION = 339
 INVENTREE_API_TEXT = """
 v336 -> 2025-04-10 : https://github.com/inventree/InvenTree/pull/9312
     - Adds "external" flag for BuildOrder
+
+v340 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9546
+    - Add nullable to various fields to make them not required
 
 v339 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9283
     - Remove need for source in /plugins/ui/features

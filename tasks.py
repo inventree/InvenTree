@@ -31,7 +31,7 @@ def is_rtd_environment():
     return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
-def is_deb_environment():
+def is_debug_environment():
     """Check if the InvenTree environment is running in a debug environment."""
     from src.backend.InvenTree.InvenTree.config import is_true
 
@@ -101,7 +101,7 @@ def state_logger(fn=None, method_name=None):
 
         @wraps(func)
         def wrapped(c, *args, **kwargs):
-            do_log = is_deb_environment()
+            do_log = is_debug_environment()
             if do_log:
                 info(f'# {func.method_name}| start')
             func(c, *args, **kwargs)
@@ -381,7 +381,7 @@ def check_file_existence(filename: Path, overwrite: bool = False):
 # Install tasks
 # region tasks
 @task(help={'uv': 'Use UV (experimental package manager)'})
-@state_logger('TSK01')
+@state_logger('TASK01')
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import get_plugin_file
@@ -407,7 +407,7 @@ def plugins(c, uv=False):
         'skip_plugins': 'Skip plugin installation',
     }
 )
-@state_logger('TSK02')
+@state_logger('TASK02')
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
     # Ensure path is relative to *this* directory
@@ -495,7 +495,7 @@ def rebuild_thumbnails(c):
 
 
 @task
-@state_logger('TSK09')
+@state_logger('TASK09')
 def clean_settings(c):
     """Clean the setting tables of old settings."""
     info('Cleaning old settings from the database')
@@ -520,7 +520,7 @@ def remove_mfa(c, mail=''):
         'skip_plugins': 'Ignore collection of plugin static files',
     }
 )
-@state_logger('TSK08')
+@state_logger('TASK08')
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
@@ -571,7 +571,7 @@ def translate(c, ignore_static=False, no_frontend=False):
         'path': 'Specify path for generated backup files (leave blank for default path)',
     }
 )
-@state_logger('TSK04')
+@state_logger('TASK04')
 def backup(c, clean=False, path=None):
     """Backup the database and media files."""
     info('Backing up InvenTree database...')
@@ -648,7 +648,7 @@ def restore(
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
-@state_logger('TSK05')
+@state_logger('TASK05')
 def migrate(c):
     """Performs database migrations.
 
@@ -681,7 +681,7 @@ def showmigrations(c, app=''):
         'uv': 'Use UV (experimental package manager)',
     },
 )
-@state_logger('TSK03')
+@state_logger('TASK03')
 def update(
     c,
     skip_backup: bool = False,
@@ -988,7 +988,7 @@ def import_fixtures(c):
 
 # Execution tasks
 @task
-@state_logger('TSK10')
+@state_logger('TASK10')
 def wait(c):
     """Wait until the database connection is ready."""
     info('Waiting for database connection...')
@@ -1276,7 +1276,7 @@ def setup_test(
         'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
-@state_logger('TSK11')
+@state_logger('TASK11')
 def schema(
     c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
 ):
@@ -1419,7 +1419,7 @@ def frontend_check(c):
 
 
 @task
-@state_logger('TSK06')
+@state_logger('TASK06')
 def frontend_compile(c):
     """Generate react frontend.
 
@@ -1491,7 +1491,7 @@ def frontend_server(c):
         'clean': 'Delete old files from InvenTree/web/static/web first, default: True',
     }
 )
-@state_logger('TSK07')
+@state_logger('TASK07')
 def frontend_download(
     c,
     ref=None,

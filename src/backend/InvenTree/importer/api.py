@@ -65,7 +65,7 @@ class DataImporterModelSerializer(serializers.Serializer):
 
     serializer = serializers.CharField(read_only=True)
     model_type = serializers.CharField(read_only=True)
-    api_url = serializers.URLField(read_only=True)
+    api_url = serializers.URLField(read_only=True, allow_null=True)
 
 
 class DataImporterModelList(APIView):
