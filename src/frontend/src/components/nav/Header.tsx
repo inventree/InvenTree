@@ -11,7 +11,7 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
@@ -63,10 +63,12 @@ export function Header() {
     return server.customize?.navbar_message;
   }, [server.customize]);
 
+  const visibility = useDocumentVisibility();
+
   // Fetch number of notifications for the current user
   const notifications = useQuery({
     queryKey: ['notification-count'],
-    enabled: isLoggedIn(),
+    enabled: isLoggedIn() && visibility === 'visible',
     queryFn: async () => {
       if (!isLoggedIn()) {
         return null;
@@ -90,7 +92,8 @@ export function Header() {
         return null;
       }
     },
-    refetchInterval: 5 * 60 * 1000,
+    // Refetch every minute, *if* the tab is visible
+    refetchInterval: 60 * 1000,
     refetchOnMount: true
   });
 
