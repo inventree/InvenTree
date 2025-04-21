@@ -474,8 +474,7 @@ def remove_mfa(c, mail=''):
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
-        frontend_trans(c, extract=False)
-        frontend_build(c)
+        frontend_compile(c)
 
     info('Collecting static files...')
 
@@ -507,9 +506,7 @@ def translate(c, ignore_static=False, no_frontend=False):
     manage(c, 'compilemessages')
 
     if not no_frontend and node_available():
-        frontend_install(c)
-        frontend_trans(c)
-        frontend_build(c)
+        frontend_compile(c)
 
     # Update static files
     if not ignore_static:
@@ -686,7 +683,9 @@ def update(
             frontend_download(c)
 
     if not skip_static:
-        static(c, frontend=not no_frontend)
+        # Collect static files
+        # Note: frontend has already been compiled if required
+        static(c, frontend=False)
 
     success('InvenTree update complete!')
 
@@ -1413,7 +1412,7 @@ def frontend_build(c):
         c: Context variable
     """
     info('Building frontend')
-    yarn(c, 'yarn run build --emptyOutDir')
+    yarn(c, 'yarn run build')
 
 
 @task

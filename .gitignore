@@ -7,6 +7,7 @@ __pycache__/
 .Python
 env/
 inventree-env/
+.venv/
 ./build/
 .cache/
 develop-eggs/
@@ -18,7 +19,6 @@ share/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/

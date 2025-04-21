@@ -1,3 +1,5 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
 import { Paper, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -15,8 +17,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 
@@ -91,6 +91,7 @@ export default function GroupDetail() {
           model={ModelType.group}
           id={instance.pk}
           instance={instance}
+          reloadInstance={instanceQuery.refetch}
         />
       </Stack>
     </InstanceDetail>
