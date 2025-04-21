@@ -122,7 +122,7 @@ nav:
       - Governance: project/governance.md
       - Project Security: security.md
       - Resources: project/resources.md
-      - Privacy: project/privacy.md
+      - Privacy: privacy.md
   - Install:
     - Introduction: start/index.md
     - Processes: start/processes.md

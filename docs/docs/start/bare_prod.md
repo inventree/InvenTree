@@ -102,7 +102,7 @@ In addition to the InvenTree server, you will need a method of delivering static
 
 ### Check your security posture
 
-It is recommended to check the [threat modelling inputs](../project/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
+It is recommended to check the [threat modelling inputs](../concepts/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
 
 
 ### Next Steps

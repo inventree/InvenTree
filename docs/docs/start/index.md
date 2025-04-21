@@ -21,7 +21,7 @@ To quickly jump to a specific installation method, refer to the following links:
     The recommended method of installing InvenTree is to follow our [docker setup guide](./docker.md). InvenTree provides out-of-the-box support for docker and docker compose, which provides a simple, reliable and repeatable pipeline for integration into your production environment.
 
 !!! warning "Important Security Considerations"
-    We provide documentation around the security posture that is assumed by the InvenTree project in the software design. Assessing this is a *critical* part of the setup process, and should be read carefully before deploying InvenTree in a production environment. You can read more about the [threat modelling inputs here](../project/threat_model.md).
+    We provide documentation around the security posture that is assumed by the InvenTree project in the software design. Assessing this is a *critical* part of the setup process, and should be read carefully before deploying InvenTree in a production environment. You can read more about the [threat modelling inputs here](../concepts/threat_model.md).
 
 !!! info "Further Reading"
     For more information on the InvenTree tech stack, continue reading below!
