@@ -5,8 +5,7 @@ import {
   clickOnRowMenu,
   loadTab,
   navigate,
-  setTableChoiceFilter,
-  submitForm
+  setTableChoiceFilter
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
@@ -46,14 +45,14 @@ test('Plugins - Settings', async ({ browser, request }) => {
   await page
     .getByLabel('number-field-value')
     .fill(originalValue == '999' ? '1000' : '999');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.waitForTimeout(500);
 
   // Change it back
   await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
   await page.getByLabel('number-field-value').fill(originalValue);
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Select supplier
   await page.getByLabel('edit-setting-SELECT_COMPANY').click();
@@ -82,7 +81,7 @@ test('Plugins - Functionality', async ({ browser }) => {
   // Activate the plugin (unless already activated)
   if ((await page.getByRole('menuitem', { name: 'Deactivate' }).count()) == 0) {
     await page.getByRole('menuitem', { name: 'Activate' }).click();
-    await submitForm(page);
+    await page.getByRole('button', { name: 'Submit' }).click();
     await page.getByText('The plugin was activated').waitFor();
     await page.waitForTimeout(250);
   }
@@ -90,7 +89,7 @@ test('Plugins - Functionality', async ({ browser }) => {
   // Deactivate the plugin again
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Deactivate' }).click();
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('The plugin was deactivated').waitFor();
 });
 
@@ -211,7 +210,7 @@ test('Plugins - Locate Item', async ({ browser, request }) => {
 
   // "Locate" this item
   await page.getByLabel('action-button-locate-item').click();
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item location requested').waitFor();
 
   // Show the location
@@ -219,6 +218,6 @@ test('Plugins - Locate Item', async ({ browser, request }) => {
   await page.waitForTimeout(500);
 
   await page.getByLabel('action-button-locate-item').click();
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item location requested').waitFor();
 });

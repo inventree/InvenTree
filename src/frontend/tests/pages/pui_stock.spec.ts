@@ -5,8 +5,7 @@ import {
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter,
-  submitForm
+  setTableChoiceFilter
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
@@ -137,7 +136,7 @@ test('Stock - Serial Numbers', async ({ browser }) => {
   // Add delay to account to field debounce
   await page.waitForTimeout(250);
 
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Expected error messages
   await page.getByText('Errors exist for one or more form fields').waitFor();
@@ -149,7 +148,7 @@ test('Stock - Serial Numbers', async ({ browser }) => {
   // Now, with correct quantity
   await page.getByLabel('number-field-quantity').fill('51');
   await page.waitForTimeout(250);
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.waitForTimeout(250);
 
   await page
@@ -173,7 +172,7 @@ test('Stock - Serial Navigation', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-actions').click();
   await page.getByLabel('action-menu-stock-actions-search').click();
   await page.getByLabel('text-field-serial').fill('359');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Start at serial 359
   await page.getByText('359', { exact: true }).first().waitFor();
@@ -185,7 +184,7 @@ test('Stock - Serial Navigation', async ({ browser }) => {
 
   await page.getByLabel('action-button-find-serial').click();
   await page.getByLabel('text-field-serial').fill('200');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('Serial Number: 200').waitFor();
   await page.getByText('200', { exact: true }).first().waitFor();
@@ -202,7 +201,7 @@ test('Stock - Serialize', async ({ browser }) => {
 
   await page.getByLabel('text-field-serial_numbers').fill('200-250');
 
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page
     .getByText('Group range 200-250 exceeds allowed quantity')
     .waitFor();
@@ -252,7 +251,7 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await launchStockAction('add');
   await page.getByLabel('number-field-quantity').fill('12');
   await setStockStatus('Lost');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('Lost').first().waitFor();
   await page.getByText('Unavailable').first().waitFor();
@@ -262,7 +261,7 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await launchStockAction('remove');
   await page.getByLabel('number-field-quantity').fill('99');
   await setStockStatus('Damaged');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('36').first().waitFor();
   await page.getByText('Damaged').first().waitFor();
@@ -271,7 +270,7 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await launchStockAction('count');
   await page.getByLabel('number-field-quantity').fill('123');
   await setStockStatus('Incoming goods inspection');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('123').first().waitFor();
   await page.getByText('Custom Status').first().waitFor();

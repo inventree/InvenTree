@@ -1,6 +1,6 @@
 /** Unit tests for form validation, rendering, etc */
 import test from 'playwright/test';
-import { navigate, submitForm } from './helpers';
+import { navigate } from './helpers';
 import { doCachedLogin } from './login';
 
 test('Forms - Stock Item Validation', async ({ browser }) => {
@@ -14,7 +14,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
 
   // Create new stock item form
   await page.getByLabel('action-button-add-stock-item').click();
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Check for validation errors
   await page.getByText('Form Error').waitFor();
@@ -31,7 +31,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByLabel('number-field-quantity').fill('-1');
   await page.getByLabel('related-field-part').click();
   await page.getByRole('option', { name: /1551AGY/ }).click();
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Check for validation errors
   await page.getByText('Errors exist for one or more form fields').waitFor();
@@ -46,14 +46,14 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
 
   // Create the stock item
   await page.getByLabel('number-field-quantity').fill('123');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Edit the resulting stock item
   await page.getByLabel('action-menu-stock-item-actions').click();
   await page.getByLabel('action-menu-stock-item-actions-edit').click();
 
   await page.getByLabel('number-field-purchase_price').fill('-1');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Errors exist for one or more form fields').waitFor();
   await page
     .getByText('Ensure this value is greater than or equal to 0')
@@ -68,7 +68,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
 
   // Correct the price
   await page.getByLabel('number-field-purchase_price').fill('1.2345');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
 
   // Ensure the stock item has been updated correctly
@@ -89,7 +89,7 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await page.getByLabel('action-button-add-company').click();
   await page.getByLabel('text-field-website').fill('not-a-website');
 
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Check for validation errors
   await page.getByText('Form Error').waitFor();
@@ -111,7 +111,7 @@ test('Forms - Supplier Validation', async ({ browser }) => {
     .getByLabel('text-field-website')
     .fill('https://www.test-website.co.uk');
   await page.getByLabel('text-field-name').fill(supplierName);
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('A description').first().waitFor();
   await page
@@ -123,7 +123,7 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await page.waitForURL('**/purchasing/index/**');
   await page.getByLabel('action-button-add-company').click();
   await page.getByLabel('text-field-name').fill(supplierName);
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Is prevented, due to uniqueness requirements
   await page.getByText('Form Error').waitFor();

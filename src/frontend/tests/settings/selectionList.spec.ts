@@ -1,5 +1,5 @@
 import { test } from '../baseFixtures';
-import { navigate, submitForm } from '../helpers';
+import { navigate } from '../helpers';
 import { doCachedLogin } from '../login';
 
 test('PUI - Admin - Parameter', async ({ browser }) => {
@@ -53,7 +53,7 @@ test('PUI - Admin - Parameter', async ({ browser }) => {
   await page.getByLabel('action-button-add-selection-').click();
   await page.getByLabel('text-field-name').fill('some list');
   await page.getByLabel('text-field-description').fill('Listdescription');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('cell', { name: 'some list' }).waitFor();
   await page.waitForTimeout(200);
 
@@ -74,7 +74,7 @@ test('PUI - Admin - Parameter', async ({ browser }) => {
     .locator('div')
     .first()
     .click();
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('cell', { name: 'my custom parameter' }).click();
 
   // Fill parameter
@@ -99,5 +99,5 @@ test('PUI - Admin - Parameter', async ({ browser }) => {
     .fill('my custom parameter');
   await page.getByRole('option', { name: 'my custom parameter' }).click();
   await page.getByLabel('choice-field-data').fill('2');
-  await submitForm(page);
+  await page.getByRole('button', { name: 'Submit' }).click();
 });

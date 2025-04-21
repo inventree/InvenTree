@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { apiUrl } from './defaults.js';
-import { getRowFromCell, loadTab, navigate, submitForm } from './helpers.js';
+import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
@@ -149,7 +149,8 @@ test('Settings - Admin', async ({ browser }) => {
   const newDescription = `${oldDescription} (edited)`;
 
   await page.getByLabel('text-field-description').fill(newDescription);
-  await submitForm(page);
+  await page.waitForTimeout(500);
+  await page.getByRole('button', { name: 'Submit' }).click();
 
   // Edit second item - 'Box (Large)'
   const boxCell = await page.getByRole('cell', {
@@ -171,11 +172,12 @@ test('Settings - Admin', async ({ browser }) => {
   await roomRow.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await page.getByLabel('text-field-name').fill('Room');
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(500);
   await page
     .getByLabel('text-field-description')
     .fill(newDescription.replaceAll(' (edited)', ''));
-  await submitForm(page);
+  await page.waitForTimeout(500);
+  await page.getByRole('button', { name: 'Submit' }).click();
 });
 
 test('Settings - Admin - Barcode History', async ({ browser, request }) => {
