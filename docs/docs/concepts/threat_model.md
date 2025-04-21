@@ -36,4 +36,4 @@ There are various checks to gate against common attack vectors but above vectors
 
 ## Secure Development Cycle
 
-The InvenTree project is developed following best practices. Read more in the [project security guide](../project/security.md).
+The InvenTree project is developed following best practices. Read more in the [project security guide](../security.md).
