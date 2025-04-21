@@ -233,31 +233,34 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return template_string.render(Context(context))
 
-    def render_as_string(self, instance, request=None, **kwargs) -> str:
+    def render_as_string(self, instance, request=None, context=None, **kwargs) -> str:
         """Render the report to a HTML string.
 
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
+            context: DTL context (optional)
 
         Returns:
             str: HTML string
         """
-        context = self.get_context(instance, request, **kwargs)
+        if context is None:
+            context = self.get_context(instance, request, **kwargs)
 
         return render_to_string(self.template_name, context, request)
 
-    def render(self, instance, request=None, **kwargs) -> bytes:
+    def render(self, instance, request=None, context=None, **kwargs) -> bytes:
         """Render the template to a PDF file.
 
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
+            context: DTL context (optional)
 
         Returns:
             bytes: PDF data
         """
-        html = self.render_as_string(instance, request, **kwargs)
+        html = self.render_as_string(instance, request, context, **kwargs)
         pdf = HTML(string=html).write_pdf()
 
         return pdf
@@ -424,6 +427,27 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return context
 
+    def handle_attachment(self, instance, report, report_name, request, debug_mode):
+        """Attach the generated report to the model instance (if required)."""
+        if self.attach_to_model and not debug_mode:
+            instance.create_attachment(
+                attachment=ContentFile(report, report_name),
+                comment=_(f'Report generated from template {self.name}'),
+                upload_user=request.user
+                if request and request.user.is_authenticated
+                else None,
+            )
+
+    def notify_plugins(self, instance, report, request):
+        """Provide generated report to any interested plugins."""
+        report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
+
+        for plugin in report_plugins:
+            try:
+                plugin.report_callback(self, instance, report, request)
+            except Exception:
+                InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.report_callback')
+
     def print(self, items: list, request=None, output=None, **kwargs) -> DataOutput:
         """Print reports for a list of items against this template.
 
@@ -455,7 +479,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         # Start with a default report name
         report_name = None
 
-        report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
+        # report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
         # If a DataOutput object is not provided, create a new one
         if not output:
@@ -482,6 +506,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 item_contexts = []
                 for instance in items:
                     item_contexts.append(instance.report_context())
+
                 contexts = {
                     **base_context,
                     **report_context,
@@ -491,29 +516,21 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 if report_name is None:
                     report_name = self.generate_filename(contexts)
 
-                html = render_to_string(self.template_name, contexts, request)
-                report = HTML(string=html).write_pdf()
+                try:
+                    if debug_mode:
+                        report = self.render_as_string(instance, request, contexts)
+                    else:
+                        report = self.render(instance, request, contexts)
+                except TemplateDoesNotExist as e:
+                    t_name = str(e) or self.template
+                    raise ValidationError(f'Template file {t_name} does not exist')
 
                 outputs.append(report)
 
-                # Attach the generated report to the model instance (if required)
-                if self.attach_to_model and not debug_mode:
-                    instance.create_attachment(
-                        attachment=ContentFile(report, report_name),
-                        comment=_(f'Report generated from template {self.name}'),
-                        upload_user=request.user
-                        if request and request.user.is_authenticated
-                        else None,
-                    )
-
-                # Provide generated report to any interested plugins
-                for plugin in report_plugins:
-                    try:
-                        plugin.report_callback(self, instance, report, request)
-                    except Exception:
-                        InvenTree.exceptions.log_error(
-                            f'plugins.{plugin.slug}.report_callback'
-                        )
+                self.handle_attachment(
+                    instance, report, report_name, request, debug_mode
+                )
+                self.notify_plugins(instance, report, request)
 
                 # Update the progress of the report generation
                 output.progress += 1
@@ -528,33 +545,19 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     # Render the report output
                     try:
                         if debug_mode:
-                            report = self.render_as_string(instance, request)
+                            report = self.render_as_string(instance, request, None)
                         else:
-                            report = self.render(instance, request)
+                            report = self.render(instance, request, None)
                     except TemplateDoesNotExist as e:
                         t_name = str(e) or self.template
                         raise ValidationError(f'Template file {t_name} does not exist')
 
                     outputs.append(report)
 
-                    # Attach the generated report to the model instance (if required)
-                    if self.attach_to_model and not debug_mode:
-                        instance.create_attachment(
-                            attachment=ContentFile(report, report_name),
-                            comment=_(f'Report generated from template {self.name}'),
-                            upload_user=request.user
-                            if request and request.user.is_authenticated
-                            else None,
-                        )
-
-                    # Provide generated report to any interested plugins
-                    for plugin in report_plugins:
-                        try:
-                            plugin.report_callback(self, instance, report, request)
-                        except Exception:
-                            InvenTree.exceptions.log_error(
-                                f'plugins.{plugin.slug}.report_callback'
-                            )
+                    self.handle_attachment(
+                        instance, report, report_name, request, debug_mode
+                    )
+                    self.notify_plugins(instance, report, request)
 
                     # Update the progress of the report generation
                     output.progress += 1
