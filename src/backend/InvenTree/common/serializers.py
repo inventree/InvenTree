@@ -812,6 +812,4 @@ class DataOutputSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
-    output = InvenTreeAttachmentSerializerField(
-        required=False, allow_null=True, read_only=True
-    )
+    output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)
