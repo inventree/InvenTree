@@ -71,7 +71,7 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
 
 export const docLinks = {
   app: 'https://docs.inventree.org/app/',
-  getting_started: 'https://docs.inventree.org/en/latest/start/intro/',
+  getting_started: 'https://docs.inventree.org/en/latest/start/',
   api: 'https://docs.inventree.org/en/latest/api/api/',
   developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
   faq: 'https://docs.inventree.org/en/latest/faq/',
