@@ -158,7 +158,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     )
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
-    overdue = serializers.BooleanField(required=False, allow_null=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
     barcode_hash = serializers.CharField(read_only=True)
 
@@ -1265,7 +1265,7 @@ class SalesOrderLineItemSerializer(
     )
 
     # Annotated fields
-    overdue = serializers.BooleanField(required=False, allow_null=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
     available_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
