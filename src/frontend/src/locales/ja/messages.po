@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-11 04:25\n"
+"PO-Revision-Date: 2025-04-19 14:25\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -200,11 +200,11 @@ msgstr "コピー"
 
 #: src/components/buttons/PrintingActions.tsx:51
 msgid "Printing Labels"
-msgstr ""
+msgstr "ラベル印刷中"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Reports"
-msgstr ""
+msgstr "レポート印刷中"
 
 #: src/components/buttons/PrintingActions.tsx:77
 #~ msgid "Printing"
@@ -297,11 +297,11 @@ msgstr "スポットライトを開く"
 
 #: src/components/buttons/StarredToggleButton.tsx:59
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "通知の配信停止"
 
 #: src/components/buttons/StarredToggleButton.tsx:60
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "通知を受け取る"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -324,32 +324,32 @@ msgstr "いいえ"
 #: src/components/calendar/Calendar.tsx:93
 #: src/components/calendar/Calendar.tsx:156
 msgid "Calendar Filters"
-msgstr ""
+msgstr "カレンダーフィルター"
 
 #: src/components/calendar/Calendar.tsx:108
 msgid "Previous month"
-msgstr ""
+msgstr "先月"
 
 #: src/components/calendar/Calendar.tsx:117
 msgid "Select month"
-msgstr ""
+msgstr "月を選択"
 
 #: src/components/calendar/Calendar.tsx:138
 msgid "Next month"
-msgstr ""
+msgstr "来月"
 
 #: src/components/calendar/Calendar.tsx:169
 #: src/tables/InvenTreeTableHeader.tsx:248
 msgid "Download data"
-msgstr ""
+msgstr "ダウンロードデータ"
 
 #: src/components/calendar/OrderCalendar.tsx:133
 msgid "Order Updated"
-msgstr ""
+msgstr "オーダー更新完了"
 
 #: src/components/calendar/OrderCalendar.tsx:143
 msgid "Error updating order"
-msgstr ""
+msgstr "オーダー更新エラー"
 
 #: src/components/calendar/OrderCalendar.tsx:179
 #: src/tables/Filter.tsx:140
@@ -635,7 +635,7 @@ msgstr "スタッフ"
 
 #: src/components/details/Details.tsx:118
 msgid "Email: "
-msgstr ""
+msgstr "メールアドレス:"
 
 #: src/components/details/Details.tsx:387
 msgid "No name defined"
@@ -1096,7 +1096,7 @@ msgstr "Eメールを送信"
 
 #: src/components/forms/AuthenticationForm.tsx:221
 msgid "Passwords do not match"
-msgstr ""
+msgstr "パスワードが一致しません"
 
 #: src/components/forms/AuthenticationForm.tsx:238
 msgid "Registration successful"
@@ -1112,7 +1112,7 @@ msgstr "入力エラー"
 
 #: src/components/forms/AuthenticationForm.tsx:263
 msgid "Check your input and try again. "
-msgstr ""
+msgstr "入力内容を確認し、もう一度やり直してください。"
 
 #: src/components/forms/AuthenticationForm.tsx:287
 msgid "This will be used for a confirmation"
@@ -1185,12 +1185,12 @@ msgstr "保存"
 
 #: src/components/forms/InstanceOptions.tsx:59
 msgid "Select Server"
-msgstr ""
+msgstr "サーバーの選択"
 
 #: src/components/forms/InstanceOptions.tsx:69
 #: src/components/forms/InstanceOptions.tsx:93
 msgid "Edit host options"
-msgstr ""
+msgstr "ホストオプションの編集"
 
 #: src/components/forms/InstanceOptions.tsx:71
 #~ msgid "Edit possible host options"
@@ -1198,7 +1198,7 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:77
 msgid "Save host selection"
-msgstr ""
+msgstr "ホスト選択の保存"
 
 #: src/components/forms/InstanceOptions.tsx:98
 #~ msgid "Version: {0}"
@@ -1251,11 +1251,11 @@ msgstr "有効"
 
 #: src/components/forms/InstanceOptions.tsx:144
 msgid "Disabled"
-msgstr ""
+msgstr "無効"
 
 #: src/components/forms/InstanceOptions.tsx:150
 msgid "Worker"
-msgstr ""
+msgstr "担当者"
 
 #: src/components/forms/InstanceOptions.tsx:151
 #: src/tables/settings/FailedTasksTable.tsx:48
@@ -1264,7 +1264,7 @@ msgstr "中断"
 
 #: src/components/forms/InstanceOptions.tsx:151
 msgid "Running"
-msgstr ""
+msgstr "実行中"
 
 #: src/components/forms/fields/IconField.tsx:82
 msgid "No icon selected"
@@ -1572,7 +1572,7 @@ msgstr "アイテムを複製"
 
 #: src/components/items/ColorToggle.tsx:17
 msgid "Toggle color scheme"
-msgstr ""
+msgstr "配色の切り替え"
 
 #: src/components/items/DocTooltip.tsx:92
 #: src/components/items/GettingStartedCarousel.tsx:20
@@ -1602,7 +1602,7 @@ msgstr "InvenTree ロゴ"
 
 #: src/components/items/LanguageToggle.tsx:20
 msgid "Select language"
-msgstr ""
+msgstr "言語を選択"
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:46
@@ -1619,11 +1619,11 @@ msgstr "この情報はスタッフユーザーのみ利用可能です。"
 
 #: src/components/items/RoleTable.tsx:81
 msgid "Updating"
-msgstr ""
+msgstr "更新中"
 
 #: src/components/items/RoleTable.tsx:82
 msgid "Updating group roles"
-msgstr ""
+msgstr "グループロールの更新中"
 
 #: src/components/items/RoleTable.tsx:118
 #: src/pages/part/pricing/BomPricingPanel.tsx:193
@@ -1634,20 +1634,20 @@ msgstr "更新しました"
 
 #: src/components/items/RoleTable.tsx:119
 msgid "Group roles updated"
-msgstr ""
+msgstr "グループロールが更新されました"
 
 #: src/components/items/RoleTable.tsx:135
 msgid "Role"
-msgstr ""
+msgstr "ロール"
 
 #: src/components/items/RoleTable.tsx:140
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:412
 msgid "View"
-msgstr ""
+msgstr "表示"
 
 #: src/components/items/RoleTable.tsx:145
 msgid "Change"
-msgstr ""
+msgstr "変更"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:788
@@ -1658,19 +1658,19 @@ msgstr "追加"
 
 #: src/components/items/RoleTable.tsx:203
 msgid "Reset group roles"
-msgstr ""
+msgstr "グループロールをリセット"
 
 #: src/components/items/RoleTable.tsx:212
 msgid "Reset"
-msgstr ""
+msgstr "リセット"
 
 #: src/components/items/RoleTable.tsx:215
 msgid "Save group roles"
-msgstr ""
+msgstr "グループロールの保存"
 
 #: src/components/items/TransferList.tsx:65
 msgid "No items"
-msgstr ""
+msgstr "項目なし"
 
 #: src/components/items/TransferList.tsx:161
 #: src/pages/part/PartDetail.tsx:755
@@ -1685,7 +1685,7 @@ msgstr "利用可能"
 
 #: src/components/items/TransferList.tsx:162
 msgid "Selected"
-msgstr ""
+msgstr "選択済み"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:101
 msgid "InvenTree Version"
@@ -1870,7 +1870,7 @@ msgstr "バックグラウンドワーカー"
 
 #: src/components/modals/ServerInfoModal.tsx:107
 msgid "The Background worker process is not running."
-msgstr ""
+msgstr "バックグラウンドワーカープロセスが実行されていません。"
 
 #: src/components/modals/ServerInfoModal.tsx:114
 msgid "Email Settings"
@@ -1879,7 +1879,7 @@ msgstr "メール設定"
 #: src/components/modals/ServerInfoModal.tsx:118
 #: src/components/nav/Alerts.tsx:60
 msgid "Email settings not configured."
-msgstr ""
+msgstr "Eメール設定は行なわれていません"
 
 #: src/components/modals/ServerInfoModal.tsx:118
 #~ msgid "Email settings not configured"
@@ -1887,39 +1887,39 @@ msgstr ""
 
 #: src/components/nav/Alerts.tsx:42
 msgid "The server is running in debug mode."
-msgstr ""
+msgstr "サーバーはデバッグモードで動作しています"
 
 #: src/components/nav/Alerts.tsx:51
 msgid "The background worker process is not running."
-msgstr ""
+msgstr "バックグラウンドワーカープロセスが実行されていません。"
 
 #: src/components/nav/Alerts.tsx:58
 msgid "Email settings"
-msgstr ""
+msgstr "Eメール設定"
 
 #: src/components/nav/Alerts.tsx:67
 msgid "Server Restart"
-msgstr ""
+msgstr "サーバー再起動"
 
 #: src/components/nav/Alerts.tsx:69
 msgid "The server requires a restart to apply changes."
-msgstr ""
+msgstr "変更を適用するにはサーバーの再起動が必要です。"
 
 #: src/components/nav/Alerts.tsx:79
 msgid "Database Migrations"
-msgstr ""
+msgstr "データベースの移行"
 
 #: src/components/nav/Alerts.tsx:81
 msgid "There are pending database migrations."
-msgstr ""
+msgstr "保留中のデータベース移行があります"
 
 #: src/components/nav/Alerts.tsx:97
 msgid "Alerts"
-msgstr ""
+msgstr "アラート"
 
 #: src/components/nav/Alerts.tsx:140
 msgid "Learn more about {code}"
-msgstr ""
+msgstr "{code} についてもっと知る"
 
 #: src/components/nav/Header.tsx:150
 #: src/components/nav/NavigationDrawer.tsx:141
@@ -2114,15 +2114,15 @@ msgstr "未読の通知はありません。"
 
 #: src/components/nav/SearchDrawer.tsx:105
 msgid "No Overview Available"
-msgstr ""
+msgstr "概要不明"
 
 #: src/components/nav/SearchDrawer.tsx:106
 msgid "No overview available for this model type"
-msgstr ""
+msgstr "このモデルタイプの概要はありません"
 
 #: src/components/nav/SearchDrawer.tsx:124
 msgid "View all results"
-msgstr ""
+msgstr "全ての検索結果を表示"
 
 #: src/components/nav/SearchDrawer.tsx:139
 msgid "results"
@@ -2130,7 +2130,7 @@ msgstr "結果"
 
 #: src/components/nav/SearchDrawer.tsx:143
 msgid "Remove search group"
-msgstr ""
+msgstr "検索グループの削除"
 
 #: src/components/nav/SearchDrawer.tsx:287
 #: src/pages/company/ManufacturerPartDetail.tsx:177
@@ -2178,7 +2178,7 @@ msgstr "正規表現検索"
 
 #: src/components/nav/SearchDrawer.tsx:530
 msgid "Notes search"
-msgstr ""
+msgstr "備考検索"
 
 #: src/components/nav/SearchDrawer.tsx:578
 msgid "An error occurred during search query"
@@ -2380,7 +2380,7 @@ msgstr "プラグインコンテンツの読み込み中にエラーが発生し
 
 #: src/components/render/Instance.tsx:239
 msgid "Unknown model: {model_name}"
-msgstr ""
+msgstr "不明なモデル{model_name}"
 
 #: src/components/render/ModelType.tsx:29
 #: src/components/wizards/OrderPartsWizard.tsx:132
@@ -2860,7 +2860,7 @@ msgstr "設定を編集"
 
 #: src/components/settings/SettingList.tsx:85
 msgid "Setting {key} updated successfully"
-msgstr ""
+msgstr "設定 {key} が正常に更新されました"
 
 #: src/components/settings/SettingList.tsx:114
 msgid "Setting updated"
@@ -3282,7 +3282,7 @@ msgstr "注文書に追加された部品"
 
 #: src/components/wizards/OrderPartsWizard.tsx:156
 msgid "Select supplier part"
-msgstr ""
+msgstr "サプライヤー部品の選択"
 
 #: src/components/wizards/OrderPartsWizard.tsx:171
 msgid "New supplier part"
@@ -3290,7 +3290,7 @@ msgstr "新サプライヤー部品"
 
 #: src/components/wizards/OrderPartsWizard.tsx:195
 msgid "Select purchase order"
-msgstr ""
+msgstr "注文書の選択"
 
 #: src/components/wizards/OrderPartsWizard.tsx:209
 msgid "New purchase order"
@@ -3466,7 +3466,7 @@ msgstr "スロベニア語"
 
 #: src/contexts/LanguageContext.tsx:50
 msgid "Serbian"
-msgstr ""
+msgstr "セルビア語"
 
 #: src/contexts/LanguageContext.tsx:51
 msgid "Swedish"
@@ -3761,7 +3761,7 @@ msgstr "InvenTreeプロジェクトについて"
 
 #: src/enums/Roles.tsx:32
 msgid "Admin"
-msgstr ""
+msgstr "管理者"
 
 #: src/enums/Roles.tsx:34
 #: src/pages/Index/Settings/SystemSettings.tsx:243
@@ -4000,7 +4000,7 @@ msgstr "セット場所"
 
 #: src/forms/PurchaseOrderForms.tsx:481
 msgid "Set Expiry Date"
-msgstr ""
+msgstr "有効期限の設定"
 
 #: src/forms/PurchaseOrderForms.tsx:489
 #: src/forms/StockForms.tsx:606
@@ -4043,7 +4043,7 @@ msgstr "デフォルトの場所に保存"
 
 #: src/forms/PurchaseOrderForms.tsx:582
 msgid "Store at line item destination "
-msgstr ""
+msgstr "行先での保存"
 
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
@@ -4086,7 +4086,7 @@ msgstr "有効期限"
 
 #: src/forms/PurchaseOrderForms.tsx:648
 msgid "Enter an expiry date for received items"
-msgstr ""
+msgstr "受け取った商品の有効期限を入力してください。"
 
 #: src/forms/PurchaseOrderForms.tsx:658
 #~ msgid "Receive line items"
@@ -4127,7 +4127,7 @@ msgstr "ラインアイテムの受信"
 
 #: src/forms/PurchaseOrderForms.tsx:776
 msgid "Items received"
-msgstr ""
+msgstr "受領品目"
 
 #: src/forms/ReturnOrderForms.tsx:253
 msgid "Receive Items"
@@ -4374,12 +4374,12 @@ msgstr "内部サーバーエラー"
 #: src/functions/auth.tsx:117
 #: src/functions/auth.tsx:276
 msgid "Already logged in"
-msgstr ""
+msgstr "ログイン済み"
 
 #: src/functions/auth.tsx:118
 #: src/functions/auth.tsx:277
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
-msgstr ""
+msgstr "このブラウザのセッションがサーバー上で競合しています。まずそちらからログアウトしてください。"
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
@@ -4399,19 +4399,19 @@ msgstr "ログアウトに成功しました"
 
 #: src/functions/auth.tsx:189
 msgid "Language changed"
-msgstr ""
+msgstr "言語変更"
 
 #: src/functions/auth.tsx:190
 msgid "Your active language has been changed to the one set in your profile"
-msgstr ""
+msgstr "アクティブ言語がプロフィールで設定した言語に変更されました。"
 
 #: src/functions/auth.tsx:210
 msgid "Theme changed"
-msgstr ""
+msgstr "テーマ変更"
 
 #: src/functions/auth.tsx:211
 msgid "Your active theme has been changed to the one set in your profile"
-msgstr ""
+msgstr "アクティブなテーマがプロフィールで設定したものに変更されました。"
 
 #: src/functions/auth.tsx:236
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -4432,7 +4432,7 @@ msgstr "ログインに成功しました"
 
 #: src/functions/auth.tsx:413
 msgid "Failed to set up MFA"
-msgstr ""
+msgstr "MFAの設定に失敗しました"
 
 #: src/functions/auth.tsx:443
 msgid "Password set"
@@ -4449,7 +4449,7 @@ msgstr "パスワードを変更できませんでした"
 
 #: src/functions/auth.tsx:536
 msgid "The two password fields didn’t match"
-msgstr ""
+msgstr "2つのパスワードフィールドが一致しませんでした"
 
 #: src/functions/auth.tsx:552
 msgid "Password Changed"
@@ -4505,24 +4505,24 @@ msgstr "リクエストがタイムアウトしました"
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
-msgstr ""
+msgstr "データエクスポート中"
 
 #: src/hooks/UseDataExport.tsx:112
 msgid "Export Data"
-msgstr ""
+msgstr "エクスポートデータ"
 
 #: src/hooks/UseDataExport.tsx:115
 msgid "Export"
-msgstr ""
+msgstr "エクスポート"
 
 #: src/hooks/UseDataOutput.tsx:57
 msgid "Process completed successfully"
-msgstr ""
+msgstr "プロセスは正常に完了しました。"
 
 #: src/hooks/UseDataOutput.tsx:73
 #: src/hooks/UseDataOutput.tsx:103
 msgid "Process failed"
-msgstr ""
+msgstr "プロセス失敗"
 
 #: src/hooks/UseForm.tsx:90
 msgid "Item Created"
@@ -4534,11 +4534,11 @@ msgstr "アイテム更新"
 
 #: src/hooks/UseForm.tsx:135
 msgid "Items Updated"
-msgstr ""
+msgstr "アイテム更新完了"
 
 #: src/hooks/UseForm.tsx:137
 msgid "Update multiple items"
-msgstr ""
+msgstr "複数アイテムの更新"
 
 #: src/hooks/UseForm.tsx:167
 msgid "Item Deleted"
@@ -4559,11 +4559,11 @@ msgstr "パスワードをリセットする"
 
 #: src/pages/Auth/ChangePassword.tsx:46
 msgid "Current Password"
-msgstr ""
+msgstr "現在のパスワード"
 
 #: src/pages/Auth/ChangePassword.tsx:47
 msgid "Enter your current password"
-msgstr ""
+msgstr "現在のパスワードを入力してください。"
 
 #: src/pages/Auth/ChangePassword.tsx:53
 msgid "New Password"
@@ -4587,7 +4587,7 @@ msgstr "確認"
 
 #: src/pages/Auth/Layout.tsx:67
 msgid "Log off"
-msgstr ""
+msgstr "ログオフ"
 
 #: src/pages/Auth/LoggedIn.tsx:19
 msgid "Checking if you are already logged in"
@@ -4611,7 +4611,7 @@ msgstr "ログイン"
 
 #: src/pages/Auth/Login.tsx:105
 msgid "Logging you in"
-msgstr ""
+msgstr "ログイン中"
 
 #: src/pages/Auth/Login.tsx:112
 msgid "Don't have an account?"
@@ -4628,29 +4628,29 @@ msgstr "アカウントをお持ちですか?"
 #: src/pages/Auth/MFA.tsx:17
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:82
 msgid "Multi-Factor Authentication"
-msgstr ""
+msgstr "多要素認証"
 
 #: src/pages/Auth/MFA.tsx:20
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:688
 msgid "TOTP Code"
-msgstr ""
+msgstr "TOTPコード"
 
 #: src/pages/Auth/MFA.tsx:22
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:690
 msgid "Enter your TOTP or recovery code"
-msgstr ""
+msgstr "TOTPまたはリカバリーコードを入力してください。"
 
 #: src/pages/Auth/MFA.tsx:32
 msgid "Log in"
-msgstr ""
+msgstr "ログイン"
 
 #: src/pages/Auth/MFASetup.tsx:23
 msgid "MFA Setup Required"
-msgstr ""
+msgstr "MFA設定必須"
 
 #: src/pages/Auth/MFASetup.tsx:34
 msgid "Add TOTP"
-msgstr ""
+msgstr "TOTPを追加"
 
 #: src/pages/Auth/Register.tsx:23
 msgid "Go back to login"
@@ -4664,11 +4664,11 @@ msgstr "ログインに戻る"
 #: src/pages/Auth/ResetPassword.tsx:22
 #: src/pages/Auth/VerifyEmail.tsx:19
 msgid "Key invalid"
-msgstr ""
+msgstr "キー無効"
 
 #: src/pages/Auth/ResetPassword.tsx:23
 msgid "You need to provide a valid key to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "新しいパスワードを設定するには、有効なキーが必要です。リセットリンクは受信箱をご確認ください。"
 
 #: src/pages/Auth/ResetPassword.tsx:30
 #~ msgid "Token invalid"
@@ -4684,11 +4684,11 @@ msgstr "新しいパスワードを設定"
 
 #: src/pages/Auth/ResetPassword.tsx:35
 msgid "The desired new password"
-msgstr ""
+msgstr "新しいパスワード"
 
 #: src/pages/Auth/ResetPassword.tsx:44
 msgid "Send Password"
-msgstr ""
+msgstr "パスワード送信"
 
 #: src/pages/Auth/Set-Password.tsx:49
 #~ msgid "No token provided"
@@ -4700,15 +4700,15 @@ msgstr ""
 
 #: src/pages/Auth/VerifyEmail.tsx:20
 msgid "You need to provide a valid key."
-msgstr ""
+msgstr "有効なキーを入力する必要があります。"
 
 #: src/pages/Auth/VerifyEmail.tsx:28
 msgid "Verify Email"
-msgstr ""
+msgstr "メールアドレスを確認"
 
 #: src/pages/Auth/VerifyEmail.tsx:30
 msgid "Verify"
-msgstr ""
+msgstr "確認"
 
 #. placeholder {0}: error.statusText
 #: src/pages/ErrorPage.tsx:16
@@ -4906,7 +4906,7 @@ msgstr "複数のオブジェクトタイプを選択"
 
 #: src/pages/Index/Scan.tsx:177
 msgid "Actions ... "
-msgstr ""
+msgstr "アクション..."
 
 #: src/pages/Index/Scan.tsx:194
 #: src/pages/Index/Scan.tsx:198
@@ -5050,7 +5050,7 @@ msgstr "スキャンされたアイテム"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:33
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:113
 msgid "Edit Account Information"
-msgstr ""
+msgstr "アカウント情報の編集"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:34
 #~ msgid "User details updated"
@@ -5058,7 +5058,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:37
 msgid "Account details updated"
-msgstr ""
+msgstr "アカウント詳細更新完了"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 #~ msgid "User Actions"
@@ -5075,7 +5075,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:136
 msgid "Edit Profile Information"
-msgstr ""
+msgstr "プロフィール情報の編集"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #~ msgid "Last name"
@@ -5091,7 +5091,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:59
 msgid "Profile details updated"
-msgstr ""
+msgstr "プロフィール詳細更新完了"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
@@ -5128,33 +5128,33 @@ msgstr "表示名"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:86
 #: src/pages/core/UserDetail.tsx:127
 msgid "Position"
-msgstr ""
+msgstr "位置"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:444
 msgid "Type"
-msgstr ""
+msgstr "タイプ"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:91
 #: src/pages/core/UserDetail.tsx:143
 msgid "Organisation"
-msgstr ""
+msgstr "組織"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:92
 msgid "Primary Group"
-msgstr ""
+msgstr "プライマリーグループ"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:104
 msgid "Account Details"
-msgstr ""
+msgstr "アカウント詳細"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:107
 msgid "Account Actions"
-msgstr ""
+msgstr "アカウントアクション"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:111
 msgid "Edit Account"
-msgstr ""
+msgstr "アカウント編集"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
 msgid "Change Password"
@@ -5166,28 +5166,28 @@ msgstr "ユーザーパスワードの変更"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:131
 msgid "Profile Details"
-msgstr ""
+msgstr "プロファイルの詳細"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:134
 msgid "Edit Profile"
-msgstr ""
+msgstr "プロフィールを編集"
 
 #. placeholder {0}: item.label
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:153
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:24
 msgid "Secret"
-msgstr ""
+msgstr "シークレット"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:30
 msgid "One-Time Password"
-msgstr ""
+msgstr "ワンタイムパスワード"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:31
 msgid "Enter the TOTP code to ensure it registered correctly"
-msgstr ""
+msgstr "TOTPコードを入力し、正しく登録されていることを確認します。"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 #~ msgid "Single Sign On Accounts"
@@ -5195,11 +5195,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:56
 msgid "Email Addresses"
-msgstr ""
+msgstr "E メールアドレス"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:64
 msgid "Single Sign On"
-msgstr ""
+msgstr "シングルサインオン"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:69
 #~ msgid "Multifactor"
@@ -5215,7 +5215,7 @@ msgstr "有効になっていません"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:75
 msgid "Single Sign On is not enabled for this server "
-msgstr ""
+msgstr "このサーバーではシングルサインオンが有効になっていません"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:83
 #~ msgid "Multifactor authentication is not configured for your account"
@@ -5223,21 +5223,21 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:90
 msgid "Access Tokens"
-msgstr ""
+msgstr "アクセス・トークン"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:128
 msgid "Error while updating email"
-msgstr ""
+msgstr "メール更新時のエラー"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:141
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:297
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:433
 msgid "Not Configured"
-msgstr ""
+msgstr "未構成"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:144
 msgid "Currently no email addresses are registered."
-msgstr ""
+msgstr "現在、メールアドレスは登録されていません。"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:151
 msgid "The following email addresses are associated with your account:"
@@ -5277,7 +5277,7 @@ msgstr "電子メールアドレス"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:226
 msgid "Error while adding email"
-msgstr ""
+msgstr "メール追加時のエラー"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:237
 msgid "Add Email"
@@ -5301,72 +5301,72 @@ msgstr "メールアドレスを追加"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:300
 msgid "There are no providers connected to this account."
-msgstr ""
+msgstr "このアカウントに接続されているプロバイダーはありません。"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:308
 msgid "You can sign in to your account using any of the following providers"
-msgstr ""
+msgstr "以下のプロバイダーのいずれかを使用してアカウントにサインインできます。"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:321
 msgid "Remove Provider Link"
-msgstr ""
+msgstr "プロバイダーリンクの削除"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:437
 msgid "No multi-factor tokens configured for this account"
-msgstr ""
+msgstr "このアカウントには多要素トークンが設定されていません。"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:447
 msgid "Last used at"
-msgstr ""
+msgstr "最終使用"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:450
 msgid "Created at"
-msgstr ""
+msgstr "作成"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:471
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:574
 msgid "Recovery Codes"
-msgstr ""
+msgstr "回復コード"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:475
 msgid "Unused Codes"
-msgstr ""
+msgstr "未使用コード"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:480
 msgid "Used Codes"
-msgstr ""
+msgstr "使用中コード"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:533
 msgid "Error while registering recovery codes"
-msgstr ""
+msgstr "リカバリーコード登録時のエラー"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:567
 msgid "TOTP"
-msgstr ""
+msgstr "TOTP"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:568
 msgid "Time-based One-Time Password"
-msgstr ""
+msgstr "時間ベースのワンタイムパスワード(TOTP)"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:575
 msgid "One-Time pre-generated recovery codes"
-msgstr ""
+msgstr "事前に生成された1回限りのリカバリーコード"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:589
 msgid "Add Token"
-msgstr ""
+msgstr "トークンの追加"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:604
 msgid "Register TOTP Token"
-msgstr ""
+msgstr "TOTPトークンの登録"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:629
 msgid "Error registering TOTP token"
-msgstr ""
+msgstr "TOTPトークンの登録エラー"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:705
 msgid "Enter your password"
-msgstr ""
+msgstr "パスワードを入力してください"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:741
 #~ msgid "Token is used - no actions"
@@ -5450,11 +5450,11 @@ msgstr "ドット"
 
 #: src/pages/Index/Settings/AccountSettings/useConfirm.tsx:93
 msgid "Reauthentication"
-msgstr ""
+msgstr "再認証"
 
 #: src/pages/Index/Settings/AccountSettings/useConfirm.tsx:109
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:91
 #~ msgid "Advanced Amininistrative Options for InvenTree"
@@ -5491,7 +5491,7 @@ msgstr "基準通貨"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 msgid "User Management"
-msgstr ""
+msgstr "ユーザーの管理"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:114
 msgid "Data Import"
@@ -5499,7 +5499,7 @@ msgstr "データインポート"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:120
 msgid "Data Export"
-msgstr ""
+msgstr "データエクスポート"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:126
 msgid "Barcode Scans"
@@ -5723,7 +5723,7 @@ msgstr "全てのユニット"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:31
 msgid "Tokens"
-msgstr ""
+msgstr "トークン"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:32
 #~ msgid "Select settings relevant for user lifecycle. More available in"
@@ -5735,7 +5735,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:68
 msgid "Authentication"
-msgstr ""
+msgstr "認証"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:94
 msgid "Barcodes"
@@ -5938,7 +5938,7 @@ msgstr "作成日"
 #: src/pages/sales/SalesOrderDetail.tsx:245
 #: src/tables/ColumnRenderers.tsx:252
 msgid "Start Date"
-msgstr ""
+msgstr "開始日"
 
 #: src/pages/build/BuildDetail.tsx:245
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:277
@@ -6157,14 +6157,14 @@ msgstr "組立注文"
 #: src/pages/sales/SalesIndex.tsx:90
 #: src/pages/sales/SalesIndex.tsx:111
 msgid "Table View"
-msgstr ""
+msgstr "テーブルビュー"
 
 #: src/pages/build/BuildIndex.tsx:74
 #: src/pages/purchasing/PurchasingIndex.tsx:72
 #: src/pages/sales/SalesIndex.tsx:93
 #: src/pages/sales/SalesIndex.tsx:114
 msgid "Calendar View"
-msgstr ""
+msgstr "カレンダービュー"
 
 #: src/pages/company/CompanyDetail.tsx:99
 msgid "Website"
@@ -6391,34 +6391,34 @@ msgstr "在庫切れ"
 #: src/pages/core/GroupDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:224
 msgid "System Overview"
-msgstr ""
+msgstr "システム概要"
 
 #: src/pages/core/GroupDetail.tsx:45
 msgid "Group Name"
-msgstr ""
+msgstr "グループ名"
 
 #: src/pages/core/GroupDetail.tsx:52
 #: src/pages/core/GroupDetail.tsx:67
 #: src/tables/settings/GroupTable.tsx:80
 msgid "Group Details"
-msgstr ""
+msgstr "グループの詳細"
 
 #: src/pages/core/GroupDetail.tsx:55
 #: src/tables/settings/GroupTable.tsx:107
 msgid "Group Roles"
-msgstr ""
+msgstr "グループロール"
 
 #: src/pages/core/UserDetail.tsx:175
 msgid "User Information"
-msgstr ""
+msgstr "ユーザー情報"
 
 #: src/pages/core/UserDetail.tsx:176
 msgid "User Permissions"
-msgstr ""
+msgstr "ユーザー権限"
 
 #: src/pages/core/UserDetail.tsx:178
 msgid "User Profile"
-msgstr ""
+msgstr "ユーザープロフィール"
 
 #: src/pages/core/UserDetail.tsx:188
 #: src/tables/settings/UserTable.tsx:153
@@ -6427,7 +6427,7 @@ msgstr "ユーザー詳細"
 
 #: src/pages/core/UserDetail.tsx:206
 msgid "Basic user"
-msgstr ""
+msgstr "基本ユーザー"
 
 #: src/pages/part/CategoryDetail.tsx:99
 #: src/pages/stock/LocationDetail.tsx:97
@@ -7150,13 +7150,13 @@ msgstr "合計コスト"
 #: src/pages/sales/ReturnOrderDetail.tsx:184
 #: src/pages/sales/SalesOrderDetail.tsx:196
 msgid "Contact Email"
-msgstr ""
+msgstr "連絡先メールアドレス"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:228
 #: src/pages/sales/ReturnOrderDetail.tsx:192
 #: src/pages/sales/SalesOrderDetail.tsx:204
 msgid "Contact Phone"
-msgstr ""
+msgstr "連絡先電話番号"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:261
 #: src/pages/sales/ReturnOrderDetail.tsx:226
@@ -7733,19 +7733,19 @@ msgstr "この日付以降に作成されたアイテムを表示"
 
 #: src/tables/Filter.tsx:184
 msgid "Start Date Before"
-msgstr ""
+msgstr "開始日 前"
 
 #: src/tables/Filter.tsx:185
 msgid "Show items with a start date before this date"
-msgstr ""
+msgstr "この日付より前の開始日のアイテムを表示"
 
 #: src/tables/Filter.tsx:193
 msgid "Start Date After"
-msgstr ""
+msgstr "開始日 後"
 
 #: src/tables/Filter.tsx:194
 msgid "Show items with a start date after this date"
-msgstr ""
+msgstr "この日付以降の開始日のアイテムを表示"
 
 #: src/tables/Filter.tsx:202
 msgid "Target Date Before"
@@ -7808,15 +7808,15 @@ msgstr "レポートのフィルタリング"
 
 #: src/tables/Filter.tsx:327
 msgid "Filter by user who created the order"
-msgstr ""
+msgstr "注文を作成したユーザーによるフィルタリング"
 
 #: src/tables/Filter.tsx:335
 msgid "Filter by user who issued the order"
-msgstr ""
+msgstr "注文を発行したユーザーによるフィルタリング"
 
 #: src/tables/Filter.tsx:343
 msgid "Filter by part category"
-msgstr ""
+msgstr "部品カテゴリーによる絞り込み"
 
 #: src/tables/FilterSelectDrawer.tsx:58
 msgid "Remove filter"
@@ -7898,7 +7898,7 @@ msgstr "サーバーが不正なデータ型を返しました。"
 
 #: src/tables/InvenTreeTable.tsx:647
 msgid "View details"
-msgstr ""
+msgstr "詳細を見る"
 
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
@@ -7928,11 +7928,11 @@ msgstr "この操作は元に戻せません。"
 
 #: src/tables/InvenTreeTableHeader.tsx:114
 msgid "Items deleted"
-msgstr ""
+msgstr "削除されたアイテム"
 
 #: src/tables/InvenTreeTableHeader.tsx:119
 msgid "Failed to delete items"
-msgstr ""
+msgstr "アイテムの削除に失敗しました"
 
 #: src/tables/InvenTreeTableHeader.tsx:165
 msgid "Custom table filters are active"
@@ -8406,28 +8406,28 @@ msgstr "部品を見る"
 #: src/tables/sales/ReturnOrderTable.tsx:78
 #: src/tables/sales/SalesOrderTable.tsx:79
 msgid "Has Target Date"
-msgstr ""
+msgstr "目標期日あり"
 
 #: src/tables/build/BuildOrderTable.tsx:144
 #: src/tables/purchasing/PurchaseOrderTable.tsx:82
 #: src/tables/sales/ReturnOrderTable.tsx:79
 #: src/tables/sales/SalesOrderTable.tsx:80
 msgid "Show orders with a target date"
-msgstr ""
+msgstr "目標期日を指定した注文の表示"
 
 #: src/tables/build/BuildOrderTable.tsx:149
 #: src/tables/purchasing/PurchaseOrderTable.tsx:87
 #: src/tables/sales/ReturnOrderTable.tsx:84
 #: src/tables/sales/SalesOrderTable.tsx:85
 msgid "Has Start Date"
-msgstr ""
+msgstr "開始日あり"
 
 #: src/tables/build/BuildOrderTable.tsx:150
 #: src/tables/purchasing/PurchaseOrderTable.tsx:88
 #: src/tables/sales/ReturnOrderTable.tsx:85
 #: src/tables/sales/SalesOrderTable.tsx:86
 msgid "Show orders with a start date"
-msgstr ""
+msgstr "開始日を指定した注文の表示"
 
 #: src/tables/build/BuildOrderTable.tsx:179
 #~ msgid "Filter by user who issued this order"
@@ -8601,7 +8601,7 @@ msgstr "担当者を追加"
 
 #: src/tables/general/AttachmentTable.tsx:104
 msgid "Uploading file {filename}"
-msgstr ""
+msgstr "アップロード中のファイル {filename}"
 
 #: src/tables/general/AttachmentTable.tsx:139
 #~ msgid "File uploaded"
@@ -8614,15 +8614,15 @@ msgstr ""
 #: src/tables/general/AttachmentTable.tsx:156
 #: src/tables/general/AttachmentTable.tsx:170
 msgid "Uploading File"
-msgstr ""
+msgstr "ファイルをアップロード中"
 
 #: src/tables/general/AttachmentTable.tsx:181
 msgid "File Uploaded"
-msgstr ""
+msgstr "ファイルアップロード完了"
 
 #: src/tables/general/AttachmentTable.tsx:182
 msgid "File {name} uploaded successfully"
-msgstr ""
+msgstr "ファイル{name}が正常にアップロードされました"
 
 #: src/tables/general/AttachmentTable.tsx:198
 msgid "File could not be uploaded"
@@ -8747,7 +8747,7 @@ msgstr "マシン「{0}」を削除しますか？"
 
 #: src/tables/machine/MachineListTable.tsx:251
 msgid "Machine"
-msgstr ""
+msgstr "マシン"
 
 #: src/tables/machine/MachineListTable.tsx:256
 #: src/tables/machine/MachineListTable.tsx:443
@@ -8810,7 +8810,7 @@ msgstr "ドライバーの設定"
 
 #: src/tables/machine/MachineListTable.tsx:516
 msgid "Add Machine"
-msgstr ""
+msgstr "マシン追加"
 
 #: src/tables/machine/MachineListTable.tsx:558
 msgid "Add machine"
@@ -8983,16 +8983,16 @@ msgstr "新部品カテゴリー"
 
 #: src/tables/part/PartCategoryTable.tsx:129
 msgid "Set Parent Category"
-msgstr ""
+msgstr "親カテゴリーを設定"
 
 #: src/tables/part/PartCategoryTable.tsx:147
 #: src/tables/stock/StockLocationTable.tsx:145
 msgid "Set Parent"
-msgstr ""
+msgstr "親子付け"
 
 #: src/tables/part/PartCategoryTable.tsx:149
 msgid "Set parent category for the selected items"
-msgstr ""
+msgstr "選択されたアイテムの親カテゴリーを設定"
 
 #: src/tables/part/PartCategoryTable.tsx:160
 msgid "Add Part Category"
@@ -9195,11 +9195,11 @@ msgstr "テンプレートになっているパーツで絞り込み"
 
 #: src/tables/part/PartTable.tsx:275
 msgid "Is Variant"
-msgstr ""
+msgstr "バリエーション？"
 
 #: src/tables/part/PartTable.tsx:276
 msgid "Filter by parts which are variants"
-msgstr ""
+msgstr "バリエーション部品によるフィルタリング"
 
 #: src/tables/part/PartTable.tsx:281
 msgid "Is Revision"
@@ -9240,11 +9240,11 @@ msgstr "在庫情報のある部品で絞り込み"
 #: src/tables/part/PartTable.tsx:350
 #: src/tables/part/PartTable.tsx:367
 msgid "Set Category"
-msgstr ""
+msgstr "カテゴリを設定"
 
 #: src/tables/part/PartTable.tsx:369
 msgid "Set category for selected parts"
-msgstr ""
+msgstr "選択した部品にカテゴリを設定"
 
 #: src/tables/part/PartTable.tsx:379
 msgid "Order selected parts"
@@ -9417,7 +9417,7 @@ msgstr "プラグイン"
 #: src/tables/plugin/PluginListTable.tsx:105
 #: src/tables/plugin/PluginListTable.tsx:421
 msgid "Mandatory"
-msgstr ""
+msgstr "必須"
 
 #: src/tables/plugin/PluginListTable.tsx:113
 #~ msgid "Plugin with id {id} not found"
@@ -9788,11 +9788,11 @@ msgstr "割り当ての削除"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:264
 msgid "Assign to Shipment"
-msgstr ""
+msgstr "出荷への割り当て"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:279
 msgid "Assign to shipment"
-msgstr ""
+msgstr "出荷への割り当て"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:263
 msgid "Allocate Serial Numbers"
@@ -9866,37 +9866,37 @@ msgstr "配送済みの貨物の表示"
 #: src/tables/settings/ApiTokenTable.tsx:29
 #: src/tables/settings/ApiTokenTable.tsx:43
 msgid "Generate Token"
-msgstr ""
+msgstr "トークンを生成"
 
 #: src/tables/settings/ApiTokenTable.tsx:31
 msgid "Token generated"
-msgstr ""
+msgstr "トークン生成完了"
 
 #: src/tables/settings/ApiTokenTable.tsx:66
 #: src/tables/settings/ApiTokenTable.tsx:110
 msgid "Revoked"
-msgstr ""
+msgstr "失効"
 
 #: src/tables/settings/ApiTokenTable.tsx:70
 #: src/tables/settings/ApiTokenTable.tsx:172
 msgid "Token"
-msgstr ""
+msgstr "トークン"
 
 #: src/tables/settings/ApiTokenTable.tsx:77
 msgid "In Use"
-msgstr ""
+msgstr "ラベル印刷に使用するプラグインを選択します。"
 
 #: src/tables/settings/ApiTokenTable.tsx:86
 msgid "Last Seen"
-msgstr ""
+msgstr "最終表示"
 
 #: src/tables/settings/ApiTokenTable.tsx:91
 msgid "Expiry"
-msgstr ""
+msgstr "有効 期限"
 
 #: src/tables/settings/ApiTokenTable.tsx:111
 msgid "Show revoked tokens"
-msgstr ""
+msgstr "取り消されたトークンの表示"
 
 #: src/tables/settings/ApiTokenTable.tsx:130
 msgid "Revoke"
@@ -9904,11 +9904,11 @@ msgstr "取消し"
 
 #: src/tables/settings/ApiTokenTable.tsx:154
 msgid "Error revoking token"
-msgstr ""
+msgstr "トークン失効エラー"
 
 #: src/tables/settings/ApiTokenTable.tsx:176
 msgid "Tokens are only shown once - make sure to note it down."
-msgstr ""
+msgstr "トークンは一度しか表示されません。"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:59
 msgid "Barcode Information"
@@ -10033,11 +10033,11 @@ msgstr "エラーの詳細"
 
 #: src/tables/settings/ExportSessionTable.tsx:24
 msgid "Output Type"
-msgstr ""
+msgstr "アウトプットタイプ"
 
 #: src/tables/settings/ExportSessionTable.tsx:34
 msgid "Exported On"
-msgstr ""
+msgstr "輸出日"
 
 #: src/tables/settings/FailedTasksTable.tsx:32
 #: src/tables/settings/PendingTasksTable.tsx:23
@@ -10078,7 +10078,7 @@ msgstr "グループ詳細の取得中にエラーが発生しました"
 #: src/tables/settings/GroupTable.tsx:91
 #: src/tables/settings/GroupTable.tsx:185
 msgid "Name of the user group"
-msgstr ""
+msgstr "ユーザーグループ名"
 
 #: src/tables/settings/GroupTable.tsx:117
 #~ msgid "Permission set"
@@ -10098,7 +10098,7 @@ msgstr "本当にこのグループを削除してよいですか？"
 
 #: src/tables/settings/GroupTable.tsx:181
 msgid "Add Group"
-msgstr ""
+msgstr "グループを追加"
 
 #: src/tables/settings/GroupTable.tsx:198
 msgid "Add group"
@@ -10110,7 +10110,7 @@ msgstr "グループ追加"
 
 #: src/tables/settings/GroupTable.tsx:219
 msgid "Edit Group"
-msgstr ""
+msgstr "グループを編集"
 
 #: src/tables/settings/ImportSessionTable.tsx:37
 msgid "Delete Import Session"
@@ -10242,15 +10242,15 @@ msgstr "有効なステータスによるフィルタリング"
 
 #: src/tables/settings/UserTable.tsx:112
 msgid "Groups updated"
-msgstr ""
+msgstr "グループ更新完了"
 
 #: src/tables/settings/UserTable.tsx:113
 msgid "User groups updated successfully"
-msgstr ""
+msgstr "ユーザーグループが正常に更新されました"
 
 #: src/tables/settings/UserTable.tsx:120
 msgid "Error updating user groups"
-msgstr ""
+msgstr "ユーザーグループの更新エラー"
 
 #: src/tables/settings/UserTable.tsx:139
 msgid "User with id {id} not found"
@@ -10294,7 +10294,7 @@ msgstr "現在ログインしているユーザーの権利は編集できませ
 
 #: src/tables/settings/UserTable.tsx:207
 msgid "User Groups"
-msgstr ""
+msgstr "ユーザーグループ"
 
 #: src/tables/settings/UserTable.tsx:305
 #~ msgid "Edit user"
@@ -10314,7 +10314,7 @@ msgstr "このユーザーを削除してもよろしいですか？"
 
 #: src/tables/settings/UserTable.tsx:319
 msgid "Add User"
-msgstr ""
+msgstr "ユーザーを追加"
 
 #: src/tables/settings/UserTable.tsx:327
 msgid "Added user"
@@ -10338,7 +10338,7 @@ msgstr "スーパーユーザーを表示"
 
 #: src/tables/settings/UserTable.tsx:379
 msgid "Edit User"
-msgstr ""
+msgstr "ユーザーを編集"
 
 #: src/tables/stock/InstalledItemsTable.tsx:37
 #: src/tables/stock/InstalledItemsTable.tsx:91
@@ -10776,11 +10776,11 @@ msgstr "ストックロケーションの追加"
 
 #: src/tables/stock/StockLocationTable.tsx:127
 msgid "Set Parent Location"
-msgstr ""
+msgstr "親の位置の設定"
 
 #: src/tables/stock/StockLocationTable.tsx:147
 msgid "Set parent location for the selected items"
-msgstr ""
+msgstr "選択されたアイテムの親ロケーションを設定"
 
 #: src/tables/stock/StockTrackingTable.tsx:75
 msgid "Added"
@@ -10813,7 +10813,7 @@ msgstr "モバイルビューポートが検出されました"
 
 #: src/views/MobileAppView.tsx:25
 msgid "InvenTree UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr ""
+msgstr "InvenTree UIはタブレットとデスクトップに最適化されています。"
 
 #: src/views/MobileAppView.tsx:25
 #~ msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."

@@ -372,6 +372,7 @@ cryptography==44.0.2 \
     #   -r src/backend/requirements.in
     #   djangorestframework-simplejwt
     #   fido2
+    #   jwcrypto
     #   pyjwt
 cssselect2==0.8.0 \
     --hash=sha256:46fc70ebc41ced7a32cd42d58b1884d72ade23d21e5a4eaaf022401c13f0e76e \
@@ -404,6 +405,7 @@ django==4.2.20 \
     #   django-js-asset
     #   django-markdownify
     #   django-money
+    #   django-oauth-toolkit
     #   django-otp
     #   django-picklefield
     #   django-q2
@@ -466,13 +468,17 @@ django-markdownify==0.9.5 \
     --hash=sha256:2c4ae44e386c209453caf5e9ea1b74f64535985d338ad2d5ad5e7089cc94be86 \
     --hash=sha256:34c34eba4a797282a5c5bd97b13cec84d6a4c0673ad47ce1c1d000d74dd8d4ab
     # via -r src/backend/requirements.in
-django-money==3.5.3 \
-    --hash=sha256:3020c0f6b77eb4c30bdd711c7c660af67ed4b7a4750fdbdf5894788848dc6fc6 \
-    --hash=sha256:cb8ef1adea8c682b792cc565ace45ace9525de26e3b116290951cd78c7393eab
+django-money==3.5.4 \
+    --hash=sha256:25933ed6177f8dc981114db813c7c5d36c7c89bc4017f2b1b2bb0209b5f68876 \
+    --hash=sha256:628b3afb6671edc2cbd26743d858c31d3b99a735357f7acb6a399ab3ab008d2b
     # via -r src/backend/requirements.in
 django-mptt==0.17.0 \
     --hash=sha256:e2dca00536450b91bdc80d8fc1454993b84307728394ae42c72947fc09574d3d \
     --hash=sha256:e77dd4b4d0de14f50239b0900def44c1d31403664ab3682b80b27fa1319fe7f0
+    # via -r src/backend/requirements.in
+django-oauth-toolkit==3.0.1 \
+    --hash=sha256:3ef00b062a284f2031b0732b32dc899e3bbf0eac221bbb1cffcb50b8932e55ed \
+    --hash=sha256:7200e4a9fb229b145a6d808cbf0423b6d69a87f68557437733eec3c0cf71db02
     # via -r src/backend/requirements.in
 django-otp==1.3.0 \
     --hash=sha256:5277731bc05b6cdbf96aa84ac46018e30ed5fb248086053b0146f925de059060 \
@@ -771,6 +777,10 @@ jsonschema-specifications==2024.10.1 \
     --hash=sha256:0f38b83639958ce1152d02a7f062902c41c8fd20d558b0c34344292d417ae272 \
     --hash=sha256:a09a0680616357d9a0ecf05c12ad234479f549239d0f5b55f3deea67475da9bf
     # via jsonschema
+jwcrypto==1.5.6 \
+    --hash=sha256:150d2b0ebbdb8f40b77f543fb44ffd2baeff48788be71f67f03566692fd55789 \
+    --hash=sha256:771a87762a0c081ae6166958a954f80848820b2ab066937dc8b8379d65b1b039
+    # via django-oauth-toolkit
 lxml==5.3.0 \
     --hash=sha256:01220dca0d066d1349bd6a1726856a78f7929f3878f7e2ee83c296c69495309e \
     --hash=sha256:02ced472497b8362c8e902ade23e3300479f4f43e45f4105c85ef43b8db85229 \
@@ -983,7 +993,9 @@ markupsafe==3.0.2 \
 oauthlib==3.2.2 \
     --hash=sha256:8139f29aac13e25d502680e9e19963e83f16838d48a0d71c287fe40e7067fbca \
     --hash=sha256:9859c40929662bec5d64f34d01c99e093149682a3f38915dc0655d5a633dd918
-    # via requests-oauthlib
+    # via
+    #   django-oauth-toolkit
+    #   requests-oauthlib
 openpyxl==3.1.5 \
     --hash=sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2 \
     --hash=sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050
@@ -1446,6 +1458,7 @@ requests==2.32.3 \
     # via
     #   coreapi
     #   django-allauth
+    #   django-oauth-toolkit
     #   opentelemetry-exporter-otlp-proto-http
     #   requests-oauthlib
 requests-oauthlib==2.0.0 \
@@ -1645,6 +1658,7 @@ typing-extensions==4.12.2 \
     #   drf-spectacular
     #   flexcache
     #   flexparser
+    #   jwcrypto
     #   opentelemetry-sdk
     #   pint
     #   py-moneyed

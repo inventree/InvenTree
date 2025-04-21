@@ -1,3 +1,7 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Container,
@@ -12,13 +16,10 @@ import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
-import { t } from '@lingui/core/macro';
 import { api } from '../../App';
+import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -89,7 +90,7 @@ export function Header() {
         return null;
       }
     },
-    refetchInterval: 30000,
+    refetchInterval: 5 * 60 * 1000,
     refetchOnMount: true
   });
 
@@ -180,10 +181,18 @@ function NavTabs() {
     [userSettings]
   );
 
+  const extraNavs = usePluginUIFeature<NavigationUIFeature>({
+    featureType: 'navigation',
+    context: {}
+  });
+
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    navTabs.forEach((tab) => {
+    const mainNavTabs = getNavTabs(user);
+
+    // static content
+    mainNavTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
@@ -206,9 +215,23 @@ function NavTabs() {
         </Tabs.Tab>
       );
     });
+    // dynamic content
+    extraNavs.forEach((nav) => {
+      _tabs.push(
+        <Tabs.Tab
+          value={nav.options.title}
+          key={nav.options.key}
+          onClick={(event: any) =>
+            navigateToLink(nav.options.options.url, navigate, event)
+          }
+        >
+          {nav.options.title}
+        </Tabs.Tab>
+      );
+    });
 
     return _tabs;
-  }, [navTabs, user, withIcons]);
+  }, [extraNavs, navTabs, user, withIcons]);
 
   return (
     <Tabs

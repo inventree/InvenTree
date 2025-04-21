@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-14 23:06\n"
+"PO-Revision-Date: 2025-04-18 22:04\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -461,7 +461,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:68
 msgid "Active Build Orders"
-msgstr ""
+msgstr "Активні запити на збірку"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:70
 msgid "Show the number of build orders which are currently active"
@@ -732,7 +732,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:398
 msgid "Image downloaded successfully"
-msgstr ""
+msgstr "Зображення успішно завантажено"
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
@@ -844,7 +844,7 @@ msgstr "Помилка збереження шаблону"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 msgid "Could not load the template from the server."
-msgstr ""
+msgstr "Не вдалося завантажити шаблон з сервера."
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:175
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:306
@@ -1096,7 +1096,7 @@ msgstr "Надіслати листа"
 
 #: src/components/forms/AuthenticationForm.tsx:221
 msgid "Passwords do not match"
-msgstr ""
+msgstr "Паролі не збігаються"
 
 #: src/components/forms/AuthenticationForm.tsx:238
 msgid "Registration successful"
@@ -1112,7 +1112,7 @@ msgstr "Помилка у вхідних даних"
 
 #: src/components/forms/AuthenticationForm.tsx:263
 msgid "Check your input and try again. "
-msgstr ""
+msgstr "Перевірте своє введення і спробуйте ще раз. "
 
 #: src/components/forms/AuthenticationForm.tsx:287
 msgid "This will be used for a confirmation"
@@ -1185,12 +1185,12 @@ msgstr "Зберегти"
 
 #: src/components/forms/InstanceOptions.tsx:59
 msgid "Select Server"
-msgstr ""
+msgstr "Оберіть сервер"
 
 #: src/components/forms/InstanceOptions.tsx:69
 #: src/components/forms/InstanceOptions.tsx:93
 msgid "Edit host options"
-msgstr ""
+msgstr "Редагувати параметри хосту"
 
 #: src/components/forms/InstanceOptions.tsx:71
 #~ msgid "Edit possible host options"
@@ -1198,7 +1198,7 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:77
 msgid "Save host selection"
-msgstr ""
+msgstr "Зберегти вибір хосту"
 
 #: src/components/forms/InstanceOptions.tsx:98
 #~ msgid "Version: {0}"
@@ -1232,7 +1232,7 @@ msgstr "Версія"
 #: src/components/modals/AboutInvenTreeModal.tsx:107
 #: src/components/modals/ServerInfoModal.tsx:37
 msgid "API Version"
-msgstr ""
+msgstr "Версія API"
 
 #: src/components/forms/InstanceOptions.tsx:143
 #: src/components/nav/NavigationDrawer.tsx:205
@@ -1247,20 +1247,20 @@ msgstr "Плагіни"
 #: src/tables/settings/TemplateTable.tsx:365
 #: src/tables/stock/StockItemTestResultTable.tsx:402
 msgid "Enabled"
-msgstr ""
+msgstr "Увімкнено"
 
 #: src/components/forms/InstanceOptions.tsx:144
 msgid "Disabled"
-msgstr ""
+msgstr "Вимкнено"
 
 #: src/components/forms/InstanceOptions.tsx:150
 msgid "Worker"
-msgstr ""
+msgstr "Працівник"
 
 #: src/components/forms/InstanceOptions.tsx:151
 #: src/tables/settings/FailedTasksTable.tsx:48
 msgid "Stopped"
-msgstr ""
+msgstr "Зупинено"
 
 #: src/components/forms/InstanceOptions.tsx:151
 msgid "Running"

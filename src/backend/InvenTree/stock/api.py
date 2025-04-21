@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -20,6 +20,7 @@ from rest_framework.serializers import ValidationError
 import common.models
 import common.settings
 import InvenTree.helpers
+import InvenTree.permissions
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
@@ -65,7 +66,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 class GenerateBatchCode(GenericAPIView):
     """API endpoint for generating batch codes."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = StockSerializers.GenerateBatchCodeSerializer
 
     def post(self, request, *args, **kwargs):
@@ -81,7 +82,7 @@ class GenerateBatchCode(GenericAPIView):
 class GenerateSerialNumber(GenericAPIView):
     """API endpoint for generating serial numbers."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = StockSerializers.GenerateSerialNumberSerializer
 
     def post(self, request, *args, **kwargs):

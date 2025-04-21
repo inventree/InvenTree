@@ -365,6 +365,52 @@ def get_secret_key():
     return key_data
 
 
+def get_oidc_private_key():
+    """Return the private key for OIDC authentication.
+
+    Following options are tested, in descending order of preference:
+    A) Check for environment variable INVENTREE_OIDC_PRIVATE_KEY or config yalue => Use raw key data
+    B) Check for environment variable INVENTREE_OIDC_PRIVATE_KEY_FILE  or config value => Load key data from file
+    C) Create "oidc.pem" if it does not exist
+    """
+    RSA_KEY = get_setting('INVENTREE_OIDC_PRIVATE_KEY', 'oidc_private_key')
+    if RSA_KEY:
+        logger.info('RSA_KEY loaded by INVENTREE_OIDC_PRIVATE_KEY')  # pragma: no cover
+        return RSA_KEY
+
+    # Look for private key file
+    key_loc = Path(
+        get_setting(
+            'INVENTREE_OIDC_PRIVATE_KEY_FILE',
+            'oidc_private_key_file',
+            get_base_dir().joinpath('oidc.pem'),
+        )
+    )
+    if key_loc.exists():
+        return key_loc.read_text()
+    else:
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+
+        # Default location for private key file
+        logger.info("Generating oidc key file at '%s'", key_loc)
+        ensure_dir(key_loc.parent)
+
+        # Create a random key file
+        new_key = rsa.generate_private_key(public_exponent=65537, key_size=4096)
+        # Write our key to disk for safe keeping
+        with open(str(key_loc), 'wb') as f:
+            f.write(
+                new_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption(),
+                )
+            )
+        RSA_KEY = key_loc.read_text()
+    return RSA_KEY
+
+
 def get_custom_file(
     env_ref: str, conf_ref: str, log_ref: str, lookup_media: bool = False
 ):
@@ -437,5 +483,14 @@ def get_frontend_settings(debug=True):
         # In debug mode, show server selector by default
         # If no servers are specified, show server selector
         frontend_settings['show_server_selector'] = True
+
+    # Support compatibility with "legacy" URLs?
+    try:
+        frontend_settings['url_compatibility'] = bool(
+            frontend_settings.get('url_compatibility', True)
+        )
+    except Exception:
+        # If the value is not a boolean, set it to True
+        frontend_settings['url_compatibility'] = True
 
     return frontend_settings
