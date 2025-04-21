@@ -96,7 +96,7 @@ BOMs can be created manually, by adjusting individual line items, or by upload a
 
 ### Add BOM Item
 
-To manually add a BOM item, navigate to the part/assembly detail page then click on the "BOM" tab. On top of the tab view, click on the <span class='fas fa-edit'></span> icon then, after the page reloads, click on the <span class='fas fa-plus-circle'></span> icon.
+To manually add a BOM item, navigate to the part/assembly detail page then click on the "BOM" tab. On top of the tab view, click on the {{ icon("edit", color="blue", title="Edit") }} icon then, after the page reloads, click on the {{ icon("plus-circle") }} icon.
 
 The `Create BOM Item` form will be displayed:
 {% with id="bom_add_item", url="build/bom_add_item.png", description="Create BOM Item Form" %}
@@ -107,7 +107,7 @@ Fill-out the `Quantity` (required), `Reference`, `Overage` and `Note` (optional)
 
 ### Add Substitute for BOM Item
 
-To manually add a substitute for a BOM item, click on the <span class='fas fa-exchange-alt'></span> icon in the *Actions* columns.
+To manually add a substitute for a BOM item, click on the {{ icon("transfer") }} icon in the *Actions* columns.
 
 The `Edit BOM Item Substitutes` form will be displayed:
 {% with id="bom_substitute_item", url="build/bom_substitute_item.png", description="Edit BOM Item Substitutes" %}

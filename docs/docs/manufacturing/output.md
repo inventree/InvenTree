@@ -28,7 +28,7 @@ The *Completed Outputs* tab displays any [completed](#complete-build-output) or 
 
 ## Create Build Output
 
-Create a new build output by pressing the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Build Output</span> button under the [incomplete outputs](#incomplete-outputs) tab:
+Create a new build output by pressing the <span class="badge inventree add">{{ icon("plus-circle") }} New Build Output</span> button under the [incomplete outputs](#incomplete-outputs) tab:
 
 {% with id="build_output_create", url="build/build_output_create.png", description="Create build output" %}
 {% include "img.html" %}

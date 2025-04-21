@@ -73,7 +73,7 @@ So, when determining the cost of each line item in the purchase order, the follo
 
 ## Create Purchase Order
 
-Once the purchase order page is loaded, click on <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Purchase Order</span> which opens the "Create Purchase Order" form.
+Once the purchase order page is loaded, click on <span class="badge inventree add">{{ icon("plus-circle") }} New Purchase Order</span> which opens the "Create Purchase Order" form.
 
 A purchase order is linked to a specific supplier, select one in the list of existing suppliers.
 
@@ -88,7 +88,8 @@ Each Purchase Order is uniquely identified by its *Reference* field. Read more a
 
 ### Add Line Items
 
-On the purchase order detail page, user can link parts to the purchase order selecting the <span class="badge inventree nav side"><span class='fas fa-list'></span> Order Items</span> tab then clicking on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> Add Line Item</span> button.
+On the purchase order detail page, user can link parts to the purchase order selecting the <span class="badge inventree nav side">{{ icon("list") }} Order Items</span> tab then clicking on the <span class="badge inventree add">{{ icon("plus-circle") }} Add Line Item</span> button.
+
 
 Once the "Add Line Item" form opens, select a supplier part in the list.
 
@@ -99,14 +100,14 @@ Fill out the rest of the form then click on <span class="badge inventree confirm
 
 #### Upload File
 
-It is possible to upload an exported purchase order from the supplier instead of manually entering each line item. To start the process, click on <span class="badge inventree confirm"><span class='fas fa-upload'></span> Upload File</span> button next to the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> Add Line Item</span> button and follow the steps.
+It is possible to upload an exported purchase order from the supplier instead of manually entering each line item. To start the process, click on <span class="badge inventree confirm">{{ icon("upload") }} Upload File</span> button next to the <span class="badge inventree add">{{ icon("plus-circle") }} Add Line Item</span> button and follow the steps.
 
 !!! info "Supported Formats"
 	This process only supports tabular data and the following formats are supported: CSV, TSV, XLS, XLSX, JSON and YAML
 
 ## Issue Order
 
-Once all the line items were added, click on the <span class='fas fa-paper-plane'></span> button on the main purchase order detail panel and confirm the order has been submitted.
+Once all the line items were added, click on the {{ icon("send", title="Issue") }} button on the main purchase order detail panel and confirm the order has been submitted.
 
 ## Receive Line Items
 
@@ -114,8 +115,8 @@ After receiving all the items from the order, the purchase order will convert th
 
 There are two options to mark items as "received":
 
-* either individually: click on <span class='fas fa-clipboard-check'></span> button on each line item
-* or globally: click on the <span class='fas fa-clipboard-check'></span> button on the main purchase order detail panel and confirm all items in the order have been received.
+* either individually: click on {{ icon("clipboard-check") }} button on each line item
+* or globally: click on the {{ icon("clipboard-check") }} button on the main purchase order detail panel and confirm all items in the order have been received.
 
 !!! note "Permissions"
 	Marking line items as received requires the "Purchase order" ADD permission.
@@ -132,7 +133,7 @@ When receiving items from a purchase order, the location of the items must be sp
 
 Each item marked as "received" is automatically converted into a stock item.
 
-To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side"><span class='fas fa-sign-in-alt'></span> Received Items</span> tab.
+To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side">{{ icon("arrow-right") }} Received Items</span> tab.
 
 ### Item Value Currency
 
@@ -145,12 +146,12 @@ However, if the [Convert Currency](#purchase-order-settings) setting is enabled,
 Once the quantity of all __received__ items is equal or above the quantity of all line items, the order will be automatically marked as __complete__.
 
 It is also possible to complete the order before all items were received (or if there were missing items).
-To do so, click on the <span class='fas fa-check-circle'></span> button on the main purchase order detail panel and confirm the order was completed.
+To do so, click on the {{ icon("circle-check", color="green") }} button on the main purchase order detail panel and confirm the order was completed.
 
 ## Cancel Order
 
 In the event that the order won't be processed, user has the option of cancelling the order instead.
-To do so, simply click on the <span class='fas fa-times-circle'></span> button on the main purchase order detail panel and confirm the purchase order has been cancelled.
+To do so, simply click on the {{ icon("circle-x", color="red") }} button on the main purchase order detail panel and confirm the purchase order has been cancelled.
 
 ## Duplicate Purchase Order
 
@@ -192,7 +193,7 @@ If the *Target Date* of the purchase order is reached but the order has not been
 
 ## Calendar view
 
-Using the button to the top right of the list of Purchase Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
+Using the button to the top right of the list of Purchase Orders, the view can be switched to a calendar view using the button {{ icon("calendar") }}. This view shows orders with a defined target date only.
 
 This view can be accessed externally as an ICS calendar using a URL like the following:
 `http://inventree.example.org/api/order/calendar/purchase-order/calendar.ics`

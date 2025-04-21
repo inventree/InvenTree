@@ -7,7 +7,7 @@ title: Suppliers
 
 A supplier is an external **vendor** of parts and raw materials.
 
-To access the supplier page, click on the <span class="badge inventree nav main"><span class='fas fa-shopping-cart'></span> Buy</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-building'></span> Suppliers</span> option in the dropdown list.
+To access the supplier page, click on the <span class="badge inventree nav main">{{ icon("shopping-cart") }} Buy</span> navigation tab and click on <span class="badge inventree nav main">{{ icon("building") }} Suppliers</span> option in the dropdown list.
 
 {% with id="supplier_list", url="order/supplier_list.png", description="Supplier List" %}
 {% include "img.html" %}
@@ -18,7 +18,7 @@ To access the supplier page, click on the <span class="badge inventree nav main"
 
 ### Add Supplier
 
-Once the supplier page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Supplier</span> button: the "Create new Supplier" form opens. Fill-in the supplier information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
+Once the supplier page is loaded, click on the <span class="badge inventree add">{{ icon("plus-circle") }} New Supplier</span> button: the "Create new Supplier" form opens. Fill-in the supplier information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
 
 !!! info "Supplier vs Manufacturer"
     In the case the supplier is a manufacturer who sells directly to customers, you may want to enable the checkbox `is manufacturer` before submitting the form (you can also enable it later on).
@@ -34,21 +34,21 @@ Supplier parts are linked to a supplier and defined as purchasable items.
 
 To create a supplier part, you have the following options:
 
-1. navigate to a Part detail page then click on the <span class="badge inventree nav side"><span class='fas fa-building'></span> Suppliers</span> tab
-0. navigate to a Supplier detail page then click on the <span class="badge inventree nav side"><span class='fas fa-building'></span> Supplied Parts</span> tab
-0. navigate to a Manufacturer detail page then click on the <span class="badge inventree nav side"><span class='fas fa-building'></span> Supplied Parts</span> tab.
+1. navigate to a Part detail page then click on the <span class="badge inventree nav side">{{ icon("building") }} Suppliers</span> tab
+0. navigate to a Supplier detail page then click on the <span class="badge inventree nav side">{{ icon("building") }} Supplied Parts</span> tab
+0. navigate to a Manufacturer detail page then click on the <span class="badge inventree nav side">{{ icon("building") }} Supplied Parts</span> tab.
 
-Whichever you pick, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Supplier Part</span> button to load the "Create new Supplier Part" form. Fill out the form with the supplier part information then click on <span class="badge inventree confirm">Submit</span>
+Whichever you pick, click on the <span class="badge inventree add">{{ icon("plus-circle") }} New Supplier Part</span> button to load the "Create new Supplier Part" form. Fill out the form with the supplier part information then click on <span class="badge inventree confirm">Submit</span>
 
 #### Edit Supplier Part
 
 To edit a supplier part, first access the supplier part detail page with one of the following options:
 
-1. navigate to a Part detail page, click on the <span class="badge inventree nav side"><span class='fas fa-building'></span> Suppliers</span> tab then, in the <span class="badge inventree nav main">Part Suppliers</span> table, click on the corresponding _Supplier Part_ link
-0. navigate to a Supplier detail page, click on the <span class="badge inventree nav side"><span class='fas fa-building'></span> Supplied Parts</span> tab then click on the corresponding _Supplier Part_ link
-0. navigate to a Manufacturer detail page, click on the <span class="badge inventree nav side"><span class='fas fa-building'></span> Supplied Parts</span> tab then click on the corresponding _Supplier Part_ link.
+1. navigate to a Part detail page, click on the <span class="badge inventree nav side">{{ icon("building") }} Suppliers</span> tab then, in the <span class="badge inventree nav main">Part Suppliers</span> table, click on the corresponding _Supplier Part_ link
+0. navigate to a Supplier detail page, click on the <span class="badge inventree nav side">{{ icon("building") }} Supplied Parts</span> tab then click on the corresponding _Supplier Part_ link
+0. navigate to a Manufacturer detail page, click on the <span class="badge inventree nav side">{{ icon("building") }} Supplied Parts</span> tab then click on the corresponding _Supplier Part_ link.
 
-After the supplier part details are loaded, click on the <span class='fas fa-edit'></span> icon next to the supplier part image. Edit the supplier part information then click on <span class="badge inventree confirm">Submit</span>
+After the supplier part details are loaded, click on the {{ icon("edit", color="blue", title="Edit") }} icon next to the supplier part image. Edit the supplier part information then click on <span class="badge inventree confirm">Submit</span>
 
 #### Disable Supplier Part
 
@@ -91,3 +91,11 @@ Availability information can be manually updated via the user interface:
 {% with id="update_availability", url="order/update_availability.png", maxheight="240px", description="Update availability" %}
 {% include "img.html" %}
 {% endwith %}
+
+## Supplier Part Pack Size
+
+Supplier parts can have a pack size defined. This value is defined when creating or editing a part. By default, the pack size is 1.
+
+When buying parts, they are bought in packs. This is taken into account in Purchase Orders: if a supplier part with a pack size of 5 is bought in a quantity of 4, 20 parts will be added to stock when the parts are received.
+
+When adding stock manually, the supplier part can be added in packs or in individual parts. This is to allow the addition of items in opened packages. Set the flag "Use pack size" (`use_pack_size` in the API) to True in order to add parts in packs.

@@ -60,11 +60,3 @@ The *Stock Item* detail view shows information regarding the particular stock it
 Every time a *Stock Item* is adjusted, a *Stock Tracking* entry is automatically created. This ensures a complete history of the *Stock Item* is maintained as long as the item is in the system.
 
 Each stock tracking historical item records the user who performed the action.
-
-## Supplier Part Pack Size
-
-Supplier parts can have a pack size defined. This value is defined when creating or editing a part. By default, the pack size is 1.
-
-When buying parts, they are bought in packs. This is taken into account in Purchase Orders: if a supplier part with a pack size of 5 is bought in a quantity of 4, 20 parts will be added to stock when the parts are received.
-
-When adding stock manually, the supplier part can be added in packs or in individual parts. This is to allow the addition of items in opened packages. Set the flag "Use pack size" (`use_pack_size` in the API) to True in order to add parts in packs.

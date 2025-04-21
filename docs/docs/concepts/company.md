@@ -49,7 +49,7 @@ To delete a company, click on the {{ icon("trash", color="red", title="Delete") 
 
 Each company can have multiple assigned *Contacts*. A contact identifies an individual who is associated with the company, including information such as name, email address, phone number, etc.
 
-The list of contacts associated with a particular company is available in the <span class='badge inventree nav main'><span class='fas fa-users'></span> Contacts</span> navigation tab:
+The list of contacts associated with a particular company is available in the <span class='badge inventree nav main'>{{ icon("users") }} Contacts</span> navigation tab:
 
 {% with id="contact_list", url="order/contact_list.png", description="Contact List" %}
 {% include "img.html" %}
@@ -88,7 +88,7 @@ City State Postal Code
 Country
 
 
-Addresses can be accessed by the <span class='badge inventree nav main'><span class='fas fa-map-marked'></span> Addresses</span> navigation tab.
+Addresses can be accessed by the <span class='badge inventree nav main'>{{ icon("map-2") }} Addresses</span> navigation tab.
 
 #### Primary Address
 

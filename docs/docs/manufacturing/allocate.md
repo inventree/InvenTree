@@ -52,7 +52,7 @@ Navigate to the *Allocate Stock* tab to view the stock allocation table:
 
 In this example, there are two BOM line items which have been partially allocated to the build. Each line has a progress bar indicating how much of the required stock has been allocated.
 
-In each row, pressing the <span class='fas fa-plus'></span> icon expands the row, showing a list of stock items which have been allocated against this build.
+Clicking on a particular row expands the row, showing a list of stock items which have been allocated against this build.
 
 !!! info "Multiple Allocations"
     Note that multiple stock items can be allocated to the given BOM line, if a single stock item does not have sufficient stock

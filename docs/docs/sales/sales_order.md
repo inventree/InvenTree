@@ -67,7 +67,7 @@ The currency code can be specified for an individual sales order. If not specifi
 
 ## Create a Sales Order
 
-Once the sales order page is loaded, click on <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Sales Order</span> which opens the "Create Sales Order" form.
+Once the sales order page is loaded, click on <span class="badge inventree add">{{ icon("plus-circle") }} New Sales Order</span> which opens the "Create Sales Order" form.
 
 A Sales Order is linked to a specific customer, select one in the list of existing customers.
 
@@ -82,7 +82,7 @@ Each Sales Order is uniquely identified by its *Reference* field. Read more abou
 
 ### Add Line Items
 
-On the sales order detail page, user can link parts to the sales order selecting the <span class="badge inventree nav side"><span class='fas fa-list-ol'></span> Line Items</span> tab then clicking on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> Add Line Item</span> button.
+On the sales order detail page, user can link parts to the sales order selecting the <span class="badge inventree nav side">{{ icon("list") }}</span> Line Items</span> tab then clicking on the <span class="badge inventree add">{{ icon("plus-circle") }} Add Line Item</span> button.
 
 Once the "Add Line Item" form opens, select a part in the list.
 
@@ -97,8 +97,8 @@ After all line items were added to the sales order, user needs to create one or 
 
 In order to create a new shipment:
 
-1. Click on the <span class="badge inventree nav side"><span class='fas fa-truck-loading'></span> Pending Shipments</span> tab
-2. Click on <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Shipment</span> button, fill out the form with the shipment number (tracking number can be added but is optional) then click on <span class="badge inventree confirm">Submit</span>
+1. Click on the <span class="badge inventree nav side">{{ icon("truck-loading") }} Pending Shipments</span> tab
+2. Click on <span class="badge inventree add">{{ icon("plus-circle") }} New Shipment</span> button, fill out the form with the shipment number (tracking number can be added but is optional) then click on <span class="badge inventree confirm">Submit</span>
 
 Repeat the two steps above to create more shipments.
 
@@ -106,26 +106,26 @@ Repeat the two steps above to create more shipments.
 
 After shipments were created, user can either:
 
-* allocate stock items for that part to the sales order (click on <span class='fas fa-sign-in-alt'></span> button)
-* or create a build order for that part to cover the quantity of the sales order (click on <span class='fas fa-tools'></span> button)
+* Allocate stock items for that part to the sales order (click on {{ icon("arrow-right") }} button)
+* Create a build order for that part to cover the quantity of the sales order (click on {{ icon("tools") }} button)
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
 
 ### Complete Shipment
 
-To complete a shipment, click on the <span class="badge inventree nav side"><span class='fas fa-truck-loading'></span> Pending Shipments</span> tab then click on <span class='fas fa-truck'></span> button shown in the shipment table.
+To complete a shipment, click on the <span class="badge inventree nav side">{{ icon("truck-loading") }} Pending Shipments</span> tab then click on {{ icon("truck-delivery") }} button shown in the shipment table.
 
 Fill out the "Complete Shipment" form then click on <span class="badge inventree confirm">Submit</span>.
 
-To view all the completed shipment, click on the <span class="badge inventree nav side"><span class='fas fa-truck'></span> Completed Shipments</span> tab. In the completed shipments table, click on the <span class='fas fa-plus'></span> icon next to each shipment reference to see the items and quantities which were shipped.
+To view all the completed shipment, click on the <span class="badge inventree nav side">{{ icon("truck-delivery") }} Completed Shipments</span> tab. In the completed shipments table, click on each shipment to view the shipment details.
 
 ## Complete Order
 
-Once all items in the sales order have been shipped, click on <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> to mark the sales order as shipped. Confirm then click on <span class="badge inventree confirm">Submit</span> to complete the order.
+Once all items in the sales order have been shipped, click on <span class="badge inventree add">{{ icon("circle-check", color="green") }} Complete Order</span> to mark the sales order as shipped. Confirm then click on <span class="badge inventree confirm">Submit</span> to complete the order.
 
 ## Cancel Order
 
-To cancel the order, click on the <span class='fas fa-tools'></span> menu button next to the <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> button, then click on the "<span class='fas fa-tools'></span> Cancel Order" menu option. Confirm then click on the <span class="badge inventree confirm">Submit</span> to cancel the order.
+To cancel the order, click on the {{ icon("tools") }} menu button next to the <span class="badge inventree add">{{ icon("circle-check", color="green") }} Complete Order</span> button, then click on the "{{ icon("tools") }} Cancel Order" menu option. Confirm then click on the <span class="badge inventree confirm">Submit</span> to cancel the order.
 
 ## Order Scheduling
 
@@ -145,7 +145,7 @@ If the *Target Date* of the sales order has passed, the order will be marked as 
 
 ## Calendar view
 
-Using the button to the top right of the list of Sales Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
+Using the button to the top right of the list of Sales Orders, the view can be switched to a calendar view using the button {{ icon("calendar") }}. This view shows orders with a defined target date only.
 
 This view can be accessed externally as an ICS calendar using a URL like the following:
 `http://inventree.example.org/api/order/calendar/sales-order/calendar.ics`

@@ -238,7 +238,7 @@ When creating a new build order, you have the option to automatically generate b
 
 ## Complete Build Order
 
-To complete a build, click on <span class='fas fa-tools'></span> icon on the build detail page, the `Complete Build` form will be displayed.
+To complete a build, click on {{ icon("tools") }} icon on the build detail page, the `Complete Build` form will be displayed.
 
 The form will validate the build order is ready to be completed, and will prevent you from continuing if any of the below conditions are present unless you select one of the presented options to override the validation and accept completion of the build anyway.
 
@@ -266,7 +266,7 @@ Finally, click on the "Complete Build" button to process the build completion.
 
 ## Cancel Build Order
 
-To cancel a build, click on <span class='fas fa-times-circle'></span> icon on the build detail page.
+To cancel a build, click on {{ icon("circle-x", color="red") }} icon on the build detail page.
 
 The `Cancel Build` form will be displayed, click on the confirmation switch then click on the "Cancel Build" button to process the build cancellation.
 

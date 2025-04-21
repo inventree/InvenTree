@@ -170,7 +170,7 @@ In this section of the settings, staff users can set a list of parameters associ
 To add a parameter to a part category:
 
 1. select the category in the dropdown list
-2. click the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Parameter</span> button on the top right
+2. click the <span class="badge inventree add">{{ icon("plus-circle") }} New Parameter</span> button on the top right
 3. fill out the "Create Category Parameter Template" form
 4. click the <span class="badge inventree confirm">Submit</span> button.
 

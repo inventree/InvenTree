@@ -13,11 +13,11 @@ class MyNavigationPlugin(NavigationMixin, InvenTreePlugin):
     NAME = "NavigationPlugin"
 
     NAVIGATION = [
-        {'name': 'SampleIntegration', 'link': 'plugin:sample:hi', 'icon': 'fas fa-box'},
+        {'name': 'SampleIntegration', 'link': 'plugin:sample:hi', 'icon': 'ti ti-box'},
     ]
 
     NAVIGATION_TAB_NAME = "Sample Nav"
-    NAVIGATION_TAB_ICON = 'fas fa-plus'
+    NAVIGATION_TAB_ICON = 'ti ti-plus-circle'
 ```
 
 The optional class constants `NAVIGATION_TAB_NAME` and `NAVIGATION_TAB_ICON` can be used to change the name and icon for the parent navigation node.

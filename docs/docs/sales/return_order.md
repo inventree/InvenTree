@@ -91,7 +91,7 @@ Return Order Status supports [custom states](../concepts/custom_states.md).
 
 ## Create a Return Order
 
-From the Return Order index, click on <span class='badge inventree add'><span class='fas fa-plus-circle'></span> New Return Order</span> which opens the "Create Return Order" form.
+From the Return Order index, click on <span class='badge inventree add'>{{ icon("plus-circle") }} New Return Order</span> which opens the "Create Return Order" form.
 
 A Return Order is linked to a specific customer, which can be selected from the list of existing customers
 
@@ -124,7 +124,7 @@ Here the details of the return order are available, and specific actions can be 
 
 ### Edit Return Order
 
-The Return Order can be edit by selecting the <span class='fas fa-edit'></span> icon under the <span class='fas fa-tools'></span> actions menu.
+The Return Order can be edit by selecting the {{ icon("edit", color="blue", title="Edit") }} icon under the {{ icon("tools") }} actions menu.
 
 ### Line Items
 
@@ -159,7 +159,7 @@ If the *Target Date* of a return order has passed, the order will be marked as *
 
 ## Calendar view
 
-Using the button to the top right of the list of Return Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
+Using the button to the top right of the list of Return Orders, the view can be switched to a calendar view using the button {{ icon("calendar") }}. This view shows orders with a defined target date only.
 
 This view can be accessed externally as an ICS calendar using a URL like the following:
 `http://inventree.example.org/api/order/calendar/return-order/calendar.ics`
