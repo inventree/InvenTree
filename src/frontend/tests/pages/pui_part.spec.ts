@@ -121,7 +121,10 @@ test('Part - Editing', async ({ browser }) => {
   // Open part edit dialog
   await page.keyboard.press('Control+E');
 
-  await page.getByLabel('text-field-keywords').fill('table furniture');
+  const keywords = await page.getByLabel('text-field-keywords').inputValue();
+  await page
+    .getByLabel('text-field-keywords')
+    .fill(keywords ? '' : 'table furniture');
 
   // Test URL validation
   await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
