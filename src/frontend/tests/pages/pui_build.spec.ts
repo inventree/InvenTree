@@ -6,7 +6,8 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  submitForm
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -133,7 +134,7 @@ test('Build Order - Edit', async ({ browser }) => {
   await page.getByLabel('date-field-start_date').fill('2026-09-09');
 
   // Submit the form
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
 
   // Expect error
   await page.getByText('Errors exist for one or more form fields').waitFor();
@@ -178,7 +179,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByLabel('text-field-batch_code').fill('BATCH12345');
   await page.getByLabel('related-field-location').click();
   await page.getByText('Reel Storage').click();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
 
   // Should be an error as the number of serial numbers doesn't match the quantity
   await page.getByText('Errors exist for one or more').waitFor();
@@ -187,7 +188,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   // Fix the quantity
   await page.getByLabel('number-field-quantity').fill('2');
   await page.waitForTimeout(250);
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
 
   // Check that new serial numbers have been created
   await page
@@ -204,7 +205,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   const row = await getRowFromCell(cell);
   await row.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Cancel' }).click();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page.getByText('Build outputs have been cancelled').waitFor();
 
   // Complete the other output
@@ -215,7 +216,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByLabel('related-field-location').click();
   await page.getByText('Mechanical Lab').click();
   await page.waitForTimeout(250);
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page.getByText('Build outputs have been completed').waitFor();
 });
 
@@ -365,7 +366,7 @@ test('Build Order - Duplicate', async ({ browser }) => {
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page.getByRole('tab', { name: 'Build Details' }).waitFor();
   await page.getByRole('tab', { name: 'Build Details' }).click();
 

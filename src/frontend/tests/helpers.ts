@@ -1,6 +1,15 @@
 import { baseUrl } from './defaults';
 
 /**
+ * Helper function to submit a form dialog.
+ * Includes a small delay to allow the form values to be debounced
+ */
+export const submitForm = async (page) => {
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+};
+
+/**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
  */

@@ -4,7 +4,8 @@ import {
   clearTableFilters,
   globalSearch,
   loadTab,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  submitForm
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -82,7 +83,7 @@ test('Sales Orders - Basic Tests', async ({ browser }) => {
   await page.getByText('Selling stuff').first().waitFor();
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).click();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
 
   // Order should now be "in progress"
   await page.getByText('In Progress').first().waitFor();
@@ -96,7 +97,7 @@ test('Sales Orders - Basic Tests', async ({ browser }) => {
 
   // Mark the order as "on hold" again
   await page.getByLabel('action-menu-order-actions-hold').click();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
 
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
@@ -119,7 +120,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByLabel('action-button-add-shipment').click();
   await page.getByLabel('text-field-tracking_number').fill('1234567890');
   await page.getByLabel('text-field-invoice_number').fill('9876543210');
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
 
   // Expected field error
   await page
@@ -152,7 +153,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   // Change the tracking number
   await page.getByLabel('text-field-tracking_number').fill(tracking_number);
   await page.waitForTimeout(250);
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
 
   // Click through to a particular shipment
   await page.getByLabel('row-action-menu-0').click();
@@ -216,7 +217,7 @@ test('Sales Orders - Duplicate', async ({ browser }) => {
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page.getByRole('tab', { name: 'Order Details' }).waitFor();
   await page.getByRole('tab', { name: 'Order Details' }).click();
 

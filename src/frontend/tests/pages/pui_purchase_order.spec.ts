@@ -9,7 +9,8 @@ import {
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  submitForm
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -180,7 +181,7 @@ test('Purchase Orders - General', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
 
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });
 
@@ -289,7 +290,7 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
   await page.getByLabel('action-button-add-to-selected').click();
   await page.getByLabel('number-field-quantity').fill('100');
   await page.waitForTimeout(250);
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page
     .getByText('All selected parts added to a purchase order')
     .waitFor();
@@ -357,7 +358,7 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   // Short timeout to allow for debouncing
   await page.waitForTimeout(200);
 
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page.getByText('Items received').waitFor();
 
   await loadTab(page, 'Received Stock');
@@ -380,7 +381,7 @@ test('Purchase Orders - Duplicate', async ({ browser }) => {
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await submitForm(page);
   await page.getByRole('tab', { name: 'Order Details' }).waitFor();
   await page.getByRole('tab', { name: 'Order Details' }).click();
 

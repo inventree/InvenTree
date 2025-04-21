@@ -3,7 +3,8 @@ import {
   clearTableFilters,
   getRowFromCell,
   loadTab,
-  navigate
+  navigate,
+  submitForm
 } from '../helpers';
 import { doCachedLogin } from '../login';
 
@@ -111,6 +112,27 @@ test('Parts - BOM', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Add Substitute' }).waitFor();
   await page.getByRole('button', { name: 'Close' }).click();
+});
+
+test('Part - Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/details' });
+
+  await page.getByText('A square table - with blue paint').first().waitFor();
+
+  // Open part edit dialog
+  await page.keyboard.press('Control+E');
+
+  await page.getByLabel('text-field-keywords').fill('table furniture');
+
+  // Test URL validation
+  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await submitForm(page);
+  await page.getByText('Enter a valid URL.').waitFor();
+
+  // Fill with an empty URL
+  await page.getByLabel('text-field-link').fill('');
+  await submitForm(page);
+  await page.getByText('Item Updated').waitFor();
 });
 
 test('Parts - Locking', async ({ browser }) => {
