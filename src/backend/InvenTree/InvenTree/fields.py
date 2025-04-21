@@ -38,7 +38,7 @@ class InvenTreeRestURLField(RestURLField):
 
         if not strict_urls and data is not empty and data is not None:
             data = str(data).strip()
-            if '://' not in data:
+            if data and '://' not in data:
                 # Validate as if there were a schema provided
                 data = 'http://' + data
 
