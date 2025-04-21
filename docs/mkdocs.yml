@@ -78,6 +78,7 @@ nav:
     - Release Notes: releases/release_notes.md
     - Core Concepts:
       - Terminology: concepts/terminology.md
+      - Threat Model: concepts/threat_model.md
       - Physical Units: concepts/units.md
       - Companies: concepts/company.md
       - Custom States: concepts/custom_states.md
@@ -119,10 +120,9 @@ nav:
       - Examples: api/python/examples.md
     - Project Details:
       - Governance: project/governance.md
-      - Project Security: project/security.md
+      - Project Security: security.md
       - Resources: project/resources.md
       - Privacy: project/privacy.md
-      - Threat Model: project/threat_model.md
   - Install:
     - Introduction: start/index.md
     - Processes: start/processes.md
