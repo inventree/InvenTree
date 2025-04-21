@@ -7,6 +7,8 @@ INVENTREE_API_VERSION = 339
 
 
 INVENTREE_API_TEXT = """
+v340 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9547
+    - Require pagination limit on list queries
 
 v339 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9283
     - Remove need for source in /plugins/ui/features
