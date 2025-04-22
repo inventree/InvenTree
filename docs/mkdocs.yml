@@ -233,6 +233,21 @@ nav:
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
+    - Builtin Plugins:
+      - Builtin Plugins: plugins/builtin/index.md
+      - Auto Issue: plugins/builtin/auto_issue.md
+      - BOM Exporter: plugins/builtin/bom_exporter.md
+      - Currency Exchange: plugins/builtin/currency_exchange.md
+      - DigiKey: plugins/builtin/digikey.md
+      - InvenTree Barcode: plugins/builtin/inventree_barcode.md
+      - InvenTree Exporter: plugins/builtin/inventree_exporter.md
+      - Label Printer: plugins/builtin/inventree_label.md
+      - Label Machine: plugins/builtin/inventree_label_machine.md
+      - Label Sheet: plugins/builtin/inventree_label_sheet.md
+      - LCSC: plugins/builtin/lcsc.md
+      - Mouser: plugins/builtin/mouser.md
+      - Notification: plugins/builtin/notification.md
+      - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
     - Third-Party: plugins/integrate.md
 
 # Plugins
