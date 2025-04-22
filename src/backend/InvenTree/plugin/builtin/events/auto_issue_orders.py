@@ -12,15 +12,11 @@ logger = structlog.get_logger('inventree')
 
 
 class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
-    """Plugin to automatically issue orders on the assigned target date.
+    """Plugin to automatically issue orders on the assigned target date."""
 
-    This plugin will automatically issue orders on the assigned target date.
-    """
-
-    NAME = 'AutoIssueOrders'
+    NAME = _('Auto Issue Orders')
     SLUG = 'autoiissueorders'
     AUTHOR = _('InvenTree contributors')
-    TITLE = _('Auto Issue Orders')
     DESCRIPTION = _('Automatically issue orders on the assigned target date')
     VERSION = '1.0.0'
 
@@ -35,6 +31,7 @@ class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
             'description': _(
                 'Automatically issue build orders on the assigned target date'
             ),
+            'validator': bool,
             'default': True,
         },
         'AUTO_ISSUE_PURCHASE_ORDERS': {
@@ -42,6 +39,7 @@ class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
             'description': _(
                 'Automatically issue purchase orders on the assigned target date'
             ),
+            'validator': bool,
             'default': True,
         },
         'AUTO_ISSUE_SALES_ORDERS': {
@@ -49,6 +47,7 @@ class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
             'description': _(
                 'Automatically issue sales orders on the assigned target date'
             ),
+            'validator': bool,
             'default': True,
         },
         'AUTO_ISSUE_RETURN_ORDERS': {
@@ -56,11 +55,13 @@ class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
             'description': _(
                 'Automatically issue return orders on the assigned target date'
             ),
+            'validator': bool,
             'default': True,
         },
         'ISSUE_BACKDATED_ORDERS': {
             'name': _('Issue Backdated Orders'),
             'description': _('Automatically issue orders that are backdated'),
+            'validator': bool,
             'default': False,
         },
     }
