@@ -1095,6 +1095,7 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
+    SITE_URL = str(SITE_URL).strip().rstrip('/')
     logger.info('Using Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
