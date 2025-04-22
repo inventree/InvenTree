@@ -17,16 +17,22 @@ The API is self-documenting, and the documentation is provided alongside any Inv
 {% include 'img.html' %}
 {% endwith %}
 
+### Browseble API
+
+If [debug mode](../start/index.md#debug-mode) is enabled, the API can be browsed directly from the web interface. This provides a simple way to explore the API and test out different endpoints. Simply navigate your web browser to any API endpoint, and the API will be displayed in a human-readable format.
+
 ### Schema Description
-    The API schema is also documented in the [API Schema](./schema.md) page.
+
+The API schema is also documented in the [API Schema](./schema.md) page.
 
 ### Generating Schema File
 
-If you want to generate the API schema file yourself (for example to use with an external client, use the `invoke dev.schema` command. Run with the `-help` command to see available options.
+If you want to generate the API schema file yourself. For example, to use with an external client, use the `invoke dev.schema` command. Run with the `-help` command to see available options.
 
 ```
 invoke dev.schema -help
 ```
+
 
 ## Authentication
 
