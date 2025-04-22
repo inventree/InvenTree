@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Stack, Table } from '@mantine/core';
+import { Alert, List, Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -376,6 +376,16 @@ export function useScrapBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
     method: 'POST',
     title: t`Scrap Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Scrap Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>
+            {t`Selected build outputs will be completed, but marked as scrapped`}
+          </List.Item>
+          <List.Item>{t`Allocated stock items will be consumed`}</List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been scrapped`,
@@ -422,6 +432,16 @@ export function useCancelBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
     method: 'POST',
     title: t`Cancel Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Cancel Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>{t`Selected build outputs will be removed`}</List.Item>
+          <List.Item>
+            {t`Allocated stock items will be returned to stock`}
+          </List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been cancelled`,

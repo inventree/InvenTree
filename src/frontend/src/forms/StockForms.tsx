@@ -1,5 +1,14 @@
 import { t } from '@lingui/core/macro';
-import { Flex, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
+import {
+  Alert,
+  Flex,
+  Group,
+  List,
+  Skeleton,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
@@ -1021,6 +1030,7 @@ function stockOperationModal({
   endpoint,
   filters,
   title,
+  preFormContent,
   successMessage,
   modalFunc = useCreateApiFormModal
 }: {
@@ -1032,6 +1042,7 @@ function stockOperationModal({
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
   endpoint: ApiEndpoints;
   title: string;
+  preFormContent?: JSX.Element;
   successMessage?: string;
   modalFunc?: apiModalFunc;
 }) {
@@ -1083,6 +1094,7 @@ function stockOperationModal({
   return modalFunc({
     url: endpoint,
     fields: fields,
+    preFormContent: preFormContent,
     title: title,
     size: '80%',
     successMessage: successMessage,
@@ -1154,7 +1166,16 @@ export function useMergeStockItem(props: StockOperationProps) {
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
     title: t`Merge Stock`,
-    successMessage: t`Stock merged`
+    successMessage: t`Stock merged`,
+    preFormContent: (
+      <Alert title={t`Merge Stock Items`} color='yellow'>
+        <List>
+          <List.Item>{t`Merge operation cannot be reversed`}</List.Item>
+          <List.Item>{t`Tracking information may be lost when merging items`}</List.Item>
+          <List.Item>{t`Supplier information may be lost when merging items`}</List.Item>
+        </List>
+      </Alert>
+    )
   });
 }
 

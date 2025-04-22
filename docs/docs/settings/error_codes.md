@@ -69,7 +69,7 @@ See [INVE-W1](#inve-w1)
 
 InvenTree is running in debug mode. This is **not** recommended for production use, as it exposes sensitive information and makes the server more vulnerable to attacks. Debug mode is not intended for production/exposed instances, **even for short duration**.
 
-It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/intro.md#debug-mode).
+It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/index.md#debug-mode).
 
 #### INVE-W5
 **Background worker process not running - Backend**

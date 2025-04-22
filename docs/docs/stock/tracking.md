@@ -45,7 +45,7 @@ The following context variables are available by default when generating a batch
 
 #### Plugin Support
 
-To implement custom batch code functionality, refer to the details on the [Validation Plugin Mixin](../extend/plugins/validation.md#batch-codes).
+To implement custom batch code functionality, refer to the details on the [Validation Plugin Mixin](../plugins/mixins/validation.md#batch-codes).
 
 ### Serial Numbers
 
@@ -53,7 +53,7 @@ A serial "number" is used to uniquely identify a single, unique stock item. Note
 
 #### Uniqueness Requirements
 
-By default, serial numbers must be unique across any given [Part](../part/part.md) instance (including any variants of that part).
+By default, serial numbers must be unique across any given [Part](../part/index.md) instance (including any variants of that part).
 
 However, it is also possible to specify that serial numbers must be globally unique across all types of parts. This is configurable in the settings display (see below):
 
@@ -146,7 +146,7 @@ If a provided serial number (or group of numbers) is not considered valid, an er
 
 #### Plugin Support
 
-Custom serial number functionality, with any arbitrary requirements or level of complexity, can be implemented using the [Validation Plugin Mixin class](../extend/plugins/validation.md#serial-numbers). Refer to the documentation for this plugin for technical details.
+Custom serial number functionality, with any arbitrary requirements or level of complexity, can be implemented using the [Validation Plugin Mixin class](../plugins/mixins/validation.md#serial-numbers). Refer to the documentation for this plugin for technical details.
 
 A custom plugin allows the user to determine how a "valid" serial number is defined, and (crucially) how any given serial number value is incremented to provide the next value in the sequence.
 

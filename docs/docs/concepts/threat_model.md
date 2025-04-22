@@ -1,7 +1,12 @@
+---
+title: Threat Model
+---
+
+## Thread Model
 
 Deploying InvenTree to production requires to knowledge of the security assumptions and threat model of the underlying system. This document outlines the security assumptions and threat model of InvenTree as a software. It is assumed that the system that InvenTree is deployed on top of is configured following best practices and is trusted.
 
-## Assumed trust
+## Assumed Trust
 
 1. The InvenTree server is only available to trusted networks and there are detection mechanisms in place to detect unauthorised access.
 
@@ -21,7 +26,7 @@ Deploying InvenTree to production requires to knowledge of the security assumpti
     4. Plugins can access the inventree database and all data in the database
     5. Plugins can access all environment variables that are accessible to the server and worker processes
 
-## Possible attack vectors
+## Possible Attack Vectors
 
 1. Malicious plugins or templates can overwrite or delete files on the server, bypass security checks, or leak sensitive information.
 2. Token phishing attacks can be used to impersonate users. Tokens are not scoped to specific IPs or devices. Limit their usage and use lowest possible user permissions.
@@ -31,4 +36,4 @@ There are various checks to gate against common attack vectors but above vectors
 
 ## Secure Development Cycle
 
-The InvenTree project is developed following best practices. Read more in the [project security guide](../project/security.md).
+The InvenTree project is developed following best practices. Read more in the [project security guide](../security.md).

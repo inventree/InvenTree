@@ -91,7 +91,7 @@ Configuration of barcode functionality:
 {{ globalsetting("BARCODE_STORE_RESULTS") }}
 {{ globalsetting("BARCODE_RESULTS_MAX_NUM") }}
 
-Read more about [barcode scanning](../barcodes/barcodes.md).
+Read more about [barcode scanning](../barcodes/index.md).
 
 ### Pricing and Currency
 
@@ -157,6 +157,7 @@ Configuration of report generation:
 {{ globalsetting("PART_COPY_TESTS") }}
 {{ globalsetting("PART_CATEGORY_PARAMETERS") }}
 {{ globalsetting("PART_CATEGORY_DEFAULT_ICON") }}
+{{ globalsetting("PART_PARAMETER_ENFORCE_UNITS") }}
 
 #### Part Parameter Templates
 
@@ -169,7 +170,7 @@ In this section of the settings, staff users can set a list of parameters associ
 To add a parameter to a part category:
 
 1. select the category in the dropdown list
-2. click the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Parameter</span> button on the top right
+2. click the <span class="badge inventree add">{{ icon("plus-circle") }} New Parameter</span> button on the top right
 3. fill out the "Create Category Parameter Template" form
 4. click the <span class="badge inventree confirm">Submit</span> button.
 
@@ -199,19 +200,19 @@ Configuration of stock item options
 
 ### Build Orders
 
-Refer to the [build order settings](../build/build.md#build-order-settings).
+Refer to the [build order settings](../manufacturing/build.md#build-order-settings).
 
 ### Purchase Orders
 
-Refer to the [purchase order settings](../order/purchase_order.md#purchase-order-settings).
+Refer to the [purchase order settings](../purchasing/purchase_order.md#purchase-order-settings).
 
 ### Sales Orders
 
-Refer to the [sales order settings](../order/sales_order.md#sales-order-settings).
+Refer to the [sales order settings](../sales/sales_order.md#sales-order-settings).
 
 ### Return Orders
 
-Refer to the [return order settings](../order/return_order.md#return-order-settings).
+Refer to the [return order settings](../sales/return_order.md#return-order-settings).
 
 ### Plugin Settings
 
