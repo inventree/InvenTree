@@ -246,7 +246,7 @@ nav:
       - Label Sheet: plugins/builtin/inventree_label_sheet.md
       - LCSC: plugins/builtin/lcsc.md
       - Mouser: plugins/builtin/mouser.md
-      - Notification: plugins/builtin/notification.md
+      - Notification: plugins/builtin/notifications.md
       - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
     - Third-Party: plugins/integrate.md
 
