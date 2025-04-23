@@ -6,101 +6,28 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
-import { useUserState } from '../../states/UserState';
+import { useLocalState } from '../../states/LocalState';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { type DashboardWidgetProps } from './DashboardWidget';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
-/**
- * Save the dashboard layout to local storage
- */
-function saveDashboardLayout(layouts: any, userId: number | undefined): void {
-  const reducedLayouts: any = {};
-
-  // Reduce the layouts to exclude default attributes from the dataset
-  Object.keys(layouts).forEach((key) => {
-    reducedLayouts[key] = layouts[key].map((item: Layout) => {
-      return {
-        ...item,
-        moved: item.moved ? true : undefined,
-        static: item.static ? true : undefined
-      };
-    });
-  });
-
-  const data = JSON.stringify(reducedLayouts);
-
-  if (userId) {
-    localStorage?.setItem(`dashboard-layout-${userId}`, data);
-  }
-
-  localStorage?.setItem('dashboard-layout', data);
-}
-
-/**
- * Load the dashboard layout from local storage
- */
-function loadDashboardLayout(
-  userId: number | undefined
-): Record<string, Layout[]> {
-  let layout = userId && localStorage?.getItem(`dashboard-layout-${userId}`);
-
-  if (!layout) {
-    // Fallback to global layout
-    layout = localStorage?.getItem('dashboard-layout');
-  }
-
-  if (layout) {
-    return JSON.parse(layout);
-  } else {
-    return {};
-  }
-}
-
-/**
- * Save the list of selected widgets to local storage
- */
-function saveDashboardWidgets(
-  widgets: string[],
-  userId: number | undefined
-): void {
-  const data = JSON.stringify(widgets);
-
-  if (userId) {
-    localStorage?.setItem(`dashboard-widgets-${userId}`, data);
-  }
-
-  localStorage?.setItem('dashboard-widgets', data);
-}
-
-/**
- * Load the list of selected widgets from local storage
- */
-function loadDashboardWidgets(userId: number | undefined): string[] {
-  let widgets = userId && localStorage?.getItem(`dashboard-widgets-${userId}`);
-
-  if (!widgets) {
-    // Fallback to global widget list
-    widgets = localStorage?.getItem('dashboard-widgets');
-  }
-
-  if (widgets) {
-    return JSON.parse(widgets);
-  } else {
-    return [];
-  }
-}
-
 export default function DashboardLayout() {
-  const user = useUserState();
-
   // Dashboard layout definition
   const [layouts, setLayouts] = useState({});
 
   // Dashboard widget selection
   const [widgets, setWidgets] = useState<DashboardWidgetProps[]>([]);
+
+  // Dashboard widget / layout selection
+  const [remoteWidgets, setRemoteWidgets, remoteLayouts, setRemoteLayouts] =
+    useLocalState((state) => [
+      state.widgets,
+      state.setWidgets,
+      state.layouts,
+      state.setLayouts
+    ]);
 
   const [editing, setEditing] = useDisclosure(false);
   const [removing, setRemoving] = useDisclosure(false);
@@ -132,7 +59,7 @@ export default function DashboardLayout() {
   // Save the selected widgets to local storage when the selection changes
   useEffect(() => {
     if (loaded) {
-      saveDashboardWidgets(widgetLabels, user.userId());
+      setRemoteWidgets(widgetLabels);
     }
   }, [widgetLabels]);
 
@@ -232,7 +159,18 @@ export default function DashboardLayout() {
       });
 
       if (layouts && loaded && availableWidgets.loaded) {
-        saveDashboardLayout(newLayouts, user.userId());
+        const reducedLayouts: any = {};
+        // Reduce the layouts to exclude default attributes from the dataset
+        Object.keys(newLayouts).forEach((key) => {
+          reducedLayouts[key] = newLayouts[key].map((item: Layout) => {
+            return {
+              ...item,
+              moved: item.moved ? true : undefined,
+              static: item.static ? true : undefined
+            };
+          });
+        });
+        setRemoteLayouts(reducedLayouts);
         setLayouts(newLayouts);
       }
     },
@@ -242,13 +180,10 @@ export default function DashboardLayout() {
   // Load the dashboard layout from local storage
   useEffect(() => {
     if (availableWidgets.loaded) {
-      const initialLayouts = loadDashboardLayout(user.userId());
-      const initialWidgetLabels = loadDashboardWidgets(user.userId());
-
-      setLayouts(initialLayouts);
+      setLayouts(remoteLayouts);
       setWidgets(
         availableWidgets.items.filter((widget) =>
-          initialWidgetLabels.includes(widget.label)
+          remoteWidgets.includes(widget.label)
         )
       );
 

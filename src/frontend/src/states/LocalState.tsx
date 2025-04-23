@@ -28,6 +28,10 @@ interface LocalStateProps {
     }[],
     noPatch?: boolean
   ) => void;
+  widgets: string[];
+  setWidgets: (widgets: string[], noPatch?: boolean) => void;
+  layouts: any;
+  setLayouts: (layouts: any, noPatch?: boolean) => void;
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
@@ -104,6 +108,34 @@ export const useLocalState = create<LocalStateProps>()(
         set({ userTheme: newTheme });
         if (!noPatch) patchUser('theme', newTheme);
       },
+      widgets: [],
+      setWidgets: (newWidgets, noPatch = false) => {
+        // check for difference
+        const currentWidgets = get().widgets;
+        if (JSON.stringify(newWidgets) === JSON.stringify(currentWidgets)) {
+          console.log('no change in widgets');
+          return;
+        }
+
+        console.log('setWidgets', newWidgets, noPatch, currentWidgets);
+        set({ widgets: newWidgets });
+        if (!noPatch)
+          patchUser('widgets', { widgets: newWidgets, layouts: get().layouts });
+      },
+      layouts: {},
+      setLayouts: (newLayouts, noPatch) => {
+        // check for difference
+        const currentLayouts = get().layouts;
+        if (JSON.stringify(newLayouts) === JSON.stringify(currentLayouts)) {
+          console.log('no change in layouts');
+          return;
+        }
+
+        console.log('setLayouts', newLayouts, noPatch, currentLayouts);
+        set({ layouts: newLayouts });
+        if (!noPatch)
+          patchUser('widgets', { widgets: get().widgets, layouts: newLayouts });
+      },
       // panels
       lastUsedPanels: {},
       setLastUsedPanel: (panelKey) => (value) => {
@@ -171,7 +203,7 @@ export const useLocalState = create<LocalStateProps>()(
 /*
 pushes changes in user profile to backend
 */
-function patchUser(key: 'language' | 'theme', val: any) {
+function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
   const uid = useUserState.getState().userId();
   if (uid) {
     api.patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });
