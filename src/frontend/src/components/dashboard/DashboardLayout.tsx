@@ -16,11 +16,10 @@ const ReactGridLayout = WidthProvider(Responsive);
 export default function DashboardLayout() {
   // Dashboard layout definition
   const [layouts, setLayouts] = useState({});
-
   // Dashboard widget selection
   const [widgets, setWidgets] = useState<DashboardWidgetProps[]>([]);
 
-  // Dashboard widget / layout selection
+  // local/remote storage values for widget / layout
   const [remoteWidgets, setRemoteWidgets, remoteLayouts, setRemoteLayouts] =
     useLocalState((state) => [
       state.widgets,
