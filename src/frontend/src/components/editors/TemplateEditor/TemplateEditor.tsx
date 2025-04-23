@@ -85,8 +85,8 @@ export type TemplateEditorProps = {
 
 export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const { templateUrl, editors, previewAreas, template } = props;
-  const editorRef = useRef<EditorRef>(undefined);
-  const previewRef = useRef<PreviewAreaRef>(undefined);
+  const editorRef = useRef<EditorRef>();
+  const previewRef = useRef<PreviewAreaRef>();
 
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
 
