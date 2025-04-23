@@ -14,9 +14,11 @@ This plugin is a *mandatory* plugin, and is always enabled.
 
 ### Plugin Settings
 
-*This plugin has no configurable settings.*
+This plugin has no configurable settings.
 
 ## Usage
+
+This plugin is used in the same way as the [InvenTree Exporter Plugin](./inventree_exporter.md), but provides a custom export format for BOM data.
 
 When exporting BOM data, the *BOM Exporter* plugin is available for selection in the export dialog. When selected, the plugin provides some additional export options to control the data export process.
 
