@@ -40,7 +40,7 @@ invoke update
 invoke dev.setup-dev --tests
 ```
 
-Read the [InvenTree setup documentation](../start/intro.md) for a complete installation reference guide.
+Read the [InvenTree setup documentation](../start/index.md) for a complete installation reference guide.
 
 !!! note "Required Packages"
     Depending on your system, you may need to install additional software packages as required.
