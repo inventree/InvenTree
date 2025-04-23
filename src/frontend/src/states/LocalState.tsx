@@ -111,13 +111,10 @@ export const useLocalState = create<LocalStateProps>()(
       widgets: [],
       setWidgets: (newWidgets, noPatch = false) => {
         // check for difference
-        const currentWidgets = get().widgets;
-        if (JSON.stringify(newWidgets) === JSON.stringify(currentWidgets)) {
-          console.log('no change in widgets');
+        if (JSON.stringify(newWidgets) === JSON.stringify(get().widgets)) {
           return;
         }
 
-        console.log('setWidgets', newWidgets, noPatch, currentWidgets);
         set({ widgets: newWidgets });
         if (!noPatch)
           patchUser('widgets', { widgets: newWidgets, layouts: get().layouts });
@@ -125,13 +122,10 @@ export const useLocalState = create<LocalStateProps>()(
       layouts: {},
       setLayouts: (newLayouts, noPatch) => {
         // check for difference
-        const currentLayouts = get().layouts;
-        if (JSON.stringify(newLayouts) === JSON.stringify(currentLayouts)) {
-          console.log('no change in layouts');
+        if (JSON.stringify(newLayouts) === JSON.stringify(get().layouts)) {
           return;
         }
 
-        console.log('setLayouts', newLayouts, noPatch, currentLayouts);
         set({ layouts: newLayouts });
         if (!noPatch)
           patchUser('widgets', { widgets: get().widgets, layouts: newLayouts });
