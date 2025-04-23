@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 340
+INVENTREE_API_VERSION = 341
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v340 -> 2025-04-18 : https://github.com/inventree/InvenTree/pull/9532
+v341 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9532
     - Adds "merge" field to the ReportTemplate model
+
+v340 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9546
+    - Add nullable to various fields to make them not required
 
 v339 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9283
     - Remove need for source in /plugins/ui/features

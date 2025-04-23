@@ -159,7 +159,7 @@ export default function PartDetail() {
       data.latest_serial_number = serials.latest;
     }
 
-    // Construct the details tables
+    // Top left - core part information
     const tl: DetailsField[] = [
       {
         type: 'string',
@@ -246,6 +246,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Top right - stock availability information
     const tr: DetailsField[] = [
       {
         type: 'string',
@@ -327,6 +328,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Bottom left - part attributes
     const bl: DetailsField[] = [
       {
         type: 'boolean',
@@ -389,6 +391,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Bottom right - other part information
     const br: DetailsField[] = [
       {
         type: 'string',
@@ -416,6 +419,16 @@ export default function PartDetail() {
         label: t`Default Supplier`,
         model: ModelType.supplierpart,
         hidden: !part.default_supplier
+      },
+      {
+        name: 'default_expiry',
+        label: t`Default Expiry`,
+        hidden: !part.default_expiry,
+        icon: 'calendar',
+        type: 'string',
+        value_formatter: () => {
+          return `${part.default_expiry} ${t`days`}`;
+        }
       }
     ];
 
