@@ -190,6 +190,12 @@ export default function DashboardLayout() {
     }
   }, [availableWidgets.loaded]);
 
+  // Clear all widgets from the dashboard
+  const clearWidgets = useCallback(() => {
+    setWidgets([]);
+    setLayouts({});
+  }, []);
+
   return (
     <>
       <DashboardWidgetDrawer
@@ -201,6 +207,7 @@ export default function DashboardLayout() {
       <DashboardMenu
         onAddWidget={openWidgetDrawer}
         onStartEdit={setEditing.open}
+        onClear={clearWidgets}
         onStartRemove={setRemoving.open}
         onAcceptLayout={() => {
           setEditing.close();
