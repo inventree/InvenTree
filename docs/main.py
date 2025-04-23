@@ -124,6 +124,8 @@ def get_build_environment() -> str:
 
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
+    config = env.config
+    assets_dir = config.get('assets_dir', '/assets')
 
     @env.macro
     def sourcedir(dirname: str, branch=None):
@@ -378,3 +380,75 @@ def define_env(env):
         t = f' <i>{title}</i>' if title else ''
 
         return f"<i class='ti ti-{source}' style='font-size: {size};{c}'></i>{t}"
+
+    @env.macro
+    def image(
+        source: str,
+        base: Optional[str] = '',
+        iid: Optional[str] = '',
+        alt: Optional[str] = '',
+        title: Optional[str] = '',
+        maxwidth: Optional[str] = '',
+        maxheight: Optional[str] = '',
+    ):
+        """Render an image within the documentation.
+
+        Arguments:
+            source: The name of the image to display (e.g. 'check', 'cross', etc.)
+            base: The base directory for the image (default: './assets/images/')
+            iid: The ID of the image (default: '')
+            alt: The alt text for the image (default: '')
+            title: The title of the image (default: '')
+            maxwidth: The maximum width of the image (default: '')
+            maxheight: The maximum height of the image (default: '')
+
+        - This will render an image which can be clicked on to expand to full size.
+        - It will also validate that the image exists in the specified directory.
+
+        The image must be located in the './docs/assets/images/' directory
+        """
+        # Allow external images too - without validation
+        if source.startswith('http'):
+            img = source
+        else:
+            basedir = os.path.dirname(__file__)
+            basedir = os.path.join(basedir, 'docs', 'assets', 'images')
+
+            if base:
+                basedir = os.path.abspath(os.path.join(basedir, base))
+            filename = os.path.join(basedir, source)
+
+            if not os.path.exists(filename):
+                raise FileNotFoundError(f'Image {filename} does not exist.')
+
+            # Now, create a proper URL to the image
+            img = os.path.join(assets_dir, 'images', base, source)
+
+        if not title:
+            title = os.path.splitext(source)[0]
+
+        if not iid:
+            iid = title.replace(' ', '_').replace('-', '_')
+
+        if not alt:
+            alt = iid
+
+        styles = []
+
+        if maxwidth:
+            styles.append(f'max-width: {maxwidth};')
+        if maxheight:
+            styles.append(f'max-height: {maxheight};')
+
+        style = f"style='{' '.join(styles)}' " if styles else ''
+
+        return textwrap.dedent(f"""
+        <figure class='image image-inventree'>
+            <a href='#{iid}'>
+                <img class='img-inline' src='{img}' alt='{alt}' title='{title}' {style}/>
+            </a>
+            <a href='#_' class='overlay' id='{iid}'>
+                <img src='{img}' alt='{alt}' />
+            </a>
+        </figure>
+        """)
