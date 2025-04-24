@@ -125,11 +125,17 @@ def get_build_environment() -> str:
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
     config = env.config
-    assets_dir = config.get('assets_dir', '/assets')
+    assets_dir = config.get('assets_dir', None)
 
-    print('define_env() called:')
-    print('- env:', env)
-    print('- cfg:', config)
+    if assets_dir is None:
+        # Construct the assets directory based on the current build environment
+        rtd_version = os.environ.get('READTHEDOCS_VERSION')
+        rtd_language = os.environ.get('READTHEDOCS_LANGUAGE')
+
+        if rtd_version and rtd_language:
+            assets_dir = f'/{rtd_language}/{rtd_version}/assets'
+        else:
+            assets_dir = '/assets'
 
     @env.macro
     def sourcedir(dirname: str, branch=None):

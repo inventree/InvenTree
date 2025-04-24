@@ -254,8 +254,4 @@ def on_config(config, *args, **kwargs):
     # Sort releases by descending date
     config['releases'] = sorted(releases, key=lambda it: it['date'], reverse=True)
 
-    print('returned config:')
-    for k, v in config.items():
-        print(f' - {k}: {v}')
-
     return config
