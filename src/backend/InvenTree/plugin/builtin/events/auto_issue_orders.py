@@ -106,7 +106,7 @@ class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
         from build.models import Build
         from build.status_codes import BuildStatus
 
-        self.issue_func(Build, BuildStatus.PENDING)
+        self.issue_func(Build, BuildStatus.PENDING, func_name='issue_build')
 
     def auto_issue_purchase_orders(self):
         """Automatically issue purchase orders on the assigned target date."""
