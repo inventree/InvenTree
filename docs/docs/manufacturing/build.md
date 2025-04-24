@@ -16,9 +16,7 @@ To navigate to the Build Order display, select *Manufacturing* from the main nav
 
 The *Build Order Index Page* allows the user to view all build orders:
 
-{% with id="build_display", url="build/build_display.png", description="Display Builds" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_display.png", title="Build Orders") }}
 
 The following view modes are available:
 

@@ -12,9 +12,7 @@ Individual orders (such as [Purchase Orders](../purchasing/purchase_order.md) or
 
 Management of project codes (such as creating or editing codes) is accessed via the [settings page](../settings/global.md). Select the *Project Codes* tab to access project code configuration options:
 
-{% with id="project_codes", url="settings/project_codes.png", description="Project Codes List" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("settings/project_codes.png", "Project Codes") }}
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
@@ -28,14 +26,10 @@ By default, project code support is disabled. Select the *Enable Project Codes* 
 
 Project codes can be assigned to an order when the order is created, or at any later stage by simply editing the order. If project code support is enabled, a *Project Code* field is available in the order details form:
 
-{% with id="assign_project_code", url="order/assign_project_code.png", description="Assign Project Code" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/assign_project_code.png", "Assign Project Code") }}
 
 ## Filtering by Project Codes
 
 The order tables can be easily filtered or sorted by project code:
 
-{% with id="filter-by-project", url="order/filter_by_project.png", description="Filter by Project Code" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/filter_by_project.png", "Filter by Project Code") }}
