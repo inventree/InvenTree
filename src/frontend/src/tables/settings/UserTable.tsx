@@ -11,6 +11,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
@@ -63,8 +64,7 @@ export function UserDrawer({
     throwError: true
   });
 
-  const currentUserPk = useUserState((s) => s.user?.pk);
-
+  const currentUserPk = useUserState(useShallow((s) => s.user?.pk));
   const isCurrentUser = useMemo(
     () => currentUserPk === Number.parseInt(id, 10),
     [currentUserPk, id]
