@@ -39,7 +39,7 @@ There are two types of owners in InvenTree: [groups](../settings/permissions.md#
 
 When selecting an owner, in the drop-down list, groups are annotated with the {{ icon("users", title="Users") }} icon and users are annotated with the {{ icon("user", title="User") }} icon:
 
-{{ image("stock/owner_type.png", title="Display stock owner type") }}
+{{ image("stock/stock_owner_type.png", title="Display stock owner type") }}
 
 ### Set Stock Location Owner
 
