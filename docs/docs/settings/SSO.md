@@ -117,10 +117,6 @@ In the [settings screen](./global.md), navigate to the *Login Settings* panel. H
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("LOGIN_ENABLE_SSO") }}
 {{ globalsetting("LOGIN_SIGNUP_SSO_AUTO") }}
-{{ globalsetting("LOGIN_ENABLE_SSO_GROUP_SYNC") }}
-{{ globalsetting("SSO_GROUP_KEY") }}
-{{ globalsetting("SSO_GROUP_MAP") }}
-{{ globalsetting("SSO_REMOVE_GROUPS") }}
 
 ### Configure Email
 
@@ -130,12 +126,12 @@ Note that [email settings](./email.md) must be correctly configured before SSO w
 
 InvenTree has the ability to synchronize groups assigned to each user directly from the IdP. To enable this feature, navigate to the *Login Settings* panel in the [settings screen](./global.md) first. Here, the following options are available:
 
-| Setting | Description |
-| --- | --- |
-| Enable SSO group sync | Enable synchronizing InvenTree groups with groups provided by the IdP |
-| SSO group key | The name of the claim containing all groups, e.g. `groups` or `roles` |
-| SSO group map | A mapping from SSO groups to InvenTree groups as JSON, e.g. `{"/inventree/admins": "admin"}`. If the mapped group does not exist once a user signs up, a new group without assigned permissions will be created. |
-| Remove groups outside of SSO | Whether groups should be removed from the user if they are not present in the IdP data |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("LOGIN_ENABLE_SSO_GROUP_SYNC") }}
+{{ globalsetting("SSO_GROUP_KEY") }}
+{{ globalsetting("SSO_GROUP_MAP") }}
+{{ globalsetting("SSO_REMOVE_GROUPS") }}
 
 !!! warning "Remove groups outside of SSO"
     Disabling this feature might cause security issues as groups that are removed in the IdP will stay assigned in InvenTree
