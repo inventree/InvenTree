@@ -41,64 +41,6 @@ export interface ServerAPIProps {
   };
 }
 
-export interface Provider {
-  id: string;
-  name: string;
-  flows: string[];
-  client_id: string;
-}
-
-// Type interface defining a single 'setting' object
-export interface Setting {
-  pk: number;
-  key: string;
-  value: string;
-  name: string;
-  description: string;
-  type: SettingType;
-  units: string;
-  choices: SettingChoice[];
-  model_name: string | null;
-  model_filters: Record<string, any> | null;
-  api_url: string | null;
-  typ: SettingTyp;
-  plugin?: string;
-  method?: string;
-  required?: boolean;
-}
-
-export interface SettingChoice {
-  value: string;
-  display_name: string;
-}
-
-export enum SettingTyp {
-  InvenTree = 'inventree',
-  Plugin = 'plugin',
-  User = 'user',
-  Notification = 'notification'
-}
-
-export enum SettingType {
-  Boolean = 'boolean',
-  Integer = 'integer',
-  String = 'string',
-  Choice = 'choice',
-  Model = 'related field'
-}
-
-// Errors
-export type ErrorResponse = {
-  data: any;
-  status: number;
-  statusText: string;
-  message?: string;
-};
-
-export type SettingsLookup = {
-  [key: string]: string;
-};
-
 /*
  * Refetch all global state information.
  * Necessary on login, or if locale is changed.
