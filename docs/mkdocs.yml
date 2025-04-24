@@ -264,6 +264,7 @@ plugins:
   - mkdocs-simple-hooks:
       hooks:
         on_config: "docs.docs.hooks:on_config"
+        on_post_build: "docs.docs.hooks:on_post_build"
   - macros:
       include_dir: docs/_includes
       module_name: main

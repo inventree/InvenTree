@@ -16,6 +16,10 @@ Management of project codes (such as creating or editing codes) is accessed via 
 {% include "img.html" %}
 {% endwith %}
 
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PROJECT_CODES_ENABLED") }}
+
 #### Enable Project Code Support
 
 By default, project code support is disabled. Select the *Enable Project Codes* option to enable support for this feature

@@ -115,12 +115,12 @@ In the [settings screen](./global.md), navigate to the *Login Settings* panel. H
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
-| {{ globalsetting("LOGIN_ENABLE_SSO") }} |
-| {{ globalsetting("LOGIN_SIGNUP_SSO_AUTO") }} |
-| {{ globalsetting("LOGIN_ENABLE_SSO_GROUP_SYNC") }} |
-| {{ globalsetting("SSO_GROUP_KEY") }} |
-| {{ globalsetting("SSO_GROUP_MAP") }} |
-| {{ globalsetting("SSO_REMOVE_GROUPS") }} |
+{{ globalsetting("LOGIN_ENABLE_SSO") }}
+{{ globalsetting("LOGIN_SIGNUP_SSO_AUTO") }}
+{{ globalsetting("LOGIN_ENABLE_SSO_GROUP_SYNC") }}
+{{ globalsetting("SSO_GROUP_KEY") }}
+{{ globalsetting("SSO_GROUP_MAP") }}
+{{ globalsetting("SSO_REMOVE_GROUPS") }}
 
 ### Configure Email
 

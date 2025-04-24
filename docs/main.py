@@ -38,7 +38,20 @@ global REPORT_CONTEXT
 
 # Read in the InvenTree settings file
 here = os.path.dirname(__file__)
+
+# File where we expect to find the settings definitions
 settings_file = os.path.join(here, 'inventree_settings.json')
+
+# File where we will *store* information on the settings we have observed
+observed_settings_file = os.path.join(here, 'observed_settings.json')
+
+# Overwrite the observed settings file
+with open(observed_settings_file, 'w', encoding='utf-8') as f:
+    data = {'global': {}, 'user': {}}
+
+    # Write an empty dict to the file
+    # This is used to track which settings we have observed during the build process
+    f.write(json.dumps(data, indent=4))
 
 with open(settings_file, encoding='utf-8') as sf:
     settings = json.load(sf)
@@ -294,6 +307,28 @@ def define_env(env):
 
         return includefile(fn, f'Template: {base}', fmt='html')
 
+    def observe_setting(key: str, group: str):
+        """Record that a particular setting has been observed.
+
+        This is used to ensure that all settings are documented in the generated documentation.
+
+        Arguments:
+            key: The name of the setting to observe
+            group: The group of the setting (e.g. 'global', 'user')
+        """
+        # Read the observed settings file
+        with open(observed_settings_file, encoding='utf-8') as f:
+            data = json.load(f)
+
+        if group not in data:
+            data[group] = {}
+
+        data[group][key] = True
+
+        # Write the updated data back to the file
+        with open(observed_settings_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+
     @env.macro
     def rendersetting(key: str, setting: dict):
         """Render a provided setting object into a table row."""
@@ -319,6 +354,8 @@ def define_env(env):
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
 
+        observe_setting(key, 'global')
+
         return rendersetting(key, setting)
 
     @env.macro
@@ -330,6 +367,8 @@ def define_env(env):
         """
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
+
+        observe_setting(key, 'user')
 
         return rendersetting(key, setting)
 

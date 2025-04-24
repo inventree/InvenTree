@@ -247,3 +247,45 @@ def on_config(config, *args, **kwargs):
     config['releases'] = sorted(releases, key=lambda it: it['date'], reverse=True)
 
     return config
+
+
+def on_post_build(*args, **kwargs):
+    """Run after the build is complete."""
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+    expected_settings_file = os.path.join(base_dir, 'inventree_settings.json')
+    observed_settings_file = os.path.join(base_dir, 'observed_settings.json')
+
+    with open(observed_settings_file, encoding='utf-8') as f:
+        observed_settings = json.loads(f.read())
+
+    with open(expected_settings_file, encoding='utf-8') as f:
+        expected_settings = json.loads(f.read())
+
+    ignored_settings = {'global': ['SERVER_RESTART_REQUIRED'], 'user': []}
+
+    for group in ['global', 'user']:
+        expected = expected_settings.get(group, {})
+        observed = observed_settings.get(group, {})
+        ignored = ignored_settings.get(group, [])
+
+        missing = []
+
+        for key in expected:
+            if key.startswith('_'):
+                # Ignore internal settings
+                continue
+
+            if key in ignored:
+                # Ignore settings that are not relevant
+                continue
+
+            if key not in observed:
+                missing.append(key)
+
+        if missing:
+            raise NotImplementedError(
+                'Missing Settings:\n'
+                + f"There are {len(missing)} missing settings in the '{group}' group:\n"
+                + '\n- '.join(missing)
+            )

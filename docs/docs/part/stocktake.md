@@ -144,3 +144,15 @@ If enabled, stocktake reports can be generated automatically at a configured int
 ### API Functionality
 
 Stocktake actions can also be performed via the [API](../api/index.md).
+
+## Stocktake Settings
+
+The following settings are available for stocktake:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("STOCKTAKE_ENABLE") }}
+{{ globalsetting("STOCKTAKE_EXCLUDE_EXTERNAL") }}
+{{ globalsetting("STOCKTAKE_AUTO_DAYS") }}
+{{ globalsetting("STOCKTAKE_DELETE_REPORT_DAYS") }}
+{{ globalsetting("DISPLAY_PROFILE_INFO") }}
