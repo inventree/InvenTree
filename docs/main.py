@@ -127,6 +127,10 @@ def define_env(env):
     config = env.config
     assets_dir = config.get('assets_dir', '/assets')
 
+    print('define_env() called:')
+    print('- env:', env)
+    print('- cfg:', config)
+
     @env.macro
     def sourcedir(dirname: str, branch=None):
         """Return a link to a directory within the source code repository.
