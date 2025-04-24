@@ -83,6 +83,7 @@ class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
     def issue_func(self, model, status: int, func_name: str = 'issue_order'):
         """Helper function to issue orders of a given model and status."""
         orders = model.objects.filter(status=status)
+        orders = orders.filter(target_date__isnull=False)
 
         if self.get_setting('ISSUE_BACKDATED_ORDERS', backup_value=False):
             orders = orders.filter(target_date__lte=current_date())
