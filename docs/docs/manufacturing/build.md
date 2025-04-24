@@ -167,7 +167,7 @@ If there exist any build orders which are *children* of the selected build order
 
 For *trackable* parts, test results can be recorded against each build output. These results are displayed in the *Test Results* panel:
 
-{{ image("build/build_test_results.png", title="Test Results") }}
+{{ image("build/build_panel_test_results.png", title="Test Results") }}
 
 This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
 
