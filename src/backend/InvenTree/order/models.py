@@ -1765,8 +1765,8 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def update_pricing(self):
         """Update pricing information based on the supplier part data."""
-        if self.part:
-            price = self.part.get_price(
+        if self.supplier_part:
+            price = self.supplier_part.get_price(
                 self.quantity, currency=self.purchase_price_currency
             )
 
