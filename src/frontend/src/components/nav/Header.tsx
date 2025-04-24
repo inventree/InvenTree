@@ -1,3 +1,7 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Container,
@@ -7,19 +11,17 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
-
-import { t } from '@lingui/core/macro';
 import { api } from '../../App';
+import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { navigateToLink } from '../../functions/navigation';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
@@ -61,10 +63,12 @@ export function Header() {
     return server.customize?.navbar_message;
   }, [server.customize]);
 
+  const visibility = useDocumentVisibility();
+
   // Fetch number of notifications for the current user
   const notifications = useQuery({
     queryKey: ['notification-count'],
-    enabled: isLoggedIn(),
+    enabled: isLoggedIn() && visibility === 'visible',
     queryFn: async () => {
       if (!isLoggedIn()) {
         return null;
@@ -88,7 +92,8 @@ export function Header() {
         return null;
       }
     },
-    refetchInterval: 30000,
+    // Refetch every minute, *if* the tab is visible
+    refetchInterval: 60 * 1000,
     refetchOnMount: true
   });
 
@@ -179,10 +184,18 @@ function NavTabs() {
     [userSettings]
   );
 
+  const extraNavs = usePluginUIFeature<NavigationUIFeature>({
+    featureType: 'navigation',
+    context: {}
+  });
+
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    navTabs.forEach((tab) => {
+    const mainNavTabs = getNavTabs(user);
+
+    // static content
+    mainNavTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
@@ -205,9 +218,23 @@ function NavTabs() {
         </Tabs.Tab>
       );
     });
+    // dynamic content
+    extraNavs.forEach((nav) => {
+      _tabs.push(
+        <Tabs.Tab
+          value={nav.options.title}
+          key={nav.options.key}
+          onClick={(event: any) =>
+            navigateToLink(nav.options.options.url, navigate, event)
+          }
+        >
+          {nav.options.title}
+        </Tabs.Tab>
+      );
+    });
 
     return _tabs;
-  }, [navTabs, user, withIcons]);
+  }, [extraNavs, navTabs, user, withIcons]);
 
   return (
     <Tabs

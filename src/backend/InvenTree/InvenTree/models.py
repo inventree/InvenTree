@@ -10,7 +10,7 @@ from django.db import models
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.urls import reverse
+from django.urls import resolve, reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
@@ -958,7 +958,17 @@ class InvenTreeBarcodeMixin(models.Model):
 
         if hasattr(self, 'get_api_url'):
             api_url = self.get_api_url()
-            data['api_url'] = f'{api_url}{self.pk}/'
+            data['api_url'] = api_url = f'{api_url}{self.pk}/'
+
+            # Attempt to serialize the object too
+            try:
+                match = resolve(api_url)
+                view_class = match.func.view_class
+                serializer_class = view_class.serializer_class
+                serializer = serializer_class(self)
+                data['instance'] = serializer.data
+            except Exception:
+                pass
 
         if hasattr(self, 'get_absolute_url'):
             data['web_url'] = self.get_absolute_url()

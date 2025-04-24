@@ -9,13 +9,13 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import InvenTree.permissions
 import plugin.serializers as PluginSerializers
-from common.api import GlobalSettingsPermissions
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import str2bool
@@ -27,7 +27,6 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     UpdateAPI,
 )
-from InvenTree.permissions import IsSuperuser, IsSuperuserOrReadOnly
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
@@ -138,7 +137,7 @@ class PluginList(ListAPI):
     # Allow any logged in user to read this endpoint
     # This is necessary to allow certain functionality,
     # e.g. determining which label printing plugins are available
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     filterset_class = PluginFilter
 
@@ -169,7 +168,7 @@ class PluginDetail(RetrieveDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
-    permission_classes = [IsSuperuserOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsSuperuserOrReadOnlyOrScope]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -228,7 +227,7 @@ class PluginUninstall(UpdateAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginUninstallSerializer
-    permission_classes = [IsSuperuser]
+    permission_classes = [InvenTree.permissions.IsSuperuserOrSuperScope]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -249,7 +248,7 @@ class PluginActivate(UpdateAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginActivateSerializer
-    permission_classes = [IsSuperuser]
+    permission_classes = [InvenTree.permissions.IsSuperuserOrSuperScope]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -269,7 +268,7 @@ class PluginReload(CreateAPI):
 
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginReloadSerializer
-    permission_classes = [IsSuperuser]
+    permission_classes = [InvenTree.permissions.IsSuperuserOrSuperScope]
 
     def perform_create(self, serializer):
         """Saving the serializer instance performs plugin installation."""
@@ -286,11 +285,20 @@ class PluginSettingList(ListAPI):
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
 
-    permission_classes = [GlobalSettingsPermissions]
+    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
 
     filter_backends = [DjangoFilterBackend]
 
     filterset_fields = ['plugin__active', 'plugin__key']
+
+    @extend_schema(operation_id='plugins_settings_list_all')
+    def get(self, request, *args, **kwargs):
+        """List endpoint for all plugin related settings.
+
+        - read only
+        - only accessible by staff users
+        """
+        return super().get(request, *args, **kwargs)
 
 
 def check_plugin(
@@ -350,7 +358,7 @@ class PluginAllSettingList(APIView):
     - GET: return all settings for a plugin config
     """
 
-    permission_classes = [GlobalSettingsPermissions]
+    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
 
     @extend_schema(
         responses={200: PluginSerializers.PluginSettingSerializer(many=True)}
@@ -404,7 +412,7 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         )
 
     # Staff permission required
-    permission_classes = [GlobalSettingsPermissions]
+    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
 
 
 class RegistryStatusView(APIView):
@@ -413,7 +421,7 @@ class RegistryStatusView(APIView):
     - GET: Provide status data for the plugin registry
     """
 
-    permission_classes = [IsSuperuser]
+    permission_classes = [InvenTree.permissions.IsSuperuserOrSuperScope]
 
     serializer_class = PluginSerializers.PluginRegistryStatusSerializer
 
@@ -493,8 +501,9 @@ plugin_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        PluginMetadataView.as_view(),
-                        {'model': PluginConfig, 'lookup_field': 'key'},
+                        PluginMetadataView.as_view(
+                            model=PluginConfig, lookup_field='key'
+                        ),
                         name='api-plugin-metadata',
                     ),
                     path(

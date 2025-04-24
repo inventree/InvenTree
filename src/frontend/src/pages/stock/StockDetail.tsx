@@ -1,12 +1,26 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Alert, Grid, Skeleton, Stack } from '@mantine/core';
 import {
+  Accordion,
+  Alert,
+  Button,
+  Grid,
+  Group,
+  Skeleton,
+  Space,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
+import {
+  IconArrowLeft,
+  IconArrowRight,
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
   IconHistory,
   IconInfoCircle,
   IconPackages,
+  IconSearch,
   IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
@@ -14,6 +28,13 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -44,28 +65,24 @@ import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   type StockOperationProps,
   useAddStockItem,
   useAssignStockItem,
   useCountStockItem,
+  useFindSerialNumberForm,
   useRemoveStockItem,
   useStockFields,
   useStockItemSerializeFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
@@ -106,6 +123,16 @@ export default function StockDetail() {
       location_detail: true,
       path_detail: true
     }
+  });
+
+  const { instance: serialNumbers, instanceQuery: serialNumbersQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.stock_serial_info,
+      pk: id
+    });
+
+  const findBySerialNumber = useFindSerialNumberForm({
+    partId: stockitem.part
   });
 
   const detailsPanel = useMemo(() => {
@@ -152,13 +179,6 @@ export default function StockDetail() {
       },
       {
         type: 'text',
-        name: 'tests',
-        label: t`Completed Tests`,
-        icon: 'progress',
-        hidden: !part?.testable
-      },
-      {
-        type: 'text',
         name: 'updated',
         icon: 'calendar',
         label: t`Last Updated`
@@ -176,14 +196,69 @@ export default function StockDetail() {
     const tr: DetailsField[] = [
       {
         type: 'text',
-        name: 'quantity',
-        label: t`Quantity`
+        name: 'serial',
+        label: t`Serial Number`,
+        hidden: !stockitem.serial,
+        value_formatter: () => (
+          <Group gap='xs' justify='space-apart'>
+            <Text>{stockitem.serial}</Text>
+            <Space flex={10} />
+            <Group gap={2} justify='right'>
+              {serialNumbers.previous?.pk && (
+                <Tooltip label={t`Previous serial number`} position='top'>
+                  <Button
+                    p={3}
+                    aria-label='previous-serial-number'
+                    leftSection={<IconArrowLeft />}
+                    variant='transparent'
+                    size='sm'
+                    onClick={() => {
+                      navigate(
+                        getDetailUrl(
+                          ModelType.stockitem,
+                          serialNumbers.previous.pk
+                        )
+                      );
+                    }}
+                  >
+                    {serialNumbers.previous.serial}
+                  </Button>
+                </Tooltip>
+              )}
+              <ActionButton
+                icon={<IconSearch size={18} />}
+                tooltip={t`Find serial number`}
+                tooltipAlignment='top'
+                variant='transparent'
+                onClick={findBySerialNumber.open}
+              />
+              {serialNumbers.next?.pk && (
+                <Tooltip label={t`Next serial number`} position='top'>
+                  <Button
+                    p={3}
+                    aria-label='next-serial-number'
+                    rightSection={<IconArrowRight />}
+                    variant='transparent'
+                    size='sm'
+                    onClick={() => {
+                      navigate(
+                        getDetailUrl(ModelType.stockitem, serialNumbers.next.pk)
+                      );
+                    }}
+                  >
+                    {serialNumbers.next.serial}
+                  </Button>
+                </Tooltip>
+              )}
+            </Group>
+          </Group>
+        )
       },
       {
         type: 'text',
-        name: 'serial',
-        label: t`Serial Number`,
-        hidden: !stockitem.serial
+        name: 'quantity',
+        label: t`Quantity`,
+        hidden: !!stockitem.serial && stockitem.quantity == 1
       },
       {
         type: 'text',
@@ -365,7 +440,13 @@ export default function StockDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [stockitem, instanceQuery.isFetching, enableExpiry]);
+  }, [
+    stockitem,
+    serialNumbers,
+    serialNumbersQuery.isFetching,
+    instanceQuery.isFetching,
+    enableExpiry
+  ]);
 
   const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
@@ -539,6 +620,8 @@ export default function StockDetail() {
     showBuildAllocations,
     showInstalledItems,
     stockitem,
+    serialNumbers,
+    serialNumbersQuery,
     id,
     user
   ]);
@@ -667,6 +750,37 @@ export default function StockDetail() {
     parts: stockitem.part_detail ? [stockitem.part_detail] : []
   });
 
+  const scanIntoLocation = useBarcodeScanDialog({
+    title: t`Scan Into Location`,
+    modelType: ModelType.stocklocation,
+    callback: async (barcode, response) => {
+      const pk = response.stocklocation.pk;
+
+      return api
+        .post(apiUrl(ApiEndpoints.stock_transfer), {
+          location: pk,
+          items: [
+            {
+              pk: stockitem.pk,
+              quantity: stockitem.quantity
+            }
+          ]
+        })
+        .then(() => {
+          refreshInstance();
+          return {
+            success: t`Scanned stock item into location`
+          };
+        })
+        .catch((error) => {
+          console.log('Error scanning stock item:', error);
+          return {
+            error: t`Error scanning stock item`
+          };
+        });
+    }
+  });
+
   const stockActions = useMemo(() => {
     // Can this stock item be transferred to a different location?
     const canTransfer =
@@ -693,6 +807,14 @@ export default function StockDetail() {
         pk={stockitem.pk}
         hash={stockitem?.barcode_hash}
         perm={user.hasChangeRole(UserRoles.stock)}
+        actions={[
+          {
+            name: t`Scan into location`,
+            icon: <InvenTreeIcon icon='location' />,
+            tooltip: t`Scan this item into a location`,
+            onClick: scanIntoLocation.open
+          }
+        ]}
       />,
       <PrintingActions
         modelType={ModelType.stockitem}
@@ -890,62 +1012,68 @@ export default function StockDetail() {
   }, [stockitem, instanceQuery, enableExpiry]);
 
   return (
-    <InstanceDetail
-      requiredRole={UserRoles.stock}
-      status={requestStatus}
-      loading={instanceQuery.isFetching}
-    >
-      <Stack>
-        {user.hasViewRole(UserRoles.stock_location) && (
-          <NavigationTree
-            title={t`Stock Locations`}
-            modelType={ModelType.stocklocation}
-            endpoint={ApiEndpoints.stock_location_tree}
-            opened={treeOpen}
-            onClose={() => setTreeOpen(false)}
-            selectedId={stockitem?.location}
-          />
-        )}
-        <PageDetail
-          title={t`Stock Item`}
-          subtitle={stockitem.part_detail?.full_name}
-          imageUrl={stockitem.part_detail?.thumbnail}
-          editAction={editStockItem.open}
-          editEnabled={user.hasChangePermission(ModelType.stockitem)}
-          badges={stockBadges}
-          breadcrumbs={
-            user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
-          }
-          lastCrumb={[
-            {
-              name: stockitem.name,
-              url: `/stock/item/${stockitem.pk}/`
+    <>
+      {findBySerialNumber.modal}
+      {scanIntoLocation.dialog}
+      <InstanceDetail
+        requiredRole={UserRoles.stock}
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+      >
+        <Stack>
+          {user.hasViewRole(UserRoles.stock_location) && (
+            <NavigationTree
+              title={t`Stock Locations`}
+              modelType={ModelType.stocklocation}
+              endpoint={ApiEndpoints.stock_location_tree}
+              opened={treeOpen}
+              onClose={() => setTreeOpen(false)}
+              selectedId={stockitem?.location}
+            />
+          )}
+          <PageDetail
+            title={t`Stock Item`}
+            subtitle={stockitem.part_detail?.full_name}
+            imageUrl={stockitem.part_detail?.thumbnail}
+            editAction={editStockItem.open}
+            editEnabled={user.hasChangePermission(ModelType.stockitem)}
+            badges={stockBadges}
+            breadcrumbs={
+              user.hasViewRole(UserRoles.stock_location)
+                ? breadcrumbs
+                : undefined
             }
-          ]}
-          breadcrumbAction={() => {
-            setTreeOpen(true);
-          }}
-          actions={stockActions}
-        />
-        <PanelGroup
-          pageKey='stockitem'
-          panels={stockPanels}
-          model={ModelType.stockitem}
-          id={stockitem.pk}
-          instance={stockitem}
-        />
-        {editStockItem.modal}
-        {duplicateStockItem.modal}
-        {deleteStockItem.modal}
-        {countStockItem.modal}
-        {addStockItem.modal}
-        {removeStockItem.modal}
-        {transferStockItem.modal}
-        {serializeStockItem.modal}
-        {returnStockItem.modal}
-        {assignToCustomer.modal}
-        {orderPartsWizard.wizard}
-      </Stack>
-    </InstanceDetail>
+            lastCrumb={[
+              {
+                name: stockitem.name,
+                url: `/stock/item/${stockitem.pk}/`
+              }
+            ]}
+            breadcrumbAction={() => {
+              setTreeOpen(true);
+            }}
+            actions={stockActions}
+          />
+          <PanelGroup
+            pageKey='stockitem'
+            panels={stockPanels}
+            model={ModelType.stockitem}
+            id={stockitem.pk}
+            instance={stockitem}
+          />
+          {editStockItem.modal}
+          {duplicateStockItem.modal}
+          {deleteStockItem.modal}
+          {countStockItem.modal}
+          {addStockItem.modal}
+          {removeStockItem.modal}
+          {transferStockItem.modal}
+          {serializeStockItem.modal}
+          {returnStockItem.modal}
+          {assignToCustomer.modal}
+          {orderPartsWizard.wizard}
+        </Stack>
+      </InstanceDetail>
+    </>
   );
 }

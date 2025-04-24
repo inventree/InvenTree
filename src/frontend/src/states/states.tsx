@@ -1,3 +1,4 @@
+import type { PluginProps } from '@lib/types/Plugins';
 import type { NavigateFunction } from 'react-router-dom';
 import { setApiDefaults } from '../App';
 import { useServerApiState } from './ApiState';
@@ -5,45 +6,6 @@ import { useIconState } from './IconState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
 import { useUserState } from './UserState';
-
-export interface Host {
-  host: string;
-  name: string;
-}
-
-export interface HostList {
-  [key: string]: Host;
-}
-
-// Type interface fully defining the current user
-export interface UserProps {
-  pk: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  is_staff?: boolean;
-  is_superuser?: boolean;
-  roles?: Record<string, string[]>;
-  permissions?: Record<string, string[]>;
-  groups: any[] | null;
-  profile: Profile;
-}
-
-interface Profile {
-  language: string;
-  theme: any;
-  widgets: any;
-  displayname: string | null;
-  position: string | null;
-  status: string | null;
-  location: string | null;
-  active: boolean;
-  contact: string | null;
-  type: string;
-  organisation: string | null;
-  primary_group: number | null;
-}
 
 // Type interface fully defining the current server
 export interface ServerAPIProps {
@@ -76,54 +38,6 @@ export interface ServerAPIProps {
     splash: string;
     login_message: string;
     navbar_message: string;
-  };
-}
-
-export interface AuthContext {
-  status: number;
-  user?: {
-    id: number;
-    display: string;
-    has_usable_password: boolean;
-    username: string;
-  };
-  methods?: {
-    method: string;
-    at: number;
-    username: string;
-  }[];
-  data: { flows: Flow[] };
-  meta: { is_authenticated: boolean };
-}
-
-export enum FlowEnum {
-  VerifyEmail = 'verify_email',
-  Login = 'login',
-  Signup = 'signup',
-  ProviderRedirect = 'provider_redirect',
-  ProviderSignup = 'provider_signup',
-  ProviderToken = 'provider_token',
-  MfaAuthenticate = 'mfa_authenticate',
-  Reauthenticate = 'reauthenticate',
-  MfaReauthenticate = 'mfa_reauthenticate'
-}
-
-export interface Flow {
-  id: FlowEnum;
-  providers?: string[];
-  is_pending?: boolean[];
-}
-
-export interface AuthConfig {
-  account: {
-    authentication_method: string;
-  };
-  socialaccount: { providers: Provider[] };
-  mfa: {
-    supported_types: string[];
-  };
-  usersessions: {
-    track_activity: boolean;
   };
 }
 
@@ -173,12 +87,6 @@ export enum SettingType {
   Model = 'related field'
 }
 
-export interface PluginProps {
-  name: string;
-  slug: string;
-  version: null | string;
-}
-
 // Errors
 export type ErrorResponse = {
   data: any;
@@ -186,6 +94,7 @@ export type ErrorResponse = {
   statusText: string;
   message?: string;
 };
+
 export type SettingsLookup = {
   [key: string]: string;
 };

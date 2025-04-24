@@ -32,7 +32,11 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
-from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
+from InvenTree.serializers import (
+    InvenTreeCurrencySerializer,
+    InvenTreeDecimalField,
+    InvenTreeModelSerializer,
+)
 from users.serializers import UserSerializer
 
 from .models import (
@@ -651,20 +655,20 @@ class StockItemSerializer(
 
     # Annotated fields
     allocated = serializers.FloatField(
-        required=False, read_only=True, label=_('Allocated Quantity')
+        read_only=True, allow_null=True, label=_('Allocated Quantity')
     )
     expired = serializers.BooleanField(
-        required=False, read_only=True, label=_('Expired')
+        read_only=True, allow_null=True, label=_('Expired')
     )
     installed_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Installed Items')
+        read_only=True, allow_null=True, label=_('Installed Items')
     )
     child_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Child Items')
+        read_only=True, allow_null=True, label=_('Child Items')
     )
-    stale = serializers.BooleanField(required=False, read_only=True, label=_('Stale'))
+    stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
     tracking_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Tracking Items')
+        read_only=True, allow_null=True, label=_('Tracking Items')
     )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1157,7 +1161,7 @@ class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
         read_only_fields = ['location_count']
 
-    location_count = serializers.IntegerField(read_only=True)
+    location_count = serializers.IntegerField(read_only=True, allow_null=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1269,7 +1273,7 @@ class LocationSerializer(
 
     # Detail for location type
     location_type_detail = StockLocationTypeSerializer(
-        source='location_type', read_only=True, many=False
+        source='location_type', read_only=True, allow_null=True, many=False
     )
 
 
@@ -1808,3 +1812,23 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs
                 )
+
+
+class StockItemSerialNumbersSerializer(InvenTreeModelSerializer):
+    """Serializer for extra serial number information about a stock item."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItem
+        fields = ['next', 'previous']
+
+    next = StockItemSerializer(
+        read_only=True, source='get_next_stock_item', label=_('Next Serial Number')
+    )
+
+    previous = StockItemSerializer(
+        read_only=True,
+        source='get_previous_stock_item',
+        label=_('Previous Serial Number'),
+    )

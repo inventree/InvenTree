@@ -21,12 +21,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { useApi } from '../../contexts/ApiContext';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
 import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';
 
@@ -142,6 +142,7 @@ export default function NavigationTree({
     (payload: RenderTreeNodePayload) => {
       return (
         <Group
+          p={3}
           justify='left'
           key={payload.node.value}
           wrap='nowrap'
@@ -151,7 +152,7 @@ export default function NavigationTree({
             }
           }}
         >
-          <Space w={5 * payload.level} />
+          <Space w={3 * payload.level} />
           <ActionIcon
             size='sm'
             variant='transparent'

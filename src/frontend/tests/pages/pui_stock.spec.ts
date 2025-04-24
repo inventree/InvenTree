@@ -165,6 +165,33 @@ test('Stock - Serial Numbers', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+// Test navigation by serial number
+test('Stock - Serial Navigation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/79/details' });
+
+  await page.getByLabel('action-menu-stock-actions').click();
+  await page.getByLabel('action-menu-stock-actions-search').click();
+  await page.getByLabel('text-field-serial').fill('359');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Start at serial 359
+  await page.getByText('359', { exact: true }).first().waitFor();
+  await page.getByLabel('next-serial-number').waitFor();
+  await page.getByLabel('previous-serial-number').click();
+
+  // Navigate to serial 358
+  await page.getByText('358', { exact: true }).first().waitFor();
+
+  await page.getByLabel('action-button-find-serial').click();
+  await page.getByLabel('text-field-serial').fill('200');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Serial Number: 200').waitFor();
+  await page.getByText('200', { exact: true }).first().waitFor();
+  await page.getByText('199', { exact: true }).first().waitFor();
+  await page.getByText('201', { exact: true }).first().waitFor();
+});
+
 test('Stock - Serialize', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/item/232/details' });
 
@@ -208,6 +235,17 @@ test('Stock - Stock Actions', async ({ browser }) => {
     .getByText('Incoming goods inspection')
     .waitFor();
   await page.getByText('123').first().waitFor();
+
+  // Check barcode actions
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page
+    .getByLabel('action-menu-barcode-actions-scan-into-location')
+    .click();
+  await page
+    .getByPlaceholder('Enter barcode data')
+    .fill('{"stocklocation": 12}');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('Scanned stock item into location').waitFor();
 
   // Add stock, and change status
   await launchStockAction('add');
@@ -256,4 +294,35 @@ test('Stock - Tracking', async ({ browser }) => {
   await page.getByText('- - Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
+});
+
+test('Stock - Location', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/location/12/' });
+
+  await loadTab(page, 'Default Parts');
+  await loadTab(page, 'Stock Items');
+  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Location Details');
+
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page
+    .getByLabel('action-menu-barcode-actions-scan-in-stock-items')
+    .waitFor();
+  await page
+    .getByLabel('action-menu-barcode-actions-scan-in-container')
+    .click();
+
+  // Attempt to scan in the same location (should fail)
+  await page
+    .getByPlaceholder('Enter barcode data')
+    .fill('{"stocklocation": 12}');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('Error scanning stock location').waitFor();
+
+  // Attempt to scan bad data (no match)
+  await page
+    .getByPlaceholder('Enter barcode data')
+    .fill('{"stocklocation": 1234}');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('No match found for barcode data').waitFor();
 });

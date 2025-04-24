@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core import mail as django_mail
 
 import structlog
+from allauth.account.models import EmailAddress
 
 import InvenTree.ready
 import InvenTree.tasks
@@ -56,7 +57,6 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         recipients = [recipients]
 
     import InvenTree.ready
-    import InvenTree.status
 
     if InvenTree.ready.isImportingData():
         # If we are importing data, don't send emails
@@ -89,3 +89,19 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         html_message=html_message,
         group='notification',
     )
+
+
+def get_email_for_user(user) -> str:
+    """Find an email address for the specified user."""
+    # First check if the user has an associated email address
+    if user.email:
+        return user.email
+
+    # Otherwise, find first matching email
+    # Priority is given to primary or verified email addresses
+    if (
+        email := EmailAddress.objects.filter(user=user)
+        .order_by('-primary', '-verified')
+        .first()
+    ):
+        return email.email

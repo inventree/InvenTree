@@ -11,15 +11,16 @@ import {
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
-import { navigateToLink } from '../../functions/navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
+import { InvenTreeIcon } from '../../functions/icons';
 import { StylishText } from './StylishText';
 
 export interface MenuLinkItem {
   id: string;
   title: string | JSX.Element;
   description?: string;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   action?: () => void;
   link?: string;
   external?: boolean;

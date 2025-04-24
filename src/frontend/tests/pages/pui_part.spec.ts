@@ -80,6 +80,63 @@ test('Parts - Supplier Parts', async ({ browser }) => {
   await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
 });
 
+test('Parts - BOM', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/87/bom' });
+
+  await loadTab(page, 'Bill of Materials');
+  await page.waitForLoadState('networkidle');
+
+  const cell = await page.getByRole('cell', {
+    name: 'Small plastic enclosure, black',
+    exact: true
+  });
+  await cell.click({ button: 'right' });
+
+  // Check for expected context menu actions
+  await page.getByRole('button', { name: 'Edit', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Delete', exact: true }).waitFor();
+  await page
+    .getByRole('button', { name: 'View details', exact: true })
+    .waitFor();
+
+  await page
+    .getByRole('button', { name: 'Edit Substitutes', exact: true })
+    .click();
+  await page.getByText('Edit BOM Substitutes').waitFor();
+  await page.getByText('1551ACLR').first().waitFor();
+  await page.getByText('1551AGY').first().waitFor();
+
+  await page.getByLabel('related-field-part').fill('enclosure');
+  await page.getByText('1591BTBU').click();
+
+  await page.getByRole('button', { name: 'Add Substitute' }).waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+});
+
+test('Part - Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/details' });
+
+  await page.getByText('A square table - with blue paint').first().waitFor();
+
+  // Open part edit dialog
+  await page.keyboard.press('Control+E');
+
+  const keywords = await page.getByLabel('text-field-keywords').inputValue();
+  await page
+    .getByLabel('text-field-keywords')
+    .fill(keywords ? '' : 'table furniture');
+
+  // Test URL validation
+  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Enter a valid URL.').waitFor();
+
+  // Fill with an empty URL
+  await page.getByLabel('text-field-link').fill('');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Updated').waitFor();
+});
+
 test('Parts - Locking', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/bom' });
   await loadTab(page, 'Bill of Materials');

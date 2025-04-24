@@ -428,7 +428,7 @@ class AllUnitListResponseSerializer(serializers.Serializer):
 
     default_system = serializers.CharField()
     available_systems = serializers.ListField(child=serializers.CharField())
-    available_units = Unit(many=True)
+    available_units = serializers.DictField(child=Unit())
 
 
 class ErrorMessageSerializer(InvenTreeModelSerializer):
@@ -619,7 +619,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
-        from users.models import check_user_permission
+        from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
 
@@ -812,6 +812,4 @@ class DataOutputSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
-    output = InvenTreeAttachmentSerializerField(
-        required=False, allow_null=True, read_only=True
-    )
+    output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)
