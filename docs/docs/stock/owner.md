@@ -46,7 +46,7 @@ When selecting an owner, in the drop-down list, groups are annotated with the {{
 To specify the owner of a stock location, navigate to the stock location detail page. Click on the {{ icon("sitemap") }}icon under the location's name then click on "Edit Location".
 
 !!! warning
-	If you cannot see the {{ icon("sitemap") }}icon, it means that you do **not** have permissions to edit stock locations. Refer to [the permissions documentation](../settings/permissions.md#roles) and/or contact your InvenTree administrator.
+	If you cannot see the {{ icon("sitemap") }} icon, it means that you do **not** have permissions to edit stock locations. Refer to [the permissions documentation](../settings/permissions.md#roles) and/or contact your InvenTree administrator.
 
 In the "Edit Stock Location" form, select the owner and click the "Submit" button:
 

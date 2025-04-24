@@ -10,25 +10,17 @@ The various user settings described below can be configured for an individual us
 
 The *Account Settings* screen shows configuration options for your user account, including linking [third party logins](./SSO.md) and [multi factor authentication](./MFA.md):
 
-{% with id="user-account", url="settings/user_account.png", description="User Account Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("settings/user_account.png", "User Account Settings") }}
 
 ### Display Settings
 
 The *Display Settings* screen shows general display configuration options. Additionally, this screen allows the user to select the primary language in which InvenTree is displayed.
 
-{% with id="user-display", url="settings/user_display.png", description="User Display Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("settings/user_display.png", "User Display Settings") }}
 
 ### Home Page
 
 This screen allows the user to customize display of items on the InvenTree home page.
-
-{% with id="user-home", url="settings/user_home.png", description="Home Page Settings" %}
-{% include 'img.html' %}
-{% endwith %}
 
 ### Search Settings
 
