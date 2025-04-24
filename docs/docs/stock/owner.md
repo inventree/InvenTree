@@ -8,9 +8,7 @@ InvenTree supports stock ownership, which allows to set groups and users as "own
 
 The stock ownership feature is disabled by default, and must be enabled via the settings menu:
 
-{% with id="stock_owner", url="stock/enable_stock_owner.png", description="Enable stock ownership feature" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/enable_stock_owner.png", title="Enable stock ownership feature") }}
 
 ### Background
 The stock item ownership function does not change or the influence the access rights that have been set
@@ -41,9 +39,7 @@ There are two types of owners in InvenTree: [groups](../settings/permissions.md#
 
 When selecting an owner, in the drop-down list, groups are annotated with the {{ icon("users", title="Users") }} icon and users are annotated with the {{ icon("user", title="User") }} icon:
 
-{% with id="stock_owner_type", url="stock/stock_owner_type.png", description="Display stock owner type" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/owner_type.png", title="Display stock owner type") }}
 
 ### Set Stock Location Owner
 
@@ -54,9 +50,7 @@ To specify the owner of a stock location, navigate to the stock location detail 
 
 In the "Edit Stock Location" form, select the owner and click the "Submit" button:
 
-{% with id="stock_location_owner", url="stock/stock_location_owner.png", description="Set stock location owner" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_location_owner.png", title="Set stock location owner") }}
 
 Setting the owner of stock location will automatically:
 
@@ -81,6 +75,4 @@ To specify the owner of a stock item, navigate to the stock item detail page. Cl
 
 In the "Edit Stock Item" form, select the owner and click the "Save" button:
 
-{% with id="stock_item_owner", url="stock/stock_item_owner.png", description="Set stock item owner" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_item_owner.png", title="Set stock item owner") }}

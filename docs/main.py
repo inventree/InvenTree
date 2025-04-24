@@ -394,21 +394,21 @@ def define_env(env):
     @env.macro
     def image(
         source: str,
-        base: Optional[str] = '',
+        title: Optional[str] = '',
         iid: Optional[str] = '',
         alt: Optional[str] = '',
-        title: Optional[str] = '',
+        base: Optional[str] = '',
         maxwidth: Optional[str] = '',
         maxheight: Optional[str] = '',
     ):
         """Render an image within the documentation.
 
         Arguments:
+            title: The title of the image (default: '')
             source: The name of the image to display (e.g. 'check', 'cross', etc.)
-            base: The base directory for the image (default: './assets/images/')
             iid: The ID of the image (default: '')
             alt: The alt text for the image (default: '')
-            title: The title of the image (default: '')
+            base: The base directory for the image (default: './assets/images/')
             maxwidth: The maximum width of the image (default: '')
             maxheight: The maximum height of the image (default: '')
 
