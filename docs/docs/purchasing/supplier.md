@@ -9,9 +9,7 @@ A supplier is an external **vendor** of parts and raw materials.
 
 To access the supplier page, click on the <span class="badge inventree nav main">{{ icon("shopping-cart") }} Buy</span> navigation tab and click on <span class="badge inventree nav main">{{ icon("building") }} Suppliers</span> option in the dropdown list.
 
-{% with id="supplier_list", url="order/supplier_list.png", description="Supplier List" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/supplier_list.png", "Supplier List") }}
 
 !!! info
     **Viewing**, **adding**, **editing** and **deleting** suppliers require the corresponding [Purchase Orders user permissions](../settings/permissions.md)
@@ -56,15 +54,11 @@ Supplier parts can be individually disabled - for example, if a supplier part is
 
 The "active" status of a supplier part is clearly visible within the user interface:
 
-{% with id="supplier_part_disable", url="order/disable_supplier_part.png", description="Disable Supplier Part" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/disable_supplier_part.png", "Disable Supplier Part") }}
 
 To change the "active" status of a supplier part, simply edit the supplier part details and set the `active` attribute:
 
-{% with id="supplier_part_disable_edit", url="order/disable_supplier_part_edit.png", description="Disable Supplier Part" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/disable_supplier_part_edit.png", "Disable Supplier Part Edit") }}
 
 It is recommended to disable a supplier part rather than deleting it, as this will preserve the integrity of historical data.
 
@@ -82,15 +76,11 @@ A custom can periodically request availability information (via a supplier API),
 
 If provided, availability information is displayed on the Supplier Part detail page.
 
-{% with id="supplier_part_availability", url="order/supplier_part_availability.png", maxheight="240px", description="Supplier part availability" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/supplier_part_availability.png", "Supplier Part Availability") }}
 
 Availability information can be manually updated via the user interface:
 
-{% with id="update_availability", url="order/update_availability.png", maxheight="240px", description="Update availability" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/update_availability.png", "Update Availability") }}
 
 ## Supplier Part Pack Size
 

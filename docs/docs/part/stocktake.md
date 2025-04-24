@@ -31,15 +31,11 @@ Historical stocktake data for a particular part can be viewed in the *Stocktake*
 
 This tab displays a chart of historical stock quantity and cost data, and corresponding tabulated data:
 
-{% with id="stocktake_tab", url="part/part_stocktake_tab.png", description="Part stocktake tab" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_tab.png", "Part stocktake tab") }}
 
 If this tab is not visible, ensure that the *Part Stocktake* [user setting](../settings/user.md) is enabled in the *Display Settings* section.
 
-{% with id="stocktake_tab_enable", url="part/part_stocktake_enable_tab.png", description="Enable stocktake tab" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_enable_tab.png", "Enable stocktake tab") }}
 
 !!! info "Permission Required"
     The stocktake tab will be unavailable if your user account does not have the [required permissions](#stocktake-permissions)
@@ -61,9 +57,7 @@ Stocktake reports are made available for download as a tabulated `.csv` file, wh
 
 There are a number of configuration options available in the [settings view](../settings/global.md):
 
-{% with id="stocktake_settings", url="part/part_stocktake_settings.png", description="Stocktake settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_settings.png", "Stocktake settings") }}
 
 ### Enable Stocktake
 
@@ -71,7 +65,7 @@ Enable or disable stocktake functionality. Note that by default, stocktake funct
 
 ### Automatic Stocktake Period
 
-Configure the number of days between genenration of [automatic stocktake reports](#automatic-stocktake). If this value is set to zero, automatic stocktake reports will not be generated.
+Configure the number of days between generation of [automatic stocktake reports](#automatic-stocktake). If this value is set to zero, automatic stocktake reports will not be generated.
 
 ### Delete Old Reports
 
@@ -81,9 +75,7 @@ Configure how many days stocktake reports will be retained, before being deleted
 
 The *Stocktake Settings* display also provides a table of historical stocktake reports:
 
-{% with id="stocktake_report_table", url="part/part_stocktake_report_table.png", description="Stocktake reports" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_report_table.png", "Stocktake report table") }}
 
 ## Stocktake Permissions
 
@@ -101,9 +93,7 @@ Manual stocktake can be performed via the web interface in a number of locations
 
 When performing a stocktake, various options are presented to the user:
 
-{% with id="stocktake_generate", url="part/part_stocktake_generate.png", description="Generate stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_generate.png", "Generate stocktake report") }}
 
 | Option | Description |
 | --- | --- |
@@ -115,27 +105,21 @@ When performing a stocktake, various options are presented to the user:
 
 ### Part Stocktake
 
-A stockake report for a single part can be generated from the *Stocktake Tab* on the part page:
+A stocktake report for a single part can be generated from the *Stocktake Tab* on the part page:
 
-{% with id="stocktake_part", url="part/part_stocktake_from_part.png", description="Generate part stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_from_part.png", "Generate part stocktake report") }}
 
 ### Category Stocktake
 
 A stocktake report for a part category can be generated from the *Part Category* page:
 
-{% with id="stocktake_category", url="part/part_stocktake_from_category.png", description="Generate category stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_from_category.png", "Generate category stocktake report") }}
 
 ### Location Stocktake
 
 A stocktake report for a stock location can be generated from the *Stock Location* page:
 
-{% with id="stocktake_location", url="part/part_stocktake_from_location.png", description="Generate location stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_from_location.png", "Generate location stocktake report") }}
 
 ### Automatic Stocktake
 
