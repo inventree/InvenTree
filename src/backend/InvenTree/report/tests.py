@@ -486,6 +486,16 @@ class TestReportTest(PrintTestMixins, ReportTest):
         # The attachment should be a PDF
         self.assertTrue(attachment.attachment.name.endswith('.pdf'))
 
+        # Set merge = True, test report is still generated
+        template.merge = True
+        response = self.post(
+            url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
+        )
+
+        # There should be a link to the generated PDF
+        self.assertTrue(response.data['output'].startswith('/media/data_output/'))
+        self.assertTrue(response.data['output'].endswith('.pdf'))
+
     def test_mdl_build(self):
         """Test the Build model."""
         self.run_print_test(Build, 'build', label=False)
