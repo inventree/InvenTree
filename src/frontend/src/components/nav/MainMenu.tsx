@@ -1,3 +1,6 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { AuthContext } from '@lib/types/Auth';
 import { Trans } from '@lingui/react/macro';
 import {
   Button,
@@ -22,16 +25,13 @@ import {
   IconUserCog
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
-
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { authApi, doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { parseDate } from '../../pages/Index/Settings/AccountSettings/SecurityContent';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { AuthContext, ServerAPIProps } from '../../states/states';
+import type { ServerAPIProps } from '../../states/states';
 import { vars } from '../../theme';
-
 export function MainMenu() {
   const navigate = useNavigate();
   const [user, username] = useUserState((state) => [
@@ -181,7 +181,7 @@ function AuthContextInformation({
           </Text>
 
           <List type='ordered'>
-            {auth_context?.methods.map((method) => (
+            {auth_context?.methods.map((method: any) => (
               <List.Item key={method.at}>
                 <strong>{parseDate(method.at)}</strong>: {method.method}
               </List.Item>
