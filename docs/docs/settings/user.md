@@ -14,13 +14,19 @@ The *Account Settings* screen shows configuration options for your user account,
 
 ### Display Settings
 
-The *Display Settings* screen shows general display configuration options. Additionally, this screen allows the user to select the primary language in which InvenTree is displayed.
+The *Display Settings* screen shows general display configuration options:
 
-{{ image("settings/user_display.png", "User Display Settings") }}
-
-### Home Page
-
-This screen allows the user to customize display of items on the InvenTree home page.
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ usersetting("ICONS_IN_NAVBAR") }}
+{{ usersetting("STICKY_HEADER") }}
+{{ usersetting("DATE_DISPLAY_FORMAT") }}
+{{ usersetting("FORMS_CLOSE_USING_ESCAPE") }}
+{{ usersetting("PART_SHOW_QUANTITY_IN_FORMS") }}
+{{ usersetting("DISPLAY_SCHEDULE_TAB") }}
+{{ usersetting("DISPLAY_STOCKTAKE_TAB") }}
+{{ usersetting("TABLE_STRING_MAX_LENGTH") }}
+{{ usersetting("ENABLE_LAST_BREADCRUMB") }}
 
 ### Search Settings
 

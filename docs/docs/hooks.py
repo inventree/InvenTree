@@ -262,7 +262,10 @@ def on_post_build(*args, **kwargs):
     with open(expected_settings_file, encoding='utf-8') as f:
         expected_settings = json.loads(f.read())
 
-    ignored_settings = {'global': ['SERVER_RESTART_REQUIRED'], 'user': []}
+    ignored_settings = {
+        'global': ['SERVER_RESTART_REQUIRED'],
+        'user': ['LAST_USED_PRINTING_MACHINES'],
+    }
 
     for group in ['global', 'user']:
         expected = expected_settings.get(group, {})
