@@ -37,7 +37,7 @@ export function InstanceOptions({
   ChangeHost: (newHost: string | null) => void;
   setHostEdit: () => void;
 }>) {
-  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
+  const [hostListEdit, setHostListEdit] = useToggle([false, true] as const);
   const [setHost, setHostList, hostList] = useLocalState(
     useShallow((state) => [state.setHost, state.setHostList, state.hostList])
   );
@@ -62,13 +62,13 @@ export function InstanceOptions({
           value={hostKey}
           onChange={ChangeHost}
           data={hostListData}
-          disabled={HostListEdit}
+          disabled={hostListEdit}
         />
         <Group gap='xs' wrap='nowrap'>
           <Tooltip label={t`Edit host options`} position='top'>
             <ActionButton
               variant='transparent'
-              disabled={HostListEdit}
+              disabled={hostListEdit}
               onClick={setHostListEdit}
               icon={<IconEdit />}
             />
@@ -77,7 +77,7 @@ export function InstanceOptions({
             <ActionButton
               variant='transparent'
               onClick={setHostEdit}
-              disabled={HostListEdit}
+              disabled={hostListEdit}
               icon={<IconCircleCheck />}
               color='green'
             />
@@ -85,7 +85,7 @@ export function InstanceOptions({
         </Group>
       </Group>
 
-      {HostListEdit ? (
+      {hostListEdit ? (
         <>
           <Divider my={'sm'} />
           <Text>

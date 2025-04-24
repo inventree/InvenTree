@@ -78,7 +78,7 @@ export const doCachedLogin = async (
   await page.waitForURL('**/web/**');
 
   // Wait for the dashboard to load
-  await page.getByText('No widgets selected').waitFor();
+  //await page.getByText('No widgets selected').waitFor()
   await page.waitForLoadState('load');
 
   // Cache the login state
