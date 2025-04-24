@@ -1695,7 +1695,7 @@ class PurchaseOrderLineItem(OrderLineItem):
             return None
         return self.part.part
 
-    part = models.ForeignKey(
+    supplier_part = models.ForeignKey(
         SupplierPart,
         on_delete=models.SET_NULL,
         blank=False,
