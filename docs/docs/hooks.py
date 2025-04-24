@@ -250,7 +250,10 @@ def on_config(config, *args, **kwargs):
 
 
 def on_post_build(*args, **kwargs):
-    """Run after the build is complete."""
+    """Run after the build is complete.
+
+    Here we check that all global settings and user settings are documented.
+    """
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     expected_settings_file = os.path.join(base_dir, 'inventree_settings.json')
