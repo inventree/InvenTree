@@ -101,7 +101,7 @@
         "react-window": "1.8.10",
         "recharts": "^2.15.0",
         "styled-components": "^6.1.14",
-        "zustand": "^4.5.5"
+        "zustand": "^5.0.3"
     },
     "devDependencies": {
         "@babel/core": "^7.26.10",
