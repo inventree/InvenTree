@@ -76,3 +76,11 @@ export type TemplatePreviewUIFeature = {
   };
   featureReturnType: undefined;
 };
+
+export type NavigationUIFeature = {
+  featureType: 'navigation';
+  requestContext: {};
+  responseOptions: PluginUIFeature;
+  featureContext: {};
+  featureReturnType: undefined;
+};

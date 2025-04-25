@@ -32,6 +32,18 @@ As the `django.db.models.QuerySet` is not a generic class, we would loose type i
 
 Models that implement the `InvenTreeReportMixin` must have an explicit return type annotation for the `report_context` function.
 
+#### INVE-E5
+**Rulesets have issues - Backend**
+
+The rulesets used for managing user/group/oAuth permissions have an issue.
+This might be caused by an addition or removal of models to the code base. Running the test suit should surface more logs with the error code indicating the exact infractions.
+
+#### INVE-E6
+**Scopes have issues - Backend**
+
+The scopes used for oAuth permissions have an issue and do not match the rulesets.
+This might be caused by an addition or removal of models to the code base or changes to the rulesets. Running the test suit should surface more logs with the error code indicating the exact infractions.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
@@ -57,7 +69,7 @@ See [INVE-W1](#inve-w1)
 
 InvenTree is running in debug mode. This is **not** recommended for production use, as it exposes sensitive information and makes the server more vulnerable to attacks. Debug mode is not intended for production/exposed instances, **even for short duration**.
 
-It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/intro.md#debug-mode).
+It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/index.md#debug-mode).
 
 #### INVE-W5
 **Background worker process not running - Backend**

@@ -60,6 +60,7 @@
         "schema",
         "--file","src/frontend/schema.yml"
       ],
+      "django": true,
       "justMyCode": false
     },
     {

@@ -629,10 +629,12 @@ def get_migration_plan():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def check_for_migrations(force: bool = False, reload_registry: bool = True):
+def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
     """Checks if migrations are needed.
 
     If the setting auto_update is enabled we will start updating.
+
+    Returns bool indicating if migrations are up to date
     """
     from plugin import registry
 
@@ -654,14 +656,14 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True):
     # Check if there are any open migrations
     if not plan:
         set_pending_migrations(0)
-        return
+        return True
 
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
     if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
         logger.info('Auto-update is disabled - skipping migrations')
-        return
+        return False
 
     # Log open migrations
     for migration in plan:
@@ -696,6 +698,8 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True):
         # are loaded fully in their new state.
         registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
+    return True
+
 
 def email_user(user_id: int, subject: str, message: str) -> None:
     """Send a message to a user."""
@@ -709,3 +713,13 @@ def email_user(user_id: int, subject: str, message: str) -> None:
 
     if email := get_email_for_user(user):
         send_email(subject, message, [email])
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def run_oauth_maintenance():
+    """Run the OAuth maintenance task(s)."""
+    from oauth2_provider.models import clear_expired
+
+    logger.info('Starting OAuth maintenance task')
+    clear_expired()
+    logger.info('Completed OAuth maintenance task')

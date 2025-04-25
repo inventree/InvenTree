@@ -11,13 +11,12 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
-import InvenTree.ready
 import InvenTree.version
 from common.settings import get_global_setting
 from InvenTree import helpers
@@ -88,7 +87,7 @@ class LicenseViewSerializer(serializers.Serializer):
 class LicenseView(APIView):
     """Simple JSON endpoint for InvenTree license information."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
@@ -134,7 +133,7 @@ class VersionViewSerializer(serializers.Serializer):
 class VersionView(APIView):
     """Simple JSON endpoint for InvenTree version information."""
 
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
 
     @extend_schema(responses={200: OpenApiResponse(response=VersionViewSerializer)})
     def get(self, request, *args, **kwargs):
@@ -195,7 +194,7 @@ class VersionTextView(ListAPI):
 
     serializer_class = VersionInformationSerializer
 
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
 
     # Specifically disable pagination for this view
     pagination_class = None
@@ -230,11 +229,11 @@ class InfoApiSerializer(serializers.Serializer):
 
         logo = serializers.CharField()
         splash = serializers.CharField()
-        login_message = serializers.CharField()
-        navbar_message = serializers
+        login_message = serializers.CharField(allow_null=True)
+        navbar_message = serializers.CharField(allow_null=True)
 
     server = serializers.CharField(read_only=True)
-    id = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True, allow_null=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -247,15 +246,13 @@ class InfoApiSerializer(serializers.Serializer):
     email_configured = serializers.BooleanField(read_only=True)
     debug_mode = serializers.BooleanField(read_only=True)
     docker_mode = serializers.BooleanField(read_only=True)
-    default_locale = serializers.ChoiceField(
-        choices=settings.LOCALE_CODES, read_only=True
-    )
+    default_locale = serializers.CharField(read_only=True)
     customize = CustomizeSerializer(read_only=True)
     system_health = serializers.BooleanField(read_only=True)
     database = serializers.CharField(read_only=True)
     platform = serializers.CharField(read_only=True)
     installer = serializers.CharField(read_only=True)
-    target = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True, allow_null=True)
     django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
 
@@ -266,7 +263,7 @@ class InfoView(APIView):
     Use to confirm that the server is running, etc.
     """
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
 
     def worker_pending_tasks(self):
         """Return the current number of outstanding background tasks."""
@@ -349,7 +346,7 @@ class InfoView(APIView):
 class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
 
     def not_found(self, request):
         """Return a 404 error."""
@@ -613,7 +610,7 @@ class APISearchView(GenericAPIView):
     Is much more efficient and simplifies code!
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = APISearchViewSerializer
 
     def get_result_types(self):
