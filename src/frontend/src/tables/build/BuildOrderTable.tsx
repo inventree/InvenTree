@@ -77,6 +77,11 @@ export function BuildOrderTable({
         title: t`IPN`
       },
       {
+        accessor: 'part_detail.revision',
+        title: t`Revision`,
+        sortable: true
+      },
+      {
         accessor: 'title',
         sortable: false
       },
