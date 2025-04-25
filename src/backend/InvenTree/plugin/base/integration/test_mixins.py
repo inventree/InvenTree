@@ -290,6 +290,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
 
+        # Set API TOKEN
+        self.mixin.set_setting('API_TOKEN', 'reqres-free-v1')
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
