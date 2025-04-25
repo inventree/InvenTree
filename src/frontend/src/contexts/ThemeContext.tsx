@@ -14,7 +14,6 @@ import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
 import type { JSX } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 
 export function ThemeContext({
   children
