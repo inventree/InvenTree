@@ -300,6 +300,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertTrue(result)
+        self.assertNotIn('error', result)
         self.assertEqual(result['name'], 'morpheus')
 
         # api_call with endpoint with leading slash
