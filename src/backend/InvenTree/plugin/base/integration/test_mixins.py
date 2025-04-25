@@ -205,7 +205,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             NAME = 'Sample API Caller'
 
             SETTINGS = {
-                'API_TOKEN': {'name': 'API Token', 'protected': True},
+                'API_TOKEN': {
+                    'name': 'API Token',
+                    'protected': True,
+                    'default': 'reqres-free-v1',
+                },
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
@@ -215,6 +219,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
+            API_TOKEN = 'x-api-key'
 
             @property
             def api_url(self):
