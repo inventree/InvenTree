@@ -28,7 +28,7 @@ test('Label Printing', async ({ browser }) => {
 
   // Select plugin
   await page.getByLabel('related-field-plugin').click();
-  await page.getByText('InvenTreeLabelSheet').click();
+  await page.getByText('InvenTreeLabelSheet').last().click();
 
   // Select label template
   await page.getByLabel('related-field-template').click();
@@ -37,7 +37,7 @@ test('Label Printing', async ({ browser }) => {
   await page.waitForTimeout(100);
 
   await page.getByLabel('related-field-plugin').click();
-  await page.getByText('InvenTreeLabelSheet').click();
+  await page.getByText('InvenTreeLabelSheet').last().click();
 
   // Submit the print form (second time should result in success)
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
