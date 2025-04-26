@@ -26,6 +26,7 @@ import {
   IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
@@ -51,12 +52,12 @@ export default function Calendar({
   filters,
   state,
   ...calendarProps
-}: InvenTreeCalendarProps) {
+}: Readonly<InvenTreeCalendarProps>) {
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  const [locale] = useLocalState((s) => [s.language]);
+  const [locale] = useLocalState(useShallow((s) => [s.language]));
 
   const selectMonth = useCallback(
     (date: DateValue) => {
