@@ -17,6 +17,7 @@ import {
 import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
 import { StylishText } from '../../../../components/items/StylishText';
@@ -34,11 +35,9 @@ const LOOKUP = Object.assign(
 
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
-  const [userTheme, setTheme, setLanguage] = useLocalState((state) => [
-    state.userTheme,
-    state.setTheme,
-    state.setLanguage
-  ]);
+  const [userTheme, setTheme, setLanguage] = useLocalState(
+    useShallow((state) => [state.userTheme, state.setTheme, state.setLanguage])
+  );
 
   // radius
   function getMark(value: number) {
