@@ -1,3 +1,4 @@
+import { ApiEndpoints, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -17,9 +18,11 @@ import { showNotification } from '@mantine/notifications';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
+import { api } from '../../App';
 import {
   doBasicLogin,
   doSimpleLogin,
+  ensureCsrf,
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
