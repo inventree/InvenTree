@@ -5,6 +5,7 @@ import { Fragment, type ReactNode, useMemo } from 'react';
 import { shortenString } from '../../functions/tables';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsState';
+import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
@@ -106,7 +107,19 @@ export function PageDetail({
 
   // action caching
   const computedActions = useMemo(() => {
-    return [...(extraActions ?? []), ...(actions ?? [])];
+    const extraActionArray: ReactNode[] = extraActions.map((action) => {
+      const { options, func } = action;
+      const { title, icon, context } = options;
+      return (
+        <PrimaryActionButton
+          title={title}
+          icon={icon}
+          onClick={() => func(context)}
+          key={title}
+        />
+      );
+    });
+    return [...(extraActionArray ?? []), ...(actions ?? [])];
   }, [extraActions, actions]);
 
   return (
