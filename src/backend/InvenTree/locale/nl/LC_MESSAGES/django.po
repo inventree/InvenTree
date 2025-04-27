@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-21 07:00+0000\n"
-"PO-Revision-Date: 2025-04-21 07:03\n"
+"PO-Revision-Date: 2025-04-25 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1685,11 +1685,11 @@ msgstr "Externe link ontbreekt"
 
 #: common/models.py:1881
 msgid "Model type"
-msgstr ""
+msgstr "Model type"
 
 #: common/models.py:1882
 msgid "Target model type for image"
-msgstr ""
+msgstr "Doel type voor afbeelding"
 
 #: common/models.py:1890
 msgid "Select file to attach"
@@ -3349,11 +3349,11 @@ msgstr "Zoekopdrachten geven resultaat voor hele woord overeenkomsten"
 
 #: common/setting/user.py:169
 msgid "Search Notes"
-msgstr ""
+msgstr "Zoek notities"
 
 #: common/setting/user.py:171
 msgid "Search queries return results for matches from the item's notes"
-msgstr ""
+msgstr "Zoekopdrachten geven resultaten voor overeenkomsten met artikel notities"
 
 #: common/setting/user.py:177
 msgid "Show Quantity in Forms"
@@ -3381,11 +3381,11 @@ msgstr "De navigatiebalk positie is gefixeerd aan de bovenkant van het scherm"
 
 #: common/setting/user.py:195
 msgid "Navigation Icons"
-msgstr ""
+msgstr "Navigatiepictogrammen"
 
 #: common/setting/user.py:196
 msgid "Display icons in the navigation bar"
-msgstr ""
+msgstr "Pictogrammen weergeven in de navigatiebalk"
 
 #: common/setting/user.py:201
 msgid "Date Format"
@@ -3856,27 +3856,27 @@ msgstr "Op voorraad"
 
 #: data_exporter/mixins.py:324 data_exporter/mixins.py:393
 msgid "Error occurred during data export"
-msgstr ""
+msgstr "Fout opgetreden tijdens data export"
 
 #: data_exporter/mixins.py:375
 msgid "Data export plugin returned incorrect data format"
-msgstr ""
+msgstr "Gegevensexport plug-in geeft onjuiste gegevensindeling terug"
 
 #: data_exporter/serializers.py:74
 msgid "Export Format"
-msgstr ""
+msgstr "Exporteer formaat"
 
 #: data_exporter/serializers.py:75
 msgid "Select export file format"
-msgstr ""
+msgstr "Selecteer export bestandsindeling"
 
 #: data_exporter/serializers.py:82
 msgid "Export Plugin"
-msgstr ""
+msgstr "Plug-in exporteren"
 
 #: data_exporter/serializers.py:83
 msgid "Select export plugin"
-msgstr ""
+msgstr "Export plug-in selecteren"
 
 #: generic/states/fields.py:146
 msgid "Additional status information for this item"
@@ -3924,7 +3924,7 @@ msgstr "Kolommen"
 
 #: importer/models.py:87
 msgid "Target model type for this import session"
-msgstr ""
+msgstr "Doel modeltype voor deze importsessie"
 
 #: importer/models.py:93
 msgid "Import status"
@@ -5044,12 +5044,12 @@ msgstr "Verkooporder {so} is nu achterstallig"
 
 #: order/tasks.py:177
 msgid "Overdue Return Order"
-msgstr ""
+msgstr "Achterstallige retour orders"
 
 #: order/tasks.py:182
 #, python-brace-format
 msgid "Return order {ro} is now overdue"
-msgstr ""
+msgstr "Productieorder {ro} is nu achterstallig"
 
 #: part/api.py:115
 msgid "Starred"
@@ -6317,7 +6317,7 @@ msgstr "De beschikbare voorraad voor {part.name} is onder het ingestelde minimum
 
 #: plugin/api.py:78
 msgid "Builtin"
-msgstr ""
+msgstr "Ingebouwd"
 
 #: plugin/api.py:92
 msgid "Mandatory"
@@ -6653,27 +6653,27 @@ msgstr "Leveranciersgegevens"
 
 #: plugin/builtin/exporter/bom_exporter.py:31
 msgid "Include supplier data"
-msgstr ""
+msgstr "Inclusief leveranciersgegevens"
 
 #: plugin/builtin/exporter/bom_exporter.py:36
 msgid "Manufacturer Data"
-msgstr ""
+msgstr "Fabrikant gegevens"
 
 #: plugin/builtin/exporter/bom_exporter.py:37
 msgid "Include manufacturer data"
-msgstr ""
+msgstr "Inclusief fabrikant gegevens"
 
 #: plugin/builtin/exporter/bom_exporter.py:42
 msgid "Substitute Data"
-msgstr ""
+msgstr "Vervang Data"
 
 #: plugin/builtin/exporter/bom_exporter.py:43
 msgid "Include substitute part data"
-msgstr ""
+msgstr "Voeg vervangende deelgegevens toe"
 
 #: plugin/builtin/exporter/bom_exporter.py:48
 msgid "Parameter Data"
-msgstr ""
+msgstr "Parameter gegevens"
 
 #: plugin/builtin/exporter/bom_exporter.py:49
 msgid "Include part parameter data"
@@ -6681,61 +6681,61 @@ msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:58
 msgid "Multi-Level BOM Exporter"
-msgstr ""
+msgstr "Meerdere niveau BOM export"
 
 #: plugin/builtin/exporter/bom_exporter.py:59
 msgid "Provides support for exporting multi-level BOMs"
-msgstr ""
+msgstr "Biedt ondersteuning voor het exporteren van multi-level BOMs"
 
 #: plugin/builtin/exporter/bom_exporter.py:96
 msgid "BOM Level"
-msgstr ""
+msgstr "BOM niveau"
 
 #: plugin/builtin/exporter/bom_exporter.py:102
 #, python-brace-format
 msgid "Substitute {n}"
-msgstr ""
+msgstr "Vervanging {n}"
 
 #: plugin/builtin/exporter/bom_exporter.py:108
 #, python-brace-format
 msgid "Supplier {n}"
-msgstr ""
+msgstr "Leverancier {n}"
 
 #: plugin/builtin/exporter/bom_exporter.py:109
 #, python-brace-format
 msgid "Supplier {n} SKU"
-msgstr ""
+msgstr "Leverancier {n} SKU"
 
 #: plugin/builtin/exporter/bom_exporter.py:110
 #, python-brace-format
 msgid "Supplier {n} MPN"
-msgstr ""
+msgstr "Leverancier {n} MPN"
 
 #: plugin/builtin/exporter/bom_exporter.py:116
 #, python-brace-format
 msgid "Manufacturer {n}"
-msgstr ""
+msgstr "Fabrikant {n}"
 
 #: plugin/builtin/exporter/bom_exporter.py:117
 #, python-brace-format
 msgid "Manufacturer {n} MPN"
-msgstr ""
+msgstr "Fabrikant {n} MPN"
 
 #: plugin/builtin/exporter/inventree_exporter.py:14
 msgid "InvenTree Generic Exporter"
-msgstr ""
+msgstr "InvenTree generieke exporteur"
 
 #: plugin/builtin/exporter/inventree_exporter.py:15
 msgid "Provides support for exporting data from InvenTree"
-msgstr ""
+msgstr "Biedt ondersteuning voor het exporteren van gegevens van InvenTree"
 
 #: plugin/builtin/exporter/part_parameter_exporter.py:33
 msgid "Part Parameter Exporter"
-msgstr ""
+msgstr "Exporteer onderdeel parameter"
 
 #: plugin/builtin/exporter/part_parameter_exporter.py:34
 msgid "Exporter for part parameter data"
-msgstr ""
+msgstr "Exporteerder voor gegevens van gedeeltelijke parameter"
 
 #: plugin/builtin/integration/core_notifications.py:32
 msgid "InvenTree Notifications"
@@ -6785,28 +6785,28 @@ msgstr "Standaard munteenheden omwisselen integratie"
 
 #: plugin/builtin/integration/part_notifications.py:24
 msgid "Part Notifications"
-msgstr ""
+msgstr "Meldingen voor onderdelen"
 
 #: plugin/builtin/integration/part_notifications.py:26
 msgid "Notify users about part changes"
-msgstr ""
+msgstr "Gebruikers inlichten over wijzigingen in onderdelen"
 
 #: plugin/builtin/integration/part_notifications.py:31
 msgid "Send notifications"
-msgstr ""
+msgstr "Meldingen verzenden"
 
 #: plugin/builtin/integration/part_notifications.py:32
 msgid "Send notifications for part changes to subscribed users"
-msgstr ""
+msgstr "Stuur meldingen van wijzigingen in onderdelen aan geabonneerde gebruikers"
 
 #: plugin/builtin/integration/part_notifications.py:49
 msgid "Changed part notification"
-msgstr ""
+msgstr "Melding gewijzigd onderdeel"
 
 #: plugin/builtin/integration/part_notifications.py:59
 #, python-brace-format
 msgid "The part `{part.name}` has been triggered with a `{part_action}` event"
-msgstr ""
+msgstr "Het deel `{part.name}` is geactiveerd met een `{part_action}` event"
 
 #: plugin/builtin/labels/inventree_label.py:23
 msgid "InvenTree PDF label printer"
@@ -7021,7 +7021,7 @@ msgstr "Ingebouwde plug-in"
 
 #: plugin/models.py:184
 msgid "Mandatory Plugin"
-msgstr ""
+msgstr "Mandatory Plugin"
 
 #: plugin/models.py:189
 msgid "Package Plugin"
@@ -8237,11 +8237,11 @@ msgstr "Voorraad transactie notities"
 
 #: stock/serializers.py:1827
 msgid "Next Serial Number"
-msgstr ""
+msgstr "Volgend serienummer"
 
 #: stock/serializers.py:1833
 msgid "Previous Serial Number"
-msgstr ""
+msgstr "Vorig serienummer"
 
 #: stock/status_codes.py:11
 msgid "OK"
@@ -8486,7 +8486,7 @@ msgstr "Minimale hoeveelheid"
 
 #: templates/email/part_event_notification.html:32
 msgid "You are receiving this email because you are subscribed to notifications for this part or a category that it is part of "
-msgstr ""
+msgstr "Je ontvangt deze e-mail omdat je bent geabonneerd op notificaties van dit onderdeel "
 
 #: users/admin.py:101
 msgid "Users"
@@ -8658,7 +8658,7 @@ msgstr "Voorkeursinformatie voor de gebruiker"
 
 #: users/models.py:570
 msgid "User Type"
-msgstr ""
+msgstr "Gebruikers type"
 
 #: users/models.py:571
 msgid "Which type of user is this?"
@@ -8746,15 +8746,15 @@ msgstr "Is dit gebruikersaccount actief"
 
 #: users/serializers.py:345
 msgid "Only a superuser can adjust this field"
-msgstr ""
+msgstr "Enkel een supergebruiker kan dit veld aanpassen"
 
 #: users/serializers.py:399
 msgid "Only staff users can create new users"
-msgstr ""
+msgstr "Alleen administrators kunnen nieuwe gebruikers aanmaken"
 
 #: users/serializers.py:404
 msgid "You do not have permission to create users"
-msgstr ""
+msgstr "U hebt geen toestemming om gebruikers aan te maken"
 
 #: users/serializers.py:425
 msgid "Your account has been created."
