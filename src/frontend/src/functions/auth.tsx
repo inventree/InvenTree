@@ -62,11 +62,12 @@ function post(path: string, params: any, method = 'post') {
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
-export const doBasicLogin = async (
+export async function doBasicLogin(
   username: string,
   password: string,
-  navigate: NavigateFunction
-) => {
+  navigate: NavigateFunction,
+  code?: string
+) {
   const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
@@ -104,15 +105,37 @@ export const doBasicLogin = async (
         success = true;
       }
     })
-    .catch((err) => {
+    .catch(async (err) => {
       if (err?.response?.status == 401) {
         setAuthContext(err.response.data?.data);
         const mfa_flow = err.response.data.data.flows.find(
           (flow: any) => flow.id == FlowEnum.MfaAuthenticate
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
-          success = true;
-          navigate('/mfa');
+          // MFA is required - we might already have a code
+          if (code && code.length > 0) {
+            const rslt = await handleMfaLogin(
+              navigate,
+              undefined,
+              { code: code },
+              () => {}
+            );
+            if (rslt) {
+              setAuthenticated(true);
+              loginDone = true;
+              success = true;
+              notifications.show({
+                title: t`MFA Login successful`,
+                message: t`MFA details were automatically provided in the browser`,
+                color: 'green'
+              });
+            }
+          }
+          // No code or success - off to the mfa page
+          if (!loginDone) {
+            success = true;
+            navigate('/mfa');
+          }
         }
       } else if (err?.response?.status == 409) {
         notifications.show({
@@ -133,7 +156,7 @@ export const doBasicLogin = async (
     clearUserState();
   }
   return success;
-};
+}
 
 /**
  * Logout the user from the current session
@@ -259,18 +282,23 @@ export function handleReset(
   });
 }
 
-export function handleMfaLogin(
+export async function handleMfaLogin(
   navigate: NavigateFunction,
-  location: Location<any>,
+  location: Location<any> | undefined,
   values: { code: string },
   setError: (message: string | undefined) => void
 ) {
   const { setAuthenticated, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
-  authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
-    code: values.code
-  })
+  const result = await authApi(
+    apiUrl(ApiEndpoints.auth_login_2fa),
+    undefined,
+    'post',
+    {
+      code: values.code
+    }
+  )
     .then((response) => {
       setError(undefined);
       setAuthContext(response.data?.data);
@@ -278,8 +306,10 @@ export function handleMfaLogin(
 
       fetchUserState().finally(() => {
         observeProfile();
-        followRedirect(navigate, location?.state);
+        if (location) followRedirect(navigate, location?.state);
       });
+
+      return true;
     })
     .catch((err) => {
       if (err?.response?.status == 409) {
@@ -298,7 +328,9 @@ export function handleMfaLogin(
         }
         setError(msg);
       }
+      return false;
     });
+  return result;
 }
 
 /**

@@ -8,22 +8,18 @@ import {
   Loader,
   PasswordInput,
   Stack,
-  TextInput
+  TextInput,
+  VisuallyHidden
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import { showNotification } from '@mantine/notifications';
 import { useShallow } from 'zustand/react/shallow';
-import { api } from '../../App';
 import {
   doBasicLogin,
   doSimpleLogin,
-  ensureCsrf,
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
@@ -33,7 +29,7 @@ import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
-    initialValues: { username: '', password: '' }
+    initialValues: { username: '', password: '', code: '' }
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
@@ -58,7 +54,9 @@ export function AuthenticationForm() {
       doBasicLogin(
         classicForm.values.username,
         classicForm.values.password,
-        navigate
+
+        navigate,
+        classicForm.values.code
       )
         .then((success) => {
           setIsLoggingIn(false);
@@ -140,6 +138,13 @@ export function AuthenticationForm() {
               placeholder={t`Your password`}
               {...classicForm.getInputProps('password')}
             />
+            <VisuallyHidden>
+              <TextInput
+                name='TOTP'
+                {...classicForm.getInputProps('code')}
+                hidden={true}
+              />
+            </VisuallyHidden>
             {password_forgotten_enabled() === true && (
               <Group justify='space-between' mt='0'>
                 <Anchor
