@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-21 07:00+0000\n"
-"PO-Revision-Date: 2025-04-21 07:03\n"
+"PO-Revision-Date: 2025-04-25 22:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1819,31 +1819,31 @@ msgstr "Name muss sich von den Namen des Referenzstatus unterscheiden"
 
 #: common/models.py:2131 common/models.py:2238 part/models.py:3876
 msgid "Selection List"
-msgstr ""
+msgstr "Auswahlliste"
 
 #: common/models.py:2132
 msgid "Selection Lists"
-msgstr ""
+msgstr "Auswahllisten"
 
 #: common/models.py:2137
 msgid "Name of the selection list"
-msgstr ""
+msgstr "Name der Auswahlliste"
 
 #: common/models.py:2144
 msgid "Description of the selection list"
-msgstr ""
+msgstr "Beschreibung der Auswahlliste"
 
 #: common/models.py:2150 part/models.py:1251
 msgid "Locked"
-msgstr ""
+msgstr "Gesperrt"
 
 #: common/models.py:2151
 msgid "Is this selection list locked?"
-msgstr ""
+msgstr "Ist diese Auswahlliste gesperrt?"
 
 #: common/models.py:2157
 msgid "Can this selection list be used?"
-msgstr ""
+msgstr "Kann diese Auswahlliste benutzt werden?"
 
 #: common/models.py:2165
 msgid "Source Plugin"
