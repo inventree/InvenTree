@@ -107,36 +107,7 @@ export async function doBasicLogin(
     })
     .catch(async (err) => {
       if (err?.response?.status == 401) {
-        setAuthContext(err.response.data?.data);
-        const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
-        );
-        if (mfa_flow && mfa_flow.is_pending == true) {
-          // MFA is required - we might already have a code
-          if (code && code.length > 0) {
-            const rslt = await handleMfaLogin(
-              navigate,
-              undefined,
-              { code: code },
-              () => {}
-            );
-            if (rslt) {
-              setAuthenticated(true);
-              loginDone = true;
-              success = true;
-              notifications.show({
-                title: t`MFA Login successful`,
-                message: t`MFA details were automatically provided in the browser`,
-                color: 'green'
-              });
-            }
-          }
-          // No code or success - off to the mfa page
-          if (!loginDone) {
-            success = true;
-            navigate('/mfa');
-          }
-        }
+        await handlePossibleMFAError(err);
       } else if (err?.response?.status == 409) {
         notifications.show({
           title: t`Already logged in`,
@@ -156,6 +127,39 @@ export async function doBasicLogin(
     clearUserState();
   }
   return success;
+
+  async function handlePossibleMFAError(err: any) {
+    setAuthContext(err.response.data?.data);
+    const mfa_flow = err.response.data.data.flows.find(
+      (flow: any) => flow.id == FlowEnum.MfaAuthenticate
+    );
+    if (mfa_flow?.is_pending) {
+      // MFA is required - we might already have a code
+      if (code && code.length > 0) {
+        const rslt = await handleMfaLogin(
+          navigate,
+          undefined,
+          { code: code },
+          () => {}
+        );
+        if (rslt) {
+          setAuthenticated(true);
+          loginDone = true;
+          success = true;
+          notifications.show({
+            title: t`MFA Login successful`,
+            message: t`MFA details were automatically provided in the browser`,
+            color: 'green'
+          });
+        }
+      }
+      // No code or success - off to the mfa page
+      if (!loginDone) {
+        success = true;
+        navigate('/mfa');
+      }
+    }
+  }
 }
 
 /**
