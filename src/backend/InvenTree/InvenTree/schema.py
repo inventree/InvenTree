@@ -8,6 +8,7 @@ from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import ComponentRegistry
 from drf_spectacular.utils import _SchemaType
+from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
 from users.oauth2_scopes import oauth2_scopes
@@ -79,6 +80,16 @@ class ExtendedAutoSchema(AutoSchema):
             request_body['required'] = True
             operation['requestBody'] = request_body
             self.method = original_method
+
+        # If pagination limit is not set (default state) then all results will return unpaginated. This doesn't match
+        # what the schema defines to be the expected result. This forces limit to be present, producing the expected
+        # type.
+        pagination_class = getattr(self.view, 'pagination_class', None)
+        if pagination_class and pagination_class == LimitOffsetPagination:
+            parameters = operation.get('parameters', [])
+            for parameter in parameters:
+                if parameter['name'] == 'limit':
+                    parameter['required'] = True
 
         return operation
 

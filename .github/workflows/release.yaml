@@ -6,10 +6,12 @@ on:
     types: [published]
 permissions:
   contents: read
+env:
+  python_version: 3.9
 
 jobs:
   stable:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Write release to stable branch
     permissions:
       contents: write
@@ -34,7 +36,7 @@ jobs:
           force: true
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Build and attest frontend
     permissions:
       id-token: write
@@ -87,5 +89,52 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           asset_name: frontend-build.intoto.jsonl
           file: ${{ steps.attest.outputs.bundle-path}}
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  docs:
+    runs-on: ubuntu-24.04
+    name: Build and publish documentation
+    permissions:
+      contents: write
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+      INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+      INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
+      INVENTREE_SITE_URL: http://localhost:8000
+      INVENTREE_DEBUG: true
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+          npm: true
+      - name: Install dependencies
+        run: |
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes -r docs/requirements.txt
+      - name: Build documentation
+        run: |
+          invoke migrate
+          invoke int.export-definitions --basedir "docs"
+          invoke dev.schema --filename docs/schema.yml --ignore-warnings
+          python docs/extract_schema.py docs/schema.yml
+          mkdocs build  -f docs/mkdocs.yml
+      - name: Zip build docs
+        run: |
+          cd docs/site
+          zip -r docs-html.zip *
+      - name: Publish documentation
+        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: docs/site/docs-html.zip
+          asset_name: docs-html.zip
           tag: ${{ github.ref }}
           overwrite: true

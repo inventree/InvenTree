@@ -13,5 +13,5 @@ Superusers can configure run-time conditions [as per django-flags](https://cfpb.
 ## Current Experimental Features
 
 | Feature | Key | Description |
-| ------- | ----------- |
-| oAuth provider / api | OIDC | Use oAuth and OIDC to authenticate users with the API - [read more](../api/api.md#oauth2--oidc). |
+| --- | --- | --- |
+| oAuth provider / api | OIDC | Use oAuth and OIDC to authenticate users with the API - [read more](../api/index.md#oauth2--oidc) |

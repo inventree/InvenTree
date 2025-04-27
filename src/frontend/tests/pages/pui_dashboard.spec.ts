@@ -5,6 +5,10 @@ import { setPluginState } from '../settings.js';
 test('Dashboard - Basic', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
+  // Reset wizards
+  await page.getByLabel('dashboard-menu').click();
+  await page.getByRole('menuitem', { name: 'Clear Widgets' }).click();
+
   await page.getByText('Use the menu to add widgets').waitFor();
 
   // Let's add some widgets
