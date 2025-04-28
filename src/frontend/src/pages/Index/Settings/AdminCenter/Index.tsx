@@ -242,7 +242,7 @@ export default function AdminCenter() {
       },
       {
         id: 'data',
-        label: t`Data`,
+        label: t`Data Management`,
         panelIDs: [
           'import',
           'export',
@@ -254,16 +254,22 @@ export default function AdminCenter() {
       {
         id: 'reporting',
         label: t`Reporting`,
-        panelIDs: ['labels', 'reports', 'stocktake']
+        panelIDs: ['labels', 'reports']
       },
       {
         id: 'extend',
-        label: t`Extend`,
+        label: t`Extend / Integrate`,
         panelIDs: ['plugin', 'machine']
       },
       {
-        id: 'other',
-        label: t`Other`
+        id: 'plm',
+        label: t`PLM`,
+        panelIDs: [
+          'part-parameters',
+          'category-parameters',
+          'location-types',
+          'stocktake'
+        ]
       }
     ];
   }, []);
