@@ -11,12 +11,13 @@ export enum ApiEndpoints {
 
   // User API endpoints
   user_list = 'user/',
-  user_me = 'user/me/',
-  user_profile = 'user/profile/',
-  user_roles = 'user/roles/',
-  user_token = 'user/token/',
-  user_tokens = 'user/tokens/',
+  user_tokens = 'user/token/',
   user_simple_login = 'email/generate/',
+  // Individual user endpoints
+  user_me_profile = 'user/me/profile/',
+  user_me_roles = 'user/me/roles/',
+  user_me_token = 'user/me/token/',
+  user_me = 'user/me/',
 
   // User auth endpoints
   user_reset = 'auth/v1/auth/password/request',

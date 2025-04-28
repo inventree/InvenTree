@@ -435,17 +435,26 @@ class UserProfileDetail(RetrieveUpdateAPI):
 
 
 user_urls = [
-    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
-    path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
+    # Individual user endpoints
     path(
-        'tokens/',
+        'me/',
+        include([
+            path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
+            path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+            path(
+                'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
+            ),
+            path('', MeUserDetail.as_view(), name='api-user-me'),
+        ]),
+    ),
+    # User related endpoints
+    path(
+        'token/',
         include([
             path('<int:pk>/', TokenDetailView.as_view(), name='api-token-detail'),
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
-    path('me/', MeUserDetail.as_view(), name='api-user-me'),
-    path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
     path(
         'owner/',
         include([
@@ -467,6 +476,7 @@ user_urls = [
             path('', RuleSetList.as_view(), name='api-ruleset-list'),
         ]),
     ),
+    # General user endpoints
     path('<int:pk>/', UserDetail.as_view(), name='api-user-detail'),
     path('', UserList.as_view(), name='api-user-list'),
 ]
