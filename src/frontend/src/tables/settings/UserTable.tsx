@@ -1,13 +1,14 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle, IconUserCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
@@ -225,9 +226,9 @@ export function UserDrawer({
  */
 export function UserTable({
   directLink
-}: {
+}: Readonly<{
   directLink?: boolean;
-}) {
+}>) {
   const table = useTable('users');
   const navigate = useNavigate();
   const user = useUserState();
@@ -298,7 +299,14 @@ export function UserTable({
             setSelectedUser(record.pk);
             deleteUser.open();
           }
-        })
+        }),
+        {
+          icon: <IconUserCircle />,
+          title: t`Open Profile`,
+          onClick: () => {
+            navigate(getDetailUrl(ModelType.user, record.pk));
+          }
+        }
       ];
     },
     [user]
