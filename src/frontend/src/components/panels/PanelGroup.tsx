@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Box,
   Divider,
   Group,
   Loader,
@@ -214,47 +215,47 @@ function BasePanelGroup({
           classNames={{ tab: classes.selectedPanelTab }}
         >
           <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
-            {groupedPanels.map((group) => {
-              const groupTabls = group.panels?.map(
-                (panel) =>
-                  !panel.hidden && (
-                    <Tooltip
-                      label={panel.label ?? panel.name}
-                      key={panel.name}
-                      disabled={expanded}
-                      position='right'
-                    >
-                      <Tabs.Tab
-                        p='xs'
-                        key={`panel-label-${panel.name}`}
-                        value={panel.name}
-                        leftSection={panel.icon}
-                        hidden={panel.hidden}
-                        disabled={panel.disabled}
-                        style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
-                        onClick={(event: any) =>
-                          handlePanelChange(panel.name, event)
-                        }
+            {groupedPanels.map((group) => (
+              <Box key={`group-${group.id}`} w={'100%'}>
+                <Text
+                  fs={'italic'}
+                  ml={'1rem'}
+                  c={vars.colors.primaryColors[7]}
+                  key={`group-label-${group.id}`}
+                >
+                  {group.label}
+                </Text>
+                {group.panels?.map(
+                  (panel) =>
+                    !panel.hidden && (
+                      <Tooltip
+                        label={panel.label ?? panel.name}
+                        key={panel.name}
+                        disabled={expanded}
+                        position='right'
                       >
-                        {expanded && panel.label}
-                      </Tabs.Tab>
-                    </Tooltip>
-                  )
-              );
-
-              return (
-                <>
-                  <Text
-                    fs={'italic'}
-                    ml={'1rem'}
-                    c={vars.colors.primaryColors[7]}
-                  >
-                    {group.label}
-                  </Text>
-                  {groupTabls}
-                </>
-              );
-            })}
+                        <Tabs.Tab
+                          p='xs'
+                          key={`panel-label-${panel.name}`}
+                          w={'100%'}
+                          value={panel.name}
+                          leftSection={panel.icon}
+                          hidden={panel.hidden}
+                          disabled={panel.disabled}
+                          style={{
+                            cursor: panel.disabled ? 'unset' : 'pointer'
+                          }}
+                          onClick={(event: any) =>
+                            handlePanelChange(panel.name, event)
+                          }
+                        >
+                          {expanded && panel.label}
+                        </Tabs.Tab>
+                      </Tooltip>
+                    )
+                )}
+              </Box>
+            ))}
             {collapsible && (
               <Group wrap='nowrap' gap='xs'>
                 <ActionIcon
