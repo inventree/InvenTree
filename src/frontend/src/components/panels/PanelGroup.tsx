@@ -6,6 +6,7 @@ import {
   Paper,
   Stack,
   Tabs,
+  Text,
   Tooltip
 } from '@mantine/core';
 import {
@@ -36,6 +37,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { identifierString } from '../../functions/conversion';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
+import { vars } from '../../theme';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 import type { PanelGroupType, PanelType } from '../panels/Panel';
@@ -99,7 +101,7 @@ function BasePanelGroup({
 
   // Rebuild the list of panels
   const [allPanels, groupedPanels] = useMemo(() => {
-    const _grouped_pannels: PanelGroupType[] = [];
+    const _grouped_panels: PanelGroupType[] = [];
     const _panels = [...panels];
     const _allpanels: PanelType[] = [...panels];
 
@@ -113,12 +115,12 @@ function BasePanelGroup({
           _panels.splice(index, 1);
         }
       });
-      _grouped_pannels.push(newVal);
+      _grouped_panels.push(newVal);
     });
 
     // Add remaining panels to group
     if (_panels.length > 0) {
-      _grouped_pannels.push({
+      _grouped_panels.push({
         id: 'ungrouped',
         label: '',
         panels: _panels
@@ -145,14 +147,14 @@ function BasePanelGroup({
     });
 
     if (pluginPanels.length > 0) {
-      _grouped_pannels.push({
+      _grouped_panels.push({
         id: 'plugins',
         label: markCustomPanels ? t`Plugin Provided` : '',
         panels: pluginPanels
       });
     }
 
-    return [_allpanels, _grouped_pannels];
+    return [_allpanels, _grouped_panels];
   }, [groups, panels, pluginPanelSet]);
 
   const activePanels = useMemo(
@@ -238,7 +240,13 @@ function BasePanelGroup({
 
               return (
                 <>
-                  <strong>{group.label}</strong>
+                  <Text
+                    fs={'italic'}
+                    ml={'1rem'}
+                    c={vars.colors.primaryColors[7]}
+                  >
+                    {group.label}
+                  </Text>
                   {groupTabls}
                 </>
               );
