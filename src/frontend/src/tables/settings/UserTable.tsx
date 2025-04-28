@@ -1,7 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { IconInfoCircle, IconUserCircle } from '@tabler/icons-react';
+import {
+  IconInfoCircle,
+  IconLock,
+  IconLockOpen,
+  IconUserCircle
+} from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -306,6 +311,26 @@ export function UserTable({
           onClick: () => {
             navigate(getDetailUrl(ModelType.user, record.pk));
           }
+        },
+        {
+          icon: <IconLock />,
+          title: t`Lock user`,
+          color: 'blue',
+          onClick: () => {
+            setUserActiveState(record.pk, false);
+            table.refreshTable();
+          },
+          hidden: !record.is_active
+        },
+        {
+          icon: <IconLockOpen />,
+          title: t`Unlock user`,
+          color: 'blue',
+          onClick: () => {
+            setUserActiveState(record.pk, true);
+            table.refreshTable();
+          },
+          hidden: record.is_active
         }
       ];
     },
@@ -412,4 +437,22 @@ export function UserTable({
       />
     </>
   );
+}
+
+async function setUserActiveState(userId: number, active: boolean) {
+  try {
+    await api.patch(apiUrl(ApiEndpoints.user_list, userId), {
+      is_active: active
+    });
+    showNotification({
+      title: t`User updated`,
+      message: t`User updated successfully`,
+      color: 'green'
+    });
+  } catch (error) {
+    showApiErrorMessage({
+      error: error,
+      title: t`Error updating user`
+    });
+  }
 }
