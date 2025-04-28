@@ -144,6 +144,10 @@ function BasePanelGroup({
         ...panel,
         name: panelKey
       });
+      _allpanels.push({
+        ...panel,
+        name: panelKey
+      });
     });
 
     if (pluginPanels.length > 0) {
