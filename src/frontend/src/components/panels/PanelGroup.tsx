@@ -147,7 +147,7 @@ function BasePanelGroup({
     if (pluginPanels.length > 0) {
       _grouped_pannels.push({
         id: 'plugins',
-        label: markCustomPanels ? t`Plugins` : '',
+        label: markCustomPanels ? t`Plugin Provided` : '',
         panels: pluginPanels
       });
     }
