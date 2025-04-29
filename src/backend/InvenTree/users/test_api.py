@@ -13,6 +13,8 @@ from users.ruleset import RULESET_NAMES, get_ruleset_models
 class UserAPITests(InvenTreeAPITestCase):
     """Tests for user API endpoints."""
 
+    fixtures = ['users']
+
     def test_user_options(self):
         """Tests for the User OPTIONS request."""
         self.assignRole('admin.add')
@@ -207,6 +209,28 @@ class UserAPITests(InvenTreeAPITestCase):
         build_perms = get_ruleset_models()['build']
 
         self.assertEqual(len(data['permissions']), len(perms) + len(build_perms))
+
+    def test_user_password_set(self):
+        """Test the set-password/ endpoint."""
+        self.user.is_superuser = True
+        self.user.save()
+
+        user = User.objects.get(pk=2)
+        url = reverse('api-user-set-password', kwargs={'pk': user.pk})
+
+        # to simple password
+        resp = self.put(url, {'password': 1}, expected_code=400)
+        self.assertContains(resp, 'This password is too short', status_code=400)
+
+        # now with overwerite
+        resp = self.put(
+            url, {'password': 1, 'override_warning': True}, expected_code=200
+        )
+        self.assertEqual(resp.data, {})
+
+        # complex enough pwd
+        resp = self.put(url, {'password': 'inventree'}, expected_code=200)
+        self.assertEqual(resp.data, {})
 
 
 class UserTokenTests(InvenTreeAPITestCase):
