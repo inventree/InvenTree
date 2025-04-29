@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-18 22:04\n"
+"PO-Revision-Date: 2025-04-25 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -297,11 +297,11 @@ msgstr "Open spotlight"
 
 #: src/components/buttons/StarredToggleButton.tsx:59
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Uitschrijven van meldingen"
 
 #: src/components/buttons/StarredToggleButton.tsx:60
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "Abonneren op notificaties"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -341,7 +341,7 @@ msgstr "Volgende maand"
 #: src/components/calendar/Calendar.tsx:169
 #: src/tables/InvenTreeTableHeader.tsx:248
 msgid "Download data"
-msgstr ""
+msgstr "Gegevens downloaden"
 
 #: src/components/calendar/OrderCalendar.tsx:133
 msgid "Order Updated"
@@ -635,7 +635,7 @@ msgstr "Medewerkers"
 
 #: src/components/details/Details.tsx:118
 msgid "Email: "
-msgstr ""
+msgstr "E-mailadres: "
 
 #: src/components/details/Details.tsx:387
 msgid "No name defined"
@@ -1112,7 +1112,7 @@ msgstr "Input error"
 
 #: src/components/forms/AuthenticationForm.tsx:263
 msgid "Check your input and try again. "
-msgstr ""
+msgstr "Controleer uw invoer en probeer het opnieuw. "
 
 #: src/components/forms/AuthenticationForm.tsx:287
 msgid "This will be used for a confirmation"
@@ -1198,7 +1198,7 @@ msgstr "Host opties bewerken"
 
 #: src/components/forms/InstanceOptions.tsx:77
 msgid "Save host selection"
-msgstr ""
+msgstr "Host keuze opslaan"
 
 #: src/components/forms/InstanceOptions.tsx:98
 #~ msgid "Version: {0}"
@@ -1619,11 +1619,11 @@ msgstr "Deze informatie is alleen beschikbaar voor medewerkers"
 
 #: src/components/items/RoleTable.tsx:81
 msgid "Updating"
-msgstr ""
+msgstr "Bijwerken"
 
 #: src/components/items/RoleTable.tsx:82
 msgid "Updating group roles"
-msgstr ""
+msgstr "Groepsrollen bijwerken"
 
 #: src/components/items/RoleTable.tsx:118
 #: src/pages/part/pricing/BomPricingPanel.tsx:193
@@ -1634,11 +1634,11 @@ msgstr "Bijgewerkt"
 
 #: src/components/items/RoleTable.tsx:119
 msgid "Group roles updated"
-msgstr ""
+msgstr "Groepsrollen bijgewerkt"
 
 #: src/components/items/RoleTable.tsx:135
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: src/components/items/RoleTable.tsx:140
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:412
@@ -1647,7 +1647,7 @@ msgstr "Bekijken"
 
 #: src/components/items/RoleTable.tsx:145
 msgid "Change"
-msgstr ""
+msgstr "Wijzigen"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:788
@@ -1658,19 +1658,19 @@ msgstr "Toevoegen"
 
 #: src/components/items/RoleTable.tsx:203
 msgid "Reset group roles"
-msgstr ""
+msgstr "Groepsrollen opnieuw instellen"
 
 #: src/components/items/RoleTable.tsx:212
 msgid "Reset"
-msgstr ""
+msgstr "Reset"
 
 #: src/components/items/RoleTable.tsx:215
 msgid "Save group roles"
-msgstr ""
+msgstr "Groep rollen opslaan"
 
 #: src/components/items/TransferList.tsx:65
 msgid "No items"
-msgstr ""
+msgstr "Geen artikelen"
 
 #: src/components/items/TransferList.tsx:161
 #: src/pages/part/PartDetail.tsx:755
@@ -1685,7 +1685,7 @@ msgstr "Beschikbaar"
 
 #: src/components/items/TransferList.tsx:162
 msgid "Selected"
-msgstr ""
+msgstr "Geselecteerd"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:101
 msgid "InvenTree Version"
