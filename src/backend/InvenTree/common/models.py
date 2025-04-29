@@ -2386,3 +2386,111 @@ class DataOutput(models.Model):
     output = models.FileField(upload_to='data_output', blank=True, null=True)
 
     errors = models.JSONField(blank=True, null=True)
+
+
+class EmailMessage(models.Model):
+    """Model for storing email messages sent or received by the system.
+
+    Attributes:
+        global_id: Unique identifier for the email message
+        message_id: Identifier for the email message - might be supplied by external system
+        thread_id: Identifier of thread - might be supplied by external system
+        subject: Subject of the email message
+        body: Body of the email message
+        recipient: Recipient of the email message
+        sender: Sender of the email message
+        status: Status of the email message (e.g. 'sent', 'failed', etc)
+        timestamp: Date and time that the email message left the system or was received by the system
+        headers: Headers of the email message
+        full_message: Full email message content
+        direction: Direction of the email message (e.g. 'inbound', 'outbound')
+        error_code: Error code (if applicable)
+        error_message: Error message (if applicable)
+        error_timestamp: Date and time of the error (if applicable)
+        delivery_options: Delivery options for the email message
+    """
+
+    class Meta:
+        """Meta options for EmailMessage."""
+
+        verbose_name = _('Email Message')
+        verbose_name_plural = _('Email Messages')
+
+    class EmailStatus(models.TextChoices):
+        """Machine setting config type enum."""
+
+        ANNOUNCED = (
+            'A',
+            _('Announced'),
+        )  # Intend to send mail was announced (saved in system, pushed to queue)
+        SENT = 'S', _('Sent')  # Mail was sent to the email server
+        FAILED = 'F', _('Failed')  # There was en error sending the email
+        DELIVERED = (
+            'D',
+            _('Delivered'),
+        )  # Mail was delivered to the recipient - this means we got some kind of feedback from the email server or user
+        READ = (
+            'R',
+            _('Read'),
+        )  # Mail was read by the recipient - this means we got some kind of feedback from the user
+        CONFIRMED = (
+            'C',
+            _('Confirmed'),
+        )  # Mail delivery was confirmed by the recipient explicitly
+
+    class EmailDirection(models.TextChoices):
+        """Email direction enum."""
+
+        INBOUND = 'I', _('Inbound')
+        OUTBOUND = 'O', _('Outbound')
+
+    class DeliveryOptions(models.TextChoices):
+        """Email delivery options enum."""
+
+        HIGH_PRIORITY = 'high', _('High Priority')
+        LOW_PRIORITY = 'low', _('Low Priority')
+        NO_REPLY = 'no_reply', _('No Reply')
+        TRACK_DELIVERY = 'track_delivery', _('Track Delivery')
+        TRACK_READ = 'track_read', _('Track Read')
+        TRACK_CLICK = 'track_click', _('Track Click')
+
+    global_id = models.UUIDField(
+        verbose_name=_('Global ID'),
+        help_text=_('Unique identifier for this message'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    message_id = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name=_('Message ID'),
+        help_text=_('Identifier for this message'),
+    )
+    thread_id = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name=_('Thread ID'),
+        help_text=_('Identifier for this message thread'),
+    )
+    subject = models.CharField(max_length=250, blank=False, null=False)
+    body = models.TextField(blank=False, null=False)
+    recipient = models.EmailField(blank=False, null=False)
+    sender = models.EmailField(blank=False, null=False)
+    status = models.CharField(
+        max_length=50, blank=True, null=True, choices=EmailStatus.choices
+    )
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    headers = models.JSONField(blank=True, null=True)
+    full_message = models.TextField(blank=True, null=True)
+    direction = models.CharField(
+        max_length=50, blank=True, null=True, choices=EmailDirection.choices
+    )
+    error_code = models.CharField(max_length=50, blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    error_timestamp = models.DateTimeField(blank=True, null=True)
+    delivery_options = models.JSONField(
+        blank=True, null=True, choices=DeliveryOptions.choices
+    )
