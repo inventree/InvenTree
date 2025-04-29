@@ -3,6 +3,7 @@ import { Trans } from '@lingui/react/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconInfoCircle,
+  IconKey,
   IconLock,
   IconLockOpen,
   IconUserCircle
@@ -29,6 +30,7 @@ import {
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
@@ -313,6 +315,15 @@ export function UserTable({
           }
         },
         {
+          icon: <IconKey />,
+          title: t`Change Password`,
+          color: 'blue',
+          onClick: () => {
+            setSelectedUser(record.pk);
+            setPassowrd.open();
+          }
+        },
+        {
           icon: <IconLock />,
           title: t`Lock user`,
           color: 'blue',
@@ -360,6 +371,18 @@ export function UserTable({
     successMessage: t`Added user`
   });
 
+  const setPassowrd = useApiFormModal({
+    url: ApiEndpoints.user_set_password,
+    method: 'PUT',
+    pk: selectedUser,
+    title: t`Set Password`,
+    fields: {
+      password: { field_type: 'password' },
+      override_warning: {}
+    },
+    successMessage: t`Password updated`
+  });
+
   const tableActions = useMemo(() => {
     const actions = [];
     const staff: boolean = user.isStaff() || user.isSuperuser();
@@ -404,6 +427,7 @@ export function UserTable({
 
   return (
     <>
+      {editable && setPassowrd.modal}
       {editable && newUser.modal}
       {editable && deleteUser.modal}
       {editable && (
