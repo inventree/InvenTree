@@ -232,6 +232,10 @@ class UserAPITests(InvenTreeAPITestCase):
         resp = self.put(url, {'password': 'inventree'}, expected_code=200)
         self.assertEqual(resp.data, {})
 
+        # reset user
+        self.user.is_superuser = False
+        self.user.save()
+
 
 class UserTokenTests(InvenTreeAPITestCase):
     """Tests for user token functionality."""
