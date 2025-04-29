@@ -283,9 +283,13 @@ class GroupSerializer(InvenTreeModelSerializer):
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
 
-    roles = RuleSetSerializer(source='rule_sets', many=True, read_only=True)
+    roles = RuleSetSerializer(
+        source='rule_sets', many=True, read_only=True, allow_null=True
+    )
 
-    users = UserSerializer(source='user_set', many=True, read_only=True)
+    users = UserSerializer(
+        source='user_set', many=True, read_only=True, allow_null=True
+    )
 
 
 class ExtendedUserSerializer(UserSerializer):

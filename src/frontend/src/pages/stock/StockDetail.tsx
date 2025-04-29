@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -749,6 +750,37 @@ export default function StockDetail() {
     parts: stockitem.part_detail ? [stockitem.part_detail] : []
   });
 
+  const scanIntoLocation = useBarcodeScanDialog({
+    title: t`Scan Into Location`,
+    modelType: ModelType.stocklocation,
+    callback: async (barcode, response) => {
+      const pk = response.stocklocation.pk;
+
+      return api
+        .post(apiUrl(ApiEndpoints.stock_transfer), {
+          location: pk,
+          items: [
+            {
+              pk: stockitem.pk,
+              quantity: stockitem.quantity
+            }
+          ]
+        })
+        .then(() => {
+          refreshInstance();
+          return {
+            success: t`Scanned stock item into location`
+          };
+        })
+        .catch((error) => {
+          console.log('Error scanning stock item:', error);
+          return {
+            error: t`Error scanning stock item`
+          };
+        });
+    }
+  });
+
   const stockActions = useMemo(() => {
     // Can this stock item be transferred to a different location?
     const canTransfer =
@@ -775,6 +807,14 @@ export default function StockDetail() {
         pk={stockitem.pk}
         hash={stockitem?.barcode_hash}
         perm={user.hasChangeRole(UserRoles.stock)}
+        actions={[
+          {
+            name: t`Scan into location`,
+            icon: <InvenTreeIcon icon='location' />,
+            tooltip: t`Scan this item into a location`,
+            onClick: scanIntoLocation.open
+          }
+        ]}
       />,
       <PrintingActions
         modelType={ModelType.stockitem}
@@ -974,6 +1014,7 @@ export default function StockDetail() {
   return (
     <>
       {findBySerialNumber.modal}
+      {scanIntoLocation.dialog}
       <InstanceDetail
         requiredRole={UserRoles.stock}
         status={requestStatus}

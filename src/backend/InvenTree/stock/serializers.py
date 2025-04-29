@@ -655,20 +655,20 @@ class StockItemSerializer(
 
     # Annotated fields
     allocated = serializers.FloatField(
-        required=False, read_only=True, label=_('Allocated Quantity')
+        read_only=True, allow_null=True, label=_('Allocated Quantity')
     )
     expired = serializers.BooleanField(
-        required=False, read_only=True, label=_('Expired')
+        read_only=True, allow_null=True, label=_('Expired')
     )
     installed_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Installed Items')
+        read_only=True, allow_null=True, label=_('Installed Items')
     )
     child_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Child Items')
+        read_only=True, allow_null=True, label=_('Child Items')
     )
-    stale = serializers.BooleanField(required=False, read_only=True, label=_('Stale'))
+    stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
     tracking_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Tracking Items')
+        read_only=True, allow_null=True, label=_('Tracking Items')
     )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1161,7 +1161,7 @@ class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
         read_only_fields = ['location_count']
 
-    location_count = serializers.IntegerField(read_only=True)
+    location_count = serializers.IntegerField(read_only=True, allow_null=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1273,7 +1273,7 @@ class LocationSerializer(
 
     # Detail for location type
     location_type_detail = StockLocationTypeSerializer(
-        source='location_type', read_only=True, many=False
+        source='location_type', read_only=True, allow_null=True, many=False
     )
 
 

@@ -4,7 +4,7 @@ import json
 import os
 import subprocess
 import textwrap
-from typing import Literal
+from typing import Literal, Optional
 
 import requests
 import yaml
@@ -355,3 +355,26 @@ def define_env(env):
             ret_data += f'| {k} | `{v["type"]}` | {v["description"]} |\n'
 
         return ret_data
+
+    @env.macro
+    def icon(
+        source: str,
+        size: str = '20px',
+        color: Optional[str] = None,
+        title: Optional[str] = None,
+    ):
+        """Return a tabler icon for a given source.
+
+        Arguments:
+            source: The name of the icon to display (e.g. 'check', 'cross', etc.)
+            size: The size of the icon (default: 20px)
+            color: The color of the icon (default: None)
+            title: The title of the icon (default: None)
+
+        Requires CSS to be loaded from:
+        https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css
+        """
+        c = f' color: {color};' if color else ''
+        t = f' <i>{title}</i>' if title else ''
+
+        return f"<i class='ti ti-{source}' style='font-size: {size};{c}'></i>{t}"

@@ -64,7 +64,7 @@ By default, this file will be created as `config.yaml` in the external data volu
 
 InvenTree uses a secret key to provide cryptographic signing for the application.
 
-As specified in the [configuration documentation](./config.md#secret-key) this can be passed to the InvenTree application directly as an environment variable, or provided via a file.
+As specified in the [configuration documentation](./config.md#secret-key-material) this can be passed to the InvenTree application directly as an environment variable, or provided via a file.
 
 By default, the InvenTree container expects the secret key file to exist as `secret_key.txt` (within the external data volume). If this file does not exist, it will be created and a new key will be randomly generated.
 
@@ -73,7 +73,7 @@ By default, the InvenTree container expects the secret key file to exist as `sec
 
 #### Plugins
 
-Plugins are supported natively when running under docker. There are two ways to [install plugins](../extend/plugins/install.md) when using docker:
+Plugins are supported natively when running under docker. There are two ways to [install plugins](../plugins/install.md) when using docker:
 
 - Install via the `plugins.txt` file provided in the external data directory
 - Install into the `plugins/` subdirectory in the external data directory

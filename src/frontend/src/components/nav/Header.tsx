@@ -8,7 +8,7 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
@@ -16,8 +16,10 @@ import { useMatch, useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
+import { getBaseUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
@@ -41,11 +43,10 @@ import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
-  const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
-    state.setNavigationOpen,
-    state.navigationOpen
-  ]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [setNavigationOpen, navigationOpen] = useLocalState(
+    useShallow((state) => [state.setNavigationOpen, state.navigationOpen])
+  );
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [
@@ -66,10 +67,12 @@ export function Header() {
     return server.customize?.navbar_message;
   }, [server.customize]);
 
+  const visibility = useDocumentVisibility();
+
   // Fetch number of notifications for the current user
   const notifications = useQuery({
     queryKey: ['notification-count'],
-    enabled: isLoggedIn(),
+    enabled: isLoggedIn() && visibility === 'visible',
     queryFn: async () => {
       if (!isLoggedIn()) {
         return null;
@@ -93,7 +96,8 @@ export function Header() {
         return null;
       }
     },
-    refetchInterval: 5 * 60 * 1000,
+    // Refetch every minute, *if* the tab is visible
+    refetchInterval: 60 * 1000,
     refetchOnMount: true
   });
 
