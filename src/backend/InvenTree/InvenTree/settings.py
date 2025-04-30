@@ -978,7 +978,8 @@ CURRENCY_DECIMAL_PLACES = 6
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
 # Email configuration options
-EMAIL_BACKEND = get_setting(
+EMAIL_BACKEND = 'InvenTree.backend.InvenTreeMailLoggingBackend'
+INTERNAL_EMAIL_BACKEND = get_setting(
     'INVENTREE_EMAIL_BACKEND',
     'email.backend',
     'django.core.mail.backends.smtp.EmailBackend',

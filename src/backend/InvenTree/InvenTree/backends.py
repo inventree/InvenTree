@@ -3,9 +3,14 @@
 import datetime
 import time
 
+from django.conf import settings
+from django.core.mail.backends.base import BaseEmailBackend
+from django.utils.module_loading import import_string
+
 import structlog
 from maintenance_mode.backends import AbstractStateBackend
 
+from common.models import log_email_messages
 from common.settings import get_global_setting, set_global_setting
 
 logger = structlog.get_logger('inventree')
@@ -80,3 +85,36 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
                 logger.warning(
                     'Failed to set maintenance mode state after %s retries', retries
                 )
+
+
+class InvenTreeMailLoggingBackend(BaseEmailBackend):
+    """Backend that logs send mails to the database."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the email backend."""
+        super().__init__(*args, **kwargs)
+        klass = import_string(settings.INTERNAL_EMAIL_BACKEND)
+        self.backend: BaseEmailBackend = klass(*args, **kwargs)
+
+    def open(self):
+        """Open the email backend connection."""
+        return self.backend.open()
+
+    def close(self):
+        """Close the email backend connection."""
+        return self.backend.open()
+
+    def send_messages(self, email_messages):
+        """Send email messages and log them to the database.
+
+        Args:
+            email_messages (list): List of EmailMessage objects to send.
+        """
+        try:
+            log_email_messages(email_messages)
+        except Exception:
+            logger.exception('INVE-W9: Problem logging recipients, ignoring')
+        try:
+            return self.backend.send_messages(email_messages)
+        except Exception:
+            logger.exception('INVE-W9: Exception during mail delivery')

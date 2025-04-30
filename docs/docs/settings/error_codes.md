@@ -99,6 +99,14 @@ There are database migrations waiting to be applied. This might lead to integrit
 Some deployment methods support [auto applying of updates](../start/config.md#auto-update). See also [Perform Database Migrations](../start/install.md#perform-database-migrations).
 Steps very between deployment methods.
 
+
+#### INVE-W9
+**Exception during mail delivery - Backend**
+
+Collective exception for errors that occur during mail delivery. This might be caused by a misconfiguration of the email provider or a network issue.
+These issues are raised directly from the mail backend so it is unlikely that the error is caused by django or InvenTree itself.
+Check the logs for more information.
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 

@@ -2393,8 +2393,8 @@ class EmailMessage(models.Model):
 
     Attributes:
         global_id: Unique identifier for the email message
-        message_id: Identifier for the email message - might be supplied by external system
-        thread_id: Identifier of thread - might be supplied by external system
+        message_id_key: Identifier for the email message - might be supplied by external system
+        thread_id_key: Identifier of thread - might be supplied by external system
         subject: Subject of the email message
         body: Body of the email message
         recipient: Recipient of the email message
@@ -2460,20 +2460,34 @@ class EmailMessage(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+        unique=True,
     )
-    message_id = models.CharField(
+    message_id_key = models.CharField(
         max_length=250,
         blank=True,
         null=True,
         verbose_name=_('Message ID'),
-        help_text=_('Identifier for this message'),
+        help_text=_(
+            'Identifier for this message (might be supplied by external system)'
+        ),
     )
-    thread_id = models.CharField(
+    thread_id_key = models.CharField(
         max_length=250,
         blank=True,
         null=True,
         verbose_name=_('Thread ID'),
-        help_text=_('Identifier for this message thread'),
+        help_text=_(
+            'Identifier for this message thread (might be supplied by external system)'
+        ),
+    )
+    thread = models.ForeignKey(
+        'EmailThread',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='messages',
+        verbose_name=_('Thread'),
+        help_text=_('Linked thread for this message'),
     )
     subject = models.CharField(max_length=250, blank=False, null=False)
     body = models.TextField(blank=False, null=False)
@@ -2494,3 +2508,75 @@ class EmailMessage(models.Model):
     delivery_options = models.JSONField(
         blank=True, null=True, choices=DeliveryOptions.choices
     )
+
+    def save(self, *args, **kwargs):
+        """Ensure threads exist before saving the email message."""
+        ret = super().save(*args, **kwargs)
+
+        # Ensure thread is linked
+        if not self.thread:
+            thread = EmailThread.objects.get_or_create(key=self.thread_id)
+            self.thread = thread
+            self.save()
+
+        return ret
+
+
+class EmailThread(InvenTree.models.InvenTreeModel, InvenTree.models.MetadataMixin):
+    """Model for storing email threads."""
+
+    class Meta:
+        """Meta options for EmailThread."""
+
+        verbose_name = _('Email Thread')
+        verbose_name_plural = _('Email Threads')
+        unique_together = [['key', 'global_id']]
+        ordering = ['-updated']
+
+    key = models.CharField(
+        max_length=250,
+        verbose_name=_('Key'),
+        help_text=_('Unique key for this thread (used to identify the thread)'),
+    )
+    global_id = models.UUIDField(
+        verbose_name=_('Global ID'),
+        help_text=_('Unique identifier for this thread'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    started_internal = models.BooleanField(
+        default=False,
+        verbose_name=_('Started Internal'),
+        help_text=_('Was this thread started internally?'),
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the thread was created'),
+    )
+    updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated'),
+        help_text=_('Date and time that the thread was last updated'),
+    )
+
+
+def log_email_messages(email_messages):
+    """Log email messages to the database.
+
+    Args:
+        email_messages (list): List of email messages to log.
+    """
+    for msg in email_messages:
+        try:
+            EmailMessage.objects.create(
+                subject=msg.subject,
+                body=msg.body,
+                recipient=msg.to,
+                sender=msg.from_email,
+                status=EmailMessage.EmailStatus.ANNOUNCED,
+                direction=EmailMessage.EmailDirection.OUTBOUND,
+            )
+        except Exception as exc:
+            logger.error(f' INVE-W9: Failed to log email message: {exc}')
