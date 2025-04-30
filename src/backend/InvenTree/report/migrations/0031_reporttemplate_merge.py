@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("report", "0029_remove_reportoutput_template_and_more"),
+        ("report", "0030_alter_labeltemplate_model_type_and_more"),
     ]
 
     operations = [
