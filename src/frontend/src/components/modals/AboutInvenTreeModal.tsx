@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
@@ -32,14 +33,14 @@ type AboutLookupRef = {
 
 export function AboutInvenTreeModal({
   context,
-  id
+  id,
+  innerProps
 }: Readonly<
   ContextModalProps<{
     modalBody: string;
   }>
 >) {
-  const [user] = useUserState((state) => [state.user]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [user] = useUserState(useShallow((state) => [state.user]));
 
   if (!user?.is_staff)
     return (
@@ -47,7 +48,18 @@ export function AboutInvenTreeModal({
         <Trans>This information is only available for staff users</Trans>
       </Text>
     );
+  return <AboutContent context={context} id={id} innerProps={innerProps} />;
+}
 
+const AboutContent = ({
+  context,
+  id
+}: Readonly<
+  ContextModalProps<{
+    modalBody: string;
+  }>
+>) => {
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const { isLoading, data } = useQuery({
     queryKey: ['version'],
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
@@ -185,7 +197,7 @@ export function AboutInvenTreeModal({
       </Group>
     </Stack>
   );
-}
+};
 
 function renderVersionBadge(data: any) {
   const badgeType = () => {

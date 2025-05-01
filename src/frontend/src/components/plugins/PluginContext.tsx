@@ -1,7 +1,7 @@
 import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../App';
 import { useLocalState } from '../../states/LocalState';
 import {
@@ -24,7 +24,7 @@ import {
 } from '../../hooks/UseForm';
 
 export const useInvenTreeContext = () => {
-  const [locale, host] = useLocalState((s) => [s.language, s.host]);
+  const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();

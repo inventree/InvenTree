@@ -4,7 +4,7 @@ title: Stock Status
 
 ## Stock Status
 
-Each [Stock Item](./stock.md#stock-item) has a *status* attribute, which serves to identify the current condition of the individual stock item.
+Each [Stock Item](./index.md#stock-item) has a *status* attribute, which serves to identify the current condition of the individual stock item.
 
 Certain stock item status codes will restrict the availability of the stock item.
 
