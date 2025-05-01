@@ -23,6 +23,8 @@ In addition to the [global context](#global-context), all *report* templates hav
 
 {{ report_context("base", "report") }}
 
+`merge` exposes the selected items in the `items` context variable. {{ templatefile("report/inventree_stock_report_merge.html") }} shows an example on how to use this context variable.
+
 Note that custom plugins may also add additional context variables to the report context.
 
 ::: report.models.ReportTemplate.get_context

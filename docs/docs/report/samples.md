@@ -22,6 +22,7 @@ The following report templates are provided "out of the box" and can be used as 
 | [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../order/sales_order.md) | Sales Order Shipment report |
 | [Stock Location](#stock-location) | [StockLocation](../stock/stock.md#stock-location) | Stock Location report |
 | [Test Report](#test-report) | [StockItem](../stock/stock.md#stock-item) | Test Report |
+| [Selected Stock Items Report](#selected-stock-items-report) | [StockItem](../stock/stock.md#stock-item) | Selected Stock Items report |
 
 ### Bill of Materials Report
 
@@ -54,6 +55,10 @@ The following report templates are provided "out of the box" and can be used as 
 ### Test Report
 
 {{ templatefile("report/inventree_test_report.html") }}
+
+### Selected Stock Items Report
+
+{{ templatefile("report/inventree_stock_report_merge.html") }}
 
 ## Label Templates
 
