@@ -2514,9 +2514,13 @@ class EmailMessage(models.Model):
         ret = super().save(*args, **kwargs)
 
         # Ensure thread is linked
-        if not self.thread and self.thread_id_key:
-            thread = EmailThread.objects.get_or_create(key=self.thread_id_key)
+        if not self.thread:
+            thread, created = EmailThread.objects.get_or_create(
+                key=self.thread_id_key, started_internal=True
+            )
             self.thread = thread
+            if created and not self.thread_id_key:
+                self.thread_id_key = thread.global_id
             self.save()
 
         return ret
@@ -2536,6 +2540,8 @@ class EmailThread(InvenTree.models.InvenTreeModel, InvenTree.models.MetadataMixi
     key = models.CharField(
         max_length=250,
         verbose_name=_('Key'),
+        null=True,
+        blank=True,
         help_text=_('Unique key for this thread (used to identify the thread)'),
     )
     global_id = models.UUIDField(
