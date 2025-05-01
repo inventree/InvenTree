@@ -112,9 +112,9 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         """
         try:
             log_email_messages(email_messages)
-        except Exception:
+        except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Problem logging recipients, ignoring')
         try:
             return self.backend.send_messages(email_messages)
-        except Exception:
+        except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Exception during mail delivery')

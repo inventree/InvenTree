@@ -1873,3 +1873,16 @@ class EmailTests(InvenTreeAPITestCase):
         )
 
         self.assertEqual(len(mail.outbox), 1)
+
+        # Check using contexts
+        with mail.get_connection() as connection:
+            message = mail.EmailMessage(
+                subject='test sub',
+                body='test msg',
+                to=['to@example.org'],
+                connection=connection,
+                headers={'X-My-Header': 'my value'},
+            )
+            message.send()
+
+        self.assertEqual(len(mail.outbox), 2)
