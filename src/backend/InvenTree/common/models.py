@@ -2514,8 +2514,8 @@ class EmailMessage(models.Model):
         ret = super().save(*args, **kwargs)
 
         # Ensure thread is linked
-        if not self.thread:
-            thread = EmailThread.objects.get_or_create(key=self.thread_id)
+        if not self.thread and self.thread_id_key:
+            thread = EmailThread.objects.get_or_create(key=self.thread_id_key)
             self.thread = thread
             self.save()
 

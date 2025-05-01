@@ -9,6 +9,7 @@ from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -1835,3 +1836,40 @@ class AdminTest(AdminTestCase):
             model=Attachment,
             model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
         )
+
+
+class EmailTests(InvenTreeAPITestCase):
+    """Unit tests for the custom email backend and models."""
+
+    def test_email_send_dummy(self):
+        """Theat that normal django send_mail still works."""
+        self.assertEqual(len(mail.outbox), 0)
+
+        mail.send_mail(
+            'test sub',
+            'test msg',
+            'from@example.org',
+            ['to@example.org'],
+            html_message='<p>test html msg</p>',
+        )
+
+        self.assertEqual(len(mail.outbox), 1)
+
+    # This is needed because django overrides the mail backend during tests
+    @override_settings(
+        EMAIL_BACKEND='InvenTree.backends.InvenTreeMailLoggingBackend',
+        INTERNAL_EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+    )
+    def test_email_send_custom(self):
+        """Theat that normal django send_mail still works."""
+        self.assertEqual(len(mail.outbox), 0)
+
+        mail.send_mail(
+            'test sub',
+            'test msg',
+            'from@example.org',
+            ['to@example.org'],
+            html_message='<p>test html msg</p>',
+        )
+
+        self.assertEqual(len(mail.outbox), 1)

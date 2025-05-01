@@ -76,7 +76,9 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
             if settings.TESTING:
                 from_email = 'from@test.com'
             else:
-                logger.error('send_email failed: DEFAULT_FROM_EMAIL not specified')
+                logger.error(
+                    'INVE-W7: send_email failed: DEFAULT_FROM_EMAIL not specified'
+                )
                 return
 
     InvenTree.tasks.offload_task(
