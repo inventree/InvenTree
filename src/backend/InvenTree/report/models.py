@@ -239,7 +239,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
-            context: DTL context (optional)
+            context: Django template language contexts (optional)
 
         Returns:
             str: HTML string
@@ -478,8 +478,6 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         # Start with a default report name
         report_name = None
-
-        # report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
         # If a DataOutput object is not provided, create a new one
         if not output:
