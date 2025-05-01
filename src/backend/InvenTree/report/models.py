@@ -255,7 +255,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
-            context: DTL context (optional)
+            context: Django template langaguage contexts (optional)
 
         Returns:
             bytes: PDF data
