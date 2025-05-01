@@ -11,9 +11,7 @@ When a certain (server-side) event occurs, the background worker passes the even
 !!! tip "Enable Event Integration"
     The *Enable Event Integration* option must first be enabled to allow plugins to respond to events.
 
-{% with id="events", url="plugin/enable_events.png", description="Enable event integration" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/enable_events.png", "Enable event integration") }}
 
 ## Events
 

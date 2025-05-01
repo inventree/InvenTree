@@ -35,9 +35,7 @@ InvenTree functionality is split into a number of distinct roles. A group will h
 - **Sales Order** - The *sales* role is related to accessing Sales Order data
 - **Return Order** - The *return* role is related to accessing Return Order data
 
-{% with id="Roles Admin View", url="admin/roles.png", description="Roles" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/roles.png", "Roles") }}
 
 ### Role Permissions
 

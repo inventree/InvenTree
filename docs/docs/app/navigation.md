@@ -7,17 +7,13 @@ title: App Navigation
 
 The app *home screen* provides quick-access buttons for stock view and actions:
 
-{% with id="home", url="app/home.png", maxheight="240px", description="Home screen" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/home.png", "Home screen") }}
 
 ## Tab Display
 
 Some screens provide multiple tabbed views, which are displayed at the top of the screen:
 
-{% with id="global_nav", url="app/app_tabs.png", maxheight="240px", description="App tabs" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/app_tabs.png", "App tabs") }}
 
 Tabs can be navigated by pressing on the text of each tab, or by scrolling the screen left or right.
 
@@ -25,17 +21,13 @@ Tabs can be navigated by pressing on the text of each tab, or by scrolling the s
 
 The *Global Action* buttons are visible on most screens, displayed in the bottom left corner of the screen:
 
-{% with id="global_nav", url="app/app_global_navigation.png", maxheight="240px", description="Global navigation actions" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/app_global_navigation.png", "Global navigation actions") }}
 
 ### Open Drawer Menu
 
 The {{ icon("list") }} action opens the *Drawer Menu*, which is a quick-access menu for global navigation:
 
-{% with id="drawer", url="app/drawer.png", maxheight="240px", description="Open drawer menu" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/drawer.png", "Open drawer menu") }}
 
 The *Drawer Menu* can be accessed in the following ways:
 
@@ -54,9 +46,7 @@ The {{ icon("barcode", title="Scan") }} action opens the [barcode scan](./barcod
 
 Within a given view, certain context actions may be available. If there are contextual actions which can be performed, they are displayed in the bottom right corner:
 
-{% with id="drawer", url="app/context_actions.png", maxheight="240px", description="Context actions" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/context_actions.png", "Context actions") }}
 
 !!! tip "Barcode Actions"
     Available barcode actions are displayed in a separate context action menu

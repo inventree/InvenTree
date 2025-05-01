@@ -162,14 +162,6 @@ def on_config(config, *args, **kwargs):
     """
     rtd = os.environ.get('READTHEDOCS', None)
 
-    # Note: version selection is handled by RTD internally
-    # Check for 'versions.json' file
-    # If it does not exist, we need to fetch it from the RTD API
-    # if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
-    #    print("Found 'versions.json' file")
-    # else:
-    #    fetch_rtd_versions()
-
     if rtd:
         rtd_version = os.environ.get('READTHEDOCS_VERSION')
         rtd_language = os.environ.get('READTHEDOCS_LANGUAGE')
@@ -255,3 +247,51 @@ def on_config(config, *args, **kwargs):
     config['releases'] = sorted(releases, key=lambda it: it['date'], reverse=True)
 
     return config
+
+
+def on_post_build(*args, **kwargs):
+    """Run after the build is complete.
+
+    Here we check that all global settings and user settings are documented.
+    """
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+    expected_settings_file = os.path.join(base_dir, 'inventree_settings.json')
+    observed_settings_file = os.path.join(base_dir, 'observed_settings.json')
+
+    with open(observed_settings_file, encoding='utf-8') as f:
+        observed_settings = json.loads(f.read())
+
+    with open(expected_settings_file, encoding='utf-8') as f:
+        expected_settings = json.loads(f.read())
+
+    ignored_settings = {
+        'global': ['SERVER_RESTART_REQUIRED'],
+        'user': ['LAST_USED_PRINTING_MACHINES'],
+    }
+
+    for group in ['global', 'user']:
+        expected = expected_settings.get(group, {})
+        observed = observed_settings.get(group, {})
+        ignored = ignored_settings.get(group, [])
+
+        missing = []
+
+        for key in expected:
+            if key.startswith('_'):
+                # Ignore internal settings
+                continue
+
+            if key in ignored:
+                # Ignore settings that are not relevant
+                continue
+
+            if key not in observed:
+                missing.append(key)
+
+        if missing:
+            raise NotImplementedError(
+                'Missing Settings:\n'
+                + f"There are {len(missing)} missing settings in the '{group}' group:\n"
+                + '\n- '.join(missing)
+            )

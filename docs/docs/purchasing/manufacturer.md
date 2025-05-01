@@ -11,9 +11,7 @@ A manufacturer is an external **producer** of parts and raw materials.
 
 To access the list of manufacturers , click on the <span class="badge inventree nav main">{{ icon("shopping-cart") }} Buy</span> navigation tab and click on <span class="badge inventree nav main">{{ icon("building-factory-2") }} Manufacturers</span> option in the dropdown list.
 
-{% with id="manufacturer_list", url="order/manufacturer_list.png", description="Manufacturer List" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/manufacturer_list.png", "Manufacturer List") }}
 
 ### Add Manufacturer
 

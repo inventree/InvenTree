@@ -119,14 +119,10 @@ To render a QR code, use the `qrcode` template tag:
 
 which produces the following output:
 
-{% with id="qrcode", url="report/qrcode.png", description="QR Code" %}
-{% include 'img.html' %}
-{% endwith %}
-
+{{ image("report/qrcode.png", "QR Code") }}
 
 !!! tip "Documentation"
     Refer to the [qrcode library documentation](https://pypi.org/project/qrcode/) for more information
-
 
 ## Data Matrix
 
@@ -173,6 +169,4 @@ which produces the following output:
 
 which produces the following output:
 
-{% with id="datamatrix", url="report/datamatrix.png", description="Datamatrix barcode" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("report/datamatrix.png", "Data Matrix") }}

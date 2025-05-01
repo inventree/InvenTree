@@ -16,9 +16,7 @@ To navigate to the Build Order display, select *Manufacturing* from the main nav
 
 The *Build Order Index Page* allows the user to view all build orders:
 
-{% with id="build_display", url="build/build_display.png", description="Display Builds" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_display.png", title="Build Orders") }}
 
 The following view modes are available:
 
@@ -26,17 +24,13 @@ The following view modes are available:
 
 *Table View* provides a table of Build Orders, which can be filtered to only show the orders you are interested in.
 
-{% with id="build_list", url="build/build_list.png", description="Build List" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_list.png", title="Build List") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding build orders, based on the various dates specified for each order.
 
-{% with id="build_calendar", url="build/build_calendar.png", description="Build Calendar" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_calendar.png", title="Build Calendar") }}
 
 The build calendar allows the user to navigate month-by-month and display the filtered build orders
 
@@ -121,17 +115,13 @@ The detail view for a single build order provides multiple display panels, as fo
 
 The *Build Details* panel provides an overview of the Build Order:
 
-{% with id="build_details", url="build/build_panel_details.png", description="Build details panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image ("build/build_panel_details.png", title="Build Details") }}
 
 ### Line Items
 
 The *Line Items* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
 
-{% with id="build_allocate", url="build/build_panel_line_items.png", description="Build line items panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_panel_line_items.png", title="Line Items") }}
 
 The allocation table (as shown above) provides an interface to allocate required stock, and also shows the stock allocation progress for each line item in the build.
 
@@ -139,9 +129,7 @@ The allocation table (as shown above) provides an interface to allocate required
 
 The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./output.md) (created stock items) associated with this build.
 
-{% with id="build_outputs", url="build/build_outputs.png", description="Outputs tab" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_outputs.png", title="Build Outputs") }}
 
 !!! info "Example: Build Outputs"
 	In the example image above, a single output (serial number 2) has been completed, while serial numbers 1 and 4 are still in progress.
@@ -158,9 +146,7 @@ This panel displays all the completed build outputs (stock items) which have bee
 
 The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
 
-{% with id="allocated_stock_table", url="build/allocated_stock_table.png", description="Allocated Stock Table" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/allocated_stock_table.png", title="Allocated Stock Table") }}
 
 ### Consumed Stock
 
@@ -173,43 +159,27 @@ The *Consumed Stock* tab displays all stock items which have been *consumed* by 
 
 If there exist any build orders which are *children* of the selected build order, they are displayed in the *Child Builds* tab:
 
-{% with id="build_childs", url="build/build_childs.png", description="Child builds panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_childs.png", title="Child Builds") }}
 
 ### Test Results
 
 For *trackable* parts, test results can be recorded against each build output. These results are displayed in the *Test Results* panel:
 
-{% with id="build_test_results", url="build/build_panel_test_results.png", description="Test Results panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_panel_test_results.png", title="Test Results") }}
 
 This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
-
-### Test Statistics
-
-For *trackable* parts, this panel displays a summary of the test results for all build outputs:
-
-{% with id="build_test_stats", url="build/build_panel_test_statistics.png", description="Test Statistics panel" %}
-{% include "img.html" %}
-{% endwith %}
 
 ### Attachments
 
 Files attachments can be uploaded against the build order, and displayed in the *Attachments* tab:
 
-{% with id="build_attachments", url="build/build_attachments.png", description="Attachments tab" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_attachments.png", title="Attachments") }}
 
 ### Notes
 
 Build order notes (which support markdown formatting) are displayed in the *Notes* tab:
 
-{% with id="build_notes", url="build/build_notes.png", description="Notes tab" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_notes.png", title="Notes") }}
 
 ## Create Build Order
 
@@ -221,9 +191,7 @@ To create a build order for your part, you have two options:
 - Select the *Build Orders* tab
 - Select *Start new Build*
 
-{% with id="build_create_from_part", url="build/build_create_from_part.png", description="Create build from Part view" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_create_from_part.png", title="Create Build Order from Part") }}
 
 ### Build Order Page
 

@@ -53,9 +53,7 @@ If a match is found, the app will navigate to the relevant page.
 
 From the [Stock Location detail page](./stock.md#stock-location-view), multiple barcode actions may be available:
 
-{% with id="location-actions", url="app/barcode_stock_location_actions.png", maxheight="240px", description="Stock location barcode actions" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/barcode_stock_location_actions.png", "Stock location barcode actions") }}
 
 #### Assign Barcode
 
@@ -77,9 +75,7 @@ the *Scan Items Into Location* action allows you to scan items into the selected
 
 From the [Stock Item detail page](./stock.md#stock-item-detail-view), the following barcode actions may be available:
 
-{% with id="item-actions", url="app/barcode_stock_item_actions.png", maxheight="240px", description="Stock item barcode actions" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/barcode_stock_item_actions.png", "Stock item barcode actions") }}
 
 #### Assign Barcode
 
@@ -93,9 +89,7 @@ Scan the selected stock item into a stock location. Scanning a valid barcode ass
 
 From the [Part detail page](./part.md#part-detail-view), the following barcode actions are available:
 
-{% with id="part-actions", url="app/barcode_part_actions.png", maxheight="240px", description="Part barcode actions" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/barcode_part_actions.png", "Part barcode actions") }}
 
 #### Assign Barcode
 
@@ -105,9 +99,7 @@ Assign a custom barcode to the selected part. Scanning a barcode (which is not a
 
 From the [Purchase Order detail page](./po.md#purchase-order-detail) page, the following barcode actions are available:
 
-{% with id="po-actions", url="app/barcode_po_actions.png", maxheight="240px", description="Purchase order barcode actions" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/barcode_po_actions.png", "Purchase order barcode actions") }}
 
 #### Scan Received Parts
 

@@ -59,18 +59,24 @@ Click [here](/part/views)
 
 ### Images
 
-Images are served from the `./docs/assets/images` folder and can be added as follow:
+Images are served from the `./docs/assets/images` folder and can be added as follows:
+
 ```
-{% with id="image_id", url="folder/image_name.png", description="Text shown if image is not loaded properly" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("image_name.png", base="subfolder", title="Image title") }}
 ```
 
-Replace:
-* `image_id` with a short unique identifier for the image (most commonly, `image_id` is same as `image_name`)
-* `folder` with the folder in `docs/assets/images` in which the image is stored
-* `image_name` with the name of the image
-* `.png` with the image extension (PNG or JPEG are preferred formats)
+See the `image` macro in `./docs/main.py` for more information.
+
+### Icons
+
+Icons can be rendered (using the [tabler icon set](https://tabler.io/icons)) as follows:
+
+```
+{{ icon("brand-github", color="red")}}
+```
+
+See the `icon` macro in `./docs/main.py` for more information.
+
 
 ### Global variables
 

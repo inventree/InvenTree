@@ -17,7 +17,7 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     NAME = 'LCSCPlugin'
     TITLE = _('Supplier Integration - LCSC')
     DESCRIPTION = _('Provides support for scanning LCSC barcodes')
-    VERSION = '1.0.0'
+    VERSION = '1.0.1'
     AUTHOR = _('InvenTree contributors')
 
     DEFAULT_SUPPLIER_NAME = 'LCSC'
@@ -26,6 +26,7 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             'name': _('Supplier'),
             'description': _("The Supplier which acts as 'LCSC'"),
             'model': 'company.company',
+            'model_filters': {'is_supplier': True},
         }
     }
 

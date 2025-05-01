@@ -13,24 +13,20 @@ Users can select to receive notifications when certain events occur.
     Each user must have a valid email address associated with their account to receive email notifications
 
 Notifications are also shown in the user interface. New notifications are announced in the header.
-{% with id="notification_header", url="part/notification_header.png", description="One new notification in the header" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("part/notification_header.png", "Notification header") }}
 
 They can be viewed in a flyout.
-{% with id="notification_flyout", url="part/notification_flyout.png", description="One new notification in the flyout" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("part/notification_flyout.png", "Notification flyout") }}
 
 All current notifications are listed in the inbox.
-{% with id="notification_inbox", url="part/notification_inbox.png", description="One new notification in the notification inbox" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("part/notification_inbox.png", "Notification inbox") }}
 
 All past notification are listed in the history. They can be deleted one-by-one or all at once from there.
-{% with id="notification_history", url="part/notification_history.png", description="One old notification in the notification history" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("part/notification_history.png", "Notification history") }}
 
 ## Part Notification Events
 
@@ -59,15 +55,11 @@ When subscribed to a *Part*, a user will receive notifications when events occur
 
 If a user is subscribed to a particular part, it will be indicated as shown below:
 
-{% with id="part_sub_on", url="part/part_subscribe_on.png", description="Subscribe" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_subscribe_on.png", "Part subscribed") }}
 
 If the user is not subscribed, the subscription icon is greyed out, as shown here:
 
-{% with id="part_sub_off", url="part/part_subscribe_off.png", description="Subscribe" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_subscribe_off.png", "Part not subscribed") }}
 
 Clicking on this icon will toggle the subscription status for this part.
 

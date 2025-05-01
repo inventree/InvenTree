@@ -461,12 +461,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'PART_SHOW_IMPORT': {
-        'name': _('Show Import in Views'),
-        'description': _('Display the import wizard in some part views'),
-        'default': False,
-        'validator': bool,
-    },
     'PART_SHOW_RELATED': {
         'name': _('Show related parts'),
         'description': _('Display related parts for a part'),

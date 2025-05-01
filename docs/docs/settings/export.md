@@ -8,6 +8,4 @@ InvenTree provides data export functionality for a variety of data types. Most d
 
 In the top right corner of the table, click the "Export Data" button to export the data in the table.
 
-{% with id="export", url="admin/export.png", description="Export data" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/export.png", "Export data") }}

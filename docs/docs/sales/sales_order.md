@@ -10,9 +10,7 @@ Sales orders allow tracking of which stock items are sold to customers, therefor
 
 To navigate to the Sales Order display, select *Sales* from the main navigation menu, and *Sales Orders* from the sidebar:
 
-{% with id="sales_order_display", url="order/so_display.png", description="Sales Order Display" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/so_display.png", "Sales Order display") }}
 
 The following view modes are available:
 
@@ -20,17 +18,13 @@ The following view modes are available:
 
 *Table View* provides a list of Sales Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
-{% with id="sales_order_list", url="order/so_list.png", description="Sales Order List" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/so_list.png", "Sales Order list") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding sales orders.
 
-{% with id="sales_order_calendar", url="order/so_calendar.png", description="Sales Order Calendar" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/so_calendar.png", "Sales Order calendar") }}
 
 ### Sales Order Status Codes
 
@@ -167,9 +161,7 @@ The *Pending Shipments* panel displays the shipments which have not yet been sen
 - Pending sales order items can be allocated to these shipments
 - New shipments can be created if the order is still open
 
-{% with id="pending-shipments", url="order/pending_shipments.png", description="Pending shipments" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/pending_shipments.png", "Pending shipments") }}
 
 #### Creating a new Shipment
 
@@ -179,15 +171,11 @@ To create a new shipment for a sales order, press the *New Shipment* button abov
 
 To complete a shipment, press the *Complete Shipment* button associated with the particular shipment:
 
-{% with id="complete-shipment", url="order/complete_shipment.png", description="Complete shipment" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/complete_shipment.png", "Complete shipment") }}
 
 ### Completed Shipments
 
-{% with id="completed-shipments", url="order/completed_shipments.png", description="Completed shipments" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/completed_shipments.png", "Completed shipments") }}
 
 ### Shipment Data
 
@@ -211,9 +199,7 @@ An optional URL field which can be used to provide a link to an external URL.
 
 All these fields can be edited by the user:
 
-{% with id="edit-shipment", url="order/edit_shipment.png", description="Edit shipment" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/edit_shipment.png", "Edit shipment") }}
 
 ## Sales Order Settings
 

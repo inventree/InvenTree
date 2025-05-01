@@ -15,7 +15,7 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     NAME = 'DigiKeyPlugin'
     TITLE = _('Supplier Integration - DigiKey')
     DESCRIPTION = _('Provides support for scanning DigiKey barcodes')
-    VERSION = '1.0.0'
+    VERSION = '1.0.1'
     AUTHOR = _('InvenTree contributors')
 
     DEFAULT_SUPPLIER_NAME = 'DigiKey'
@@ -25,6 +25,7 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             'name': _('Supplier'),
             'description': _("The Supplier which acts as 'DigiKey'"),
             'model': 'company.company',
+            'model_filters': {'is_supplier': True},
         }
     }
 

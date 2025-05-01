@@ -4,7 +4,7 @@ title: Parts
 
 ## Part
 
-The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in hierarchical categories which are used to organise and filter parts by function.
+The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in hierarchical categories which are used to organize and filter parts by function.
 
 ## Part Category
 
@@ -12,9 +12,7 @@ Part categories are very flexible and can be easily arranged to match a particul
 
 Each part category also shows a list of sub-categories which exist underneath it.
 
-{% with id="part_category", url="part/part_category.png", description="Parts are arranged in categories" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_category.png", "Part category") }}
 
 The category part list provides an overview of each part:
 
@@ -100,9 +98,7 @@ Each type of part can define a custom "unit of measure" which is a standardized 
 
 It is possible to track parts using physical quantity values, such as *metres* or *litres*. For example, it would make sense to track a "wire" in units of "metres":
 
-{% with id="part_units", url="part/part_units.png", description="Parts units" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_units.png", "Part units") }}
 
 ### Supplier Part Units
 
@@ -113,17 +109,13 @@ By default, units of measure for [supplier parts](../purchasing/supplier.md#supp
 
 If an incompatible unit type is specified, an error will be displayed:
 
-{% with id="part_units_invalid", url="part/part_units_invalid.png", description="Invalid supplier part units" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_units_invalid.png", "Invalid supplier part units") }}
 
 ## Part Images
 
 Each part can have an associated image, which is used for display purposes throughout the InvenTree interface. A prominent example is on the part detail page itself:
 
-{% with id="part_image", url="part/part_image_example.png", description="Part image example" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_image_example.png", "Part image example") }}
 
 ### Image Thumbnails
 
@@ -135,9 +127,7 @@ Thumbnail images are also used throughout the interface, particularly in table v
 
 In the web interface, part images can be uploaded directly from the [part view](./views.md). Hover the mouse cursor over the Part image to reveal multiple options:
 
-{% with id="part_image_uplaod", url="part/part_image_upload.png", description="Upload part image" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_image_upload.png", "Part image upload") }}
 
 | Action | Description |
 | --- | --- |

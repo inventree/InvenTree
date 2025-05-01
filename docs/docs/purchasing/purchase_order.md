@@ -10,9 +10,7 @@ Purchase orders allow to track which parts are bought from suppliers and manufac
 
 To navigate to the Purchase Order display, select *Purchasing* from the main navigation menu, and *Build Orders* from the sidebar:
 
-{% with id="purchase_order_display", url="order/po_display.png", description="Purchase Order Display" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/po_display.png", "Purchase Order Display") }}
 
 The following view modes are available:
 
@@ -20,17 +18,13 @@ The following view modes are available:
 
 *Table View* provides a list of Purchase Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
-{% with id="purchase_order_list", url="order/po_list.png", description="Purchase Order List" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/po_list.png", "Purchase Order List") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding purchase orders, based on the various dates specified for each order.
 
-{% with id="purchase_order_calendar", url="order/po_calendar.png", description="Purchase Order Calendar" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/po_calendar.png", "Purchase Order Calendar") }}
 
 ### Purchase Order Status Codes
 
@@ -159,21 +153,15 @@ Duplicating a Purchase Order allows the user to quickly create a new *copy* of a
 
 To duplicate an existing order, select the *Duplicate Order* action from the menu in the top-right of the screen (as shown below):
 
-{% with id="purchase_order_duplicate", url="order/po_duplicate.png", description="Duplicate Purchase Order" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/po_duplicate.png", "Duplicate Purchase Order") }}
 
 This opens the following dialog, where you can adjust the parameters of the new order before proceeding to actually create the new order. You can see in the screenshot below that some extra options are provided in this form, to control duplication of individual line items.
 
-{% with id="purchase_order_duplicate_2", url="order/po_duplicate_2.png", description="Duplicate Purchase Order" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/po_duplicate_2.png", "Duplicate Purchase Order") }}
 
 A new purchase order is then created based on the currently selected order:
 
-{% with id="purchase_order_duplicate_3", url="order/po_duplicate_3.png", description="Duplicate Purchase Order" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("order/po_duplicate_3.png", "Duplicate Purchase Order") }}
 
 ## Order Scheduling
 

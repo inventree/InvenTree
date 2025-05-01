@@ -8,9 +8,7 @@ Stock items which are associated with a [testable part](../part/index.md#testabl
 
 The master "Part" record for the stock item can define multiple [test templates](../part/test.md), against which test data can be uploaded. Additionally, arbitrary test information can be assigned to the stock item.
 
-{% with id="stock_test_results", url="stock/test_results.png", description="Stock Item Test Results" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/test_results.png", title="Stock Item Test Results") }}
 
 ### Test Result Fields
 

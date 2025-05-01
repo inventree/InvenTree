@@ -6,9 +6,7 @@ title: Sales Orders
 
 The sales order list display shows all sales orders:
 
-{% with id="so_list", url="app/so_list.png", maxheight="240px", description="Sales order list" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("app/so_list.png", "Sales order list") }}
 
 Select an individual sales order to display the detail view for that order.
 
@@ -20,9 +18,7 @@ Displayed sales orders can be subsequently filtered using the search input at th
 
 Select an individual order to show the detailed view for that order:
 
-{% with id="so_detail", url="app/so_detail.png", maxheight="240px", description="Sales order details" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("app/so_detail.png", "Sales order detail") }}
 
 ### Edit Order Details
 
@@ -32,6 +28,4 @@ From the detail view, select the *Edit* button in the top-right of the screen. T
 
 View the line items associated with the selected order:
 
-{% with id="so_lines", url="app/so_lines.png", maxheight="240px", description="Sales order lines" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("app/so_lines.png", "Sales order line items") }}
