@@ -7,6 +7,8 @@ INVENTREE_API_VERSION = 341
 
 
 INVENTREE_API_TEXT = """
+v341 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9547
+    - Require pagination limit on list queries
 
 v341 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9532
     - Adds "merge" field to the ReportTemplate model

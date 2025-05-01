@@ -49,18 +49,18 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 
 | Model Type | Description |
 | --- | --- |
-| [build](#build-order) | A [Build Order](../build/build.md) instance |
-| [buildline](#build-line) | A [Build Order Line Item](../build/build.md) instance |
-| [salesorder](#sales-order) | A [Sales Order](../order/sales_order.md) instance |
-| [returnorder](#return-order) | A [Return Order](../order/return_order.md) instance |
-| [purchaseorder](#purchase-order) | A [Purchase Order](../order/purchase_order.md) instance |
-| [stockitem](#stock-item) | A [StockItem](../stock/stock.md#stock-item) instance |
-| [stocklocation](#stock-location) | A [StockLocation](../stock/stock.md#stock-location) instance |
-| [part](#part) | A [Part](../part/part.md) instance |
+| [build](#build-order) | A [Build Order](../manufacturing/build.md) instance |
+| [buildline](#build-line) | A [Build Order Line Item](../manufacturing/build.md) instance |
+| [salesorder](#sales-order) | A [Sales Order](../sales/sales_order.md) instance |
+| [returnorder](#return-order) | A [Return Order](../sales/return_order.md) instance |
+| [purchaseorder](#purchase-order) | A [Purchase Order](../purchasing/purchase_order.md) instance |
+| [stockitem](#stock-item) | A [StockItem](../stock/index.md#stock-item) instance |
+| [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-location) instance |
+| [part](#part) | A [Part](../part/index.md) instance |
 
 ### Build Order
 
-When printing a report or label against a [Build Order](../build/build.md) object, the following context variables are available:
+When printing a report or label against a [Build Order](../manufacturing/build.md) object, the following context variables are available:
 
 {{ report_context("models", "build") }}
 
@@ -70,7 +70,7 @@ When printing a report or label against a [Build Order](../build/build.md) objec
 
 ### Build Line
 
-When printing a report or label against a [BuildOrderLineItem](../build/build.md) object, the following context variables are available:
+When printing a report or label against a [BuildOrderLineItem](../manufacturing/build.md) object, the following context variables are available:
 
 {{ report_context("models", "buildline") }}
 
@@ -80,7 +80,7 @@ When printing a report or label against a [BuildOrderLineItem](../build/build.md
 
 ### Sales Order
 
-When printing a report or label against a [SalesOrder](../order/sales_order.md) object, the following context variables are available:
+When printing a report or label against a [SalesOrder](../sales/sales_order.md) object, the following context variables are available:
 
 {{ report_context("models", "salesorder") }}
 
@@ -90,7 +90,7 @@ When printing a report or label against a [SalesOrder](../order/sales_order.md) 
 
 ### Sales Order Shipment
 
-When printing a report or label against a [SalesOrderShipment](../order/sales_order.md#sales-order-shipments) object, the following context variables are available:
+When printing a report or label against a [SalesOrderShipment](../sales/sales_order.md#sales-order-shipments) object, the following context variables are available:
 
 {{ report_context("models", "salesordershipment") }}
 
@@ -100,19 +100,19 @@ When printing a report or label against a [SalesOrderShipment](../order/sales_or
 
 ### Return Order
 
-When printing a report or label against a [ReturnOrder](../order/return_order.md) object, the following context variables are available:
+When printing a report or label against a [ReturnOrder](../sales/return_order.md) object, the following context variables are available:
 
 {{ report_context("models", "returnorder") }}
 
 ### Purchase Order
 
-When printing a report or label against a [PurchaseOrder](../order/purchase_order.md) object, the following context variables are available:
+When printing a report or label against a [PurchaseOrder](../purchasing/purchase_order.md) object, the following context variables are available:
 
 {{ report_context("models", "purchaseorder") }}
 
 ### Stock Item
 
-When printing a report or label against a [StockItem](../stock/stock.md#stock-item) object, the following context variables are available:
+When printing a report or label against a [StockItem](../stock/index.md#stock-item) object, the following context variables are available:
 
 {{ report_context("models", "stockitem") }}
 
@@ -122,7 +122,7 @@ When printing a report or label against a [StockItem](../stock/stock.md#stock-it
 
 ### Stock Location
 
-When printing a report or label against a [StockLocation](../stock/stock.md#stock-location) object, the following context variables are available:
+When printing a report or label against a [StockLocation](../stock/index.md#stock-location) object, the following context variables are available:
 
 {{ report_context("models", "stocklocation") }}
 
@@ -132,7 +132,7 @@ When printing a report or label against a [StockLocation](../stock/stock.md#stoc
 
 ### Part
 
-When printing a report or label against a [Part](../part/part.md) object, the following context variables are available:
+When printing a report or label against a [Part](../part/index.md) object, the following context variables are available:
 
 {{ report_context("models", "part") }}
 
@@ -157,7 +157,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | name | Brief name for this part |
 | full_name | Full name for this part (including IPN, if not null and including variant, if not null) |
 | variant | Optional variant number for this part - Must be unique for the part name
-| category | The [PartCategory](./context_variables.md#part-category) object to which this part belongs
+| category | The [PartCategory](#part-category) object to which this part belongs
 | description | Longer form description of the part
 | keywords | Optional keywords for improving part search results
 | IPN | Internal part number (optional)
@@ -165,8 +165,8 @@ Each part object has access to a lot of context variables about the part. The fo
 | is_template | If True, this part is a 'template' part
 | link | Link to an external page with more information about this part (e.g. internal Wiki)
 | image | Image of this part
-| default_location | The default [StockLocation](./context_variables.md#stocklocation) object where the item is normally stored (may be null)
-| default_supplier | The default [SupplierPart](./context_variables.md#supplierpart) which should be used to procure and stock this part
+| default_location | The default [StockLocation](#stock-location) object where the item is normally stored (may be null)
+| default_supplier | The default [SupplierPart](#supplierpart) which should be used to procure and stock this part
 | default_expiry | The default expiry duration for any StockItem instances of this part
 | minimum_stock | Minimum preferred quantity to keep in stock
 | units | Units of measure for this part (default='pcs')
@@ -202,7 +202,7 @@ Each part object has access to a lot of context variables about the part. The fo
 |----------|-------------|
 | name | Name of this category |
 | parent | Parent category |
-| default_location | Default [StockLocation](./context_variables.md#stocklocation) object for parts in this category or child categories |
+| default_location | Default [StockLocation](#stock-location) object for parts in this category or child categories |
 | default_keywords | Default keywords for parts created in this category |
 
 ### Stock
@@ -212,37 +212,37 @@ Each part object has access to a lot of context variables about the part. The fo
 
 | Variable | Description |
 |----------|-------------|
-| parent | Link to another [StockItem](./context_variables.md#stockitem) from which this StockItem was created |
+| parent | Link to another [StockItem](#stock-item) from which this StockItem was created |
 | uid | Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode) |
-| part | Link to the master abstract [Part](./context_variables.md#part) that this [StockItem](./context_variables.md#stockitem) is an instance of |
-| supplier_part | Link to a specific [SupplierPart](./context_variables.md#supplierpart) (optional) |
-| location | The [StockLocation](./context_variables.md#stocklocation) Where this [StockItem](./context_variables.md#stockitem) is located |
+| part | Link to the master abstract [Part](#part) that this [StockItem](#stock-item) is an instance of |
+| supplier_part | Link to a specific [SupplierPart](#supplierpart) (optional) |
+| location | The [StockLocation](#stock-location) Where this [StockItem](#stock-item) is located |
 | quantity | Number of stocked units |
-| batch | Batch number for this [StockItem](./context_variables.md#stockitem) |
-| serial | Unique serial number for this [StockItem](./context_variables.md#stockitem) |
+| batch | Batch number for this [StockItem](#stock-item) |
+| serial | Unique serial number for this [StockItem](#stock-item) |
 | link | Optional URL to link to external resource |
 | updated | Date that this stock item was last updated (auto) |
-| expiry_date | Expiry date of the [StockItem](./context_variables.md#stockitem) (optional) |
+| expiry_date | Expiry date of the [StockItem](#stock-item) (optional) |
 | stocktake_date | Date of last stocktake for this item |
 | stocktake_user | User that performed the most recent stocktake |
-| review_needed | Flag if [StockItem](./context_variables.md#stockitem) needs review |
-| delete_on_deplete | If True, [StockItem](./context_variables.md#stockitem) will be deleted when the stock level gets to zero |
-| status | Status of this [StockItem](./context_variables.md#stockitem) (ref: InvenTree.status_codes.StockStatus) |
+| review_needed | Flag if [StockItem](#stock-item) needs review |
+| delete_on_deplete | If True, [StockItem](#stock-item) will be deleted when the stock level gets to zero |
+| status | Status of this [StockItem](#stock-item) (ref: InvenTree.status_codes.StockStatus) |
 | status_label | Textual representation of the status e.g. "OK" |
 | notes | Extra notes field |
 | build | Link to a Build (if this stock item was created from a build) |
 | is_building | Boolean field indicating if this stock item is currently being built (or is "in production") |
-| purchase_order | Link to a [PurchaseOrder](./context_variables.md#purchase-order) (if this stock item was created from a PurchaseOrder) |
-| infinite | If True this [StockItem](./context_variables.md#stockitem) can never be exhausted |
-| sales_order | Link to a [SalesOrder](./context_variables.md#salesorder) object (if the StockItem has been assigned to a SalesOrder) |
-| purchase_price | The unit purchase price for this [StockItem](./context_variables.md#stockitem) - this is the unit price at time of purchase (if this item was purchased from an external supplier) |
+| purchase_order | Link to a [PurchaseOrder](#purchase-order) (if this stock item was created from a PurchaseOrder) |
+| infinite | If True this [StockItem](#stock-item) can never be exhausted |
+| sales_order | Link to a [SalesOrder](#sales-order) object (if the StockItem has been assigned to a SalesOrder) |
+| purchase_price | The unit purchase price for this [StockItem](#stock-item) - this is the unit price at time of purchase (if this item was purchased from an external supplier) |
 | packaging | Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc) |
 
 #### StockLocation
 
 | Variable | Description |
 |----------|-------------|
-| barcode | Brief payload data (e.g. for labels). Example: {"stocklocation": 826} where 826 is the primary key|
+| barcode | Brief payload data (e.g. for labels). Example: `{"stocklocation": 826}` where 826 is the primary key|
 | description | The description of the location  |
 | icon | The name of the icon if set, e.g. fas fa-warehouse |
 | item_count | Simply returns the number of stock items in this location |
@@ -263,7 +263,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | name | Name of the company |
 | description | Longer form description |
 | website | URL for the company website |
-| primary_address | [Address](./context_variables.md#address) object that is marked as primary address |
+| primary_address | [Address](#address) object that is marked as primary address |
 | address | String format of the primary address |
 | contact | Contact Name |
 | phone | Contact phone number |
@@ -303,8 +303,8 @@ Each part object has access to a lot of context variables about the part. The fo
 | Variable | Description |
 |----------|-------------|
 | part | Link to the master Part (Obsolete) |
-| source_item | The sourcing [StockItem](./context_variables.md#stockitem) linked to this [SupplierPart](./context_variables.md#supplierpart) instance |
-| supplier | [Company](./context_variables.md#company) that supplies this part |
+| source_item | The sourcing [StockItem](#stock-item) linked to this [SupplierPart](#supplierpart) instance |
+| supplier | [Company](#company) that supplies this part |
 | SKU | Stock keeping unit (supplier part number) |
 | link | Link to external website for this supplier part |
 | description | Descriptive notes field |
@@ -316,8 +316,8 @@ Each part object has access to a lot of context variables about the part. The fo
 | pretty_name | The IPN, supplier name, supplier SKU and (if not null) manufacturer string joined by `|`. Ex. `P00037 | Company | 000021` |
 | unit_pricing | The price for one unit. |
 | price_breaks | Return the associated price breaks in the correct order |
-| has_price_breaks | Whether this [SupplierPart](./context_variables.md#supplierpart) has price breaks |
-| manufacturer_string | Format a MPN string for this [SupplierPart](./context_variables.md#supplierpart). Concatenates manufacture name and part number. |
+| has_price_breaks | Whether this [SupplierPart](#supplierpart) has price breaks |
+| manufacturer_string | Format a MPN string for this [SupplierPart](#supplierpart). Concatenates manufacture name and part number. |
 
 ### User
 

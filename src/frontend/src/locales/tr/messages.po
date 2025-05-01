@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-15 23:09\n"
+"PO-Revision-Date: 2025-04-21 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -297,7 +297,7 @@ msgstr "Spot ışığını aç"
 
 #: src/components/buttons/StarredToggleButton.tsx:59
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Bildirimleri iptal edin"
 
 #: src/components/buttons/StarredToggleButton.tsx:60
 msgid "Subscribe to notifications"
@@ -2118,7 +2118,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:106
 msgid "No overview available for this model type"
-msgstr ""
+msgstr "Bu seçim için kayıt bulunamadı"
 
 #: src/components/nav/SearchDrawer.tsx:124
 msgid "View all results"
@@ -2130,7 +2130,7 @@ msgstr "sonuçlar"
 
 #: src/components/nav/SearchDrawer.tsx:143
 msgid "Remove search group"
-msgstr ""
+msgstr "Arama grubunu kaldır"
 
 #: src/components/nav/SearchDrawer.tsx:287
 #: src/pages/company/ManufacturerPartDetail.tsx:177
@@ -3959,11 +3959,11 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:350
 msgid "Assign Batch Code and Serial Numbers"
-msgstr ""
+msgstr "Parti No ve Seri No Ataması"
 
 #: src/forms/PurchaseOrderForms.tsx:352
 msgid "Assign Batch Code"
-msgstr ""
+msgstr "Parti Kodu Ata"
 
 #: src/forms/PurchaseOrderForms.tsx:372
 msgid "Choose Location"
@@ -4043,7 +4043,7 @@ msgstr "Varsayılan konumda depola"
 
 #: src/forms/PurchaseOrderForms.tsx:582
 msgid "Store at line item destination "
-msgstr ""
+msgstr "Satır ögesinin hedefinde depola "
 
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
