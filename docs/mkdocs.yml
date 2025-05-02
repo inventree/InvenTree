@@ -91,6 +91,7 @@ nav:
         - Custom Barcodes: barcodes/custom.md
     - Development:
       - Contributing: develop/contributing.md
+      - Architecture: develop/architecture.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
     - Mobile App:
