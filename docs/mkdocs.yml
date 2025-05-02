@@ -92,6 +92,7 @@ nav:
     - Development:
       - Contributing: develop/contributing.md
       - Architecture: develop/architecture.md
+      - Roadmap: develop/roadmap.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
     - Mobile App:
