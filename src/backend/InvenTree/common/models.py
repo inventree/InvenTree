@@ -2397,7 +2397,7 @@ class EmailMessage(models.Model):
         thread_id_key: Identifier of thread - might be supplied by external system
         subject: Subject of the email message
         body: Body of the email message
-        recipient: Recipient of the email message
+        to: Recipient of the email message
         sender: Sender of the email message
         status: Status of the email message (e.g. 'sent', 'failed', etc)
         timestamp: Date and time that the email message left the system or was received by the system
@@ -2491,7 +2491,7 @@ class EmailMessage(models.Model):
     )
     subject = models.CharField(max_length=250, blank=False, null=False)
     body = models.TextField(blank=False, null=False)
-    recipient = models.EmailField(blank=False, null=False)
+    to = models.EmailField(blank=False, null=False)
     sender = models.EmailField(blank=False, null=False)
     status = models.CharField(
         max_length=50, blank=True, null=True, choices=EmailStatus.choices
@@ -2526,7 +2526,7 @@ class EmailMessage(models.Model):
         return ret
 
 
-class EmailThread(InvenTree.models.InvenTreeModel, InvenTree.models.MetadataMixin):
+class EmailThread(InvenTree.models.InvenTreeMetadataModel):
     """Model for storing email threads."""
 
     class Meta:
@@ -2579,7 +2579,7 @@ def log_email_messages(email_messages):
             EmailMessage.objects.create(
                 subject=msg.subject,
                 body=msg.body,
-                recipient=msg.to,
+                to=msg.to,
                 sender=msg.from_email,
                 status=EmailMessage.EmailStatus.ANNOUNCED,
                 direction=EmailMessage.EmailDirection.OUTBOUND,

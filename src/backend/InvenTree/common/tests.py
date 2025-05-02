@@ -1841,8 +1841,10 @@ class AdminTest(AdminTestCase):
 class EmailTests(InvenTreeAPITestCase):
     """Unit tests for the custom email backend and models."""
 
-    def test_email_send_dummy(self):
-        """Theat that normal django send_mail still works."""
+    superuser = True
+    fixtures = ['users']
+
+    def _mail_test(self):
         self.assertEqual(len(mail.outbox), 0)
 
         mail.send_mail(
@@ -1854,6 +1856,10 @@ class EmailTests(InvenTreeAPITestCase):
         )
 
         self.assertEqual(len(mail.outbox), 1)
+
+    def test_email_send_dummy(self):
+        """Theat that normal django send_mail still works."""
+        self._mail_test()
 
     # This is needed because django overrides the mail backend during tests
     @override_settings(
@@ -1862,17 +1868,7 @@ class EmailTests(InvenTreeAPITestCase):
     )
     def test_email_send_custom(self):
         """Theat that normal django send_mail still works."""
-        self.assertEqual(len(mail.outbox), 0)
-
-        mail.send_mail(
-            'test sub',
-            'test msg',
-            'from@example.org',
-            ['to@example.org'],
-            html_message='<p>test html msg</p>',
-        )
-
-        self.assertEqual(len(mail.outbox), 1)
+        self._mail_test()
 
         # Check using contexts
         with mail.get_connection() as connection:
@@ -1886,3 +1882,21 @@ class EmailTests(InvenTreeAPITestCase):
             message.send()
 
         self.assertEqual(len(mail.outbox), 2)
+
+    @override_settings(
+        EMAIL_BACKEND='InvenTree.backends.InvenTreeMailLoggingBackend',
+        INTERNAL_EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+    )
+    def test_email_api(self):
+        """Test that the email api endpoints work."""
+        self._mail_test()
+
+        response = self.get(reverse('api-email-list'), expected_code=200)
+        self.assertIn('base_currency', response.data)
+        self.assertIn('exchange_rates', response.data)
+
+        response = self.get(
+            reverse('api-email-detail', kwargs={'pk': 1}), expected_code=200
+        )
+        self.assertIn('base_currency', response.data)
+        self.assertIn('exchange_rates', response.data)
