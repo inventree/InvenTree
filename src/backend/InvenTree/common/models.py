@@ -2584,5 +2584,5 @@ def log_email_messages(email_messages):
                 status=EmailMessage.EmailStatus.ANNOUNCED,
                 direction=EmailMessage.EmailDirection.OUTBOUND,
             )
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.error(f' INVE-W9: Failed to log email message: {exc}')
