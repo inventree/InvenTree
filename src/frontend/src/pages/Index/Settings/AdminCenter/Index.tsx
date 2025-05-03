@@ -10,6 +10,7 @@ import {
   IconFileUpload,
   IconList,
   IconListDetails,
+  IconMail,
   IconPackages,
   IconPlugConnected,
   IconQrcode,
@@ -39,6 +40,10 @@ const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
+);
+
+const EmailManagementPanel = Loadable(
+  lazy(() => import('./EmailManagementPanel'))
 );
 
 const TaskManagementPanel = Loadable(
@@ -108,6 +113,13 @@ export default function AdminCenter() {
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'email',
+        label: t`Email Settings`,
+        icon: <IconMail />,
+        content: <EmailManagementPanel />,
+        hidden: !user.isSuperuser()
       },
       {
         name: 'import',
