@@ -148,7 +148,7 @@ InvenTree is following industry best practices for security. Our security policy
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](CONTRIBUTING.md).
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://docs.inventree.org/en/latest/develop/contributing/).
 
 <!-- Translation -->
 ## :scroll: Translation
