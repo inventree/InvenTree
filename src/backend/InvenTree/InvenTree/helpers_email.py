@@ -28,6 +28,12 @@ def is_email_configured():
     if InvenTree.ready.isImportingData():
         return False
 
+    # Might be using a different INTERNAL_EMAIL_BACKEND
+    if settings.INTERNAL_EMAIL_BACKEND != 'django.core.mail.backends.smtp.EmailBackend':
+        # If we are using a different email backend, we don't need to check
+        # the SMTP settings
+        return True
+
     if not settings.EMAIL_HOST:
         configured = False
 
