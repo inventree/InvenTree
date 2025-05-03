@@ -10,8 +10,12 @@ Read the Project [Governance](./project/governance.md) document for more informa
 
 InvenTree is open-source, and we welcome contributions from the community. However, all contributions are reviewed and scrutinised before being merged into the codebase.
 
-We provide a written [Security Policy]({{ sourcefile("SECURITY.md") }}) in our main repo to ensure that all security issues are handled in a timely manner.
+### Security Policy
 
+The official [Security Policy]({{ sourcefile("SECURITY.md") }}) is available in the code repository.
+We provide this document in our main repo to increase discoverabiltity to ensure that all security issues are handled in a timely manner.
+
+### Past Reports
 If we become aware of a security issue, we will take immediate action to address the issue, and will provide a public disclosure of the issue once it has been resolved. We support assigning CVEs to security issues where appropriate.  Our [past security advisories can be found here](https://github.com/inventree/InvenTree/security/advisories).
 
 ## Technical measures
@@ -54,6 +58,6 @@ We also follow OpenSSF recommendations where applicable and take part in multipl
 - OSSF Best Practices, currently at a [level of passing](https://www.bestpractices.dev/de/projects/7179)
 - OSSF Scorecard, running with each merge [check current state](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
 
-## Security Policy
+## Hall of Fame
 
-The official [Security Policy]({{ sourcefile("SECURITY.md") }}) is available in the code repository.
+We are grateful for all reports. Confirmed reports can be rewarded with a mention in the Hall of Fame below if the reporter requests it. We are also happy to provide a CVE if applicable.
