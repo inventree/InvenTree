@@ -234,5 +234,6 @@ export enum ApiEndpoints {
   custom_unit_list = 'units/',
   notes_image_upload = 'notes-image-upload/',
   email_list = 'admin/email/',
-  email_test = 'admin/email/test/'
+  email_test = 'admin/email/test/',
+  config_list = 'admin/config/'
 }

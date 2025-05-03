@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Accordion } from '@mantine/core';
 
 import { StylishText } from '../../../../components/items/StylishText';
-import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { ConfigValueList } from '../../../../components/settings/ConfigValueList';
 import { EmailTable } from '../../../../tables/settings/EmailTable';
 
 export default function UserManagementPanel() {
@@ -21,8 +21,19 @@ export default function UserManagementPanel() {
           <StylishText size='lg'>{t`Settings`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
-          <GlobalSettingList
-            keys={['LOGIN_ENABLE_REG', 'SIGNUP_GROUP', 'LOGIN_ENABLE_SSO_REG']}
+          <ConfigValueList
+            key='email_settings'
+            keys={[
+              'INVENTREE_EMAIL_BACKEND',
+              'INVENTREE_EMAIL_HOST',
+              'INVENTREE_EMAIL_PORT',
+              'INVENTREE_EMAIL_USERNAME',
+              'INVENTREE_EMAIL_PASSWORD',
+              'INVENTREE_EMAIL_PREFIX',
+              'INVENTREE_EMAIL_TLS',
+              'INVENTREE_EMAIL_SSL',
+              'INVENTREE_EMAIL_SENDER'
+            ]}
           />
         </Accordion.Panel>
       </Accordion.Item>
