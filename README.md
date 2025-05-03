@@ -53,10 +53,10 @@ Want to see what we are working on? Check out the [roadmap tag](https://github.c
 
 InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
 
-* [InvenTree API](https://docs.inventree.org/en/latest/api/api/)
-* [Python module](https://docs.inventree.org/en/latest/api/python/python/)
-* [Plugin interface](https://docs.inventree.org/en/latest/extend/plugins)
-* [Third party tools](https://docs.inventree.org/en/latest/extend/integrate)
+* [InvenTree API](https://docs.inventree.org/en/latest/api/)
+* [Python module](https://docs.inventree.org/en/latest/api/python/)
+* [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
+* [Third party tools](https://docs.inventree.org/en/latest/plugins/integrate/)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
