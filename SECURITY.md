@@ -17,3 +17,9 @@ Someone from the InvenTree development team will acknowledge your email as soon 
 
 
 The team will endeavour to keep you informed of the progress towards a fix for the issue, and subsequent release to the stable and development code branches. Where possible, the issue will be resolved within 90 days of reporting.
+
+### Public Disclosure
+
+Using GitHub's security advisory system, we will publish a public disclosure of the issue once it has been acknowledged, reproduced and resolved.
+We support assigning CVEs to security issues where appropriate.
+The project can be identified by the CPE code ``cpe:2.3:a:inventree_project:inventree:``.
