@@ -138,6 +138,13 @@ InvenTree is supported by a [companion mobile app](https://docs.inventree.org/ap
     <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
 </h4></div>
 
+<!-- Security -->
+## :lock: Code of Conduct & Security Policy
+
+The InvenTree project team is committed to providing a safe and welcoming environment for all users. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) for more information.
+
+InvenTree is following industry best practices for security. Our security policy is included [in this repo](SECURITY.md). We provide dedicated security pages on [our documentation site](https://docs.inventree.org/en/latest/security/).
+
 <!-- Contributing -->
 ## :wave: Contributing
 
