@@ -815,7 +815,7 @@ class DataOutputSerializer(InvenTreeModelSerializer):
     output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)
 
 
-class EmailMessageSerializer(serializers.Serializer):
+class EmailMessageSerializer(InvenTreeModelSerializer):
     """Serializer for the EmailMessage model."""
 
     class Meta:

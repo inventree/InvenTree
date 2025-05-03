@@ -2506,7 +2506,9 @@ class EmailMessage(models.Model):
     error_message = models.TextField(blank=True, null=True)
     error_timestamp = models.DateTimeField(blank=True, null=True)
     delivery_options = models.JSONField(
-        blank=True, null=True, choices=DeliveryOptions.choices
+        blank=True,
+        null=True,
+        # choices=DeliveryOptions.choices
     )
 
     def save(self, *args, **kwargs):

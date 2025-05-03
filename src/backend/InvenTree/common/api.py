@@ -870,8 +870,15 @@ class EmailMessageList(EmailMessageMixin, ListAPI):
     """List view for email objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
-    ordering_fields = ['created', 'subject', 'to', 'sender']
-    search_fields = ['subject', 'to', 'sender']
+    ordering_fields = ['created', 'subject', 'to', 'sender', 'status']
+    search_fields = [
+        'subject',
+        'to',
+        'sender',
+        'global_id',
+        'message_id_key',
+        'thread_id_key',
+    ]
 
 
 class EmailMessageDetail(EmailMessageMixin, RetrieveAPI):

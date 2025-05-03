@@ -977,6 +977,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
+
 # Email configuration options
 EMAIL_BACKEND = 'InvenTree.backends.InvenTreeMailLoggingBackend'
 INTERNAL_EMAIL_BACKEND = get_setting(

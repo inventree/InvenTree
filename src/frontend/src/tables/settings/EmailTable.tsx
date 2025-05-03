@@ -1,15 +1,12 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { Badge } from '@mantine/core';
 import { IconTestPipe } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { BooleanColumn } from '../ColumnRenderers';
+import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function EmailTable() {
@@ -39,60 +36,58 @@ export function EmailTable() {
   const tableColumns = useMemo(() => {
     return [
       {
-        accessor: 'name',
-        title: t`Name`,
+        accessor: 'subject',
+        title: t`Subject`,
         sortable: true
       },
-      BooleanColumn({
-        accessor: 'active',
-        title: t`Active`,
-        sortable: false
-      }),
-      BooleanColumn({
-        accessor: 'revoked',
-        title: t`Revoked`
-      }),
       {
-        accessor: 'token',
-        title: t`Token`,
+        accessor: 'to',
+        title: t`To`,
+        sortable: true
+      },
+      {
+        accessor: 'sender',
+        title: t`Sender`,
+        sortable: true
+      },
+      {
+        accessor: 'status',
+        title: t`Status`,
+        sortable: true,
         render: (record: any) => {
-          return (
-            <>
-              {record.token}{' '}
-              {record.in_use ? (
-                <Badge color='green'>
-                  <Trans>In Use</Trans>
-                </Badge>
-              ) : null}
-            </>
-          );
-        }
+          switch (record.status) {
+            case 'A':
+              return t`Announced`;
+            case 'S':
+              return t`Sent`;
+            case 'F':
+              return t`Failed`;
+            case 'D':
+              return t`Delivered`;
+            case 'R':
+              return t`Read`;
+            case 'C':
+              return t`Confirmed`;
+          }
+          return '-';
+        },
+        switchable: true
       },
       {
-        accessor: 'last_seen',
-        title: t`Last Seen`,
-        sortable: true
+        accessor: 'direction',
+        title: t`Direction`,
+        sortable: true,
+        render: (record: any) => {
+          return record.direction === 'incoming' ? t`Incoming` : t`Outgoing`;
+        },
+        switchable: true
       },
-      {
-        accessor: 'expiry',
-        title: t`Expiry`,
-        sortable: true
-      },
-      {
-        accessor: 'created',
-        title: t`Created`,
-        sortable: true
-      }
-    ];
-  }, []);
-
-  const tableFilters: TableFilter[] = useMemo(() => {
-    return [
-      {
-        name: 'revoked',
-        label: t`Revoked`,
-        description: t`Show revoked tokens`
-      }
+      DateColumn({
+        accessor: 'timestamp',
+        title: t`Timestamp`,
+        sortable: true,
+        switchable: true
+      })
     ];
   }, []);
 
@@ -106,8 +101,7 @@ export function EmailTable() {
         props={{
           enableSearch: true,
           enableColumnSwitching: true,
-          tableActions: tableActions,
-          tableFilters: tableFilters
+          tableActions: tableActions
         }}
       />
     </>
