@@ -1,6 +1,9 @@
 
 The InvenTree project is committed to providing a secure and safe environment for all users. We know that many of our users rely on InvenTree to manage the inventory and manufacturing for their small and mid-size businesses, and we take that responsibility seriously.
 
+!!! tip "This page covers the InvenTree project"
+    This page covers the InvenTree project as a whole. Specific security measures for deploying your own instance of InvenTree can be found on the [Threat Model](./concepts/threat_model.md) page.
+
 To that end, we have implemented a number of security measures over the years, which we will outline in this document.
 
 ## Organisational measures
