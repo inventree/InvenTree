@@ -2570,15 +2570,16 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-def log_email_messages(email_messages):
+def log_email_messages(email_messages) -> list[EmailMessage]:
     """Log email messages to the database.
 
     Args:
         email_messages (list): List of email messages to log.
     """
+    msg_ids = []
     for msg in email_messages:
         try:
-            EmailMessage.objects.create(
+            new_obj = EmailMessage.objects.create(
                 subject=msg.subject,
                 body=msg.body,
                 to=msg.to,
@@ -2586,5 +2587,7 @@ def log_email_messages(email_messages):
                 status=EmailMessage.EmailStatus.ANNOUNCED,
                 direction=EmailMessage.EmailDirection.OUTBOUND,
             )
+            msg_ids.append(new_obj)
         except Exception as exc:  # pragma: no cover
             logger.error(f' INVE-W9: Failed to log email message: {exc}')
+    return msg_ids

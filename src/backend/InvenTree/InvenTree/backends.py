@@ -10,7 +10,7 @@ from django.utils.module_loading import import_string
 import structlog
 from maintenance_mode.backends import AbstractStateBackend
 
-from common.models import log_email_messages
+from common.models import EmailMessage, log_email_messages
 from common.settings import get_global_setting, set_global_setting
 
 logger = structlog.get_logger('inventree')
@@ -110,11 +110,20 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         Args:
             email_messages (list): List of EmailMessage objects to send.
         """
+        msg_ids: list[EmailMessage] = []
         try:
-            log_email_messages(email_messages)
+            msg_ids = log_email_messages(email_messages)
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Problem logging recipients, ignoring')
         try:
-            return self.backend.send_messages(email_messages)
+            ret_val = self.backend.send_messages(email_messages)
+            if ret_val == 0:
+                logger.info('INVE-W9: No emails sent')
+            else:
+                logger.info('INVE-W9: %s emails sent', ret_val)
+                EmailMessage.objects.filter(pk__in=[msg.pk for msg in msg_ids]).update(
+                    status=EmailMessage.EmailStatus.SENT
+                )
+            return ret_val
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Exception during mail delivery')
