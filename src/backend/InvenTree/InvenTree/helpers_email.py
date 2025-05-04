@@ -3,13 +3,13 @@
 from typing import Optional, Union
 
 from django.conf import settings
-from django.core import mail as django_mail
 
 import structlog
 from allauth.account.models import EmailAddress
 
 import InvenTree.ready
 import InvenTree.tasks
+from common.models import issue_mail
 
 logger = structlog.get_logger('inventree')
 
@@ -96,11 +96,11 @@ def send_email(
                 return False, 'INVE-W7: no from_email or DEFAULT_FROM_EMAIL specified'
 
     InvenTree.tasks.offload_task(
-        django_mail.send_mail,
-        subject,
-        body,
-        from_email,
-        recipients,
+        issue_mail,
+        subject=subject,
+        body=body,
+        from_email=from_email,
+        recipients=recipients,
         fail_silently=False,
         html_message=html_message,
         group='notification',

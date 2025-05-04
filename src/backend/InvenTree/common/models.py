@@ -2573,6 +2573,30 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
+def issue_mail(
+    subject: str,
+    body: str,
+    from_email: str,
+    recipients: Union[str, list],
+    fail_silently: bool = False,
+    html_message=None,
+):
+    """Send an email with the specified subject and body, to the specified recipients list.
+
+    Mostly used by tasks.
+    """
+    from django.core.mail import send_mail
+
+    send_mail(
+        subject,
+        body,
+        from_email,
+        recipients,
+        fail_silently=fail_silently,
+        html_message=html_message,
+    )
+
+
 def log_email_messages(email_messages) -> list[EmailMessage]:
     """Log email messages to the database.
 
