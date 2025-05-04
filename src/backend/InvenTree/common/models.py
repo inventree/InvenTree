@@ -11,6 +11,7 @@ import json
 import os
 import uuid
 from datetime import timedelta, timezone
+from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
@@ -25,6 +26,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -51,6 +53,7 @@ from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.version import inventree_identifier
 
 logger = structlog.get_logger('inventree')
 
@@ -2576,10 +2579,19 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
     Args:
         email_messages (list): List of email messages to log.
     """
+    instance_id = inventree_identifier(True)
+
     msg_ids = []
     for msg in email_messages:
         try:
+            # Stabilize the message ID before creating the object
+            if 'Message-ID' not in msg.extra_headers:
+                msg.extra_headers['Message-ID'] = make_msgid(domain=DNS_NAME)
+
+            # TODO add `References` field for the thread ID
+
             new_obj = EmailMessage.objects.create(
+                message_id_key=msg.extra_headers.get('Message-ID'),
                 subject=msg.subject,
                 body=msg.body,
                 to=msg.to,
@@ -2588,6 +2600,11 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
                 direction=EmailMessage.EmailDirection.OUTBOUND,
             )
             msg_ids.append(new_obj)
+
+            # Add InvenTree specific headers to the message to help with identification if we see mails again
+            msg.extra_headers['X-InvenTree-MsgId-1'] = new_obj.global_id
+            msg.extra_headers['X-InvenTree-ThreadId-1'] = new_obj.thread.global_id
+            msg.extra_headers['X-InvenTree-Instance-1'] = instance_id
         except Exception as exc:  # pragma: no cover
             logger.error(f' INVE-W9: Failed to log email message: {exc}')
     return msg_ids
