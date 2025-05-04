@@ -39,6 +39,11 @@ export function UsedInTable({
         title: t`IPN`
       },
       {
+        accessor: 'part_detail.revision',
+        title: t`Revision`,
+        sortable: true
+      },
+      {
         accessor: 'part_detail.description',
         sortable: false,
         title: t`Description`
