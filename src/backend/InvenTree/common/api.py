@@ -1169,7 +1169,7 @@ admin_api_urls = [
     path(
         'email/',
         include([
-            path('<int:pk>/', EmailMessageDetail.as_view(), name='api-email-detail'),
+            path('<str:pk>/', EmailMessageDetail.as_view(), name='api-email-detail'),
             path('test/', TestEmail.as_view(), name='api-email-test'),
             path('', EmailMessageList.as_view(), name='api-email-list'),
         ]),

@@ -1892,11 +1892,12 @@ class EmailTests(InvenTreeAPITestCase):
         self._mail_test()
 
         response = self.get(reverse('api-email-list'), expected_code=200)
-        self.assertIn('base_currency', response.data)
-        self.assertIn('exchange_rates', response.data)
+        self.assertIn('subject', response.data[0])
+        self.assertIn('message_id_key', response.data[0])
 
-        response = self.get(
-            reverse('api-email-detail', kwargs={'pk': 1}), expected_code=200
+        response1 = self.get(
+            reverse('api-email-detail', kwargs={'pk': response.data[0]['pk']}),
+            expected_code=200,
         )
-        self.assertIn('base_currency', response.data)
-        self.assertIn('exchange_rates', response.data)
+        self.assertIn('subject', response1.data)
+        self.assertIn('message_id_key', response1.data)
