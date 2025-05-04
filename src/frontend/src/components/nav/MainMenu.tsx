@@ -26,6 +26,8 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authApi, doLogout } from '../../functions/auth';
+
+import { useShallow } from 'zustand/react/shallow';
 import * as classes from '../../main.css';
 import { parseDate } from '../../pages/Index/Settings/AccountSettings/SecurityContent';
 import { useServerApiState } from '../../states/ApiState';
@@ -34,10 +36,9 @@ import type { ServerAPIProps } from '../../states/states';
 import { vars } from '../../theme';
 export function MainMenu() {
   const navigate = useNavigate();
-  const [user, username] = useUserState((state) => [
-    state.user,
-    state.username
-  ]);
+  const [user, username] = useUserState(
+    useShallow((state) => [state.user, state.username])
+  );
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [server, auth_context] = useServerApiState((state) => [
     state.server,

@@ -5,6 +5,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
+import { useShallow } from 'zustand/react/shallow';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { useLocalState } from '../../states/LocalState';
 import DashboardMenu from './DashboardMenu';
@@ -21,12 +22,14 @@ export default function DashboardLayout() {
 
   // local/remote storage values for widget / layout
   const [remoteWidgets, setRemoteWidgets, remoteLayouts, setRemoteLayouts] =
-    useLocalState((state) => [
-      state.widgets,
-      state.setWidgets,
-      state.layouts,
-      state.setLayouts
-    ]);
+    useLocalState(
+      useShallow((state) => [
+        state.widgets,
+        state.setWidgets,
+        state.layouts,
+        state.setLayouts
+      ])
+    );
 
   const [editing, setEditing] = useDisclosure(false);
   const [removing, setRemoving] = useDisclosure(false);

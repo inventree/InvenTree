@@ -31,6 +31,7 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
@@ -40,10 +41,9 @@ import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
 export function SecurityContent() {
-  const [auth_config, sso_enabled] = useServerApiState((state) => [
-    state.auth_config,
-    state.sso_enabled
-  ]);
+  const [auth_config, sso_enabled] = useServerApiState(
+    useShallow((state) => [state.auth_config, state.sso_enabled])
+  );
 
   return (
     <Stack>
@@ -507,7 +507,9 @@ function MfaAddSection({
   refetch: () => void;
   showRecoveryCodes: (codes: Recoverycodes) => void;
 }>) {
-  const [auth_config] = useServerApiState((state) => [state.auth_config]);
+  const [auth_config] = useServerApiState(
+    useShallow((state) => [state.auth_config])
+  );
   const [totpQrOpen, { open: openTotpQr, close: closeTotpQr }] =
     useDisclosure(false);
   const [totpQr, setTotpQr] = useState<{ totp_url: string; secret: string }>();
