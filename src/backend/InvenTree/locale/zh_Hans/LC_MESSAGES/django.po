@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-21 07:00+0000\n"
-"PO-Revision-Date: 2025-04-21 07:03\n"
+"POT-Creation-Date: 2025-05-01 18:20+0000\n"
+"PO-Revision-Date: 2025-05-01 18:23\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -19,37 +19,41 @@ msgstr ""
 
 #: InvenTree/AllUserRequire2FAMiddleware.py:42
 msgid "You must enable two-factor authentication before doing anything else."
-msgstr ""
+msgstr "您必须启用双重身份验证才能进行后续操作。"
 
 #: InvenTree/api.py:355
 msgid "API endpoint not found"
 msgstr "未找到 API 端点"
 
-#: InvenTree/api.py:431
+#: InvenTree/api.py:432
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:438
+#: InvenTree/api.py:439
 msgid "Items must be provided as a list"
-msgstr ""
+msgstr "必须以列表形式提供项目"
 
-#: InvenTree/api.py:446
+#: InvenTree/api.py:447
 msgid "Invalid items list provided"
 msgstr "提供了无效的单位"
 
-#: InvenTree/api.py:452
+#: InvenTree/api.py:453
 msgid "Filters must be provided as a dict"
-msgstr ""
+msgstr "必须以字典形式提供筛选器"
 
-#: InvenTree/api.py:459
+#: InvenTree/api.py:460
 msgid "Invalid filters provided"
 msgstr "提供了无效的过滤器"
 
-#: InvenTree/api.py:464
-msgid "No items match the provided criteria"
+#: InvenTree/api.py:465
+msgid "All filter must only be used with true"
 msgstr ""
 
-#: InvenTree/api.py:707
+#: InvenTree/api.py:470
+msgid "No items match the provided criteria"
+msgstr "没有符合所供条件的项目"
+
+#: InvenTree/api.py:713
 msgid "User does not have permission to view this model"
 msgstr "用户没有权限查阅当前模型。"
 
@@ -460,7 +464,7 @@ msgstr "任务失败"
 #: InvenTree/models.py:1085
 #, python-brace-format
 msgid "Background worker task '{f}' failed after {n} attempts"
-msgstr ""
+msgstr "后台工作任务“{f}”在 {n} 次尝试后失败"
 
 #: InvenTree/models.py:1112
 msgid "Server Error"
