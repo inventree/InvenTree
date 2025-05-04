@@ -26,6 +26,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -2391,6 +2392,17 @@ class DataOutput(models.Model):
     errors = models.JSONField(blank=True, null=True)
 
 
+# region Email
+class Priority(models.IntegerChoices):
+    """Enumeration for defining email priority levels."""
+
+    VERY_HIGH = 1
+    HIGH = 2
+    NORMAL = 3
+    LOW = 4
+    VERY_LOW = 5
+
+
 class EmailMessage(models.Model):
     """Model for storing email messages sent or received by the system.
 
@@ -2450,8 +2462,6 @@ class EmailMessage(models.Model):
     class DeliveryOptions(models.TextChoices):
         """Email delivery options enum."""
 
-        HIGH_PRIORITY = 'high', _('High Priority')
-        LOW_PRIORITY = 'low', _('Low Priority')
         NO_REPLY = 'no_reply', _('No Reply')
         TRACK_DELIVERY = 'track_delivery', _('Track Delivery')
         TRACK_READ = 'track_read', _('Track Read')
@@ -2501,18 +2511,21 @@ class EmailMessage(models.Model):
     )
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
     headers = models.JSONField(blank=True, null=True)
+    # Additional info
     full_message = models.TextField(blank=True, null=True)
     direction = models.CharField(
         max_length=50, blank=True, null=True, choices=EmailDirection.choices
     )
-    error_code = models.CharField(max_length=50, blank=True, null=True)
-    error_message = models.TextField(blank=True, null=True)
-    error_timestamp = models.DateTimeField(blank=True, null=True)
+    priority = models.IntegerField(verbose_name=_('Prioriy'), choices=Priority.choices)
     delivery_options = models.JSONField(
         blank=True,
         null=True,
         # choices=DeliveryOptions.choices
     )
+    # Optional tracking of delivery
+    error_code = models.CharField(max_length=50, blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    error_timestamp = models.DateTimeField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """Ensure threads exist before saving the email message."""
@@ -2580,21 +2593,32 @@ def issue_mail(
     recipients: Union[str, list],
     fail_silently: bool = False,
     html_message=None,
+    prio: Priority = Priority.NORMAL,
 ):
     """Send an email with the specified subject and body, to the specified recipients list.
 
     Mostly used by tasks.
     """
-    from django.core.mail import send_mail
+    connection = get_connection(fail_silently=fail_silently)
 
-    send_mail(
-        subject,
-        body,
-        from_email,
-        recipients,
-        fail_silently=fail_silently,
-        html_message=html_message,
+    message = EmailMultiAlternatives(
+        subject, body, from_email, recipients, connection=connection
     )
+    if html_message:
+        message.attach_alternative(html_message, 'text/html')
+
+    # Stabilize the message ID before creating the object
+    if 'Message-ID' not in message.extra_headers:
+        message.extra_headers['Message-ID'] = make_msgid(domain=DNS_NAME)
+
+    # TODO add `References` field for the thread ID
+
+    # Add headers for flags
+    if prio != Priority.NORMAL:
+        message.extra_headers['X-Priority'] = str(prio)
+
+    # And now send
+    return message.send()
 
 
 def log_email_messages(email_messages) -> list[EmailMessage]:
@@ -2608,12 +2632,6 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
     msg_ids = []
     for msg in email_messages:
         try:
-            # Stabilize the message ID before creating the object
-            if 'Message-ID' not in msg.extra_headers:
-                msg.extra_headers['Message-ID'] = make_msgid(domain=DNS_NAME)
-
-            # TODO add `References` field for the thread ID
-
             new_obj = EmailMessage.objects.create(
                 message_id_key=msg.extra_headers.get('Message-ID'),
                 subject=msg.subject,
@@ -2622,6 +2640,9 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
                 sender=msg.from_email,
                 status=EmailMessage.EmailStatus.ANNOUNCED,
                 direction=EmailMessage.EmailDirection.OUTBOUND,
+                priority=msg.extra_headers.get('X-Priority', '3'),
+                headers=msg.extra_headers,
+                full_message=msg,
             )
             msg_ids.append(new_obj)
 
@@ -2632,3 +2653,6 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
         except Exception as exc:  # pragma: no cover
             logger.error(f' INVE-W9: Failed to log email message: {exc}')
     return msg_ids
+
+
+# endregion Email
