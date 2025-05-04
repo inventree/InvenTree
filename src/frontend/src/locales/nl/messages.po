@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-25 22:18\n"
+"PO-Revision-Date: 2025-04-29 11:17\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1870,7 +1870,7 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:107
 msgid "The Background worker process is not running."
-msgstr ""
+msgstr "Het proces van de server loopt niet."
 
 #: src/components/modals/ServerInfoModal.tsx:114
 msgid "Email Settings"
@@ -1879,7 +1879,7 @@ msgstr "E-mail instellingen"
 #: src/components/modals/ServerInfoModal.tsx:118
 #: src/components/nav/Alerts.tsx:60
 msgid "Email settings not configured."
-msgstr ""
+msgstr "E-mailinstellingen niet geconfigureerd."
 
 #: src/components/modals/ServerInfoModal.tsx:118
 #~ msgid "Email settings not configured"
@@ -1887,39 +1887,39 @@ msgstr ""
 
 #: src/components/nav/Alerts.tsx:42
 msgid "The server is running in debug mode."
-msgstr ""
+msgstr "Server wordt uitgevoerd in debug mode."
 
 #: src/components/nav/Alerts.tsx:51
 msgid "The background worker process is not running."
-msgstr ""
+msgstr "Het proces van server is niet gestart."
 
 #: src/components/nav/Alerts.tsx:58
 msgid "Email settings"
-msgstr ""
+msgstr "E-mail instellingen"
 
 #: src/components/nav/Alerts.tsx:67
 msgid "Server Restart"
-msgstr ""
+msgstr "Server herstart"
 
 #: src/components/nav/Alerts.tsx:69
 msgid "The server requires a restart to apply changes."
-msgstr ""
+msgstr "De server vereist een herstart om de wijzigingen toe te passen."
 
 #: src/components/nav/Alerts.tsx:79
 msgid "Database Migrations"
-msgstr ""
+msgstr "Database migraties"
 
 #: src/components/nav/Alerts.tsx:81
 msgid "There are pending database migrations."
-msgstr ""
+msgstr "Er zijn nog geen database migraties."
 
 #: src/components/nav/Alerts.tsx:97
 msgid "Alerts"
-msgstr ""
+msgstr "Waarschuwingen"
 
 #: src/components/nav/Alerts.tsx:140
 msgid "Learn more about {code}"
-msgstr ""
+msgstr "Meer informatie over {code}"
 
 #: src/components/nav/Header.tsx:150
 #: src/components/nav/NavigationDrawer.tsx:141
@@ -2178,7 +2178,7 @@ msgstr "Regex zoeken"
 
 #: src/components/nav/SearchDrawer.tsx:530
 msgid "Notes search"
-msgstr ""
+msgstr "Notities zoeken"
 
 #: src/components/nav/SearchDrawer.tsx:578
 msgid "An error occurred during search query"
@@ -2380,7 +2380,7 @@ msgstr "Fout opgetreden tijdens het laden van de plug-in inhoud"
 
 #: src/components/render/Instance.tsx:239
 msgid "Unknown model: {model_name}"
-msgstr ""
+msgstr "Onbekend model: {model_name}"
 
 #: src/components/render/ModelType.tsx:29
 #: src/components/wizards/OrderPartsWizard.tsx:132
@@ -3282,7 +3282,7 @@ msgstr "Onderdeel aan inkooporder toegevoegd"
 
 #: src/components/wizards/OrderPartsWizard.tsx:156
 msgid "Select supplier part"
-msgstr ""
+msgstr "Selecteer leveranciersdeel"
 
 #: src/components/wizards/OrderPartsWizard.tsx:171
 msgid "New supplier part"
@@ -3290,7 +3290,7 @@ msgstr "Nieuw leveranciers onderdeel"
 
 #: src/components/wizards/OrderPartsWizard.tsx:195
 msgid "Select purchase order"
-msgstr ""
+msgstr "Selecteer een bestelling"
 
 #: src/components/wizards/OrderPartsWizard.tsx:209
 msgid "New purchase order"
@@ -3761,7 +3761,7 @@ msgstr "Over het InvenTree project"
 
 #: src/enums/Roles.tsx:32
 msgid "Admin"
-msgstr ""
+msgstr "Administrator"
 
 #: src/enums/Roles.tsx:34
 #: src/pages/Index/Settings/SystemSettings.tsx:243
@@ -4043,7 +4043,7 @@ msgstr "Op standaardlocatie opslaan"
 
 #: src/forms/PurchaseOrderForms.tsx:582
 msgid "Store at line item destination "
-msgstr ""
+msgstr "Bewaar op de bestemming van het item "
 
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
@@ -4505,24 +4505,24 @@ msgstr "De aanvraag duurde te lang"
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
-msgstr ""
+msgstr "Gegevens exporteren"
 
 #: src/hooks/UseDataExport.tsx:112
 msgid "Export Data"
-msgstr ""
+msgstr "Gegevens exporteren"
 
 #: src/hooks/UseDataExport.tsx:115
 msgid "Export"
-msgstr ""
+msgstr "Exporteren"
 
 #: src/hooks/UseDataOutput.tsx:57
 msgid "Process completed successfully"
-msgstr ""
+msgstr "Proces succesvol voltooid"
 
 #: src/hooks/UseDataOutput.tsx:73
 #: src/hooks/UseDataOutput.tsx:103
 msgid "Process failed"
-msgstr ""
+msgstr "Proces is mislukt"
 
 #: src/hooks/UseForm.tsx:90
 msgid "Item Created"
@@ -4611,7 +4611,7 @@ msgstr "Inloggen"
 
 #: src/pages/Auth/Login.tsx:105
 msgid "Logging you in"
-msgstr ""
+msgstr "Bezig met inloggen"
 
 #: src/pages/Auth/Login.tsx:112
 msgid "Don't have an account?"
@@ -4906,7 +4906,7 @@ msgstr "Meerdere objecttypes geselecteerd"
 
 #: src/pages/Index/Scan.tsx:177
 msgid "Actions ... "
-msgstr ""
+msgstr "Acties ... "
 
 #: src/pages/Index/Scan.tsx:194
 #: src/pages/Index/Scan.tsx:198
@@ -5215,7 +5215,7 @@ msgstr "Niet actief"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:75
 msgid "Single Sign On is not enabled for this server "
-msgstr ""
+msgstr "Eenmalige aanmelding is niet ingeschakeld voor deze server "
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:83
 #~ msgid "Multifactor authentication is not configured for your account"
@@ -5499,7 +5499,7 @@ msgstr "Gegevens importeren"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:120
 msgid "Data Export"
-msgstr ""
+msgstr "Gegevens exporteren"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:126
 msgid "Barcode Scans"
@@ -5723,7 +5723,7 @@ msgstr "Alle eenheden"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:31
 msgid "Tokens"
-msgstr ""
+msgstr "Tokens"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:32
 #~ msgid "Select settings relevant for user lifecycle. More available in"
@@ -5735,7 +5735,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:68
 msgid "Authentication"
-msgstr ""
+msgstr "Authenticatie"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:94
 msgid "Barcodes"
@@ -6406,19 +6406,19 @@ msgstr "Groep details"
 #: src/pages/core/GroupDetail.tsx:55
 #: src/tables/settings/GroupTable.tsx:107
 msgid "Group Roles"
-msgstr ""
+msgstr "Groep rollen"
 
 #: src/pages/core/UserDetail.tsx:175
 msgid "User Information"
-msgstr ""
+msgstr "Gebruikersinformatie"
 
 #: src/pages/core/UserDetail.tsx:176
 msgid "User Permissions"
-msgstr ""
+msgstr "Gebruikersrechten"
 
 #: src/pages/core/UserDetail.tsx:178
 msgid "User Profile"
-msgstr ""
+msgstr "Gebruikers profiel"
 
 #: src/pages/core/UserDetail.tsx:188
 #: src/tables/settings/UserTable.tsx:153
@@ -7150,13 +7150,13 @@ msgstr "Totale kosten"
 #: src/pages/sales/ReturnOrderDetail.tsx:184
 #: src/pages/sales/SalesOrderDetail.tsx:196
 msgid "Contact Email"
-msgstr ""
+msgstr "Contact email adres"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:228
 #: src/pages/sales/ReturnOrderDetail.tsx:192
 #: src/pages/sales/SalesOrderDetail.tsx:204
 msgid "Contact Phone"
-msgstr ""
+msgstr "Contact telefoonnummer"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:261
 #: src/pages/sales/ReturnOrderDetail.tsx:226
@@ -7454,7 +7454,7 @@ msgstr "Basis onderdeel"
 
 #: src/pages/stock/StockDetail.tsx:156
 msgid "Completed Tests"
-msgstr ""
+msgstr "Voltooide tests"
 
 #: src/pages/stock/StockDetail.tsx:161
 #~ msgid "Unlink custom barcode from stock item"
@@ -7898,7 +7898,7 @@ msgstr "Server heeft onjuist gegevenstype teruggestuurd"
 
 #: src/tables/InvenTreeTable.tsx:647
 msgid "View details"
-msgstr ""
+msgstr "Details weergeven"
 
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
@@ -8601,7 +8601,7 @@ msgstr "Contact toevoegen"
 
 #: src/tables/general/AttachmentTable.tsx:104
 msgid "Uploading file {filename}"
-msgstr ""
+msgstr "Bestand {filename} wordt geüpload"
 
 #: src/tables/general/AttachmentTable.tsx:139
 #~ msgid "File uploaded"
@@ -8614,15 +8614,15 @@ msgstr ""
 #: src/tables/general/AttachmentTable.tsx:156
 #: src/tables/general/AttachmentTable.tsx:170
 msgid "Uploading File"
-msgstr ""
+msgstr "Uploaden bestand"
 
 #: src/tables/general/AttachmentTable.tsx:181
 msgid "File Uploaded"
-msgstr ""
+msgstr "Bestand geüpload"
 
 #: src/tables/general/AttachmentTable.tsx:182
 msgid "File {name} uploaded successfully"
-msgstr ""
+msgstr "Bestand {name} met succes geüpload"
 
 #: src/tables/general/AttachmentTable.tsx:198
 msgid "File could not be uploaded"
@@ -8747,7 +8747,7 @@ msgstr "Weet je zeker dat je de machine{0} wilt verwijderen?"
 
 #: src/tables/machine/MachineListTable.tsx:251
 msgid "Machine"
-msgstr ""
+msgstr "Machine"
 
 #: src/tables/machine/MachineListTable.tsx:256
 #: src/tables/machine/MachineListTable.tsx:443
@@ -8983,16 +8983,16 @@ msgstr "Nieuwe onderdeel categorie"
 
 #: src/tables/part/PartCategoryTable.tsx:129
 msgid "Set Parent Category"
-msgstr ""
+msgstr "Bovenliggende categorie"
 
 #: src/tables/part/PartCategoryTable.tsx:147
 #: src/tables/stock/StockLocationTable.tsx:145
 msgid "Set Parent"
-msgstr ""
+msgstr "Bovenliggend instellen"
 
 #: src/tables/part/PartCategoryTable.tsx:149
 msgid "Set parent category for the selected items"
-msgstr ""
+msgstr "Stel de bovenliggende categorie in voor de geselecteerde items"
 
 #: src/tables/part/PartCategoryTable.tsx:160
 msgid "Add Part Category"
@@ -9417,7 +9417,7 @@ msgstr "Plug-in"
 #: src/tables/plugin/PluginListTable.tsx:105
 #: src/tables/plugin/PluginListTable.tsx:421
 msgid "Mandatory"
-msgstr ""
+msgstr "Verplicht"
 
 #: src/tables/plugin/PluginListTable.tsx:113
 #~ msgid "Plugin with id {id} not found"
@@ -9788,11 +9788,11 @@ msgstr "Verwijder toewijzing"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:264
 msgid "Assign to Shipment"
-msgstr ""
+msgstr "Toewijzen aan zending"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:279
 msgid "Assign to shipment"
-msgstr ""
+msgstr "Toewijzen aan zending"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:263
 msgid "Allocate Serial Numbers"
@@ -9866,37 +9866,37 @@ msgstr "Toon verzendingen die afgeleverd zijn"
 #: src/tables/settings/ApiTokenTable.tsx:29
 #: src/tables/settings/ApiTokenTable.tsx:43
 msgid "Generate Token"
-msgstr ""
+msgstr "Token genereren"
 
 #: src/tables/settings/ApiTokenTable.tsx:31
 msgid "Token generated"
-msgstr ""
+msgstr "Token gegenereerd"
 
 #: src/tables/settings/ApiTokenTable.tsx:66
 #: src/tables/settings/ApiTokenTable.tsx:110
 msgid "Revoked"
-msgstr ""
+msgstr "Intrekken"
 
 #: src/tables/settings/ApiTokenTable.tsx:70
 #: src/tables/settings/ApiTokenTable.tsx:172
 msgid "Token"
-msgstr ""
+msgstr "Sleutel"
 
 #: src/tables/settings/ApiTokenTable.tsx:77
 msgid "In Use"
-msgstr ""
+msgstr "In gebruik"
 
 #: src/tables/settings/ApiTokenTable.tsx:86
 msgid "Last Seen"
-msgstr ""
+msgstr "Laatst gezien"
 
 #: src/tables/settings/ApiTokenTable.tsx:91
 msgid "Expiry"
-msgstr ""
+msgstr "Vervaldatum"
 
 #: src/tables/settings/ApiTokenTable.tsx:111
 msgid "Show revoked tokens"
-msgstr ""
+msgstr "Toon ingetrokken tokens"
 
 #: src/tables/settings/ApiTokenTable.tsx:130
 msgid "Revoke"
@@ -9908,7 +9908,7 @@ msgstr "Fout bij intrekken token"
 
 #: src/tables/settings/ApiTokenTable.tsx:176
 msgid "Tokens are only shown once - make sure to note it down."
-msgstr ""
+msgstr "Tokens worden slechts één keer getoond - zorg ervoor dat je deze onthoudt."
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:59
 msgid "Barcode Information"
@@ -10033,11 +10033,11 @@ msgstr "Fout details"
 
 #: src/tables/settings/ExportSessionTable.tsx:24
 msgid "Output Type"
-msgstr ""
+msgstr "Uitvoer type"
 
 #: src/tables/settings/ExportSessionTable.tsx:34
 msgid "Exported On"
-msgstr ""
+msgstr "Geëxporteerd op"
 
 #: src/tables/settings/FailedTasksTable.tsx:32
 #: src/tables/settings/PendingTasksTable.tsx:23
@@ -10078,7 +10078,7 @@ msgstr "Er is een fout opgetreden bij het ophalen van groepsgegevens"
 #: src/tables/settings/GroupTable.tsx:91
 #: src/tables/settings/GroupTable.tsx:185
 msgid "Name of the user group"
-msgstr ""
+msgstr "Naam van de gebruikersgroep"
 
 #: src/tables/settings/GroupTable.tsx:117
 #~ msgid "Permission set"
@@ -10098,7 +10098,7 @@ msgstr "Weet u zeker dat u deze groep wilt verwijderen?"
 
 #: src/tables/settings/GroupTable.tsx:181
 msgid "Add Group"
-msgstr ""
+msgstr "Groep toevoegen"
 
 #: src/tables/settings/GroupTable.tsx:198
 msgid "Add group"
@@ -10110,7 +10110,7 @@ msgstr "Groep toevoegen"
 
 #: src/tables/settings/GroupTable.tsx:219
 msgid "Edit Group"
-msgstr ""
+msgstr "Groep bewerken"
 
 #: src/tables/settings/ImportSessionTable.tsx:37
 msgid "Delete Import Session"
@@ -10242,15 +10242,15 @@ msgstr "Filter op ingeschakelde status"
 
 #: src/tables/settings/UserTable.tsx:112
 msgid "Groups updated"
-msgstr ""
+msgstr "Groepen bijgewerkt"
 
 #: src/tables/settings/UserTable.tsx:113
 msgid "User groups updated successfully"
-msgstr ""
+msgstr "Gebruikersgroepen zijn succesvol bijgewerkt"
 
 #: src/tables/settings/UserTable.tsx:120
 msgid "Error updating user groups"
-msgstr ""
+msgstr "Fout bij het bijwerken van gebruikersgroepen"
 
 #: src/tables/settings/UserTable.tsx:139
 msgid "User with id {id} not found"
@@ -10294,7 +10294,7 @@ msgstr "U kunt de rechten van de momenteel ingelogde gebruiker niet bewerken."
 
 #: src/tables/settings/UserTable.tsx:207
 msgid "User Groups"
-msgstr ""
+msgstr "Gebruikers groepen"
 
 #: src/tables/settings/UserTable.tsx:305
 #~ msgid "Edit user"
@@ -10314,7 +10314,7 @@ msgstr "Weet u zeker dat u deze gebruiker wilt verwijderen?"
 
 #: src/tables/settings/UserTable.tsx:319
 msgid "Add User"
-msgstr ""
+msgstr "Gebruiker toevoegen"
 
 #: src/tables/settings/UserTable.tsx:327
 msgid "Added user"
@@ -10338,7 +10338,7 @@ msgstr "Toon administrators "
 
 #: src/tables/settings/UserTable.tsx:379
 msgid "Edit User"
-msgstr ""
+msgstr "Wijzig gebruiker"
 
 #: src/tables/stock/InstalledItemsTable.tsx:37
 #: src/tables/stock/InstalledItemsTable.tsx:91
@@ -10776,11 +10776,11 @@ msgstr "Voorraad locatie toevoegen"
 
 #: src/tables/stock/StockLocationTable.tsx:127
 msgid "Set Parent Location"
-msgstr ""
+msgstr "Bovenliggende locatie instellen"
 
 #: src/tables/stock/StockLocationTable.tsx:147
 msgid "Set parent location for the selected items"
-msgstr ""
+msgstr "Stel bovenliggende locatie in voor de geselecteerde items"
 
 #: src/tables/stock/StockTrackingTable.tsx:75
 msgid "Added"
@@ -10813,7 +10813,7 @@ msgstr "Mobiel scherm gedetecteerd"
 
 #: src/views/MobileAppView.tsx:25
 msgid "InvenTree UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr ""
+msgstr "InvenTree UI is geoptimaliseerd voor tablets en desktops, u kunt de officiële app gebruiken voor een mobiele ervaring."
 
 #: src/views/MobileAppView.tsx:25
 #~ msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
