@@ -1029,6 +1029,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'after_save': reload_plugin_registry,
     },
+    'ENABLE_PLUGINS_MAILS': {
+        'name': _('Enable mail integration'),
+        'description': _('Enable plugins to process outgoing/incoming mails'),
+        'default': False,
+        'validator': bool,
+        'after_save': reload_plugin_registry,
+    },
     'PROJECT_CODES_ENABLED': {
         'name': _('Enable project codes'),
         'description': _('Enable project codes for tracking projects'),

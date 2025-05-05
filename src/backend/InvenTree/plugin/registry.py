@@ -839,6 +839,7 @@ class PluginsRegistry:
             'ENABLE_PLUGINS_NAVIGATION',
             'ENABLE_PLUGINS_SCHEDULE',
             'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_MAILS',
         ]
 
     def calculate_plugin_hash(self):
