@@ -14,8 +14,6 @@ from maintenance_mode.backends import AbstractStateBackend
 
 import common.models
 from common.settings import get_global_setting, set_global_setting
-from plugin.plugin import PluginMixinEnum
-from plugin.registry import registry
 
 logger = structlog.get_logger('inventree')
 
@@ -116,8 +114,10 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         Args:
             email_messages (list): List of EmailMessage objects to send.
         """
+        from plugin.base.mail.mail import process_mail
+
         # Issue mails to plugins
-        process_plugin_mail(email_messages)
+        process_mail(email_messages)
 
         # Process
         msg_ids: list[common.models.EmailMessage] = []
@@ -139,29 +139,3 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
             return ret_val
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Exception during mail delivery')
-
-
-def process_plugin_mail(
-    email_messages: list[Union[EmailMessage, EmailMultiAlternatives]],
-) -> bool:
-    """Process email messages with plugins.
-
-    Args:
-        email_messages (list): List of EmailMessage objects to process.
-
-    Returns:
-        bool: True if processing was successful, False otherwise.
-    """
-    if not get_global_setting('ENABLE_PLUGINS_MAILS', False):
-        # Do nothing if plugin mails are not enabled
-        return False
-
-    for plugin in registry.with_mixin(PluginMixinEnum.MAIL):
-        for message in email_messages:
-            try:
-                plugin.process_mail(message)
-            except Exception:
-                logger.exception(
-                    'Exception during mail processing for plugin %s', plugin.slug
-                )
-    return True
