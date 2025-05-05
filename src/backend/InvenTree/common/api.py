@@ -903,7 +903,7 @@ class TestEmail(CreateAPI):
         if not delivered:
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
-            )
+            )  # pragma: no cover
 
 
 selection_urls = [

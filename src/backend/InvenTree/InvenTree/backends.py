@@ -129,7 +129,7 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         # Send and log
         try:
             ret_val = self.backend.send_messages(email_messages)
-            if ret_val == 0:
+            if ret_val == 0:  # pragma: no cover
                 logger.info('INVE-W9: No emails sent')
             else:
                 logger.info('INVE-W9: %s emails sent', ret_val)

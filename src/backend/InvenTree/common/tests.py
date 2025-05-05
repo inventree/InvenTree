@@ -1889,7 +1889,7 @@ class EmailTests(InvenTreeAPITestCase):
     )
     def test_email_api(self):
         """Test that the email api endpoints work."""
-        self._mail_test()
+        self.post(reverse('api-email-test'), {'email': 'test@example.org'})
 
         response = self.get(reverse('api-email-list'), expected_code=200)
         self.assertIn('subject', response.data[0])
