@@ -221,7 +221,7 @@ class PluginsRegistry:
     # region registry functions
     def with_mixin(
         self, mixin: str, active: bool = True, builtin: Optional[bool] = None
-    ) -> list:
+    ) -> list[InvenTreePlugin]:
         """Returns reference to all plugins that have a specified mixin enabled.
 
         Args:

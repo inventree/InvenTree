@@ -12,6 +12,8 @@ from maintenance_mode.backends import AbstractStateBackend
 
 from common.models import EmailMessage, log_email_messages
 from common.settings import get_global_setting, set_global_setting
+from plugin.plugin import PluginMixinEnum
+from plugin.registry import registry
 
 logger = structlog.get_logger('inventree')
 
@@ -110,11 +112,24 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         Args:
             email_messages (list): List of EmailMessage objects to send.
         """
+        # Issue mails to plugins
+        for plugin in registry.with_mixin(PluginMixinEnum.MAIL):
+            for message in email_messages:
+                try:
+                    plugin.process_mail(message)
+                except Exception:
+                    logger.exception(
+                        'Exception during mail processing for plugin %s', plugin.slug
+                    )
+
+        # Process
         msg_ids: list[EmailMessage] = []
         try:
             msg_ids = log_email_messages(email_messages)
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Problem logging recipients, ignoring')
+
+        # Send and log
         try:
             ret_val = self.backend.send_messages(email_messages)
             if ret_val == 0:
