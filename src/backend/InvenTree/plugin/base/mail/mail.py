@@ -4,10 +4,10 @@ from typing import Union
 
 from django.core.mail.message import EmailMessage, EmailMultiAlternatives
 
-from backend.InvenTree.common.settings import get_global_setting
-from backend.InvenTree.InvenTree.backends import logger
-from backend.InvenTree.plugin.plugin import PluginMixinEnum
-from backend.InvenTree.plugin.registry import registry
+from common.settings import get_global_setting
+from InvenTree.backends import logger
+from plugin.plugin import PluginMixinEnum
+from plugin.registry import registry
 
 
 def process_mail(
