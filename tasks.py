@@ -1738,6 +1738,23 @@ def clear_generated(c):
     run(c, 'find src -name "messages.mo" -exec rm -f {} +')
 
 
+@task(
+    help={'mkdocs': 'Build the documentation using mkdocs at the end (default: False)'}
+)
+def build_docs(c, mkdocs=False):
+    """Build the required documents for building the docs. Optionally build the documentation using mkdocs."""
+    migrate(c)
+    export_definitions(c, basedir='docs')
+    schema(c, ignore_warnings=True, filename='docs/schema.yml')
+    run(c, 'python docs/extract_schema.py docs/schema.yml')
+
+    if mkdocs:
+        run(c, 'mkdocs build  -f docs/mkdocs.yml')
+        info('Documentation build complete')
+    else:
+        info('Documentation build complete, but mkdocs not requested')
+
+
 # endregion tasks
 
 # Collection sorting
@@ -1787,6 +1804,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    build_docs,
 )
 
 ns.add_collection(development, 'dev')

@@ -121,11 +121,7 @@ jobs:
           pip install --require-hashes -r docs/requirements.txt
       - name: Build documentation
         run: |
-          invoke migrate
-          invoke int.export-definitions --basedir "docs"
-          invoke dev.schema --filename docs/schema.yml --ignore-warnings
-          python docs/extract_schema.py docs/schema.yml
-          mkdocs build  -f docs/mkdocs.yml
+          invoke build-docs --mkdocs
       - name: Zip build docs
         run: |
           cd docs/site
