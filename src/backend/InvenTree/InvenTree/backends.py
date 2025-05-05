@@ -2,15 +2,17 @@
 
 import datetime
 import time
+from typing import Union
 
 from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
+from django.core.mail.message import EmailMessage, EmailMultiAlternatives
 from django.utils.module_loading import import_string
 
 import structlog
 from maintenance_mode.backends import AbstractStateBackend
 
-from common.models import EmailMessage, log_email_messages
+import common.models
 from common.settings import get_global_setting, set_global_setting
 from plugin.plugin import PluginMixinEnum
 from plugin.registry import registry
@@ -106,7 +108,9 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         """Close the email backend connection."""
         return self.backend.open()
 
-    def send_messages(self, email_messages):
+    def send_messages(
+        self, email_messages: list[Union[EmailMessage, EmailMultiAlternatives]]
+    ) -> int:
         """Send email messages and log them to the database.
 
         Args:
@@ -116,9 +120,9 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         process_plugin_mail(email_messages)
 
         # Process
-        msg_ids: list[EmailMessage] = []
+        msg_ids: list[common.models.EmailMessage] = []
         try:
-            msg_ids = log_email_messages(email_messages)
+            msg_ids = common.models.log_email_messages(email_messages)
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Problem logging recipients, ignoring')
 
@@ -129,15 +133,17 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
                 logger.info('INVE-W9: No emails sent')
             else:
                 logger.info('INVE-W9: %s emails sent', ret_val)
-                EmailMessage.objects.filter(pk__in=[msg.pk for msg in msg_ids]).update(
-                    status=EmailMessage.EmailStatus.SENT
-                )
+                common.models.EmailMessage.objects.filter(
+                    pk__in=[msg.pk for msg in msg_ids]
+                ).update(status=common.models.EmailMessage.EmailStatus.SENT)
             return ret_val
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Exception during mail delivery')
 
 
-def process_plugin_mail(email_messages) -> bool:
+def process_plugin_mail(
+    email_messages: list[Union[EmailMessage, EmailMultiAlternatives]],
+) -> bool:
     """Process email messages with plugins.
 
     Args:
