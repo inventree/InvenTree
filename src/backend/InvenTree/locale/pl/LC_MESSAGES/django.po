@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-21 07:00+0000\n"
-"PO-Revision-Date: 2025-04-21 07:03\n"
+"POT-Creation-Date: 2025-05-01 18:20+0000\n"
+"PO-Revision-Date: 2025-05-01 18:23\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -25,31 +25,35 @@ msgstr "Musisz włączyć uwierzytelnianie dwuskładnikowe przed wykonaniem czeg
 msgid "API endpoint not found"
 msgstr "Nie znaleziono punktu końcowego API"
 
-#: InvenTree/api.py:431
+#: InvenTree/api.py:432
 msgid "List of items or filters must be provided for bulk operation"
 msgstr "Dla operacji masowych należy podać wykaz przedmiotów lub filtrów"
 
-#: InvenTree/api.py:438
+#: InvenTree/api.py:439
 msgid "Items must be provided as a list"
 msgstr "Elementy muszą być podane jako lista"
 
-#: InvenTree/api.py:446
+#: InvenTree/api.py:447
 msgid "Invalid items list provided"
 msgstr "Podano nieprawidłową listę artykułów"
 
-#: InvenTree/api.py:452
+#: InvenTree/api.py:453
 msgid "Filters must be provided as a dict"
 msgstr "Filtry muszą być dostarczone jako kartka"
 
-#: InvenTree/api.py:459
+#: InvenTree/api.py:460
 msgid "Invalid filters provided"
 msgstr "Podano niepoprawne filtry"
 
-#: InvenTree/api.py:464
+#: InvenTree/api.py:465
+msgid "All filter must only be used with true"
+msgstr ""
+
+#: InvenTree/api.py:470
 msgid "No items match the provided criteria"
 msgstr "Żaden element nie spełnia podanych kryteriów"
 
-#: InvenTree/api.py:707
+#: InvenTree/api.py:713
 msgid "User does not have permission to view this model"
 msgstr "Użytkownik nie ma uprawnień do przeglądania tego modelu"
 
