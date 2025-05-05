@@ -615,17 +615,14 @@ jobs:
           path: src/frontend/playwright-report/
           retention-days: 14
       - name: Report coverage
-        if: github.event_name != 'pull_request'
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # pin@v5.4.2
-        if: github.event_name != 'pull_request'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: web
       - name: Upload bundler info
-        if: github.event_name != 'pull_request'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |

@@ -11,6 +11,7 @@ export enum ApiEndpoints {
 
   // User API endpoints
   user_list = 'user/',
+  user_set_password = 'user/:id/set-password/',
   user_me = 'user/me/',
   user_profile = 'user/profile/',
   user_roles = 'user/roles/',
