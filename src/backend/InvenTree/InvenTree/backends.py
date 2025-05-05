@@ -113,14 +113,7 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
             email_messages (list): List of EmailMessage objects to send.
         """
         # Issue mails to plugins
-        for plugin in registry.with_mixin(PluginMixinEnum.MAIL):
-            for message in email_messages:
-                try:
-                    plugin.process_mail(message)
-                except Exception:
-                    logger.exception(
-                        'Exception during mail processing for plugin %s', plugin.slug
-                    )
+        process_plugin_mail(email_messages)
 
         # Process
         msg_ids: list[EmailMessage] = []
@@ -142,3 +135,27 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
             return ret_val
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Exception during mail delivery')
+
+
+def process_plugin_mail(email_messages) -> bool:
+    """Process email messages with plugins.
+
+    Args:
+        email_messages (list): List of EmailMessage objects to process.
+
+    Returns:
+        bool: True if processing was successful, False otherwise.
+    """
+    if not get_global_setting('ENABLE_PLUGINS_MAILS', False):
+        # Do nothing if plugin mails are not enabled
+        return False
+
+    for plugin in registry.with_mixin(PluginMixinEnum.MAIL):
+        for message in email_messages:
+            try:
+                plugin.process_mail(message)
+            except Exception:
+                logger.exception(
+                    'Exception during mail processing for plugin %s', plugin.slug
+                )
+    return True
