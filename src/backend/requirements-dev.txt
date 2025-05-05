@@ -428,9 +428,9 @@ pyyaml==6.0.2 \
     # via
     #   -c src/backend/requirements.txt
     #   pre-commit
-setuptools==79.0.1 \
-    --hash=sha256:128ce7b8f33c3079fd1b067ecbb4051a66e8526e7b65f6cec075dfc650ddfa88 \
-    --hash=sha256:e147c0549f27767ba362f9da434eab9c5dc0045d5304feb602a0af001089fc51
+setuptools==80.1.0 \
+    --hash=sha256:2e308396e1d83de287ada2c2fd6e64286008fe6aca5008e0b6a8cb0e2c86eedd \
+    --hash=sha256:ea0e7655c05b74819f82e76e11a85b31779fee7c4969e82f72bab0664e8317e4
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements-dev.in

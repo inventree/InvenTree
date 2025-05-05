@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-21 07:00+0000\n"
-"PO-Revision-Date: 2025-04-25 22:18\n"
+"POT-Creation-Date: 2025-05-01 18:20+0000\n"
+"PO-Revision-Date: 2025-05-01 18:23\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -25,31 +25,35 @@ msgstr "Schakel tweestapsverificatie in voordat je iets anders kunt doen."
 msgid "API endpoint not found"
 msgstr "API eindpunt niet gevonden"
 
-#: InvenTree/api.py:431
+#: InvenTree/api.py:432
 msgid "List of items or filters must be provided for bulk operation"
 msgstr "Lijst met items of filters moet worden opgegeven voor bulk bewerking"
 
-#: InvenTree/api.py:438
+#: InvenTree/api.py:439
 msgid "Items must be provided as a list"
 msgstr "Items moeten worden opgegeven als een lijst"
 
-#: InvenTree/api.py:446
+#: InvenTree/api.py:447
 msgid "Invalid items list provided"
 msgstr "Ongeldige items lijst verstrekt"
 
-#: InvenTree/api.py:452
+#: InvenTree/api.py:453
 msgid "Filters must be provided as a dict"
 msgstr "Filters moeten als woordenboek worden opgegeven"
 
-#: InvenTree/api.py:459
+#: InvenTree/api.py:460
 msgid "Invalid filters provided"
 msgstr "Ongeldige filters opgegeven"
 
-#: InvenTree/api.py:464
+#: InvenTree/api.py:465
+msgid "All filter must only be used with true"
+msgstr ""
+
+#: InvenTree/api.py:470
 msgid "No items match the provided criteria"
 msgstr "Geen items die overeenkomen met de opgegeven criteria"
 
-#: InvenTree/api.py:707
+#: InvenTree/api.py:713
 msgid "User does not have permission to view this model"
 msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
 
@@ -6677,7 +6681,7 @@ msgstr "Parameter gegevens"
 
 #: plugin/builtin/exporter/bom_exporter.py:49
 msgid "Include part parameter data"
-msgstr ""
+msgstr "Parametergegevens van onderdeel opnemen"
 
 #: plugin/builtin/exporter/bom_exporter.py:58
 msgid "Multi-Level BOM Exporter"
