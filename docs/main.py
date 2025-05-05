@@ -93,7 +93,8 @@ def check_link(url) -> bool:
 
     while attempts > 0:
         response = requests.head(url, timeout=5000)
-        if response.status_code == 200:
+        # Ensure GH is not causing issues
+        if response.status_code in (200, 429):
             # Update the cache file
             with open(CACHE_FILE, 'a', encoding='utf-8') as f:
                 f.write(f'{url}\n')
