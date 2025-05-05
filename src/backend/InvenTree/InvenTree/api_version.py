@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 341
+INVENTREE_API_VERSION = 342
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v342 -> 2025-05-05 : https://github.com/inventree/InvenTree/pull/9608
+    - Adds email endpoints
+
 v341 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9547
     - Require pagination limit on list queries
 
