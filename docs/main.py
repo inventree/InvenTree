@@ -38,7 +38,7 @@ global REPORT_CONTEXT
 
 # Read in the InvenTree settings file
 here = os.path.dirname(__file__)
-settings_file = os.path.join(here, 'inventree_settings.json')
+settings_file = os.path.join(here, 'generated', 'inventree_settings.json')
 
 with open(settings_file, encoding='utf-8') as sf:
     settings = json.load(sf)
@@ -47,13 +47,17 @@ with open(settings_file, encoding='utf-8') as sf:
     USER_SETTINGS = settings['user']
 
 # Tags
-with open(os.path.join(here, 'inventree_tags.yml'), encoding='utf-8') as f:
+with open(os.path.join(here, 'generated', 'inventree_tags.yml'), encoding='utf-8') as f:
     TAGS = yaml.load(f, yaml.BaseLoader)
 # Filters
-with open(os.path.join(here, 'inventree_filters.yml'), encoding='utf-8') as f:
+with open(
+    os.path.join(here, 'generated', 'inventree_filters.yml'), encoding='utf-8'
+) as f:
     FILTERS = yaml.load(f, yaml.BaseLoader)
 # Report context
-with open(os.path.join(here, 'inventree_report_context.json'), encoding='utf-8') as f:
+with open(
+    os.path.join(here, 'generated', 'inventree_report_context.json'), encoding='utf-8'
+) as f:
     REPORT_CONTEXT = json.load(f)
 
 
@@ -77,7 +81,7 @@ def check_link(url) -> bool:
     We allow a number attempts and a lengthy timeout,
     as we do not want false negatives.
     """
-    CACHE_FILE = os.path.join(os.path.dirname(__file__), 'url_cache.txt')
+    CACHE_FILE = os.path.join(os.path.dirname(__file__), 'generated', 'url_cache.txt')
 
     # Keep a local cache file of URLs we have already checked
     if os.path.exists(CACHE_FILE):
@@ -217,7 +221,7 @@ def define_env(env):
         base = os.path.join(here, '..')
         base = os.path.abspath(base)
         tasks = os.path.join(base, 'tasks.py')
-        output = os.path.join(here, 'invoke-commands.txt')
+        output = os.path.join(here, 'generated', 'invoke-commands.txt')
 
         command = f'invoke -f {tasks} --list > {output}'
 

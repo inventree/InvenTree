@@ -92,7 +92,9 @@ def get_release_data():
     - First look to see if 'releases.json' file exists
     - If data does not exist in this file, request via the github API
     """
-    json_file = os.path.join(os.path.dirname(__file__), 'releases.json')
+    json_file = os.path.join(
+        os.path.dirname(__file__), '..', 'generated', 'releases.json'
+    )
 
     releases = []
 

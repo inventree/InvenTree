@@ -1325,12 +1325,13 @@ def export_definitions(c, basedir: str = ''):
     """Export various definitions."""
     if basedir != '' and basedir.endswith('/') is False:
         basedir += '/'
+    base_path = Path(basedir, 'generated').resolve()
 
     filenames = [
-        Path(basedir + 'inventree_settings.json').resolve(),
-        Path(basedir + 'inventree_tags.yml').resolve(),
-        Path(basedir + 'inventree_filters.yml').resolve(),
-        Path(basedir + 'inventree_report_context.json').resolve(),
+        base_path.joinpath('inventree_settings.json'),
+        base_path.joinpath('inventree_tags.yml'),
+        base_path.joinpath('inventree_filters.yml'),
+        base_path.joinpath('inventree_report_context.json'),
     ]
 
     info('Exporting definitions...')
@@ -1706,8 +1707,10 @@ via your signed in browser, or consider using a point release download via invok
 
 def doc_schema(c):
     """Generate schema documentation for the API."""
-    schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
-    run(c, 'python docs/extract_schema.py docs/schema.yml')
+    schema(
+        c, ignore_warnings=True, overwrite=True, filename='docs/generated/schema.yml'
+    )
+    run(c, 'python docs/extract_schema.py docs/generated/schema.yml')
 
 
 @task(
