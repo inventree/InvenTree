@@ -22,7 +22,7 @@ The following report templates are provided "out of the box" and can be used as 
 | [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../sales/sales_order.md) | Sales Order Shipment report |
 | [Stock Location](#stock-location) | [StockLocation](../stock/index.md#stock-location) | Stock Location report |
 | [Test Report](#test-report) | [StockItem](../stock/index.md#stock-item) | Test Report |
-| [Selected Stock Items Report](#selected-stock-items-report) | [StockItem](../stock/stock.md#stock-item) | Selected Stock Items report |
+| [Selected Stock Items Report](#selected-stock-items-report) | [StockItem](../stock/index.md#stock-item) | Selected Stock Items report |
 
 
 ### Bill of Materials Report
