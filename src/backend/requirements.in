@@ -12,6 +12,7 @@ django-filter                           # Extended filtering options
 django-flags                            # Feature flags
 django-ical                             # iCal export for calendar views
 django-maintenance-mode                 # Shut down application while reloading etc.
+django-mailbox                          # Email scraping
 django-markdownify                      # Markdown rendering
 django-mptt                             # Modified Preorder Tree Traversal
 django-markdownify                      # Markdown rendering

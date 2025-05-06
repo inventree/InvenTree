@@ -308,6 +308,7 @@ INSTALLED_APPS = [
     'oauth2_provider',  # OAuth2 provider and API access
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
+    'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
 ]
 

@@ -476,6 +476,9 @@ django-js-asset==2.2.0 \
     --hash=sha256:0c57a82cae2317e83951d956110ce847f58ff0cdc24e314dbc18b35033917e94 \
     --hash=sha256:7ef3e858e13d06f10799b56eea62b1e76706f42cf4e709be4e13356bc0ae30d8
     # via django-mptt
+django-mailbox==4.10.1 \
+    --hash=sha256:9060a4ddc81d16aa699e266649c12eaf4f29671b5266352e2fad3043a6832b52
+    # via -r src/backend/requirements.in
 django-maintenance-mode==0.22.0 \
     --hash=sha256:502f04f845d6996e8add321186b3b9236c3702de7cb0ab14952890af6523b9e5 \
     --hash=sha256:a9cf2ba79c9945bd67f98755a6cfd281869d39b3745bbb5d1f571d058657aa85
