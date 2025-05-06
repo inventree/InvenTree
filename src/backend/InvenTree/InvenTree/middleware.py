@@ -83,13 +83,11 @@ class AuthRequiredMiddleware:
 
         # API requests are handled by the DRF library
         if request.path_info.startswith('/api/'):
-            response = self.get_response(request)
-            return response
+            return self.get_response(request)
 
         # oAuth2 requests are handled by the oAuth2 library
         if request.path_info.startswith('/o/'):
-            response = self.get_response(request)
-            return response
+            return self.get_response(request)
 
         # anymail requests are handled by the anymail library
         if request.path_info.startswith('/anymail/'):
