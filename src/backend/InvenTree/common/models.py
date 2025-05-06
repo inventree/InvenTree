@@ -38,7 +38,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from anymail.signals import tracking
+from anymail.signals import inbound, tracking
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
@@ -2397,6 +2397,7 @@ class DataOutput(models.Model):
 class Priority(models.IntegerChoices):
     """Enumeration for defining email priority levels."""
 
+    NONE = 0
     VERY_HIGH = 1
     HIGH = 2
     NORMAL = 3
@@ -2654,6 +2655,26 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
         except Exception as exc:  # pragma: no cover
             logger.error(f' INVE-W9: Failed to log email message: {exc}')
     return msg_ids
+
+
+@receiver(inbound)
+def handle_inbound(sender, event, esp_name, **kwargs):
+    """Handle inbound email messages from anymail."""
+    message = event.message
+
+    EmailMessage.objects.create(
+        message_id_key=event.message['Message-ID'],
+        subject=message.subject,
+        body=message.text,
+        to=message.envelope_recipient,
+        sender=message.envelope_sender,
+        status=EmailMessage.EmailStatus.READ,
+        direction=EmailMessage.EmailDirection.INBOUND,
+        priority=Priority.NONE,
+        timestamp=message.date,
+        headers=message._headers,
+        full_message=message.html,
+    )
 
 
 @receiver(tracking)
