@@ -26,6 +26,16 @@ bleach[css]==6.2.0 \
     --hash=sha256:117d9c6097a7c3d22fd578fcd8d35ff1e125df6736f554da4e432fdd63f31e5e \
     --hash=sha256:123e894118b8a599fd80d3ec1a6d4cc7ce4e5882b1317a7e1ba69b56e95f991f
     # via django-markdownify
+boto3==1.38.9 \
+    --hash=sha256:71f6d43f5bc156cc904f8dde9a2801adb222b81724fb9129f8ff6e7b9331e853 \
+    --hash=sha256:a9f8642e84589e7787da0d5d146a14d1eb9e3a4029893c88d1b4e11654cf8014
+    # via django-anymail
+botocore==1.38.9 \
+    --hash=sha256:2d954d3d9a6c7f86fbfbeb164223996c24b7b7726682bace61f86a7e10b531e6 \
+    --hash=sha256:53113040882192388e05edebee48d45c008fb4ba2739dc889ce09b2adc9e56e4
+    # via
+    #   boto3
+    #   s3transfer
 brotli==1.1.0 \
     --hash=sha256:03d20af184290887bdea3f0f78c4f737d126c74dc2f3ccadf07e54ceca3bf208 \
     --hash=sha256:0541e747cce78e24ea12d69176f6a7ddb690e62c425e01d31cc065e69ce55b48 \
@@ -370,6 +380,7 @@ cryptography==44.0.2 \
     --hash=sha256:f514ef4cd14bb6fb484b4a60203e912cfcb64f2ab139e88c2274511514bf7308
     # via
     #   -r src/backend/requirements.in
+    #   django-anymail
     #   djangorestframework-simplejwt
     #   fido2
     #   jwcrypto
@@ -396,6 +407,7 @@ django==4.2.20 \
     # via
     #   -r src/backend/requirements.in
     #   django-allauth
+    #   django-anymail
     #   django-cors-headers
     #   django-dbbackup
     #   django-error-report-2
@@ -423,6 +435,10 @@ django==4.2.20 \
     #   drf-spectacular
 django-allauth[mfa, openid, saml, socialaccount]==65.4.1 \
     --hash=sha256:60b32aef7dbbcc213319aa4fd8f570e985266ea1162ae6ef7a26a24efca85c8c
+    # via -r src/backend/requirements.in
+django-anymail[amazon-ses, postal]==13.0 \
+    --hash=sha256:6da4465eff18f679955f74332501a3a4299e34079015d91e1fce9c049d784d6c \
+    --hash=sha256:87f42d9ff12a9a029d5e88edaaf62a4b880aa9a6a7ef937042b7e96579e6db07
     # via -r src/backend/requirements.in
 django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
@@ -769,6 +785,12 @@ jinja2==3.1.6 \
     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
     # via coreschema
+jmespath==1.0.1 \
+    --hash=sha256:02e2e4cc71b5bcab88332eebf907519190dd9e6e82107fa7f83b1003a6252980 \
+    --hash=sha256:90261b206d6defd58fdd5e85f478bf633a2901798906be2ad389150c5c60edbe
+    # via
+    #   boto3
+    #   botocore
 jsonschema==4.23.0 \
     --hash=sha256:d71497fef26351a33265337fa77ffeb82423f3ea21283cd9467bb03999266bc4 \
     --hash=sha256:fbadb6f8b144a8f8cf9f0b89ba94501d143e50411a1278633f56a7acf7fd5566
@@ -1255,6 +1277,7 @@ python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
     # via
+    #   botocore
     #   django-recurrence
     #   icalendar
 python-dotenv==1.1.0 \
@@ -1458,6 +1481,7 @@ requests==2.32.3 \
     # via
     #   coreapi
     #   django-allauth
+    #   django-anymail
     #   django-oauth-toolkit
     #   opentelemetry-exporter-otlp-proto-http
     #   requests-oauthlib
@@ -1572,6 +1596,10 @@ rpds-py==0.22.3 \
     # via
     #   jsonschema
     #   referencing
+s3transfer==0.12.0 \
+    --hash=sha256:35b314d7d82865756edab59f7baebc6b477189e6ab4c53050e28c1de4d9cce18 \
+    --hash=sha256:8ac58bc1989a3fdb7c7f3ee0918a66b160d038a147c7b5db1500930a607e9a1c
+    # via boto3
 sentry-sdk==2.27.0 \
     --hash=sha256:90f4f883f9eff294aff59af3d58c2d1b64e3927b28d5ada2b9b41f5aeda47daf \
     --hash=sha256:c58935bfff8af6a0856d37e8adebdbc7b3281c2b632ec823ef03cd108d216ff0
@@ -1675,10 +1703,12 @@ uritemplate==4.1.1 \
     # via
     #   coreapi
     #   drf-spectacular
-urllib3==2.3.0 \
-    --hash=sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df \
-    --hash=sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d
+urllib3==1.26.20 \
+    --hash=sha256:0ed14ccfbf1c30a9072c7ca157e4319b70d65f623e91e7b32fadb2853431016e \
+    --hash=sha256:40c2dc0c681e47eb8f90e7e27bf6ff7df2e677421fd46756da1161c39ca70d32
     # via
+    #   botocore
+    #   django-anymail
     #   dulwich
     #   requests
     #   sentry-sdk

@@ -308,6 +308,7 @@ INSTALLED_APPS = [
     'oauth2_provider',  # OAuth2 provider and API access
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
+    'anymail',  # For email sending/receiving via ESPs
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -977,7 +978,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
-
+# region email
 # Email configuration options
 EMAIL_BACKEND = 'InvenTree.backends.InvenTreeMailLoggingBackend'
 INTERNAL_EMAIL_BACKEND = get_setting(
@@ -985,16 +986,20 @@ INTERNAL_EMAIL_BACKEND = get_setting(
     'email.backend',
     'django.core.mail.backends.smtp.EmailBackend',
 )
+# SMTP backend
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
 EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
+EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
+EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
+# Anymail
+if INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
+    ANYMAIL = get_setting('INVENTREE_ANYMAIL', 'email.anymail', None, dict)
+
 EMAIL_SUBJECT_PREFIX = get_setting(
     'INVENTREE_EMAIL_PREFIX', 'email.prefix', '[InvenTree] '
 )
-EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
-EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
-
 DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
 
 # If "from" email not specified, default to the username
@@ -1003,6 +1008,7 @@ if not DEFAULT_FROM_EMAIL:
 
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60
+# endregion email
 
 LOCALE_PATHS = (BASE_DIR.joinpath('locale/'),)
 

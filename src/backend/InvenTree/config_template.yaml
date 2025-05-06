@@ -75,21 +75,33 @@ timezone: UTC
 #admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Email backend configuration
-# Ref: https://docs.djangoproject.com/en/dev/topics/email/
+# See TODO for more information on email configuration
+# You can either use (1) SMTP, (2) console or (3) anymail backends
+# 1 (SMTP) : Ref: https://docs.djangoproject.com/en/dev/topics/email/
+# 2 (Console): Ref: https://docs.djangoproject.com/en/dev/topics/email/#console-backend
+# 3 (Anymail): Ref: https://anymail.dev/en/stable/esps/
 # Alternatively, these options can all be set using environment variables,
 # with the INVENTREE_EMAIL_ prefix:
 # e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
-# Refer to the InvenTree documentation for more information
 
 email:
+  sender: '' #  'inventree@example.org'
+  # For 1
   # backend: 'django.core.mail.backends.smtp.EmailBackend'
   host: ''
   port: 25
   username: ''
   password: ''
-  sender: ''
   tls: False
   ssl: False
+  # For 2
+  # backend: 'django.core.mail.backends.console.EmailBackend'
+  # For 3
+  # backend: 'anymail.backends.mailjet.EmailBackend'
+  # anymail:
+  #   MAILJET_API_KEY: abc456
+  #   MAILJET_SECRET_KEY: def123
+  #   WEBHOOK_SECRET: random:random  # generate a random string for webhook secret
 
 # Set sentry_enabled to True to report errors back to the maintainers
 # Set sentry,dsn to your custom DSN if you want to use your own instance for error reporting

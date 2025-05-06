@@ -91,6 +91,10 @@ class AuthRequiredMiddleware:
             response = self.get_response(request)
             return response
 
+        # anymail requests are handled by the anymail library
+        if request.path_info.startswith('/anymail/'):
+            return self.get_response(request)
+
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
 

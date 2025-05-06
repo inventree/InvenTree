@@ -32,12 +32,13 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-from django.dispatch.dispatcher import receiver
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from anymail.signals import tracking
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
@@ -2647,12 +2648,46 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
             msg_ids.append(new_obj)
 
             # Add InvenTree specific headers to the message to help with identification if we see mails again
-            msg.extra_headers['X-InvenTree-MsgId-1'] = new_obj.global_id
-            msg.extra_headers['X-InvenTree-ThreadId-1'] = new_obj.thread.global_id
-            msg.extra_headers['X-InvenTree-Instance-1'] = instance_id
+            msg.extra_headers['X-InvenTree-MsgId-1'] = str(new_obj.global_id)
+            msg.extra_headers['X-InvenTree-ThreadId-1'] = str(new_obj.thread.global_id)
+            msg.extra_headers['X-InvenTree-Instance-1'] = str(instance_id)
         except Exception as exc:  # pragma: no cover
             logger.error(f' INVE-W9: Failed to log email message: {exc}')
     return msg_ids
+
+
+@receiver(tracking)
+def handle_event(sender, event, esp_name, **kwargs):
+    """Handle tracking events from anymail."""
+    try:
+        email = EmailMessage.objects.get(message_id_key=event.message_id)
+
+        if event.event_type == 'delivered':
+            email.status = EmailMessage.EmailStatus.DELIVERED
+        elif event.event_type == 'opened':
+            email.status = EmailMessage.EmailStatus.READ
+        elif event.event_type == 'clicked':
+            email.status = EmailMessage.EmailStatus.CONFIRMED
+        elif event.event_type == 'sent':
+            email.status = EmailMessage.EmailStatus.SENT
+        elif event.event_type == 'unknown':
+            email.error_message = event.esp_event
+        else:
+            if event.event_type in ('queued', 'deferred'):
+                # We ignore these
+                return True
+            else:
+                email.status = EmailMessage.EmailStatus.FAILED
+                email.error_code = event.event_type
+                email.error_message = event.esp_event
+                email.error_timestamp = event.timestamp
+        email.save()
+        return True
+    except EmailMessage.DoesNotExist:
+        return False
+    except Exception as exc:
+        logger.error(f' INVE-W9: Failed to handle tracking event: {exc}')
+        return False
 
 
 # endregion Email

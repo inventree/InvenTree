@@ -126,16 +126,33 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Problem logging recipients, ignoring')
 
-        # Send and log
-        try:
-            ret_val = self.backend.send_messages(email_messages)
-            if ret_val == 0:  # pragma: no cover
-                logger.info('INVE-W9: No emails sent')
+        # Anymail: Some ESP do not like the Message-ID header being set in headers
+        if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
+            for a in email_messages:
+                a.extra_headers.pop('Message-ID')
+                # Add tracking if requested: TODO
+                # a.track_opens = True
+
+        # Send
+        ret_val = self.backend.send_messages(email_messages)
+
+        # Log
+        if ret_val == 0:  # pragma: no cover
+            logger.info('INVE-W9: No emails sent')
+        else:
+            logger.info('INVE-W9: %s emails sent', ret_val)
+            if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
+                # Anymail: ESP does return the message ID for us so we need to set it in the database
+                for k, v in {
+                    a.extra_headers['X-InvenTree-MsgId-1']: a.anymail_status.message_id
+                    for a in email_messages
+                }.items():
+                    current = common.models.EmailMessage.objects.get(global_id=k)
+                    current.message_id_key = v
+                    current.status = common.models.EmailMessage.EmailStatus.SENT
+                    current.save()
             else:
-                logger.info('INVE-W9: %s emails sent', ret_val)
                 common.models.EmailMessage.objects.filter(
                     pk__in=[msg.pk for msg in msg_ids]
                 ).update(status=common.models.EmailMessage.EmailStatus.SENT)
-            return ret_val
-        except Exception:  # pragma: no cover
-            logger.exception('INVE-W9: Exception during mail delivery')
+        return ret_val
