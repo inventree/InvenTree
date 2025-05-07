@@ -75,7 +75,7 @@ The site URL is the URL that users will use to access the InvenTree server. For 
 
 ### Timezone
 
-By default, the InvenTree server is configured to use the UTC timezone. This can be adjusted to your desired local timezone. You can refer to [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of available timezones. Use the values specified in the *TZ Identifier* column in the linked page.
+By default, the InvenTree server is configured to use the UTC timezone. This can be adjusted to your desired local timezone. You can refer to [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of available timezones. Use the values specified in the *TZ Identifier* column in the linked page. For example, to change to the United States Pacific timezone, set `INVENTREE_TIMEZONE='America/Los_Angeles'`.
 
 Date and time values are stored in the database in UTC format, and are converted to the selected timezone for display in the user interface or API.
 
