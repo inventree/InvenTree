@@ -102,6 +102,10 @@ generate-hashes=true
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
+dynamic_context = "test_function"
+
+[tool.coverage.html]
+show_contexts = true
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
