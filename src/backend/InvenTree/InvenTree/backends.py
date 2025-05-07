@@ -5,6 +5,7 @@ import time
 from typing import Union
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.mail.message import EmailMessage, EmailMultiAlternatives
 from django.utils.module_loading import import_string
@@ -134,7 +135,16 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
                 # a.track_opens = True
 
         # Send
-        ret_val = self.backend.send_messages(email_messages)
+        try:
+            ret_val = self.backend.send_messages(email_messages)
+        except Exception as e:
+            logger.exception('INVE-W9: Problem sending email: %s', e)
+            # If we fail to send the email, we need to set the status to ERROR
+            for msg in msg_ids:
+                msg.status = common.models.EmailMessage.EmailStatus.FAILED
+                msg.error_message = str(e)
+                msg.save()
+            raise ValidationError(f'INVE-W9: Failed to send email: {e}') from e
 
         # Log
         if ret_val == 0:  # pragma: no cover
