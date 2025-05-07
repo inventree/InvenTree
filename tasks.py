@@ -1325,12 +1325,13 @@ def export_definitions(c, basedir: str = ''):
     """Export various definitions."""
     if basedir != '' and basedir.endswith('/') is False:
         basedir += '/'
+    base_path = Path(basedir, 'generated').resolve()
 
     filenames = [
-        Path(basedir + 'inventree_settings.json').resolve(),
-        Path(basedir + 'inventree_tags.yml').resolve(),
-        Path(basedir + 'inventree_filters.yml').resolve(),
-        Path(basedir + 'inventree_report_context.json').resolve(),
+        base_path.joinpath('inventree_settings.json'),
+        base_path.joinpath('inventree_tags.yml'),
+        base_path.joinpath('inventree_filters.yml'),
+        base_path.joinpath('inventree_report_context.json'),
     ]
 
     info('Exporting definitions...')
@@ -1704,6 +1705,14 @@ via your signed in browser, or consider using a point release download via invok
         )
 
 
+def doc_schema(c):
+    """Generate schema documentation for the API."""
+    schema(
+        c, ignore_warnings=True, overwrite=True, filename='docs/generated/schema.yml'
+    )
+    run(c, 'python docs/extract_schema.py docs/generated/schema.yml')
+
+
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
@@ -1716,11 +1725,25 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
     export_definitions(c, basedir='docs')
 
     if compile_schema:
-        # Build the schema docs first
-        schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
-        run(c, 'python docs/extract_schema.py docs/schema.yml')
+        doc_schema(c)
 
     run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+
+
+@task(
+    help={'mkdocs': 'Build the documentation using mkdocs at the end (default: False)'}
+)
+def build_docs(c, mkdocs=False):
+    """Build the required documents for building the docs. Optionally build the documentation using mkdocs."""
+    migrate(c)
+    export_definitions(c, basedir='docs')
+    doc_schema(c)
+
+    if mkdocs:
+        run(c, 'mkdocs build  -f docs/mkdocs.yml')
+        info('Documentation build complete')
+    else:
+        info('Documentation build complete, but mkdocs not requested')
 
 
 @task
@@ -1787,6 +1810,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    build_docs,
 )
 
 ns.add_collection(development, 'dev')
