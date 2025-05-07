@@ -246,7 +246,8 @@ plugins:
       closing_tag: "!}"
   - search
   - mermaid2:
-      version: 11.6.0
+      # version: 11.6.0
+      javascript: javascripts/mermaid.min.js
   - git-revision-date-localized
   - mkdocs-simple-hooks:
       hooks:
