@@ -21,6 +21,18 @@ Mail can be received though various ESPs, POP3 and IMAP.
 
 When using POP3/IMAP InvenTree removes email that were processed. This is to prevent duplicate processing of the same email. You can specify a archive folder, that mails should be moved to after processing. This is useful for retaining manual access.
 
+### Supported ESPs
+
+InvenTree uses django-anymail to support various ESPs. A full list of supported ESPs can be found in [their docs](https://anymail.dev/en/stable/esps/).
+
+Most popular providers are supported:
+- Amazon SES
+- Brevo (EU)
+- Postal (Self hosted)
+- Mailgun
+- Postmark
+- SendGrid
+
 ### Logging / Admin Insights
 
 Superusers can view the email log in the [Admin Center](./admin.md#admin-center). This is useful for debugging and tracking email delivery / receipt.
