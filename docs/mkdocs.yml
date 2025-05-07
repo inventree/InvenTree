@@ -245,6 +245,8 @@ plugins:
       opening_tag: "{!"
       closing_tag: "!}"
   - search
+  - mermaid2:
+      version: 11.6.0
   - git-revision-date-localized
   - mkdocs-simple-hooks:
       hooks:
@@ -295,7 +297,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          # format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:mermaid2.fence_mermaid_custom
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg
