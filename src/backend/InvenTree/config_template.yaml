@@ -75,7 +75,7 @@ timezone: UTC
 #admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Email backend configuration
-# See TODO for more information on email configuration
+# See https://docs.inventree.org/en/stable/settings/email for more information on email configuration
 # You can either use (1) SMTP, (2) console or (3) anymail backends
 # 1 (SMTP) : Ref: https://docs.djangoproject.com/en/dev/topics/email/
 # 2 (Console): Ref: https://docs.djangoproject.com/en/dev/topics/email/#console-backend

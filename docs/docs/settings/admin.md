@@ -26,11 +26,11 @@ Some panes can only be accessed by users with specific permissions. For example,
 
 ### System Settings
 
-TODO
+The System Settings interface provides ordered access to all global settings in InvenTree. Users need to have _staff_ privileges enabled or the _a:staff_ scope.
 
 ### Backend Admin Interface
 
-Users which have *staff* privileges have access to an Admin interface which provides extremely low level control of the database. Every item in the database is available and this interface provides a convenient option for directly viewing and modifying database objects.
+Users which have *staff* privileges have access to an Admin interface which provides extremely low level control of the database. Every item in the database is available and this interface provides a unrestricted option for directly viewing and modifying database objects.
 
 !!! warning "Caution"
 	Admin users should exercise extreme care when modifying data via the admin interface, as performing the wrong action may have unintended consequences!

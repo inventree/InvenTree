@@ -6,16 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { api } from '../../App';
 
-/*
-  {
-    "key": "INVENTREE_DEBUG",
-    "env_var": "INVENTREE_DEBUG",
-    "config_key": "debug",
-    "source": "yaml",
-    "accessed": "2025-05-03T17:35:53.409662"
-  }
-    */
-
 export function ConfigValueList({ keys }: Readonly<{ keys: string[] }>) {
   const { data, isLoading } = useQuery({
     queryKey: ['config'],
