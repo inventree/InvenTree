@@ -268,6 +268,8 @@ plugins:
         'sref/contrib.md': 'develop/contributing.md'  #  https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md.
         'sref/docs.md': 'index.md' #   https://docs.inventree.org/en/latest/
         'sref/api.md': 'api/index.md' #  https://demo.inventree.org/api-doc/
+        'sref/architecture.md': 'develop/architecture.md'
+        'sref/roadmap.md': 'develop/roadmap.md'
         'sref/code.md': 'https://github.com/inventree/InvenTree/tree/master' #  https://github.com/inventree/InvenTree/tree/master
         'sref/oci-image.md': 'https://hub.docker.com/r/inventree/inventree/tags' #  https://hub.docker.com/r/inventree/inventree/tags
         'sref/releases.md': 'https://github.com/inventree/InvenTree/releases' # https://github.com/inventree/InvenTree/releases
