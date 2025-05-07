@@ -202,22 +202,22 @@ jobs:
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Extract settings / tags
-        run: invoke int.export-definitions --basedir src/backend/InvenTree
+        run: invoke int.export-definitions --basedir docs
       - name: Upload settings
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_settings.json
-          path: src/backend/InvenTree/inventree_settings.json
+          path: docs/generated/inventree_settings.json
       - name: Upload tags
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_tags.yml
-          path: src/backend/InvenTree/inventree_tags.yml
+          path: docs/generated/inventree_tags.yml
       - name: Upload filters
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_filters.yml
-          path: src/backend/InvenTree/inventree_filters.yml
+          path: docs/generated/inventree_filters.yml
 
   schema-push:
     name: Push new schema
