@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-21 07:00+0000\n"
-"PO-Revision-Date: 2025-04-21 22:19\n"
+"POT-Creation-Date: 2025-05-01 18:20+0000\n"
+"PO-Revision-Date: 2025-05-01 18:23\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -25,31 +25,35 @@ msgstr "Başka bir şey yapmadan önce iki faktörlü kimlik doğrulamayı etkin
 msgid "API endpoint not found"
 msgstr "API uç noktası bulunamadı"
 
-#: InvenTree/api.py:431
+#: InvenTree/api.py:432
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:438
+#: InvenTree/api.py:439
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:446
+#: InvenTree/api.py:447
 msgid "Invalid items list provided"
 msgstr "Geçersiz ögeler listesi sağlandı"
 
-#: InvenTree/api.py:452
+#: InvenTree/api.py:453
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:459
+#: InvenTree/api.py:460
 msgid "Invalid filters provided"
 msgstr "Geçersiz filtreler sağlandı"
 
-#: InvenTree/api.py:464
+#: InvenTree/api.py:465
+msgid "All filter must only be used with true"
+msgstr ""
+
+#: InvenTree/api.py:470
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:707
+#: InvenTree/api.py:713
 msgid "User does not have permission to view this model"
 msgstr "Kullanıcının bu modeli görüntüleme izni yok"
 
@@ -628,7 +632,7 @@ msgstr "Sonra tamamlandı"
 
 #: build/api.py:249 order/api.py:219
 msgid "Min Date"
-msgstr ""
+msgstr "En yakın tarih"
 
 #: build/api.py:272 order/api.py:238
 msgid "Max Date"
@@ -3265,19 +3269,19 @@ msgstr ""
 
 #: common/setting/user.py:102
 msgid "Display build orders in search preview window"
-msgstr ""
+msgstr "Üretim emirlerini arama önizleme penceresinde görüntüle"
 
 #: common/setting/user.py:107
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Satınalma Emri Ara"
 
 #: common/setting/user.py:108
 msgid "Display purchase orders in search preview window"
-msgstr ""
+msgstr "Satın alma siparişlerini arama önizleme penceresinde görüntüle"
 
 #: common/setting/user.py:113
 msgid "Exclude Inactive Purchase Orders"
-msgstr ""
+msgstr "Etkin Olmayan Satın Alma Siparişlerini Hariç Tut"
 
 #: common/setting/user.py:114
 msgid "Exclude inactive purchase orders from search preview window"
@@ -3353,7 +3357,7 @@ msgstr ""
 
 #: common/setting/user.py:171
 msgid "Search queries return results for matches from the item's notes"
-msgstr ""
+msgstr "Arama sorguları, nesnenin notlarındaki eşleşmelere ilişkin sonuçları verir"
 
 #: common/setting/user.py:177
 msgid "Show Quantity in Forms"
@@ -3361,7 +3365,7 @@ msgstr "Formlarda Miktarı Göster"
 
 #: common/setting/user.py:178
 msgid "Display available part quantity in some forms"
-msgstr ""
+msgstr "Bazı formlarda mevcut parça miktarını görüntüleyin"
 
 #: common/setting/user.py:183
 msgid "Escape Key Closes Forms"
