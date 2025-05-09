@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 341
+INVENTREE_API_VERSION = 342
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v342 -> 2025-04-22 : https://github.com/inventree/InvenTree/pull/9312
+    - Adds "external" flag for BuildOrder
+    - Adds link between PurchaseOrderLineItem and BuildOrder
+
 v341 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9547
     - Require pagination limit on list queries
 

@@ -167,6 +167,7 @@ nav:
     - Build Orders: manufacturing/build.md
     - Build Outputs: manufacturing/output.md
     - Allocating Stock: manufacturing/allocate.md
+    - External Manufacturing: manufacturing/external.md
     - Example Build Order: manufacturing/example.md
   - Purchasing:
     - Purchasing: purchasing/index.md
