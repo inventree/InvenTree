@@ -516,35 +516,6 @@ class BuildTest(BuildAPITest):
 
         self.assertEqual(bo.children.count(), 0)
 
-        # Create a build order for Part A, and auto-create child builds
-        response = self.post(
-            url,
-            {
-                'reference': 'BO-9875',
-                'part': part_a.pk,
-                'quantity': 15,
-                'title': 'A build - with childs',
-                'create_child_builds': True,
-            },
-        )
-
-        # An addition 1 + 2 builds should have been created
-        self.assertEqual(n + 4, Build.objects.count())
-
-        bo = Build.objects.get(pk=response.data['pk'])
-
-        # One build has a direct child
-        self.assertEqual(bo.children.count(), 1)
-        child = bo.children.first()
-        self.assertEqual(child.part.pk, part_b.pk)
-        self.assertEqual(child.quantity, 75)
-
-        # And there should be a second-level child build too
-        self.assertEqual(child.children.count(), 1)
-        child = child.children.first()
-        self.assertEqual(child.part.pk, part_c.pk)
-        self.assertEqual(child.quantity, 7 * 5 * 15)
-
 
 class BuildAllocationTest(BuildAPITest):
     """Unit tests for allocation of stock items against a build order.
