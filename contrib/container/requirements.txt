@@ -3,11 +3,14 @@
 asgiref==3.8.1 \
     --hash=sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47 \
     --hash=sha256:c343bd80a0bec947a9860adb4c432ffa7db769836c64238fc34bdc3fec84d590
-    # via django
-django==4.2.20 \
-    --hash=sha256:213381b6e4405f5c8703fffc29cd719efdf189dec60c67c04f76272b3dc845b9 \
-    --hash=sha256:92bac5b4432a64532abb73b2ac27203f485e40225d2640a7fbef2b62b876e789
     # via
+    #   -c contrib/container/../../src/backend/requirements.txt
+    #   django
+django==4.2.21 \
+    --hash=sha256:1d658c7bf5d31c7d0cac1cab58bc1f822df89255080fec81909256c30e6180b3 \
+    --hash=sha256:b54ac28d6aa964fc7c2f7335138a54d78980232011e0cd2231d04eed393dcb0d
+    # via
+    #   -c contrib/container/../../src/backend/requirements.txt
     #   -r contrib/container/requirements.in
     #   django-auth-ldap
 django-auth-ldap==5.1.0 \
@@ -17,7 +20,9 @@ django-auth-ldap==5.1.0 \
 gunicorn==23.0.0 \
     --hash=sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d \
     --hash=sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec
-    # via -r contrib/container/requirements.in
+    # via
+    #   -c contrib/container/../../src/backend/requirements.txt
+    #   -r contrib/container/requirements.in
 invoke==2.2.0 \
     --hash=sha256:6ea924cc53d4f78e3d98bc436b08069a03077e6f85ad1ddaa8a116d7dad15820 \
     --hash=sha256:ee6cbb101af1a859c7fe84f2a264c059020b0cb7fe3535f9424300ab568f6bd5
@@ -49,6 +54,7 @@ packaging==24.2 \
     --hash=sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759 \
     --hash=sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f
     # via
+    #   -c contrib/container/../../src/backend/requirements.txt
     #   gunicorn
     #   mariadb
 psycopg[binary, pool]==3.2.6 \
@@ -195,19 +201,26 @@ pyyaml==6.0.2 \
     --hash=sha256:efdca5630322a10774e8e98e1af481aad470dd62c3170801852d752aa7a783ba \
     --hash=sha256:f753120cb8181e736c57ef7636e83f31b9c0d1722c516f7e86cf15b7aa57ff12 \
     --hash=sha256:ff3824dc5261f50c9b0dfb3be22b4567a6f938ccce4587b38952d85fd9e9afe4
-    # via -r contrib/container/requirements.in
-setuptools==79.0.1 \
-    --hash=sha256:128ce7b8f33c3079fd1b067ecbb4051a66e8526e7b65f6cec075dfc650ddfa88 \
-    --hash=sha256:e147c0549f27767ba362f9da434eab9c5dc0045d5304feb602a0af001089fc51
-    # via -r contrib/container/requirements.in
+    # via
+    #   -c contrib/container/../../src/backend/requirements.txt
+    #   -r contrib/container/requirements.in
+setuptools==80.3.1 \
+    --hash=sha256:31e2c58dbb67c99c289f51c16d899afedae292b978f8051efaf6262d8212f927 \
+    --hash=sha256:ea8e00d7992054c4c592aeb892f6ad51fe1b4d90cc6947cc45c45717c40ec537
+    # via
+    #   -c contrib/container/../../src/backend/requirements.txt
+    #   -r contrib/container/requirements.in
 sqlparse==0.5.3 \
     --hash=sha256:09f67787f56a0b16ecdbde1bfc7f5d9c3371ca683cfeaa8e6ff60b4807ec9272 \
     --hash=sha256:cf2196ed3418f3ba5de6af7e82c694a9fbdbfecccdfc72e281548517081f16ca
-    # via django
+    # via
+    #   -c contrib/container/../../src/backend/requirements.txt
+    #   django
 typing-extensions==4.12.2 \
     --hash=sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d \
     --hash=sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8
     # via
+    #   -c contrib/container/../../src/backend/requirements.txt
     #   psycopg
     #   psycopg-pool
 uv==0.6.6 \
