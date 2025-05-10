@@ -26,6 +26,7 @@ When using POP3/IMAP InvenTree removes email that were processed. This is to pre
 InvenTree uses django-anymail to support various ESPs. A full list of supported ESPs can be found in [their docs](https://anymail.dev/en/stable/esps/).
 
 Most popular providers are supported:
+
 - Amazon SES
 - Brevo (EU)
 - Postal (Self hosted)
