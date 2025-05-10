@@ -246,6 +246,12 @@ T002: Double quotes should be used in tags
 
 New features or updates to existing features should be accompanied by user documentation.
 
+### Stable link references
+
+The documentation framework enables addition of redirections. This is used to build stable references for linking in external resources.
+
+New references can be added in `docs/mkdocs.yml` in the `redirect_maps` section. Both external targets and documentation pages are possible targets. All references are linted in the docs CI pipeline.
+
 ## Translations
 
 Any user-facing strings *must* be passed through the translation engine.
