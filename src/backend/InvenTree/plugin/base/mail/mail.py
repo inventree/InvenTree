@@ -25,6 +25,10 @@ def process_mail(
         # Do nothing if plugin mails are not enabled
         return False
 
+    # Ensure messages are a list
+    if not isinstance(email_messages, list):
+        email_messages = [email_messages]
+
     for plugin in registry.with_mixin(PluginMixinEnum.MAIL):
         for message in email_messages:
             try:
