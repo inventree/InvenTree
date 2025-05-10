@@ -99,7 +99,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     previewAreas[0].key
   );
 
-  const codeRef = useRef<string | undefined>();
+  const codeRef = useRef<string | undefined>(undefined);
 
   const loadCodeToEditor = useCallback(async (code: string) => {
     try {
