@@ -2,10 +2,18 @@
 
 import datetime
 import time
+from typing import Union
+
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.mail.backends.base import BaseEmailBackend
+from django.core.mail.message import EmailMessage, EmailMultiAlternatives
+from django.utils.module_loading import import_string
 
 import structlog
 from maintenance_mode.backends import AbstractStateBackend
 
+import common.models
 from common.settings import get_global_setting, set_global_setting
 
 logger = structlog.get_logger('inventree')
@@ -80,3 +88,81 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
                 logger.warning(
                     'Failed to set maintenance mode state after %s retries', retries
                 )
+
+
+class InvenTreeMailLoggingBackend(BaseEmailBackend):
+    """Backend that logs send mails to the database."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the email backend."""
+        super().__init__(*args, **kwargs)
+        klass = import_string(settings.INTERNAL_EMAIL_BACKEND)
+        self.backend: BaseEmailBackend = klass(*args, **kwargs)
+
+    def open(self):
+        """Open the email backend connection."""
+        return self.backend.open()
+
+    def close(self):
+        """Close the email backend connection."""
+        return self.backend.open()
+
+    def send_messages(
+        self, email_messages: list[Union[EmailMessage, EmailMultiAlternatives]]
+    ) -> int:
+        """Send email messages and log them to the database.
+
+        Args:
+            email_messages (list): List of EmailMessage objects to send.
+        """
+        from plugin.base.mail.mail import process_mail
+
+        # Issue mails to plugins
+        process_mail(email_messages)
+
+        # Process
+        msg_ids: list[common.models.EmailMessage] = []
+        try:
+            msg_ids = common.models.log_email_messages(email_messages)
+        except Exception:  # pragma: no cover
+            logger.exception('INVE-W9: Problem logging recipients, ignoring')
+
+        # Anymail: Some ESP do not like the Message-ID header being set in headers
+        if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
+            for a in email_messages:
+                a.extra_headers.pop('Message-ID')
+                # Add tracking if requested: TODO
+                # a.track_opens = True
+
+        # Send
+        try:
+            ret_val = self.backend.send_messages(email_messages)
+        except Exception as e:
+            logger.exception('INVE-W9: Problem sending email: %s', e)
+            # If we fail to send the email, we need to set the status to ERROR
+            for msg in msg_ids:
+                msg.status = common.models.EmailMessage.EmailStatus.FAILED
+                msg.error_message = str(e)
+                msg.save()
+            raise ValidationError(f'INVE-W9: Failed to send email: {e}') from e
+
+        # Log
+        if ret_val == 0:  # pragma: no cover
+            logger.info('INVE-W9: No emails sent')
+        else:
+            logger.info('INVE-W9: %s emails sent', ret_val)
+            if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
+                # Anymail: ESP does return the message ID for us so we need to set it in the database
+                for k, v in {
+                    a.extra_headers['X-InvenTree-MsgId-1']: a.anymail_status.message_id
+                    for a in email_messages
+                }.items():
+                    current = common.models.EmailMessage.objects.get(global_id=k)
+                    current.message_id_key = v
+                    current.status = common.models.EmailMessage.EmailStatus.SENT
+                    current.save()
+            else:
+                common.models.EmailMessage.objects.filter(
+                    pk__in=[msg.pk for msg in msg_ids]
+                ).update(status=common.models.EmailMessage.EmailStatus.SENT)
+        return ret_val
