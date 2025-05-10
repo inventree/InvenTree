@@ -1,5 +1,6 @@
 # Base python requirements for docker containers
 -c ../../src/backend/requirements.txt
+-c ../../src/backend/requirements-dev.txt
 
 # Basic package requirements
 invoke>=2.2.0                   # Invoke build tool
