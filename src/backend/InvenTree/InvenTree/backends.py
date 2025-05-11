@@ -127,10 +127,14 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         except Exception:  # pragma: no cover
             logger.exception('INVE-W9: Problem logging recipients, ignoring')
 
-        # Anymail: Some ESP do not like the Message-ID header being set in headers
+        # Anymail: pre-processing
         if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
             for a in email_messages:
-                a.extra_headers.pop('Message-ID')
+                if a.extra_headers and 'Message-ID' in a.extra_headers:
+                    # Remove the Message-ID header from the email
+                    # This is because some ESPs do not like it being set
+                    # in the headers, and will ignore the email
+                    a.extra_headers.pop('Message-ID')
                 # Add tracking if requested: TODO
                 # a.track_opens = True
 

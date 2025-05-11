@@ -4,7 +4,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from backend.InvenTree.InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class EmailTests(InvenTreeAPITestCase):
@@ -37,6 +37,27 @@ class EmailTests(InvenTreeAPITestCase):
     )
     def test_email_send_custom(self):
         """Theat that normal django send_mail still works."""
+        self._mail_test()
+
+        # Check using contexts
+        with mail.get_connection() as connection:
+            message = mail.EmailMessage(
+                subject='test sub',
+                body='test msg',
+                to=['to@example.org'],
+                connection=connection,
+                headers={'X-My-Header': 'my value'},
+            )
+            message.send()
+
+        self.assertEqual(len(mail.outbox), 2)
+
+    @override_settings(
+        EMAIL_BACKEND='InvenTree.backends.InvenTreeMailLoggingBackend',
+        INTERNAL_EMAIL_BACKEND='anymail.backends.test.EmailBackend',
+    )
+    def test_email_send_anymail(self):
+        """Theat that normal django send_mail still works with anymal."""
         self._mail_test()
 
         # Check using contexts
