@@ -2668,15 +2668,15 @@ def handle_inbound(sender, event, esp_name, **kwargs):
     """Handle inbound email messages from anymail."""
     message = event.message
 
-    to = message.envelope_recipient or [a.addr_spec for a in message.to]
-    sender = message.envelope_sender or message.from_email.addr_spec
+    r_to = message.envelope_recipient or [a.addr_spec for a in message.to]
+    r_sender = message.envelope_sender or message.from_email.addr_spec
 
     EmailMessage.objects.create(
         message_id_key=event.message['Message-ID'],
         subject=message.subject,
         body=message.text,
-        to=to,
-        sender=sender,
+        to=r_to,
+        sender=r_sender,
         status=EmailMessage.EmailStatus.READ,
         direction=EmailMessage.EmailDirection.INBOUND,
         priority=Priority.NONE,
