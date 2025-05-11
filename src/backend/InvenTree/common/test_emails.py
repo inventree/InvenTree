@@ -5,7 +5,8 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from anymail.signals import AnymailTrackingEvent, tracking
+from anymail.inbound import AnymailInboundMessage
+from anymail.signals import AnymailInboundEvent, AnymailTrackingEvent, inbound, tracking
 
 from common.models import EmailMessage, Priority
 from InvenTree.helpers_email import send_email
@@ -99,8 +100,8 @@ class EmailTests(InvenTreeAPITestCase):
         self.assertIn('message_id_key', response1.data)
 
 
-class EmailTrackingTests(TestCase):
-    """Unit tests for the custom email backend and models."""
+class EmailEventsTests(TestCase):
+    """Unit tests for anymail events."""
 
     def do_send(self, event_type, status):
         """Helper to simulate an email event."""
@@ -164,3 +165,23 @@ class EmailTrackingTests(TestCase):
         self.assertEqual(msg[0].status, EmailMessage.EmailStatus.FAILED)
         self.assertEqual(msg[0].error_code, 'bounced')
         self.assertEqual(msg[0].error_message, "{'sample': 'data'}")
+
+    def test_inbound_event(self):
+        """Test the inbound event."""
+        # Create a test inbound event
+        message = AnymailInboundMessage.construct(
+            from_email='user@example.com',
+            to='comments@example.net',
+            subject='subject',
+            text='text body',
+            html='html <s>body</s>',
+        )
+        event = AnymailInboundEvent(message=message, event_type='inbound')
+        inbound.send(sender=object(), event=event, esp_name='TestESP')
+
+        # Check that the email was saved
+        msg = EmailMessage.objects.filter(to=['comments@example.net']).first()
+        self.assertEqual(EmailMessage.objects.count(), 1)
+        self.assertEqual(msg.status, EmailMessage.EmailStatus.READ)
+        self.assertEqual(msg.direction, EmailMessage.EmailDirection.INBOUND)
+        self.assertEqual(msg.body, 'text body')
