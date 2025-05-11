@@ -9,7 +9,7 @@ from allauth.account.models import EmailAddress
 
 import InvenTree.ready
 import InvenTree.tasks
-from common.models import issue_mail
+from common.models import Priority, issue_mail
 
 logger = structlog.get_logger('inventree')
 
@@ -65,6 +65,8 @@ def send_email(
     recipients: Union[str, list],
     from_email: Optional[str] = None,
     html_message=None,
+    prio: Priority = Priority.NORMAL,
+    headers: Optional[dict] = None,
 ) -> tuple[bool, Optional[str]]:
     """Send an email with the specified subject and body, to the specified recipients list."""
     if isinstance(recipients, str):
@@ -103,6 +105,8 @@ def send_email(
         recipients=recipients,
         fail_silently=False,
         html_message=html_message,
+        prio=prio,
+        headers=headers,
         group='notification',
     )
     return True, None

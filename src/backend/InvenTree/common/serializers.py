@@ -837,6 +837,7 @@ class EmailMessageSerializer(InvenTreeModelSerializer):
             'headers',
             'full_message',
             'direction',
+            'priority',
             'error_code',
             'error_message',
             'error_timestamp',

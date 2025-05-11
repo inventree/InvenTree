@@ -15,7 +15,7 @@ from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -2596,6 +2596,7 @@ def issue_mail(
     fail_silently: bool = False,
     html_message=None,
     prio: Priority = Priority.NORMAL,
+    headers: Optional[dict] = None,
 ):
     """Send an email with the specified subject and body, to the specified recipients list.
 
@@ -2608,6 +2609,11 @@ def issue_mail(
     )
     if html_message:
         message.attach_alternative(html_message, 'text/html')
+
+    # Add any extra headers
+    if headers:
+        for key, value in headers.items():
+            message.extra_headers[key] = value
 
     # Stabilize the message ID before creating the object
     if 'Message-ID' not in message.extra_headers:
