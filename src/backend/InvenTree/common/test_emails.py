@@ -1,6 +1,7 @@
 """Tests for the custom email backend and models."""
 
 from django.core import mail
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -33,8 +34,19 @@ class EmailTests(InvenTreeAPITestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_email_send_dummy(self):
-        """Theat that normal django send_mail still works."""
+        """Test that normal django send_mail still works."""
         self._mail_test()
+
+    def test_email_send(self):
+        """Test the custom send_email command."""
+        resp = send_email(
+            subject='test sub',
+            body='test msg',
+            recipients='to@example.org',
+            prio=Priority.VERY_HIGH,
+            headers={'X-My-Header': 'my value'},
+        )
+        self.assertTrue(resp[0])
 
     # This is needed because django overrides the mail backend during tests
     @override_settings(
@@ -99,6 +111,20 @@ class EmailTests(InvenTreeAPITestCase):
         self.assertIn('subject', response1.data)
         self.assertIn('message_id_key', response1.data)
 
+    @override_settings(
+        EMAIL_BACKEND='InvenTree.backends.InvenTreeMailLoggingBackend',
+        INTERNAL_EMAIL_BACKEND='InvenTree.backends.InvenTreeErrorMailBackend',
+    )
+    def test_backend_error_handling(self):
+        """Test that the custom email backend handles errors correctly."""
+        with self.assertRaises(ValidationError):
+            self._mail_test()
+
+        # There should be an error logged on the message
+        msg = EmailMessage.objects.first()
+        self.assertEqual(msg.status, EmailMessage.EmailStatus.FAILED)
+        self.assertEqual(msg.error_message, 'Test error sending email')
+
 
 class EmailEventsTests(TestCase):
     """Unit tests for anymail events."""
@@ -130,8 +156,8 @@ class EmailEventsTests(TestCase):
         self.assertTrue(msg.exists())
         return msg
 
-    def test_unknown_event(self):
-        """Test that unknown events are ignored."""
+    def test_unknown_mail(self):
+        """Test that unknown mail is ignored."""
         event = AnymailTrackingEvent(
             event_type='delivered',
             recipient='to@example.com',
@@ -141,6 +167,11 @@ class EmailEventsTests(TestCase):
 
         self.assertFalse(rslt[0][1])
         self.assertEqual(EmailMessage.objects.all().count(), 0)
+
+    def test_unknown_event(self):
+        """Test the unknown event."""
+        msg = self.do_send(event_type='unknown', status=None)
+        self.assertEqual(msg[0].error_message, "{'sample': 'data'}")
 
     def test_delivered_event(self):
         """Test the delivered event."""
@@ -157,6 +188,11 @@ class EmailEventsTests(TestCase):
     def test_send_event(self):
         """Test the send event."""
         self.do_send(event_type='sent', status=EmailMessage.EmailStatus.SENT)
+
+    def test_queued_event(self):
+        """Test the queued event."""
+        msg = self.do_send(event_type='queued', status=None)
+        self.assertEqual(msg[0].error_message, None)
 
     def test_bounced_event(self):
         """Test the bounced event."""

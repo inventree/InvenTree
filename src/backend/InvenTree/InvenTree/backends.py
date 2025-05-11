@@ -7,6 +7,7 @@ from typing import Union
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.mail.backends.base import BaseEmailBackend
+from django.core.mail.backends.locmem import EmailBackend as LocMemEmailBackend
 from django.core.mail.message import EmailMessage, EmailMultiAlternatives
 from django.utils.module_loading import import_string
 
@@ -170,3 +171,13 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
                     pk__in=[msg.pk for msg in msg_ids]
                 ).update(status=common.models.EmailMessage.EmailStatus.SENT)
         return ret_val
+
+
+class InvenTreeErrorMailBackend(LocMemEmailBackend):
+    """Backend that generates an error when sending - for testing."""
+
+    def send_messages(self, email_messages):
+        """Issues an error when sending email messages."""
+        super().send_messages(email_messages)
+        # Simulate an error
+        raise ValueError('Test error sending email')

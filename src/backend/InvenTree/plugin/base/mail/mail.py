@@ -33,7 +33,7 @@ def process_mail(
         for message in email_messages:
             try:
                 plugin.process_mail(message)
-            except Exception:
+            except Exception:  # pragma: no cover
                 logger.exception(
                     'Exception during mail processing for plugin %s', plugin.slug
                 )
