@@ -2712,7 +2712,7 @@ def handle_event(sender, event, esp_name, **kwargs):
         return True
     except EmailMessage.DoesNotExist:
         return False
-    except Exception as exc:
+    except Exception as exc:  # pragma: no cover
         logger.error(f' INVE-W9: Failed to handle tracking event: {exc}')
         return False
 
