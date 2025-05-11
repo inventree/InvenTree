@@ -3,7 +3,7 @@
 import functools
 import re
 from datetime import datetime
-from common.api import OrderedSearchFilter
+
 from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -21,6 +21,7 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
+from common.api import OrderedSearchFilter
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
