@@ -3,7 +3,7 @@
 import functools
 import re
 from datetime import datetime
-
+from common.api import OrderedSearchFilter
 from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -1369,7 +1369,7 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = [OrderedSearchFilter]
 
     ordering_fields = [
         'name',
