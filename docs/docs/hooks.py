@@ -5,8 +5,11 @@ import os
 import re
 from datetime import datetime
 from distutils.version import StrictVersion
+from pathlib import Path
 
 import requests
+
+here = Path(__file__).parent
 
 
 def fetch_rtd_versions():
@@ -77,7 +80,7 @@ def fetch_rtd_versions():
             'aliases': [],
         })
 
-    output_filename = os.path.join(os.path.dirname(__file__), 'versions.json')
+    output_filename = here.joinpath('versions.json')
 
     print('Discovered the following versions:')
     print(versions)
@@ -92,11 +95,11 @@ def get_release_data():
     - First look to see if 'releases.json' file exists
     - If data does not exist in this file, request via the github API
     """
-    json_file = os.path.join(os.path.dirname(__file__), 'releases.json')
+    json_file = here.parent.joinpath('generated', 'releases.json')
 
     releases = []
 
-    if os.path.exists(json_file):
+    if json_file.exists():
         # Release information has been cached to file
 
         print("Loading release information from 'releases.json'")
@@ -165,7 +168,7 @@ def on_config(config, *args, **kwargs):
     # Note: version selection is handled by RTD internally
     # Check for 'versions.json' file
     # If it does not exist, we need to fetch it from the RTD API
-    # if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
+    # if here.joinpath('versions.json').exists():
     #    print("Found 'versions.json' file")
     # else:
     #    fetch_rtd_versions()
@@ -230,9 +233,9 @@ def on_config(config, *args, **kwargs):
             continue
 
         # Check if there is a local file with release information
-        local_path = os.path.join(os.path.dirname(__file__), 'releases', f'{tag}.md')
+        local_path = here.joinpath('releases', f'{tag}.md')
 
-        if os.path.exists(local_path):
+        if local_path.exists():
             item['local_path'] = local_path
 
         # Extract the date

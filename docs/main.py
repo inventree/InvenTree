@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import textwrap
+from pathlib import Path
 from typing import Literal, Optional
 
 import requests
@@ -37,29 +38,29 @@ global FILTERS
 global REPORT_CONTEXT
 
 # Read in the InvenTree settings file
-here = os.path.dirname(__file__)
-settings_file = os.path.join(here, 'inventree_settings.json')
+here = Path(__file__).parent
+gen_base = here.joinpath('generated')
 
-with open(settings_file, encoding='utf-8') as sf:
+with open(gen_base.joinpath('inventree_settings.json'), encoding='utf-8') as sf:
     settings = json.load(sf)
 
     GLOBAL_SETTINGS = settings['global']
     USER_SETTINGS = settings['user']
 
 # Tags
-with open(os.path.join(here, 'inventree_tags.yml'), encoding='utf-8') as f:
+with open(gen_base.joinpath('inventree_tags.yml'), encoding='utf-8') as f:
     TAGS = yaml.load(f, yaml.BaseLoader)
 # Filters
-with open(os.path.join(here, 'inventree_filters.yml'), encoding='utf-8') as f:
+with open(gen_base.joinpath('inventree_filters.yml'), encoding='utf-8') as f:
     FILTERS = yaml.load(f, yaml.BaseLoader)
 # Report context
-with open(os.path.join(here, 'inventree_report_context.json'), encoding='utf-8') as f:
+with open(gen_base.joinpath('inventree_report_context.json'), encoding='utf-8') as f:
     REPORT_CONTEXT = json.load(f)
 
 
 def get_repo_url(raw=False):
     """Return the repository URL for the current project."""
-    mkdocs_yml = os.path.join(os.path.dirname(__file__), 'mkdocs.yml')
+    mkdocs_yml = here.joinpath('mkdocs.yml')
 
     with open(mkdocs_yml, encoding='utf-8') as f:
         mkdocs_config = yaml.safe_load(f)
@@ -77,10 +78,10 @@ def check_link(url) -> bool:
     We allow a number attempts and a lengthy timeout,
     as we do not want false negatives.
     """
-    CACHE_FILE = os.path.join(os.path.dirname(__file__), 'url_cache.txt')
+    CACHE_FILE = gen_base.joinpath('url_cache.txt')
 
     # Keep a local cache file of URLs we have already checked
-    if os.path.exists(CACHE_FILE):
+    if CACHE_FILE.exists():
         with open(CACHE_FILE, encoding='utf-8') as f:
             cache = f.read().splitlines()
 
@@ -93,6 +94,7 @@ def check_link(url) -> bool:
 
     while attempts > 0:
         response = requests.head(url, timeout=5000)
+
         # Ensure GH is not causing issues
         if response.status_code in (200, 429):
             # Update the cache file
@@ -147,13 +149,8 @@ def define_env(env):
             dirname = dirname[1:]
 
         # This file exists at ./docs/main.py, so any directory we link to must be relative to the top-level directory
-        here = os.path.dirname(__file__)
-        root = os.path.abspath(os.path.join(here, '..'))
-
-        directory = os.path.join(root, dirname)
-        directory = os.path.abspath(directory)
-
-        if not os.path.exists(directory) or not os.path.isdir(directory):
+        directory = here.parent.joinpath(dirname)
+        if not directory.exists() or not directory.is_dir():
             raise FileNotFoundError(f'Source directory {dirname} does not exist.')
 
         repo_url = get_repo_url()
@@ -188,12 +185,8 @@ def define_env(env):
             filename = filename[1:]
 
         # This file exists at ./docs/main.py, so any file we link to must be relative to the top-level directory
-        here = os.path.dirname(__file__)
-        root = os.path.abspath(os.path.join(here, '..'))
-
-        file_path = os.path.join(root, filename)
-
-        if not os.path.exists(file_path):
+        file_path = here.parent.joinpath(filename)
+        if not file_path.exists():
             raise FileNotFoundError(f'Source file {filename} does not exist.')
 
         # Construct repo URL
@@ -214,11 +207,8 @@ def define_env(env):
     @env.macro
     def invoke_commands():
         """Provides an output of the available commands."""
-        here = os.path.dirname(__file__)
-        base = os.path.join(here, '..')
-        base = os.path.abspath(base)
-        tasks = os.path.join(base, 'tasks.py')
-        output = os.path.join(here, 'invoke-commands.txt')
+        tasks = here.parent.joinpath('tasks.py')
+        output = gen_base.joinpath('invoke-commands.txt')
 
         command = f'invoke -f {tasks} --list > {output}'
 
@@ -232,17 +222,15 @@ def define_env(env):
     @env.macro
     def listimages(subdir):
         """Return a listing of all asset files in the provided subdir."""
-        here = os.path.dirname(__file__)
-
-        directory = os.path.join(here, 'docs', 'assets', 'images', subdir)
+        directory = here.joinpath('docs', 'assets', 'images', subdir)
 
         assets = []
 
         allowed = ['.png', '.jpg']
 
-        for asset in os.listdir(directory):
-            if any(asset.endswith(x) for x in allowed):
-                assets.append(os.path.join(subdir, asset))
+        for asset in directory.iterdir():
+            if any(str(asset).endswith(x) for x in allowed):
+                assets.append(str(subdir / asset.relative_to(directory)))
 
         return assets
 
@@ -255,11 +243,9 @@ def define_env(env):
             title: The title of the collapse block in the documentation
             fmt: The format of the included file (e.g., 'python', 'html', etc.)
         """
-        here = os.path.dirname(__file__)
-        path = os.path.join(here, '..', filename)
-        path = os.path.abspath(path)
+        path = here.parent.joinpath(filename)
 
-        if not os.path.exists(path):
+        if not path.exists():
             raise FileNotFoundError(f'Required file {path} does not exist.')
 
         with open(path, encoding='utf-8') as f:
@@ -276,10 +262,8 @@ def define_env(env):
     @env.macro
     def templatefile(filename):
         """Include code for a provided template file."""
-        base = os.path.basename(filename)
-        fn = os.path.join(
-            'src', 'backend', 'InvenTree', 'report', 'templates', filename
-        )
+        base = Path(filename).name
+        fn = Path('src', 'backend', 'InvenTree', 'report', 'templates', filename)
 
         return includefile(fn, f'Template: {base}', fmt='html')
 
