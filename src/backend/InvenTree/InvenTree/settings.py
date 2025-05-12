@@ -20,6 +20,7 @@ import django.core.exceptions
 from django.core.validators import URLValidator
 from django.http import Http404, HttpResponseGone
 
+import django_stubs_ext
 import structlog
 from corsheaders.defaults import default_headers as default_cors_headers
 from dotenv import load_dotenv
@@ -38,6 +39,7 @@ from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
 
+django_stubs_ext.monkeypatch()
 checkMinPythonVersion()
 
 INVENTREE_BASE_URL = 'https://inventree.org'
