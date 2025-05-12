@@ -41,17 +41,23 @@ export default function BarcodeKeyboardInput({
               setText(event.currentTarget?.value);
             }}
             onKeyDown={(event) => {
+              let key = event.key;
+
               if (event.ctrlKey) {
                 if (event.code in BarcodeControlKeys) {
                   // Prevent most of the keyboard shortcuts.
                   // Not all of them will be blocked, browser don't allow this:
                   // https://stackoverflow.com/questions/59952382/using-preventdefault-to-override-opening-new-tab
                   event.preventDefault();
-                  setText((prev) => prev + BarcodeControlKeys[event.code]);
+                  key = BarcodeControlKeys[event.code];
+                  setText((prev) => prev + key);
                 }
               }
 
-              if (event.code === 'Enter') {
+              if (
+                key === 'Enter' ||
+                key === String.fromCharCode(4) // End of transmission
+              ) {
                 onTextScan(text);
               }
             }}
