@@ -1,8 +1,10 @@
 """Unit testing for the various report models."""
 
+import os
 from io import StringIO
 
 from django.apps import apps
+from django.conf import settings
 from django.core.cache import cache
 from django.urls import reverse
 
@@ -505,8 +507,10 @@ class TestReportTest(PrintTestMixins, ReportTest):
 
         # Open and read the output HTML as a string
         html_report = ''
-        path_prefix = '/home/inventree/dev'
-        with open(path_prefix + response.data['output'], encoding='utf-8') as f:
+        report_path = os.path.join(
+            settings.MEDIA_ROOT.parent, response.data['output'].lstrip('/')
+        )
+        with open(report_path, encoding='utf-8') as f:
             html_report = f.read()
 
         # Assuming the number of <head> and <body> correlates to the number of pages
