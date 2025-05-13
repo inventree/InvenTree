@@ -53,7 +53,7 @@ export function AccountDetailPanel() {
 
   const editProfile = useEditApiFormModal({
     title: t`Edit Profile Information`,
-    url: ApiEndpoints.user_profile,
+    url: ApiEndpoints.user_me_profile,
     onFormSuccess: fetchUserState,
     fields: profileFields,
     successMessage: t`Profile details updated`
