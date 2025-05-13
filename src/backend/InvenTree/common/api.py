@@ -1,6 +1,7 @@
 """Provides a JSON API for common components."""
 
 import json
+import json.decoder
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType

@@ -1,5 +1,7 @@
 """Multi-level BOM exporter plugin."""
 
+from typing import Optional
+
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.serializers as serializers
@@ -179,7 +181,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
         return self.bom_data
 
-    def process_bom_row(self, bom_item, level, **kwargs) -> list:
+    def process_bom_row(self, bom_item, level, **kwargs) -> Optional[list]:
         """Process a single BOM row.
 
         Arguments:

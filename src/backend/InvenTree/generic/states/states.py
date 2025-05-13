@@ -297,7 +297,7 @@ class StatusCodeMixin:
         """Return the status code for this object."""
         return getattr(self, self.STATUS_FIELD)
 
-    def get_custom_status(self) -> int:
+    def get_custom_status(self) -> int | None:
         """Return the custom status code for this object."""
         return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 

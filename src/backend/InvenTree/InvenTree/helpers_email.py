@@ -91,7 +91,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
     )
 
 
-def get_email_for_user(user) -> str:
+def get_email_for_user(user) -> str | None:
     """Find an email address for the specified user."""
     # First check if the user has an associated email address
     if user.email:

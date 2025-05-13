@@ -21,6 +21,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import bleach
+import bleach.css_sanitizer
+import bleach.sanitizer
 import structlog
 from bleach import clean
 from djmoney.money import Money

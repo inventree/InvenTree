@@ -74,7 +74,7 @@ def generate_batch_code(**kwargs):
     return Template(batch_template).render(context)
 
 
-def generate_serial_number(part=None, quantity=1, **kwargs) -> str:
+def generate_serial_number(part=None, quantity=1, **kwargs) -> str | None:
     """Generate a default 'serial number' for a new StockItem."""
     quantity = quantity or 1
 

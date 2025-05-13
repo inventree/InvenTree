@@ -20,6 +20,7 @@ import build.models
 import company.models
 import company.serializers as company_serializers
 import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.serializers
 import order.models
 import part.filters as part_filters

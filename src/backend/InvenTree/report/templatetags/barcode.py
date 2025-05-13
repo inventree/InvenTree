@@ -148,7 +148,7 @@ def datamatrix(data: str, **kwargs) -> str:
     Returns:
         image (str): base64 encoded image data
     """
-    from ppf.datamatrix import DataMatrix
+    from ppf.datamatrix.datamatrix import DataMatrix
 
     data = str(data).strip()
 

@@ -26,7 +26,7 @@ def prep_name(ref):
     return f'{dja_ref_prefix}.{ref}'
 
 
-def sub_component_name(name: T) -> T:
+def sub_component_name(name: T) -> T | str:
     """Clean up component references."""
     if not isinstance(name, str):
         return name

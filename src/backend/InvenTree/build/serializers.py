@@ -23,6 +23,7 @@ from rest_framework.serializers import ValidationError
 
 import build.tasks
 import common.models
+import common.settings
 import company.serializers
 import InvenTree.helpers
 import InvenTree.tasks

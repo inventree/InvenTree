@@ -337,7 +337,7 @@ class RegistryTests(TestCase):
 
         def create_plugin_file(
             version: str, enabled: bool = True, reload: bool = True
-        ) -> str:
+        ) -> str | None:
             """Create a plugin file with the given version.
 
             Arguments:

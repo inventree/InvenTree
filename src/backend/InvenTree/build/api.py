@@ -13,6 +13,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 import build.admin
+import build.models
 import build.serializers
 import common.models
 import part.models as part_models

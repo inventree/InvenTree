@@ -124,7 +124,7 @@ def construct_format_regex(fmt_string: str) -> str:
     return pattern
 
 
-def validate_string(value: str, fmt_string: str) -> str:
+def validate_string(value: str, fmt_string: str) -> bool:
     """Validate that the provided string matches the specified format.
 
     Args:

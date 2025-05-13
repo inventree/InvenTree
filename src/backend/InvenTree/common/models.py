@@ -27,6 +27,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
+from django.db.models import enums
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.dispatch.dispatcher import receiver
@@ -55,7 +56,7 @@ from InvenTree.sanitizer import sanitize_svg
 logger = structlog.get_logger('inventree')
 
 
-class RenderMeta(models.enums.ChoicesMeta):
+class RenderMeta(enums.ChoicesMeta):
     """Metaclass for rendering choices."""
 
     choice_fnc = None
@@ -916,7 +917,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
-    def model_filters(self) -> dict:
+    def model_filters(self) -> dict | None:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()

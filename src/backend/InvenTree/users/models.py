@@ -224,7 +224,7 @@ class RuleSet(models.Model):
         unique_together = (('name', 'group'),)
 
     @property
-    def label(self) -> str:
+    def label(self) -> str | None:
         """Return the translated label for this ruleset."""
         return dict(RULESET_CHOICES).get(self.name, self.name)
 

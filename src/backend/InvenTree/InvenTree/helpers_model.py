@@ -11,6 +11,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import requests.exceptions
 import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
