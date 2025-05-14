@@ -84,7 +84,7 @@ class PluginsRegistry:
         ] = {}  # List of all plugin instances
 
         # Keep an internal hash of the plugin registry state
-        self.registry_hash = None
+        self.registry_hash: str | None = None
 
         self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
         self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
@@ -538,10 +538,9 @@ class PluginsRegistry:
             package_name = getattr(plugin, 'package_name', None)
 
         # Auto-enable default builtin plugins
-        if builtin and plg_db and plg_db.is_mandatory():
-            if not plg_db.active:
-                plg_db.active = True
-                plg_db.save()
+        if builtin and plg_db and plg_db.is_mandatory() and not plg_db.active:
+            plg_db.active = True
+            plg_db.save()
 
         # Save the package_name attribute to the plugin
         if plg_db.package_name != package_name:
@@ -929,11 +928,13 @@ def _load_source(modname, filename):
 
     # loader = importlib.machinery.SourceFileLoader(modname, filename)
     spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
+    if spec is None:
+        raise ImportError(f"Cannot find module '{modname}'")
     module = importlib.util.module_from_spec(spec)
 
     sys.modules[module.__name__] = module
 
-    if spec.loader:
+    if spec.loader is not None:
         spec.loader.exec_module(module)
 
     return module
