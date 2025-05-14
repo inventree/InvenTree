@@ -249,7 +249,9 @@ class RolePermissionOrReadOnly(RolePermission):
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
         scopes = map_scope(
-            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+            only_read=True,
+            read_name=DEFAULT_STAFF,
+            map_read=list(permissions.SAFE_METHODS),
         )
         return scopes
 
@@ -287,7 +289,7 @@ class IsSuperuserOrReadOnlyOrScope(OASTokenMixin, permissions.IsAdminUser):
         return map_scope(
             only_read=True,
             read_name=DEFAULT_SUPERUSER,
-            map_read=permissions.SAFE_METHODS,
+            map_read=list(permissions.SAFE_METHODS),
         )
 
 
@@ -312,7 +314,9 @@ class IsStaffOrReadOnlyScope(OASTokenMixin, permissions.IsAuthenticated):
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
         return map_scope(
-            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+            only_read=True,
+            read_name=DEFAULT_STAFF,
+            map_read=list(permissions.SAFE_METHODS),
         )
 
 
@@ -342,7 +346,7 @@ def auth_exempt(view_func):
     def wrapped_view(*args, **kwargs):
         return view_func(*args, **kwargs)
 
-    wrapped_view.auth_exempt = True
+    wrapped_view.auth_exempt = True  # type:ignore[unresolved-attribute]
     return wraps(view_func)(wrapped_view)
 
 
@@ -382,5 +386,7 @@ class GlobalSettingsPermissions(OASTokenMixin, permissions.BasePermission):
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
         return map_scope(
-            only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
+            only_read=True,
+            read_name=DEFAULT_STAFF,
+            map_read=list(permissions.SAFE_METHODS),
         )

@@ -36,19 +36,19 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
 
         # no send / send bulk
         with self.assertRaises(NotImplementedError):
-            FalseNotificationMethod('', '', '', '')
+            FalseNotificationMethod('', '', None, '')
 
         # no METHOD_NAME
         with self.assertRaises(NotImplementedError):
-            NoNameNotificationMethod('', '', '', '')
+            NoNameNotificationMethod('', '', None, '')
 
         # a not existent context check
         with self.assertRaises(NotImplementedError):
-            WrongContextNotificationMethod('', '', '', '')
+            WrongContextNotificationMethod('', '', None, '')
 
         # no get_targets
         with self.assertRaises(NotImplementedError):
-            AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2})
+            AnotherFalseNotificationMethod('', '', None, {'name': 1, 'message': 2})
 
     def test_failing_passing(self):
         """Ensure that an error in one deliverymethod is not blocking all mehthods."""

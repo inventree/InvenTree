@@ -33,7 +33,9 @@ class NotificationMethod:
     GLOBAL_SETTING = None
     USER_SETTING = None
 
-    def __init__(self, obj: Model, category: str, targets: list, context) -> None:
+    def __init__(
+        self, obj: Model, category: str, targets: Optional[list], context
+    ) -> None:
         """Check that the method is read.
 
         This checks that:
@@ -185,7 +187,7 @@ class MethodStorageClass:
     Is initialized on startup as one instance named `storage` in this file.
     """
 
-    methods_list = None
+    methods_list: list = []
     user_settings = {}
 
     @property
@@ -359,9 +361,7 @@ class InvenTreeNotificationBodies:
     )
 
 
-def trigger_notification(
-    obj: Model, category: Optional[str] = None, obj_ref: str = 'pk', **kwargs
-):
+def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **kwargs):
     """Send out a notification.
 
     Args:

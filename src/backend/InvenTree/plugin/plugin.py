@@ -468,8 +468,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             package = {}
 
         # process date
-        if package.get('date'):
-            package['date'] = datetime.fromisoformat(package.get('date'))
+        date = package.get('date')
+        if date:
+            package['date'] = datetime.fromisoformat(date)
 
         # set variables
         self.package = package

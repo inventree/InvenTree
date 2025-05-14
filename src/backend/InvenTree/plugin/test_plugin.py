@@ -283,14 +283,14 @@ class RegistryTests(TestCase):
         self.assertEqual(len(registry.errors), 2)
 
         # There should be at least one discovery error in the module `broken_file`
-        self.assertGreater(len(registry.errors.get('discovery')), 0)
+        self.assertGreater(len(registry.errors.get('discovery') or []), 0)
         self.assertEqual(
             registry.errors.get('discovery')[0]['broken_file'],
             "name 'bb' is not defined",
         )
 
         # There should be at least one load error with an intentional KeyError
-        self.assertGreater(len(registry.errors.get('init')), 0)
+        self.assertGreater(len(registry.errors.get('init') or []), 0)
         self.assertEqual(
             registry.errors.get('init')[0]['broken_sample'], "'This is a dummy error'"
         )

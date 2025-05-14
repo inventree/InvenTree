@@ -106,7 +106,7 @@ def associate_manufacturers(apps, schema_editor):
         response = cursor.execute(query)
         row = cursor.fetchone()
 
-        if len(row) > 0:
+        if len(row or []) > 0:
             return row[0]
         return ''  # pragma: no cover
 

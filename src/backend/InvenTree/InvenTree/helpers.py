@@ -125,7 +125,7 @@ def extract_int(
     return ref_int
 
 
-def generateTestKey(test_name: str) -> str:
+def generateTestKey(test_name: str | None) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.

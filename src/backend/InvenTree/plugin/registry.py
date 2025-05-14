@@ -220,7 +220,7 @@ class PluginsRegistry:
 
     # region registry functions
     def with_mixin(
-        self, mixin: str, active: bool = True, builtin: Optional[bool] = None
+        self, mixin: str, active: bool | None = True, builtin: Optional[bool] = None
     ) -> list:
         """Returns reference to all plugins that have a specified mixin enabled.
 
