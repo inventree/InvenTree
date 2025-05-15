@@ -96,11 +96,25 @@ jobs:
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
+
+  typecheck:
+    name: Style [Typecheck]
+    runs-on: ubuntu-24.04
+    needs: [paths-filter, pre-commit]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils
+          dev-install: true
+          update: true
       - name: Check types
         run: |
-          pip install --require-hashes -r src/backend/requirements.txt
-          pip install --require-hashes -r src/backend/requirements-dev.txt
-          # pip install --require-hashes -r contrib/container/requirements.txt
           ty check
 
   mkdocs:
