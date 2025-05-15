@@ -107,14 +107,14 @@ src = [
     "./",
 ]
 [tool.ty.rules]
-unresolved-reference="ignore"
-unresolved-attribute="ignore"
-call-non-callable="ignore"
-invalid-return-type="ignore"
-invalid-argument-type="ignore"
-invalid-type-form="ignore"
-possibly-unbound-attribute="ignore"
-unknown-argument="ignore"
+unresolved-reference="ignore"  # 24
+unresolved-attribute="ignore"  # 33
+call-non-callable="ignore"  # 3
+invalid-return-type="ignore"  # 12
+invalid-argument-type="ignore"  # 15
+invalid-type-form="ignore"  # 5
+possibly-unbound-attribute="ignore"  # 18
+unknown-argument="ignore"  # 9
 
 
 [tool.coverage.run]

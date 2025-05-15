@@ -288,7 +288,7 @@ class ScheduledTask:
     QUARTERLY: str = 'Q'
     YEARLY: str = 'Y'
 
-    TYPE: list[str] = [MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY]  # noqa: RUF008
+    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)  # type: ignore[invalid-assignment]
 
 
 class TaskRegister:
