@@ -100,7 +100,7 @@ jobs:
         run: |
           pip install --require-hashes -r src/backend/requirements.txt
           pip install --require-hashes -r src/backend/requirements-dev.txt
-          pip install --require-hashes -r contrib/container/requirements.txt
+          # pip install --require-hashes -r contrib/container/requirements.txt
           ty check
 
   mkdocs:
