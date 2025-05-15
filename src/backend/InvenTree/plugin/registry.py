@@ -934,7 +934,8 @@ def _load_source(modname, filename):
 
     sys.modules[module.__name__] = module
 
-    if spec.loader is not None:
-        spec.loader.exec_module(module)
+    loader = spec.loader
+    if loader is not None:
+        loader.exec_module(module)
 
     return module

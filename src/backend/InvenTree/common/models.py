@@ -1416,8 +1416,8 @@ class WebhookEndpoint(models.Model):
             request (optional): Original request object. Defaults to None.
         """
         return WebhookMessage.objects.create(
-            host=request.get_host(),
-            header=json.dumps(dict(headers.items())),
+            host=request.get_host() if request else '',
+            header=json.dumps(dict(headers.items())) if headers else None,
             body=payload,
             endpoint=self,
         )

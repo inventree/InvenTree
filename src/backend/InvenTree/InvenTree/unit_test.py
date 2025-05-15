@@ -76,7 +76,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
             oldest_num = num
             oldest_file = f
 
-    if exclude_extension:
+    if exclude_extension and oldest_file:
         oldest_file = oldest_file.replace('.py', '')
 
     return oldest_file
@@ -518,6 +518,8 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         result = re.search(
             r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
         )
+        if not result:
+            raise ValueError('No filename match found in disposition')
 
         fn = result.groups()[1]
 

@@ -201,7 +201,9 @@ class InvenTreePluginTests(TestCase):
         self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
 
         plug = registry.plugins_full.get('sampleversion')
-        self.assertEqual(plug.is_active(), False)
+        self.assertIsNotNone(plug)
+        if plug:
+            self.assertEqual(plug.is_active(), False)
 
 
 class RegistryTests(TestCase):

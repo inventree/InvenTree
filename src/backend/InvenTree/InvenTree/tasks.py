@@ -514,7 +514,7 @@ def check_for_updates():
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-    if len(match.groups()) != 3:  # pragma: no cover
+    if not match or len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
         return
 

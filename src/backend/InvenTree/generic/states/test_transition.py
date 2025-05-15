@@ -58,7 +58,7 @@ class TransitionTests(InvenTreeTestCase):
         storage.collect()
 
         # Ensure the class is registered
-        self.assertIn(RaisingImplementation, storage.list)
+        self.assertIn(RaisingImplementation, storage.method_list)
 
         # Ensure stuff is passed to the class
         with self.assertRaises(MyPrivateError) as exp:
@@ -90,8 +90,8 @@ class TransitionTests(InvenTreeTestCase):
                     return False  # pragma: no cover # Return false to keep other transitions working
 
         storage.collect()
-        self.assertIn(ValidImplementationNoEffect, storage.list)
-        self.assertIn(ValidImplementation, storage.list)
+        self.assertIn(ValidImplementationNoEffect, storage.method_list)
+        self.assertIn(ValidImplementation, storage.method_list)
 
         # Ensure that the function is called
         self.assertEqual(

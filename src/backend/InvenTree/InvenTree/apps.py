@@ -134,6 +134,9 @@ class InvenTreeConfig(AppConfig):
         tasks = InvenTree.tasks.tasks.task_list
 
         for task in tasks:
+            if not task:
+                continue
+
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 
             if ref_name in existing_tasks:

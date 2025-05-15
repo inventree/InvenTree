@@ -48,7 +48,7 @@ def get_existing_release_tags(include_prerelease=True):
         tag = release['tag_name'].strip()
         match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-        if len(match.groups()) != 3:
+        if not match or len(match.groups()) != 3:
             print(f"Version '{tag}' did not match expected pattern")
             continue
 
@@ -164,16 +164,16 @@ if __name__ == '__main__':
     highest_release = check_version_number(version, allow_duplicate=allow_duplicate)
 
     # Determine which docker tag we are going to use
-    docker_tags = None
+    docker_tags: list[str] | None = None
 
     if GITHUB_REF_TYPE == 'tag':
         # GITHUB_REF should be of the form /refs/heads/<tag>
-        version_tag = GITHUB_REF.split('/')[-1]
+        version_tag: str = GITHUB_REF.split('/')[-1]
         print(f"Checking requirements for tagged release - '{version_tag}':")
 
         if version_tag != version:
             print(f"Version number '{version}' does not match tag '{version_tag}'")
-            sys.exit
+            sys.exit()
 
         docker_tags = [version_tag, 'stable'] if highest_release else [version_tag]
 

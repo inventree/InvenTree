@@ -51,7 +51,7 @@ def reverse_association(apps, schema_editor):  # pragma: no cover
 
         row = cursor.fetchone()
 
-        if len(row) > 0:
+        if row and len(row) > 0:
             try:
                 manufacturer_id = int(row[0])
             except (TypeError, ValueError):

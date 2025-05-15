@@ -1,5 +1,7 @@
 """Classes and functions for plugin controlled object state transitions."""
 
+from typing import Any
+
 import InvenTree.helpers
 
 
@@ -28,11 +30,11 @@ class TransitionMethodStorageClass:
     Is initialized on startup as one instance named `storage` in this file.
     """
 
-    list = None
+    method_list: list | None = None
 
     def collect(self):
         """Collect all classes in the environment that are transition methods."""
-        filtered_list = {}
+        filtered_list: dict[str, Any] = {}
         for item in InvenTree.helpers.inheritors(TransitionMethod):
             # Try if valid
             try:
@@ -41,11 +43,11 @@ class TransitionMethodStorageClass:
                 continue
             filtered_list[f'{item.__module__}.{item.__qualname__}'] = item
 
-        self.list = list(filtered_list.values())
+        self.method_list: list = list(filtered_list.values())
 
         # Ensure the list has items
-        if not self.list:
-            self.list = []
+        if not self.method_list:
+            self.method_list = []
 
 
 storage = TransitionMethodStorageClass()
@@ -77,7 +79,7 @@ class StateTransitionMixin:
             default_action: Default action to be taken if none of the transitions returns a boolean true value
         """
         # Check if there is a custom override function for this transition
-        for override in storage.list:
+        for override in storage.method_list:
             rslt = override.transition(
                 current_state, target_state, instance, default_action, **kwargs
             )

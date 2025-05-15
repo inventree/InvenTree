@@ -225,7 +225,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         ),
     )
 
-    def generate_filename(self, context, **kwargs):
+    def generate_filename(self, context, **kwargs) -> str:
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
 
@@ -438,7 +438,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
 
         # Start with a default report name
-        report_name = None
+        report_name: str | None = None
 
         report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
@@ -513,6 +513,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 'path': request.path if request else None,
             })
 
+        if not report_name:
+            report_name = ''
+
         if not report_name.endswith('.pdf'):
             report_name += '.pdf'
 
@@ -541,7 +544,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         # Save the generated report to the database
         output.complete = True
-        output.output = ContentFile(data, report_name)
+        if data:
+            output.output = ContentFile(data, report_name)
         output.save()
 
         return output
