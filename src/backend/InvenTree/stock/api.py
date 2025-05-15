@@ -397,11 +397,11 @@ class StockLocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
         return super().destroy(
             request,
             *args,
-            **dict(
-                kwargs,
-                delete_sub_locations=delete_sub_locations,
-                delete_stock_items=delete_stock_items,
-            ),
+            **{
+                **kwargs,
+                'delete_sub_locations': delete_sub_locations,
+                'delete_stock_items': delete_stock_items,
+            },
         )
 
 

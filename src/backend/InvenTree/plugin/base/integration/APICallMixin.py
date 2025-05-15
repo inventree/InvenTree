@@ -175,7 +175,7 @@ class APICallMixin:
             kwargs['data'] = data
 
         # run command
-        response = requests.request(method, **kwargs)
+        response = requests.request(method, url=url, **kwargs)
 
         # return
         if simple_response:

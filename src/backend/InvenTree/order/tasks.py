@@ -1,6 +1,7 @@
 """Background tasks for the 'order' app."""
 
 from datetime import datetime, timedelta
+from typing import Union
 
 from django.contrib.auth.models import Group, User
 from django.db import transaction
@@ -99,7 +100,7 @@ def check_overdue_purchase_orders():
 
 def notify_overdue_sales_order(so: order.models.SalesOrder) -> None:
     """Notify appropriate users that a SalesOrder has just become 'overdue'."""
-    targets: list[User, Group, Owner] = []
+    targets: list[Union[User, Group, Owner]] = []
 
     if so.created_by:
         targets.append(so.created_by)
@@ -164,7 +165,7 @@ def check_overdue_sales_orders():
 
 def notify_overdue_return_order(ro: order.models.ReturnOrder) -> None:
     """Notify appropriate users that a ReturnOrder has just become 'overdue'."""
-    targets: list[User, Group, Owner] = []
+    targets: list[Union[User, Group, Owner]] = []
 
     if ro.created_by:
         targets.append(ro.created_by)

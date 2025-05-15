@@ -287,11 +287,11 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
         return super().destroy(
             request,
             *args,
-            **dict(
-                kwargs,
-                delete_parts=delete_parts,
-                delete_child_categories=delete_child_categories,
-            ),
+            **{
+                **kwargs,
+                'delete_parts': delete_parts,
+                'delete_child_categories': delete_child_categories,
+            },
         )
 
 

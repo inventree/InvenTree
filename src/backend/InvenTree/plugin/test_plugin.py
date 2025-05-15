@@ -249,7 +249,7 @@ class RegistryTests(TestCase):
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
         # Run in temporary directory -> always a new random name
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp:  # type: ignore[no-matching-overload]
             # Fill directory with sample data
             new_dir = Path(tmp).joinpath('mock')
             shutil.copytree(self.mockDir(), new_dir)
