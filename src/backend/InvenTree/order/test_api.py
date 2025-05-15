@@ -4,6 +4,7 @@ import base64
 import io
 import json
 from datetime import date, datetime, timedelta
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -2036,13 +2037,18 @@ class SalesOrderAllocateTest(OrderTest):
             return line_item.part.is_template
 
         for line in filter(check_template, self.order.lines.all()):
-            stock_item = None
+            stock_item: Optional[StockItem] = None
 
             # Allocate a matching variant
-            parts = Part.objects.filter(salable=True).filter(variant_of=line.part.pk)
+            parts: list[Part] = Part.objects.filter(salable=True).filter(
+                variant_of=line.part.pk
+            )
             for part in parts:
-                stock_item = part.stock_items.last()
+                stock_item: StockItem = part.stock_items.last()
                 break
+
+            if stock_item is None:
+                raise self.fail('No stock item found for part')
 
             # Fully-allocate each line
             data['items'].append({

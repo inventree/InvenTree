@@ -329,8 +329,9 @@ def notify_users(
         'template': {'subject': content.name.format(**content_context)},
     }
 
-    if content.template:
-        context['template']['html'] = content.template.format(**content_context)
+    tmp = content.template
+    if tmp:
+        context['template']['html'] = tmp.format(**content_context)
 
     # Create notification
     trigger_notification(

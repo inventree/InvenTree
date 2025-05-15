@@ -1,6 +1,7 @@
 """Unit tests for the BuildOrder API."""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from django.urls import reverse
 
@@ -664,6 +665,9 @@ class BuildAllocationTest(BuildAPITest):
                 wrong_line = line
                 break
 
+        if not wrong_line:
+            raise self.fail('No matching BuildLine found for the given stock item')
+
         data = self.post(
             self.url,
             {
@@ -690,6 +694,9 @@ class BuildAllocationTest(BuildAPITest):
             if line.bom_item.sub_part.pk == si.part.pk:
                 right_line = line
                 break
+
+        if not right_line:
+            raise self.fail('No matching BuildLine found for the given stock item')
 
         self.post(
             self.url,
@@ -718,11 +725,13 @@ class BuildAllocationTest(BuildAPITest):
         # Find the correct BuildLine
         si = StockItem.objects.get(pk=2)
 
-        right_line = None
+        right_line: Optional[BuildLine] = None
         for line in self.build.build_lines.all():
             if line.bom_item.sub_part.pk == si.part.pk:
-                right_line = line
+                right_line: BuildLine = line
                 break
+        if not right_line:
+            raise self.fail('No matching BuildLine found for the given stock item')
 
         self.post(
             self.url,

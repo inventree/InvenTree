@@ -113,7 +113,7 @@ call-non-callable="ignore"  # 3
 invalid-return-type="ignore"  # 12
 invalid-argument-type="ignore"  # 15
 invalid-type-form="ignore"  # 5
-possibly-unbound-attribute="ignore"  # 18
+possibly-unbound-attribute="ignore"  # 7
 unknown-argument="ignore"  # 9
 
 
