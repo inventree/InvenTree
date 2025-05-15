@@ -951,7 +951,7 @@ def current_time(local=True):
     """
     if settings.USE_TZ:
         now = timezone.now()
-        now = to_local_time(now, target_tz=server_timezone() if local else 'UTC')
+        now = to_local_time(now, target_tz_str=server_timezone() if local else 'UTC')
         return now
     else:
         return datetime.datetime.now()
@@ -970,12 +970,12 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time, target_tz: Optional[str] = None):
+def to_local_time(time, target_tz_str: Optional[str] = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:
         time: The time / date to convert
-        target_tz: The desired timezone (string) - defaults to server time
+        target_tz_str: The desired timezone (string) - defaults to server time
 
     Returns:
         A timezone aware datetime object, with the desired timezone
@@ -999,11 +999,11 @@ def to_local_time(time, target_tz: Optional[str] = None):
         # Default to UTC if not provided
         source_tz = ZoneInfo('UTC')
 
-    if not target_tz:
-        target_tz = server_timezone()
+    if not target_tz_str:
+        target_tz_str = server_timezone()
 
     try:
-        target_tz = ZoneInfo(str(target_tz))
+        target_tz = ZoneInfo(str(target_tz_str))
     except ZoneInfoNotFoundError:
         target_tz = ZoneInfo('UTC')
 
