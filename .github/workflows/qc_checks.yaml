@@ -108,6 +108,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
+        id: setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
@@ -115,7 +116,7 @@ jobs:
           update: true
       - name: Check types
         run: |
-          ty check
+          ty check -- python ${{ steps.setup.outputs.python-path }}
 
   mkdocs:
     name: Style [Documentation]
