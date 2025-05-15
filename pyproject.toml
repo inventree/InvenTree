@@ -58,6 +58,7 @@ ignore = [
 	"N812",
     # - RUF032 - decimal-from-float-literal
     "RUF032",
+    # - RUF045 - implicit-class-var-in-dataclass
     "RUF045",
     # - UP045 - Use `X | None` instead of `Optional[X]`
     "UP045",
