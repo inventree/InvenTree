@@ -11,8 +11,9 @@ from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
+import django_filters.filters as rest_filters
 import rest_framework.serializers
-from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
@@ -97,7 +98,7 @@ class OrderCreateMixin:
         )
 
 
-class OrderFilter(rest_filters.FilterSet):
+class OrderFilter(FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
     # Filter against order status
@@ -255,7 +256,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
 
 
-class LineItemFilter(rest_filters.FilterSet):
+class LineItemFilter(FilterSet):
     """Base class for custom API filters for order line item list(s)."""
 
     # Filter by order status
@@ -1087,7 +1088,7 @@ class SalesOrderAllocate(SalesOrderContextMixin, CreateAPI):
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
 
 
-class SalesOrderAllocationFilter(rest_filters.FilterSet):
+class SalesOrderAllocationFilter(FilterSet):
     """Custom filterset for the SalesOrderAllocationList endpoint."""
 
     class Meta:
@@ -1240,7 +1241,7 @@ class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestro
     """API endpoint for detali view of a SalesOrderAllocation object."""
 
 
-class SalesOrderShipmentFilter(rest_filters.FilterSet):
+class SalesOrderShipmentFilter(FilterSet):
     """Custom filterset for the SalesOrderShipmentList endpoint."""
 
     class Meta:

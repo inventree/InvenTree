@@ -4,7 +4,8 @@ from django.db.models import Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.filters as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
 from data_exporter.mixins import DataExportViewMixin
@@ -127,7 +128,7 @@ class AddressDetail(RetrieveUpdateDestroyAPI):
     serializer_class = AddressSerializer
 
 
-class ManufacturerPartFilter(rest_filters.FilterSet):
+class ManufacturerPartFilter(FilterSet):
     """Custom API filters for the ManufacturerPart list endpoint."""
 
     class Meta:
@@ -204,7 +205,7 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ManufacturerPartSerializer
 
 
-class ManufacturerPartParameterFilter(rest_filters.FilterSet):
+class ManufacturerPartParameterFilter(FilterSet):
     """Custom filterset for the ManufacturerPartParameterList API endpoint."""
 
     class Meta:
@@ -259,7 +260,7 @@ class ManufacturerPartParameterDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ManufacturerPartParameterSerializer
 
 
-class SupplierPartFilter(rest_filters.FilterSet):
+class SupplierPartFilter(FilterSet):
     """API filters for the SupplierPartList endpoint."""
 
     class Meta:
@@ -416,7 +417,7 @@ class SupplierPartDetail(SupplierPartMixin, RetrieveUpdateDestroyAPI):
     """
 
 
-class SupplierPriceBreakFilter(rest_filters.FilterSet):
+class SupplierPriceBreakFilter(FilterSet):
     """Custom API filters for the SupplierPriceBreak list endpoint."""
 
     class Meta:

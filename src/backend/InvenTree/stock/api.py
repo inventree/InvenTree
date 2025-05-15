@@ -9,7 +9,8 @@ from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.filters as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import status
@@ -228,7 +229,7 @@ class StockMerge(CreateAPI):
         return ctx
 
 
-class StockLocationFilter(rest_filters.FilterSet):
+class StockLocationFilter(FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
     class Meta:
@@ -476,7 +477,7 @@ class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
-class StockFilter(rest_filters.FilterSet):
+class StockFilter(FilterSet):
     """FilterSet for StockItem LIST API."""
 
     class Meta:
@@ -1272,7 +1273,7 @@ class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyA
     """Detail endpoint for StockItemTestResult."""
 
 
-class StockItemTestResultFilter(rest_filters.FilterSet):
+class StockItemTestResultFilter(FilterSet):
     """API filter for the StockItemTestResult list."""
 
     class Meta:

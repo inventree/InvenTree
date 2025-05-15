@@ -7,7 +7,8 @@ from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.filters as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -28,7 +29,7 @@ from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from users.models import Owner
 
 
-class BuildFilter(rest_filters.FilterSet):
+class BuildFilter(FilterSet):
     """Custom filterset for BuildList API endpoint."""
 
     class Meta:
@@ -440,7 +441,7 @@ class BuildUnallocate(CreateAPI):
         return ctx
 
 
-class BuildLineFilter(rest_filters.FilterSet):
+class BuildLineFilter(FilterSet):
     """Custom filterset for the BuildLine API endpoint."""
 
     class Meta:
@@ -756,7 +757,7 @@ class BuildItemDetail(RetrieveUpdateDestroyAPI):
     serializer_class = build.serializers.BuildItemSerializer
 
 
-class BuildItemFilter(rest_filters.FilterSet):
+class BuildItemFilter(FilterSet):
     """Custom filterset for the BuildItemList API endpoint."""
 
     class Meta:

@@ -14,8 +14,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
+import django_filters.filters as rest_filters
 import django_q.models
-from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -699,7 +700,7 @@ class ContentTypeModelDetail(ContentTypeDetail):
         return super().get(request, *args, **kwargs)
 
 
-class AttachmentFilter(rest_filters.FilterSet):
+class AttachmentFilter(FilterSet):
     """Filterset for the AttachmentList API endpoint."""
 
     class Meta:
