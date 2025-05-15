@@ -98,7 +98,9 @@ jobs:
           python3 .github/scripts/version_check.py
       - name: Check types
         run: |
+          pip install --require-hashes -r src/backend/requirements.txt
           pip install --require-hashes -r src/backend/requirements-dev.txt
+          pip install --require-hashes -r contrib/container/requirements.txt
           ty check
 
   mkdocs:
