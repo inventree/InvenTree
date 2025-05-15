@@ -1,5 +1,7 @@
 """Code for managing email functionality in InvenTree."""
 
+from typing import Optional
+
 from django.conf import settings
 from django.core import mail as django_mail
 
@@ -91,7 +93,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
     )
 
 
-def get_email_for_user(user) -> str | None:
+def get_email_for_user(user) -> Optional[str]:
     """Find an email address for the specified user."""
     # First check if the user has an associated email address
     if user.email:

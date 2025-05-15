@@ -8,7 +8,7 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -125,7 +125,7 @@ def extract_int(
     return ref_int
 
 
-def generateTestKey(test_name: str | None) -> str:
+def generateTestKey(test_name: Union[str, None]) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.

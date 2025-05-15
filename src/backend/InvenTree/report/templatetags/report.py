@@ -50,7 +50,7 @@ def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
 
 
 @register.simple_tag()
-def filter_db_model(model_name: str, **kwargs) -> QuerySet | None:
+def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
     """Filter a database model based on the provided keyword arguments.
 
     Arguments:
@@ -316,7 +316,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str) -> str | None:
+def part_parameter(part: Part, parameter_name: str) -> Optional[str]:
     """Return a PartParameter object for the given part and parameter name.
 
     Arguments:

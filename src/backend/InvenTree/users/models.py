@@ -1,6 +1,7 @@
 """Database model definitions for the 'users' app."""
 
 import datetime
+from typing import Optional
 
 from django.conf import settings
 from django.contrib import admin
@@ -224,7 +225,7 @@ class RuleSet(models.Model):
         unique_together = (('name', 'group'),)
 
     @property
-    def label(self) -> str | None:
+    def label(self) -> Optional[str]:
         """Return the translated label for this ruleset."""
         return dict(RULESET_CHOICES).get(self.name, self.name)
 

@@ -1,6 +1,6 @@
 """Classes and functions for plugin controlled object state transitions."""
 
-from typing import Any
+from typing import Any, Optional
 
 import InvenTree.helpers
 
@@ -30,7 +30,7 @@ class TransitionMethodStorageClass:
     Is initialized on startup as one instance named `storage` in this file.
     """
 
-    method_list: list | None = None
+    method_list: Optional[list] = None
 
     def collect(self):
         """Collect all classes in the environment that are transition methods."""

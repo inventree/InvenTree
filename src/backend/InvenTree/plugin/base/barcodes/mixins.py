@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -113,7 +115,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         return fields.get(key, backup_value)
 
-    def get_part(self) -> Part | None:
+    def get_part(self) -> Optional[Part]:
         """Extract the Part object from the barcode fields."""
         # TODO: Implement this
         return None
@@ -128,7 +130,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the supplier part number from the barcode fields."""
         return self.get_field_value(self.SUPPLIER_PART_NUMBER)
 
-    def get_supplier_part(self) -> SupplierPart | None:
+    def get_supplier_part(self) -> Optional[SupplierPart]:
         """Return the SupplierPart object for the scanned barcode.
 
         Returns:
@@ -172,7 +174,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the manufacturer part number from the barcode fields."""
         return self.get_field_value(self.MANUFACTURER_PART_NUMBER)
 
-    def get_manufacturer_part(self) -> ManufacturerPart | None:
+    def get_manufacturer_part(self) -> Optional[ManufacturerPart]:
         """Return the ManufacturerPart object for the scanned barcode.
 
         Returns:
@@ -213,7 +215,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the supplier order number from the barcode fields."""
         return self.get_field_value(self.SUPPLIER_ORDER_NUMBER)
 
-    def get_purchase_order(self) -> PurchaseOrder | None:
+    def get_purchase_order(self) -> Optional[PurchaseOrder]:
         """Extract the PurchaseOrder object from the barcode fields.
 
         Inspect the customer_order_number and supplier_order_number fields,
@@ -260,7 +262,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             'extract_barcode_fields must be implemented by each plugin'
         )
 
-    def scan(self, barcode_data: str) -> dict | None:
+    def scan(self, barcode_data: str) -> Optional[dict]:
         """Perform a generic 'scan' operation on a supplier barcode.
 
         The supplier barcode may provide sufficient information to match against
@@ -319,7 +321,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         location=None,
         auto_allocate: bool = True,
         **kwargs,
-    ) -> dict | None:
+    ) -> Optional[dict]:
         """Attempt to receive an item against a PurchaseOrder via barcode scanning.
 
         Arguments:
@@ -430,7 +432,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         return response
 
-    def get_supplier(self, cache: bool = False) -> Company | None:
+    def get_supplier(self, cache: bool = False) -> Optional[Company]:
         """Get the supplier for the SUPPLIER_ID set in the plugin settings.
 
         If it's not defined, try to guess it and set it if possible.

@@ -105,6 +105,17 @@ src = [
     "src/backend/InvenTree",
     "./",
 ]
+[tool.ty.rules]
+unresolved-reference="ignore"
+unresolved-attribute="ignore"
+call-non-callable="ignore"
+invalid-return-type="ignore"
+invalid-argument-type="ignore"
+invalid-type-form="ignore"
+invalid-assignment="ignore"
+possibly-unbound-attribute="ignore"
+#call-possibly-unbound-method="ignore"
+unknown-argument="ignore"
 
 
 [tool.coverage.run]

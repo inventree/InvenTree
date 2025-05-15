@@ -16,6 +16,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 import requests
 
@@ -165,7 +166,7 @@ def main() -> bool:
     highest_release = check_version_number(version, allow_duplicate=allow_duplicate)
 
     # Determine which docker tag we are going to use
-    docker_tags: list[str] | None = None
+    docker_tags: Optional[list[str]] = None
 
     if GITHUB_REF_TYPE == 'tag':
         # GITHUB_REF should be of the form /refs/heads/<tag>

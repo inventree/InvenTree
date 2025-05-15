@@ -7,6 +7,7 @@ import tempfile
 import textwrap
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from unittest import mock
 from unittest.mock import patch
 
@@ -14,7 +15,8 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePlugin
+from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
     WrongIntegrationPlugin,
@@ -285,16 +287,17 @@ class RegistryTests(TestCase):
         self.assertEqual(len(registry.errors), 2)
 
         # There should be at least one discovery error in the module `broken_file`
-        self.assertGreater(len(registry.errors.get('discovery') or []), 0)
+        self.assertGreater(len(registry.errors.get('discovery')), 0)
         self.assertEqual(
-            registry.errors.get('discovery')[0]['broken_file'],
+            registry.errors.get('discovery')[0]['broken_file'],  # type: ignore[call-possibly-unbound-method]
             "name 'bb' is not defined",
         )
 
         # There should be at least one load error with an intentional KeyError
-        self.assertGreater(len(registry.errors.get('init') or []), 0)
+        self.assertGreater(len(registry.errors.get('init')), 0)
         self.assertEqual(
-            registry.errors.get('init')[0]['broken_sample'], "'This is a dummy error'"
+            registry.errors.get('init')[0]['broken_sample'],  # type: ignore[call-possibly-unbound-method]
+            "'This is a dummy error'",
         )
 
     @override_settings(PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
@@ -339,7 +342,7 @@ class RegistryTests(TestCase):
 
         def create_plugin_file(
             version: str, enabled: bool = True, reload: bool = True
-        ) -> str | None:
+        ) -> Optional[str]:
             """Create a plugin file with the given version.
 
             Arguments:

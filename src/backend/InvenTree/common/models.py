@@ -14,7 +14,7 @@ from datetime import timedelta, timezone
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -917,7 +917,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
-    def model_filters(self) -> dict | None:
+    def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()

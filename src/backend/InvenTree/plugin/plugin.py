@@ -490,7 +490,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         return url
 
-    def get_admin_source(self) -> str | None:
+    def get_admin_source(self) -> Union[str, None]:
         """Return a path to a JavaScript file which contains custom UI settings.
 
         The frontend code expects that this file provides a function named 'renderPluginSettings'.
@@ -500,7 +500,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         return self.plugin_static_file(self.ADMIN_SOURCE)
 
-    def get_admin_context(self) -> dict | None:
+    def get_admin_context(self) -> Union[dict, None]:
         """Return a context dictionary for the admin panel settings.
 
         This is an optional method which can be overridden by the plugin.

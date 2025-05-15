@@ -4,6 +4,7 @@ import enum
 import logging
 import re
 from enum import Enum
+from typing import Optional
 
 logger = logging.getLogger('inventree')
 
@@ -297,7 +298,7 @@ class StatusCodeMixin:
         """Return the status code for this object."""
         return getattr(self, self.STATUS_FIELD)
 
-    def get_custom_status(self) -> int | None:
+    def get_custom_status(self) -> Optional[int]:
         """Return the custom status code for this object."""
         return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 

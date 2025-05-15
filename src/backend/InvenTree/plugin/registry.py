@@ -84,12 +84,12 @@ class PluginsRegistry:
         ] = {}  # List of all plugin instances
 
         # Keep an internal hash of the plugin registry state
-        self.registry_hash: str | None = None
+        self.registry_hash: Optional[str] = None
 
         self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
         self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
 
-        self.errors = {}  # Holds discovering errors
+        self.errors: dict[str, list[Any]] = {}  # Holds discovering errors
 
         self.loading_lock = Lock()  # Lock to prevent multiple loading at the same time
 
@@ -220,7 +220,7 @@ class PluginsRegistry:
 
     # region registry functions
     def with_mixin(
-        self, mixin: str, active: bool | None = True, builtin: Optional[bool] = None
+        self, mixin: str, active: Optional[bool] = True, builtin: Optional[bool] = None
     ) -> list:
         """Returns reference to all plugins that have a specified mixin enabled.
 

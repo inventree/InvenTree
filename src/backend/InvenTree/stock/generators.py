@@ -1,6 +1,7 @@
 """Generator functions for the stock app."""
 
 from inspect import signature
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 
@@ -74,7 +75,7 @@ def generate_batch_code(**kwargs):
     return Template(batch_template).render(context)
 
 
-def generate_serial_number(part=None, quantity=1, **kwargs) -> str | None:
+def generate_serial_number(part=None, quantity=1, **kwargs) -> Optional[str]:
     """Generate a default 'serial number' for a new StockItem."""
     quantity = quantity or 1
 

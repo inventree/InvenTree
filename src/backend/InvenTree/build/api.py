@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.urls import include, path
@@ -13,7 +15,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-import build.admin
 import build.models
 import build.serializers
 import common.models
@@ -602,7 +603,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         'bom_item__reference',
     ]
 
-    def get_source_build(self) -> Build | None:
+    def get_source_build(self) -> Optional[Build]:
         """Return the target build for the BuildLine queryset."""
         source_build = None
 
@@ -619,7 +620,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
 
-    def get_source_build(self) -> Build | None:
+    def get_source_build(self) -> Optional[Build]:
         """Return the target source location for the BuildLine queryset."""
         return None
 

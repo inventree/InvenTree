@@ -8,6 +8,7 @@ import random
 import shutil
 import string
 from pathlib import Path
+from typing import Union
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -113,7 +114,7 @@ def get_config_file(create=True) -> Path:
     return cfg_filename
 
 
-def load_config_data(set_cache: bool = False) -> map | None:
+def load_config_data(set_cache: bool = False) -> Union[map, None]:
     """Load configuration data from the config file.
 
     Arguments:

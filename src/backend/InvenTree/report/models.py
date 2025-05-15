@@ -438,7 +438,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
 
         # Start with a default report name
-        report_name: str | None = None
+        report_name: Optional[str] = None
 
         report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
