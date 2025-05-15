@@ -1256,6 +1256,16 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
 
         queryset = super().filter_queryset(queryset)
 
+        queryset = self.exlude_specific_ids(queryset, params)
+        queryset = self.filter_by_related_parts(queryset, params)
+        queryset = self.filter_by_category(queryset, params)
+        queryset = self.filter_parametric_data(queryset)
+        queryset = self.sort_by_ipn(queryset, params)
+
+        return queryset
+
+
+    def exlude_specific_ids(self, queryset, params):
         # Exclude specific part ID values?
         exclude_id = []
 
@@ -1275,7 +1285,10 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
                     pass
 
             queryset = queryset.exclude(pk__in=id_values)
+        
+        return queryset
 
+    def filter_by_related_parts(self, queryset, params):
         # Filter by 'related' parts?
         related = params.get('related', None)
         exclude_related = params.get('exclude_related', None)
@@ -1309,6 +1322,9 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        return queryset
+
+    def filter_by_category(self, queryset, params):
         # Cascade? (Default = True)
         cascade = str2bool(params.get('cascade', True))
 
@@ -1338,8 +1354,6 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
 
-        queryset = self.filter_parametric_data(queryset)
-
         return queryset
 
     def filter_parametric_data(self, queryset):
@@ -1366,6 +1380,20 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
                 queryset = part.filters.order_by_parameter(
                     queryset, template_id, ascending
                 )
+
+        return queryset
+    
+    def sort_by_ipn(self, queryset, params):
+        # Sort the queryset by IPN
+        search_query = params.get('search', None)
+
+        if search_query:
+            # Get all parts with matching IPN
+            exact_ipn_matches = queryset.filter(IPN__iexact=search_query)
+            # Get all other parts
+            other_matches = queryset.exclude(IPN__iexact=search_query)
+            # Recombine the two querysets with IPN matches first
+            queryset = exact_ipn_matches.union(other_matches, all=True)
 
         return queryset
 
