@@ -21,7 +21,7 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
         if settings.USE_TZ and value is not None:
             tz = timezone.get_current_timezone()
             value = datetime(value.year, value.month, value.day)
-            value = make_aware(value, tz, True)
+            value = make_aware(value, timezone=tz, is_dst=True)
 
         return super().filter(qs, value)
 
