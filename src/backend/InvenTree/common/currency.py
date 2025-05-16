@@ -158,7 +158,7 @@ def get_price(
     - If MOQ (minimum order quantity) is required, bump quantity
     - If order multiples are to be observed, then we need to calculate based on that, too
     """
-    from common.currency import currency_code_default
+    # from common.currency import currency_code_default
 
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()

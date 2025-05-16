@@ -295,7 +295,7 @@ class GroupSerializer(InvenTreeModelSerializer):
 class ExtendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
 
-    from users.serializers import GroupSerializer
+    # from users.serializers import GroupSerializer
 
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
