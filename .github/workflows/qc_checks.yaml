@@ -116,7 +116,6 @@ jobs:
           update: true
       - name: Check types
         run: |
-          pip install django_auth_ldap
           ty check --python ${Python_ROOT_DIR}/bin/python3
 
   mkdocs:

@@ -48,7 +48,9 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 
 
 if settings.LDAP_AUTH:
-    from django_auth_ldap.backend import populate_user
+    from django_auth_ldap.backend import (  # type: ignore[unresolved-import]
+        populate_user,
+    )
 
     @receiver(populate_user)
     def create_email_address(user, **kwargs):

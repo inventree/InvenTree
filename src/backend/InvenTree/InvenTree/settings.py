@@ -380,7 +380,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get(
 # LDAP support
 LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
 if LDAP_AUTH:
-    import django_auth_ldap.config
+    import django_auth_ldap.config  # type: ignore[unresolved-import]
     import ldap
 
     AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
