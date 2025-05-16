@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
-import django_filters.filters as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
 from rest_framework.generics import GenericAPIView

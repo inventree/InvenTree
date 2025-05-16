@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
-import django_filters.filters as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 import django_q.models
 from django_filters.rest_framework.filterset import FilterSet
 from django_q.tasks import async_task

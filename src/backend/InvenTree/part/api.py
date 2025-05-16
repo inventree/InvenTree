@@ -8,7 +8,7 @@ from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-import django_filters.filters as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes

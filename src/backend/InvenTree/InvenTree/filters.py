@@ -6,8 +6,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
-import django_filters.filters as rest_filters
 import django_filters.rest_framework.backends as drf_backend
+import django_filters.rest_framework.filters as rest_filters
 from rest_framework import filters
 
 import InvenTree.helpers
