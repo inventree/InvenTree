@@ -11,7 +11,7 @@ from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-import django_filters.filters as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 import rest_framework.serializers
 from django_filters.rest_framework.filterset import FilterSet
 from django_ical.views import ICalFeed

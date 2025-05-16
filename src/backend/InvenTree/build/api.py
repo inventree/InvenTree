@@ -15,7 +15,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-import build.models
+import build.models as build_models
 import build.serializers
 import common.models
 import part.models as part_models
@@ -804,7 +804,7 @@ class BuildItemFilter(FilterSet):
             return queryset.filter(stock_item__part=part)
 
     build = rest_filters.ModelChoiceFilter(
-        queryset=build.models.Build.objects.all(),
+        queryset=build_models.Build.objects.all(),
         label=_('Build Order'),
         field_name='build_line__build',
     )
