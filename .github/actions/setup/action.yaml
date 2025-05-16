@@ -30,10 +30,6 @@ inputs:
     pip-dependency:
         required: false
         description: 'Extra python package for install.'
-outputs:
-  python-path:
-        description: "Pyth to the python executable"
-        value: ${{ steps.setup-python.outputs.python-path }}
 
 runs:
     using: 'composite'
@@ -46,7 +42,6 @@ runs:
       # Python installs
       - name: Set up Python ${{ env.python_version }}
         if: ${{ inputs.python == 'true' }}
-        id: setup-python
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
         with:
           python-version: ${{ env.python_version }}
@@ -56,7 +51,6 @@ runs:
             src/backend/requirements-dev.txt
             contrib/container/requirements.txt
             contrib/dev_reqs/requirements.txt
-
       - name: Install Base Python Dependencies
         if: ${{ inputs.python == 'true' }}
         shell: bash
