@@ -116,7 +116,7 @@ jobs:
           update: true
       - name: Check types
         run: |
-          ty check -- python ${{ steps.setup.outputs.python-path }}
+          ty check -- python ${Python_ROOT_DIR}/bin/python3
 
   mkdocs:
     name: Style [Documentation]
