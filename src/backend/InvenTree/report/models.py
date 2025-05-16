@@ -515,7 +515,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             })
 
         if not report_name:
-            report_name = ''
+            report_name = ''  # pragma: no cover
 
         if not report_name.endswith('.pdf'):
             report_name += '.pdf'

@@ -42,7 +42,7 @@ try:
     import django_stubs_ext
 
     django_stubs_ext.monkeypatch()  # pragma: no cover
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 checkMinPythonVersion()

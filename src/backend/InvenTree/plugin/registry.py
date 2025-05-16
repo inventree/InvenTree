@@ -929,7 +929,7 @@ def _load_source(modname, filename):
     # loader = importlib.machinery.SourceFileLoader(modname, filename)
     spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
     if spec is None:
-        raise ImportError(f"Cannot find module '{modname}'")
+        raise ImportError(f"Cannot find module '{modname}'")  # pragma: no cover
     module = importlib.util.module_from_spec(spec)
 
     sys.modules[module.__name__] = module

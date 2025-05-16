@@ -2048,7 +2048,7 @@ class SalesOrderAllocateTest(OrderTest):
                 break
 
             if stock_item is None:
-                raise self.fail('No stock item found for part')
+                raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
             data['items'].append({

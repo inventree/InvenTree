@@ -519,7 +519,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
         )
         if not result:
-            raise ValueError('No filename match found in disposition')
+            raise ValueError(
+                'No filename match found in disposition'
+            )  # pragma: no cover
 
         fn = result.groups()[1]
 

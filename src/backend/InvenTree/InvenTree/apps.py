@@ -135,7 +135,7 @@ class InvenTreeConfig(AppConfig):
 
         for task in tasks:
             if not task:
-                continue
+                continue  # pragma: no cover
 
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 

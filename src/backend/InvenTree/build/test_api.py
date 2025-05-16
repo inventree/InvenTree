@@ -666,7 +666,9 @@ class BuildAllocationTest(BuildAPITest):
                 break
 
         if not wrong_line:
-            raise self.fail('No matching BuildLine found for the given stock item')
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
 
         data = self.post(
             self.url,
@@ -696,7 +698,9 @@ class BuildAllocationTest(BuildAPITest):
                 break
 
         if not right_line:
-            raise self.fail('No matching BuildLine found for the given stock item')
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
 
         self.post(
             self.url,
@@ -731,7 +735,9 @@ class BuildAllocationTest(BuildAPITest):
                 right_line: BuildLine = line
                 break
         if not right_line:
-            raise self.fail('No matching BuildLine found for the given stock item')
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
 
         self.post(
             self.url,
