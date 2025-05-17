@@ -1,6 +1,7 @@
 """Template tag to render SPA imports."""
 
 import json
+import json.decoder
 from pathlib import Path
 from typing import Union
 

@@ -50,7 +50,7 @@ def check_provider(provider):
     if not app:
         return False
 
-    if allauth.app_settings.SITES_ENABLED:
+    if allauth.app_settings.SITES_ENABLED:  # type: ignore[unresolved-attribute]
         # At least one matching site must be specified
         if not app.sites.exists():
             logger.error('SocialApp %s has no sites configured', app)

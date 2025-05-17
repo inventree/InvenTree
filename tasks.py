@@ -19,21 +19,21 @@ from invoke.exceptions import UnexpectedExit
 
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
-    from src.backend.InvenTree.InvenTree.config import is_true
+    from src.backend.InvenTree.InvenTree.config import is_true  # type: ignore[import]
 
     return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
 
 
 def is_rtd_environment():
     """Check if the InvenTree environment is running on ReadTheDocs."""
-    from src.backend.InvenTree.InvenTree.config import is_true
+    from src.backend.InvenTree.InvenTree.config import is_true  # type: ignore[import]
 
     return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
 def is_debug_environment():
     """Check if the InvenTree environment is running in a debug environment."""
-    from src.backend.InvenTree.InvenTree.config import is_true
+    from src.backend.InvenTree.InvenTree.config import is_true  # type: ignore[import]
 
     return is_true(os.environ.get('INVENTREE_DEBUG', 'False')) or is_true(
         os.environ.get('RUNNER_DEBUG', 'False')
@@ -384,7 +384,9 @@ def check_file_existence(filename: Path, overwrite: bool = False):
 @state_logger('TASK01')
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
-    from src.backend.InvenTree.InvenTree.config import get_plugin_file
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_plugin_file,
+    )
 
     plugin_file = get_plugin_file()
 
@@ -488,7 +490,9 @@ def rebuild_models(c):
 @task
 def rebuild_thumbnails(c):
     """Rebuild missing image thumbnails."""
-    from src.backend.InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_media_dir,
+    )
 
     info(f'Rebuilding image thumbnails in {get_media_dir()}')
     manage(c, 'rebuild_thumbnails', pty=True)
@@ -1069,7 +1073,7 @@ def test_translations(c):
     info('Fill in dummy translations...')
 
     file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
-    new_file_path = str(file_path) + '_new'
+    new_file_path = Path(str(file_path) + '_new')
 
     # compile regex
     reg = re.compile(
@@ -1205,7 +1209,9 @@ def setup_test(
     path='inventree-demo-dataset',
 ):
     """Setup a testing environment."""
-    from src.backend.InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_media_dir,
+    )
 
     if not ignore_update:
         update(c)
@@ -1352,8 +1358,8 @@ def export_definitions(c, basedir: str = ''):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
-    from src.backend.InvenTree.InvenTree.config import (
+    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_backup_dir,
         get_config_file,
         get_media_dir,

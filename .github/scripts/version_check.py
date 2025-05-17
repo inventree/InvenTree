@@ -16,6 +16,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 import requests
 
@@ -48,7 +49,7 @@ def get_existing_release_tags(include_prerelease=True):
         tag = release['tag_name'].strip()
         match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-        if len(match.groups()) != 3:
+        if not match or len(match.groups()) != 3:
             print(f"Version '{tag}' did not match expected pattern")
             continue
 
@@ -94,11 +95,12 @@ def check_version_number(version_string, allow_duplicate=False):
     return highest_release
 
 
-if __name__ == '__main__':
+def main() -> bool:
+    """Main function to check the version number."""
     # Ensure that we are running in GH Actions
     if os.environ.get('GITHUB_ACTIONS', '') != 'true':
         print('This script is intended to be run within a GitHub Action!')
-        sys.exit(1)
+        return False
 
     if 'only_version' in sys.argv:
         here = Path(__file__).parent.absolute()
@@ -111,7 +113,7 @@ if __name__ == '__main__':
         if len(sys.argv) > 2 and sys.argv[2] == 'true':
             results[0] = str(int(results[0]) - 1)
         print(results[0])
-        exit(0)
+        return True
 
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
     GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
@@ -142,7 +144,7 @@ if __name__ == '__main__':
 
         if len(results) != 1:
             print(f'Could not find INVENTREE_SW_VERSION in {version_file}')
-            sys.exit(1)
+            return False
 
         version = results[0]
 
@@ -164,16 +166,16 @@ if __name__ == '__main__':
     highest_release = check_version_number(version, allow_duplicate=allow_duplicate)
 
     # Determine which docker tag we are going to use
-    docker_tags = None
+    docker_tags: Optional[list[str]] = None
 
     if GITHUB_REF_TYPE == 'tag':
         # GITHUB_REF should be of the form /refs/heads/<tag>
-        version_tag = GITHUB_REF.split('/')[-1]
+        version_tag: str = GITHUB_REF.split('/')[-1]
         print(f"Checking requirements for tagged release - '{version_tag}':")
 
         if version_tag != version:
             print(f"Version number '{version}' does not match tag '{version_tag}'")
-            sys.exit
+            return True
 
         docker_tags = [version_tag, 'stable'] if highest_release else [version_tag]
 
@@ -187,11 +189,11 @@ if __name__ == '__main__':
         print('GITHUB_REF_TYPE:', GITHUB_REF_TYPE)
         print('GITHUB_BASE_REF:', GITHUB_BASE_REF)
         print('GITHUB_REF:', GITHUB_REF)
-        sys.exit(1)
+        return False
 
     if docker_tags is None:
         print('Docker tags could not be determined')
-        sys.exit(1)
+        return False
 
     print(f"Version check passed for '{version}'!")
     print(f"Docker tags: '{docker_tags}'")
@@ -208,3 +210,11 @@ if __name__ == '__main__':
 
         if GITHUB_REF_TYPE == 'tag' and highest_release:
             env_file.write('stable_release=true\n')
+    return True
+
+
+if __name__ == '__main__':
+    rslt = main()
+    if rslt is not True:
+        print('Version check failed!')
+        sys.exit(1)
