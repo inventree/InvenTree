@@ -21,6 +21,12 @@ function ReportTemplateTable() {
               <YesNoButton value={instance.landscape} />
             )
           },
+          merge: {
+            label: t`Merge`,
+            modelRenderer: (instance: any) => (
+              <YesNoButton value={instance.merge} />
+            )
+          },
           attach_to_model: {
             label: t`Attach to Model`,
             modelRenderer: (instance: any) => (
