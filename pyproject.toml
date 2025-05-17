@@ -107,14 +107,13 @@ src = [
     "./",
 ]
 [tool.ty.rules]
-unresolved-reference="ignore"  # 24
-unresolved-attribute="ignore"  # 33
-call-non-callable="ignore"  # 3
-invalid-return-type="ignore"  # 12
+unresolved-reference="ignore"  # 24 # see https://github.com/astral-sh/ty/issues/220
+unresolved-attribute="ignore"  # 33 # need Plugin Mixin typing
+call-non-callable="ignore"  # 3 ##
+invalid-return-type="ignore"  # 12 ##
 invalid-argument-type="ignore"  # 15
-invalid-type-form="ignore"  # 5
 possibly-unbound-attribute="ignore"  # 7
-unknown-argument="ignore"  # 9
+unknown-argument="ignore"  # 9  # need to wait for betterdjango field stubs
 
 
 [tool.coverage.run]

@@ -294,9 +294,7 @@ class DataImportSession(models.Model):
             if not any(row_data.values()):
                 continue
 
-            row = importer.models.DataImportRow(
-                session=self, row_data=row_data, row_index=idx
-            )
+            row = DataImportRow(session=self, row_data=row_data, row_index=idx)
 
             row.extract_data(
                 field_mapping=field_mapping,
@@ -308,7 +306,7 @@ class DataImportSession(models.Model):
             imported_rows.append(row)
 
         # Perform database writes as a single operation
-        importer.models.DataImportRow.objects.bulk_create(imported_rows)
+        DataImportRow.objects.bulk_create(imported_rows)
 
         # Mark the import task as "PROCESSING"
         self.status = DataImportStatusCode.PROCESSING.value

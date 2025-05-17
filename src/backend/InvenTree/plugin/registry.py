@@ -655,7 +655,7 @@ class PluginsRegistry:
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
-                            error.path,
+                            getattr(error, 'path', None),
                             str(error),
                         )
 

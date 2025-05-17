@@ -296,11 +296,11 @@ def associate_manufacturers(apps, schema_editor):
 
                 # Double-check if the typed name corresponds to an existing item
                 elif response in companies.keys():
-                    link_part(part, companies[response])
+                    link_part(part_id, companies[response])
                     return
 
                 elif response in links.keys():
-                    link_part(part, links[response])
+                    link_part(part_id, links[response])
                     return
 
                 # No match, create a new manufacturer

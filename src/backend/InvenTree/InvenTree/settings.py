@@ -317,31 +317,31 @@ INSTALLED_APPS = [
     'django_ical',  # For exporting calendars
 ]
 
-MIDDLEWARE = CONFIG.get(
-    'middleware',
-    [
-        'django.middleware.security.SecurityMiddleware',
-        'x_forwarded_for.middleware.XForwardedForMiddleware',
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
-        'django.middleware.locale.LocaleMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
-        'corsheaders.middleware.CorsMiddleware',
-        'whitenoise.middleware.WhiteNoiseMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
-        'allauth.account.middleware.AccountMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-        'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        'InvenTree.middleware.AuthRequiredMiddleware',
-        'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
-        'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
-        'maintenance_mode.middleware.MaintenanceModeMiddleware',
-        'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
-        'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
-        'django_structlog.middlewares.RequestMiddleware',  # Structured logging
-    ],
+default_middleware = [
+    'django.middleware.security.SecurityMiddleware',
+    'x_forwarded_for.middleware.XForwardedForMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
+    'allauth.account.middleware.AccountMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'InvenTree.middleware.AuthRequiredMiddleware',
+    'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
+    'maintenance_mode.middleware.MaintenanceModeMiddleware',
+    'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
+    'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
+    'django_structlog.middlewares.RequestMiddleware',  # Structured logging
+]
+MIDDLEWARE = (
+    CONFIG.get('middleware', default_middleware) if CONFIG else default_middleware
 )
 
 # In DEBUG mode, add support for django-querycount
@@ -366,15 +366,18 @@ QUERYCOUNT = {
 }
 
 
-AUTHENTICATION_BACKENDS = CONFIG.get(
-    'authentication_backends',
-    [
-        'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
-        'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
-        'django.contrib.auth.backends.ModelBackend',
-        'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
-        'sesame.backends.ModelBackend',  # Magic link login django-sesame
-    ],
+default_auth_backends = [
+    'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
+    'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
+    'sesame.backends.ModelBackend',  # Magic link login django-sesame
+]
+
+AUTHENTICATION_BACKENDS = (
+    CONFIG.get('authentication_backends', default_auth_backends)
+    if CONFIG
+    else default_auth_backends
 )
 
 # LDAP support
@@ -434,7 +437,7 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
-        ldap.SCOPE_SUBTREE,
+        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
         str(
             get_setting(
                 'INVENTREE_LDAP_SEARCH_FILTER_STR',
@@ -470,7 +473,7 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,
+        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
         f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
     AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
@@ -597,7 +600,7 @@ Configure the database backend based on the user-specified values.
 logger.debug('Configuring database backend:')
 
 # Extract database configuration from the config.yaml file
-db_config = CONFIG.get('database', None)
+db_config = CONFIG.get('database', None) if CONFIG else None
 
 if not db_config:
     db_config = {}

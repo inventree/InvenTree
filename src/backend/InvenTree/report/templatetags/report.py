@@ -102,7 +102,7 @@ def getindex(container: list, index: int) -> Any:
 
 
 @register.simple_tag()
-def getkey(container: dict, key: str, backup_value: Optional[any] = None) -> Any:
+def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any:
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.

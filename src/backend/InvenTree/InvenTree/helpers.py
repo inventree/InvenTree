@@ -364,9 +364,7 @@ def increment(value):
     except ValueError:
         pass
 
-    number = number.zfill(width)
-
-    return prefix + number
+    return prefix + str(number).zfill(width)
 
 
 def decimal2string(d):
