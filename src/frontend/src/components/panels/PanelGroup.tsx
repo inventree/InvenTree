@@ -6,7 +6,8 @@ import {
   Paper,
   Stack,
   Tabs,
-  Tooltip
+  Tooltip,
+  UnstyledButton
 } from '@mantine/core';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -30,9 +31,11 @@ import {
 
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
+import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { useShallow } from 'zustand/react/shallow';
 import { identifierString } from '../../functions/conversion';
+import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
@@ -125,9 +128,9 @@ function BasePanelGroup({
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
-      if (event && (event?.ctrlKey || event?.shiftKey)) {
+      cancelEvent(event);
+      if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
-        cancelEvent(event);
         navigateToLink(url, navigate, event);
       } else {
         navigate(`../${targetPanel}`);
@@ -191,7 +194,14 @@ function BasePanelGroup({
                         handlePanelChange(panel.name, event)
                       }
                     >
-                      {expanded && panel.label}
+                      <UnstyledButton
+                        component={'a'}
+                        href={generateUrl(
+                          `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                        )}
+                      >
+                        {expanded && panel.label}
+                      </UnstyledButton>
                     </Tabs.Tab>
                   </Tooltip>
                 )
