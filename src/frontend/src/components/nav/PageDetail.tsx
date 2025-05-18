@@ -3,9 +3,12 @@ import { useHotkeys } from '@mantine/hooks';
 
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { shortenString } from '../../functions/tables';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsState';
+import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
+import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
 
@@ -97,6 +100,28 @@ export function PageDetail({
     }
   }, [breadcrumbs, last_crumb, userSettings]);
 
+  const extraActions = usePluginUIFeature<PrimaryActionUIFeature>({
+    featureType: 'primary_action',
+    context: {}
+  });
+
+  // action caching
+  const computedActions = useMemo(() => {
+    const extraActionArray: ReactNode[] = extraActions.map((action) => {
+      const { options, func } = action;
+      const { title, icon, context } = options;
+      return (
+        <PrimaryActionButton
+          title={title}
+          icon={icon}
+          onClick={() => func(context)}
+          key={title}
+        />
+      );
+    });
+    return [...(extraActionArray ?? []), ...(actions ?? [])];
+  }, [extraActions, actions]);
+
   return (
     <>
       <PageTitle title={pageTitleString} />
@@ -156,9 +181,9 @@ export function PageDetail({
                 </Group>
               )}
             </SimpleGrid>
-            {actions && (
+            {computedActions && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
-                {actions.map((action, idx) => (
+                {computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}
               </Group>
