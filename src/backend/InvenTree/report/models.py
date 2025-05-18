@@ -417,6 +417,11 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         context = {**base_context, **report_context}
 
         # Pass the context through to the plugin registry for any additional information
+        context = self.get_plugin_context(instance, request, context)
+        return context
+
+    def get_plugin_context(self, instance, request, context):
+        """Get the context for the plugin."""
         for plugin in registry.with_mixin(PluginMixinEnum.REPORT):
             try:
                 plugin.add_report_context(self, instance, request, context)
@@ -503,7 +508,11 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 report_context = self.get_report_context()
                 item_contexts = []
                 for instance in items:
-                    item_contexts.append(instance.report_context())
+                    instance_context = instance.report_context()
+                    instance_context = self.get_plugin_context(
+                        instance, request, instance_context
+                    )
+                    item_contexts.append(instance_context)
 
                 contexts = {
                     **base_context,
