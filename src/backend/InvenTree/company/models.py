@@ -229,7 +229,7 @@ class Company(
         max_length=50,
         blank=True,
         verbose_name=_('Tax ID'),
-        help_text=_('Company Tax iD'),
+        help_text=_('Company Tax ID'),
     )
 
     @property
