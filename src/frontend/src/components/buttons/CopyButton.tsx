@@ -10,6 +10,8 @@ import {
 
 import { InvenTreeIcon } from '../../functions/icons';
 
+import type { JSX } from 'react';
+
 export function CopyButton({
   value,
   label,

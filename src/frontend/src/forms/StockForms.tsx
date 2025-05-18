@@ -20,7 +20,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
