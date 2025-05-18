@@ -1,12 +1,26 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 337
+INVENTREE_API_VERSION = 342
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v342 -> 2025-05-09 : https://github.com/inventree/InvenTree/pull/9651
+    - Fix serializer to match Generate API for serial numbers
+
+v341 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9547
+    - Require pagination limit on list queries
+
+v340 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9546
+    - Add nullable to various fields to make them not required
+
+v339 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9283
+    - Remove need for source in /plugins/ui/features
+
+v338 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9333
+    - Adds oAuth2 support for the API
 
 v337 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9505
     - Adds API endpoint with extra serial number information for a given StockItem object

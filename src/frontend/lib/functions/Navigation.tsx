@@ -1,13 +1,15 @@
 import type { NavigateFunction } from 'react-router-dom';
 import { ModelInformationDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
+import { apiUrl } from './Api';
 import { cancelEvent } from './Events';
 
 export const getBaseUrl = (): string =>
   (window as any).INVENTREE_SETTINGS?.base_url || 'web';
 
 /**
- * Returns the detail view URL for a given model type
+ * Returns the detail view URL for a given model type.
+ * This is the UI URL, not the API URL.
  */
 export function getDetailUrl(
   model: ModelType,
@@ -33,6 +35,27 @@ export function getDetailUrl(
 
   console.error(`No detail URL found for model ${model} <${pk}>`);
   return '';
+}
+
+/**
+ * Returns the API detail URL for a given model type.
+ */
+export function getApiUrl(
+  model: ModelType,
+  pk: number | string
+): string | undefined {
+  const modelInfo = ModelInformationDict[model];
+
+  if (pk === undefined || pk === null) {
+    return '';
+  }
+
+  if (!!pk && modelInfo && modelInfo.api_endpoint) {
+    return apiUrl(modelInfo.api_endpoint, pk);
+  }
+
+  console.error(`No API detail URL found for model ${model} <${pk}>`);
+  return undefined;
 }
 
 /*

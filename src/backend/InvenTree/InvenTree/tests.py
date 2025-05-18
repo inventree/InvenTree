@@ -435,16 +435,26 @@ class ValidatorTest(TestCase):
             link='www.google.com',
         )
 
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 1}', description='Missing link', category=cat, link=''
+        )
+
         # With strict URL validation
         InvenTreeSetting.set_setting('INVENTREE_STRICT_URLS', True, None)
 
         with self.assertRaises(ValidationError):
             Part.objects.create(
-                name=f'Part {n + 1}',
+                name=f'Part {n + 2}',
                 description='Link without schema',
                 category=cat,
                 link='www.google.com',
             )
+
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 3}', description='Missing link', category=cat, link=''
+        )
 
 
 class FormatTest(TestCase):
@@ -1694,3 +1704,22 @@ class SchemaPostprocessingTest(TestCase):
         self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
         # required key removed when empty
         self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
+
+
+class URLCompatibilityTest(InvenTreeTestCase):
+    """Unit test for legacy URL compatibility."""
+
+    URL_MAPPINGS = [
+        ('/index/', '/web'),
+        ('/part/1/', '/web/part/1/'),
+        ('/company/customers/', '/web/sales/index/customers'),
+        ('/build/3/', '/web/manufacturing/build-order/3'),
+        ('/stock/item/1/', '/web/stock/item/1/'),
+    ]
+
+    def test_legacy_urls(self):
+        """Test legacy URLs."""
+        for old_url, new_url in self.URL_MAPPINGS:
+            response = self.client.get(old_url)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['Location'], new_url)

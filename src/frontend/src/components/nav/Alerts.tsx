@@ -3,6 +3,7 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { t } from '@lingui/core/macro';
+import { useShallow } from 'zustand/react/shallow';
 import { docLinks } from '../../defaults/links';
 import { useServerApiState } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
@@ -26,7 +27,7 @@ interface AlertInfo {
  */
 export function Alerts() {
   const user = useUserState();
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const globalSettings = useGlobalSettingsState();
 
   const [dismissed, setDismissed] = useState<string[]>([]);

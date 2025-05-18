@@ -10,9 +10,8 @@ from django.views.generic.base import RedirectView
 
 import structlog
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import exceptions, permissions
+from rest_framework import exceptions
 from rest_framework.generics import DestroyAPIView, GenericAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 import InvenTree.helpers
@@ -51,6 +50,7 @@ class OwnerList(ListAPI):
 
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def filter_queryset(self, queryset):
         """Implement text search for the "owner" model.
@@ -114,12 +114,13 @@ class OwnerDetail(RetrieveAPI):
 
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
 
 class RoleDetails(RetrieveAPI):
     """API endpoint which lists the available role permissions for the current user."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = RoleSerializer
 
     def get_object(self):
@@ -149,7 +150,7 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
     """
 
     serializer_class = MeUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
 
@@ -206,7 +207,7 @@ class GroupMixin:
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
@@ -254,7 +255,7 @@ class RuleSetMixin:
 
     queryset = RuleSet.objects.all()
     serializer_class = RuleSetSerializer
-    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
 class RuleSetList(RuleSetMixin, ListAPI):
@@ -274,7 +275,7 @@ class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
 class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = GetAuthTokenSerializer
 
     @extend_schema(
@@ -343,7 +344,7 @@ class GetAuthToken(GenericAPIView):
 class TokenMixin:
     """Mixin for API token endpoints."""
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (InvenTree.permissions.IsAuthenticatedOrReadScope,)
     serializer_class = ApiTokenSerializer
 
     def get_queryset(self):
@@ -426,7 +427,7 @@ class UserProfileDetail(RetrieveUpdateAPI):
 
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def get_object(self):
         """Return the profile of the current user."""

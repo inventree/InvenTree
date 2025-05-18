@@ -152,7 +152,7 @@ This barcode can then be used to track the stock item.
 
 #### Print Label
 
-If the server supports [label printing plugins](../extend/plugins/label.md), then an option to print a label for the selected stock item:
+If the server supports [label printing plugins](../plugins/mixins/label.md), then an option to print a label for the selected stock item:
 
 {% with id="label_print_1", url="stock_print_label_1.png", description="Print label via plugin" %}
 {% include 'app_img.html' %}
