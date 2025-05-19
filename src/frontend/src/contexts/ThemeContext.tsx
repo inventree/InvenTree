@@ -13,6 +13,8 @@ import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
+import type { JSX } from 'react';
+
 export function ThemeContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
