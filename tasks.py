@@ -48,8 +48,8 @@ def is_pkg_installer(content: Optional[dict] = None, load_content: bool = False)
 
 def is_pkg_installer_by_path():
     """Check if the current environment is a package installer by checking the path."""
-    return len(sys.argv) == 1 and sys.argv[0].startswith(
-        '/opt/inventree/env/lib/python'
+    return len(sys.argv) >= 1 and sys.argv[0].startswith(
+        '/opt/inventree/env/bin/invoke'
     )
 
 
@@ -211,6 +211,10 @@ def envcheck_invoke_cmd():
         ref_name = 'rtd'
     elif is_pkg_installer(load_content=True):
         ref_name = 'pkg'
+        if not is_pkg_installer_by_path():
+            error('INVE-W8 - Wrong Invoke Environment')
+            error('Use the command `inventree run invoke` to run this script')
+            return
 
     if not ref_name:
         warning('Unknown environment, not checking used invoke command')
