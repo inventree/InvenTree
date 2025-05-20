@@ -220,9 +220,7 @@ def envcheck_invoke_cmd():
         warning('Unknown environment, not checking used invoke command')
     else:
         cmd = CMD_MAP[ref_name]
-        print('cmd:', cmd)
         first_cmd = sys.argv[0].replace(sys.prefix, '')
-        print('first_cmd:', first_cmd)
         if first_cmd not in cmd:
             error('INVE-W9 - Wrong Invoke Environment')
             error(
