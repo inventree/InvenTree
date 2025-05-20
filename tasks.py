@@ -39,6 +39,22 @@ def is_debug_environment():
     )
 
 
+def get_version_vals():
+    """Get values from the VERSION file."""
+    version_file = local_dir().joinpath('VERSION')
+    if not version_file.exists():
+        return {}
+    try:
+        from dotenv import dotenv_values
+
+        return dotenv_values(version_file)
+    except ImportError:
+        error(
+            'ERROR: dotenv package not installed. You might not be running in the right environment.'
+        )
+        return {}
+
+
 def is_pkg_installer(content: Optional[dict] = None, load_content: bool = False):
     """Check if the current environment is a package installer by VERSION/environment."""
     if load_content:
@@ -212,20 +228,18 @@ def envcheck_invoke_cmd():
         correct_cmd = correct_cmd if correct_cmd else 'invoke'
         error('INVE-W9 - Wrong Invoke Environment')
         error(
-            f'The detected invoke command `{first_cmd}` is not the intended one for this environment, ensure you are using one of the following commands `{correct_cmd}`'
+            f'The detected invoke command `{first_cmd}` is not the intended one for this environment, ensure you are using one of the following command(s) `{correct_cmd}`'
         )
 
 
 def main():
     """Main function to check the execution environment."""
     envcheck_invoke_version()
-    envcheck_invoke_path()
     envcheck_python_version()
+    envcheck_invoke_path()
     envcheck_invoke_cmd()
 
 
-if __name__ in ['__main__', 'tasks']:
-    main()
 # endregion
 
 
@@ -325,6 +339,9 @@ def manage_py_path():
 
 
 # endregion
+
+if __name__ in ['__main__', 'tasks']:
+    main()
 
 
 def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
@@ -1528,22 +1545,6 @@ def frontend_server(c):
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
     yarn(c, 'yarn run dev --host')
-
-
-def get_version_vals():
-    """Get values from the VERSION file."""
-    version_file = local_dir().joinpath('VERSION')
-    if not version_file.exists():
-        return {}
-    try:
-        from dotenv import dotenv_values
-
-        return dotenv_values(version_file)
-    except ImportError:
-        error(
-            'ERROR: dotenv package not installed. You might not be running in the right environment.'
-        )
-        return {}
 
 
 @task(
