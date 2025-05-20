@@ -41,7 +41,7 @@ def is_debug_environment():
 
 
 def is_pkg_installer(content: Optional[dict] = None):
-    """Check if the current environment is a package installer."""
+    """Check if the current environment is a package installer by VERSION/environment."""
     return get_installer(content) == 'PKG'
 
 
@@ -187,11 +187,43 @@ def envcheck_python_version():
         sys.exit(1)
 
 
+def envcheck_invoke_cmd():
+    """Checks if the rights invoke command for the current environment is used."""
+    DFLT_CMD = ['/bin/invoke', '/bin/inv']
+    CMD_MAP = {
+        'docker': DFLT_CMD,
+        'rtd': DFLT_CMD,
+        'pkg': ['inventree run invoke', 'inventree run cli'],
+    }
+
+    ref_name = None
+    if is_docker_environment():
+        ref_name = 'docker'
+    elif is_rtd_environment():
+        ref_name = 'rtd'
+    elif is_pkg_installer():
+        ref_name = 'pkg'
+
+    if not ref_name:
+        warning('Unknown environment, not checking used invoke command')
+    else:
+        cmd = CMD_MAP[ref_name]
+        print('cmd:', cmd)
+        first_cmd = sys.argv[0].replace(sys.prefix, '')
+        print('first_cmd:', first_cmd)
+        if first_cmd not in cmd:
+            error('INVE-W9 - Wrong Invoke Environment')
+            error(
+                f'The detected invoke command `{first_cmd}` is not the intended one for this environment, ensure you are using one of the following methods `{cmd}`'
+            )
+
+
 def main():
     """Main function to check the execution environment."""
     envcheck_invoke_version()
     envcheck_invoke_path()
     envcheck_python_version()
+    envcheck_invoke_cmd()
 
 
 if __name__ in ['__main__', 'tasks']:
