@@ -45,6 +45,13 @@ def is_pkg_installer(content: Optional[dict] = None):
     return get_installer(content) == 'PKG'
 
 
+def is_pkg_installer_by_path():
+    """Check if the current environment is a package installer by checking the path."""
+    return len(sys.argv) == 1 and sys.argv[0].startswith(
+        '/opt/inventree/env/lib/python'
+    )
+
+
 def get_installer(content: Optional[dict] = None):
     """Get the installer for the current environment or a content dict."""
     if content is None:
@@ -1448,11 +1455,12 @@ Yarn        {yarn if yarn else NA}
 Environment:
 Docker      {is_docker_environment()}
 RTD         {is_rtd_environment()}
+PKG         {is_pkg_installer()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     )
-    if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
+    if is_pkg_installer_by_path():
         print(
             """
 You are probably running the package installer / single-line installer. Please mention this in any bug reports!
