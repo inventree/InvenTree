@@ -197,35 +197,23 @@ def envcheck_python_version():
 
 def envcheck_invoke_cmd():
     """Checks if the rights invoke command for the current environment is used."""
-    DFLT_CMD = ['/bin/invoke', '/bin/inv']
-    CMD_MAP = {
-        'docker': DFLT_CMD,
-        'rtd': DFLT_CMD,
-        'pkg': ['inventree run invoke', 'inventree run cli'],
-    }
+    first_cmd = sys.argv[0].replace(sys.prefix, '')
+    intendded = ['/bin/invoke', '/bin/inv']
 
-    ref_name = None
-    if is_docker_environment():
-        ref_name = 'docker'
-    elif is_rtd_environment():
-        ref_name = 'rtd'
-    elif is_pkg_installer(load_content=True):
-        ref_name = 'pkg'
-        if not is_pkg_installer_by_path():
-            error('INVE-W8 - Wrong Invoke Environment')
-            error('Use the command `inventree run invoke` to run this script')
-            return
-
-    if not ref_name:
-        warning('Unknown environment, not checking used invoke command')
+    correct_cmd: Optional[str] = None
+    if is_rtd_environment() or is_docker_environment():
+        pass
+    elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
+        correct_cmd = 'inventree run invoke'
     else:
-        cmd = CMD_MAP[ref_name]
-        first_cmd = sys.argv[0].replace(sys.prefix, '')
-        if first_cmd not in cmd:
-            error('INVE-W9 - Wrong Invoke Environment')
-            error(
-                f'The detected invoke command `{first_cmd}` is not the intended one for this environment, ensure you are using one of the following methods `{cmd}`'
-            )
+        warning('Unknown environment, not checking used invoke command')
+
+    if first_cmd not in intendded:
+        correct_cmd = correct_cmd if correct_cmd else 'invoke'
+        error('INVE-W9 - Wrong Invoke Environment')
+        error(
+            f'The detected invoke command `{first_cmd}` is not the intended one for this environment, ensure you are using one of the following commands `{correct_cmd}`'
+        )
 
 
 def main():
