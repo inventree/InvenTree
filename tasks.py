@@ -40,6 +40,18 @@ def is_debug_environment():
     )
 
 
+def is_pkg_installer(content: Optional[dict] = None):
+    """Check if the current environment is a package installer."""
+    return get_installer(content) == 'PKG'
+
+
+def get_installer(content: Optional[dict] = None):
+    """Get the installer for the current environment or a content dict."""
+    if content is None:
+        content = os.environ
+    return content.get('INVENTREE_PKG_INSTALLER', None)
+
+
 # region execution logging helpers
 def task_exception_handler(t, v, tb):
     """Handle exceptions raised by tasks.
@@ -1487,6 +1499,22 @@ def frontend_server(c):
     yarn(c, 'yarn run dev --host')
 
 
+def get_version_vals():
+    """Get values from the VERSION file."""
+    version_file = local_dir().joinpath('VERSION')
+    if not version_file.exists():
+        return {}
+    try:
+        from dotenv import dotenv_values
+
+        return dotenv_values(version_file)
+    except ImportError:
+        error(
+            'ERROR: dotenv package not installed. You might not be running in the right environment.'
+        )
+        return {}
+
+
 @task(
     help={
         'ref': 'git ref, default: current git ref',
@@ -1627,16 +1655,8 @@ def frontend_download(
             ).strip()
         except Exception:
             # .deb Packages contain extra information in the VERSION file
-            version_file = local_dir().joinpath('VERSION')
-            if not version_file.exists():
-                return
-            from dotenv import dotenv_values
-
-            content = dotenv_values(version_file)
-            if (
-                'INVENTREE_PKG_INSTALLER' in content
-                and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
-            ):
+            content: dict = get_version_vals()
+            if is_pkg_installer(content):
                 ref = content.get('INVENTREE_COMMIT_SHA')
                 info(
                     f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
