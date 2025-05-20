@@ -17,24 +17,23 @@ from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
 
+def is_true(x):
+    """Shortcut function to determine if a value "looks" like a boolean."""
+    return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
+
+
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
-    from src.backend.InvenTree.InvenTree.config import is_true
-
     return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
 
 
 def is_rtd_environment():
     """Check if the InvenTree environment is running on ReadTheDocs."""
-    from src.backend.InvenTree.InvenTree.config import is_true
-
     return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
 def is_debug_environment():
     """Check if the InvenTree environment is running in a debug environment."""
-    from src.backend.InvenTree.InvenTree.config import is_true
-
     return is_true(os.environ.get('INVENTREE_DEBUG', 'False')) or is_true(
         os.environ.get('RUNNER_DEBUG', 'False')
     )
