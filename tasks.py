@@ -121,7 +121,7 @@ def state_logger(fn=None, method_name=None):
 
 
 # region environment checks
-def check_invoke_version():
+def envcheck_invoke_version():
     """Check that the installed invoke version meets minimum requirements."""
     MIN_INVOKE_VERSION: str = '2.0.0'
 
@@ -134,7 +134,7 @@ def check_invoke_version():
         sys.exit(1)
 
 
-def check_invoke_path():
+def envcheck_invoke_path():
     """Check that the path of the used invoke is correct."""
     if is_docker_environment() or is_rtd_environment():
         return
@@ -152,7 +152,7 @@ def check_invoke_path():
         sys.exit(1)
 
 
-def check_python_version():
+def envcheck_python_version():
     """Check that the installed python version meets minimum requirements.
 
     If the python version is not sufficient, exits with a non-zero exit code.
@@ -177,9 +177,9 @@ def check_python_version():
 
 def main():
     """Main function to check the execution environment."""
-    check_invoke_version()
-    check_invoke_path()
-    check_python_version()
+    envcheck_invoke_version()
+    envcheck_invoke_path()
+    envcheck_python_version()
 
 
 if __name__ in ['__main__', 'tasks']:
