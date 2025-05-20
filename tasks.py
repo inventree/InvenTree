@@ -39,8 +39,10 @@ def is_debug_environment():
     )
 
 
-def is_pkg_installer(content: Optional[dict] = None):
+def is_pkg_installer(content: Optional[dict] = None, load_content: bool = False):
     """Check if the current environment is a package installer by VERSION/environment."""
+    if load_content:
+        content = get_version_vals()
     return get_installer(content) == 'PKG'
 
 
@@ -207,7 +209,7 @@ def envcheck_invoke_cmd():
         ref_name = 'docker'
     elif is_rtd_environment():
         ref_name = 'rtd'
-    elif is_pkg_installer():
+    elif is_pkg_installer(load_content=True):
         ref_name = 'pkg'
 
     if not ref_name:
