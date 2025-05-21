@@ -7,6 +7,7 @@ from typing import Optional
 import requests
 import structlog
 
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
 
 logger = structlog.get_logger('inventree')
@@ -72,7 +73,7 @@ class APICallMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('api_call', 'has_api_call', __class__)
+        self.add_mixin(PluginMixinEnum.API_CALL, 'has_api_call', __class__)
 
     @property
     def has_api_call(self):

@@ -55,6 +55,7 @@ export const setTableChoiceFilter = async (page, filter, value) => {
   await page.getByPlaceholder('Select filter value').click();
   await page.getByRole('option', { name: value }).click();
 
+  await page.waitForLoadState('networkidle');
   await closeFilterDrawer(page);
 };
 
@@ -86,8 +87,7 @@ export const navigate = async (page, url: string) => {
     url = `${baseUrl}/${url}`;
   }
 
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
-  await page.waitForLoadState('networkidle');
+  await page.goto(url);
 };
 
 /**
@@ -98,6 +98,17 @@ export const loadTab = async (page, tabName) => {
     .getByLabel(/panel-tabs-/)
     .getByRole('tab', { name: tabName })
     .click();
+};
+
+// Activate "table" view in certain contexts
+export const activateTableView = async (page) => {
+  await page.getByLabel('segmented-icon-control-table').click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Activate "calendar" view in certain contexts
+export const activateCalendarView = async (page) => {
+  await page.getByLabel('segmented-icon-control-calendar').click();
   await page.waitForLoadState('networkidle');
 };
 
@@ -109,5 +120,4 @@ export const globalSearch = async (page, query) => {
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
-  await page.waitForLoadState('networkidle');
 };

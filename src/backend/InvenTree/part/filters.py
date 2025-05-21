@@ -112,8 +112,8 @@ def annotate_total_stock(reference: str = '', filter: Q = None):
     - Aggregates the 'quantity' of each relevant stock item
 
     Args:
-        reference: The relationship reference of the part from the current model e.g. 'part'
-        stock_filter: Q object which defines how to filter the stock items
+        reference (str): The relationship reference of the part from the current model e.g. 'part'
+        filter (Q): Q object which defines how to filter the stock items
     """
     # Stock filter only returns 'in stock' items
     stock_filter = stock.models.StockItem.IN_STOCK_FILTER

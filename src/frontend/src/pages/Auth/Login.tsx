@@ -1,8 +1,11 @@
-import { Trans, t } from '@lingui/macro';
-import { Anchor, Divider, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Anchor, Divider, Group, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+
+import { useShallow } from 'zustand/react/shallow';
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
@@ -18,15 +21,13 @@ import { useLocalState } from '../../states/LocalState';
 import { Wrapper } from './Layout';
 
 export default function Login() {
-  const [hostKey, setHost, hostList] = useLocalState((state) => [
-    state.hostKey,
-    state.setHost,
-    state.hostList
-  ]);
-  const [server, fetchServerApiState] = useServerApiState((state) => [
-    state.server,
-    state.fetchServerApiState
-  ]);
+  const [hostKey, setHost, hostList] = useLocalState(
+    useShallow((state) => [state.hostKey, state.setHost, state.hostList])
+  );
+  const [server, fetchServerApiState] = useServerApiState(
+    useShallow((state) => [state.server, state.fetchServerApiState])
+  );
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
@@ -34,7 +35,10 @@ export default function Login() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const [sso_registration, registration_enabled] = useServerApiState(
-    (state) => [state.sso_registration_enabled, state.registration_enabled]
+    useShallow((state) => [
+      state.sso_registration_enabled,
+      state.registration_enabled
+    ])
   );
   const both_reg_enabled =
     registration_enabled() || sso_registration() || false;
@@ -73,6 +77,7 @@ export default function Login() {
 
     // check if we got login params (login and password)
     if (searchParams.has('login') && searchParams.has('password')) {
+      setIsLoggingIn(true);
       doBasicLogin(
         searchParams.get('login') ?? '',
         searchParams.get('password') ?? '',
@@ -94,22 +99,33 @@ export default function Login() {
       ) : (
         <>
           <Wrapper titleText={t`Login`} smallPadding>
-            <AuthenticationForm />
-            {both_reg_enabled === false && (
-              <Text ta='center' size={'xs'} mt={'md'}>
-                <Trans>Don&apos;t have an account?</Trans>{' '}
-                <Anchor
-                  component='button'
-                  type='button'
-                  c='dimmed'
-                  size='xs'
-                  onClick={() => navigate('/register')}
-                >
-                  <Trans>Register</Trans>
-                </Anchor>
-              </Text>
+            {isLoggingIn ? (
+              <>
+                <Group justify='center'>
+                  <Loader />
+                </Group>
+                <Trans>Logging you in</Trans>
+              </>
+            ) : (
+              <>
+                <AuthenticationForm />
+                {both_reg_enabled === false && (
+                  <Text ta='center' size={'xs'} mt={'md'}>
+                    <Trans>Don&apos;t have an account?</Trans>{' '}
+                    <Anchor
+                      component='button'
+                      type='button'
+                      c='dimmed'
+                      size='xs'
+                      onClick={() => navigate('/register')}
+                    >
+                      <Trans>Register</Trans>
+                    </Anchor>
+                  </Text>
+                )}
+                {LoginMessage}{' '}
+              </>
             )}
-            {LoginMessage}
           </Wrapper>
           <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
         </>

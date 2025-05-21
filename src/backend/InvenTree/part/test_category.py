@@ -127,9 +127,7 @@ class CategoryTest(TestCase):
 
     def test_url(self):
         """Test that the PartCategory URL works."""
-        self.assertEqual(
-            self.capacitors.get_absolute_url(), '/platform/part/category/3'
-        )
+        self.assertEqual(self.capacitors.get_absolute_url(), '/web/part/category/3')
 
     def test_part_count(self):
         """Test that the Category part count works."""

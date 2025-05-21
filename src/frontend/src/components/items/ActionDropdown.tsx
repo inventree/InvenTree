@@ -1,6 +1,7 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Button,
+  type FloatingPosition,
   Indicator,
   type IndicatorProps,
   Menu,
@@ -19,7 +20,7 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
@@ -43,6 +44,7 @@ export type ActionDropdownItem = {
 export function ActionDropdown({
   icon,
   tooltip,
+  tooltipPosition,
   actions,
   disabled = false,
   hidden = false,
@@ -50,6 +52,7 @@ export function ActionDropdown({
 }: {
   icon: ReactNode;
   tooltip: string;
+  tooltipPosition?: FloatingPosition;
   actions: ActionDropdownItem[];
   disabled?: boolean;
   hidden?: boolean;
@@ -71,7 +74,11 @@ export function ActionDropdown({
     <Menu position='bottom-end' key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
-          <Tooltip label={tooltip} hidden={!tooltip} position='bottom'>
+          <Tooltip
+            label={tooltip}
+            hidden={!tooltip}
+            position={tooltipPosition ?? 'bottom'}
+          >
             <Button
               variant={noindicator ? 'transparent' : 'light'}
               disabled={disabled}

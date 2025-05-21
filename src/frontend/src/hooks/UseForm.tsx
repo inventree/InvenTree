@@ -1,28 +1,14 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { type ApiFormProps, OptionsApiForm } from '../components/forms/ApiForm';
-import type { UiSizeType } from '../defaults/formatters';
+import type {
+  ApiFormModalProps,
+  BulkEditApiFormModalProps
+} from '@lib/types/Forms';
+import { OptionsApiForm } from '../components/forms/ApiForm';
 import { useModal } from './UseModal';
-
-/**
- * @param title : The title to display in the modal header
- * @param cancelText : Optional custom text to display on the cancel button (default: Cancel)
- * @param cancelColor : Optional custom color for the cancel button (default: blue)
- * @param onClose : A callback function to call when the modal is closed.
- * @param onOpen : A callback function to call when the modal is opened.
- */
-export interface ApiFormModalProps extends ApiFormProps {
-  title: string;
-  cancelText?: string;
-  cancelColor?: string;
-  onClose?: () => void;
-  onOpen?: () => void;
-  closeOnClickOutside?: boolean;
-  size?: UiSizeType;
-}
 
 /**
  * Construct and open a modal form
@@ -44,12 +30,14 @@ export function useApiFormModal(props: ApiFormModalProps) {
           }
         }
       ],
-      onFormSuccess: (data) => {
-        modalClose.current();
-        props.onFormSuccess?.(data);
+      onFormSuccess: (data, form) => {
+        if (props.checkClose?.(data, form) ?? true) {
+          modalClose.current();
+        }
+        props.onFormSuccess?.(data, form);
       },
-      onFormError: (error: any) => {
-        props.onFormError?.(error);
+      onFormError: (error: any, form) => {
+        props.onFormError?.(error, form);
       }
     }),
     [props]
@@ -88,7 +76,7 @@ export function useCreateApiFormModal(props: ApiFormModalProps) {
         props.successMessage === null
           ? null
           : (props.successMessage ?? t`Item Created`),
-      method: 'POST'
+      method: props.method ?? 'POST'
     }),
     [props]
   );
@@ -108,12 +96,43 @@ export function useEditApiFormModal(props: ApiFormModalProps) {
         props.successMessage === null
           ? null
           : (props.successMessage ?? t`Item Updated`),
-      method: 'PATCH'
+      method: props.method ?? 'PATCH'
     }),
     [props]
   );
 
   return useApiFormModal(editProps);
+}
+
+export function useBulkEditApiFormModal({
+  items,
+  ...props
+}: BulkEditApiFormModalProps) {
+  const bulkEditProps = useMemo<ApiFormModalProps>(
+    () => ({
+      ...props,
+      method: 'PATCH',
+      submitText: props.submitText ?? t`Update`,
+      successMessage:
+        props.successMessage === null
+          ? null
+          : (props.successMessage ?? t`Items Updated`),
+      preFormContent: props.preFormContent ?? (
+        <Alert color={'blue'}>{t`Update multiple items`}</Alert>
+      ),
+      fields: {
+        ...props.fields,
+        items: {
+          hidden: true,
+          field_type: 'number',
+          value: items
+        }
+      }
+    }),
+    [props, items]
+  );
+
+  return useApiFormModal(bulkEditProps);
 }
 
 /**
@@ -123,7 +142,7 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
   const deleteProps = useMemo<ApiFormModalProps>(
     () => ({
       ...props,
-      method: 'DELETE',
+      method: props.method ?? 'DELETE',
       submitText: t`Delete`,
       submitColor: 'red',
       successMessage:

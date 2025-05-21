@@ -5,15 +5,17 @@ import {
   loadTab,
   navigate
 } from '../helpers';
-import { doQuickLogin } from '../login';
+import { doCachedLogin } from '../login';
 
 /**
  * CHeck each panel tab for the "Parts" page
  */
-test('Parts - Tabs', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Tabs', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Parts' }).click();
+  await page.waitForURL('**/part/category/index/**');
+
   await page
     .getByLabel('panel-tabs-partcategory')
     .getByRole('tab', { name: 'Parts' })
@@ -22,6 +24,7 @@ test('Parts - Tabs', async ({ page }) => {
   // Select a particular part from the table
   await clearTableFilters(page);
   await page.getByPlaceholder('Search').fill('1551');
+  await page.waitForLoadState('networkidle');
   await page.getByText('1551ABK').click();
 
   await loadTab(page, 'Allocations');
@@ -55,10 +58,8 @@ test('Parts - Tabs', async ({ page }) => {
   await loadTab(page, 'Build Orders');
 });
 
-test('Parts - Manufacturer Parts', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'part/84/suppliers');
+test('Parts - Manufacturer Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/84/suppliers' });
 
   await loadTab(page, 'Suppliers');
   await page.getByText('Hammond Manufacturing').click();
@@ -68,10 +69,8 @@ test('Parts - Manufacturer Parts', async ({ page }) => {
   await page.getByText('1551ACLR - 1551ACLR').waitFor();
 });
 
-test('Parts - Supplier Parts', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'part/15/suppliers');
+test('Parts - Supplier Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/15/suppliers' });
 
   await loadTab(page, 'Suppliers');
   await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
@@ -81,11 +80,65 @@ test('Parts - Supplier Parts', async ({ page }) => {
   await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
 });
 
-test('Parts - Locking', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - BOM', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/87/bom' });
 
-  // Navigate to a known assembly which is *not* locked
-  await navigate(page, 'part/104/bom');
+  await loadTab(page, 'Bill of Materials');
+  await page.waitForLoadState('networkidle');
+
+  const cell = await page.getByRole('cell', {
+    name: 'Small plastic enclosure, black',
+    exact: true
+  });
+  await cell.click({ button: 'right' });
+
+  // Check for expected context menu actions
+  await page.getByRole('button', { name: 'Edit', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Delete', exact: true }).waitFor();
+  await page
+    .getByRole('button', { name: 'View details', exact: true })
+    .waitFor();
+
+  await page
+    .getByRole('button', { name: 'Edit Substitutes', exact: true })
+    .click();
+  await page.getByText('Edit BOM Substitutes').waitFor();
+  await page.getByText('1551ACLR').first().waitFor();
+  await page.getByText('1551AGY').first().waitFor();
+
+  await page.getByLabel('related-field-part').fill('enclosure');
+  await page.getByText('1591BTBU').click();
+
+  await page.getByRole('button', { name: 'Add Substitute' }).waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+});
+
+test('Part - Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/details' });
+
+  await page.getByText('A square table - with blue paint').first().waitFor();
+
+  // Open part edit dialog
+  await page.keyboard.press('Control+E');
+
+  const keywords = await page.getByLabel('text-field-keywords').inputValue();
+  await page
+    .getByLabel('text-field-keywords')
+    .fill(keywords ? '' : 'table furniture');
+
+  // Test URL validation
+  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Enter a valid URL.').waitFor();
+
+  // Fill with an empty URL
+  await page.getByLabel('text-field-link').fill('');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Updated').waitFor();
+});
+
+test('Parts - Locking', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/bom' });
   await loadTab(page, 'Bill of Materials');
   await page.getByLabel('action-button-add-bom-item').waitFor();
   await loadTab(page, 'Parameters');
@@ -107,11 +160,9 @@ test('Parts - Locking', async ({ page }) => {
   await page.getByText('Part parameters cannot be').waitFor();
 });
 
-test('Parts - Allocations', async ({ page }) => {
-  await doQuickLogin(page);
-
+test('Parts - Allocations', async ({ browser }) => {
   // Let's look at the allocations for a single stock item
-  await navigate(page, 'stock/item/324/');
+  const page = await doCachedLogin(browser, { url: 'stock/item/324/' });
   await loadTab(page, 'Allocations');
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
@@ -172,11 +223,9 @@ test('Parts - Allocations', async ({ page }) => {
   await page.keyboard.press('Escape');
 });
 
-test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
-  await doQuickLogin(page);
-
+test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   // Part with no history
-  await navigate(page, 'part/82/pricing');
+  const page = await doCachedLogin(browser, { url: 'part/82/pricing' });
 
   await page.getByText('Small plastic enclosure, black').waitFor();
   await loadTab(page, 'Part Pricing');
@@ -222,11 +271,9 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.waitForURL('**/part/98/**');
 });
 
-test('Parts - Pricing (Supplier)', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Pricing (Supplier)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/55/pricing' });
 
-  // Part
-  await navigate(page, 'part/55/pricing');
   await page.getByText('Ceramic capacitor, 100nF in').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -248,11 +295,8 @@ test('Parts - Pricing (Supplier)', async ({ page }) => {
   // await page.waitForURL('**/purchasing/supplier-part/697/');
 });
 
-test('Parts - Pricing (Variant)', async ({ page }) => {
-  await doQuickLogin(page);
-
-  // Part
-  await navigate(page, 'part/106/pricing');
+test('Parts - Pricing (Variant)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/106/pricing' });
   await page.getByText('A chair - available in multiple colors').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -274,11 +318,8 @@ test('Parts - Pricing (Variant)', async ({ page }) => {
   await page.waitForURL('**/part/109/**');
 });
 
-test('Parts - Pricing (Internal)', async ({ page }) => {
-  await doQuickLogin(page);
-
-  // Part
-  await navigate(page, 'part/65/pricing');
+test('Parts - Pricing (Internal)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/65/pricing' });
   await page.getByText('Socket head cap screw, M2').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -299,11 +340,9 @@ test('Parts - Pricing (Internal)', async ({ page }) => {
   await page.getByText('Part *M2x4 SHCSSocket head').click();
 });
 
-test('Parts - Pricing (Purchase)', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Pricing (Purchase)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/pricing' });
 
-  // Part
-  await navigate(page, 'part/69/pricing');
   await page.getByText('1.25mm Pitch, PicoBlade PCB').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -321,10 +360,8 @@ test('Parts - Pricing (Purchase)', async ({ page }) => {
   await page.getByText('2022-04-29').waitFor();
 });
 
-test('Parts - Attachments', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'part/69/attachments');
+test('Parts - Attachments', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/attachments' });
 
   // Submit a new external link
   await page.getByLabel('action-button-add-external-').click();
@@ -343,10 +380,8 @@ test('Parts - Attachments', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Parts - Parameters', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'part/69/parameters');
+test('Parts - Parameters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
 
   // Create a new template
   await page.getByLabel('action-button-add-parameter').click();
@@ -370,10 +405,8 @@ test('Parts - Parameters', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Parts - Notes', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'part/69/notes');
+test('Parts - Notes', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/notes' });
 
   // Enable editing
   await page.getByLabel('Enable Editing').waitFor();
@@ -392,20 +425,16 @@ test('Parts - Notes', async ({ page }) => {
   await page.getByLabel('Close Editor').waitFor();
 });
 
-test('Parts - 404', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'part/99999/');
+test('Parts - 404', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/99999/' });
   await page.getByText('Page Not Found', { exact: true }).waitFor();
 
   // Clear out any console error messages
   await page.evaluate(() => console.clear());
 });
 
-test('Parts - Revision', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await navigate(page, 'part/906/details');
+test('Parts - Revision', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/906/details' });
 
   await page.getByText('Revision of').waitFor();
   await page.getByText('Select Part Revision').waitFor();
@@ -416,6 +445,26 @@ test('Parts - Revision', async ({ page }) => {
     .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
     .click();
 
-  await page.waitForURL('**/platform/part/101/**');
+  await page.waitForURL('**/web/part/101/**');
   await page.getByText('Select Part Revision').waitFor();
+});
+
+test('Parts - Bulk Edit', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
+
+  // Edit the category for multiple parts
+  await page.getByLabel('Select record 1', { exact: true }).click();
+  await page.getByLabel('Select record 2', { exact: true }).click();
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-set-category').click();
+  await page.getByLabel('related-field-category').fill('rnitu');
+  await page
+    .getByRole('option', { name: '- Furniture/Chairs' })
+    .getByRole('paragraph')
+    .click();
+
+  await page.getByRole('button', { name: 'Update' }).click();
+  await page.getByText('Items Updated').waitFor();
 });

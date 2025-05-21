@@ -110,9 +110,9 @@ def reload_plugin_registry(setting):
 def barcode_plugins() -> list:
     """Return a list of plugin choices which can be used for barcode generation."""
     try:
-        from plugin import registry
+        from plugin import PluginMixinEnum, registry
 
-        plugins = registry.with_mixin('barcode', active=True)
+        plugins = registry.with_mixin(PluginMixinEnum.BARCODE, active=True)
     except Exception:  # pragma: no cover
         plugins = []
 

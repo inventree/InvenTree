@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconChecklist,
@@ -13,6 +13,11 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -37,18 +42,13 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
@@ -99,6 +99,14 @@ export default function BuildDetail() {
         icon: 'part',
         label: t`IPN`,
         hidden: !build.part_detail?.IPN,
+        copy: true
+      },
+      {
+        type: 'string',
+        name: 'part_detail.revision',
+        icon: 'revision',
+        label: t`Revision`,
+        hidden: !build.part_detail?.revision,
         copy: true
       },
       {
@@ -182,6 +190,40 @@ export default function BuildDetail() {
         hidden: !build.responsible
       },
       {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !build.project_code
+      },
+      {
+        type: 'link',
+        name: 'take_from',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Source Location`,
+        backup_value: t`Any location`
+      },
+      {
+        type: 'link',
+        name: 'destination',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Destination Location`,
+        hidden: !build.destination
+      },
+      {
+        type: 'text',
+        name: 'batch',
+        label: t`Batch Code`,
+        hidden: !build.batch,
+        copy: true
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
         type: 'date',
         name: 'creation_date',
         label: t`Created`,
@@ -212,40 +254,6 @@ export default function BuildDetail() {
         icon: 'calendar',
         copy: true,
         hidden: !build.completion_date
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !build.project_code
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'link',
-        name: 'take_from',
-        icon: 'location',
-        model: ModelType.stocklocation,
-        label: t`Source Location`,
-        backup_value: t`Any location`
-      },
-      {
-        type: 'link',
-        name: 'destination',
-        icon: 'location',
-        model: ModelType.stocklocation,
-        label: t`Destination Location`,
-        hidden: !build.destination
-      },
-      {
-        type: 'text',
-        name: 'batch',
-        label: t`Batch Code`,
-        hidden: !build.batch,
-        copy: true
       }
     ];
 
@@ -561,6 +569,7 @@ export default function BuildDetail() {
             pageKey='build'
             panels={buildPanels}
             instance={build}
+            reloadInstance={refreshInstance}
             model={ModelType.build}
             id={build.pk}
           />

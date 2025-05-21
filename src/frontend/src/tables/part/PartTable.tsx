@@ -1,24 +1,27 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useBulkEditApiFormModal,
+  useCreateApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -341,6 +344,16 @@ export function PartListTable({
     modelType: ModelType.part
   });
 
+  const setCategory = useBulkEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    items: table.selectedIds,
+    title: t`Set Category`,
+    fields: {
+      category: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
 
   const tableActions = useMemo(() => {
@@ -351,9 +364,20 @@ export function PartListTable({
         disabled={!table.hasSelectedRecords}
         actions={[
           {
+            name: t`Set Category`,
+            icon: <InvenTreeIcon icon='category' />,
+            tooltip: t`Set category for selected parts`,
+            hidden: !user.hasChangeRole(UserRoles.part),
+            disabled: !table.hasSelectedRecords,
+            onClick: () => {
+              setCategory.open();
+            }
+          },
+          {
             name: t`Order Parts`,
             icon: <IconShoppingCart color='blue' />,
             tooltip: t`Order selected parts`,
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
             onClick: () => {
               orderPartsWizard.openWizard();
             }
@@ -372,6 +396,7 @@ export function PartListTable({
   return (
     <>
       {newPart.modal}
+      {setCategory.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}

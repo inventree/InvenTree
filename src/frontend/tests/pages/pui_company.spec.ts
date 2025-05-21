@@ -1,9 +1,9 @@
 import { test } from '../baseFixtures.js';
 import { loadTab, navigate } from '../helpers.js';
-import { doQuickLogin } from '../login.js';
+import { doCachedLogin } from '../login.js';
 
-test('Company', async ({ page }) => {
-  await doQuickLogin(page);
+test('Company', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'company/1/details');
   await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();

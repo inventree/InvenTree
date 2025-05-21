@@ -5,16 +5,16 @@ import inspect
 from django.urls import include, path
 
 from drf_spectacular.utils import OpenApiResponse, extend_schema
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 import common.models
 import common.serializers
-from importer.mixins import DataExportViewMixin
+import InvenTree.permissions
+from data_exporter.mixins import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
-from InvenTree.permissions import IsStaffOrReadOnly
 from InvenTree.serializers import EmptySerializer
 
 from .serializers import GenericStateClassSerializer
@@ -36,7 +36,7 @@ class StatusView(GenericAPIView):
     all available 'StockStatus' codes
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = GenericStateClassSerializer
 
     # Override status_class for implementing subclass
@@ -96,9 +96,10 @@ class StatusView(GenericAPIView):
 class AllStatusViews(StatusView):
     """Endpoint for listing all defined status models."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = EmptySerializer
 
+    @extend_schema(operation_id='generic_status_retrieve_all')
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
         from InvenTree.helpers import inheritors
@@ -135,7 +136,7 @@ class CustomStateList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
     serializer_class = common.serializers.CustomStateSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['key']
     search_fields = ['key', 'name', 'label', 'reference_status']
@@ -147,7 +148,7 @@ class CustomStateDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
     serializer_class = common.serializers.CustomStateSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
 urlpattern = [

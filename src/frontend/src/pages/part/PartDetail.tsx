@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   Center,
@@ -20,6 +20,7 @@ import {
   IconListTree,
   IconLock,
   IconPackages,
+  IconSearch,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -33,8 +34,15 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
+import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
   type DetailsField,
   DetailsTable
@@ -42,7 +50,6 @@ import {
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -63,24 +70,20 @@ import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
   useCountStockItem,
+  useFindSerialNumberForm,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -156,7 +159,7 @@ export default function PartDetail() {
       data.latest_serial_number = serials.latest;
     }
 
-    // Construct the details tables
+    // Top left - core part information
     const tl: DetailsField[] = [
       {
         type: 'string',
@@ -243,6 +246,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Top right - stock availability information
     const tr: DetailsField[] = [
       {
         type: 'string',
@@ -324,6 +328,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Bottom left - part attributes
     const bl: DetailsField[] = [
       {
         type: 'boolean',
@@ -386,6 +391,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Bottom right - other part information
     const br: DetailsField[] = [
       {
         type: 'string',
@@ -413,6 +419,16 @@ export default function PartDetail() {
         label: t`Default Supplier`,
         model: ModelType.supplierpart,
         hidden: !part.default_supplier
+      },
+      {
+        name: 'default_expiry',
+        label: t`Default Expiry`,
+        hidden: !part.default_expiry,
+        icon: 'calendar',
+        type: 'string',
+        value_formatter: () => {
+          return `${part.default_expiry} ${t`days`}`;
+        }
       }
     ];
 
@@ -878,9 +894,19 @@ export default function PartDetail() {
     parts: [part]
   });
 
+  const findBySerialNumber = useFindSerialNumberForm({ partId: part.pk });
+
   const partActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.part} id={part.pk} />,
+      <StarredToggleButton
+        key='starred_change'
+        instance={part}
+        model={ModelType.part}
+        successFunction={() => {
+          refreshInstance();
+        }}
+      />,
       <BarcodeActionDropdown
         model={ModelType.part}
         pk={part.pk}
@@ -931,6 +957,13 @@ export default function PartDetail() {
             onClick: () => {
               orderPartsWizard.openWizard();
             }
+          },
+          {
+            name: t`Search`,
+            tooltip: t`Search by serial number`,
+            hidden: !part.trackable,
+            icon: <IconSearch />,
+            onClick: findBySerialNumber.open
           }
         ]}
       />,
@@ -967,6 +1000,7 @@ export default function PartDetail() {
       {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
+      {findBySerialNumber.modal}
       {orderPartsWizard.wizard}
       <InstanceDetail
         status={requestStatus}
@@ -1050,6 +1084,7 @@ export default function PartDetail() {
             pageKey='part'
             panels={partPanels}
             instance={part}
+            reloadInstance={refreshInstance}
             model={ModelType.part}
             id={part.pk}
           />

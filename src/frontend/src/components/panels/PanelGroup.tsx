@@ -28,15 +28,17 @@ import {
   useParams
 } from 'react-router-dom';
 
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
+import { cancelEvent } from '@lib/functions/Events';
+import { navigateToLink } from '@lib/functions/Navigation';
+import { useShallow } from 'zustand/react/shallow';
 import { identifierString } from '../../functions/conversion';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 import type { PanelType } from '../panels/Panel';
+import * as classes from './PanelGroup.css';
 
 /**
  * Set of properties which define a panel group:
@@ -46,6 +48,7 @@ import type { PanelType } from '../panels/Panel';
  * @param model - The target model for this panel group (e.g. 'part' / 'salesorder')
  * @param id - The target ID for this panel group (set to *null* for groups which do not target a specific model instance)
  * @param instance - The target model instance for this panel group
+ * @param reloadInstance - Function to reload the model instance
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
@@ -54,6 +57,7 @@ export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
   instance?: any;
+  reloadInstance?: () => void;
   model?: ModelType | string;
   id?: number | null;
   selectedPanel?: string;
@@ -66,6 +70,7 @@ function BasePanelGroup({
   panels,
   onPanelChange,
   selectedPanel,
+  reloadInstance,
   instance,
   model,
   id,
@@ -81,9 +86,10 @@ function BasePanelGroup({
 
   // Hook to load plugins for this panel
   const pluginPanelSet = usePluginPanels({
+    id: id,
     model: model,
     instance: instance,
-    id: id
+    reloadFunc: reloadInstance
   });
 
   // Rebuild the list of panels
@@ -161,6 +167,7 @@ function BasePanelGroup({
           orientation='vertical'
           keepMounted={false}
           aria-label={`panel-group-${pageKey}`}
+          classNames={{ tab: classes.selectedPanelTab }}
         >
           <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
             {allPanels.map(
@@ -227,7 +234,14 @@ function BasePanelGroup({
                   <Stack gap='md'>
                     {panel.showHeadline !== false && (
                       <>
-                        <StylishText size='xl'>{panel.label}</StylishText>
+                        <Group justify='space-between'>
+                          <StylishText size='xl'>{panel.label}</StylishText>
+                          {panel.controls && (
+                            <Group justify='right' wrap='nowrap'>
+                              {panel.controls}
+                            </Group>
+                          )}
+                        </Group>
                         <Divider />
                       </>
                     )}
@@ -249,19 +263,21 @@ function IndexPanelComponent({
   selectedPanel,
   panels
 }: Readonly<PanelProps>) {
-  const lastUsedPanel = useLocalState((state) => {
-    const panelName =
-      selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+  const lastUsedPanel = useLocalState(
+    useShallow((state) => {
+      const panelName =
+        selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
 
-    const panel = panels.findIndex(
-      (p) => p.name === panelName && !p.disabled && !p.hidden
-    );
-    if (panel === -1) {
-      return panels.find((p) => !p.disabled && !p.hidden)?.name || '';
-    }
+      const panel = panels.findIndex(
+        (p) => p.name === panelName && !p.disabled && !p.hidden
+      );
+      if (panel === -1) {
+        return panels.find((p) => !p.disabled && !p.hidden)?.name || '';
+      }
 
-    return panelName;
-  });
+      return panelName;
+    })
+  );
 
   return <Navigate to={lastUsedPanel} replace />;
 }

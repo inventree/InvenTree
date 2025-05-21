@@ -1,66 +1,15 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
-
-/**
- * Interface for the table filter choice
- */
-export type TableFilterChoice = {
-  value: string;
-  label: string;
-};
-
-/**
- * Available filter types
- *
- * boolean: A simple true/false filter
- * choice: A filter which allows selection from a list of (supplied)
- * date: A filter which allows selection from a date input
- * text: A filter which allows raw text input
- * api: A filter which fetches its options from an API endpoint
- */
-export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text' | 'api';
-
-/**
- * Interface for the table filter type. Provides a number of options for selecting filter value:
- *
- * name: The name of the filter (used for query string)
- * label: The label to display in the UI (human readable)
- * description: A description of the filter (human readable)
- * type: The type of filter (see TableFilterType)
- * choices: A list of TableFilterChoice objects
- * choiceFunction: A function which returns a list of TableFilterChoice objects
- * defaultValue: The default value for the filter
- * value: The current value of the filter
- * displayValue: The current display value of the filter
- * active: Whether the filter is active (false = hidden, not used)
- * apiUrl: The API URL to use for fetching dynamic filter options
- * model: The model type to use for fetching dynamic filter options
- * modelRenderer: A function to render a simple text version of the model type
- */
-export type TableFilter = {
-  name: string;
-  label: string;
-  description?: string;
-  type?: TableFilterType;
-  choices?: TableFilterChoice[];
-  choiceFunction?: () => TableFilterChoice[];
-  defaultValue?: any;
-  value?: any;
-  displayValue?: any;
-  active?: boolean;
-  apiUrl?: string;
-  model?: ModelType;
-  modelRenderer?: (instance: any) => string;
-};
 
 /**
  * Return list of available filter options for a given filter
@@ -334,4 +283,15 @@ export function IssuedByFilter(): TableFilter {
     label: t`Issued By`,
     description: t`Filter by user who issued the order`
   });
+}
+
+export function PartCategoryFilter(): TableFilter {
+  return {
+    name: 'category',
+    label: t`Category`,
+    description: t`Filter by part category`,
+    apiUrl: apiUrl(ApiEndpoints.category_list),
+    model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
+  };
 }

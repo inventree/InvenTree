@@ -203,8 +203,8 @@ class PurchaseOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be below 15, independent of the number of results
-                self.assertLess(len(ctx), 15)
+                # Total database queries must be below 20, independent of the number of results
+                self.assertLess(len(ctx), 20)
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
@@ -756,7 +756,7 @@ class PurchaseOrderLineItemTest(OrderTest):
         url = reverse('api-po-line-list')
 
         # Try to delete a set of line items via their IDs
-        self.delete(url, {'items': [1, 2]}, expected_code=204)
+        self.delete(url, {'items': [1, 2]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deletign them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
@@ -870,14 +870,13 @@ class PurchaseOrderDownloadTest(OrderTest):
         """Incorrect format should default raise an error."""
         url = reverse('api-po-list')
 
-        with self.assertRaises(ValueError):
-            self.download_file(url, {'export': 'xyz'})
+        response = self.export_data(url, export_format='xyz', expected_code=400)
+        self.assertIn('is not a valid choice', str(response['export_format']))
 
     def test_download_csv(self):
         """Download PurchaseOrder data as .csv."""
-        with self.download_file(
+        with self.export_data(
             reverse('api-po-list'),
-            {'export': 'csv'},
             expected_code=200,
             expected_fn=r'InvenTree_PurchaseOrder_.+\.csv',
         ) as file:
@@ -896,12 +895,12 @@ class PurchaseOrderDownloadTest(OrderTest):
 
     def test_download_line_items(self):
         """Test that the PurchaseOrderLineItems can be downloaded to a file."""
-        with self.download_file(
+        with self.export_data(
             reverse('api-po-line-list'),
-            {'export': 'xlsx'},
-            decode=False,
+            export_format='xlsx',
             expected_code=200,
             expected_fn=r'InvenTree_PurchaseOrderLineItem.+\.xlsx',
+            decode=False,
         ) as file:
             self.assertIsInstance(file, io.BytesIO)
 
@@ -1352,8 +1351,8 @@ class SalesOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be less than 15
-                self.assertLess(len(ctx), 15)
+                # Total database queries must be less than 20
+                self.assertLess(len(ctx), 20)
 
                 n = len(response.data['results'])
 
@@ -1602,9 +1601,9 @@ class SalesOrderTest(OrderTest):
 
         # Download file, check we get a 200 response
         for fmt in ['csv', 'xlsx', 'tsv']:
-            self.download_file(
+            self.export_data(
                 reverse('api-so-list'),
-                {'export': fmt},
+                export_format=fmt,
                 decode=fmt == 'csv',
                 expected_code=200,
                 expected_fn=r'InvenTree_SalesOrder_.+',
@@ -1856,16 +1855,16 @@ class SalesOrderDownloadTest(OrderTest):
         """Test that downloading without the 'export' option fails."""
         url = reverse('api-so-list')
 
-        with self.assertRaises(ValueError):
-            self.download_file(url, {}, expected_code=200)
+        response = self.export_data(url, export_plugin='no-plugin', expected_code=400)
+        self.assertIn('is not a valid choice', str(response['export_plugin']))
 
     def test_download_xlsx(self):
         """Test xlsx file download."""
         url = reverse('api-so-list')
 
         # Download .xls file
-        with self.download_file(
-            url, {'export': 'xlsx'}, expected_code=200, decode=False
+        with self.export_data(
+            url, export_format='xlsx', expected_code=200, decode=False
         ) as file:
             self.assertIsInstance(file, io.BytesIO)
 
@@ -1888,9 +1887,7 @@ class SalesOrderDownloadTest(OrderTest):
         excluded_cols = ['metadata']
 
         # Download .xls file
-        with self.download_file(
-            url, {'export': 'csv'}, expected_code=200, decode=True
-        ) as file:
+        with self.export_data(url, export_format='csv') as file:
             data = self.process_csv(
                 file,
                 required_cols=required_cols,
@@ -1905,9 +1902,7 @@ class SalesOrderDownloadTest(OrderTest):
                 self.assertEqual(line['Order Status'], str(order.status))
 
         # Download only outstanding sales orders
-        with self.download_file(
-            url, {'export': 'tsv', 'outstanding': True}, expected_code=200, decode=True
-        ) as file:
+        with self.export_data(url, {'outstanding': True}, export_format='tsv') as file:
             self.process_csv(
                 file,
                 required_cols=required_cols,

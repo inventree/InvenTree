@@ -14,7 +14,7 @@ import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
 from company.models import Company, SupplierPart
-from InvenTree.unit_test import ExchangeRateMixin
+from InvenTree.unit_test import ExchangeRateMixin, addUserPermission
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockItem, StockLocation
@@ -43,7 +43,7 @@ class OrderTest(TestCase, ExchangeRateMixin):
         for pk in range(1, 8):
             order = PurchaseOrder.objects.get(pk=pk)
             self.assertEqual(
-                order.get_absolute_url(), f'/platform/purchasing/purchase-order/{pk}'
+                order.get_absolute_url(), f'/web/purchasing/purchase-order/{pk}'
             )
 
             self.assertEqual(order.reference, f'PO-{pk:04d}')
@@ -417,6 +417,13 @@ class OrderTest(TestCase, ExchangeRateMixin):
         Ensure that a notification is sent when a PurchaseOrder becomes overdue
         """
         po = PurchaseOrder.objects.get(pk=1)
+
+        # Ensure that the right users have the right permissions
+        for user_id in [2, 4]:
+            user = get_user_model().objects.get(pk=user_id)
+            addUserPermission(user, 'order', 'purchaseorder', 'view')
+            user.is_active = True
+            user.save()
 
         # Created by 'sam'
         po.created_by = get_user_model().objects.get(pk=4)

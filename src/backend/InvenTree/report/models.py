@@ -1,67 +1,49 @@
 """Report template model definitions."""
 
+import io
 import os
 import sys
+from datetime import date, datetime
+from typing import Optional, TypedDict, cast
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
-from django.http import HttpRequest
 from django.template import Context, Template
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
-from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from pypdf import PdfWriter
 
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
+from common.models import DataOutput, RenderChoices
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
-from plugin import InvenTreePlugin
+from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
 
 try:
-    from django_weasyprint import WeasyTemplateResponseMixin
+    from weasyprint import HTML
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
-    print("Unable to import 'django_weasyprint' module.")
+    print("Unable to import 'weasyprint' module.")
     print('You may require some further system packages to be installed.')
     sys.exit(1)
 
 
 logger = structlog.getLogger('inventree')
-
-
-def dummy_print_request() -> HttpRequest:
-    """Generate a dummy HTTP request object.
-
-    This is required for internal print calls, as WeasyPrint *requires* a request object.
-    """
-    factory = RequestFactory()
-    request = factory.get('/')
-    request.user = AnonymousUser()
-    return request
-
-
-class WeasyprintReport(WeasyTemplateResponseMixin):
-    """Class for rendering a HTML template to a PDF."""
-
-    def __init__(self, request, template, **kwargs):
-        """Initialize the report mixin with some standard attributes."""
-        self.request = request
-        self.template_name = template
-        self.pdf_filename = kwargs.get('filename', 'output.pdf')
 
 
 def rename_template(instance, filename):
@@ -144,8 +126,63 @@ class TemplateUploadMixin:
         return super().validate_unique(exclude)
 
 
+class BaseContextExtension(TypedDict):
+    """Base context extension.
+
+    Attributes:
+        base_url: The base URL for the InvenTree instance
+        date: Current date, represented as a Python datetime.date object
+        datetime: Current datetime, represented as a Python datetime object
+        template: The report template instance which is being rendered against
+        template_description: Description of the report template
+        template_name: Name of the report template
+        template_revision: Revision of the report template
+        user: User who made the request to render the template
+    """
+
+    base_url: str
+    date: date
+    datetime: datetime
+    template: 'ReportTemplateBase'
+    template_description: str
+    template_name: str
+    template_revision: int
+    user: Optional[AbstractUser]
+
+
+class LabelContextExtension(TypedDict):
+    """Label report context extension.
+
+    Attributes:
+        width: The width of the label (in mm)
+        height: The height of the label (in mm)
+        page_style: The CSS @page style for the label template. This is used to be inserted at the top of the style block for a given label
+    """
+
+    width: float
+    height: float
+    page_style: Optional[str]
+
+
+class ReportContextExtension(TypedDict):
+    """Report context extension.
+
+    Attributes:
+        page_size: The page size of the report
+        landscape: Boolean value, True if the report is in landscape mode
+    """
+
+    page_size: str
+    landscape: bool
+
+
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     """Base class for reports, labels."""
+
+    class ModelChoices(RenderChoices):
+        """Model choices for report templates."""
+
+        choice_fnc = report.helpers.report_model_options
 
     class Meta:
         """Metaclass options."""
@@ -194,33 +231,34 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return template_string.render(Context(context))
 
-    def render_as_string(self, instance, request=None, **kwargs):
+    def render_as_string(self, instance, request=None, **kwargs) -> str:
         """Render the report to a HTML string.
 
-        Useful for debug mode (viewing generated code)
+        Arguments:
+            instance: The model instance to render against
+            request: A HTTPRequest object (optional)
+
+        Returns:
+            str: HTML string
         """
         context = self.get_context(instance, request, **kwargs)
 
         return render_to_string(self.template_name, context, request)
 
-    def render(self, instance, request=None, **kwargs):
+    def render(self, instance, request=None, **kwargs) -> bytes:
         """Render the template to a PDF file.
 
-        Uses django-weasyprint plugin to render HTML template against Weasyprint
+        Arguments:
+            instance: The model instance to render against
+            request: A HTTPRequest object (optional)
+
+        Returns:
+            bytes: PDF data
         """
-        context = self.get_context(instance, request)
+        html = self.render_as_string(instance, request, **kwargs)
+        pdf = HTML(string=html).write_pdf()
 
-        # Render HTML template to PDF
-        wp = WeasyprintReport(
-            request,
-            self.template_name,
-            base_url=get_base_url(request=request),
-            presentational_hints=True,
-            filename=self.generate_filename(context),
-            **kwargs,
-        )
-
-        return wp.render_to_response(context, **kwargs)
+        return pdf
 
     filename_pattern = models.CharField(
         default='output.pdf',
@@ -236,6 +274,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     model_type = models.CharField(
         max_length=100,
         validators=[report.validators.validate_report_model_type],
+        verbose_name=_('Model Type'),
         help_text=_('Target model type for template'),
     )
 
@@ -265,7 +304,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
-    def base_context(self, request=None):
+    def base_context(self, request=None) -> BaseContextExtension:
         """Return base context data (available to all templates)."""
         return {
             'base_url': get_base_url(request=request),
@@ -333,11 +372,11 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         help_text=_('Render report in landscape orientation'),
     )
 
-    def get_report_size(self):
+    def get_report_size(self) -> str:
         """Return the printable page size for this report."""
         try:
-            page_size_default = get_global_setting(
-                'REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False
+            page_size_default = cast(
+                str, get_global_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False)
             )
         except Exception:
             page_size_default = 'A4'
@@ -351,14 +390,16 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the report template for rendering."""
-        context = {
-            **super().get_context(instance, request),
+        base_context = super().get_context(instance, request)
+        report_context: ReportContextExtension = {
             'page_size': self.get_report_size(),
             'landscape': self.landscape,
         }
 
+        context = {**base_context, **report_context}
+
         # Pass the context through to the plugin registry for any additional information
-        for plugin in registry.with_mixin('report'):
+        for plugin in registry.with_mixin(PluginMixinEnum.REPORT):
             try:
                 plugin.add_report_context(self, instance, request, context)
             except Exception:
@@ -368,16 +409,16 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return context
 
-    def print(self, items: list, request=None, output=None, **kwargs) -> 'ReportOutput':
+    def print(self, items: list, request=None, output=None, **kwargs) -> DataOutput:
         """Print reports for a list of items against this template.
 
         Arguments:
             items: A list of items to print reports for (model instance)
-            output: The ReportOutput object to use (if provided)
+            output: The DataOutput object to use (if provided)
             request: The request object (optional)
 
         Returns:
-            output: The ReportOutput object representing the generated report(s)
+            output: The DataOutput object representing the generated report(s)
 
         Raises:
             ValidationError: If there is an error during report printing
@@ -389,8 +430,6 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             Further work is required to allow the following extended features:
             - Render a single PDF file with the collated items (optional per template)
             - Render a raw file (do not convert to PDF) - allows for other file types
-            - Render using background worker, provide progress updates to UI
-            - Run report generation in the background worker process
         """
         logger.info("Printing %s reports against template '%s'", len(items), self.name)
 
@@ -401,22 +440,19 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         # Start with a default report name
         report_name = None
 
-        if request is None:
-            # Generate a dummy request object
-            request = dummy_print_request()
+        report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
-        report_plugins = registry.with_mixin('report')
-
-        # If a ReportOutput object is not provided, create a new one
+        # If a DataOutput object is not provided, create a new one
         if not output:
-            output = ReportOutput.objects.create(
-                template=self,
-                items=len(items),
+            output = DataOutput.objects.create(
+                total=len(items),
                 user=request.user
-                if request.user and request.user.is_authenticated
+                if request and request.user and request.user.is_authenticated
                 else None,
                 progress=0,
                 complete=False,
+                output_type=DataOutput.DataOutputTypes.REPORT,
+                template_name=self.name,
                 output=None,
             )
 
@@ -445,12 +481,11 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
                 # Attach the generated report to the model instance (if required)
                 if self.attach_to_model and not debug_mode:
-                    data = report.get_document().write_pdf()
                     instance.create_attachment(
-                        attachment=ContentFile(data, report_name),
+                        attachment=ContentFile(report, report_name),
                         comment=_(f'Report generated from template {self.name}'),
                         upload_user=request.user
-                        if request.user.is_authenticated
+                        if request and request.user.is_authenticated
                         else None,
                     )
 
@@ -475,7 +510,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             raise ValidationError({
                 'error': _('Error generating report'),
                 'detail': str(exc),
-                'path': request.path,
+                'path': request.path if request else None,
             })
 
         if not report_name.endswith('.pdf'):
@@ -486,18 +521,23 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             data = '\n'.join(outputs)
             report_name = report_name.replace('.pdf', '.html')
         else:
-            pages = []
+            # Merge the outputs back together into a single PDF file
+            pdf_writer = PdfWriter()
 
             try:
                 for report in outputs:
-                    doc = report.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
+                    # Construct file object with raw PDF data
+                    report_file = io.BytesIO(report)
+                    pdf_writer.append(report_file)
 
-                data = outputs[0].get_document().copy(pages).write_pdf()
-            except TemplateDoesNotExist as exc:
-                t_name = str(exc) or self.template
-                raise ValidationError(f'Template file {t_name} does not exist')
+                # Generate raw output
+                pdf_file = io.BytesIO()
+                pdf_writer.write(pdf_file)
+                data = pdf_file.getvalue()
+                pdf_file.close()
+            except Exception:
+                InvenTree.exceptions.log_error('report.print')
+                data = None
 
         # Save the generated report to the database
         output.complete = True
@@ -557,17 +597,20 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
-        context = {
-            **super().get_context(instance, request, **kwargs),
+        base_context = super().get_context(instance, request, **kwargs)
+        label_context: LabelContextExtension = {
             'width': self.width,
             'height': self.height,
+            'page_style': None,
         }
+
+        context = {**base_context, **label_context}
 
         if kwargs.pop('insert_page_style', True):
             context['page_style'] = self.generate_page_style()
 
         # Pass the context through to any registered plugins
-        plugins = registry.with_mixin('report')
+        plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
         for plugin in plugins:
             # Let each plugin add its own context data
@@ -588,18 +631,18 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         options=None,
         request=None,
         **kwargs,
-    ) -> 'LabelOutput':
+    ) -> DataOutput:
         """Print labels for a list of items against this template.
 
         Arguments:
             items: A list of items to print labels for (model instance)
             plugin: The plugin to use for label rendering
-            output: The LabelOutput object to use (if provided)
+            output: The DataOutput object to use (if provided)
             options: Additional options for the label printing plugin (optional)
             request: The request object (optional)
 
         Returns:
-            output: The LabelOutput object representing the generated label(s)
+            output: The DataOutput object representing the generated label(s)
 
         Raises:
             ValidationError: If there is an error during label printing
@@ -612,22 +655,21 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         )
 
         if not output:
-            output = LabelOutput.objects.create(
-                template=self,
-                items=len(items),
-                plugin=plugin.slug,
-                user=request.user if request else None,
+            output = DataOutput.objects.create(
+                user=request.user
+                if request and request.user.is_authenticated
+                else None,
+                total=len(items),
                 progress=0,
                 complete=False,
+                output_type=DataOutput.DataOutputTypes.LABEL,
+                template_name=self.name,
+                plugin=plugin.slug,
+                output=None,
             )
 
         if options is None:
             options = {}
-
-        if request is None:
-            # If the request object is not provided, we need to create a dummy one
-            # Otherwise, WeasyPrint throws an error
-            request = dummy_print_request()
 
         try:
             if hasattr(plugin, 'before_printing'):
@@ -649,81 +691,6 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         # Return the output object
         return output
-
-
-class TemplateOutput(models.Model):
-    """Base class representing a generated file from a template.
-
-    As reports (or labels) may take a long time to render,
-    this process is offloaded to the background worker process.
-
-    The result is either a file made available for download,
-    or a message indicating that the output is handled externally.
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        abstract = True
-
-    created = models.DateField(auto_now_add=True, editable=False)
-
-    user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, blank=True, null=True, related_name='+'
-    )
-
-    items = models.PositiveIntegerField(
-        default=0, verbose_name=_('Items'), help_text=_('Number of items to process')
-    )
-
-    complete = models.BooleanField(
-        default=False,
-        verbose_name=_('Complete'),
-        help_text=_('Report generation is complete'),
-    )
-
-    progress = models.PositiveIntegerField(
-        default=0, verbose_name=_('Progress'), help_text=_('Report generation progress')
-    )
-
-
-class ReportOutput(TemplateOutput):
-    """Class representing a generated report output file."""
-
-    template = models.ForeignKey(
-        ReportTemplate, on_delete=models.CASCADE, verbose_name=_('Report Template')
-    )
-
-    output = models.FileField(
-        upload_to='report/output',
-        blank=True,
-        null=True,
-        verbose_name=_('Output File'),
-        help_text=_('Generated output file'),
-    )
-
-
-class LabelOutput(TemplateOutput):
-    """Class representing a generated label output file."""
-
-    plugin = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_('Plugin'),
-        help_text=_('Label output plugin'),
-    )
-
-    template = models.ForeignKey(
-        LabelTemplate, on_delete=models.CASCADE, verbose_name=_('Label Template')
-    )
-
-    output = models.FileField(
-        upload_to='label/output',
-        blank=True,
-        null=True,
-        verbose_name=_('Output File'),
-        help_text=_('Generated output file'),
-    )
 
 
 class ReportSnippet(TemplateUploadMixin, models.Model):

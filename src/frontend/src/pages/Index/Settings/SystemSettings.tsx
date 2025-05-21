@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBellCog,
@@ -18,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
@@ -64,8 +65,8 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'login',
-        label: t`Login`,
+        name: 'authentication',
+        label: t`Authentication`,
         icon: <IconFingerprint />,
         content: (
           <GlobalSettingList
@@ -207,7 +208,8 @@ export default function SystemSettings() {
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON'
+              'PART_CATEGORY_DEFAULT_ICON',
+              'PART_PARAMETER_ENFORCE_UNITS'
             ]}
           />
         )
@@ -308,7 +310,7 @@ export default function SystemSettings() {
 
   const user = useUserState();
 
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   if (!user.isLoggedIn()) {
     return <Skeleton />;

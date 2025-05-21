@@ -1,5 +1,5 @@
-import { t } from '@lingui/macro';
-import { Stack, Table } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Alert, List, Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -11,24 +11,22 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
@@ -373,6 +371,16 @@ export function useScrapBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
     method: 'POST',
     title: t`Scrap Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Scrap Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>
+            {t`Selected build outputs will be completed, but marked as scrapped`}
+          </List.Item>
+          <List.Item>{t`Allocated stock items will be consumed`}</List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been scrapped`,
@@ -419,6 +427,16 @@ export function useCancelBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
     method: 'POST',
     title: t`Cancel Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Cancel Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>{t`Selected build outputs will be removed`}</List.Item>
+          <List.Item>
+            {t`Allocated stock items will be returned to stock`}
+          </List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been cancelled`,

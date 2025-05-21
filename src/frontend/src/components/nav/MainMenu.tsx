@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Group,
   Menu,
@@ -18,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { useShallow } from 'zustand/react/shallow';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { useUserState } from '../../states/UserState';
@@ -25,10 +26,9 @@ import { vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
-  const [user, username] = useUserState((state) => [
-    state.user,
-    state.username
-  ]);
+  const [user, username] = useUserState(
+    useShallow((state) => [state.user, state.username])
+  );
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   return (

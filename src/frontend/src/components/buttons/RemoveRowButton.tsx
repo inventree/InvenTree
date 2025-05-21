@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
 import { InvenTreeIcon } from '../../functions/icons';
 import { ActionButton } from './ActionButton';

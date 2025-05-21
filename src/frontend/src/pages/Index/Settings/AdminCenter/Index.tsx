@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
   IconClipboardCheck,
@@ -6,6 +6,7 @@ import {
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileDownload,
   IconFileUpload,
   IconList,
   IconListDetails,
@@ -20,6 +21,7 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
@@ -69,7 +71,11 @@ const BarcodeScanHistoryTable = Loadable(
   lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
 );
 
-const ImportSesssionTable = Loadable(
+const ExportSessionTable = Loadable(
+  lazy(() => import('../../../../tables/settings/ExportSessionTable'))
+);
+
+const ImportSessionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
 
@@ -79,14 +85,6 @@ const ProjectCodeTable = Loadable(
 
 const CustomStateTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomStateTable'))
-);
-
-const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
-);
-
-const PartParameterTemplateTable = Loadable(
-  lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
 );
 
 const PartCategoryTemplateTable = Loadable(
@@ -108,13 +106,20 @@ export default function AdminCenter() {
         name: 'user',
         label: t`User Management`,
         icon: <IconUsersGroup />,
-        content: <UserManagementPanel />
+        content: <UserManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'import',
         label: t`Data Import`,
         icon: <IconFileUpload />,
-        content: <ImportSesssionTable />
+        content: <ImportSessionTable />
+      },
+      {
+        name: 'export',
+        label: t`Data Export`,
+        icon: <IconFileDownload />,
+        content: <ExportSessionTable />
       },
       {
         name: 'barcode-history',
@@ -167,19 +172,22 @@ export default function AdminCenter() {
         name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />
+        content: <PartParameterPanel />,
+        hidden: !user.hasViewRole(UserRoles.part)
       },
       {
         name: 'category-parameters',
         label: t`Category Parameters`,
         icon: <IconSitemap />,
-        content: <PartCategoryTemplateTable />
+        content: <PartCategoryTemplateTable />,
+        hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
         name: 'stocktake',
         label: t`Stocktake`,
         icon: <IconClipboardCheck />,
-        content: <StocktakePanel />
+        content: <StocktakePanel />,
+        hidden: !user.hasViewRole(UserRoles.stocktake)
       },
       {
         name: 'labels',
@@ -197,22 +205,25 @@ export default function AdminCenter() {
         name: 'location-types',
         label: t`Location Types`,
         icon: <IconPackages />,
-        content: <LocationTypesTable />
+        content: <LocationTypesTable />,
+        hidden: !user.hasViewRole(UserRoles.stock_location)
       },
       {
         name: 'plugin',
         label: t`Plugins`,
         icon: <IconPlugConnected />,
-        content: <PluginManagementPanel />
+        content: <PluginManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'machine',
         label: t`Machines`,
         icon: <IconDevicesPc />,
-        content: <MachineManagementPanel />
+        content: <MachineManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
-  }, []);
+  }, [user]);
 
   return (
     <>

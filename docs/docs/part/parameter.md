@@ -60,7 +60,7 @@ Select the parameter `Template` you would like to use for this parameter, fill-o
 
 ## Parametric Tables
 
-Parametric tables gather all parameters from all parts inside a particular [part category](./part.md#part-category) to be sorted and filtered.
+Parametric tables gather all parameters from all parts inside a particular [part category](./index.md#part-category) to be sorted and filtered.
 
 To access a category's parametric table, click on the "Parameters" tab within the category view:
 
@@ -114,4 +114,4 @@ Selection Lists can be used to add a large number of predefined values to a para
 It is possible that plugins lock selection lists to ensure a known state.
 
 
-Administration of lists can be done through the Part Parameter section in the Admin Center or via the API.
+Administration of lists can be done through the Part Parameter section in the [Admin Center](../settings/admin.md#admin-center) or via the API.

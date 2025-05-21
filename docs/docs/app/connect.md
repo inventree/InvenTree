@@ -24,7 +24,7 @@ Press on the server icon to navigate to the server selection view:
 !!! success "Server Profiles"
     The app supports multiple server profiles, providing simple switching between different InvenTree servers and/or account profiles.
 
-Press the <span class='fas fa-plus-circle blue'></span> button in the bottom-right corner of the screen to create a new server profile.
+Press the {{ icon("circle-plus", color="blue") }} button in the bottom-right corner of the screen to create a new server profile.
 
 {% with id="add_profile", url="app/add_server_profile.png", maxheight="240px", description="Add server" %}
 {% include 'img.html' %}
@@ -45,7 +45,7 @@ Once the server profile is created, you need to connect to the server. Simply sh
 
 Alternatively, long press on the server profile to activate the context menu, then select *Connect to Server*.
 
-When the app successfully connects to the server, a success message is briefly displayed at the bottom of the screen. A green <span class='fas fa-check-circle green'></span> icon next to the server profile indicate that the profile is currently *selected* and also the connection was successful.
+When the app successfully connects to the server, a success message is briefly displayed at the bottom of the screen. A green {{ icon("circle-check", color="green") }} icon next to the server profile indicate that the profile is currently *selected* and also the connection was successful.
 
 {% with id="connected", url="app/connected.png", maxheight="240px", description="Connected to server" %}
 {% include 'img.html' %}
@@ -53,7 +53,7 @@ When the app successfully connects to the server, a success message is briefly d
 
 ### Connection Failure
 
-If (for whatever reason) the app does not successfully connect to the InvenTree server, a failure message is displayed, and a red <span class='fas fa-times-circle red'></span> icon is displayed next to the server profile.
+If (for whatever reason) the app does not successfully connect to the InvenTree server, a failure message is displayed, and a red {{ icon("circle-x", color="red") }} icon is displayed next to the server profile.
 
 {% with id="failed", url="app/unauthorized.png", maxheight="240px", description="Connection failure" %}
 {% include 'img.html' %}

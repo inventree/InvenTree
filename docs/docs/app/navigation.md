@@ -31,7 +31,7 @@ The *Global Action* buttons are visible on most screens, displayed in the bottom
 
 ### Open Drawer Menu
 
-The <span class='fas fa-list'></span> action opens the *Drawer Menu*, which is a quick-access menu for global navigation:
+The {{ icon("list") }} action opens the *Drawer Menu*, which is a quick-access menu for global navigation:
 
 {% with id="drawer", url="app/drawer.png", maxheight="240px", description="Open drawer menu" %}
 {% include 'img.html' %}
@@ -44,11 +44,11 @@ The *Drawer Menu* can be accessed in the following ways:
 
 ### Search
 
-The <span class='fas fa-search'></span> action opens the [Search](./search.md) screen
+The {{ icon("search", title="Search") }} action opens the [Search](./search.md) screen
 
 ### Scan Barcode
 
-The <span class='fas fa-qrcode'></span> action opens the [barcode scan](./barcode.md#global-scan) window, which allows quick access to the barcode scanning functionality.
+The {{ icon("barcode", title="Scan") }} action opens the [barcode scan](./barcode.md#global-scan) window, which allows quick access to the barcode scanning functionality.
 
 ## Context Actions
 

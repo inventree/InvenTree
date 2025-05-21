@@ -12,7 +12,8 @@ from InvenTree.api import read_license_file
 from InvenTree.api_version import INVENTREE_API_VERSION
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from InvenTree.version import inventreeApiText, parse_version_text
-from users.models import RuleSet, update_group_roles
+from users.ruleset import RULESET_NAMES
+from users.tasks import update_group_roles
 
 
 class HTMLAPITests(InvenTreeTestCase):
@@ -142,7 +143,7 @@ class ApiAccessTests(InvenTreeAPITestCase):
         role_names = roles.keys()
 
         # By default, no permissions are provided
-        for rule in RuleSet.RULESET_NAMES:
+        for rule in RULESET_NAMES:
             self.assertIn(rule, role_names)
 
             if roles[rule] is None:
@@ -167,7 +168,7 @@ class ApiAccessTests(InvenTreeAPITestCase):
 
         roles = response.data['roles']
 
-        for rule in RuleSet.RULESET_NAMES:
+        for rule in RULESET_NAMES:
             self.assertIn(rule, roles.keys())
 
             for perm in ['view', 'add', 'change', 'delete']:
@@ -217,9 +218,11 @@ class ApiAccessTests(InvenTreeAPITestCase):
 
         actions = self.getActions(url)
 
-        self.assertEqual(len(actions), 2)
+        self.assertEqual(len(actions), 3)
+
         self.assertIn('POST', actions)
         self.assertIn('GET', actions)
+        self.assertIn('PUT', actions)  # Fancy bulk-update action
 
     def test_detail_endpoint_actions(self):
         """Tests for detail API endpoint actions."""
@@ -268,19 +271,19 @@ class BulkDeleteTests(InvenTreeAPITestCase):
         response = self.delete(url, {}, expected_code=400)
 
         self.assertIn(
-            'List of items or filters must be provided for bulk deletion',
+            'List of items or filters must be provided for bulk operation',
             str(response.data),
         )
 
         # DELETE with invalid 'items'
         response = self.delete(url, {'items': {'hello': 'world'}}, expected_code=400)
 
-        self.assertIn("'items' must be supplied as a list object", str(response.data))
+        self.assertIn('Items must be provided as a list', str(response.data))
 
         # DELETE with invalid 'filters'
         response = self.delete(url, {'filters': [1, 2, 3]}, expected_code=400)
 
-        self.assertIn("'filters' must be supplied as a dict object", str(response.data))
+        self.assertIn('Filters must be provided as a dict', str(response.data))
 
 
 class SearchTests(InvenTreeAPITestCase):
@@ -295,6 +298,7 @@ class SearchTests(InvenTreeAPITestCase):
         'stock',
         'order',
         'sales_order',
+        'build',
     ]
     roles = ['build.view', 'part.view']
 
@@ -350,6 +354,82 @@ class SearchTests(InvenTreeAPITestCase):
 
         self.assertNotIn('stockitem', response.data)
         self.assertNotIn('build', response.data)
+
+    def test_search_filters(self):
+        """Test that the regex, whole word, and notes filters are handled correctly."""
+        SEARCH_TERM = 'some note'
+        RE_SEARCH_TERM = 'some (.*) note'
+
+        response = self.post(
+            reverse('api-search'),
+            {'search': SEARCH_TERM, 'limit': 10, 'part': {}, 'build': {}},
+            expected_code=200,
+        )
+        # No build or part results
+        self.assertEqual(response.data['build']['count'], 0)
+        self.assertEqual(response.data['part']['count'], 0)
+
+        # add the search_notes param
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': SEARCH_TERM,
+                'limit': 10,
+                'search_notes': True,
+                'part': {},
+                'build': {},
+            },
+            expected_code=200,
+        )
+        # now should have some build results
+        self.assertEqual(response.data['build']['count'], 4)
+
+        # use the regex term
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': RE_SEARCH_TERM,
+                'limit': 10,
+                'search_notes': True,
+                'part': {},
+                'build': {},
+            },
+            expected_code=200,
+        )
+        # No results again
+        self.assertEqual(response.data['build']['count'], 0)
+
+        # add the regex_search param
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': RE_SEARCH_TERM,
+                'limit': 10,
+                'search_notes': True,
+                'search_regex': True,
+                'part': {},
+                'build': {},
+            },
+            expected_code=200,
+        )
+        # we get our results back!
+        self.assertEqual(response.data['build']['count'], 4)
+
+        # add the search_whole param
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': RE_SEARCH_TERM,
+                'limit': 10,
+                'search_notes': True,
+                'search_whole': True,
+                'part': {},
+                'build': {},
+            },
+            expected_code=200,
+        )
+        # No results again
+        self.assertEqual(response.data['build']['count'], 0)
 
     def test_permissions(self):
         """Test that users with insufficient permissions are handled correctly."""
@@ -435,24 +515,43 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
     def test_inventree_api_text_fnc(self):
         """Test that the inventreeApiText function works expected."""
+        latest_version = f'v{INVENTREE_API_VERSION}'
+
         # Normal run
         resp = inventreeApiText()
         self.assertEqual(len(resp), 10)
+        self.assertIn(latest_version, resp)
 
         # More responses
         resp = inventreeApiText(20)
         self.assertEqual(len(resp), 20)
+        self.assertIn(latest_version, resp)
 
         # Specific version
         resp = inventreeApiText(start_version=5)
         self.assertEqual(list(resp)[0], 'v5')
+        self.assertEqual(list(resp)[-1], 'v14')
 
     def test_parse_version_text_fnc(self):
         """Test that api version text is correctly parsed."""
         resp = parse_version_text()
 
-        # Check that all texts are parsed
-        self.assertEqual(len(resp), INVENTREE_API_VERSION - 1)
+        latest_version = INVENTREE_API_VERSION
+        self.assertTrue(resp[f'v{latest_version}']['latest'])
+
+        # All fields except github link should exist for every version
+        latest_count = 0
+        for k, v in resp.items():
+            self.assertEqual('v', k[0], f'Version should start with v: {k}')
+            self.assertEqual(k, v['version'])
+            self.assertGreater(len(v['date']), 0, f'Date is missing from {v}')
+            self.assertGreater(len(v['text']), 0, f'Text is missing from {v}')
+            self.assertIsNotNone(v['latest'])
+            latest_count = latest_count + (1 if v['latest'] else 0)
+        self.assertEqual(1, latest_count, 'Should have a single version marked latest')
+
+        # Check that all texts are parsed: v1 and v2 are missing
+        self.assertEqual(len(resp), INVENTREE_API_VERSION - 2)
 
     def test_api_license(self):
         """Test that the license endpoint is working."""

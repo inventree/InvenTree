@@ -1,5 +1,7 @@
-import { t } from '@lingui/macro';
-import { Badge, Grid, Skeleton, Stack } from '@mantine/core';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { t } from '@lingui/core/macro';
+import { Badge, Group, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -13,8 +15,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useGlobalSettingsState } from '../../states/SettingsState';
@@ -34,18 +34,14 @@ export default function UserDetail() {
     pk: id
   });
 
+  const userGroups: any[] = useMemo(() => instance?.groups ?? [], [instance]);
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
     }
 
     const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'email',
-        label: t`Email`,
-        copy: true
-      },
       {
         type: 'text',
         name: 'username',
@@ -58,79 +54,132 @@ export default function UserDetail() {
         name: 'first_name',
         label: t`First Name`,
         icon: 'info',
-        copy: true
+        copy: true,
+        hidden: !instance.first_name
       },
       {
         type: 'text',
         name: 'last_name',
         label: t`Last Name`,
         icon: 'info',
-        copy: true
+        copy: true,
+        hidden: !instance.last_name
+      },
+      {
+        type: 'text',
+        name: 'email',
+        label: t`Email`,
+        copy: true,
+        hidden: !instance.email
       }
     ];
 
     const tr: DetailsField[] = [
       {
+        type: 'boolean',
+        name: 'is_active',
+        label: t`Active`,
+        icon: 'info'
+      },
+      {
+        type: 'boolean',
+        name: 'is_staff',
+        label: t`Staff`,
+        icon: 'info'
+      },
+      {
+        type: 'boolean',
+        name: 'is_superuser',
+        label: t`Superuser`,
+        icon: 'info'
+      },
+      {
+        type: 'text',
+        name: 'groups',
+        label: t`Groups`,
+        icon: 'group',
+        copy: false,
+        hidden: !userGroups,
+        value_formatter: () => {
+          return (
+            <Group gap='xs'>
+              {userGroups?.map((group) => (
+                <Badge key={group.pk}>{group.name}</Badge>
+              ))}
+            </Group>
+          );
+        }
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
         type: 'text',
         name: 'displayname',
         label: t`Display Name`,
         icon: 'user',
-        copy: true
+        copy: true,
+        hidden: !instance.displayname
       },
       {
         type: 'text',
         name: 'position',
         label: t`Position`,
-        icon: 'info'
+        icon: 'info',
+        hidden: !instance.position
       },
-      {
-        type: 'boolean',
-        name: 'active',
-        label: t`Active`,
-        icon: 'info'
-      },
+
       {
         type: 'text',
         name: 'contact',
         label: t`Contact`,
         icon: 'email',
-        copy: true
+        copy: true,
+        hidden: !instance.contact
       },
       {
         type: 'text',
         name: 'organisation',
         label: t`Organisation`,
         icon: 'info',
-        copy: true
+        copy: true,
+        hidden: !instance.organisation
       },
       {
         type: 'text',
         name: 'status',
         label: t`Status`,
-        icon: 'note'
+        icon: 'note',
+        hidden: !instance.status
       },
       {
         type: 'text',
         name: 'location',
         label: t`Location`,
         icon: 'location',
-        copy: true
+        copy: true,
+        hidden: !instance.location
       }
     ];
 
+    const hasProfile =
+      instance.displayname ||
+      instance.position ||
+      instance.contact ||
+      instance.organisation ||
+      instance.status ||
+      instance.location;
+
     return (
       <ItemDetailsGrid>
-        <Grid grow>
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={instance} />
-          </Grid.Col>
-        </Grid>
-        {settings.isSet('DISPLAY_PROFILE_INFO') && (
-          <DetailsTable fields={tr} item={instance} />
+        <DetailsTable fields={tl} item={instance} title={t`User Information`} />
+        <DetailsTable fields={tr} item={instance} title={t`User Permissions`} />
+        {hasProfile && settings.isSet('DISPLAY_PROFILE_INFO') && (
+          <DetailsTable fields={br} item={instance} title={t`User Profile`} />
         )}
       </ItemDetailsGrid>
     );
-  }, [instance, instanceQuery]);
+  }, [instance, userGroups, instanceQuery]);
 
   const userPanels: PanelType[] = useMemo(() => {
     return [
@@ -186,6 +235,7 @@ export default function UserDetail() {
           model={ModelType.user}
           id={instance.pk}
           instance={instance}
+          reloadInstance={instanceQuery.refetch}
         />
       </Stack>
     </InstanceDetail>

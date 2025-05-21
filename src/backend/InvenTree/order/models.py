@@ -1,7 +1,7 @@
 """Order model definitions."""
 
-from datetime import datetime
 from decimal import Decimal
+from typing import Any, Optional
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -178,6 +178,92 @@ class TotalPriceMixin(models.Model):
         return total
 
 
+class BaseOrderReportContext(report.mixins.BaseReportContext):
+    """Base context for all order models.
+
+    Attributes:
+        description: The description field of the order
+        extra_lines: Query set of all extra lines associated with the order
+        lines: Query set of all line items associated with the order
+        order: The order instance itself
+        reference: The reference field of the order
+        title: The title (string representation) of the order
+    """
+
+    description: str
+    extra_lines: Any
+    lines: Any
+    order: Any
+    reference: str
+    title: str
+
+
+class PurchaseOrderReportContext(report.mixins.BaseReportContext):
+    """Context for the purchase order model.
+
+    Attributes:
+        description: The description field of the PurchaseOrder
+        reference: The reference field of the PurchaseOrder
+        title: The title (string representation) of the PurchaseOrder
+        extra_lines: Query set of all extra lines associated with the PurchaseOrder
+        lines: Query set of all line items associated with the PurchaseOrder
+        order: The PurchaseOrder instance itself
+        supplier: The supplier object associated with the PurchaseOrder
+    """
+
+    description: str
+    reference: str
+    title: str
+    extra_lines: report.mixins.QuerySet['PurchaseOrderExtraLine']
+    lines: report.mixins.QuerySet['PurchaseOrderLineItem']
+    order: 'PurchaseOrder'
+    supplier: Optional[Company]
+
+
+class SalesOrderReportContext(report.mixins.BaseReportContext):
+    """Context for the sales order model.
+
+    Attributes:
+        description: The description field of the SalesOrder
+        reference: The reference field of the SalesOrder
+        title: The title (string representation) of the SalesOrder
+        extra_lines: Query set of all extra lines associated with the SalesOrder
+        lines: Query set of all line items associated with the SalesOrder
+        order: The SalesOrder instance itself
+        customer: The customer object associated with the SalesOrder
+    """
+
+    description: str
+    reference: str
+    title: str
+    extra_lines: report.mixins.QuerySet['SalesOrderExtraLine']
+    lines: report.mixins.QuerySet['SalesOrderLineItem']
+    order: 'SalesOrder'
+    customer: Optional[Company]
+
+
+class ReturnOrderReportContext(report.mixins.BaseReportContext):
+    """Context for the return order model.
+
+    Attributes:
+        description: The description field of the ReturnOrder
+        reference: The reference field of the ReturnOrder
+        title: The title (string representation) of the ReturnOrder
+        extra_lines: Query set of all extra lines associated with the ReturnOrder
+        lines: Query set of all line items associated with the ReturnOrder
+        order: The ReturnOrder instance itself
+        customer: The customer object associated with the ReturnOrder
+    """
+
+    description: str
+    reference: str
+    title: str
+    extra_lines: report.mixins.QuerySet['ReturnOrderExtraLine']
+    lines: report.mixins.QuerySet['ReturnOrderLineItem']
+    order: 'ReturnOrder'
+    customer: Optional[Company]
+
+
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
@@ -301,7 +387,7 @@ class Order(
         line.target_date = None
         line.order = self
 
-    def report_context(self):
+    def report_context(self) -> BaseOrderReportContext:
         """Generate context data for the reporting interface."""
         return {
             'description': self.description,
@@ -389,6 +475,13 @@ class Order(
         verbose_name=_('Created By'),
     )
 
+    issue_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Issue Date'),
+        help_text=_('Date order was issued'),
+    )
+
     responsible = models.ForeignKey(
         UserModels.Owner,
         on_delete=models.SET_NULL,
@@ -450,7 +543,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         super().clean_line_item(line)
         line.received = 0
 
-    def report_context(self):
+    def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
         return {**super().report_context(), 'supplier': self.supplier}
 
@@ -482,49 +575,20 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Return the associated barcode model type code for this model."""
         return 'PO'
 
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by 'minimum and maximum date range'.
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this PurchaseOrder.
 
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist between these dates
-
-        To be "interesting":
-        - A "received" order where the received date lies within the date range
-        - A "pending" order where the target date lies within the date range
-        - TODO: An "overdue" order where the target date is in the past
+        By this, we mean users to are interested in any of the parts associated with this order.
         """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
+        subscribed_users = set()
 
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
+        for line in self.lines.all():
+            if line.part and line.part.part:
+                # Add the part to the list of subscribed users
+                for user in line.part.part.get_subscribers():
+                    subscribed_users.add(user)
 
-        # Construct a queryset for "received" orders within the range
-        received = (
-            Q(status=PurchaseOrderStatus.COMPLETE.value)
-            & Q(complete_date__gte=min_date)
-            & Q(complete_date__lte=max_date)
-        )
-
-        # Construct a queryset for "pending" orders within the range
-        pending = (
-            Q(status__in=PurchaseOrderStatusGroups.OPEN)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO - Construct a queryset for "overdue" orders within the range
-
-        queryset = queryset.filter(received | pending)
-
-        return queryset
+        return list(subscribed_users)
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
@@ -582,13 +646,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         related_name='+',
         verbose_name=_('received by'),
-    )
-
-    issue_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Issue Date'),
-        help_text=_('Date order was issued'),
     )
 
     complete_date = models.DateField(
@@ -705,6 +762,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 PurchaseOrder,
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
             )
 
     def _action_complete(self, *args, **kwargs):
@@ -799,6 +857,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 PurchaseOrder,
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
+                extra_users=self.subscribed_users(),
             )
 
     @property
@@ -1003,6 +1062,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
+            extra_users=line.part.part.get_subscribers(),
         )
 
 
@@ -1024,7 +1084,7 @@ class SalesOrder(TotalPriceMixin, Order):
         super().clean_line_item(line)
         line.shipped = 0
 
-    def report_context(self):
+    def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
         return {**super().report_context(), 'customer': self.customer}
 
@@ -1054,49 +1114,20 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return the associated barcode model type code for this model."""
         return 'SO'
 
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by "minimum and maximum date range".
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this SalesOrder.
 
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist between these dates
-
-        To be "interesting":
-        - A "completed" order where the completion date lies within the date range
-        - A "pending" order where the target date lies within the date range
-        - TODO: An "overdue" order where the target date is in the past
+        By this, we mean users to are interested in any of the parts associated with this order.
         """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
+        subscribed_users = set()
 
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
+        for line in self.lines.all():
+            if line.part:
+                # Add the part to the list of subscribed users
+                for user in line.part.get_subscribers():
+                    subscribed_users.add(user)
 
-        # Construct a queryset for "completed" orders within the range
-        completed = (
-            Q(status__in=SalesOrderStatusGroups.COMPLETE)
-            & Q(shipment_date__gte=min_date)
-            & Q(shipment_date__lte=max_date)
-        )
-
-        # Construct a queryset for "pending" orders within the range
-        pending = (
-            Q(status__in=SalesOrderStatusGroups.OPEN)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO: Construct a queryset for "overdue" orders within the range
-
-        queryset = queryset.filter(completed | pending)
-
-        return queryset
+        return list(subscribed_users)
 
     def __str__(self):
         """Render a string representation of this SalesOrder."""
@@ -1250,6 +1281,15 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event(SalesOrderEvents.ISSUED, id=self.pk)
 
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                SalesOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
+            )
+
     @property
     def can_hold(self):
         """Return True if this order can be placed on hold."""
@@ -1327,6 +1367,7 @@ class SalesOrder(TotalPriceMixin, Order):
             SalesOrder,
             exclude=self.created_by,
             content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.subscribed_users(),
         )
 
         return True
@@ -1467,9 +1508,6 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
         if get_global_setting('SALESORDER_DEFAULT_SHIPMENT'):
             # Create default shipment
             SalesOrderShipment.objects.create(order=instance, reference='1')
-
-        # Notify the responsible users that the sales order has been created
-        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
@@ -1891,6 +1929,26 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
+class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
+    """Context for the SalesOrderShipment model.
+
+    Attributes:
+        allocations: QuerySet of SalesOrderAllocation objects
+        order: The associated SalesOrder object
+        reference: Shipment reference string
+        shipment: The SalesOrderShipment object itself
+        tracking_number: Shipment tracking number string
+        title: Title for the report
+    """
+
+    allocations: report.mixins.QuerySet['SalesOrderAllocation']
+    order: 'SalesOrder'
+    reference: str
+    shipment: 'SalesOrderShipment'
+    tracking_number: str
+    title: str
+
+
 class SalesOrderShipment(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -1924,7 +1982,7 @@ class SalesOrderShipment(
         """Return the API URL associated with the SalesOrderShipment model."""
         return reverse('api-so-shipment-list')
 
-    def report_context(self):
+    def report_context(self) -> SalesOrderShipmentReportContext:
         """Generate context data for the reporting interface."""
         return {
             'allocations': self.allocations,
@@ -2287,7 +2345,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = None
         line.outcome = ReturnOrderLineStatus.PENDING.value
 
-    def report_context(self):
+    def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
         return {**super().report_context(), 'customer': self.customer}
 
@@ -2318,6 +2376,21 @@ class ReturnOrder(TotalPriceMixin, Order):
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
         return 'RO'
+
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this ReturnOrder.
+
+        By this, we mean users to are interested in any of the parts associated with this order.
+        """
+        subscribed_users = set()
+
+        for line in self.lines.all():
+            if line.item and line.item.part:
+                # Add the part to the list of subscribed users
+                for user in line.item.part.get_subscribers():
+                    subscribed_users.add(user)
+
+        return list(subscribed_users)
 
     def __str__(self):
         """Render a string representation of this ReturnOrder."""
@@ -2361,13 +2434,6 @@ class ReturnOrder(TotalPriceMixin, Order):
         blank=True,
         verbose_name=_('Customer Reference '),
         help_text=_('Customer order reference code'),
-    )
-
-    issue_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Issue Date'),
-        help_text=_('Date order was issued'),
     )
 
     complete_date = models.DateField(
@@ -2428,6 +2494,7 @@ class ReturnOrder(TotalPriceMixin, Order):
                 ReturnOrder,
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
+                extra_users=self.subscribed_users(),
             )
 
     def _action_complete(self, *args, **kwargs):
@@ -2459,6 +2526,15 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.save()
 
             trigger_event(ReturnOrderEvents.ISSUED, id=self.pk)
+
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                ReturnOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
+            )
 
     @transaction.atomic
     def hold_order(self):
@@ -2564,6 +2640,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             ReturnOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ReturnOrderItemsReceived,
+            extra_users=line.item.part.get_subscribers(),
         )
 
 

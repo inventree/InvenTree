@@ -1,16 +1,17 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CreationDateColumn,
@@ -36,11 +37,11 @@ import {
   OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
+  PartCategoryFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
   StartDateAfterFilter,
   StartDateBeforeFilter,
-  type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
@@ -74,6 +75,11 @@ export function BuildOrderTable({
         sortable: true,
         switchable: true,
         title: t`IPN`
+      },
+      {
+        accessor: 'part_detail.revision',
+        title: t`Revision`,
+        sortable: true
       },
       {
         accessor: 'title',
@@ -154,14 +160,7 @@ export function BuildOrderTable({
       HasProjectCodeFilter(),
       IssuedByFilter(),
       ResponsibleFilter(),
-      {
-        name: 'category',
-        label: t`Category`,
-        description: t`Filter by part category`,
-        apiUrl: apiUrl(ApiEndpoints.category_list),
-        model: ModelType.partcategory,
-        modelRenderer: (instance: any) => instance.name
-      }
+      PartCategoryFilter()
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter

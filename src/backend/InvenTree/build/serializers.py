@@ -31,7 +31,8 @@ import part.serializers as part_serializers
 from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
-from importer.mixins import DataImportExportSerializerMixin
+from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -39,7 +40,11 @@ from InvenTree.serializers import (
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
-from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
+from stock.serializers import (
+    LocationBriefSerializer,
+    StockItemSerializerBrief,
+    StockStatusCustomSerializer,
+)
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -126,7 +131,9 @@ class BuildSerializer(
 
     issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
-    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
+    responsible_detail = OwnerSerializer(
+        source='responsible', read_only=True, allow_null=True
+    )
 
     barcode_hash = serializers.CharField(read_only=True)
 
@@ -176,6 +183,9 @@ class BuildSerializer(
         create = kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not create:
             self.fields.pop('create_child_builds', None)
@@ -575,11 +585,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
-    status_custom_key = serializers.ChoiceField(
-        choices=StockStatus.items(custom=True),
-        default=StockStatus.OK.value,
-        label=_('Status'),
-    )
+    status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     accept_incomplete_allocation = serializers.BooleanField(
         default=False,
@@ -1204,6 +1210,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
@@ -1246,11 +1255,12 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         source='stock_item.part',
         many=False,
         read_only=True,
+        allow_null=True,
         pricing=False,
     )
 
     stock_item_detail = StockItemSerializerBrief(
-        source='stock_item', read_only=True, label=_('Stock Item')
+        source='stock_item', read_only=True, allow_null=True, label=_('Stock Item')
     )
 
     location = serializers.PrimaryKeyRelatedField(
@@ -1258,11 +1268,18 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     location_detail = LocationBriefSerializer(
-        label=_('Location'), source='stock_item.location', read_only=True
+        label=_('Location'),
+        source='stock_item.location',
+        read_only=True,
+        allow_null=True,
     )
 
     build_detail = BuildSerializer(
-        label=_('Build'), source='build_line.build', many=False, read_only=True
+        label=_('Build'),
+        source='build_line.build',
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     supplier_part_detail = company.serializers.SupplierPartSerializer(
@@ -1270,6 +1287,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         source='stock_item.supplier_part',
         many=False,
         read_only=True,
+        allow_null=True,
         brief=True,
     )
 
@@ -1338,6 +1356,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         build_detail = kwargs.pop('build_detail', True)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -1410,7 +1431,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
     build_detail = BuildSerializer(
-        label=_('Build'), source='build', part_detail=False, many=False, read_only=True
+        label=_('Build'),
+        source='build',
+        part_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     # Annotated (calculated) fields

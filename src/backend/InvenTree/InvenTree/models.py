@@ -10,7 +10,7 @@ from django.db import models
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.urls import reverse
+from django.urls import resolve, reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
@@ -87,11 +87,11 @@ class PluginValidationMixin(DiffMixin):
 
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         deltas = self.get_field_deltas()
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 if plugin.validate_model_instance(self, deltas=deltas) is True:
                     return
@@ -130,9 +130,9 @@ class PluginValidationMixin(DiffMixin):
         Note: Each plugin may raise a ValidationError to prevent deletion.
         """
         from InvenTree.exceptions import log_error
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 plugin.validate_model_deletion(self)
             except ValidationError as e:
@@ -947,7 +947,7 @@ class InvenTreeBarcodeMixin(models.Model):
         )
 
     def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a QR code for this model instance."""
+        """Return a string for formatting a QR code for this model instance."""
         from plugin.base.barcodes.helper import generate_barcode
 
         return generate_barcode(self)
@@ -958,7 +958,17 @@ class InvenTreeBarcodeMixin(models.Model):
 
         if hasattr(self, 'get_api_url'):
             api_url = self.get_api_url()
-            data['api_url'] = f'{api_url}{self.pk}/'
+            data['api_url'] = api_url = f'{api_url}{self.pk}/'
+
+            # Attempt to serialize the object too
+            try:
+                match = resolve(api_url)
+                view_class = match.func.view_class
+                serializer_class = view_class.serializer_class
+                serializer = serializer_class(self)
+                data['instance'] = serializer.data
+            except Exception:
+                pass
 
         if hasattr(self, 'get_absolute_url'):
             data['web_url'] = self.get_absolute_url()
@@ -966,7 +976,7 @@ class InvenTreeBarcodeMixin(models.Model):
         return data
 
     @property
-    def barcode(self):
+    def barcode(self) -> str:
         """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode()
 

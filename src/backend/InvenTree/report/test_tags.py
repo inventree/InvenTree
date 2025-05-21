@@ -175,8 +175,8 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Test might return one of two results, depending on test env
         # If INVENTREE_SITE_URL is not set in the CI environment, the link will be relative
         options = [
-            f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>',
-            f'<a href="/platform/part/{obj.pk}">test</a>',
+            f'<a href="http://localhost:8000/web/part/{obj.pk}">test</a>',
+            f'<a href="/web/part/{obj.pk}">test</a>',
         ]
 
         self.assertIn(link, options)

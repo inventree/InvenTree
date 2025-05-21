@@ -1,15 +1,24 @@
 
 The InvenTree project is committed to providing a secure and safe environment for all users. We know that many of our users rely on InvenTree to manage the inventory and manufacturing for their small and mid-size businesses, and we take that responsibility seriously.
 
+!!! tip "This page covers the InvenTree project"
+    This page covers the InvenTree project as a whole. Specific security measures for deploying your own instance of InvenTree can be found on the [Threat Model](./concepts/threat_model.md) page.
+
 To that end, we have implemented a number of security measures over the years, which we will outline in this document.
 
 ## Organisational measures
 
 The InvenTree project is managed by a small team of developers, who are responsible for the ongoing development and maintenance of the software. Two geographically distributed users have administrative access to the InvenTree codebase. Merges are only done by one of these two users, the maintainer Oliver.
+Read the Project [Governance](./project/governance.md) document for more information.
+
 InvenTree is open-source, and we welcome contributions from the community. However, all contributions are reviewed and scrutinised before being merged into the codebase.
 
-We provide a written [Security Policy]({{ sourcefile("SECURITY.md") }}) in our main repo to ensure that all security issues are handled in a timely manner.
+### Security Policy
 
+The official [Security Policy]({{ sourcefile("SECURITY.md") }}) is available in the code repository.
+We provide this document in our main repo to increase discoverabiltity to ensure that all security issues are handled in a timely manner.
+
+### Past Reports
 If we become aware of a security issue, we will take immediate action to address the issue, and will provide a public disclosure of the issue once it has been resolved. We support assigning CVEs to security issues where appropriate.  Our [past security advisories can be found here](https://github.com/inventree/InvenTree/security/advisories).
 
 ## Technical measures
@@ -51,3 +60,7 @@ We also follow OpenSSF recommendations where applicable and take part in multipl
 
 - OSSF Best Practices, currently at a [level of passing](https://www.bestpractices.dev/de/projects/7179)
 - OSSF Scorecard, running with each merge [check current state](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
+
+## Hall of Fame
+
+We are grateful for all reports. Confirmed reports can be rewarded with a mention in the Hall of Fame below if the reporter requests it. We are also happy to provide a CVE if applicable.

@@ -35,7 +35,6 @@ from company.serializers import (
     SupplierPartSerializer,
 )
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import (
     current_date,
@@ -44,6 +43,8 @@ from InvenTree.helpers import (
     normalize,
     str2bool,
 )
+from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -111,11 +112,13 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     import_exclude_fields = ['notes', 'duplicate']
 
     # Number of line items in this order
-    line_items = serializers.IntegerField(read_only=True, label=_('Line Items'))
+    line_items = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Line Items')
+    )
 
     # Number of completed line items (this is an annotated field)
     completed_lines = serializers.IntegerField(
-        read_only=True, label=_('Completed Lines')
+        read_only=True, allow_null=True, label=_('Completed Lines')
     )
 
     # Human-readable status text (read-only)
@@ -128,11 +131,13 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     reference = serializers.CharField(required=True)
 
     # Detail for point-of-contact field
-    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
+    contact_detail = ContactSerializer(
+        source='contact', many=False, read_only=True, allow_null=True
+    )
 
     # Detail for responsible field
     responsible_detail = OwnerSerializer(
-        source='responsible', read_only=True, many=False
+        source='responsible', read_only=True, allow_null=True, many=False
     )
 
     project_code_label = serializers.CharField(
@@ -149,11 +154,11 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
 
     # Detail for address field
     address_detail = AddressBriefSerializer(
-        source='address', many=False, read_only=True
+        source='address', many=False, read_only=True, allow_null=True
     )
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
     barcode_hash = serializers.CharField(read_only=True)
 
@@ -190,6 +195,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'pk',
             'created_by',
             'creation_date',
+            'issue_date',
             'start_date',
             'target_date',
             'description',
@@ -275,7 +281,7 @@ class AbstractExtraLineSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if order_detail is not True:
+        if order_detail is not True and not isGeneratingSchema():
             self.fields.pop('order_detail', None)
 
     quantity = serializers.FloatField()
@@ -319,7 +325,6 @@ class PurchaseOrderSerializer(
         model = order.models.PurchaseOrder
 
         fields = AbstractOrderSerializer.order_fields([
-            'issue_date',
             'complete_date',
             'supplier',
             'supplier_detail',
@@ -343,7 +348,7 @@ class PurchaseOrderSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if supplier_detail is not True:
+        if supplier_detail is not True and not isGeneratingSchema():
             self.fields.pop('supplier_detail', None)
 
     def skip_create_fields(self):
@@ -384,7 +389,7 @@ class PurchaseOrderSerializer(
     )
 
     supplier_detail = CompanyBriefSerializer(
-        source='supplier', many=False, read_only=True
+        source='supplier', many=False, read_only=True, allow_null=True
     )
 
 
@@ -518,6 +523,9 @@ class PurchaseOrderLineItemSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if part_detail is not True:
             self.fields.pop('part_detail', None)
             self.fields.pop('supplier_part_detail', None)
@@ -603,16 +611,16 @@ class PurchaseOrderLineItemSerializer(
 
     received = serializers.FloatField(default=0, read_only=True)
 
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
     total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(
-        source='get_base_part', many=False, read_only=True
+        source='get_base_part', many=False, read_only=True, allow_null=True
     )
 
     supplier_part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True
+        source='part', brief=True, many=False, read_only=True, allow_null=True
     )
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
@@ -626,14 +634,16 @@ class PurchaseOrderLineItemSerializer(
     )
 
     destination_detail = stock.serializers.LocationBriefSerializer(
-        source='get_destination', read_only=True
+        source='get_destination', read_only=True, allow_null=True
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(
         help_text=_('Purchase price currency')
     )
 
-    order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
+    order_detail = PurchaseOrderSerializer(
+        source='order', read_only=True, allow_null=True, many=False
+    )
 
     merge_items = serializers.BooleanField(
         label=_('Merge Items'),
@@ -644,14 +654,22 @@ class PurchaseOrderLineItemSerializer(
         write_only=True,
     )
 
-    sku = serializers.CharField(source='part.SKU', read_only=True, label=_('SKU'))
+    sku = serializers.CharField(
+        source='part.SKU', read_only=True, allow_null=True, label=_('SKU')
+    )
 
     mpn = serializers.CharField(
-        source='part.manufacturer_part.MPN', read_only=True, label=_('MPN')
+        source='part.manufacturer_part.MPN',
+        read_only=True,
+        allow_null=True,
+        label=_('MPN'),
     )
 
     ipn = serializers.CharField(
-        source='part.part.IPN', read_only=True, label=_('Internal Part Number')
+        source='part.part.IPN',
+        read_only=True,
+        allow_null=True,
+        label=_('Internal Part Number'),
     )
 
     internal_part = serializers.PrimaryKeyRelatedField(
@@ -699,7 +717,9 @@ class PurchaseOrderExtraLineSerializer(
 ):
     """Serializer for a PurchaseOrderExtraLine object."""
 
-    order_detail = PurchaseOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = PurchaseOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
 
     class Meta(AbstractExtraLineMeta):
         """Metaclass options."""
@@ -785,11 +805,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         allow_blank=True,
     )
 
-    status = serializers.ChoiceField(
-        choices=StockStatus.items(custom=True),
-        default=StockStatus.OK.value,
-        label=_('Status'),
-    )
+    status = stock.serializers.StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     packaging = serializers.CharField(
         label=_('Packaging'),
@@ -1025,7 +1041,7 @@ class SalesOrderSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if customer_detail is not True:
+        if customer_detail is not True and not isGeneratingSchema():
             self.fields.pop('customer_detail', None)
 
     def skip_create_fields(self):
@@ -1069,13 +1085,15 @@ class SalesOrderSerializer(
         return queryset
 
     customer_detail = CompanyBriefSerializer(
-        source='customer', many=False, read_only=True
+        source='customer', many=False, read_only=True, allow_null=True
     )
 
-    shipments_count = serializers.IntegerField(read_only=True, label=_('Shipments'))
+    shipments_count = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Shipments')
+    )
 
     completed_shipments_count = serializers.IntegerField(
-        read_only=True, label=_('Completed Shipments')
+        read_only=True, allow_null=True, label=_('Completed Shipments')
     )
 
 
@@ -1134,6 +1152,9 @@ class SalesOrderLineItemSerializer(
         customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if part_detail is not True:
             self.fields.pop('part_detail', None)
@@ -1233,14 +1254,18 @@ class SalesOrderLineItemSerializer(
 
         return queryset
 
-    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    order_detail = SalesOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
+    part_detail = PartBriefSerializer(
+        source='part', many=False, read_only=True, allow_null=True
+    )
     customer_detail = CompanyBriefSerializer(
-        source='order.customer', many=False, read_only=True
+        source='order.customer', many=False, read_only=True, allow_null=True
     )
 
     # Annotated fields
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
     available_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
@@ -1289,7 +1314,7 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
 
         super().__init__(*args, **kwargs)
 
-        if not order_detail:
+        if not order_detail and not isGeneratingSchema():
             self.fields.pop('order_detail', None)
 
     @staticmethod
@@ -1303,10 +1328,12 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
         return queryset
 
     allocated_items = serializers.IntegerField(
-        read_only=True, label=_('Allocated Items')
+        read_only=True, allow_null=True, label=_('Allocated Items')
     )
 
-    order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
+    order_detail = SalesOrderSerializer(
+        source='order', read_only=True, allow_null=True, many=False
+    )
 
 
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
@@ -1352,6 +1379,9 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not order_detail:
             self.fields.pop('order_detail', None)
 
@@ -1371,23 +1401,27 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     order = serializers.PrimaryKeyRelatedField(
         source='line.order', many=False, read_only=True
     )
-    serial = serializers.CharField(source='get_serial', read_only=True)
+    serial = serializers.CharField(source='get_serial', read_only=True, allow_null=True)
     quantity = serializers.FloatField(read_only=False)
     location = serializers.PrimaryKeyRelatedField(
         source='item.location', many=False, read_only=True
     )
 
     # Extra detail fields
-    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
-    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    order_detail = SalesOrderSerializer(
+        source='line.order', many=False, read_only=True, allow_null=True
+    )
+    part_detail = PartBriefSerializer(
+        source='item.part', many=False, read_only=True, allow_null=True
+    )
     item_detail = stock.serializers.StockItemSerializerBrief(
-        source='item', many=False, read_only=True
+        source='item', many=False, read_only=True, allow_null=True
     )
     location_detail = stock.serializers.LocationBriefSerializer(
-        source='item.location', many=False, read_only=True
+        source='item.location', many=False, read_only=True, allow_null=True
     )
     customer_detail = CompanyBriefSerializer(
-        source='line.order.customer', many=False, read_only=True
+        source='line.order.customer', many=False, read_only=True, allow_null=True
     )
 
     shipment_detail = SalesOrderShipmentSerializer(
@@ -1833,7 +1867,9 @@ class SalesOrderExtraLineSerializer(
 
         model = order.models.SalesOrderExtraLine
 
-    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = SalesOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
 
 
 @register_importer()
@@ -1852,7 +1888,6 @@ class ReturnOrderSerializer(
         model = order.models.ReturnOrder
 
         fields = AbstractOrderSerializer.order_fields([
-            'issue_date',
             'complete_date',
             'customer',
             'customer_detail',
@@ -1869,7 +1904,7 @@ class ReturnOrderSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if customer_detail is not True:
+        if customer_detail is not True and not isGeneratingSchema():
             self.fields.pop('customer_detail', None)
 
     def skip_create_fields(self):
@@ -1902,7 +1937,7 @@ class ReturnOrderSerializer(
         return queryset
 
     customer_detail = CompanyBriefSerializer(
-        source='customer', many=False, read_only=True
+        source='customer', many=False, read_only=True, allow_null=True
     )
 
 
@@ -1954,13 +1989,8 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
         label=_('Return order line item'),
     )
 
-    status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(custom=True),
-        default=None,
-        label=_('Status'),
-        help_text=_('Stock item status code'),
-        required=False,
-        allow_blank=True,
+    status = stock.serializers.StockStatusCustomSerializer(
+        default=None, required=False, allow_blank=True
     )
 
     def validate_line_item(self, item):
@@ -2081,6 +2111,9 @@ class ReturnOrderLineItemSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not order_detail:
             self.fields.pop('order_detail', None)
 
@@ -2090,17 +2123,21 @@ class ReturnOrderLineItemSerializer(
         if not part_detail:
             self.fields.pop('part_detail', None)
 
-    order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = ReturnOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )
 
     quantity = serializers.FloatField(
         label=_('Quantity'), help_text=_('Quantity to return')
     )
 
     item_detail = stock.serializers.StockItemSerializer(
-        source='item', many=False, read_only=True
+        source='item', many=False, read_only=True, allow_null=True
     )
 
-    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    part_detail = PartBriefSerializer(
+        source='item.part', many=False, read_only=True, allow_null=True
+    )
 
     price = InvenTreeMoneySerializer(allow_null=True)
     price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))
@@ -2117,4 +2154,6 @@ class ReturnOrderExtraLineSerializer(
 
         model = order.models.ReturnOrderExtraLine
 
-    order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+    order_detail = ReturnOrderSerializer(
+        source='order', many=False, read_only=True, allow_null=True
+    )

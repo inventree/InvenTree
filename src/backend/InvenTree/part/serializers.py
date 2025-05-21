@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
@@ -33,8 +34,9 @@ import part.tasks
 import stock.models
 import users.models
 from build.status_codes import BuildStatusGroups
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.tasks import offload_task
 from users.serializers import UserSerializer
 
@@ -94,7 +96,7 @@ class CategorySerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not path_detail:
+        if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
     def get_starred(self, category) -> bool:
@@ -124,16 +126,23 @@ class CategorySerializer(
         help_text=_('Parent part category'),
     )
 
-    part_count = serializers.IntegerField(read_only=True, label=_('Parts'))
+    part_count = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Parts')
+    )
 
-    subcategories = serializers.IntegerField(read_only=True, label=_('Subcategories'))
+    subcategories = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Subcategories')
+    )
 
     level = serializers.IntegerField(read_only=True)
 
     starred = serializers.SerializerMethodField()
 
     path = serializers.ListField(
-        child=serializers.DictField(), source='get_path', read_only=True
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     icon = serializers.CharField(
@@ -144,7 +153,7 @@ class CategorySerializer(
         max_length=100,
     )
 
-    parent_default_location = serializers.IntegerField(read_only=True)
+    parent_default_location = serializers.IntegerField(read_only=True, allow_null=True)
 
 
 class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
@@ -330,6 +339,7 @@ class PartParameterTemplateSerializer(
 
     parts = serializers.IntegerField(
         read_only=True,
+        allow_null=True,
         label=_('Parts'),
         help_text=_('Number of parts using this template'),
     )
@@ -383,7 +393,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         super().__init__(*args, **kwargs)
 
-        if not pricing:
+        if not pricing and not isGeneratingSchema():
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
 
@@ -391,7 +401,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
+    image = InvenTree.serializers.InvenTreeImageSerializerField(
+        read_only=True, allow_null=True
+    )
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     IPN = serializers.CharField(
@@ -444,67 +456,21 @@ class PartParameterSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
         if not template_detail:
             self.fields.pop('template_detail', None)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = PartBriefSerializer(
+        source='part', many=False, read_only=True, allow_null=True
+    )
     template_detail = PartParameterTemplateSerializer(
-        source='template', many=False, read_only=True
+        source='template', many=False, read_only=True, allow_null=True
     )
-
-
-class PartSetCategorySerializer(serializers.Serializer):
-    """Serializer for changing PartCategory for multiple Part objects."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['parts', 'category']
-
-    parts = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        many=True,
-        required=True,
-        allow_null=False,
-        label=_('Parts'),
-    )
-
-    def validate_parts(self, parts):
-        """Validate the selected parts."""
-        if len(parts) == 0:
-            raise serializers.ValidationError(_('No parts selected'))
-
-        return parts
-
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=PartCategory.objects.filter(structural=False),
-        many=False,
-        required=True,
-        allow_null=False,
-        label=_('Category'),
-        help_text=_('Select category'),
-    )
-
-    @transaction.atomic
-    def save(self):
-        """Save the serializer to change the location of the selected parts."""
-        data = self.validated_data
-        parts = data['parts']
-        category = data['category']
-
-        parts_to_save = []
-
-        for p in parts:
-            if p.category == category:
-                continue
-
-            p.category = category
-            parts_to_save.append(p)
-
-        Part.objects.bulk_update(parts_to_save, ['category'])
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -782,6 +748,9 @@ class PartSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not category_detail:
             self.fields.pop('category_detail', None)
 
@@ -923,14 +892,19 @@ class PartSerializer(
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    category_detail = CategorySerializer(
+        source='category', many=False, read_only=True, allow_null=True
+    )
 
     category_path = serializers.ListField(
-        child=serializers.DictField(), source='category.get_path', read_only=True
+        child=serializers.DictField(),
+        source='category.get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     default_location_detail = DefaultLocationSerializer(
-        source='default_location', many=False, read_only=True
+        source='default_location', many=False, read_only=True, allow_null=True
     )
 
     category_name = serializers.CharField(
@@ -957,25 +931,47 @@ class PartSerializer(
     )
 
     # Annotated fields
-    allocated_to_build_orders = serializers.FloatField(read_only=True)
-    allocated_to_sales_orders = serializers.FloatField(read_only=True)
-    building = serializers.FloatField(read_only=True, label=_('Building'))
-    in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
-    ordering = serializers.FloatField(read_only=True, label=_('On Order'))
-    required_for_build_orders = serializers.IntegerField(read_only=True)
-    required_for_sales_orders = serializers.IntegerField(read_only=True)
-    stock_item_count = serializers.IntegerField(read_only=True, label=_('Stock Items'))
-    revision_count = serializers.IntegerField(read_only=True, label=_('Revisions'))
-    suppliers = serializers.IntegerField(read_only=True, label=_('Suppliers'))
-    total_in_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
-    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
+    allocated_to_build_orders = serializers.FloatField(read_only=True, allow_null=True)
+    allocated_to_sales_orders = serializers.FloatField(read_only=True, allow_null=True)
+    building = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('Building')
+    )
+    in_stock = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('In Stock')
+    )
+    ordering = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('On Order')
+    )
+    required_for_build_orders = serializers.IntegerField(
+        read_only=True, allow_null=True
+    )
+    required_for_sales_orders = serializers.IntegerField(
+        read_only=True, allow_null=True
+    )
+    stock_item_count = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Stock Items')
+    )
+    revision_count = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Revisions')
+    )
+    suppliers = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Suppliers')
+    )
+    total_in_stock = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('Total Stock')
+    )
+    external_stock = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('External Stock')
+    )
     unallocated_stock = serializers.FloatField(
-        read_only=True, label=_('Unallocated Stock')
+        read_only=True, allow_null=True, label=_('Unallocated Stock')
     )
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
     )
-    variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
+    variant_stock = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('Variant Stock')
+    )
 
     minimum_stock = serializers.FloatField(
         required=False, label=_('Minimum Stock'), default=0
@@ -1003,7 +999,7 @@ class PartSerializer(
         source='pricing_data.updated', allow_null=True, read_only=True
     )
 
-    parameters = PartParameterSerializer(many=True, read_only=True)
+    parameters = PartParameterSerializer(many=True, read_only=True, allow_null=True)
 
     # Extra fields used only for creation of a new Part instance
     duplicate = DuplicatePartSerializer(
@@ -1334,6 +1330,21 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
         )
 
 
+@extend_schema_field(
+    serializers.CharField(
+        help_text=_('Select currency from available options')
+        + '\n\n'
+        + '\n'.join(
+            f'* `{value}` - {label}'
+            for value, label in common.currency.currency_code_mappings()
+        )
+        + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
+    )
+)
+class PartPricingCurrencySerializer(serializers.ChoiceField):
+    """Serializer to allow annotating the schema to use String on currency fields."""
+
+
 class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for Part pricing information."""
 
@@ -1418,7 +1429,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         required=False,
     )
 
-    override_min_currency = serializers.ChoiceField(
+    override_min_currency = PartPricingCurrencySerializer(
         label=_('Minimum price currency'),
         read_only=False,
         required=False,
@@ -1433,7 +1444,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         required=False,
     )
 
-    override_max_currency = serializers.ChoiceField(
+    override_max_currency = PartPricingCurrencySerializer(
         label=_('Maximum price currency'),
         read_only=False,
         required=False,
@@ -1560,6 +1571,8 @@ class BomItemSerializer(
 
     import_exclude_fields = ['validated', 'substitutes']
 
+    export_exclude_fields = ['substitutes']
+
     export_child_fields = [
         'sub_part_detail.name',
         'sub_part_detail.IPN',
@@ -1617,6 +1630,9 @@ class BomItemSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
@@ -1648,10 +1664,12 @@ class BomItemSerializer(
         help_text=_('Select the parent assembly'),
     )
 
-    substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
+    substitutes = BomItemSubstituteSerializer(
+        many=True, read_only=True, allow_null=True
+    )
 
     part_detail = PartBriefSerializer(
-        source='part', label=_('Assembly'), many=False, read_only=True
+        source='part', label=_('Assembly'), many=False, read_only=True, allow_null=True
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1661,14 +1679,24 @@ class BomItemSerializer(
     )
 
     sub_part_detail = PartBriefSerializer(
-        source='sub_part', label=_('Component'), many=False, read_only=True
+        source='sub_part',
+        label=_('Component'),
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
-    on_order = serializers.FloatField(label=_('On Order'), read_only=True)
+    on_order = serializers.FloatField(
+        label=_('On Order'), read_only=True, allow_null=True
+    )
 
-    building = serializers.FloatField(label=_('In Production'), read_only=True)
+    building = serializers.FloatField(
+        label=_('In Production'), read_only=True, allow_null=True
+    )
 
-    can_build = serializers.FloatField(label=_('Can Build'), read_only=True)
+    can_build = serializers.FloatField(
+        label=_('Can Build'), read_only=True, allow_null=True
+    )
 
     # Cached pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1691,12 +1719,14 @@ class BomItemSerializer(
     )
 
     # Annotated fields for available stock
-    available_stock = serializers.FloatField(label=_('Available Stock'), read_only=True)
+    available_stock = serializers.FloatField(
+        label=_('Available Stock'), read_only=True, allow_null=True
+    )
 
-    available_substitute_stock = serializers.FloatField(read_only=True)
-    available_variant_stock = serializers.FloatField(read_only=True)
+    available_substitute_stock = serializers.FloatField(read_only=True, allow_null=True)
+    available_variant_stock = serializers.FloatField(read_only=True, allow_null=True)
 
-    external_stock = serializers.FloatField(read_only=True)
+    external_stock = serializers.FloatField(read_only=True, allow_null=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1867,7 +1897,9 @@ class CategoryParameterTemplateSerializer(
         source='parameter_template', many=False, read_only=True
     )
 
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    category_detail = CategorySerializer(
+        source='category', many=False, read_only=True, allow_null=True
+    )
 
 
 class PartCopyBOMSerializer(serializers.Serializer):

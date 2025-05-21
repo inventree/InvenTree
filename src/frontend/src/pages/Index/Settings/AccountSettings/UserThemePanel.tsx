@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   ActionIcon,
   Button,
@@ -11,14 +12,15 @@ import {
   Select,
   Slider,
   Table,
-  Title,
   useMantineTheme
 } from '@mantine/core';
 import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
+import { StylishText } from '../../../../components/items/StylishText';
 import { SizeMarks } from '../../../../defaults/defaults';
 import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';
@@ -33,11 +35,9 @@ const LOOKUP = Object.assign(
 
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
-  const [usertheme, setTheme, setLanguage] = useLocalState((state) => [
-    state.usertheme,
-    state.setTheme,
-    state.setLanguage
-  ]);
+  const [userTheme, setTheme, setLanguage] = useLocalState(
+    useShallow((state) => [state.userTheme, state.setTheme, state.setLanguage])
+  );
 
   // radius
   function getMark(value: number) {
@@ -46,7 +46,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
     return SizeMarks[0];
   }
   function getDefaultRadius() {
-    const value = Number.parseInt(usertheme.radius.toString());
+    const value = Number.parseInt(userTheme.radius.toString());
     return SizeMarks.some((mark) => mark.value === value) ? value : 50;
   }
   const [radius, setRadius] = useState(getDefaultRadius());
@@ -57,9 +57,9 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
 
   return (
     <Container w='100%' mih={height} p={0}>
-      <Title order={3}>
+      <StylishText size='lg'>
         <Trans>Display Settings</Trans>
-      </Title>
+      </StylishText>
       <Table>
         <Table.Tbody>
           <Table.Tr>
@@ -118,7 +118,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ColorInput
                 aria-label='Color Picker White'
-                value={usertheme.whiteColor}
+                value={userTheme.whiteColor}
                 onChange={(v) => setTheme([{ key: 'whiteColor', value: v }])}
               />
             </Table.Td>
@@ -141,7 +141,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ColorInput
                 aria-label='Color Picker Black'
-                value={usertheme.blackColor}
+                value={userTheme.blackColor}
                 onChange={(v) => setTheme([{ key: 'blackColor', value: v }])}
               />
             </Table.Td>
@@ -187,7 +187,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
                     { value: 'oval', label: t`Oval` },
                     { value: 'dots', label: t`Dots` }
                   ]}
-                  value={usertheme.loader}
+                  value={userTheme.loader}
                   onChange={(v) => {
                     if (v != null) setTheme([{ key: 'loader', value: v }]);
                   }}
@@ -196,7 +196,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <Group justify='left'>
-                <Loader type={usertheme.loader} mah={16} size='sm' />
+                <Loader type={userTheme.loader} mah={16} size='sm' />
               </Group>
             </Table.Td>
           </Table.Tr>

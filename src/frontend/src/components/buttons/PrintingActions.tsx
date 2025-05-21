@@ -1,115 +1,20 @@
-import { t } from '@lingui/macro';
-import { notifications, showNotification } from '@mantine/notifications';
-import {
-  IconCircleCheck,
-  IconPrinter,
-  IconReport,
-  IconTags
-} from '@tabler/icons-react';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
+import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { api } from '../../App';
-import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
-import { generateUrl } from '../../functions/urls';
+import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
-import { ProgressBar } from '../items/ProgressBar';
-
-/**
- * Hook to track the progress of a printing operation
- */
-function usePrintingProgress({
-  title,
-  outputId,
-  endpoint
-}: {
-  title: string;
-  outputId?: number;
-  endpoint: ApiEndpoints;
-}) {
-  const api = useApi();
-
-  const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!!outputId) {
-      setLoading(true);
-      showNotification({
-        id: `printing-progress-${endpoint}-${outputId}`,
-        title: title,
-        loading: true,
-        autoClose: false,
-        withCloseButton: false,
-        message: <ProgressBar size='lg' value={0} progressLabel />
-      });
-    } else {
-      setLoading(false);
-    }
-  }, [outputId, endpoint, title]);
-
-  const progress = useQuery({
-    enabled: !!outputId && loading,
-    refetchInterval: 750,
-    queryKey: ['printingProgress', endpoint, outputId],
-    queryFn: () =>
-      api
-        .get(apiUrl(endpoint, outputId))
-        .then((response) => {
-          const data = response?.data ?? {};
-
-          if (data.pk && data.pk == outputId) {
-            if (data.complete) {
-              setLoading(false);
-              notifications.hide(`printing-progress-${endpoint}-${outputId}`);
-              notifications.hide('print-success');
-
-              notifications.show({
-                id: 'print-success',
-                title: t`Printing`,
-                message: t`Printing completed successfully`,
-                color: 'green',
-                icon: <IconCircleCheck />
-              });
-
-              if (data.output) {
-                const url = generateUrl(data.output);
-                window.open(url.toString(), '_blank');
-              }
-            } else {
-              notifications.update({
-                id: `printing-progress-${endpoint}-${outputId}`,
-                autoClose: false,
-                withCloseButton: false,
-                message: (
-                  <ProgressBar
-                    size='lg'
-                    value={data.progress}
-                    maximum={data.items}
-                    progressLabel
-                  />
-                )
-              });
-            }
-          }
-
-          return data;
-        })
-        .catch(() => {
-          notifications.hide(`printing-progress-${endpoint}-${outputId}`);
-          setLoading(false);
-          return {};
-        })
-  });
-}
 
 export function PrintingActions({
   items,
@@ -142,16 +47,14 @@ export function PrintingActions({
   const [labelId, setLabelId] = useState<number | undefined>(undefined);
   const [reportId, setReportId] = useState<number | undefined>(undefined);
 
-  const labelProgress = usePrintingProgress({
+  const labelProgress = useDataOutput({
     title: t`Printing Labels`,
-    outputId: labelId,
-    endpoint: ApiEndpoints.label_output
+    id: labelId
   });
 
-  const reportProgress = usePrintingProgress({
+  const reportProgress = useDataOutput({
     title: t`Printing Reports`,
-    outputId: reportId,
-    endpoint: ApiEndpoints.report_output
+    id: reportId
   });
 
   // Fetch available printing fields via OPTIONS request

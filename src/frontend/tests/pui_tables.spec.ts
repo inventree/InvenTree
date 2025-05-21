@@ -4,13 +4,11 @@ import {
   navigate,
   setTableChoiceFilter
 } from './helpers.js';
-import { doQuickLogin } from './login.js';
+import { doCachedLogin } from './login.js';
 
-test('Tables - Filters', async ({ page }) => {
-  await doQuickLogin(page);
-
+test('Tables - Filters', async ({ browser }) => {
   // Head to the "build order list" page
-  await navigate(page, 'manufacturing/index/');
+  const page = await doCachedLogin(browser, { url: 'manufacturing/index/' });
 
   await clearTableFilters(page);
 
@@ -41,11 +39,11 @@ test('Tables - Filters', async ({ page }) => {
   await clearTableFilters(page);
 });
 
-test('Tables - Columns', async ({ page }) => {
-  await doQuickLogin(page);
-
+test('Tables - Columns', async ({ browser }) => {
   // Go to the "stock list" page
-  await navigate(page, 'stock/location/index/stock-items');
+  const page = await doCachedLogin(browser, {
+    url: 'stock/location/index/stock-items'
+  });
 
   // Open column selector
   await page.getByLabel('table-select-columns').click();
@@ -64,6 +62,4 @@ test('Tables - Columns', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Target Date' }).click();
   await page.getByRole('menuitem', { name: 'Reference', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Project Code' }).click();
-
-  await page.waitForTimeout(1000);
 });

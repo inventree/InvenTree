@@ -37,7 +37,7 @@ from InvenTree.unit_test import InvenTreeTestCase, in_env_context
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
-from . import config, helpers, ready, status, version
+from . import config, helpers, ready, schema, status, version
 from .tasks import offload_task
 from .validators import validate_overage
 
@@ -435,16 +435,26 @@ class ValidatorTest(TestCase):
             link='www.google.com',
         )
 
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 1}', description='Missing link', category=cat, link=''
+        )
+
         # With strict URL validation
         InvenTreeSetting.set_setting('INVENTREE_STRICT_URLS', True, None)
 
         with self.assertRaises(ValidationError):
             Part.objects.create(
-                name=f'Part {n + 1}',
+                name=f'Part {n + 2}',
                 description='Link without schema',
                 category=cat,
                 link='www.google.com',
             )
+
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 3}', description='Missing link', category=cat, link=''
+        )
 
 
 class FormatTest(TestCase):
@@ -1116,6 +1126,10 @@ class TestStatus(TestCase):
         """Test isImportingData check."""
         self.assertEqual(ready.isImportingData(), False)
 
+    def test_GeneratingSchema(self):
+        """Test isGeneratingSchema check."""
+        self.assertEqual(ready.isGeneratingSchema(), False)
+
 
 class TestSettings(InvenTreeTestCase):
     """Unit tests for settings."""
@@ -1631,3 +1645,81 @@ class ClassProviderMixinTest(TestCase):
     def test_get_is_builtin(self):
         """Test the get_is_builtin function."""
         self.assertTrue(self.TestClass.get_is_builtin())
+
+
+class SchemaPostprocessingTest(TestCase):
+    """Tests for schema postprocessing functions."""
+
+    def create_result_structure(self):
+        """Create a schema dict structure representative of the spectacular-generated on."""
+        return {
+            'openapi': {},
+            'info': {},
+            'paths': {},
+            'components': {
+                'examples': {},
+                'parameters': {},
+                'requestBodies': {},
+                'responses': {},
+                'schemas': {},
+                'securitySchemes': {},
+            },
+            'servers': {},
+            'externalDocs': {},
+        }
+
+    def test_postprocess_required_nullable(self):
+        """Verify that only selected elements are removed from required list."""
+        result_in = self.create_result_structure()
+        schemas_in = result_in.get('components').get('schemas')
+
+        schemas_in['SalesOrder'] = {
+            'properties': {
+                'pk': {'type': 'integer', 'readOnly': True, 'title': 'ID'},
+                'customer_detail': {
+                    'allOf': [{'$ref': '#/components/schemas/CompanyBrief'}],
+                    'readOnly': True,
+                    'nullable': True,
+                },
+            },
+            'required': ['customer_detail', 'pk'],
+        }
+
+        schemas_in['SalesOrderShipment'] = {
+            'properties': {
+                'order_detail': {
+                    'allOf': [{'$ref': '#/components/schemas/SalesOrder'}],
+                    'readOnly': True,
+                    'nullable': True,
+                }
+            },
+            'required': ['order_detail'],
+        }
+
+        result_out = schema.postprocess_required_nullable(result_in, {}, {}, {})
+        schemas_out = result_out.get('components').get('schemas')
+
+        # only intended elements removed (read-only, required, and object type)
+        self.assertIn('pk', schemas_out.get('SalesOrder')['required'])
+        self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
+        # required key removed when empty
+        self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
+
+
+class URLCompatibilityTest(InvenTreeTestCase):
+    """Unit test for legacy URL compatibility."""
+
+    URL_MAPPINGS = [
+        ('/index/', '/web'),
+        ('/part/1/', '/web/part/1/'),
+        ('/company/customers/', '/web/sales/index/customers'),
+        ('/build/3/', '/web/manufacturing/build-order/3'),
+        ('/stock/item/1/', '/web/stock/item/1/'),
+    ]
+
+    def test_legacy_urls(self):
+        """Test legacy URLs."""
+        for old_url, new_url in self.URL_MAPPINGS:
+            response = self.client.get(old_url)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['Location'], new_url)

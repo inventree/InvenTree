@@ -1,14 +1,16 @@
-import { t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
+import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl, useServerApiState } from '../states/ApiState';
+import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
-import { type Provider, fetchGlobalStates } from '../states/states';
+import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -65,8 +67,9 @@ export const doBasicLogin = async (
   password: string,
   navigate: NavigateFunction
 ) => {
-  const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+  const { getHost } = useLocalState.getState();
+  const { clearUserState, setAuthenticated, fetchUserState } =
+    useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
@@ -78,6 +81,8 @@ export const doBasicLogin = async (
 
   let loginDone = false;
   let success = false;
+
+  const host: string = getHost();
 
   // Attempt login with
   await api
@@ -94,7 +99,7 @@ export const doBasicLogin = async (
     .then((response) => {
       setAuthContext(response.data?.data);
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
-        setToken(response.data.meta.access_token);
+        setAuthenticated(true);
         loginDone = true;
         success = true;
       }
@@ -103,7 +108,7 @@ export const doBasicLogin = async (
       if (err?.response?.status == 401) {
         setAuthContext(err.response.data?.data);
         const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_authenticate'
+          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
           success = true;
@@ -155,7 +160,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 };
 
 export const doSimpleLogin = async (email: string) => {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const mail = await axios
     .post(
       apiUrl(ApiEndpoints.user_simple_login),
@@ -163,7 +168,7 @@ export const doSimpleLogin = async (email: string) => {
         email: email
       },
       {
-        baseURL: host,
+        baseURL: getHost(),
         timeout: 2000
       }
     )
@@ -178,7 +183,7 @@ function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
-  const { language, setLanguage, usertheme, setTheme } =
+  const { language, setLanguage, userTheme, setTheme, setWidgets, setLayouts } =
     useLocalState.getState();
   if (user) {
     if (user.profile?.language && language != user.profile.language) {
@@ -193,14 +198,14 @@ function observeProfile() {
 
     if (user.profile?.theme) {
       // extract keys of usertheme and set them to the values of user.profile.theme
-      const newTheme = Object.keys(usertheme).map((key) => {
+      const newTheme = Object.keys(userTheme).map((key) => {
         return {
-          key: key as keyof typeof usertheme,
+          key: key as keyof typeof userTheme,
           value: user.profile.theme[key] as string
         };
       });
       const diff = newTheme.filter(
-        (item) => usertheme[item.key] !== item.value
+        (item) => userTheme[item.key] !== item.value
       );
       if (diff.length > 0) {
         showNotification({
@@ -211,13 +216,22 @@ function observeProfile() {
         setTheme(newTheme);
       }
     }
+
+    if (user.profile?.widgets) {
+      const data = user.profile.widgets;
+      // split data into widgets and layouts (either might be undefined)
+      const widgets = data.widgets ?? [];
+      const layouts = data.layouts ?? {};
+      setWidgets(widgets, true);
+      setLayouts(layouts, true);
+    }
   }
 }
 
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
-    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {});
+    await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
   }
 }
 
@@ -251,7 +265,7 @@ export function handleMfaLogin(
   values: { code: string },
   setError: (message: string | undefined) => void
 ) {
-  const { setToken, fetchUserState } = useUserState.getState();
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
@@ -260,7 +274,7 @@ export function handleMfaLogin(
     .then((response) => {
       setError(undefined);
       setAuthContext(response.data?.data);
-      setToken(response.data.meta.access_token);
+      setAuthenticated();
 
       fetchUserState().finally(() => {
         observeProfile();
@@ -358,7 +372,7 @@ export function clearCsrfCookie() {
 }
 
 export async function ProviderLogin(
-  provider: Provider,
+  provider: AuthProvider,
   process: 'login' | 'connect' = 'login'
 ) {
   await ensureCsrf();

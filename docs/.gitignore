@@ -13,12 +13,5 @@ site/
 # Generated API schema files
 docs/api/schema/*.yml
 
-# Temporary cache files
-url_cache.txt
-invoke-commands.txt
-
-# Temp files
-releases.json
-versions.json
-
 .vscode/
+generated/

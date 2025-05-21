@@ -1,14 +1,15 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
-import type { ApiFormFieldType } from './ApiFormField';
 
 export interface TableFieldRowProps {
   item: any;

@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
@@ -22,6 +23,7 @@ from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
+import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
@@ -85,6 +87,7 @@ class InvenTreeMoneySerializer(MoneyField):
             return amount
 
 
+@extend_schema_field(serializers.CharField())
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
     """Custom serializers for selecting currency option."""
 
@@ -109,6 +112,14 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
         if 'help_text' not in kwargs:
             kwargs['help_text'] = _('Select currency from available options')
+
+        if InvenTree.ready.isGeneratingSchema():
+            kwargs['help_text'] = (
+                kwargs['help_text']
+                + '\n\n'
+                + '\n'.join(f'* `{value}` - {label}' for value, label in choices)
+                + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
+            )
 
         super().__init__(*args, **kwargs)
 
@@ -468,7 +479,10 @@ class NotesFieldMixin:
 
         if hasattr(self, 'context'):
             if view := self.context.get('view', None):
-                if issubclass(view.__class__, ListModelMixin):
+                if (
+                    issubclass(view.__class__, ListModelMixin)
+                    and not InvenTree.ready.isGeneratingSchema()
+                ):
                     self.fields.pop('notes', None)
 
 

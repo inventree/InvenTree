@@ -1,7 +1,6 @@
 """Build database model definitions."""
 
 import decimal
-from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -48,6 +47,30 @@ from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
+
+
+class BuildReportContext(report.mixins.BaseReportContext):
+    """Context for the Build model.
+
+    Attributes:
+        bom_items: Query set of all BuildItem objects associated with the BuildOrder
+        build: The BuildOrder instance itself
+        build_outputs: Query set of all BuildItem objects associated with the BuildOrder
+        line_items: Query set of all build line items associated with the BuildOrder
+        part: The Part object which is being assembled in the build order
+        quantity: The total quantity of the part being assembled
+        reference: The reference field of the BuildOrder
+        title: The title field of the BuildOrder
+    """
+
+    bom_items: report.mixins.QuerySet[part.models.BomItem]
+    build: 'Build'
+    build_outputs: report.mixins.QuerySet[stock.models.StockItem]
+    line_items: report.mixins.QuerySet['BuildLine']
+    part: part.models.Part
+    quantity: int
+    reference: str
+    title: str
 
 
 class Build(
@@ -184,7 +207,7 @@ class Build(
                 'target_date': _('Target date must be after start date')
             })
 
-    def report_context(self) -> dict:
+    def report_context(self) -> BuildReportContext:
         """Generate custom report context data."""
         return {
             'bom_items': self.part.get_bom_items(),
@@ -196,44 +219,6 @@ class Build(
             'reference': self.reference,
             'title': str(self),
         }
-
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by 'minimum and maximum date range'.
-
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
-
-        # Order was completed within the specified range
-        completed = (
-            Q(status=BuildStatus.COMPLETE.value)
-            & Q(completion_date__gte=min_date)
-            & Q(completion_date__lte=max_date)
-        )
-
-        # Order target date falls within specified range
-        pending = (
-            Q(status__in=BuildStatusGroups.ACTIVE_CODES)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO - Construct a queryset for "overdue" orders
-
-        queryset = queryset.filter(completed | pending)
-
-        return queryset
 
     def __str__(self):
         """String representation of a BuildOrder."""
@@ -643,8 +628,13 @@ class Build(
         self.allocated_stock.delete()
 
     @transaction.atomic
-    def complete_build(self, user, trim_allocated_stock=False):
-        """Mark this build as complete."""
+    def complete_build(self, user: User, trim_allocated_stock: bool = False):
+        """Mark this build as complete.
+
+        Arguments:
+            user: The user who is completing the build
+            trim_allocated_stock: If True, trim any allocated stock
+        """
         return self.handle_transition(
             self.status,
             BuildStatus.COMPLETE.value,
@@ -695,6 +685,9 @@ class Build(
 
         # Notify users that this build has been completed
         targets = [self.issued_by, self.responsible]
+
+        # Also inform anyone subscribed to the assembly part
+        targets.extend(self.part.get_subscribers())
 
         # Notify those users interested in the parent build
         if self.parent:
@@ -832,6 +825,7 @@ class Build(
             Build,
             exclude=self.issued_by,
             content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.part.get_subscribers(),
         )
 
         trigger_event(BuildEvents.CANCELLED, id=self.pk)
@@ -1485,12 +1479,37 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(
-                instance, sender, exclude=instance.issued_by
+                instance,
+                sender,
+                exclude=instance.issued_by,
+                extra_users=instance.part.get_subscribers(),
             )
 
         else:
             # Update BuildLine objects if the Build quantity has changed
             instance.update_build_line_items()
+
+
+class BuildLineReportContext(report.mixins.BaseReportContext):
+    """Context for the BuildLine model.
+
+    Attributes:
+        allocated_quantity: The quantity of the part which has been allocated to this build
+        allocations: A query set of all StockItem objects which have been allocated to this build line
+        bom_item: The BomItem associated with this line item
+        build: The BuildOrder instance associated with this line item
+        build_line: The build line instance itself
+        part: The sub-part (component) associated with the linked BomItem instance
+        quantity: The quantity required for this line item
+    """
+
+    allocated_quantity: decimal.Decimal
+    allocations: report.mixins.QuerySet['BuildItem']
+    bom_item: part.models.BomItem
+    build: Build
+    build_line: 'BuildLine'
+    part: part.models.Part
+    quantity: decimal.Decimal
 
 
 class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
@@ -1520,7 +1539,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the API URL used to access this model."""
         return reverse('api-build-line-list')
 
-    def report_context(self):
+    def report_context(self) -> BuildLineReportContext:
         """Generate custom report context for this BuildLine object."""
         return {
             'allocated_quantity': self.allocated_quantity,
