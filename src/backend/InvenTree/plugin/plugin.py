@@ -40,6 +40,7 @@ class PluginMixinEnum(str, enum.Enum):
     ICON_PACK = 'icon_pack'
     LABELS = 'labels'
     LOCATE = 'locate'
+    MAIL = 'mail'
     NAVIGATION = 'navigation'
     REPORT = 'report'
     SCHEDULE = 'schedule'
