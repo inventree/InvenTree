@@ -2659,7 +2659,7 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
             msg.extra_headers['X-InvenTree-ThreadId-1'] = str(new_obj.thread.global_id)
             msg.extra_headers['X-InvenTree-Instance-1'] = str(instance_id)
         except Exception as exc:  # pragma: no cover
-            logger.error(f' INVE-W9: Failed to log email message: {exc}')
+            logger.error(f' INVE-W10: Failed to log email message: {exc}')
     return msg_ids
 
 
@@ -2716,7 +2716,7 @@ def handle_event(sender, event, esp_name, **kwargs):
     except EmailMessage.DoesNotExist:
         return False
     except Exception as exc:  # pragma: no cover
-        logger.error(f' INVE-W9: Failed to handle tracking event: {exc}')
+        logger.error(f' INVE-W10: Failed to handle tracking event: {exc}')
         return False
 
 

@@ -126,7 +126,7 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         try:
             msg_ids = common.models.log_email_messages(email_messages)
         except Exception:  # pragma: no cover
-            logger.exception('INVE-W9: Problem logging recipients, ignoring')
+            logger.exception('INVE-W10: Problem logging recipients, ignoring')
 
         # Anymail: pre-processing
         if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
@@ -143,19 +143,19 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         try:
             ret_val = self.backend.send_messages(email_messages)
         except Exception as e:
-            logger.exception('INVE-W9: Problem sending email: %s', e)
+            logger.exception('INVE-W10: Problem sending email: %s', e)
             # If we fail to send the email, we need to set the status to ERROR
             for msg in msg_ids:
                 msg.status = common.models.EmailMessage.EmailStatus.FAILED
                 msg.error_message = str(e)
                 msg.save()
-            raise ValidationError(f'INVE-W9: Failed to send email: {e}') from e
+            raise ValidationError(f'INVE-W10: Failed to send email: {e}') from e
 
         # Log
         if ret_val == 0:  # pragma: no cover
-            logger.info('INVE-W9: No emails sent')
+            logger.info('INVE-W10: No emails sent')
         else:
-            logger.info('INVE-W9: %s emails sent', ret_val)
+            logger.info('INVE-W10: %s emails sent', ret_val)
             if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
                 # Anymail: ESP does return the message ID for us so we need to set it in the database
                 for k, v in {

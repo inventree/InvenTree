@@ -99,8 +99,13 @@ There are database migrations waiting to be applied. This might lead to integrit
 Some deployment methods support [auto applying of updates](../start/config.md#auto-update). See also [Perform Database Migrations](../start/install.md#perform-database-migrations).
 Steps very between deployment methods.
 
-
 #### INVE-W9
+**Wrong Invoke Environment - Backend**
+
+The command that was used to run invoke is not the one that is recommended. This might be caused by a wrong PATH variable or by thinking you are using a different deployment method.
+The warning text will show the recommended command for intended use.
+
+#### INVE-W10
 **Exception during mail delivery - Backend**
 
 Collective exception for errors that occur during mail delivery. This might be caused by a misconfiguration of the email provider or a network issue.
