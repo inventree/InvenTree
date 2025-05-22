@@ -180,6 +180,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <Group justify='left'>
                 <Select
+                  searchable
                   aria-label='Loader Type Selector'
                   data={[
                     { value: 'bars', label: t`Bars` },
