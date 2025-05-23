@@ -52,6 +52,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'image',
             'thumbnail',
             'currency',
+            'tax_id',
         ]
         read_only_fields = ['currency']
 
@@ -145,6 +146,7 @@ class CompanySerializer(
             'remote_image',
             'address_count',
             'primary_address',
+            'tax_id',
         ]
 
     @staticmethod
