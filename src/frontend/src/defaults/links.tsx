@@ -76,7 +76,7 @@ export const docLinks = {
   developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
   faq: 'https://docs.inventree.org/en/latest/faq/',
   github: 'https://github.com/inventree/inventree',
-  errorcodes: 'https://docs.inventree.org/en/latest/settings/error_codes/'
+  errorcodes: 'https://docs.inventree.org/en/latest/sref/error-codes/'
 };
 
 export function DocumentationLinks(): MenuLinkItem[] {
