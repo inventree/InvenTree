@@ -288,7 +288,7 @@ class ScheduledTask:
     QUARTERLY: str = 'Q'
     YEARLY: str = 'Y'
 
-    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)
+    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)  # type: ignore[invalid-assignment]
 
 
 class TaskRegister:
@@ -305,7 +305,9 @@ tasks = TaskRegister()
 
 
 def scheduled_task(
-    interval: str, minutes: Optional[int] = None, tasklist: TaskRegister = None
+    interval: str,
+    minutes: Optional[int] = None,
+    tasklist: Optional[TaskRegister] = None,
 ):
     """Register the given task as a scheduled task.
 
@@ -512,7 +514,7 @@ def check_for_updates():
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-    if len(match.groups()) != 3:  # pragma: no cover
+    if not match or len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
         return
 

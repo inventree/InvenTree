@@ -1307,7 +1307,7 @@ class Build(
                         except (ValidationError, serializers.ValidationError) as exc:
                             # Catch model errors and re-throw as DRF errors
                             raise ValidationError(
-                                detail=serializers.as_serializer_error(exc)
+                                exc.message, detail=serializers.as_serializer_error(exc)
                             )
 
                     if unallocated_quantity <= 0:

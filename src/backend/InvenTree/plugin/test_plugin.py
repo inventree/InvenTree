@@ -7,6 +7,7 @@ import tempfile
 import textwrap
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from unittest import mock
 from unittest.mock import patch
 
@@ -14,7 +15,8 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePlugin
+from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
     WrongIntegrationPlugin,
@@ -201,7 +203,9 @@ class InvenTreePluginTests(TestCase):
         self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
 
         plug = registry.plugins_full.get('sampleversion')
-        self.assertEqual(plug.is_active(), False)
+        self.assertIsNotNone(plug)
+        if plug:
+            self.assertEqual(plug.is_active(), False)
 
 
 class RegistryTests(TestCase):
@@ -247,7 +251,7 @@ class RegistryTests(TestCase):
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
         # Run in temporary directory -> always a new random name
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp:  # type: ignore[no-matching-overload]
             # Fill directory with sample data
             new_dir = Path(tmp).joinpath('mock')
             shutil.copytree(self.mockDir(), new_dir)
@@ -285,14 +289,15 @@ class RegistryTests(TestCase):
         # There should be at least one discovery error in the module `broken_file`
         self.assertGreater(len(registry.errors.get('discovery')), 0)
         self.assertEqual(
-            registry.errors.get('discovery')[0]['broken_file'],
+            registry.errors.get('discovery')[0]['broken_file'],  # type: ignore[call-possibly-unbound-method]
             "name 'bb' is not defined",
         )
 
         # There should be at least one load error with an intentional KeyError
         self.assertGreater(len(registry.errors.get('init')), 0)
         self.assertEqual(
-            registry.errors.get('init')[0]['broken_sample'], "'This is a dummy error'"
+            registry.errors.get('init')[0]['broken_sample'],  # type: ignore[call-possibly-unbound-method]
+            "'This is a dummy error'",
         )
 
     @override_settings(PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
@@ -337,7 +342,7 @@ class RegistryTests(TestCase):
 
         def create_plugin_file(
             version: str, enabled: bool = True, reload: bool = True
-        ) -> str:
+        ) -> Optional[str]:
             """Create a plugin file with the given version.
 
             Arguments:

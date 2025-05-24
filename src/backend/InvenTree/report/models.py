@@ -225,7 +225,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         ),
     )
 
-    def generate_filename(self, context, **kwargs):
+    def generate_filename(self, context, **kwargs) -> str:
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
 
@@ -391,7 +391,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the report template for rendering."""
         base_context = super().get_context(instance, request)
-        report_context: ReportContextExtension = {
+
+        report_context: ReportContextExtension = {  # type: ignore[invalid-assignment]
             'page_size': self.get_report_size(),
             'landscape': self.landscape,
         }
@@ -438,7 +439,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
 
         # Start with a default report name
-        report_name = None
+        report_name: Optional[str] = None
 
         report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
@@ -513,6 +514,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 'path': request.path if request else None,
             })
 
+        if not report_name:
+            report_name = ''  # pragma: no cover
+
         if not report_name.endswith('.pdf'):
             report_name += '.pdf'
 
@@ -541,7 +545,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         # Save the generated report to the database
         output.complete = True
-        output.output = ContentFile(data, report_name)
+        if data:
+            output.output = ContentFile(data, report_name)
         output.save()
 
         return output
@@ -598,7 +603,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
         base_context = super().get_context(instance, request, **kwargs)
-        label_context: LabelContextExtension = {
+        label_context: LabelContextExtension = {  # type: ignore[invalid-assignment]
             'width': self.width,
             'height': self.height,
             'page_style': None,

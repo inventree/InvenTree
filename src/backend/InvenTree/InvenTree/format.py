@@ -107,7 +107,7 @@ def construct_format_regex(fmt_string: str) -> str:
         # Add a named capture group for the format entry
         if name:
             # Check if integer values are required
-            c = '\\d' if _fmt.endswith('d') else '.'
+            c = '\\d' if _fmt and _fmt.endswith('d') else '.'
 
             # Specify width
             # TODO: Introspect required width
@@ -124,7 +124,7 @@ def construct_format_regex(fmt_string: str) -> str:
     return pattern
 
 
-def validate_string(value: str, fmt_string: str) -> str:
+def validate_string(value: str, fmt_string: str) -> bool:
     """Validate that the provided string matches the specified format.
 
     Args:

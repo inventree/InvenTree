@@ -4,6 +4,7 @@ from django import template
 from django.utils.safestring import mark_safe
 
 import barcode as python_barcode
+import barcode.writer as python_barcode_writer
 import qrcode.constants as ECL
 from PIL import Image, ImageColor
 from qrcode.main import QRCode
@@ -122,7 +123,7 @@ def barcode(data: str, barcode_class='code128', **kwargs) -> str:
 
     data = str(data).zfill(constructor.digits)
 
-    writer = python_barcode.writer.ImageWriter
+    writer = python_barcode_writer.ImageWriter
 
     barcode_image = constructor(data, writer=writer())
 
@@ -148,7 +149,7 @@ def datamatrix(data: str, **kwargs) -> str:
     Returns:
         image (str): base64 encoded image data
     """
-    from ppf.datamatrix import DataMatrix
+    from ppf.datamatrix.datamatrix import DataMatrix
 
     data = str(data).strip()
 
