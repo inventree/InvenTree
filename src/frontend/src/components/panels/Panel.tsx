@@ -13,3 +13,10 @@ export type PanelType = {
   disabled?: boolean;
   showHeadline?: boolean;
 };
+
+export type PanelGroupType = {
+  id: string;
+  label: string;
+  panelIDs?: string[];
+  panels?: PanelType[];
+};

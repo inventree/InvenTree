@@ -1,11 +1,13 @@
 import {
   ActionIcon,
+  Box,
   Divider,
   Group,
   Loader,
   Paper,
   Stack,
   Tabs,
+  Text,
   Tooltip
 } from '@mantine/core';
 import {
@@ -31,13 +33,15 @@ import {
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
 import { navigateToLink } from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { identifierString } from '../../functions/conversion';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
+import { vars } from '../../theme';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
-import type { PanelType } from '../panels/Panel';
+import type { PanelGroupType, PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 
 /**
@@ -56,6 +60,7 @@ import * as classes from './PanelGroup.css';
 export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
+  groups?: PanelGroupType[];
   instance?: any;
   reloadInstance?: () => void;
   model?: ModelType | string;
@@ -63,18 +68,21 @@ export type PanelProps = {
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
+  markCustomPanels?: boolean;
 };
 
 function BasePanelGroup({
   pageKey,
   panels,
+  groups,
   onPanelChange,
   selectedPanel,
   reloadInstance,
   instance,
   model,
   id,
-  collapsible = true
+  collapsible = true,
+  markCustomPanels = false
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -93,29 +101,66 @@ function BasePanelGroup({
   });
 
   // Rebuild the list of panels
-  const allPanels = useMemo(() => {
+  const [allPanels, groupedPanels] = useMemo(() => {
+    const _grouped_panels: PanelGroupType[] = [];
     const _panels = [...panels];
+    const _allpanels: PanelType[] = [...panels];
+
+    groups?.forEach((group) => {
+      const newVal: any = { ...group, panels: [] };
+      // Add panel to group and remove from main list
+      group.panelIDs?.forEach((panelID) => {
+        const index = _panels.findIndex((p) => p.name === panelID);
+        if (index !== -1) {
+          newVal.panels.push(_panels[index]);
+          _panels.splice(index, 1);
+        }
+      });
+      _grouped_panels.push(newVal);
+    });
+
+    // Add remaining panels to group
+    if (_panels.length > 0) {
+      _grouped_panels.push({
+        id: 'ungrouped',
+        label: '',
+        panels: _panels
+      });
+    }
 
     // Add plugin panels
+    const pluginPanels: any = [];
     pluginPanelSet.panels?.forEach((panel) => {
       let panelKey = panel.name;
 
       // Check if panel with this name already exists
-      const existingPanel = _panels.find((p) => p.name === panelKey);
+      const existingPanel = panels.find((p) => p.name === panelKey);
 
       if (existingPanel) {
         // Create a unique key for the panel which includes the plugin slug
         panelKey = identifierString(`${panel.pluginName}-${panel.name}`);
       }
 
-      _panels.push({
+      pluginPanels.push({
+        ...panel,
+        name: panelKey
+      });
+      _allpanels.push({
         ...panel,
         name: panelKey
       });
     });
 
-    return _panels;
-  }, [panels, pluginPanelSet]);
+    if (pluginPanels.length > 0) {
+      _grouped_panels.push({
+        id: 'plugins',
+        label: markCustomPanels ? t`Plugin Provided` : '',
+        panels: pluginPanels
+      });
+    }
+
+    return [_allpanels, _grouped_panels];
+  }, [groups, panels, pluginPanelSet]);
 
   const activePanels = useMemo(
     () => allPanels.filter((panel) => !panel.hidden && !panel.disabled),
@@ -170,32 +215,47 @@ function BasePanelGroup({
           classNames={{ tab: classes.selectedPanelTab }}
         >
           <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
-            {allPanels.map(
-              (panel) =>
-                !panel.hidden && (
-                  <Tooltip
-                    label={panel.label ?? panel.name}
-                    key={panel.name}
-                    disabled={expanded}
-                    position='right'
-                  >
-                    <Tabs.Tab
-                      p='xs'
-                      key={`panel-label-${panel.name}`}
-                      value={panel.name}
-                      leftSection={panel.icon}
-                      hidden={panel.hidden}
-                      disabled={panel.disabled}
-                      style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
-                      onClick={(event: any) =>
-                        handlePanelChange(panel.name, event)
-                      }
-                    >
-                      {expanded && panel.label}
-                    </Tabs.Tab>
-                  </Tooltip>
-                )
-            )}
+            {groupedPanels.map((group) => (
+              <Box key={`group-${group.id}`} w={'100%'}>
+                <Text
+                  fs={'italic'}
+                  ml={'1rem'}
+                  c={vars.colors.primaryColors[7]}
+                  key={`group-label-${group.id}`}
+                >
+                  {group.label}
+                </Text>
+                {group.panels?.map(
+                  (panel) =>
+                    !panel.hidden && (
+                      <Tooltip
+                        label={panel.label ?? panel.name}
+                        key={panel.name}
+                        disabled={expanded}
+                        position='right'
+                      >
+                        <Tabs.Tab
+                          p='xs'
+                          key={`panel-label-${panel.name}`}
+                          w={'100%'}
+                          value={panel.name}
+                          leftSection={panel.icon}
+                          hidden={panel.hidden}
+                          disabled={panel.disabled}
+                          style={{
+                            cursor: panel.disabled ? 'unset' : 'pointer'
+                          }}
+                          onClick={(event: any) =>
+                            handlePanelChange(panel.name, event)
+                          }
+                        >
+                          {expanded && panel.label}
+                        </Tabs.Tab>
+                      </Tooltip>
+                    )
+                )}
+              </Box>
+            ))}
             {collapsible && (
               <Group wrap='nowrap' gap='xs'>
                 <ActionIcon
