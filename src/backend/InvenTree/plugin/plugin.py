@@ -4,7 +4,7 @@ import enum
 import inspect
 import warnings
 from datetime import datetime
-from distutils.sysconfig import get_python_lib
+from distutils.sysconfig import get_python_lib  # type: ignore[import]
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
 from typing import Optional, Union
@@ -468,8 +468,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             package = {}
 
         # process date
-        if package.get('date'):
-            package['date'] = datetime.fromisoformat(package.get('date'))
+        date = package.get('date')
+        if date:
+            package['date'] = datetime.fromisoformat(date)
 
         # set variables
         self.package = package
@@ -489,7 +490,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         return url
 
-    def get_admin_source(self) -> str:
+    def get_admin_source(self) -> Union[str, None]:
         """Return a path to a JavaScript file which contains custom UI settings.
 
         The frontend code expects that this file provides a function named 'renderPluginSettings'.
@@ -499,7 +500,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         return self.plugin_static_file(self.ADMIN_SOURCE)
 
-    def get_admin_context(self) -> dict:
+    def get_admin_context(self) -> Union[dict, None]:
         """Return a context dictionary for the admin panel settings.
 
         This is an optional method which can be overridden by the plugin.

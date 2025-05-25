@@ -1,6 +1,7 @@
 """Mixin classes for the exporter app."""
 
 from collections import OrderedDict
+from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -127,7 +128,7 @@ class DataExportSerializerMixin:
         """
         return headers
 
-    def get_nested_value(self, row: dict, key: str) -> any:
+    def get_nested_value(self, row: dict, key: str) -> Any:
         """Get a nested value from a dictionary.
 
         This method allows for dot notation to access nested fields.

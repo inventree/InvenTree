@@ -188,8 +188,8 @@ ALLOWED_ATTRIBUTES_SVG = [
 def sanitize_svg(
     file_data,
     strip: bool = True,
-    elements: str = ALLOWED_ELEMENTS_SVG,
-    attributes: str = ALLOWED_ATTRIBUTES_SVG,
+    elements: list[str] = ALLOWED_ELEMENTS_SVG,
+    attributes: list[str] = ALLOWED_ATTRIBUTES_SVG,
 ) -> str:
     """Sanitize a SVG file.
 

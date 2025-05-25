@@ -101,6 +101,21 @@ python-version = "3.9.2"
 no-strip-extras=true
 generate-hashes=true
 
+[tool.ty]
+src = [
+    "src/backend/InvenTree",
+    "./",
+]
+[tool.ty.rules]
+unresolved-reference="ignore"  # 24 # see https://github.com/astral-sh/ty/issues/220
+unresolved-attribute="ignore"  # 33 # need Plugin Mixin typing
+call-non-callable="ignore"  # 3 ##
+invalid-return-type="ignore"  # 12 ##
+invalid-argument-type="ignore"  # 15
+possibly-unbound-attribute="ignore"  # 7
+unknown-argument="ignore"  # 9  # need to wait for betterdjango field stubs
+
+
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
 dynamic_context = "test_function"

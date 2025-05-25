@@ -18,7 +18,7 @@ from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
-import PIL
+from PIL import Image
 
 import common.validators
 from common.settings import get_global_setting, set_global_setting
@@ -1298,7 +1298,7 @@ class NotesImageTest(InvenTreeAPITestCase):
         n = NotesImage.objects.count()
 
         # Construct a simple image file
-        image = PIL.Image.new('RGB', (100, 100), color='red')
+        image = Image.new('RGB', (100, 100), color='red')
 
         with io.BytesIO() as output:
             image.save(output, format='PNG')

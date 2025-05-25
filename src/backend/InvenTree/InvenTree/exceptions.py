@@ -50,7 +50,8 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
         data = error_data
     else:
         try:
-            data = '\n'.join(traceback.format_exception(kind, info, data))
+            formatted_exception = traceback.format_exception(kind, info, data)  # type: ignore[no-matching-overload]
+            data = '\n'.join(formatted_exception)
         except AttributeError:
             data = 'No traceback information available'
 

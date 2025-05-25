@@ -84,12 +84,12 @@ class PluginsRegistry:
         ] = {}  # List of all plugin instances
 
         # Keep an internal hash of the plugin registry state
-        self.registry_hash = None
+        self.registry_hash: Optional[str] = None
 
         self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
         self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
 
-        self.errors = {}  # Holds discovering errors
+        self.errors: dict[str, list[Any]] = {}  # Holds discovering errors
 
         self.loading_lock = Lock()  # Lock to prevent multiple loading at the same time
 
@@ -220,7 +220,7 @@ class PluginsRegistry:
 
     # region registry functions
     def with_mixin(
-        self, mixin: str, active: bool = True, builtin: Optional[bool] = None
+        self, mixin: str, active: Optional[bool] = True, builtin: Optional[bool] = None
     ) -> list:
         """Returns reference to all plugins that have a specified mixin enabled.
 
@@ -538,10 +538,9 @@ class PluginsRegistry:
             package_name = getattr(plugin, 'package_name', None)
 
         # Auto-enable default builtin plugins
-        if builtin and plg_db and plg_db.is_mandatory():
-            if not plg_db.active:
-                plg_db.active = True
-                plg_db.save()
+        if builtin and plg_db and plg_db.is_mandatory() and not plg_db.active:
+            plg_db.active = True
+            plg_db.save()
 
         # Save the package_name attribute to the plugin
         if plg_db.package_name != package_name:
@@ -611,9 +610,9 @@ class PluginsRegistry:
                     f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
                 )
                 if v := plg_i.MIN_VERSION:
-                    _msg += _(f'Plugin requires at least version {v}')
+                    _msg += _(f'Plugin requires at least version {v}')  # type: ignore[unsupported-operator]
                 if v := plg_i.MAX_VERSION:
-                    _msg += _(f'Plugin requires at most version {v}')
+                    _msg += _(f'Plugin requires at most version {v}')  # type: ignore[unsupported-operator]
                 # Log to error stack
                 log_error(_msg, reference='init')
             else:
@@ -656,7 +655,7 @@ class PluginsRegistry:
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
-                            error.path,
+                            getattr(error, 'path', None),
                             str(error),
                         )
 
@@ -929,11 +928,14 @@ def _load_source(modname, filename):
 
     # loader = importlib.machinery.SourceFileLoader(modname, filename)
     spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
+    if spec is None:
+        raise ImportError(f"Cannot find module '{modname}'")  # pragma: no cover
     module = importlib.util.module_from_spec(spec)
 
     sys.modules[module.__name__] = module
 
-    if spec.loader:
-        spec.loader.exec_module(module)
+    loader = spec.loader
+    if loader is not None:
+        loader.exec_module(module)
 
     return module

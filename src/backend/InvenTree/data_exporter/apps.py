@@ -18,7 +18,7 @@ class DataExporterConfig(AppConfig):
     def cleanup(self):
         """Cleanup any old export files."""
         try:
-            from data_exporter.tasks import cleanup_old_export_outputs
+            from data_exporter.tasks import cleanup_old_export_outputs  # type: ignore
 
             cleanup_old_export_outputs()
         except Exception:

@@ -2,6 +2,7 @@
 
 import socket
 import threading
+from typing import Any
 
 import structlog
 
@@ -127,7 +128,7 @@ def delete_session_cache() -> None:
         del thread_data.request_cache
 
 
-def get_session_cache(key: str) -> any:
+def get_session_cache(key: str) -> Any:
     """Return a cached value from the session cache."""
     # Only return a cached value if the request object is available too
     if not hasattr(thread_data, 'request'):
@@ -139,7 +140,7 @@ def get_session_cache(key: str) -> any:
         return val
 
 
-def set_session_cache(key: str, value: any) -> None:
+def set_session_cache(key: str, value: Any) -> None:
     """Set a cached value in the session cache."""
     # Only set a cached value if the request object is available too
     if not hasattr(thread_data, 'request'):

@@ -2,9 +2,10 @@
 
 import time
 
+from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
 from django.db import connection
-from django.db.utils import ImproperlyConfigured, OperationalError
+from django.db.utils import OperationalError
 
 
 class Command(BaseCommand):

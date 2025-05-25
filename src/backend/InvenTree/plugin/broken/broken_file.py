@@ -7,4 +7,4 @@ class BrokenFileIntegrationPlugin(InvenTreePlugin):
     """An very broken plugin."""
 
 
-aaa = bb  # noqa: F821
+aaa = bb  # noqa: F821  # type: ignore[unresolved-reference]

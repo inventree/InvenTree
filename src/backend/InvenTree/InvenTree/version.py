@@ -107,7 +107,7 @@ def inventreeVersionTuple(version=None):
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', str(version))
 
-    return [int(g) for g in match.groups()]
+    return [int(g) for g in match.groups()] if match else []
 
 
 def isInvenTreeDevelopmentVersion():
