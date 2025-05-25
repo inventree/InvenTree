@@ -114,6 +114,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Email Address`,
         copy: true,
         hidden: !company.email
+      },
+      {
+        type: 'text',
+        name: 'tax_id',
+        label: t`Tax ID`,
+        copy: true,
+        hidden: !company.tax_id
       }
     ];
 
