@@ -284,6 +284,7 @@ plugins:
         'sref/ci-pre.md': 'https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml' # https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml
         'sref/test-sample.md': 'https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py' # https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py
         'sref/coverage.md': 'https://coveralls.io/github/inventree/InvenTree' # https://coveralls.io/github/inventree/InvenTree
+        'sref/error-codes.md': 'settings/error_codes.md'
 
 # Extensions
 markdown_extensions:
