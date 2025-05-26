@@ -27,3 +27,5 @@ Smaller items can be viewed [on the milestone](https://github.com/inventree/Inve
 ### Future
 
 There are several epics that target [the horizion](https://github.com/inventree/InvenTree/issues?q=is%3Aissue%20state%3Aopen%20type%3AEpic).
+
+## Non-Goals
