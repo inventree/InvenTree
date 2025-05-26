@@ -60,13 +60,27 @@ This sections describes various architectural aspects of the InvenTree codebase 
 
 Knowledege of these aspects is not required to use InvenTree, but it is helpful for developers who want to contribute to the project or to understand where / how one might extend the system with plugins or by pathching in custom functionality.
 
+### Repository layout and separation of concerns
+
 ### Backend Architecture
 
 TODO Describes the python/django designs
 
+#### Middleware and templateting
+
+#### Build in apps
+
+#### Plugin system
+
 ### Frontend Architecture
 
 TODO Describes how frontend calls works.
+
+#### Coupling to the backend
+
+#### Translations
+
+#### Frontend Plugins
 
 ## Security
 
