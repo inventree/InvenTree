@@ -66,9 +66,11 @@ Knowledege of these aspects is not required to use InvenTree, but it is helpful 
 
 TODO Describes the python/django designs
 
-#### Middleware and templateting
+#### Configuration sources
 
-#### Build in apps
+#### Middlewares and templateting
+
+#### Built-in apps
 
 #### Plugin system
 
@@ -80,7 +82,7 @@ TODO Describes how frontend calls works.
 
 #### Translations
 
-#### Frontend Plugins
+#### Library / exported components
 
 ## Security
 
