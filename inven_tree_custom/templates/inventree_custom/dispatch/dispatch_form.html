@@ -1,0 +1,39 @@
+{% extends 'panel_layout.html' %} {# Or your base InvenTree template #}
+{% load i18n %}
+{% load inventree_extras %}
+{% load crispy_forms_tags %} {# Assuming crispy_forms is available #}
+
+{% block title %}
+    {% if form.instance.pk %}
+        {% trans "Edit Dispatch" %}: {{ form.instance }}
+    {% else %}
+        {% trans "Create New Dispatch" %}
+    {% endif %}
+{% endblock %}
+
+{% block page_content %}
+<div class="container-fluid">
+    <h1>
+        {% if form.instance.pk %}
+            {% trans "Edit Dispatch" %}: {{ form.instance }}
+        {% else %}
+            {% trans "Create New Dispatch" %}
+        {% endif %}
+    </h1>
+
+    <form method="post" class="form">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">
+                <span class="fas fa-save"></span>
+                {% if form.instance.pk %}{% trans "Save Changes" %}{% else %}{% trans "Create Dispatch" %}{% endif %}
+            </button>
+            <a href="{% if form.instance.pk %}{% url 'plugin:inventreecustom:dispatch_detail' form.instance.pk %}{% else %}{% url 'plugin:inventreecustom:dispatch_list' %}{% endif %}" class="btn btn-secondary">
+                <span class="fas fa-times"></span> {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
