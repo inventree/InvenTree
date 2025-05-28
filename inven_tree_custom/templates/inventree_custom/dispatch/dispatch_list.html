@@ -1,0 +1,50 @@
+{% extends 'panel_layout.html' %} {# Or your base InvenTree template #}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block title %}{% trans "Dispatches" %}{% endblock %}
+
+{% block page_content %}
+<div class="container-fluid">
+    <h1>{% trans "Dispatches" %}</h1>
+    <a href="{% url 'plugin:inventreecustom:dispatch_create' %}" class="btn btn-primary mb-3">
+        <span class="fas fa-plus"></span> {% trans "Create New Dispatch" %}
+    </a>
+
+    {% if dispatches %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{% trans "Client" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Items" %}</th>
+                <th>{% trans "Created At" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dispatch in dispatches %}
+            <tr>
+                <td>{{ dispatch.client }}</td>
+                <td>{{ dispatch.date|date:"Y-m-d" }}</td>
+                <td>{{ dispatch.items.count }}</td>
+                <td>{{ dispatch.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <a href="{% url 'plugin:inventreecustom:dispatch_detail' dispatch.pk %}" class="btn btn-sm btn-info" title="{% trans 'View Details' %}"><span class="fas fa-search"></span></a>
+                    <a href="{% url 'plugin:inventreecustom:dispatch_update' dispatch.pk %}" class="btn btn-sm btn-secondary" title="{% trans 'Edit Dispatch' %}"><span class="fas fa-edit"></span></a>
+                    {# Add delete button if needed, with confirmation #}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include "generic/paginator.html" with page_obj=page_obj %}
+
+    {% else %}
+    <div class="alert alert-info">
+        {% trans "No dispatches found." %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

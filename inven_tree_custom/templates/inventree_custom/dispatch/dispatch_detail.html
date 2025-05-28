@@ -1,0 +1,168 @@
+{% extends 'panel_layout.html' %} {# Or your base InvenTree template #}
+{% load i18n %}
+{% load inventree_extras %}
+{% load crispy_forms_tags %} {# For the add_item_form #}
+
+{% block title %}{% trans "Dispatch Details" %}: {{ dispatch }}{% endblock %}
+
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{% trans "Dispatch" %}: {{ dispatch }}</h2>
+            <p><strong>{% trans "Client" %}:</strong> {{ dispatch.client }}</p>
+            <p><strong>{% trans "Date" %}:</strong> {{ dispatch.date|date:"Y-m-d" }}</p>
+            <p><strong>{% trans "Created At" %}:</strong> {{ dispatch.created_at|date:"Y-m-d H:i" }}</p>
+            <p><strong>{% trans "Last Updated" %}:</strong> {{ dispatch.updated_at|date:"Y-m-d H:i" }}</p>
+            <a href="{% url 'plugin:inventreecustom:dispatch_update' dispatch.pk %}" class="btn btn-primary">
+                <span class="fas fa-edit"></span> {% trans "Edit Dispatch Info" %}
+            </a>
+            <a href="{% url 'plugin:inventreecustom:dispatch_list' %}" class="btn btn-secondary">
+                 <span class="fas fa-list"></span> {% trans "Back to List" %}
+            </a>
+        </div>
+    </div>
+
+    <hr>
+
+    {# Section for adding items - Step 7 (Scanning Workflow) will enhance this #}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>{% trans "Add Item to Dispatch" %}</h3>
+            <form method="post" action="{% url 'plugin:inventreecustom:dispatch_add_item' dispatch_pk=dispatch.pk %}" class="form-inline"> {# URL to be created later #}
+                {% csrf_token %}
+                {{ add_item_form|crispy }}
+                <button type="submit" class="btn btn-success ml-2">
+                    <span class="fas fa-plus"></span> {% trans "Add Item" %}
+                </button>
+            </form>
+            <small class="form-text text-muted">
+                {% trans "Enter the product number and quantity to add to this dispatch." %}
+            </small>
+        </div>
+    </div>
+    
+    <hr>
+
+    {# Section for displaying items and summary - Step 5 & 6 will populate this #}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>{% trans "Dispatched Items" %}</h3>
+            {% if items %}
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>{% trans "Product Number" %}</th>
+                        <th>{% trans "Stock Item Details" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Added At" %}</th>
+                        {# Add more columns as needed e.g. Quality, Color from parameters #}
+                        {#<th>{% trans "Actions" %}</th>#}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.stock_item.product_number|default:"N/A" }}</td>
+                        <td>
+                            {# Accessing Part details through StockItem #}
+                            {% if item.stock_item.part %}
+                                {{ item.stock_item.part.full_name|default:"-" }}
+                                ({{ item.stock_item.quantity }} {% trans "in stock" %})
+                            {% else %}
+                                {{ item.stock_item }}
+                            {% endif %}
+                        </td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.added_at|date:"Y-m-d H:i" }}</td>
+                        {#<td><button class="btn btn-danger btn-sm">Remove</button></td>#}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>{% trans "No items have been added to this dispatch yet." %}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>{% trans "Dispatch Summary" %}</h3>
+            {# This is where the output of Step 6 (Grouping & Summary Logic) will go. #}
+            {# For now, a placeholder. This might be an included template later. #}
+            <div id="dispatch-summary-content">
+                {% if summary_data %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <table class="table table-sm table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>{% trans "Total Items (Lines)" %}</th>
+                                        <td>{{ summary_data['Total Items'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{% trans "Total Net Weight" %}</th>
+                                        <td>{{ summary_data['Total Net Weight']|floatformat:2 }} kg</td> {# Assuming kg #}
+                                    </tr>
+                                    <tr>
+                                        <th>{% trans "Total Gross Weight" %}</th>
+                                        <td>{{ summary_data['Total Gross Weight']|floatformat:2 }} kg</td> {# Assuming kg #}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h4>{% trans "Grouped Summary" %}:</h4>
+                    {% if summary_data.Groups %}
+                        {% for quality, color_map in summary_data.Groups.items %}
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <strong>{% trans "Quality" %}:</strong> {{ quality }}
+                            </div>
+                            <div class="card-body">
+                                {% for color_category, type_map in color_map.items %}
+                                <h5 class="mt-2">{% trans "Color" %}: {{ color_category }}</h5>
+                                <table class="table table-sm table-hover table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>{% trans "Product Type" %}</th>
+                                            <th>{% trans "Count (Lines)" %}</th>
+                                            <th>{% trans "Net Weight" %}</th>
+                                            <th>{% trans "Gross Weight" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for product_type, details in type_map.items %}
+                                        <tr>
+                                            <td>{{ product_type }}</td>
+                                            <td>{{ details.count }}</td>
+                                            <td>{{ details.net_weight|floatformat:2 }} kg</td>
+                                            <td>{{ details.gross_weight|floatformat:2 }} kg</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr><td colspan="4">{% trans "No items for this color category." %}</td></tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% empty %}
+                                    <p>{% trans "No color categories for this quality." %}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="alert alert-info">{% trans "No grouped data available." %}</div>
+                        {% endfor %}
+                    {% else %}
+                        <p>{% trans "No grouped summary data available." %}</p>
+                    {% endif %}
+                {% else %}
+                    <p>{% trans "Summary data could not be calculated or is not available." %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

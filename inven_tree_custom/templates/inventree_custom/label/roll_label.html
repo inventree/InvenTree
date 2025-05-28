@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roll Label</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            width: 300px; /* Example width, adjust as needed */
+            height: 200px; /* Example height, adjust as needed */
+            margin: 0;
+            padding: 10px;
+            border: 1px solid black; /* For visualizing the label boundary */
+        }
+        .label-field {
+            margin-bottom: 5px;
+        }
+        .label-title {
+            font-weight: bold;
+        }
+        .qr-code {
+            margin-top: 10px;
+            text-align: center; /* Center the QR code image if it's an image */
+        }
+    </style>
+</head>
+<body>
+    <h3>Product Label</h3>
+    
+    <div class="label-field">
+        <span class="label-title">Product #/Lot:</span>
+        <span>{{ part.product_number }}</span>
+    </div>
+
+    <div class="label-field">
+        <span class="label-title">Quality:</span>
+        {# Assuming 'Quality' is the name of the parameter template #}
+        <span>{{ part.get_parameter_display:'Quality' }}</span>
+    </div>
+
+    <div class="label-field">
+        <span class="label-title">Colour:</span>
+        {# Assuming 'Colour' is the name of the parameter template #}
+        <span>{{ part.get_parameter_display:'Colour' }}</span>
+    </div>
+    
+    <div class="label-field">
+        <span class="label-title">Stored Location:</span>
+        {# Assuming 'Stored Location' is the name of the parameter template #}
+        <span>{{ part.get_parameter_display:'Stored Location' }}</span>
+    </div>
+
+    <div class="label-field">
+        <span class="label-title">Product Type:</span>
+        {# Assuming 'Product Type' is the name of the parameter template #}
+        <span>{{ part.get_parameter_display:'Product Type' }}</span>
+    </div>
+    
+    <div class="label-field">
+        <span class="label-title">GSM:</span>
+        {# Assuming 'GSM' is the name of the parameter template for a numeric value #}
+        <span>{{ part.get_parameter:'GSM' }}</span>
+    </div>
+
+    <div class="label-field">
+        <span class="label-title">Net Weight:</span>
+        {# Assuming 'Net Weight' is the name of the parameter template #}
+        <span>{{ part.get_parameter:'Net Weight' }}</span>
+    </div>
+
+    <div class="label-field">
+        <span class="label-title">Gross Weight:</span>
+        {# Assuming 'Gross Weight' is the name of the parameter template #}
+        <span>{{ part.get_parameter:'Gross Weight' }}</span>
+    </div>
+
+    <div class="qr-code">
+        {% if part.product_number %}
+            {% barcode part.product_number format="qrcode" width="4cm" height="4cm" %}
+        {% else %}
+            <p>No Product Number for QR Code</p>
+        {% endif %}
+    </div>
+
+    <p style="font-size: 8px; text-align: center; margin-top: 10px;">
+        Generated on: {% now "Y-m-d H:i" %}
+    </p>
+</body>
+</html>
