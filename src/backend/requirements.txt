@@ -1851,7 +1851,9 @@ xmlsec==1.3.14 \
     --hash=sha256:e6cbc914d77678db0c8bc39e723d994174633d18f9d6be4665ec29cce978a96d \
     --hash=sha256:e732a75fcb6b84872b168f972fbbf3749baf76308635f14015d1d35ed0c5719c \
     --hash=sha256:ed4034939d8566ccdcd3b4e4f23c63fd807fb8763ae5668d59a19e11640a8242
-    # via python3-saml
+    # via
+    #   -r src/backend/requirements.in
+    #   python3-saml
 zipp==3.22.0 \
     --hash=sha256:dd2f28c3ce4bc67507bfd3781d21b7bb2be31103b51a4553ad7d90b84e57ace5 \
     --hash=sha256:fe208f65f2aca48b81f9e6fd8cf7b8b32c26375266b009b413d45306b6148343
