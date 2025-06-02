@@ -226,3 +226,9 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
 {{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}
+
+## Override Global Settings
+
+The *global settings* can be overridden via environment variables or the configuration file.
+
+Refer to the [configuration guide](../start/config.md#override-global-settings) for more information on how to override global settings.

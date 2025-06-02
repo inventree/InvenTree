@@ -463,3 +463,11 @@ The following [plugin](../plugins/index.md) configuration options are available:
 | INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Disable Plugin installation via API - only use plugins.txt file | False |
 | INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
 | INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
+
+## Override Global Settings
+
+If required, [global settings values](../settings/global.md#override-global-settings) can be overridden by the system administrator.
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| GLOBAL_SETTINGS_OVERRIDES | global_settings_overrides | JSON object containing global settings overrides | *Not specified* |
