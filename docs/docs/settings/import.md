@@ -27,7 +27,7 @@ Importing data is a multi-step process, which is managed via an *import session*
 
 The import session is managed by the InvenTree server, and all import session data is stored on the server. As the import process can be time-consuming, the user can navigate away from the import page and return later to check on the progress of the import.
 
-Import sessions can be managed from the *Admin Center* page, which lists all available import sessions
+Import sessions can be managed from the [Admin Center](./admin.md#admin-center) page, which lists all available import sessions
 
 ### Context Sensitive Importing
 
