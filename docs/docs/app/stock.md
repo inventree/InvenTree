@@ -28,7 +28,7 @@ The *Stock* tab displays all the stock items available in this location. Tap a d
 
 The list of available stock items can be filtered using the input box at the top of the screen:
 
-{{ image("app/location_stock_filter.png", "Location Stock Filter") }}
+{{ image("app/location_stock_filter.jpg", "Location Stock Filter") }}
 
 ### Context Actions
 

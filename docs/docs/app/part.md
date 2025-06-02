@@ -10,7 +10,7 @@ From the *home screen*, select *Parts* to open the top-level part category view.
 
 The *Details* tab shows information about the selected part category. In particular, it shows the name and description of the category, a link to the parent category (if available) and a list of subcategories.
 
-{{ image("app/part_category_detail.png", "Part Category") }}
+{{ image("app/part_category_detail.jpg", "Part Category") }}
 
 #### Parent Category
 
@@ -40,19 +40,19 @@ The following *Context Actions* are available for the selected category:
 
 Create a new subcategory under the current category:
 
-{{ image("app/new_category.png", "New Category") }}
+{{ image("app/new_category.jpg", "New Category") }}
 
 #### New Part
 
 Create a new part within the current category:
 
-{{ image("app/new_part.png", "New Part") }}
+{{ image("app/new_part.jpg", "New Part") }}
 
 ### Edit Category
 
 Select the *Edit* button in the top right corner of the screen to edit the details for the selected part category:
 
-{{ image("app/part_category_edit.png", "Edit Category") }}
+{{ image("app/part_category_edit.jpg", "Edit Category") }}
 
 !!! info "Permission Required"
     If the user does not have permission to edit part details, this button will be hidden
@@ -81,13 +81,13 @@ The *stock* tile shows the total quantity of stock available for the part. Tap o
 
 Tap on the *notes* tile to view (and edit) the notes for this part:
 
-{{ image("app/part_notes.png", "Part Notes") }}
+{{ image("app/part_notes.jpg", "Part Notes") }}
 
 #### Attachments
 
 Tap on the *attachments* tile to view the file attachments for this part:
 
-{{ image("app/part_attachments.png", "Part Attachments") }}
+{{ image("app/part_attachments.jpg", "Part Attachments") }}
 
 New attachments can be uploaded by tapping on the icons in the top right of the screen.
 
