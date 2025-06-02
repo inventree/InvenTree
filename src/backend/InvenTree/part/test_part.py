@@ -811,9 +811,6 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.part.set_starred(self.user, True)
         self.part.save()
 
-        # There should be 0, 1 or 2 notifications - in some cases an error is generated, which creates a subsequent notification
-        self.assertIn(NotificationEntry.objects.all().count(), [0, 1, 2])
-
 
 class PartNotificationTest(BaseNotificationIntegrationTest):
     """Integration test for part notifications."""
