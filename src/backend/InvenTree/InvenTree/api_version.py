@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 343
+INVENTREE_API_VERSION = 344
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v343 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9718
+v344 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9718
     - Adds "read_only" field to the GlobalSettings API endpoint(s)
+
+v343 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9717
+    - Add ISO currency codes to the description text for currency options
 
 v342 -> 2025-05-09 : https://github.com/inventree/InvenTree/pull/9651
     - Fix serializer to match Generate API for serial numbers

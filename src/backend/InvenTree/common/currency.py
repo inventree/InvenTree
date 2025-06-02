@@ -75,7 +75,7 @@ def currency_codes() -> list:
 
 def currency_code_mappings() -> list:
     """Returns the current currency choices."""
-    return [(a, CURRENCIES[a].name) for a in currency_codes()]
+    return [(a, f'{a} - {CURRENCIES[a].name}') for a in currency_codes()]
 
 
 def after_change_currency(setting) -> None:
