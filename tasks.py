@@ -72,7 +72,7 @@ def is_pkg_installer_by_path():
 def get_installer(content: Optional[dict] = None):
     """Get the installer for the current environment or a content dict."""
     if content is None:
-        content = os.environ
+        content = dict(os.environ)
     return content.get('INVENTREE_PKG_INSTALLER', None)
 
 
