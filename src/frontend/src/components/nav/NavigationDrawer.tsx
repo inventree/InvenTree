@@ -140,7 +140,8 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         id: 'notifications',
         title: t`Notifications`,
         link: '/notifications',
-        icon: 'notification'
+        icon: 'notification',
+        hidden: !globalSettings.isSet('INVENTREE_NOTIFICATIONS_ENABLE')
       },
       {
         id: 'user-settings',
@@ -163,7 +164,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         hidden: !user.isStaff()
       }
     ];
-  }, [user]);
+  }, [globalSettings, user]);
 
   const menuItemsDocumentation: MenuLinkItem[] = useMemo(
     () => DocumentationLinks(),

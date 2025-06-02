@@ -12,15 +12,19 @@ import { useCallback, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
 import { useApi } from '../contexts/ApiContext';
 import { useTable } from '../hooks/UseTable';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import { NotificationTable } from '../tables/notifications/NotificationTable';
 
 export default function NotificationsPage() {
   const api = useApi();
+  const navigate = useNavigate();
+  const globalSettings = useGlobalSettingsState();
   const unreadTable = useTable('unreadnotifications');
   const readTable = useTable('readnotifications');
 
@@ -124,6 +128,11 @@ export default function NotificationsPage() {
       }
     ];
   }, [unreadTable, readTable]);
+
+  if (!globalSettings.isSet('INVENTREE_NOTIFICATIONS_ENABLE')) {
+    // Redirect to the dashboard if notifications are not enabled
+    navigate('/');
+  }
 
   return (
     <Stack>

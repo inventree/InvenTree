@@ -145,24 +145,26 @@ export function Header() {
             </Tooltip>
             <SpotlightButton />
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
-            <Indicator
-              radius='lg'
-              size='18'
-              label={notificationCount}
-              color='red'
-              disabled={notificationCount <= 0}
-              inline
-            >
-              <Tooltip position='bottom-end' label={t`Notifications`}>
-                <ActionIcon
-                  onClick={openNotificationDrawer}
-                  variant='transparent'
-                  aria-label='open-notifications'
-                >
-                  <IconBell />
-                </ActionIcon>
-              </Tooltip>
-            </Indicator>
+            {globalSettings.isSet('INVENTREE_NOTIFICATIONS_ENABLE') && (
+              <Indicator
+                radius='lg'
+                size='18'
+                label={notificationCount}
+                color='red'
+                disabled={notificationCount <= 0}
+                inline
+              >
+                <Tooltip position='bottom-end' label={t`Notifications`}>
+                  <ActionIcon
+                    onClick={openNotificationDrawer}
+                    variant='transparent'
+                    aria-label='open-notifications'
+                  >
+                    <IconBell />
+                  </ActionIcon>
+                </Tooltip>
+              </Indicator>
+            )}
             <Alerts />
             <MainMenu />
           </Group>
