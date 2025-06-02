@@ -65,7 +65,6 @@ class PluginsRegistry:
         'inventreecorenotificationsplugin',
         'inventreelabel',
         'inventreelabelmachine',
-        'inventreelabelsheet',
         'parameter-exporter',
     ]
 
