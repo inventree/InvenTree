@@ -1,12 +1,15 @@
 """App config for common app."""
 
 from django.apps import AppConfig
-from django.conf import settings
 
 import structlog
 
 import InvenTree.ready
-from common.settings import get_global_setting, set_global_setting
+from common.settings import (
+    get_global_setting,
+    global_setting_overrides,
+    set_global_setting,
+)
 
 logger = structlog.get_logger('inventree')
 
@@ -42,10 +45,12 @@ class CommonConfig(AppConfig):
 
     def override_global_settings(self):
         """Update global settings based on environment variables."""
-        if not settings.GLOBAL_SETTINGS_OVERRIDES:
+        overrides = global_setting_overrides()
+
+        if not overrides:
             return
 
-        for key, value in settings.GLOBAL_SETTINGS_OVERRIDES.items():
+        for key, value in overrides.items():
             try:
                 current_value = get_global_setting(key, create=False)
 

@@ -47,6 +47,7 @@ import InvenTree.models
 import InvenTree.ready
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
+from common.settings import global_setting_overrides
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
@@ -1157,7 +1158,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         If so, set the "SERVER_RESTART_REQUIRED" setting to True
         """
-        overrides = django_settings.GLOBAL_SETTINGS_OVERRIDES or {}
+        overrides = global_setting_overrides()
 
         # If an override is specified for this setting, use that value
         if self.key in overrides:
