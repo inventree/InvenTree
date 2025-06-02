@@ -52,7 +52,7 @@ The following [global settings](../settings/global.md) control the notification 
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
-{{ globalsetting("NOTIFICATION_ENABLE") }}
+{{ globalsetting("NOTIFICATIONS_ENABLE") }}
 {{ globalsetting("NOTIFICATIONS_LOW_STOCK") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
 
