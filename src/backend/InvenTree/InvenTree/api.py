@@ -422,10 +422,11 @@ class BulkOperationMixin:
 
         items = request.data.pop('items', None)
         filters = request.data.pop('filters', None)
+        all_filter = request.GET.get('all', None)
 
         queryset = model.objects.all()
 
-        if not items and not filters:
+        if not items and not filters and all_filter is None:
             raise ValidationError({
                 'non_field_errors': _(
                     'List of items or filters must be provided for bulk operation'
@@ -458,6 +459,11 @@ class BulkOperationMixin:
                 raise ValidationError({
                     'non_field_errors': _('Invalid filters provided')
                 })
+
+        if all_filter and not helpers.str2bool(all_filter):
+            raise ValidationError({
+                'non_field_errors': _('All filter must only be used with true')
+            })
 
         if queryset.count() == 0:
             raise ValidationError({

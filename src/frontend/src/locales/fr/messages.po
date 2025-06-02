@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-15 23:09\n"
+"PO-Revision-Date: 2025-05-17 05:36\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -64,19 +64,19 @@ msgstr "Scanner"
 
 #: src/components/barcodes/BarcodeInput.tsx:53
 msgid "Camera Input"
-msgstr ""
+msgstr "Entrée Caméra"
 
 #: src/components/barcodes/BarcodeInput.tsx:63
 msgid "Scanner Input"
-msgstr ""
+msgstr "Entrés Scanners"
 
 #: src/components/barcodes/BarcodeInput.tsx:105
 msgid "Barcode Data"
-msgstr ""
+msgstr "Données du code-barres"
 
 #: src/components/barcodes/BarcodeInput.tsx:109
 msgid "No barcode data"
-msgstr ""
+msgstr "Aucune donnée de code-barres"
 
 #: src/components/barcodes/BarcodeInput.tsx:110
 msgid "Scan or enter barcode data"

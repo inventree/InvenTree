@@ -4,6 +4,7 @@ import { MantineProvider, createTheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { ContextMenuProvider } from 'mantine-contextmenu';
+import { useShallow } from 'zustand/react/shallow';
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrModal } from '../components/modals/QrModal';
@@ -12,10 +13,12 @@ import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
+import type { JSX } from 'react';
+
 export function ThemeContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
-  const [userTheme] = useLocalState((state) => [state.userTheme]);
+  const [userTheme] = useLocalState(useShallow((state) => [state.userTheme]));
 
   // Theme
   const myTheme = createTheme({

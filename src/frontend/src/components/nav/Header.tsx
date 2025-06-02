@@ -1,7 +1,3 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
-import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Container,
@@ -16,6 +12,12 @@ import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
@@ -38,11 +40,10 @@ import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
-  const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
-    state.setNavigationOpen,
-    state.navigationOpen
-  ]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [setNavigationOpen, navigationOpen] = useLocalState(
+    useShallow((state) => [state.setNavigationOpen, state.navigationOpen])
+  );
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [
@@ -55,7 +56,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
-  const { isLoggedIn } = useUserState();
+  const { isLoggedIn, isStaff } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
 

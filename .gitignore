@@ -113,8 +113,3 @@ api.yaml
 # web frontend (static files)
 src/backend/InvenTree/web/static
 InvenTree/web/static
-
-# Exported interim files
-docs/schema.yml
-docs/docs/api/*.yml
-docs/docs/api/schema/*.yml
