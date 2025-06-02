@@ -9,7 +9,7 @@ A supplier is an external **vendor** of parts and raw materials.
 
 To access the supplier page, click on the <span class="badge inventree nav main">{{ icon("shopping-cart") }} Buy</span> navigation tab and click on <span class="badge inventree nav main">{{ icon("building") }} Suppliers</span> option in the dropdown list.
 
-{{ image("build/supplier_list.png", "Supplier List") }}
+{{ image("order/supplier_list.png", "Supplier List") }}
 
 !!! info
     **Viewing**, **adding**, **editing** and **deleting** suppliers require the corresponding [Purchase Orders user permissions](../settings/permissions.md)
