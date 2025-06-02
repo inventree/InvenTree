@@ -17,6 +17,7 @@ Relevant PRs:
 """
 
 from decimal import Decimal
+from typing import Optional
 
 from django.db import models
 from django.db.models import (
@@ -104,7 +105,7 @@ def annotate_on_order_quantity(reference: str = ''):
     )
 
 
-def annotate_total_stock(reference: str = '', filter: Q = None):
+def annotate_total_stock(reference: str = '', filter: Optional[Q] = None):
     """Annotate 'total stock' quantity against a queryset.
 
     - This function calculates the 'total stock' for a given part
@@ -216,7 +217,7 @@ def annotate_sales_order_allocations(reference: str = ''):
     )
 
 
-def variant_stock_query(reference: str = '', filter: Q = None):
+def variant_stock_query(reference: str = '', filter: Optional[Q] = None):
     """Create a queryset to retrieve all stock items for variant parts under the specified part.
 
     - Useful for annotating a queryset with aggregated information about variant parts

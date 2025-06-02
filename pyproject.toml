@@ -101,11 +101,9 @@ python-version = "3.9.2"
 no-strip-extras=true
 generate-hashes=true
 
-[tool.ty]
-src = [
-    "src/backend/InvenTree",
-    "./",
-]
+[tool.ty.src]
+root = "src/backend/InvenTree"
+
 [tool.ty.rules]
 unresolved-reference="ignore"  # 24 # see https://github.com/astral-sh/ty/issues/220
 unresolved-attribute="ignore"  # 33 # need Plugin Mixin typing
