@@ -587,7 +587,16 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
 
         # 3. Update the tree structure
         if tree_id:
-            self.__class__.objects.partial_rebuild(tree_id)
+            try:
+                self.__class__.objects.partial_rebuild(tree_id)
+            except Exception:
+                logger.warning(
+                    'Failed to rebuild tree for %s <%s>',
+                    self.__class__.__name__,
+                    self.pk,
+                )
+                # If the partial rebuild fails, rebuild the entire tree
+                self.__class__.objects.rebuild()
         else:
             self.__class__.objects.rebuild()
 
