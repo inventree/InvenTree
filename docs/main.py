@@ -1,6 +1,7 @@
 """Main entry point for the documentation build process."""
 
 import json
+import logging
 import os
 import subprocess
 import textwrap
@@ -12,6 +13,8 @@ import yaml
 
 # Debugging output - useful for diagnosing CI build issues
 print('loading ./docs/main.py...')
+
+logging.getLogger('openapidocs').setLevel(logging.ERROR)
 
 # Print out some useful debugging information
 # Ref: https://docs.readthedocs.io/en/stable/reference/environment-variables.html
