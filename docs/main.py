@@ -106,8 +106,6 @@ def check_link(url) -> bool:
         if url in cache:
             return True
 
-    print(f'Checking external URL: {url}')
-
     attempts = 5
 
     while attempts > 0:
@@ -123,7 +121,7 @@ def check_link(url) -> bool:
 
         attempts -= 1
 
-        print(f' - URL check failed with status code {response.status_code}')
+        print(f'URL check failed with status code {response.status_code}')
 
     return False
 
