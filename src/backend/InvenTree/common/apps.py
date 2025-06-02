@@ -1,6 +1,7 @@
 """App config for common app."""
 
 from django.apps import AppConfig
+from django.conf import settings
 
 import structlog
 
@@ -24,6 +25,7 @@ class CommonConfig(AppConfig):
             return
 
         self.clear_restart_flag()
+        self.override_global_settings()
 
     def clear_restart_flag(self):
         """Clear the SERVER_RESTART_REQUIRED setting."""
@@ -37,3 +39,22 @@ class CommonConfig(AppConfig):
                     set_global_setting('SERVER_RESTART_REQUIRED', False, None)
         except Exception:
             pass
+
+    def override_global_settings(self):
+        """Update global settings based on environment variables."""
+        if not settings.GLOBAL_SETTINGS_OVERRIDES:
+            return
+
+        for key, value in settings.GLOBAL_SETTINGS_OVERRIDES.items():
+            try:
+                current_value = get_global_setting(key, create=False)
+
+                if current_value != value:
+                    logger.info(
+                        'Overriding global setting: %s = %s', value, current_value
+                    )
+                    set_global_setting(key, value, None, create=True)
+
+            except Exception:
+                logger.warning('Failed to override global setting %s -> %s', key, value)
+                continue
