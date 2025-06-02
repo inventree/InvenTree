@@ -28,14 +28,25 @@ def set_global_setting(key, value, change_user=None, create=True, **kwargs):
     return InvenTreeSetting.set_setting(key, value, **kwargs)
 
 
-def stock_expiry_enabled():
-    """Returns True if the stock expiry feature is enabled."""
+def stock_expiry_enabled() -> bool:
+    """Helper function which returns True if the stock expiry feature is enabled."""
     from common.models import InvenTreeSetting
 
-    return InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY', False, create=False)
+    return InvenTreeSetting.get_setting(
+        'STOCK_ENABLE_EXPIRY', backup_value=False, create=False
+    )
 
 
-def prevent_build_output_complete_on_incompleted_tests():
+def notifications_enabled() -> bool:
+    """Helper function which returns True if the notifications feature is enabled."""
+    from common.models import InvenTreeSetting
+
+    return InvenTreeSetting.get_setting(
+        'INVENTREE_NOTIFICATIONS_ENABLE', backup_value=True, create=False
+    )
+
+
+def prevent_build_output_complete_on_incompleted_tests() -> bool:
     """Returns True if the completion of the build outputs is disabled until the required tests are passed."""
     from common.models import InvenTreeSetting
 

@@ -12,12 +12,11 @@ import structlog
 import common.currency
 import common.notifications
 import company.models
-import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models as part_models
 import part.stocktake
-from common.settings import get_global_setting
+from common.settings import get_global_setting, notifications_enabled
 from InvenTree.tasks import (
     ScheduledTask,
     check_daily_holdoff,
@@ -52,11 +51,16 @@ def notify_low_stock(part: part_models.Part):
     )
 
 
-def notify_low_stock_if_required(part_id: int):
+def notify_low_stock_if_required(part_id: int) -> None:
     """Check if the stock quantity has fallen below the minimum threshold of part.
 
     If true, notify the users who have subscribed to the part
     """
+    # Return early if notifications are not enabled
+    # This prevents additional tasks from being queued unnecessarily
+    if not notifications_enabled():
+        return
+
     try:
         part = part_models.Part.objects.get(pk=part_id)
     except part_models.Part.DoesNotExist:
