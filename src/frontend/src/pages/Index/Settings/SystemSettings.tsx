@@ -112,7 +112,8 @@ export default function SystemSettings() {
         content: (
           <GlobalSettingList
             keys={[
-              'INVENTREE_NOTIFICATIONS_ENABLE',
+              'NOTIFICATIONS_ENABLE',
+              'NOTIFICATIONS_LOW_STOCK',
               'INVENTREE_DELETE_NOTIFICATIONS_DAYS'
             ]}
           />

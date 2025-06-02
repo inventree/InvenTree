@@ -141,7 +141,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         title: t`Notifications`,
         link: '/notifications',
         icon: 'notification',
-        hidden: !globalSettings.isSet('INVENTREE_NOTIFICATIONS_ENABLE')
+        hidden: !globalSettings.isSet('NOTIFICATIONS_ENABLE')
       },
       {
         id: 'user-settings',

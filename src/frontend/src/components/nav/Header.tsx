@@ -145,7 +145,7 @@ export function Header() {
             </Tooltip>
             <SpotlightButton />
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
-            {globalSettings.isSet('INVENTREE_NOTIFICATIONS_ENABLE') && (
+            {globalSettings.isSet('NOTIFICATIONS_ENABLE') && (
               <Indicator
                 radius='lg'
                 size='18'

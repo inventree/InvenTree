@@ -61,6 +61,9 @@ def notify_low_stock_if_required(part_id: int) -> None:
     if not notifications_enabled():
         return
 
+    if not get_global_setting('NOTIFICATIONS_LOW_STOCK', backup_value=True):
+        return
+
     try:
         part = part_models.Part.objects.get(pk=part_id)
     except part_models.Part.DoesNotExist:

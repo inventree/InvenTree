@@ -129,7 +129,7 @@ export default function NotificationsPage() {
     ];
   }, [unreadTable, readTable]);
 
-  if (!globalSettings.isSet('INVENTREE_NOTIFICATIONS_ENABLE')) {
+  if (!globalSettings.isSet('NOTIFICATIONS_ENABLE')) {
     // Redirect to the dashboard if notifications are not enabled
     navigate('/');
   }

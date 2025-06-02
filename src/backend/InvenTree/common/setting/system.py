@@ -15,7 +15,6 @@ from jinja2 import Template
 
 import build.validators
 import common.currency
-import common.models
 import common.validators
 import order.validators
 import report.helpers
@@ -309,6 +308,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
     },
+    'NOTIFICATIONS_ENABLE': {
+        'name': _('Enable Notifications'),
+        'description': _('Enable user notifications for system events'),
+        'default': True,
+        'validator': bool,
+    },
+    'NOTIFICATIONS_LOW_STOCK': {
+        'name': _('Low Stock Notifications'),
+        'description': _('Enable notifications when a part is low on stock'),
+        'default': True,
+        'validator': bool,
+    },
     'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
         'name': _('Notification Deletion Interval'),
         'description': _(
@@ -317,12 +328,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 30,
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
-    },
-    'INVENTREE_NOTIFICATIONS_ENABLE': {
-        'name': _('Enable Notifications'),
-        'description': _('Enable user notifications for system events'),
-        'default': True,
-        'validator': bool,
     },
     'BARCODE_ENABLE': {
         'name': _('Barcode Support'),

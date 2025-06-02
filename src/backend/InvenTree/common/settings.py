@@ -42,7 +42,7 @@ def notifications_enabled() -> bool:
     from common.models import InvenTreeSetting
 
     return InvenTreeSetting.get_setting(
-        'INVENTREE_NOTIFICATIONS_ENABLE', backup_value=True, create=False
+        'NOTIFICATIONS_ENABLE', backup_value=True, create=False
     )
 
 
