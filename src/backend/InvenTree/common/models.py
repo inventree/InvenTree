@@ -1157,6 +1157,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         If so, set the "SERVER_RESTART_REQUIRED" setting to True
         """
+        overrides = django_settings.GLOBAL_SETTINGS_OVERRIDES or {}
+
+        # If an override is specified for this setting, use that value
+        if self.key in overrides:
+            self.value = overrides[self.key]
+
         super().save()
 
         if self.requires_restart() and not InvenTree.ready.isImportingData():
