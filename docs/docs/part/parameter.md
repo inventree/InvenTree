@@ -114,4 +114,4 @@ Selection Lists can be used to add a large number of predefined values to a para
 It is possible that plugins lock selection lists to ensure a known state.
 
 
-Administration of lists can be done through the Part Parameter section in the Admin Center or via the API.
+Administration of lists can be done through the Part Parameter section in the [Admin Center](../settings/admin.md#admin-center) or via the API.

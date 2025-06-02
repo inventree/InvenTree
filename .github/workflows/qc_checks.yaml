@@ -202,22 +202,22 @@ jobs:
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Extract settings / tags
-        run: invoke int.export-definitions --basedir src/backend/InvenTree
+        run: invoke int.export-definitions --basedir docs
       - name: Upload settings
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_settings.json
-          path: src/backend/InvenTree/inventree_settings.json
+          path: docs/generated/inventree_settings.json
       - name: Upload tags
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_tags.yml
-          path: src/backend/InvenTree/inventree_tags.yml
+          path: docs/generated/inventree_tags.yml
       - name: Upload filters
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_filters.yml
-          path: src/backend/InvenTree/inventree_filters.yml
+          path: docs/generated/inventree_filters.yml
 
   schema-push:
     name: Push new schema
@@ -342,8 +342,14 @@ jobs:
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
         run: invoke dev.test --coverage --translations
+      - name: Upload raw coverage to artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
+        with:
+          name: coverage
+          path: .coverage
+          retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # pin@v5.4.2
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -486,7 +492,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # pin@v5.4.2
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -617,7 +623,7 @@ jobs:
       - name: Report coverage
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # pin@v5.4.2
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -678,7 +684,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@28deaeda66b76a05916b6923827895f2b14ab387 # pin@v3
+        uses: github/codeql-action/upload-sarif@ff0a06e83cb2de871e5a09832bc6a81e7276941f # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor
