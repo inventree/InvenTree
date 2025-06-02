@@ -33,6 +33,7 @@ export interface Setting {
   plugin?: string;
   method?: string;
   required?: boolean;
+  read_only?: boolean;
 }
 
 export interface SettingChoice {
