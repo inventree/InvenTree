@@ -2025,6 +2025,7 @@ class StockTestResultTest(StockAPITestCase):
         url = reverse('api-stock-test-result-list')
 
         test_template = PartTestTemplate.objects.first()
+        assert test_template
 
         test_template.choices = 'AA, BB, CC'
         test_template.save()

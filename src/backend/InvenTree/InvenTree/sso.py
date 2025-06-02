@@ -102,6 +102,7 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
 
     # ensure user has groups
     user = sociallogin.account.user
+
     for group_name in group_names:
         try:
             user.groups.get(name=group_name)

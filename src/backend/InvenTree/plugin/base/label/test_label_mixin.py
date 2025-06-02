@@ -94,6 +94,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         parts = Part.objects.all()[:2]
 
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
 
         self.assertIsNotNone(template)
         self.assertTrue(template.enabled)
@@ -208,6 +209,8 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         # Lookup references
         parts = Part.objects.all()[:2]
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
+
         self.do_activate_plugin()
         plugin = registry.get_plugin(self.plugin_ref)
 

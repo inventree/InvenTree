@@ -2305,6 +2305,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Now, let's validate an item
         bom_item = BomItem.objects.first()
+        assert bom_item
 
         bom_item.validate_hash()
 
@@ -3091,6 +3092,7 @@ class PartTestTemplateTest(PartAPITestBase):
     def test_choices(self):
         """Test the 'choices' field for the PartTestTemplate model."""
         template = PartTestTemplate.objects.first()
+        assert template
 
         url = reverse('api-part-test-template-detail', kwargs={'pk': template.pk})
 

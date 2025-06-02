@@ -463,9 +463,12 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if len(suppliers) != 1:
             return _cache_supplier(None)
 
-        self.set_setting('SUPPLIER_ID', suppliers.first().pk)
+        supplier = suppliers.first()
+        assert supplier
 
-        return _cache_supplier(suppliers.first())
+        self.set_setting('SUPPLIER_ID', supplier.pk)
+
+        return _cache_supplier(supplier)
 
     @classmethod
     def ecia_field_map(cls):
