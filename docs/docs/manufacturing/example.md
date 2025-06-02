@@ -32,7 +32,7 @@ Untracked stock items are allocated to the build order in the *Allocate Stock* t
 
 Tracked stock items are allocated to individual build outputs:
 
-{{ image("build/build_example_allocate_tracked.png", "Allocate Tracked Stock") }}
+{{ image("build/build_example_allocated_tracked.png", "Allocate Tracked Stock") }}
 
 ### Complete Build Outputs
 

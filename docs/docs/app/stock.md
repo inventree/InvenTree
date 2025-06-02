@@ -40,13 +40,13 @@ The following *Context Actions* are available for the selected location:
 
 Create a new location under the current location:
 
-{{ image("app/new_location.png", "New Location") }}
+{{ image("app/new_location.jpg", "New Location") }}
 
 #### New Stock Item
 
 Create a new stock item in the current location:
 
-{{ image("app/new_stock_item_from_location.png", "New Stock Item") }}
+{{ image("app/new_stock_item_from_location.jpg", "New Stock Item") }}
 
 #### Scan Stock Items Into Location
 
@@ -131,4 +131,4 @@ If the server supports [label printing plugins](../plugins/mixins/label.md), the
 
 To edit the stock item details, select the *Edit* button in the top right corner of the screen:
 
-{{ image("app/stock_edit.png", "Edit Stock Item") }}
+{{ image("app/stock_edit.jpg", "Edit Stock Item") }}

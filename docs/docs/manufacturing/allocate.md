@@ -55,8 +55,6 @@ Clicking on a particular row expands the row, showing a list of stock items whic
 !!! info "Multiple Allocations"
     Note that multiple stock items can be allocated to the given BOM line, if a single stock item does not have sufficient stock
 
-{{ image("build/build_allocate_expand.png", "Allocate expand") }}
-
 ## Manual Stock Allocation
 
 For each line in the BOM, stock will be automatically allocated if one (and only one) stock item (for the referenced part) is found (within the specified *source location* for the build):
@@ -135,7 +133,7 @@ Here we can see that the incomplete build outputs (serial numbers 15 and 14) now
 
 Once all build outputs have been completed, the build order itself can be completed by selecting the *Complete Build* button:
 
-{{ image("build/build_complete_build.png", "Complete build") }}
+{{ image("build/build_complete.png", "Complete build") }}
 
 ### Allocated Stock
 

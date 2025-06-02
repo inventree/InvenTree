@@ -81,9 +81,7 @@ If a part parameter is created with a value which is incompatible with the units
 
 {{ image("part/part_invalid_units.png", "Invalid Parameter Units") }}
 
-This behaviour can be disabled if required, so that any parameter value is accepted:
-
-{{ image("part/part_parameters_enforce.png", "Enforce Parameter Units") }}
+This behaviour can be disabled if required, so that any parameter value is accepted.
 
 ### Parameter Sorting
 

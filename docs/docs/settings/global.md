@@ -243,4 +243,4 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 
 ### Project Codes
 
-Refer to the [project code settings](../concepts/project_codes.md#project-code-settings).
+Refer to the [project code settings](../concepts/project_codes.md).

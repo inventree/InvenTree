@@ -10,7 +10,7 @@ From the *home screen*, select *Parts* to open the top-level part category view.
 
 The *Details* tab shows information about the selected part category. In particular, it shows the name and description of the category, a link to the parent category (if available) and a list of subcategories.
 
-{{ image("app/part_category_detail.jpg", "Part Category") }}
+{{ image("app/part_category_detail.png", "Part Category") }}
 
 #### Parent Category
 
@@ -109,13 +109,13 @@ The *Actions* tab displays the available actions for the selected part:
 
 Create a new stock item for this part:
 
-{{ image("app/new_stock_item.png", "New Stock Item") }}
+{{ image("app/new_stock_item.jpg", "New Stock Item") }}
 
 ### Edit Part
 
 To edit the part details, select the *Edit* button in the top right corner of the screen:
 
-{{ image("app/part_edit.png", "Edit Part") }}
+{{ image("app/part_edit.jpg", "Edit Part") }}
 
 !!! info "Permission Required"
     If the user does not have permission to edit part details, this button will be hidden
@@ -124,6 +124,6 @@ To edit the part details, select the *Edit* button in the top right corner of th
 
 Tap the image of the part (displayed at the top left of the screen) to launch the part image view:
 
-{{ image("app/part_image.png", "Part Image") }}
+{{ image("app/part_image.jpg", "Part Image") }}
 
 A full-screen view of the image is displayed. The user can also upload a new image for the part, either selecting an image from the device, or taking a new picture with the device's camera.
