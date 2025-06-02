@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-09 19:12+0000\n"
-"PO-Revision-Date: 2025-05-14 11:50\n"
+"PO-Revision-Date: 2025-06-02 01:32\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -528,7 +528,7 @@ msgstr "Неверное значение для избытка"
 
 #: build/api.py:39 order/api.py:104 order/api.py:263 order/serializers.py:128
 msgid "Order Status"
-msgstr "Статсу заказа"
+msgstr "Статус заказа"
 
 #: build/api.py:65 build/models.py:254
 msgid "Parent Build"
@@ -815,7 +815,7 @@ msgstr ""
 
 #: build/models.py:342
 msgid "Scheduled start date for this build order"
-msgstr ""
+msgstr "Запланированная начальная дата этого заказа на сборку"
 
 #: build/models.py:348
 msgid "Target completion date"
@@ -1935,7 +1935,7 @@ msgstr ""
 
 #: common/models.py:2303 importer/models.py:66
 msgid "Timestamp"
-msgstr ""
+msgstr "Метка времени"
 
 #: common/models.py:2304
 msgid "Date and time of the barcode scan"
@@ -3385,11 +3385,11 @@ msgstr ""
 
 #: common/setting/user.py:195
 msgid "Navigation Icons"
-msgstr ""
+msgstr "Значки навигации"
 
 #: common/setting/user.py:196
 msgid "Display icons in the navigation bar"
-msgstr ""
+msgstr "Отображать значки в панели навигации"
 
 #: common/setting/user.py:201
 msgid "Date Format"
@@ -3868,19 +3868,19 @@ msgstr ""
 
 #: data_exporter/serializers.py:74
 msgid "Export Format"
-msgstr ""
+msgstr "Формат экспорта"
 
 #: data_exporter/serializers.py:75
 msgid "Select export file format"
-msgstr ""
+msgstr "Выберите формат файла экспорта"
 
 #: data_exporter/serializers.py:82
 msgid "Export Plugin"
-msgstr ""
+msgstr "Плагин экспорта"
 
 #: data_exporter/serializers.py:83
 msgid "Select export plugin"
-msgstr ""
+msgstr "Выберите плагин экспорта"
 
 #: generic/states/fields.py:146
 msgid "Additional status information for this item"
@@ -4339,11 +4339,11 @@ msgstr "Ссылка на внешнюю страницу"
 
 #: order/models.py:452
 msgid "Start date"
-msgstr ""
+msgstr "Начальная дата"
 
 #: order/models.py:453
 msgid "Scheduled start date for this order"
-msgstr ""
+msgstr "Запланированная начальная дата этого заказа"
 
 #: order/models.py:459 order/models.py:1593 order/serializers.py:269
 #: report/templates/report/inventree_build_order_report.html:125
@@ -4352,7 +4352,7 @@ msgstr "Целевая дата"
 
 #: order/models.py:461
 msgid "Expected date for order delivery. Order will be overdue after this date."
-msgstr ""
+msgstr "Ожидаемая дата доставки заказа. После этой даты заказ будет считаться просроченным."
 
 #: order/models.py:481
 msgid "Issue Date"
@@ -4368,11 +4368,11 @@ msgstr "Пользователь или группа, ответственная
 
 #: order/models.py:501
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Контактное лицо по данному заказу"
 
 #: order/models.py:511
 msgid "Company address for this order"
-msgstr ""
+msgstr "Адрес компании по этому заказу"
 
 #: order/models.py:602 order/models.py:1141
 msgid "Order reference"
@@ -4393,11 +4393,11 @@ msgstr "Компания, в которой детали заказываютс�
 
 #: order/models.py:638
 msgid "Supplier Reference"
-msgstr ""
+msgstr "Номер у поставщика"
 
 #: order/models.py:639
 msgid "Supplier order reference code"
-msgstr ""
+msgstr "Номер заказа у поставщика"
 
 #: order/models.py:648
 msgid "received by"
@@ -4409,11 +4409,11 @@ msgstr ""
 
 #: order/models.py:664 order/models.py:1733
 msgid "Destination"
-msgstr "Назначение"
+msgstr "Место хранения"
 
 #: order/models.py:665 order/models.py:1737
 msgid "Destination for received items"
-msgstr ""
+msgstr "Место хранения для полученных позиций"
 
 #: order/models.py:711
 msgid "Part supplier must match PO supplier"
@@ -8541,7 +8541,7 @@ msgstr "Название токена"
 
 #: users/models.py:138
 msgid "Custom token name"
-msgstr ""
+msgstr "Название пользовательского токена"
 
 #: users/models.py:144
 msgid "Token expiry date"
@@ -8713,7 +8713,7 @@ msgstr "Заказы на возврат"
 
 #: users/serializers.py:236
 msgid "Username"
-msgstr "Имя пользователя"
+msgstr "Логин"
 
 #: users/serializers.py:239
 msgid "First Name"
@@ -8733,7 +8733,7 @@ msgstr "Фамилия пользователя"
 
 #: users/serializers.py:247
 msgid "Email address of the user"
-msgstr "Электронный адрес пользователя"
+msgstr "Адрес электронной почты пользователя"
 
 #: users/serializers.py:323
 msgid "Staff"
