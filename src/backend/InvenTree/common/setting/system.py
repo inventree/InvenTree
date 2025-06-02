@@ -318,6 +318,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
     },
+    'INVENTREE_NOTIFICATIONS_ENABLE': {
+        'name': _('Enable Notifications'),
+        'description': _('Enable user notifications for system events'),
+        'default': True,
+        'validator': bool,
+    },
     'BARCODE_ENABLE': {
         'name': _('Barcode Support'),
         'description': _('Enable barcode scanner support in the web interface'),

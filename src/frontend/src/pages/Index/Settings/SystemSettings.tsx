@@ -1,12 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Skeleton, Stack, Text } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
-  IconInfoCircle,
   IconPackages,
   IconQrcode,
   IconServerCog,
@@ -57,9 +56,7 @@ export default function SystemSettings() {
               'INVENTREE_STRICT_URLS',
               'INVENTREE_BACKUP_ENABLE',
               'INVENTREE_BACKUP_DAYS',
-              'INVENTREE_DELETE_TASKS_DAYS',
-              'INVENTREE_DELETE_ERRORS_DAYS',
-              'INVENTREE_DELETE_NOTIFICATIONS_DAYS'
+              'INVENTREE_DELETE_TASKS_DAYS'
             ]}
           />
         )
@@ -113,15 +110,12 @@ export default function SystemSettings() {
         label: t`Notifications`,
         icon: <IconBellCog />,
         content: (
-          <Stack>
-            <Alert
-              color='teal'
-              title={t`This panel is a placeholder.`}
-              icon={<IconInfoCircle />}
-            >
-              <Text c='gray'>This panel has not yet been implemented</Text>
-            </Alert>
-          </Stack>
+          <GlobalSettingList
+            keys={[
+              'INVENTREE_NOTIFICATIONS_ENABLE',
+              'INVENTREE_DELETE_NOTIFICATIONS_DAYS'
+            ]}
+          />
         )
       },
       {
