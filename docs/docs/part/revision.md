@@ -59,7 +59,7 @@ Once these changes (and any other required changes) are made, press *Submit* to 
 
 Once the form is submitted (without any errors), you will be redirected to the new part revision. Here you can see that it is linked to the original part:
 
-{{ image"(part/part_revision_b.png", "Part revision B") }}
+{{ image("part/part_revision_b.png", "Part revision B") }}
 
 ## Revision Navigation
 
