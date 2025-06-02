@@ -876,22 +876,22 @@ def export_records(
 
     data_out = []
 
-    if include_permissions is False:
-        for entry in data:
-            model_name = entry.get('model', None)
+    for entry in data:
+        model_name = entry.get('model', None)
 
-            # Ignore any temporary settings (start with underscore)
-            if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
-                if entry['fields'].get('key', '').startswith('_'):
-                    continue
+        # Ignore any temporary settings (start with underscore)
+        if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
+            if entry['fields'].get('key', '').startswith('_'):
+                continue
 
+        if include_permissions is False:
             if model_name == 'auth.group':
                 entry['fields']['permissions'] = []
 
             if model_name == 'auth.user':
                 entry['fields']['user_permissions'] = []
 
-            data_out.append(entry)
+        data_out.append(entry)
 
     # Write the processed data to file
     with open(target, 'w', encoding='utf-8') as f_out:
