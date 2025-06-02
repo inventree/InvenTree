@@ -811,8 +811,8 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.part.set_starred(self.user, True)
         self.part.save()
 
-        # There should be 1 (or 2) notifications - in some cases an error is generated, which creates a subsequent notification
-        self.assertIn(NotificationEntry.objects.all().count(), [1, 2])
+        # There should be 0, 1 or 2 notifications - in some cases an error is generated, which creates a subsequent notification
+        self.assertIn(NotificationEntry.objects.all().count(), [0, 1, 2])
 
 
 class PartNotificationTest(BaseNotificationIntegrationTest):
@@ -820,6 +820,10 @@ class PartNotificationTest(BaseNotificationIntegrationTest):
 
     def test_notification(self):
         """Test that a notification is generated."""
+        # Ensure notifications are enabled
+        set_global_setting('NOTIFICATIONS_ENABLE', True)
+        set_global_setting('NOTIFICATIONS_LOW_STOCK', True)
+
         self._notification_run(UIMessageNotification)
 
         # There should be 1 notification message right now
@@ -830,3 +834,19 @@ class PartNotificationTest(BaseNotificationIntegrationTest):
 
         # There should not be more messages
         self.assertEqual(NotificationMessage.objects.all().count(), 1)
+
+    def test_disabled(self):
+        """Test that the notification is not generated if notifications are globally disabled."""
+        set_global_setting('NOTIFICATIONS_ENABLE', False)
+        set_global_setting('NOTIFICATIONS_LOW_STOCK', True)
+
+        self._notification_run(UIMessageNotification)
+        self.assertEqual(NotificationEntry.objects.all().count(), 0)
+
+    def test_disabled_low_stock(self):
+        """Test that the notification is not generated if low stock notifications are disabled."""
+        set_global_setting('NOTIFICATIONS_ENABLE', True)
+        set_global_setting('NOTIFICATIONS_LOW_STOCK', False)
+
+        self._notification_run(UIMessageNotification)
+        self.assertEqual(NotificationEntry.objects.all().count(), 0)

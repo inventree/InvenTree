@@ -34,6 +34,9 @@ def notify_low_stock(part: part_models.Part):
     - Triggered when the available stock for a given part falls be low the configured threhsold
     - A notification is delivered to any users who are 'subscribed' to this part
     """
+    if not get_global_setting('NOTIFICATIONS_LOW_STOCK', backup_value=True):
+        return
+
     name = _('Low stock notification')
     message = _(
         f'The available stock for {part.name} has fallen below the configured minimum level'
