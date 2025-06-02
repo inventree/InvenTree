@@ -181,9 +181,9 @@ requests==2.32.3 \
     # via
     #   -c contrib/dev_reqs/../../src/backend/requirements.txt
     #   -r contrib/dev_reqs/requirements.in
-ruamel-yaml==0.18.10 \
-    --hash=sha256:20c86ab29ac2153f80a428e1254a8adf686d3383df04490514ca3b79a362db58 \
-    --hash=sha256:30f22513ab2301b3d2b577adc121c6471f28734d3d9728581245f1e76468b4f1
+ruamel-yaml==0.18.12 \
+    --hash=sha256:5a38fd5ce39d223bebb9e3a6779e86b9427a03fb0bf9f270060f8b149cffe5e2 \
+    --hash=sha256:790ba4c48b6a6e6b12b532a7308779eb12d2aaab3a80fdb8389216f28ea2b287
     # via jc
 ruamel-yaml-clib==0.2.12 \
     --hash=sha256:040ae85536960525ea62868b642bdb0c2cc6021c9f9d507810c0c604e66f5a7b \
