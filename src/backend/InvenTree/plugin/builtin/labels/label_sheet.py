@@ -49,6 +49,13 @@ class LabelPrintingOptionsSerializer(serializers.Serializer):
         help_text=_('Print the label sheet in landscape mode'),
     )
 
+    margin = serializers.IntegerField(
+        default=10,
+        label=_('Page Margin'),
+        help_text=_('Margin around the page in mm'),
+        min_value=0,
+    )
+
 
 class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     """Builtin plugin for label printing.
@@ -60,7 +67,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
     NAME = 'InvenTreeLabelSheet'
     TITLE = _('InvenTree Label Sheet Printer')
     DESCRIPTION = _('Arrays multiple labels onto a single sheet')
-    VERSION = '1.0.0'
+    VERSION = '1.0.1'
     AUTHOR = _('InvenTree contributors')
 
     BLOCKING_PRINT = True
@@ -91,6 +98,9 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         border = printing_options.get('border', False)
         skip = int(printing_options.get('skip', 0))
 
+        # Get margin from printing options
+        margin = printing_options.get('margin', 10)
+
         # Extract size of page
         page_size = report.helpers.page_size(page_size_code)
         page_width, page_height = page_size
@@ -98,9 +108,13 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         if landscape:
             page_width, page_height = page_height, page_width
 
-        # Calculate number of rows and columns
-        n_cols = math.floor(page_width / label.width)
-        n_rows = math.floor(page_height / label.height)
+        # Calculate available space after margins
+        available_width = page_width - (2 * margin)
+        available_height = page_height - (2 * margin)
+
+        # Calculate number of rows and columns based on available space
+        n_cols = math.floor(available_width / label.width)
+        n_rows = math.floor(available_height / label.height)
         n_cells = n_cols * n_rows
 
         if n_cells == 0:
@@ -123,6 +137,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             'n_pages': math.ceil(n_labels / n_cells),
             'n_cols': n_cols,
             'n_rows': n_rows,
+            'margin': margin,
         }
 
         pages = []
@@ -232,6 +247,8 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         n_rows = kwargs['n_rows']
         n_cols = kwargs['n_cols']
 
+        margin = kwargs.get('margin', 0)
+
         inner = ''.join(pages)
 
         # Generate styles for individual cells (on each page)
@@ -262,7 +279,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             <style>
                 @page {{
                     size: {page_width}mm {page_height}mm;
-                    margin: 0mm;
+                    margin: {margin}mm;
                     padding: 0mm;
                 }}
 

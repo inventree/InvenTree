@@ -39,7 +39,7 @@ There are two types of owners in InvenTree: [groups](../settings/permissions.md#
 * If a group is selected as owner, **all** users linked to the specified group will be able to edit the stock location or item.
 * If a user is selected as owner, only the specified user will be able to edit the stock location or item.
 
-When selecting an owner, in the drop-down list, groups are annotated with the <span class='fas fa-users'></span> icon and users are annotated with the <span class='fas fa-user'></span> icon:
+When selecting an owner, in the drop-down list, groups are annotated with the {{ icon("users", title="Users") }} icon and users are annotated with the {{ icon("user", title="User") }} icon:
 
 {% with id="stock_owner_type", url="stock/stock_owner_type.png", description="Display stock owner type" %}
 {% include 'img.html' %}
@@ -47,10 +47,10 @@ When selecting an owner, in the drop-down list, groups are annotated with the <s
 
 ### Set Stock Location Owner
 
-To specify the owner of a stock location, navigate to the stock location detail page. Click on the <span class='fas fa-sitemap'></span> icon under the location's name then click on "Edit Location".
+To specify the owner of a stock location, navigate to the stock location detail page. Click on the {{ icon("sitemap") }}icon under the location's name then click on "Edit Location".
 
 !!! warning
-	If you cannot see the <span class='fas fa-sitemap'></span> icon, it means that you do **not** have permissions to edit stock locations. Refer to [the permissions documentation](../settings/permissions.md#roles) and/or contact your InvenTree administrator.
+	If you cannot see the {{ icon("sitemap") }}icon, it means that you do **not** have permissions to edit stock locations. Refer to [the permissions documentation](../settings/permissions.md#roles) and/or contact your InvenTree administrator.
 
 In the "Edit Stock Location" form, select the owner and click the "Submit" button:
 
@@ -74,10 +74,10 @@ is moved to a location owned by Daniel.
 
 ### Set Stock Item Owner
 
-To specify the owner of a stock item, navigate to the stock item detail page. Click on the <span class='fas fa-tools'></span> icon under the item's name then click on "Edit stock item".
+To specify the owner of a stock item, navigate to the stock item detail page. Click on the {{ icon("tools") }} icon under the item's name then click on "Edit stock item".
 
 !!! warning
-	If you cannot see the <span class='fas fa-tools'></span> icon, it means that you do **not** have permissions to edit stock items. Refer to [the permissions documentation](../settings/permissions.md/#roles) and/or contact your InvenTree administrator.
+	If you cannot see the {{ icon("tools") }} icon, it means that you do **not** have permissions to edit stock items. Refer to [the permissions documentation](../settings/permissions.md/#roles) and/or contact your InvenTree administrator.
 
 In the "Edit Stock Item" form, select the owner and click the "Save" button:
 

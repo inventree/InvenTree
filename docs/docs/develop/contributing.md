@@ -40,7 +40,7 @@ invoke update
 invoke dev.setup-dev --tests
 ```
 
-Read the [InvenTree setup documentation](../start/intro.md) for a complete installation reference guide.
+Read the [InvenTree setup documentation](../start/index.md) for a complete installation reference guide.
 
 !!! note "Required Packages"
     Depending on your system, you may need to install additional software packages as required.
@@ -198,6 +198,15 @@ alter user myuser createdb;
 
 !!! info "Devcontainer"
     The default database container which is provided in the devcontainer is already setup with the required permissions
+
+### Trace coverage to specific tests
+
+Sometimes it is valuable to get insights how many tests cover a specific statement and which ones do. coverage.py calls this information contexts. Contexts are automatically captured by the invoke task test (with coverage enabled) and can be rendered with below command into a HTML report.
+```bash
+coverage html -i
+```
+
+The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
 
 ## Code Style
 

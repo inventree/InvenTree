@@ -1,5 +1,14 @@
 import { t } from '@lingui/core/macro';
-import { Flex, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
+import {
+  Alert,
+  Flex,
+  Group,
+  List,
+  Skeleton,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
@@ -11,7 +20,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -491,15 +500,19 @@ function StockOperationsRow({
     props.removeFn(props.idx);
   };
 
+  const callChangeFn = (idx: number, key: string, value: any) => {
+    setTimeout(() => props.changeFn(idx, key, value), 0);
+  };
+
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
     onOpen: () => {
       if (transfer) {
-        props.changeFn(props.idx, 'packaging', record?.packaging || undefined);
+        callChangeFn(props.idx, 'packaging', record?.packaging || undefined);
       }
     },
     onClose: () => {
       if (transfer) {
-        props.changeFn(props.idx, 'packaging', undefined);
+        callChangeFn(props.idx, 'packaging', undefined);
       }
     }
   });
@@ -511,7 +524,7 @@ function StockOperationsRow({
     },
     onClose: () => {
       setStatus(undefined);
-      props.changeFn(props.idx, 'status', undefined);
+      callChangeFn(props.idx, 'status', undefined);
     }
   });
 
@@ -1021,6 +1034,7 @@ function stockOperationModal({
   endpoint,
   filters,
   title,
+  preFormContent,
   successMessage,
   modalFunc = useCreateApiFormModal
 }: {
@@ -1032,6 +1046,7 @@ function stockOperationModal({
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
   endpoint: ApiEndpoints;
   title: string;
+  preFormContent?: JSX.Element;
   successMessage?: string;
   modalFunc?: apiModalFunc;
 }) {
@@ -1083,6 +1098,7 @@ function stockOperationModal({
   return modalFunc({
     url: endpoint,
     fields: fields,
+    preFormContent: preFormContent,
     title: title,
     size: '80%',
     successMessage: successMessage,
@@ -1154,7 +1170,16 @@ export function useMergeStockItem(props: StockOperationProps) {
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
     title: t`Merge Stock`,
-    successMessage: t`Stock merged`
+    successMessage: t`Stock merged`,
+    preFormContent: (
+      <Alert title={t`Merge Stock Items`} color='yellow'>
+        <List>
+          <List.Item>{t`Merge operation cannot be reversed`}</List.Item>
+          <List.Item>{t`Tracking information may be lost when merging items`}</List.Item>
+          <List.Item>{t`Supplier information may be lost when merging items`}</List.Item>
+        </List>
+      </Alert>
+    )
   });
 }
 

@@ -6,7 +6,7 @@ title: Python Currency Support
 
 InvenTree provides native support for multiple currencies, which can mean that data require conversion between these currencies, at defined exchange rates.
 
-The InvenTree server maintains a set of exchange rates, which are updated periodically. These exchange rates are available via the [InvenTree API](../api.md), and can be used by the Python bindings.
+The InvenTree server maintains a set of exchange rates, which are updated periodically. These exchange rates are available via the [InvenTree API](../index.md), and can be used by the Python bindings.
 
 ### CurrencyManager Class
 

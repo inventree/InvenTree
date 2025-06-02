@@ -69,7 +69,7 @@ See [INVE-W1](#inve-w1)
 
 InvenTree is running in debug mode. This is **not** recommended for production use, as it exposes sensitive information and makes the server more vulnerable to attacks. Debug mode is not intended for production/exposed instances, **even for short duration**.
 
-It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/intro.md#debug-mode).
+It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/index.md#debug-mode).
 
 #### INVE-W5
 **Background worker process not running - Backend**
@@ -98,6 +98,13 @@ There are database migrations waiting to be applied. This might lead to integrit
 
 Some deployment methods support [auto applying of updates](../start/config.md#auto-update). See also [Perform Database Migrations](../start/install.md#perform-database-migrations).
 Steps very between deployment methods.
+
+#### INVE-W9
+**Wrong Invoke Environment - Backend**
+
+The command that was used to run invoke is not the one that is recommended. This might be caused by a wrong PATH variable or by thinking you are using a different deployment method.
+The warning text will show the recommended command for intended use.
+
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.

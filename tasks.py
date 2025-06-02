@@ -17,27 +17,63 @@ from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
 
+def is_true(x):
+    """Shortcut function to determine if a value "looks" like a boolean."""
+    return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
+
+
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
-    from src.backend.InvenTree.InvenTree.config import is_true
-
     return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
 
 
 def is_rtd_environment():
     """Check if the InvenTree environment is running on ReadTheDocs."""
-    from src.backend.InvenTree.InvenTree.config import is_true
-
     return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
 def is_debug_environment():
     """Check if the InvenTree environment is running in a debug environment."""
-    from src.backend.InvenTree.InvenTree.config import is_true
-
     return is_true(os.environ.get('INVENTREE_DEBUG', 'False')) or is_true(
         os.environ.get('RUNNER_DEBUG', 'False')
     )
+
+
+def get_version_vals():
+    """Get values from the VERSION file."""
+    version_file = local_dir().joinpath('VERSION')
+    if not version_file.exists():
+        return {}
+    try:
+        from dotenv import dotenv_values
+
+        return dotenv_values(version_file)
+    except ImportError:
+        error(
+            'ERROR: dotenv package not installed. You might not be running in the right environment.'
+        )
+        return {}
+
+
+def is_pkg_installer(content: Optional[dict] = None, load_content: bool = False):
+    """Check if the current environment is a package installer by VERSION/environment."""
+    if load_content:
+        content = get_version_vals()
+    return get_installer(content) == 'PKG'
+
+
+def is_pkg_installer_by_path():
+    """Check if the current environment is a package installer by checking the path."""
+    return len(sys.argv) >= 1 and sys.argv[0].startswith(
+        '/opt/inventree/env/bin/invoke'
+    )
+
+
+def get_installer(content: Optional[dict] = None):
+    """Get the installer for the current environment or a content dict."""
+    if content is None:
+        content = os.environ
+    return content.get('INVENTREE_PKG_INSTALLER', None)
 
 
 # region execution logging helpers
@@ -121,9 +157,9 @@ def state_logger(fn=None, method_name=None):
 
 
 # region environment checks
-def check_invoke_version():
+def envcheck_invoke_version():
     """Check that the installed invoke version meets minimum requirements."""
-    MIN_INVOKE_VERSION = '2.0.0'
+    MIN_INVOKE_VERSION: str = '2.0.0'
 
     min_version = tuple(map(int, MIN_INVOKE_VERSION.split('.')))
     invoke_version = tuple(map(int, invoke.__version__.split('.')))  # noqa: RUF048
@@ -134,14 +170,14 @@ def check_invoke_version():
         sys.exit(1)
 
 
-def check_invoke_path():
+def envcheck_invoke_path():
     """Check that the path of the used invoke is correct."""
     if is_docker_environment() or is_rtd_environment():
         return
 
-    invoke_path = Path(invoke.__file__)
-    env_path = Path(sys.prefix).resolve()
-    loc_path = Path(__file__).parent.resolve()
+    invoke_path: Path = Path(invoke.__file__)
+    env_path: Path = Path(sys.prefix).resolve()
+    loc_path: Path = Path(__file__).parent.resolve()
     if not invoke_path.is_relative_to(loc_path) and not invoke_path.is_relative_to(
         env_path
     ):
@@ -152,17 +188,17 @@ def check_invoke_path():
         sys.exit(1)
 
 
-def check_python_version():
+def envcheck_python_version():
     """Check that the installed python version meets minimum requirements.
 
     If the python version is not sufficient, exits with a non-zero exit code.
     """
-    REQ_MAJOR = 3
-    REQ_MINOR = 9
+    REQ_MAJOR: int = 3
+    REQ_MINOR: int = 9
 
     version = sys.version.split(' ')[0]
 
-    valid = True
+    valid: bool = True
 
     if sys.version_info.major < REQ_MAJOR or (
         sys.version_info.major == REQ_MAJOR and sys.version_info.minor < REQ_MINOR
@@ -175,10 +211,35 @@ def check_python_version():
         sys.exit(1)
 
 
-if __name__ in ['__main__', 'tasks']:
-    check_invoke_version()
-    check_invoke_path()
-    check_python_version()
+def envcheck_invoke_cmd():
+    """Checks if the rights invoke command for the current environment is used."""
+    first_cmd = sys.argv[0].replace(sys.prefix, '')
+    intendded = ['/bin/invoke', '/bin/inv']
+
+    correct_cmd: Optional[str] = None
+    if is_rtd_environment() or is_docker_environment():
+        pass
+    elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
+        correct_cmd = 'inventree run invoke'
+    else:
+        warning('Unknown environment, not checking used invoke command')
+
+    if first_cmd not in intendded:
+        correct_cmd = correct_cmd if correct_cmd else 'invoke'
+        error('INVE-W9 - Wrong Invoke Environment')
+        error(
+            f'The detected invoke command `{first_cmd}` is not the intended one for this environment, ensure you are using one of the following command(s) `{correct_cmd}`'
+        )
+
+
+def main():
+    """Main function to check the execution environment."""
+    envcheck_invoke_version()
+    envcheck_python_version()
+    envcheck_invoke_path()
+    envcheck_invoke_cmd()
+
+
 # endregion
 
 
@@ -278,6 +339,9 @@ def manage_py_path():
 
 
 # endregion
+
+if __name__ in ['__main__', 'tasks']:
+    main()
 
 
 def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
@@ -1325,12 +1389,13 @@ def export_definitions(c, basedir: str = ''):
     """Export various definitions."""
     if basedir != '' and basedir.endswith('/') is False:
         basedir += '/'
+    base_path = Path(basedir, 'generated').resolve()
 
     filenames = [
-        Path(basedir + 'inventree_settings.json').resolve(),
-        Path(basedir + 'inventree_tags.yml').resolve(),
-        Path(basedir + 'inventree_filters.yml').resolve(),
-        Path(basedir + 'inventree_report_context.json').resolve(),
+        base_path.joinpath('inventree_settings.json'),
+        base_path.joinpath('inventree_tags.yml'),
+        base_path.joinpath('inventree_filters.yml'),
+        base_path.joinpath('inventree_report_context.json'),
     ]
 
     info('Exporting definitions...')
@@ -1398,11 +1463,12 @@ Yarn        {yarn if yarn else NA}
 Environment:
 Docker      {is_docker_environment()}
 RTD         {is_rtd_environment()}
+PKG         {is_pkg_installer()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     )
-    if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
+    if is_pkg_installer_by_path():
         print(
             """
 You are probably running the package installer / single-line installer. Please mention this in any bug reports!
@@ -1621,16 +1687,8 @@ def frontend_download(
             ).strip()
         except Exception:
             # .deb Packages contain extra information in the VERSION file
-            version_file = local_dir().joinpath('VERSION')
-            if not version_file.exists():
-                return
-            from dotenv import dotenv_values
-
-            content = dotenv_values(version_file)
-            if (
-                'INVENTREE_PKG_INSTALLER' in content
-                and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
-            ):
+            content: dict = get_version_vals()
+            if is_pkg_installer(content):
                 ref = content.get('INVENTREE_COMMIT_SHA')
                 info(
                     f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
@@ -1704,6 +1762,14 @@ via your signed in browser, or consider using a point release download via invok
         )
 
 
+def doc_schema(c):
+    """Generate schema documentation for the API."""
+    schema(
+        c, ignore_warnings=True, overwrite=True, filename='docs/generated/schema.yml'
+    )
+    run(c, 'python docs/extract_schema.py docs/generated/schema.yml')
+
+
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
@@ -1716,11 +1782,25 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
     export_definitions(c, basedir='docs')
 
     if compile_schema:
-        # Build the schema docs first
-        schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
-        run(c, 'python docs/extract_schema.py docs/schema.yml')
+        doc_schema(c)
 
     run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+
+
+@task(
+    help={'mkdocs': 'Build the documentation using mkdocs at the end (default: False)'}
+)
+def build_docs(c, mkdocs=False):
+    """Build the required documents for building the docs. Optionally build the documentation using mkdocs."""
+    migrate(c)
+    export_definitions(c, basedir='docs')
+    doc_schema(c)
+
+    if mkdocs:
+        run(c, 'mkdocs build  -f docs/mkdocs.yml')
+        info('Documentation build complete')
+    else:
+        info('Documentation build complete, but mkdocs not requested')
 
 
 @task
@@ -1787,6 +1867,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    build_docs,
 )
 
 ns.add_collection(development, 'dev')

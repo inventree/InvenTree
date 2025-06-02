@@ -183,7 +183,7 @@ function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
-  const { language, setLanguage, userTheme, setTheme } =
+  const { language, setLanguage, userTheme, setTheme, setWidgets, setLayouts } =
     useLocalState.getState();
   if (user) {
     if (user.profile?.language && language != user.profile.language) {
@@ -215,6 +215,15 @@ function observeProfile() {
         });
         setTheme(newTheme);
       }
+    }
+
+    if (user.profile?.widgets) {
+      const data = user.profile.widgets;
+      // split data into widgets and layouts (either might be undefined)
+      const widgets = data.widgets ?? [];
+      const layouts = data.layouts ?? {};
+      setWidgets(widgets, true);
+      setLayouts(layouts, true);
     }
   }
 }
