@@ -40,11 +40,13 @@ global REPORT_CONTEXT
 # Read in the InvenTree settings file
 here = Path(__file__).parent
 
+gen_base = here.joinpath('generated')
+
 # File where we expect to find the settings definitions
-settings_file = here.joinpath('inventree_settings.json')
+settings_file = gen_base.joinpath('inventree_settings.json')
 
 # File where we will *store* information on the settings we have observed
-observed_settings_file = here.joinpath('observed_settings.json')
+observed_settings_file = gen_base.joinpath('observed_settings.json')
 
 # Overwrite the observed settings file
 with open(observed_settings_file, 'w', encoding='utf-8') as f:
@@ -54,9 +56,7 @@ with open(observed_settings_file, 'w', encoding='utf-8') as f:
     # This is used to track which settings we have observed during the build process
     f.write(json.dumps(data, indent=4))
 
-gen_base = here.joinpath('generated')
-
-with open(gen_base.joinpath('inventree_settings.json'), encoding='utf-8') as sf:
+with open(settings_file, encoding='utf-8') as sf:
     settings = json.load(sf)
 
     GLOBAL_SETTINGS = settings['global']

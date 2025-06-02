@@ -265,10 +265,11 @@ def on_post_build(*args, **kwargs):
 
     Here we check that all global settings and user settings are documented.
     """
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    here = Path(__file__).parent
+    gen_base = here.parent.joinpath('generated')
 
-    expected_settings_file = os.path.join(base_dir, 'inventree_settings.json')
-    observed_settings_file = os.path.join(base_dir, 'observed_settings.json')
+    expected_settings_file = gen_base.joinpath('inventree_settings.json')
+    observed_settings_file = gen_base.joinpath('observed_settings.json')
 
     with open(observed_settings_file, encoding='utf-8') as f:
         observed_settings = json.loads(f.read())
