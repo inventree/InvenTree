@@ -15,10 +15,13 @@ export default function ScheduledTasksTable() {
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'func',
+        accessor: 'name',
         title: t`Task`,
         sortable: true,
-        switchable: false
+        switchable: false,
+        render: (record: any) => {
+          return record.name || record.task;
+        }
       },
       {
         accessor: 'last_run',
