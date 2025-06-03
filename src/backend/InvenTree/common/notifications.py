@@ -200,16 +200,16 @@ def trigger_notification(
     obj_ref_value = None
 
     # Find the first reference that is available
-    for ref in refs:
-        if obj and hasattr(obj, ref):
-            obj_ref_value = getattr(obj, ref)
-            break
+    if obj:
+        for ref in refs:
+            if hasattr(obj, ref):
+                obj_ref_value = getattr(obj, ref)
+                break
 
-    # Try with some defaults
-    if obj and not obj_ref_value:
-        raise KeyError(
-            f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
-        )
+        if not obj_ref_value:
+            raise KeyError(
+                f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
+            )
 
     # Check if we have notified recently...
     delta = timedelta(days=1)
