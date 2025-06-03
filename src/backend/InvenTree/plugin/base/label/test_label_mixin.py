@@ -76,12 +76,13 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         # Should be available via the API now
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 3)
 
         labels = [item['key'] for item in response.data]
 
+        self.assertIn('inventreelabel', labels)
+        self.assertIn('inventreelabelmachine', labels)
         self.assertIn('samplelabelprinter', labels)
-        self.assertIn('inventreelabelsheet', labels)
 
     def test_printing_process(self):
         """Test that a label can be printed."""
