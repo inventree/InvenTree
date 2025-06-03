@@ -581,6 +581,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PRICING_AUTO_UPDATE': {
+        'name': _('Auto Update Pricing'),
+        'description': _(
+            'Automatically update part pricing when internal data changes'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     'PRICING_UPDATE_DAYS': {
         'name': _('Pricing Rebuild Interval'),
         'description': _('Number of days before part pricing is automatically updated'),

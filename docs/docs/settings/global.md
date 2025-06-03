@@ -103,6 +103,7 @@ Configuration of pricing data and currency support:
 {{ globalsetting("CURRENCY_CODES") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
+{{ globalsetting("PRICING_AUTO_UPDATE") }}
 {{ globalsetting("PRICING_UPDATE_DAYS") }}
 
 #### Part Pricing
