@@ -2015,7 +2015,9 @@ class Part(
             create: Whether or not a new PartPricing object should be created if it does not already exist
             force: If True, force the pricing to be updated even auto pricing is disabled
         """
-        if not force and not get_global_setting('PRICING_AUTO_UPDATE', default=True):
+        if not force and not get_global_setting(
+            'PRICING_AUTO_UPDATE', backup_value=True
+        ):
             return
 
         try:
