@@ -372,7 +372,11 @@ class Owner(models.Model):
         if self.owner_type.name == 'user' and get_global_setting(
             'DISPLAY_FULL_NAMES', cache=True
         ):
-            return self.owner.get_full_name() or str(self.owner)
+            if self.owner and hasattr(self.owner, 'get_full_name'):
+                # Use the get_full_name method if available
+                return self.owner.get_full_name() or str(self.owner)
+            else:
+                return str(self.owner)
         return str(self.owner)
 
     def label(self):
