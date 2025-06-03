@@ -14,9 +14,7 @@ The ScheduleMixin class provides a plugin with the ability to call functions at 
 !!! tip "Enable Schedule Integration"
     The *Enable Schedule Integration* option but be enabled, for scheduled plugin events to be activated.
 
-{% with id="schedule", url="plugin/enable_schedule.png", description="Enable schedule integration" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/enable_schedule.png", "Enable schedule integration") }}
 
 ### SamplePlugin
 
