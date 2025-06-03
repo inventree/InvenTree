@@ -2003,7 +2003,7 @@ class Part(
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False):
+    def schedule_pricing_update(self, create: bool = False, force: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -2013,7 +2013,11 @@ class Part(
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
+            force: If True, force the pricing to be updated even auto pricing is disabled
         """
+        if not force and not get_global_setting('PRICING_AUTO_UPDATE', default=True):
+            return
+
         try:
             self.refresh_from_db()
         except Part.DoesNotExist:
