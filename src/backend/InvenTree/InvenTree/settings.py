@@ -1403,9 +1403,9 @@ GLOBAL_SETTINGS_OVERRIDES = get_setting(
 
 if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
     logger.info('Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES))
-    for key, value in GLOBAL_SETTINGS_OVERRIDES.items():
+    for key in GLOBAL_SETTINGS_OVERRIDES:
         # Set the global setting
-        logger.debug('- %s = %s', key, value)
+        logger.debug('- Override value for %s = ********', key)
 
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
