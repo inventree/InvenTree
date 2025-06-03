@@ -1180,6 +1180,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         return super().get_setting_default(key, **kwargs)
 
+    @classmethod
+    def get_setting(cls, key, backup_value=None, **kwargs):
+        """Get the value of a particular setting.
+
+        If it does not exist, return the backup value (default = None)
+        """
+        overrides = global_setting_overrides()
+
+        if key in overrides:
+            # If an override is specified for this setting, use that value
+            return overrides[key]
+
+        return super().get_setting(key, backup_value=backup_value, **kwargs)
+
     """
     Dict of all global settings values:
 
