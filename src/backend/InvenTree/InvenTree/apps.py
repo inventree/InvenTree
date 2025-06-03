@@ -37,7 +37,6 @@ class InvenTreeConfig(AppConfig):
         - Cleaning up tasks
         - Starting regular tasks
         - Updating exchange rates
-        - Collecting notification methods
         - Collecting state transition methods
         - Adding users set in the current environment
         """
@@ -71,7 +70,6 @@ class InvenTreeConfig(AppConfig):
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.update_site_url()
-        self.collect_notification_methods()
         self.collect_state_transition_methods()
 
         # Ensure the unit registry is loaded
@@ -375,12 +373,6 @@ class InvenTreeConfig(AppConfig):
 
         # do not try again
         settings.USER_ADDED_FILE = True
-
-    def collect_notification_methods(self):
-        """Collect all notification methods."""
-        from common.notifications import storage
-
-        storage.collect()
 
     def collect_state_transition_methods(self):
         """Collect all state transition methods."""
