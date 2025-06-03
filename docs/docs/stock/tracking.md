@@ -8,9 +8,7 @@ It may be desirable to track individual stock items, or groups of stock items, w
 
 Individual stock items can be assigned a batch code, or a serial number, or both, or neither, as requirements dictate.
 
-{% with id="batch_and_serial", url="stock/batch_and_serial.png", description="Batch and serial number" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/batch_and_serial.png", title="Batch and Serial Number Tracking") }}
 
 Out of the box, the default implementations for both batch codes and serial numbers are (intentionally) simplistic.
 
@@ -26,9 +24,7 @@ Multiple stock items may share the same batch code without restriction, even acr
 
 Batch codes can be generated automatically based on a provided pattern. The default pattern simply uses the current date-code as the batch number, however this can be customized within a certain scope.
 
-{% with id="batch_code_pattern", url="stock/batch_code_template.png", description="Batch code pattern" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/batch_code_template.png", title="Batch code pattern") }}
 
 #### Context Variables
 
@@ -57,17 +53,13 @@ By default, serial numbers must be unique across any given [Part](../part/index.
 
 However, it is also possible to specify that serial numbers must be globally unique across all types of parts. This is configurable in the settings display (see below):
 
-{% with id="serial_numbers_unique", url="stock/serial_numbers_unique.png", description="Serial number uniqueness" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/serial_numbers_unique.png", title="Serial number uniqueness") }}
 
 #### Generating Serial Numbers
 
 When creating a group of serialized stock items, it can be very useful for the user to be able to generate a group of unique serial numbers, with one serial number for each serialized stock item.
 
-{% with id="serial_next", url="stock/serial_next.png", description="Serial number entry" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/serial_next.png", title="Serial number entry") }}
 
 For a given serial number *schema* (either the in-built schema or a custom schema defined by a plugin), a group (or *range*) of serial numbers can be generated using a number of possible patterns:
 
@@ -129,15 +121,11 @@ If a provided serial number (or group of numbers) is not considered valid, an er
 
 ##### Example: Invalid Quantity
 
-{% with id="serial_error_quantity", url="stock/serial_error_quantity.png", description="Serial number - invalid quantity" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/serial_error_quantity.png", title="Serial number - invalid quantity") }}
 
 ##### Example: Duplicate Serial Numbers
 
-{% with id="serial_error_unique", url="stock/serial_error_unique.png", description="Serial number - duplicate values" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/serial_error_unique.png", title="Serial number - duplicate values") }}
 
 ##### Example: Invalid Serial Numbers
 
