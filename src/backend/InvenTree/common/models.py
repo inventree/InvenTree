@@ -4,7 +4,6 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import enum
 import hashlib
 import hmac
 import json
@@ -48,6 +47,7 @@ import InvenTree.ready
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import global_setting_overrides
+from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
@@ -2386,12 +2386,8 @@ class DataOutput(models.Model):
         errors: JSON field for storing any errors generated during the data output generation process
     """
 
-    class DataOutputTypes(str, enum.Enum):
+    class DataOutputTypes(StringEnum):
         """Enum for data output types."""
-
-        def __str__(self):
-            """Return the string representation of the data output type."""
-            return str(self.value)
 
         LABEL = 'label'
         REPORT = 'report'
