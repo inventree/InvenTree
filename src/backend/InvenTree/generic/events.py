@@ -1,11 +1,7 @@
 """Generic event enumerations for InvenTree."""
 
-import enum
+from enums import StringEnum
 
 
-class BaseEventEnum(str, enum.Enum):
+class BaseEventEnum(StringEnum):
     """Base class for representing a set of 'events'."""
-
-    def __str__(self):
-        """Return the string representation of the event."""
-        return str(self.value)
