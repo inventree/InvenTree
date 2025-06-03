@@ -64,6 +64,10 @@ class InvenTreeEmailNotifications(NotificationMixin, InvenTreePlugin):
         self, target: Model, category: str, users: list[User], context: dict
     ):
         """Send notification to the specified targets."""
+        # Ignore if there is no template provided to render
+        if not context.get('template'):
+            return
+
         html_message = render_to_string(context['template']['html'], context)
 
         # Prefix the 'instance title' to the email subject
@@ -84,9 +88,6 @@ class InvenTreeEmailNotifications(NotificationMixin, InvenTreePlugin):
             InvenTree.helpers_email.send_email(
                 subject, '', recipients, html_message=html_message
             )
-            return True
-
-        return False
 
 
 class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlugin):
