@@ -1,11 +1,19 @@
 """Tests for basic notification methods and functions in InvenTree."""
 
-from common.notifications import (
-    BulkNotificationMethod,
-    NotificationMethod,
-    SingleNotificationMethod,
-)
 from part.test_part import BaseNotificationIntegrationTest
+
+
+# TODO: Remove these, hacky
+class NotificationMethod:
+    """Dummy class to be removed."""
+
+
+class SingleNotificationMethod:
+    """Dummy class to be removed."""
+
+
+class BulkNotificationMethod:
+    """Dummy class to be removed."""
 
 
 class BaseNotificationTests(BaseNotificationIntegrationTest):
