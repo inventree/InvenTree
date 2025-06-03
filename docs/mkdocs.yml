@@ -82,6 +82,7 @@ nav:
       - Physical Units: concepts/units.md
       - Companies: concepts/company.md
       - Custom States: concepts/custom_states.md
+      - Notifications: concepts/notifications.md
       - Pricing: concepts/pricing.md
       - Project Codes: concepts/project_codes.md
       - Barcodes:

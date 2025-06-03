@@ -13,6 +13,7 @@ import structlog
 
 import common.models
 import InvenTree.helpers
+from common.settings import notifications_enabled
 from InvenTree.ready import isImportingData, isRebuildingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
@@ -372,6 +373,10 @@ def trigger_notification(
     """
     # Check if data is importing currently
     if isImportingData() or isRebuildingData():
+        return
+
+    # Ignore if notifications are disabled globally
+    if not notifications_enabled():
         return
 
     targets = kwargs.get('targets')

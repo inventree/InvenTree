@@ -1035,6 +1035,13 @@ def notify_staff_users_of_error(instance, label: str, context: dict):
     """Helper function to notify staff users of an error."""
     import common.models
     import common.notifications
+    import common.settings
+
+    # Return early if error notifications are not enabled
+    if not common.settings.get_global_setting(
+        'NOTIFICATIONS_ERRORS', backup_value=True
+    ):
+        return
 
     try:
         # Get all staff users
