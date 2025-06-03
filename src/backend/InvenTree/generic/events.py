@@ -1,6 +1,6 @@
 """Generic event enumerations for InvenTree."""
 
-from enums import StringEnum
+from generic.enums import StringEnum
 
 
 class BaseEventEnum(StringEnum):
