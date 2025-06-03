@@ -53,10 +53,18 @@ The following [global settings](../settings/global.md) control the notification 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("NOTIFICATIONS_ENABLE") }}
+{{ globalsetting("NOTIFICATIONS_ERRORS") }}
 {{ globalsetting("NOTIFICATIONS_LOW_STOCK") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
 
 ## Notification Categories
+
+### Error Notifications
+
+If enabled, InvenTree can send notifications about errors that occur within the system. This is useful for administrators to monitor the health of the application and address issues promptly.
+
+!!! info "Staff Only"
+    Error notifications are only sent to staff users. Regular users will not receive these notifications.
 
 ### Part Notifications
 

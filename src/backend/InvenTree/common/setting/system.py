@@ -314,6 +314,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'NOTIFICATIONS_ERRORS': {
+        'name': _('Error Notifications'),
+        'description': _('Enable notifications for system errors'),
+        'default': True,
+        'validator': bool,
+    },
     'NOTIFICATIONS_LOW_STOCK': {
         'name': _('Low Stock Notifications'),
         'description': _('Enable notifications when a part is low on stock'),
