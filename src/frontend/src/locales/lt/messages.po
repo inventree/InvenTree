@@ -8,7 +8,7 @@ msgstr ""
 "Language: lt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-15 23:09\n"
+"PO-Revision-Date: 2025-06-02 01:32\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: src/components/Boundary.tsx:12
 msgid "Error rendering component"
-msgstr ""
+msgstr "Klaida atvaizduojant komponentą"
 
 #: src/components/Boundary.tsx:14
 msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr ""
+msgstr "Įvyko klaida atvaizduojant šį komponentą. Daugiau informacijos rasite konsoleje."
 
 #: src/components/DashboardItemProxy.tsx:34
 #~ msgid "Title"
@@ -32,55 +32,55 @@ msgstr ""
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:103
 msgid "Error while scanning"
-msgstr ""
+msgstr "Klaida nuskaitant"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:117
 msgid "Error while stopping"
-msgstr ""
+msgstr "Klaida stabdant"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:159
 msgid "Start scanning by selecting a camera and pressing the play button."
-msgstr ""
+msgstr "Pradėkite nuskaitymą pasirinkdami kamerą ir paspausdami paleidimo mygtuką."
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:180
 msgid "Stop scanning"
-msgstr ""
+msgstr "Sustabdyti nuskaitymą"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:190
 msgid "Start scanning"
-msgstr ""
+msgstr "Pradėti nuskaitymą"
 
 #: src/components/barcodes/BarcodeInput.tsx:34
 #: src/tables/general/BarcodeScanTable.tsx:55
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:63
 msgid "Barcode"
-msgstr ""
+msgstr "Brūkšninis kodas"
 
 #: src/components/barcodes/BarcodeInput.tsx:35
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:9
 #: src/defaults/actions.tsx:69
 msgid "Scan"
-msgstr ""
+msgstr "Nuskaityti"
 
 #: src/components/barcodes/BarcodeInput.tsx:53
 msgid "Camera Input"
-msgstr ""
+msgstr "Kameros įvestis"
 
 #: src/components/barcodes/BarcodeInput.tsx:63
 msgid "Scanner Input"
-msgstr ""
+msgstr "Skaitytuvo įvestis"
 
 #: src/components/barcodes/BarcodeInput.tsx:105
 msgid "Barcode Data"
-msgstr ""
+msgstr "Brūkšninio kodo duomenys"
 
 #: src/components/barcodes/BarcodeInput.tsx:109
 msgid "No barcode data"
-msgstr ""
+msgstr "Brūkšninio kodo duomenų nėra"
 
 #: src/components/barcodes/BarcodeInput.tsx:110
 msgid "Scan or enter barcode data"
-msgstr ""
+msgstr "Nuskaitykite arba įveskite brūkšninio kodo duomenis"
 
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/editors/NotesEditor.tsx:74
@@ -104,11 +104,11 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:455
 #: src/tables/stock/StockItemTestResultTable.tsx:321
 msgid "Error"
-msgstr ""
+msgstr "Klaida"
 
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:39
 msgid "Enter barcode data"
-msgstr ""
+msgstr "Įveskite brūkšninio kodo duomenis"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:32
 #: src/components/buttons/ScanButton.tsx:15
@@ -116,52 +116,52 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:416
 #: src/forms/PurchaseOrderForms.tsx:520
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Nuskaityti brūkšninį kodą"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:83
 msgid "No matching item found"
-msgstr ""
+msgstr "Atitinkamų elementų nerasta"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:90
 #: src/pages/Index/Scan.tsx:129
 msgid "Failed to scan barcode"
-msgstr ""
+msgstr "Nepavyko nuskaityti brūkšninio kodo"
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Low (7%)"
-msgstr ""
+msgstr "Žemas (7%)"
 
 #: src/components/barcodes/QRCode.tsx:95
 msgid "Medium (15%)"
-msgstr ""
+msgstr "Vidutinis (15%)"
 
 #: src/components/barcodes/QRCode.tsx:96
 msgid "Quartile (25%)"
-msgstr ""
+msgstr "Ketvirtinis (25%)"
 
 #: src/components/barcodes/QRCode.tsx:97
 msgid "High (30%)"
-msgstr ""
+msgstr "Aukštas (30%)"
 
 #: src/components/barcodes/QRCode.tsx:107
 msgid "Custom barcode"
-msgstr ""
+msgstr "Individualus brūkšninis kodas"
 
 #: src/components/barcodes/QRCode.tsx:108
 msgid "A custom barcode is registered for this item. The shown code is not that custom barcode."
-msgstr ""
+msgstr "Šiam elementui priskirtas individualus brūkšninis kodas. Rodytas kodas nėra tas individualus kodas."
 
 #: src/components/barcodes/QRCode.tsx:127
 msgid "Barcode Data:"
-msgstr ""
+msgstr "Brūkšninio kodo duomenys:"
 
 #: src/components/barcodes/QRCode.tsx:138
 msgid "Select Error Correction Level"
-msgstr ""
+msgstr "Pasirinkite klaidų taisymo lygį"
 
 #: src/components/barcodes/QRCode.tsx:170
 msgid "Failed to link barcode"
-msgstr ""
+msgstr "Nepavyko susieti brūkšninio kodo"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetail.tsx:240
@@ -170,21 +170,21 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:181
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:170
 msgid "Link"
-msgstr ""
+msgstr "Susieti"
 
 #: src/components/barcodes/QRCode.tsx:200
 msgid "This will remove the link to the associated barcode"
-msgstr ""
+msgstr "Tai pašalins nuorodą į susietą brūkšninį kodą"
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:190
 #: src/forms/PurchaseOrderForms.tsx:511
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Atsieti brūkšninį kodą"
 
 #: src/components/buttons/AdminButton.tsx:85
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Atidaryti administravimo sąsajoje"
 
 #: src/components/buttons/CopyButton.tsx:18
 #~ msgid "Copy to clipboard"
@@ -192,19 +192,19 @@ msgstr ""
 
 #: src/components/buttons/CopyButton.tsx:29
 msgid "Copied"
-msgstr ""
+msgstr "Nukopijuota"
 
 #: src/components/buttons/CopyButton.tsx:29
 msgid "Copy"
-msgstr ""
+msgstr "Kopijuoti"
 
 #: src/components/buttons/PrintingActions.tsx:51
 msgid "Printing Labels"
-msgstr ""
+msgstr "Spausdinamos etiketės"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Reports"
-msgstr ""
+msgstr "Spausdinamos ataskaitos"
 
 #: src/components/buttons/PrintingActions.tsx:77
 #~ msgid "Printing"
@@ -220,7 +220,7 @@ msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:118
 msgid "Print Label"
-msgstr ""
+msgstr "Spausdinti etiketę"
 
 #: src/components/buttons/PrintingActions.tsx:121
 #~ msgid "The label could not be generated"
@@ -229,11 +229,11 @@ msgstr ""
 #: src/components/buttons/PrintingActions.tsx:124
 #: src/components/buttons/PrintingActions.tsx:149
 msgid "Print"
-msgstr ""
+msgstr "Spausdinti"
 
 #: src/components/buttons/PrintingActions.tsx:133
 msgid "Print Report"
-msgstr ""
+msgstr "Spausdinti ataskaitą"
 
 #: src/components/buttons/PrintingActions.tsx:152
 #~ msgid "Generate"
@@ -249,23 +249,23 @@ msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:170
 msgid "Printing Actions"
-msgstr ""
+msgstr "Spausdinimo veiksmai"
 
 #: src/components/buttons/PrintingActions.tsx:175
 msgid "Print Labels"
-msgstr ""
+msgstr "Spausdinti etiketes"
 
 #: src/components/buttons/PrintingActions.tsx:181
 msgid "Print Reports"
-msgstr ""
+msgstr "Spausdinti ataskaitas"
 
 #: src/components/buttons/RemoveRowButton.tsx:8
 msgid "Remove this row"
-msgstr ""
+msgstr "Pašalinti šią eilutę"
 
 #: src/components/buttons/SSOButton.tsx:38
 msgid "You will be redirected to the provider for further actions."
-msgstr ""
+msgstr "Būsite nukreiptas pas tiekėją tolimesniems veiksmams."
 
 #: src/components/buttons/SSOButton.tsx:44
 #~ msgid "This provider is not full set up."
@@ -281,7 +281,7 @@ msgstr ""
 
 #: src/components/buttons/ScanButton.tsx:19
 msgid "Open Barcode Scanner"
-msgstr ""
+msgstr "Atidaryti brūkšninio kodo skaitytuvą"
 
 #: src/components/buttons/ScanButton.tsx:20
 #~ msgid "Open QR code scanner"
@@ -289,7 +289,7 @@ msgstr ""
 
 #: src/components/buttons/SpotlightButton.tsx:12
 msgid "Open spotlight"
-msgstr ""
+msgstr "Atidaryti paiešką"
 
 #: src/components/buttons/StarredToggleButton.tsx:57
 #~ msgid "Unsubscribe from part"
@@ -297,29 +297,29 @@ msgstr ""
 
 #: src/components/buttons/StarredToggleButton.tsx:59
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Atsisakyti pranešimų"
 
 #: src/components/buttons/StarredToggleButton.tsx:60
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "Prenumeruoti pranešimus"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Atlikta"
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Neatlikta"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:83
 msgid "Yes"
-msgstr ""
+msgstr "Taip"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:84
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: src/components/calendar/Calendar.tsx:93
 #: src/components/calendar/Calendar.tsx:156
