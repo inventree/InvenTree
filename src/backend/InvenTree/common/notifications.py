@@ -284,4 +284,4 @@ def trigger_notification(
         try:
             plugin.send_notification(obj, category, filtered_users, context)
         except Exception:
-            log_error(f'plugins.{plugin.slug}.send_notification', exc_info=True)
+            log_error(f'plugins.{plugin.slug}.send_notification')
