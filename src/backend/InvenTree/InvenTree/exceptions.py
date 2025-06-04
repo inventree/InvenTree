@@ -4,6 +4,7 @@
 
 import sys
 import traceback
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -17,7 +18,13 @@ from rest_framework.response import Response
 logger = structlog.get_logger('inventree')
 
 
-def log_error(path, error_name=None, error_info=None, error_data=None):
+def log_error(
+    path,
+    error_name=None,
+    error_info=None,
+    error_data=None,
+    plugin: Optional[str] = None,
+):
     """Log an error to the database.
 
     - Uses python exception handling to extract error details
@@ -29,6 +36,7 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
         error_name: The name of the error (optional, overrides 'kind')
         error_info: The error information (optional, overrides 'info')
         error_data: The error data (optional, overrides 'data')
+        plugin: The plugin name associated with this error (optional)
     """
     from error_report.models import Error
 
@@ -56,6 +64,10 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
 
     # Log error to stderr
     logger.error(info)
+
+    if plugin:
+        # If a plugin is specified, prepend it to the path
+        path = f'plugin.{plugin}.{path}'
 
     # Ensure the error information does not exceed field size limits
     path = path[:200]
