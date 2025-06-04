@@ -1,13 +1,5 @@
 import { t } from '@lingui/core/macro';
-import {
-  ActionIcon,
-  Group,
-  Select,
-  Stack,
-  Text,
-  TextInput,
-  Tooltip
-} from '@mantine/core';
+import { ActionIcon, Box, Group, Select, TextInput } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -22,7 +14,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
+import { IconCircleX } from '@tabler/icons-react';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
@@ -101,73 +93,95 @@ function ParameterCell({
 
 function ParameterFilter({
   template,
+  filterValue,
   setFilter,
-  clearFilter
+  clearFilter,
+  closeFilter
 }: {
   template: any;
+  filterValue?: string;
   setFilter: (templateId: number, value: string, operator: string) => void;
   clearFilter: (templateId: number) => void;
+  closeFilter: () => void;
 }) {
   const [operator, setOperator] = useState<string>('');
 
+  const clearFilterButton = useMemo(() => {
+    return (
+      <ActionIcon
+        variant='transparent'
+        color='red'
+        size='sm'
+        onClick={() => {
+          clearFilter(template.pk);
+          closeFilter();
+        }}
+      >
+        <IconCircleX />
+      </ActionIcon>
+    );
+  }, [clearFilter, template.pk]);
+
   // Filter input element (depends on template type)
-  const filterElement = useMemo(() => {
+  return useMemo(() => {
     if (template.checkbox) {
       setOperator('');
       return (
         <Select
           data={[t`True`, t`False`]}
+          value={filterValue}
+          defaultValue={filterValue}
           onChange={(val) => setFilter(template.pk, val ?? '', '')}
           placeholder={t`Select a choice`}
+          rightSection={clearFilterButton}
         />
       );
     } else if (!!template.choices) {
       setOperator('');
       return (
         <Select
-          data={template.choices.split(',')}
+          data={template.choices
+            .split(',')
+            .map((choice: string) => choice.trim())}
+          value={filterValue}
+          defaultValue={filterValue}
           onChange={(val) => setFilter(template.pk, val ?? '', '')}
           placeholder={t`Select a choice`}
           searchable
+          rightSection={clearFilterButton}
         />
       );
     } else {
       return (
         <Group gap='xs' align='left'>
-          <Select data={['=', '<', '>']} defaultValue='=' />
-          <TextInput />
+          <TextInput
+            rightSection={clearFilterButton}
+            leftSectionWidth={50}
+            leftSection={
+              <Box
+                w={50}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <Select
+                  comboboxProps={{
+                    withinPortal: true
+                  }}
+                  data={['=', '<', '>', '<=', '>='].map((op) => ({
+                    value: op,
+                    label: op
+                  }))}
+                  // variant="unstyled"
+                />
+              </Box>
+            }
+          />
         </Group>
       );
     }
-  }, [template]);
-
-  return (
-    <Stack gap='xs'>
-      <Text size='sm'>
-        {template.name}
-        {template.units ? ` [${template.units}]` : ''}
-      </Text>
-      <Group gap='xs' align='apart' wrap='nowrap'>
-        <Group gap='xs' align='left' grow>
-          {filterElement}
-        </Group>
-        <Tooltip label={t`Apply filter`} position='top-end'>
-          <ActionIcon variant='transparent' color='green'>
-            <IconCircleCheck />
-          </ActionIcon>
-        </Tooltip>
-        <Tooltip label={t`Clear filter`} position='top-end'>
-          <ActionIcon
-            variant='transparent'
-            color='red'
-            onClick={() => clearFilter(template.pk)}
-          >
-            <IconCircleX />
-          </ActionIcon>
-        </Tooltip>
-      </Group>
-    </Stack>
-  );
+  }, [template, filterValue, setFilter, clearFilterButton]);
 }
 
 export default function ParametricPartTable({
@@ -231,14 +245,15 @@ export default function ParametricPartTable({
       const filterName = `parameter_${templateId}`;
 
       setParameterFilters((prev: any) => {
-        Object.keys(prev).forEach((key: string) => {
+        const newFilters = { ...prev };
+        Object.keys(newFilters).forEach((key: string) => {
           // Remove any filters that match the template ID
           if (key.startsWith(filterName)) {
-            delete prev[key];
+            delete newFilters[key];
           }
         });
 
-        return prev;
+        return newFilters;
       });
 
       table.refreshTable();
@@ -317,6 +332,10 @@ export default function ParametricPartTable({
         title += ` [${template.units}]`;
       }
 
+      const filterKey = Object.keys(parameterFilters).find((key: string) =>
+        key.startsWith(`parameter_${template.pk}`)
+      );
+
       return {
         accessor: `parameter_${template.pk}`,
         title: title,
@@ -331,14 +350,14 @@ export default function ParametricPartTable({
             canEdit={user.hasChangeRole(UserRoles.part)}
           />
         ),
-        filtering: !!Object.keys(parameterFilters).find((key: string) =>
-          key.startsWith(`parameter_${template.pk}`)
-        ),
-        filter: (
+        filtering: !!filterKey,
+        filter: ({ close }: { close: () => void }) => (
           <ParameterFilter
             template={template}
+            filterValue={filterKey && parameterFilters[filterKey]}
             setFilter={addParameterFilter}
             clearFilter={clearParameterFilter}
+            closeFilter={close}
           />
         )
       };
