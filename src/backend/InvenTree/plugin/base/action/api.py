@@ -40,7 +40,7 @@ class ActionPluginView(GenericAPIView):
                     plugin.perform_action(request.user, data=data)
                     return Response(plugin.get_response(request.user, data=data))
             except Exception:
-                log_error('action_plugin')
+                log_error('perform_action', plugin=plugin.slug)
 
         # If we got to here, no matching action was found
         return Response({'error': _('No matching action found'), 'action': action})
