@@ -1014,7 +1014,7 @@ class Build(
         lines = lines.exclude(bom_item__consumable=True)
         lines = annotate_allocated_quantity(lines)
 
-        for build_line in lines:
+        for build_line in lines:  # type: ignore[non-iterable]
             reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:

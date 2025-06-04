@@ -70,7 +70,7 @@ class RenderMeta(enums.ChoicesMeta):
         return []
 
 
-class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
     """Class for creating enumerated string choices for schema rendering."""
 
 
