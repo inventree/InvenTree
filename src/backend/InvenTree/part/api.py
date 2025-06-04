@@ -1351,14 +1351,18 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
         To filter based on parameter value, supply query parameters like:
         - parameter_<x>=<value>
         - parameter_<x>_gt=<value>
-        - parameter_<x>_lt=<value>
+        - parameter_<x>_lte=<value>
 
         where:
             - <x> is the ID of the PartParameterTemplate.
             - <value> is the value to filter against.
         """
+        # Allowed lookup operations for parameter values
+        operations = '|'.join(['gt', 'lt', 'gte', 'lte'])
+        regex_pattern = rf'^parameter_(\d+)(_({operations}))?$'
+
         for param in self.request.query_params:
-            result = re.match(r'^parameter_(\d+)(_(gt|lt))?$', param)
+            result = re.match(regex_pattern, param)
 
             if not result:
                 continue

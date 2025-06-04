@@ -371,8 +371,6 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
             # The value cannot be converted - return an empty queryset
             return queryset.none()
 
-    print('filter by:', template, value, func, value_numeric)
-
     q1 = Q(**{
         'parameters__template': template,
         'parameters__data_numeric__isnull': False,
