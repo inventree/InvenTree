@@ -1,5 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { Group } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Tooltip
+} from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -14,6 +22,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
@@ -90,6 +99,77 @@ function ParameterCell({
   );
 }
 
+function ParameterFilter({
+  template,
+  setFilter,
+  clearFilter
+}: {
+  template: any;
+  setFilter: (templateId: number, value: string, operator: string) => void;
+  clearFilter: (templateId: number) => void;
+}) {
+  const [operator, setOperator] = useState<string>('');
+
+  // Filter input element (depends on template type)
+  const filterElement = useMemo(() => {
+    if (template.checkbox) {
+      setOperator('');
+      return (
+        <Select
+          data={[t`True`, t`False`]}
+          onChange={(val) => setFilter(template.pk, val ?? '', '')}
+          placeholder={t`Select a choice`}
+        />
+      );
+    } else if (!!template.choices) {
+      setOperator('');
+      return (
+        <Select
+          data={template.choices.split(',')}
+          onChange={(val) => setFilter(template.pk, val ?? '', '')}
+          placeholder={t`Select a choice`}
+          searchable
+        />
+      );
+    } else {
+      return (
+        <Group gap='xs' align='left'>
+          <Select data={['=', '<', '>']} defaultValue='=' />
+          <TextInput />
+        </Group>
+      );
+    }
+  }, [template]);
+
+  return (
+    <Stack gap='xs'>
+      <Text size='sm'>
+        {template.name}
+        {template.units ? ` [${template.units}]` : ''}
+      </Text>
+      <Group gap='xs' align='apart' wrap='nowrap'>
+        <Group gap='xs' align='left' grow>
+          {filterElement}
+        </Group>
+        <Tooltip label={t`Apply filter`} position='top-end'>
+          <ActionIcon variant='transparent' color='green'>
+            <IconCircleCheck />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label={t`Clear filter`} position='top-end'>
+          <ActionIcon
+            variant='transparent'
+            color='red'
+            onClick={() => clearFilter(template.pk)}
+          >
+            <IconCircleX />
+          </ActionIcon>
+        </Tooltip>
+      </Group>
+    </Stack>
+  );
+}
+
 export default function ParametricPartTable({
   categoryId
 }: Readonly<{
@@ -114,6 +194,57 @@ export default function ParametricPartTable({
     },
     refetchOnMount: true
   });
+
+  // Filters against selected part parameters
+  const [parameterFilters, setParameterFilters] = useState<any>({});
+
+  const addParameterFilter = useCallback(
+    (templateId: number, value: string, operator: string) => {
+      // Map the operator to a more API-friendly format
+      const operations: Record<string, string> = {
+        '=': '',
+        '<': 'lt',
+        '>': 'gt',
+        '<=': 'lte',
+        '>=': 'gte'
+      };
+
+      const op = operations[operator] ?? '';
+      let filterName = `parameter_${templateId}`;
+
+      if (op) {
+        filterName += `_${op}`;
+      }
+
+      setParameterFilters((prev: any) => ({
+        ...prev,
+        [filterName]: value?.trim() ?? ''
+      }));
+
+      table.refreshTable();
+    },
+    [setParameterFilters]
+  );
+
+  const clearParameterFilter = useCallback(
+    (templateId: number) => {
+      const filterName = `parameter_${templateId}`;
+
+      setParameterFilters((prev: any) => {
+        Object.keys(prev).forEach((key: string) => {
+          // Remove any filters that match the template ID
+          if (key.startsWith(filterName)) {
+            delete prev[key];
+          }
+        });
+
+        return prev;
+      });
+
+      table.refreshTable();
+    },
+    [setParameterFilters]
+  );
 
   const [selectedPart, setSelectedPart] = useState<number>(0);
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
@@ -199,10 +330,20 @@ export default function ParametricPartTable({
             template={template}
             canEdit={user.hasChangeRole(UserRoles.part)}
           />
+        ),
+        filtering: !!Object.keys(parameterFilters).find((key: string) =>
+          key.startsWith(`parameter_${template.pk}`)
+        ),
+        filter: (
+          <ParameterFilter
+            template={template}
+            setFilter={addParameterFilter}
+            clearFilter={clearParameterFilter}
+          />
         )
       };
     });
-  }, [user, categoryParameters.data]);
+  }, [user, categoryParameters.data, parameterFilters]);
 
   const onParameterClick = useCallback((template: number, part: any) => {
     setSelectedTemplate(template);
@@ -275,7 +416,8 @@ export default function ParametricPartTable({
             category: categoryId,
             cascade: true,
             category_detail: true,
-            parameters: true
+            parameters: true,
+            ...parameterFilters
           },
           onCellClick: ({ event, record, index, column, columnIndex }) => {
             cancelEvent(event);
