@@ -8,9 +8,7 @@ A Bill of Materials (BOM) defines the list of component parts required to make a
 
 A part which can be built from other sub components is called an *Assembly*.
 
-{% with id="bom_flat", url="build/bom_flat.png", description="Flat BOM Table" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("build/bom_flat.png", "Flat BOM Table") }}
 
 ## BOM Line Items
 
@@ -33,9 +31,7 @@ If a BOM line item is marked as *consumable*, this means that while the part and
 
 In the example below, see that the *Wood Screw* line item is marked as consumable. It is clear that 12 screws are required for each assembled *Table*, but the screws will not be tracked through the build process, as this line item is marked as *consumable*
 
-{% with id="bom_item_consumable", url="build/bom_consumable_item.png", description="Consumable BOM Item" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("build/bom_consumable_item.png", "Consumable BOM Item") }}
 
 Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*.
 
@@ -56,9 +52,7 @@ This is particularly useful if a template part is defined with the "common" BOM 
 
 Consider the example diagram below:
 
-{% with id="inherited_bom", url="build/inherited_bom.png", description="Inherited BOM Line Items" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("build/inherited_bom.png", "Inherited BOM Line Items") }}
 
 **Template Part A** has two BOM line items defined: *A1* and *A2*.
 
@@ -99,9 +93,8 @@ BOMs can be created manually, by adjusting individual line items, or by upload a
 To manually add a BOM item, navigate to the part/assembly detail page then click on the "BOM" tab. On top of the tab view, click on the {{ icon("edit", color="blue", title="Edit") }} icon then, after the page reloads, click on the {{ icon("plus-circle") }} icon.
 
 The `Create BOM Item` form will be displayed:
-{% with id="bom_add_item", url="build/bom_add_item.png", description="Create BOM Item Form" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("build/bom_add_item.png", "Create BOM Item Form") }}
 
 Fill-out the `Quantity` (required), `Reference`, `Overage` and `Note` (optional) fields then click on <span class="badge inventree confirm">Submit</span> to add the BOM item to this part's BOM.
 
@@ -110,9 +103,8 @@ Fill-out the `Quantity` (required), `Reference`, `Overage` and `Note` (optional)
 To manually add a substitute for a BOM item, click on the {{ icon("transfer") }} icon in the *Actions* columns.
 
 The `Edit BOM Item Substitutes` form will be displayed:
-{% with id="bom_substitute_item", url="build/bom_substitute_item.png", description="Edit BOM Item Substitutes" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("build/bom_substitute_item.png", "Edit BOM Item Substitutes") }}
 
 Select a part in the list and click on "Add Substitute" button to confirm.
 

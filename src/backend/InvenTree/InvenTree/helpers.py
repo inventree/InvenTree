@@ -510,7 +510,7 @@ def increment_serial_number(serial, part=None):
             if result is not None:
                 return str(result)
         except Exception:
-            log_error(f'{plugin.slug}.increment_serial_number')
+            log_error('increment_serial_number', plugin=plugin.slug)
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
