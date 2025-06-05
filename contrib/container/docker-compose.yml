@@ -32,6 +32,12 @@
 # INVENTREE_TAG=0.7.5
 #
 
+# ----------------------------
+# Docker compose customization
+# ----------------------------
+# If you wish to customize the docker-compose script, you should only do so if you understand the stack!
+# Do not expect support for customizations that are not part of the standard InvenTree setup!
+
 services:
     # Database service
     # Use PostgreSQL as the database backend
