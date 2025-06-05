@@ -102,7 +102,7 @@ class PluginValidationMixin(DiffMixin):
                 import InvenTree.exceptions
 
                 InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.validate_model_instance'
+                    'validate_model_instance', plugin=plugin.slug
                 )
                 raise ValidationError(_('Error running plugin validation'))
 
@@ -139,7 +139,7 @@ class PluginValidationMixin(DiffMixin):
                 # Plugin might raise a ValidationError to prevent deletion
                 raise e
             except Exception:
-                log_error('plugin.validate_model_deletion')
+                log_error('validate_model_deletion', plugin=plugin.slug)
                 continue
 
         super().delete()
