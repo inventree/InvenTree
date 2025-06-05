@@ -115,6 +115,7 @@ function ParameterFilter({
   const clearFilterButton = useMemo(() => {
     return (
       <ActionIcon
+        aria-label={`clear-filter-${template.name}`}
         variant='transparent'
         color='red'
         size='sm'
@@ -134,6 +135,7 @@ function ParameterFilter({
       setOperator('=');
       return (
         <Select
+          aria-label={`filter-${template.name}`}
           data={[t`True`, t`False`]}
           value={filterValue}
           defaultValue={filterValue}
@@ -146,6 +148,7 @@ function ParameterFilter({
       setOperator('=');
       return (
         <Select
+          aria-label={`filter-${template.name}`}
           data={template.choices
             .split(',')
             .map((choice: string) => choice.trim())}
@@ -165,13 +168,7 @@ function ParameterFilter({
       }
 
       return (
-        <Group
-          gap='xs'
-          align='left'
-          onClick={(e) => {
-            // cancelEvent(e);
-          }}
-        >
+        <Group gap='xs' align='left'>
           <TextInput
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
@@ -183,6 +180,7 @@ function ParameterFilter({
                 closeFilter();
               }
             }}
+            aria-label={`filter-${template.name}`}
             placeholder={placeholder}
             defaultValue={filterValue}
             rightSection={clearFilterButton}
