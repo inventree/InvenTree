@@ -153,18 +153,25 @@ function ParameterFilter({
       );
     } else {
       return (
-        <Group gap='xs' align='left'>
+        <Group
+          gap='xs'
+          align='left'
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
           <TextInput
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                setFilter(template.pk, event.currentTarget.value || '', '');
+                closeFilter();
+              }
+            }}
+            defaultValue={filterValue}
             rightSection={clearFilterButton}
             leftSectionWidth={50}
             leftSection={
-              <Box
-                w={50}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
+              <Box w={50}>
                 <Select
                   comboboxProps={{
                     withinPortal: true
