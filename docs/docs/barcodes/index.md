@@ -54,15 +54,11 @@ The following barcode input modes are supported by the web interface:
 
 If barcode scanning is enabled in the web interface, select the barcode icon in the top-right of the menu bar to perform a quick-scan of a barcode. If the barcode is recognized by the system, the web browser will automatically navigate to the correct item:
 
-{% with id="barcode_scan", url="barcode/barcode_scan.png", description="Barcode scan" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("barcode/barcode_scan.png", "Barcode scan") }}
 
 If no match is found for the scanned barcode, the following error message is displayed:
 
-{% with id="barcode_no_match", url="barcode/barcode_no_match.png", description="No match for barcode" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("barcode/barcode_no_match.png", "No match for barcode") }}
 
 ### Scanning Action Page
 
@@ -70,13 +66,9 @@ A more comprehensive barcode scanning interface is available via the "Scan" page
 
 To access this page, select *Scan Barcode* from the main navigation menu:
 
-{% with id="barcode_nav_menu", url="barcode/barcode_nav_menu.png", description="Barcode menu item" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("barcode/barcode_nav_menu.png", "Barcode menu item") }}
+{{ image("barcode/barcode_scan_page.png", "Barcode scan page") }}
 
-{% with id="barcode_scan_page", url="barcode/barcode_scan_page.png", description="Barcode scan page" %}
-{% include 'img.html' %}
-{% endwith %}
 
 ## App Integration
 

@@ -154,7 +154,7 @@ class BarcodeView(CreateAPIView):
             try:
                 result = current_plugin.scan(barcode)
             except Exception:
-                log_error('BarcodeView.scan_barcode')
+                log_error('BarcodeView.scan_barcode', plugin=current_plugin.slug)
                 continue
 
             if result is None:
@@ -546,7 +546,7 @@ class BarcodePOReceive(BarcodeView):
                     auto_allocate=auto_allocate,
                 )
             except Exception:
-                log_error('BarcodePOReceive.handle_barcode')
+                log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
 
             if result is None:

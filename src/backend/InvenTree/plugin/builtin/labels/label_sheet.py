@@ -35,6 +35,7 @@ class LabelPrintingOptionsSerializer(serializers.Serializer):
         label=_('Skip Labels'),
         help_text=_('Skip this number of labels when printing label sheets'),
         min_value=0,
+        max_value=500,
     )
 
     border = serializers.BooleanField(

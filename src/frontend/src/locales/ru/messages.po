@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-05-14 11:50\n"
+"PO-Revision-Date: 2025-06-02 01:32\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -54,7 +54,7 @@ msgstr "Начать сканирование"
 #: src/tables/general/BarcodeScanTable.tsx:55
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:63
 msgid "Barcode"
-msgstr "Штрих-код"
+msgstr "Штрихкод"
 
 #: src/components/barcodes/BarcodeInput.tsx:35
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:9
@@ -367,7 +367,7 @@ msgstr "Используйте меню для добавления виджет
 #: src/components/dashboard/DashboardMenu.tsx:60
 #: src/components/dashboard/DashboardMenu.tsx:127
 msgid "Accept Layout"
-msgstr "Подтвердить раскладку"
+msgstr "Сохранить макет"
 
 #: src/components/dashboard/DashboardMenu.tsx:92
 #: src/components/nav/NavigationDrawer.tsx:71
@@ -411,7 +411,7 @@ msgstr "Больше нет виджетов, доступных для выво
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:22
 msgid "Subscribed Parts"
-msgstr "Отслеживаемые товарыОтслеживаемые товары"
+msgstr "Отслеживаемые детали"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:23
 msgid "Show the number of parts which you have subscribed to"
@@ -1038,12 +1038,12 @@ msgstr "Или продолжить с другими методами"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:64
 #: src/pages/core/UserDetail.tsx:48
 msgid "Username"
-msgstr "Имя пользователя"
+msgstr "Логин"
 
 #: src/components/forms/AuthenticationForm.tsx:129
 #: src/components/forms/AuthenticationForm.tsx:280
 msgid "Your username"
-msgstr "Имя пользователя"
+msgstr "Логин"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 #: src/components/forms/AuthenticationForm.tsx:293
@@ -1083,7 +1083,7 @@ msgstr "Отправьте мне электронное письмо"
 
 #: src/components/forms/AuthenticationForm.tsx:176
 msgid "Use username and password"
-msgstr "Имя пользователя и пароль"
+msgstr "Логин и пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:185
 msgid "Log In"
@@ -1949,7 +1949,7 @@ msgstr "Настройки"
 #: src/components/nav/MainMenu.tsx:59
 #: src/pages/Index/Settings/UserSettings.tsx:126
 msgid "Account Settings"
-msgstr "Настройки учетной записи"
+msgstr "Настройки учётной записи"
 
 #: src/components/nav/MainMenu.tsx:59
 #: src/defaults/menuItems.tsx:15
@@ -4505,7 +4505,7 @@ msgstr ""
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
-msgstr ""
+msgstr "Экспортирование данных"
 
 #: src/hooks/UseDataExport.tsx:112
 msgid "Export Data"
@@ -4513,11 +4513,11 @@ msgstr "Экспорт данных"
 
 #: src/hooks/UseDataExport.tsx:115
 msgid "Export"
-msgstr ""
+msgstr "Экспорт"
 
 #: src/hooks/UseDataOutput.tsx:57
 msgid "Process completed successfully"
-msgstr ""
+msgstr "Процесс успешно завершён"
 
 #: src/hooks/UseDataOutput.tsx:73
 #: src/hooks/UseDataOutput.tsx:103
@@ -4555,35 +4555,35 @@ msgstr "Последний серийный номер"
 #: src/pages/Auth/ChangePassword.tsx:32
 #: src/pages/Auth/Reset.tsx:14
 msgid "Reset Password"
-msgstr ""
+msgstr "Сброс пароля"
 
 #: src/pages/Auth/ChangePassword.tsx:46
 msgid "Current Password"
-msgstr ""
+msgstr "Текущий пароль"
 
 #: src/pages/Auth/ChangePassword.tsx:47
 msgid "Enter your current password"
-msgstr ""
+msgstr "Введите текущий пароль"
 
 #: src/pages/Auth/ChangePassword.tsx:53
 msgid "New Password"
-msgstr ""
+msgstr "Новый пароль"
 
 #: src/pages/Auth/ChangePassword.tsx:54
 msgid "Enter your new password"
-msgstr ""
+msgstr "Введите новый пароль"
 
 #: src/pages/Auth/ChangePassword.tsx:60
 msgid "Confirm New Password"
-msgstr ""
+msgstr "Подтвердите новый пароль"
 
 #: src/pages/Auth/ChangePassword.tsx:61
 msgid "Confirm your new password"
-msgstr ""
+msgstr "Подтвердите новый пароль"
 
 #: src/pages/Auth/ChangePassword.tsx:80
 msgid "Confirm"
-msgstr ""
+msgstr "Подтвердить"
 
 #: src/pages/Auth/Layout.tsx:67
 msgid "Log off"
@@ -4633,12 +4633,12 @@ msgstr "Многофакторная аутентификация"
 #: src/pages/Auth/MFA.tsx:20
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:688
 msgid "TOTP Code"
-msgstr ""
+msgstr "Код TOTP"
 
 #: src/pages/Auth/MFA.tsx:22
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:690
 msgid "Enter your TOTP or recovery code"
-msgstr ""
+msgstr "Введите пароль TOTP или код восстановления"
 
 #: src/pages/Auth/MFA.tsx:32
 msgid "Log in"
@@ -4877,12 +4877,12 @@ msgstr "Произошла неожиданная ошибка"
 
 #: src/pages/Index/Scan.tsx:65
 msgid "Item already scanned"
-msgstr ""
+msgstr "Элемент уже отсканирован"
 
 #: src/pages/Index/Scan.tsx:82
 #: src/tables/InvenTreeTable.tsx:217
 msgid "API Error"
-msgstr ""
+msgstr "Ошибка API"
 
 #: src/pages/Index/Scan.tsx:83
 msgid "Failed to fetch instance data"
@@ -4890,7 +4890,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:130
 msgid "Scan Error"
-msgstr ""
+msgstr "Ошибка сканирования"
 
 #: src/pages/Index/Scan.tsx:162
 msgid "Selected elements are not known"
@@ -4906,7 +4906,7 @@ msgstr "Выбрано несколько типов объектов"
 
 #: src/pages/Index/Scan.tsx:177
 msgid "Actions ... "
-msgstr ""
+msgstr "Действия ... "
 
 #: src/pages/Index/Scan.tsx:194
 #: src/pages/Index/Scan.tsx:198
@@ -4915,7 +4915,7 @@ msgstr "Сканирование штрихкодов"
 
 #: src/pages/Index/Scan.tsx:207
 msgid "Barcode Input"
-msgstr ""
+msgstr "Ввод штрихкода"
 
 #: src/pages/Index/Scan.tsx:214
 msgid "Action"
@@ -4923,7 +4923,7 @@ msgstr "Действие"
 
 #: src/pages/Index/Scan.tsx:217
 msgid "No Items Selected"
-msgstr ""
+msgstr "Объекты не выбраны"
 
 #: src/pages/Index/Scan.tsx:217
 #~ msgid "Manual input"
@@ -4931,7 +4931,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:218
 msgid "Scan and select items to perform actions"
-msgstr ""
+msgstr "Отсканируйте и выберите объекты для выполнения действий"
 
 #: src/pages/Index/Scan.tsx:218
 #~ msgid "Image Barcode"
@@ -4940,11 +4940,11 @@ msgstr ""
 #. placeholder {0}: selection.length
 #: src/pages/Index/Scan.tsx:223
 msgid "{0} items selected"
-msgstr "{0} объектов выбраны"
+msgstr "Выбрано объектов: {0}"
 
 #: src/pages/Index/Scan.tsx:235
 msgid "Scanned Items"
-msgstr ""
+msgstr "Отсканированные объекты"
 
 #: src/pages/Index/Scan.tsx:276
 #~ msgid "Actions for {0}"
@@ -5050,7 +5050,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:33
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:113
 msgid "Edit Account Information"
-msgstr ""
+msgstr "Изменить данные аккаунта"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:34
 #~ msgid "User details updated"
@@ -5058,7 +5058,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:37
 msgid "Account details updated"
-msgstr ""
+msgstr "Данные аккаунта обновлены"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 #~ msgid "User Actions"
@@ -5075,7 +5075,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:136
 msgid "Edit Profile Information"
-msgstr ""
+msgstr "Изменить данные профиля"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #~ msgid "Last name"
@@ -5091,7 +5091,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:59
 msgid "Profile details updated"
-msgstr ""
+msgstr "Данные профиля обновлены"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
@@ -5133,7 +5133,7 @@ msgstr "Должность"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:444
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:91
 #: src/pages/core/UserDetail.tsx:143
@@ -5146,11 +5146,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:104
 msgid "Account Details"
-msgstr ""
+msgstr "Сведения об аккаунте"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:107
 msgid "Account Actions"
-msgstr ""
+msgstr "Действия с аккаунтом"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:111
 msgid "Edit Account"
@@ -5166,28 +5166,28 @@ msgstr "Изменить пароль пользователя"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:131
 msgid "Profile Details"
-msgstr ""
+msgstr "Сведения о профиле"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:134
 msgid "Edit Profile"
-msgstr ""
+msgstr "Редактировать профиль"
 
 #. placeholder {0}: item.label
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:153
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:24
 msgid "Secret"
-msgstr ""
+msgstr "Секрет"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:30
 msgid "One-Time Password"
-msgstr ""
+msgstr "Одноразовый пароль"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:31
 msgid "Enter the TOTP code to ensure it registered correctly"
-msgstr ""
+msgstr "Введите код TOTP, чтобы убедиться, что он зарегистрирован правильно"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 #~ msgid "Single Sign On Accounts"
@@ -5227,7 +5227,7 @@ msgstr "Токены доступа"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:128
 msgid "Error while updating email"
-msgstr ""
+msgstr "Ошибка обновления электронной почты"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:141
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:297
@@ -5277,7 +5277,7 @@ msgstr "Адрес электронной почты"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:226
 msgid "Error while adding email"
-msgstr ""
+msgstr "Ошибка добавления электронной почты"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:237
 msgid "Add Email"
@@ -5313,7 +5313,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:437
 msgid "No multi-factor tokens configured for this account"
-msgstr ""
+msgstr "Токены многофакторной аутентификации для данного аккаунта не настроены"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:447
 msgid "Last used at"
@@ -5326,7 +5326,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:471
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:574
 msgid "Recovery Codes"
-msgstr ""
+msgstr "Коды восстановления"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:475
 msgid "Unused Codes"
@@ -5338,7 +5338,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:533
 msgid "Error while registering recovery codes"
-msgstr ""
+msgstr "Ошибка регистрации кодов восстановления"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:567
 msgid "TOTP"
@@ -5354,19 +5354,19 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:589
 msgid "Add Token"
-msgstr ""
+msgstr "Добавить токен"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:604
 msgid "Register TOTP Token"
-msgstr ""
+msgstr "Зарегестрировать токен TOTP"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:629
 msgid "Error registering TOTP token"
-msgstr ""
+msgstr "Ошибка регистрации токена TOTP"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:705
 msgid "Enter your password"
-msgstr ""
+msgstr "Введите пароль"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:741
 #~ msgid "Token is used - no actions"
@@ -5414,7 +5414,7 @@ msgstr "Цветовое оформление"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:97
 msgid "Highlight color"
-msgstr ""
+msgstr "Цвет выделения"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:111
 msgid "Example"
@@ -5422,11 +5422,11 @@ msgstr "Пример"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:117
 msgid "White color"
-msgstr ""
+msgstr "Белый цвет"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:140
 msgid "Black color"
-msgstr ""
+msgstr "Черный цвет"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:163
 msgid "Border Radius"
@@ -5438,7 +5438,7 @@ msgstr "Значок загрузки"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:186
 msgid "Bars"
-msgstr ""
+msgstr "Полоски"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:187
 msgid "Oval"
@@ -5608,7 +5608,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 #: src/tables/settings/UserTable.tsx:184
 msgid "Info"
-msgstr ""
+msgstr "Информация"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #~ msgid "Plugin Error Stack"
@@ -5723,7 +5723,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:31
 msgid "Tokens"
-msgstr ""
+msgstr "Токены"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:32
 #~ msgid "Select settings relevant for user lifecycle. More available in"
@@ -5938,7 +5938,7 @@ msgstr "Создано"
 #: src/pages/sales/SalesOrderDetail.tsx:245
 #: src/tables/ColumnRenderers.tsx:252
 msgid "Start Date"
-msgstr ""
+msgstr "Начальная дата"
 
 #: src/pages/build/BuildDetail.tsx:245
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:277
@@ -5949,7 +5949,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:124
 msgid "Target Date"
-msgstr ""
+msgstr "Целевая дата"
 
 #: src/pages/build/BuildDetail.tsx:253
 #: src/tables/sales/SalesOrderLineItemTable.tsx:311
@@ -6401,7 +6401,7 @@ msgstr ""
 #: src/pages/core/GroupDetail.tsx:67
 #: src/tables/settings/GroupTable.tsx:80
 msgid "Group Details"
-msgstr ""
+msgstr "Сведения о группе"
 
 #: src/pages/core/GroupDetail.tsx:55
 #: src/tables/settings/GroupTable.tsx:107
@@ -6423,7 +6423,7 @@ msgstr ""
 #: src/pages/core/UserDetail.tsx:188
 #: src/tables/settings/UserTable.tsx:153
 msgid "User Details"
-msgstr ""
+msgstr "Сведения о пользователе"
 
 #: src/pages/core/UserDetail.tsx:206
 msgid "Basic user"
@@ -6683,7 +6683,7 @@ msgstr "Ценовой диапазон"
 
 #: src/pages/part/PartDetail.tsx:435
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "Последний серийный номер"
 
 #: src/pages/part/PartDetail.tsx:510
 #~ msgid "Stocktake By"
@@ -6919,7 +6919,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderLineItemTable.tsx:114
 #: src/tables/sales/SalesOrderTable.tsx:178
 msgid "Total Price"
-msgstr ""
+msgstr "Общая стоимость"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:112
 #: src/pages/part/pricing/BomPricingPanel.tsx:141
@@ -7105,7 +7105,7 @@ msgstr ""
 #: src/tables/purchasing/PurchaseOrderTable.tsx:150
 #: src/tables/purchasing/PurchaseOrderTable.tsx:163
 msgid "Add Purchase Order"
-msgstr "Добавить заказ на закупку"
+msgstr "Создать заказ на закупку"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:130
 msgid "Supplier Reference"
@@ -7680,11 +7680,11 @@ msgstr "Выбрать столбцы"
 
 #: src/tables/Filter.tsx:124
 msgid "Assigned to me"
-msgstr ""
+msgstr "Назначено мне"
 
 #: src/tables/Filter.tsx:125
 msgid "Show orders assigned to me"
-msgstr ""
+msgstr "Показать заказы, назначенные мне"
 
 #: src/tables/Filter.tsx:132
 #: src/tables/sales/SalesOrderAllocationTable.tsx:77
@@ -7693,7 +7693,7 @@ msgstr ""
 
 #: src/tables/Filter.tsx:133
 msgid "Show outstanding items"
-msgstr ""
+msgstr "Показать просроченные элементы"
 
 #: src/tables/Filter.tsx:141
 msgid "Show overdue items"
@@ -7717,19 +7717,19 @@ msgstr ""
 
 #: src/tables/Filter.tsx:166
 msgid "Created Before"
-msgstr ""
+msgstr "Созданы до"
 
 #: src/tables/Filter.tsx:167
 msgid "Show items created before this date"
-msgstr ""
+msgstr "Показать заказы, созданные до указанной даты"
 
 #: src/tables/Filter.tsx:175
 msgid "Created After"
-msgstr ""
+msgstr "Созданы после"
 
 #: src/tables/Filter.tsx:176
 msgid "Show items created after this date"
-msgstr ""
+msgstr "Показать заказы, созданные после указанной даты"
 
 #: src/tables/Filter.tsx:184
 msgid "Start Date Before"
@@ -7765,50 +7765,50 @@ msgstr ""
 
 #: src/tables/Filter.tsx:220
 msgid "Completed Before"
-msgstr ""
+msgstr "Завершен до"
 
 #: src/tables/Filter.tsx:221
 msgid "Show items completed before this date"
-msgstr ""
+msgstr "Показать заказы, завершенные до указанной даты"
 
 #: src/tables/Filter.tsx:229
 msgid "Completed After"
-msgstr ""
+msgstr "Завершен после"
 
 #: src/tables/Filter.tsx:230
 msgid "Show items completed after this date"
-msgstr ""
+msgstr "Показать заказы, завершенные после указанной даты"
 
 #: src/tables/Filter.tsx:242
 msgid "Has Project Code"
-msgstr ""
+msgstr "Указан код проекта"
 
 #: src/tables/Filter.tsx:243
 msgid "Show orders with an assigned project code"
-msgstr ""
+msgstr "Показать заказы с указанным кодом проекта"
 
 #: src/tables/Filter.tsx:254
 #: src/tables/part/PartPurchaseOrdersTable.tsx:132
 msgid "Filter by order status"
-msgstr ""
+msgstr "Фильтр по статусу заказа"
 
 #: src/tables/Filter.tsx:266
 msgid "Filter by project code"
-msgstr ""
+msgstr "Фильтр по коду проекта"
 
 #: src/tables/Filter.tsx:299
 msgid "Filter by responsible owner"
-msgstr ""
+msgstr "Фильтр по ответственному"
 
 #: src/tables/Filter.tsx:315
 #: src/tables/settings/ApiTokenTable.tsx:120
 #: src/tables/stock/StockTrackingTable.tsx:189
 msgid "Filter by user"
-msgstr ""
+msgstr "Фильтр по пользователю"
 
 #: src/tables/Filter.tsx:327
 msgid "Filter by user who created the order"
-msgstr ""
+msgstr "Фильтр по пользователю, который создал заказ"
 
 #: src/tables/Filter.tsx:335
 msgid "Filter by user who issued the order"
@@ -7826,15 +7826,15 @@ msgstr "Убрать фильтрацию"
 #: src/tables/FilterSelectDrawer.tsx:102
 #: src/tables/FilterSelectDrawer.tsx:148
 msgid "Select filter value"
-msgstr ""
+msgstr "Выберите значение фильтра"
 
 #: src/tables/FilterSelectDrawer.tsx:114
 msgid "Enter filter value"
-msgstr ""
+msgstr "Введите значение фильтра"
 
 #: src/tables/FilterSelectDrawer.tsx:136
 msgid "Select date value"
-msgstr ""
+msgstr "Выберите дату"
 
 #: src/tables/FilterSelectDrawer.tsx:258
 msgid "Select filter"
@@ -9697,7 +9697,7 @@ msgstr "Базовая единица измерения"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:182
 msgid "Add supplier part"
-msgstr ""
+msgstr "Создать деталь поставщика"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 #~ msgid "Supplier part updated"
@@ -9896,7 +9896,7 @@ msgstr "Истекает"
 
 #: src/tables/settings/ApiTokenTable.tsx:111
 msgid "Show revoked tokens"
-msgstr ""
+msgstr "Показать отменённые токены"
 
 #: src/tables/settings/ApiTokenTable.tsx:130
 msgid "Revoke"
@@ -10069,11 +10069,11 @@ msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:66
 msgid "Group with id {id} not found"
-msgstr ""
+msgstr "Группа с идентификатором {id} не найдена"
 
 #: src/tables/settings/GroupTable.tsx:68
 msgid "An error occurred while fetching group details"
-msgstr ""
+msgstr "Произошла ошибка при получении данных группы"
 
 #: src/tables/settings/GroupTable.tsx:91
 #: src/tables/settings/GroupTable.tsx:185
@@ -10086,15 +10086,15 @@ msgstr "Название группы пользователей"
 
 #: src/tables/settings/GroupTable.tsx:173
 msgid "Delete group"
-msgstr ""
+msgstr "Удалить группу"
 
 #: src/tables/settings/GroupTable.tsx:174
 msgid "Group deleted"
-msgstr ""
+msgstr "Группа удалена"
 
 #: src/tables/settings/GroupTable.tsx:176
 msgid "Are you sure you want to delete this group?"
-msgstr ""
+msgstr "Вы уверены, что хотите удалить эту группу?"
 
 #: src/tables/settings/GroupTable.tsx:181
 msgid "Add Group"
@@ -10110,7 +10110,7 @@ msgstr "Добавить группу"
 
 #: src/tables/settings/GroupTable.tsx:219
 msgid "Edit Group"
-msgstr ""
+msgstr "Редактировать группу"
 
 #: src/tables/settings/ImportSessionTable.tsx:37
 msgid "Delete Import Session"
@@ -10242,23 +10242,23 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:112
 msgid "Groups updated"
-msgstr ""
+msgstr "Группы обновлены"
 
 #: src/tables/settings/UserTable.tsx:113
 msgid "User groups updated successfully"
-msgstr ""
+msgstr "Группы пользователя обновлены"
 
 #: src/tables/settings/UserTable.tsx:120
 msgid "Error updating user groups"
-msgstr ""
+msgstr "Ошибка обновления групп пользователя"
 
 #: src/tables/settings/UserTable.tsx:139
 msgid "User with id {id} not found"
-msgstr ""
+msgstr "Пользователь с идентификатором {id} не найден"
 
 #: src/tables/settings/UserTable.tsx:141
 msgid "An error occurred while fetching user details"
-msgstr ""
+msgstr "Произошла ошибка при получении данных пользователя"
 
 #: src/tables/settings/UserTable.tsx:154
 #~ msgid "No groups"
@@ -10266,7 +10266,7 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:167
 msgid "Is Active"
-msgstr ""
+msgstr "Активен"
 
 #: src/tables/settings/UserTable.tsx:168
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
@@ -10274,23 +10274,23 @@ msgstr "Указывает, следует ли рассматривать эт�
 
 #: src/tables/settings/UserTable.tsx:172
 msgid "Is Staff"
-msgstr ""
+msgstr "Сотрудник"
 
 #: src/tables/settings/UserTable.tsx:173
 msgid "Designates whether the user can log into the django admin site."
-msgstr ""
+msgstr "Определяет, может ли пользователь войти в админ-панель django."
 
 #: src/tables/settings/UserTable.tsx:177
 msgid "Is Superuser"
-msgstr ""
+msgstr "Суперпользователь"
 
 #: src/tables/settings/UserTable.tsx:178
 msgid "Designates that this user has all permissions without explicitly assigning them."
-msgstr ""
+msgstr "Определяет, что у пользователя есть все разрешения без их явного назначения."
 
 #: src/tables/settings/UserTable.tsx:188
 msgid "You cannot edit the rights for the currently logged-in user."
-msgstr ""
+msgstr "Вы не можете редактировать права пользователя, вошедшего в систему."
 
 #: src/tables/settings/UserTable.tsx:207
 msgid "User Groups"
@@ -10302,15 +10302,15 @@ msgstr "Группы пользователей"
 
 #: src/tables/settings/UserTable.tsx:310
 msgid "Delete user"
-msgstr ""
+msgstr "Удалить пользователя"
 
 #: src/tables/settings/UserTable.tsx:311
 msgid "User deleted"
-msgstr ""
+msgstr "Пользователь удалён"
 
 #: src/tables/settings/UserTable.tsx:313
 msgid "Are you sure you want to delete this user?"
-msgstr ""
+msgstr "Вы уверены, что хотите удалить этого пользователя?"
 
 #: src/tables/settings/UserTable.tsx:319
 msgid "Add User"
@@ -10326,19 +10326,19 @@ msgstr "Добавить пользователя"
 
 #: src/tables/settings/UserTable.tsx:351
 msgid "Show active users"
-msgstr ""
+msgstr "Показать активных пользователей"
 
 #: src/tables/settings/UserTable.tsx:356
 msgid "Show staff users"
-msgstr ""
+msgstr "Показать сотрудников"
 
 #: src/tables/settings/UserTable.tsx:361
 msgid "Show superusers"
-msgstr ""
+msgstr "Показать суперпользователей"
 
 #: src/tables/settings/UserTable.tsx:379
 msgid "Edit User"
-msgstr ""
+msgstr "Редактировать пользователя"
 
 #: src/tables/stock/InstalledItemsTable.tsx:37
 #: src/tables/stock/InstalledItemsTable.tsx:91

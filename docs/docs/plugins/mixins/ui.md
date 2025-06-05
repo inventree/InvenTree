@@ -18,12 +18,13 @@ The entrypoint for user interface plugins is the `UserInterfaceMixin` class, whi
 
 ::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_features
     options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      summary: False
+      members: []
+      extra:
         show_source: True
-        summary: False
-        members: []
 
 Note here that the `get_ui_features` calls other methods to extract the available features from the plugin, based on the requested feature type. These methods can be overridden to provide custom functionality.
 
@@ -39,9 +40,10 @@ The `get_ui_features` method should return a list of `UIFeature` objects, which 
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_source: True
       summary: False
       members: []
+      extra:
+        show_source: True
 
 Note that the *options* field contains fields which may be specific to a particular feature type - read the documentation below on each feature type for more information.
 
@@ -76,7 +78,8 @@ The InvenTree dashboard is a collection of "items" which are displayed on the ma
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_source: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -89,7 +92,8 @@ The *options* field in the returned `UIFeature` object can contain the following
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_source: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -110,7 +114,8 @@ Many of the pages in the InvenTree web interface are built using a series of "pa
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_source: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -123,7 +128,8 @@ The *options* field in the returned `UIFeature` object can contain the following
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_source: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -144,7 +150,8 @@ The `get_ui_template_editors` feature type can be used to provide custom templat
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_source: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -157,7 +164,8 @@ The `get_ui_template_previews` feature type can be used to provide custom templa
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_source: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
