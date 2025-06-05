@@ -113,6 +113,8 @@ class UserAPITests(InvenTreeAPITestCase):
     def test_user_detail(self):
         """Test the UserDetail API endpoint."""
         user = User.objects.first()
+        assert user
+
         url = reverse('api-user-detail', kwargs={'pk': user.pk})
 
         user.is_staff = False
@@ -230,6 +232,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # If we re-generate a token, the value changes
         token = ApiToken.objects.filter(name='cat').first()
+        assert token
 
         # Request the token with the same name
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
@@ -287,6 +290,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # Grab the token, and update
         token = ApiToken.objects.first()
+        assert token
         self.assertEqual(token.key, token_key)
         self.assertIsNotNone(token.last_seen)
 

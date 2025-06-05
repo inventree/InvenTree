@@ -126,7 +126,7 @@ def check_link(url) -> bool:
     return False
 
 
-def get_build_environment() -> str:
+def get_build_environment() -> Optional[str]:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':

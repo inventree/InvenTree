@@ -14,6 +14,7 @@ from djmoney.money import Money
 
 import common.currency
 import common.models
+import common.notifications
 import InvenTree.helpers
 import part.models
 import stock.models

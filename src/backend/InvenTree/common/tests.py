@@ -18,7 +18,7 @@ from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
-import PIL
+from PIL import Image
 
 import common.validators
 from common.settings import get_global_setting, set_global_setting
@@ -199,7 +199,7 @@ class AttachmentTest(InvenTreeAPITestCase):
 
         # Assign 'delete' permission to 'part' model
         self.assignRole('part.delete')
-        response = self.delete(url, expected_code=204)
+        self.delete(url, expected_code=204)
 
 
 class SettingsTest(InvenTreeTestCase):
@@ -1298,7 +1298,7 @@ class NotesImageTest(InvenTreeAPITestCase):
         n = NotesImage.objects.count()
 
         # Construct a simple image file
-        image = PIL.Image.new('RGB', (100, 100), color='red')
+        image = Image.new('RGB', (100, 100), color='red')
 
         with io.BytesIO() as output:
             image.save(output, format='PNG')
@@ -1352,6 +1352,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
         # Get the first project code
         code = ProjectCode.objects.first()
+        assert code is not None and code.pk
 
         # Delete it
         self.delete(
@@ -1449,6 +1450,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
     def test_edit(self):
         """Test edit permissions for CustomUnit model."""
         unit = CustomUnit.objects.first()
+        assert unit is not None and unit.pk
 
         # Try to edit without permission
         self.user.is_staff = False
@@ -1476,6 +1478,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
     def test_validation(self):
         """Test that validation works as expected."""
         unit = CustomUnit.objects.first()
+        assert unit is not None and unit.pk
 
         self.user.is_staff = True
         self.user.save()

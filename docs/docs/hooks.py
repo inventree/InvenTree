@@ -4,7 +4,7 @@ import json
 import os
 import re
 from datetime import datetime
-from distutils.version import StrictVersion
+from distutils.version import StrictVersion  # type: ignore[import]
 from pathlib import Path
 
 import requests
