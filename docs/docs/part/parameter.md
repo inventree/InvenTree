@@ -66,6 +66,37 @@ The parametric parts table allows the returned parts to be sorted by particular 
 
 {{ image("part/part_sort_by_param.png", "Sort by Parameter") }}
 
+### Filtering by Parameter Value
+
+The parametric parts table allows the returned parts to be filtered by particular parameter values. Click on the {{ icon("filter") }} button associated with the particular parameter, and enter the value you wish to filter against:
+
+{{ image("part/filter_by_param.png", "Filter by Parameter") }}
+
+The available filter options depend on the type of parameter being filtered. For example, a parameter with a limited set of choices will allow you to filter by those choices, while a numeric parameter will allow you to filter against a specific value and operator (e.g. greater than, less than, etc.).
+
+#### Filtering by Multiple Parameters
+
+Multiple parameters can be used to filter the parametric table. Simply add a new filter for each parameter you wish to filter against. The results will be filtered to include only parts which match *all* of the specified filters.
+
+Each parameter column indicates whether a filter is currently applied:
+
+{{ image("part/multiple_param_filters.png", "Multiple Parameter Filters") }}
+
+#### Unit-Aware Filtering
+
+When filtering against a parameter which has a unit defined, you can specify the value in any compatible unit. The system will automatically convert the value to the base unit defined for that parameter template.
+
+For example, to show all parts with a *Resistance* parameter of greater than 10kΩ, you can enter `10k` or `10000` in the filter field, and the system will correctly interpret this as 10,000 ohms.
+
+{{ image("part/filter_with_unit.png", "Unit Aware Filters") }}
+
+#### Remove Filter
+
+To remove a filter against a given parameter, click on the {{ icon("circle-x", color='red') }} button associated with that filter:
+
+{{ image("part/remove_param_filter.png", "Remove Parameter Filter") }}
+
+
 ## Parameter Units
 
 The *units* field (which is defined against a [parameter template](#parameter-templates)) defines the base unit of that template. Any parameters which are created against that unit *must* be specified in compatible units.
@@ -83,7 +114,7 @@ If a part parameter is created with a value which is incompatible with the units
 
 This behaviour can be disabled if required, so that any parameter value is accepted.
 
-### Parameter Sorting
+### Parameter Unit Sorting
 
 Parameter sorting takes unit conversion into account, meaning that values provided in different (but compatible) units are sorted correctly:
 
