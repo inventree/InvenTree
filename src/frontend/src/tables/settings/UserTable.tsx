@@ -320,7 +320,7 @@ export function UserTable({
           color: 'blue',
           onClick: () => {
             setSelectedUser(record.pk);
-            setPassowrd.open();
+            setPassword.open();
           }
         },
         {
@@ -371,7 +371,7 @@ export function UserTable({
     successMessage: t`Added user`
   });
 
-  const setPassowrd = useApiFormModal({
+  const setPassword = useApiFormModal({
     url: ApiEndpoints.user_set_password,
     method: 'PUT',
     pk: selectedUser,
@@ -427,7 +427,7 @@ export function UserTable({
 
   return (
     <>
-      {editable && setPassowrd.modal}
+      {editable && setPassword.modal}
       {editable && newUser.modal}
       {editable && deleteUser.modal}
       {editable && (
