@@ -31,6 +31,7 @@ export enum ApiEndpoints {
   auth_recovery = 'auth/v1/account/authenticators/recovery-codes',
   auth_mfa_reauthenticate = 'auth/v1/auth/2fa/reauthenticate',
   auth_totp = 'auth/v1/account/authenticators/totp',
+  auth_trust = 'auth/v1/auth/2fa/trust',
   auth_reauthenticate = 'auth/v1/auth/reauthenticate',
   auth_email = 'auth/v1/account/email',
   auth_email_verify = 'auth/v1/auth/email/verify',
