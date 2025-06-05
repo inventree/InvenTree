@@ -7,7 +7,7 @@ title: Part Parameters
 A part *parameter* describes a particular "attribute" or "property" of a specific part.
 
 Part parameters are located in the "Parameters" tab, on each part detail page.
-There is no limit for the number of part parameters and they are fully customizable through the use of [parameters templates](#parameter-templates).
+There is no limit for the number of part parameters and they are fully customizable through the use of [parameter templates](#parameter-templates).
 
 Here is an example of parameters for a capacitor:
 
