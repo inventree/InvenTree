@@ -1,5 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { ActionIcon, Box, Group, Select, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  SegmentedControl,
+  Select,
+  TextInput
+} from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -104,7 +110,7 @@ function ParameterFilter({
   clearFilter: (templateId: number) => void;
   closeFilter: () => void;
 }) {
-  const [operator, setOperator] = useState<string>('');
+  const [operator, setOperator] = useState<string>('=');
 
   const clearFilterButton = useMemo(() => {
     return (
@@ -125,7 +131,7 @@ function ParameterFilter({
   // Filter input element (depends on template type)
   return useMemo(() => {
     if (template.checkbox) {
-      setOperator('');
+      setOperator('=');
       return (
         <Select
           data={[t`True`, t`False`]}
@@ -137,7 +143,7 @@ function ParameterFilter({
         />
       );
     } else if (!!template.choices) {
-      setOperator('');
+      setOperator('=');
       return (
         <Select
           data={template.choices
@@ -157,38 +163,42 @@ function ParameterFilter({
           gap='xs'
           align='left'
           onClick={(e) => {
-            e.stopPropagation();
+            // cancelEvent(e);
           }}
         >
           <TextInput
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
-                setFilter(template.pk, event.currentTarget.value || '', '');
+                setFilter(
+                  template.pk,
+                  event.currentTarget.value || '',
+                  operator
+                );
                 closeFilter();
               }
             }}
             defaultValue={filterValue}
             rightSection={clearFilterButton}
-            leftSectionWidth={50}
+            leftSectionWidth={75}
+            leftSectionProps={{
+              style: {
+                paddingRight: '10px'
+              }
+            }}
             leftSection={
-              <Box w={50}>
-                <Select
-                  comboboxProps={{
-                    withinPortal: true
-                  }}
-                  data={['=', '<', '>', '<=', '>='].map((op) => ({
-                    value: op,
-                    label: op
-                  }))}
-                  // variant="unstyled"
-                />
-              </Box>
+              <SegmentedControl
+                defaultValue='='
+                value={operator}
+                onChange={(value: string) => setOperator(value)}
+                size='xs'
+                data={['=', '<', '>']}
+              />
             }
           />
         </Group>
       );
     }
-  }, [template, filterValue, setFilter, clearFilterButton]);
+  }, [template, filterValue, setFilter, clearFilterButton, operator]);
 }
 
 export default function ParametricPartTable({
@@ -219,8 +229,32 @@ export default function ParametricPartTable({
   // Filters against selected part parameters
   const [parameterFilters, setParameterFilters] = useState<any>({});
 
+  const clearParameterFilter = useCallback(
+    (templateId: number) => {
+      const filterName = `parameter_${templateId}`;
+
+      setParameterFilters((prev: any) => {
+        const newFilters = { ...prev };
+        Object.keys(newFilters).forEach((key: string) => {
+          // Remove any filters that match the template ID
+          if (key.startsWith(filterName)) {
+            delete newFilters[key];
+          }
+        });
+
+        return newFilters;
+      });
+
+      table.refreshTable();
+    },
+    [setParameterFilters, table.refreshTable]
+  );
+
   const addParameterFilter = useCallback(
     (templateId: number, value: string, operator: string) => {
+      // First, clear any existing filters for this template
+      clearParameterFilter(templateId);
+
       // Map the operator to a more API-friendly format
       const operations: Record<string, string> = {
         '=': '',
@@ -244,28 +278,7 @@ export default function ParametricPartTable({
 
       table.refreshTable();
     },
-    [setParameterFilters]
-  );
-
-  const clearParameterFilter = useCallback(
-    (templateId: number) => {
-      const filterName = `parameter_${templateId}`;
-
-      setParameterFilters((prev: any) => {
-        const newFilters = { ...prev };
-        Object.keys(newFilters).forEach((key: string) => {
-          // Remove any filters that match the template ID
-          if (key.startsWith(filterName)) {
-            delete newFilters[key];
-          }
-        });
-
-        return newFilters;
-      });
-
-      table.refreshTable();
-    },
-    [setParameterFilters]
+    [setParameterFilters, clearParameterFilter, table.refreshTable]
   );
 
   const [selectedPart, setSelectedPart] = useState<number>(0);
