@@ -604,26 +604,18 @@ class PartParameterFilterTest(InvenTreeAPITestCase):
     def test_filter_multiple(self):
         """Test filtering by multiple parameters."""
         data = {f'parameter_{self.template_length.pk}_lt': '225'}
-
         response = self.get(self.url, data)
-
         self.assertEqual(len(response.data), 22)
 
         data[f'parameter_{self.template_width.pk}_gt'] = '150'
-
         response = self.get(self.url, data)
-
         self.assertEqual(len(response.data), 21)
 
         data[f'parameter_{self.template_ionized.pk}'] = 'true'
-
         response = self.get(self.url, data)
-
         self.assertEqual(len(response.data), 5)
 
         for color in ['red', 'green', 'blue']:
             data[f'parameter_{self.template_color.pk}'] = color
-
             response = self.get(self.url, data)
-
             self.assertEqual(len(response.data), 1)
