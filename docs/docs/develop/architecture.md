@@ -6,18 +6,6 @@ title: Architecture
 
 TODO Describes the components of the ecosystem.
 
-Sample flow chart
-
-``` mermaid
-graph LR
-  A[Start] --> B{Error?};
-  B -->|Yes| C[Hmm...];
-  C --> D[Debug];
-  D --> B;
-  B ---->|No| E[Yay!];
-```
-
-TODO And more text
 
 ## Typical Deployment
 
@@ -62,9 +50,23 @@ Knowledege of these aspects is not required to use InvenTree, but it is helpful 
 
 ### Repository layout and separation of concerns
 
+All code that is intended to be executed on the server is located in the `src/` directory. Some code in contrib might be needed to deploy or maintain an instance.
+One exception is the `tasks.py` file, that contains definitions for various maintenance tasks that can be run from the command line. This file is located in the root directory of the repository to make instructions easier.
+
+Code styles are generally only applied to the code in the `src/` directory.
+
 ### Backend Architecture
 
-TODO Describes the python/django designs
+InvenTree's backend is a Django application. It is generally structured in a way that follows Django's conventions, but also includes some customizations and extensions to support the specific needs of InvenTree.
+Most remarkable deviations from the Django standard are:
+- Manipulation of the django app mechanisms to enable the [plugin system](#plugin-system)
+- Usage of a custom role-mapping system to make permissions more approachable
+
+The backend aims to be:
+- API first, with a RESTful API that is used by the frontend and can also be used by other applications.
+- Modular, with a clear separation of concerns between different components and apps.
+- Tested reasonably throughout with transparent test coverage
+- Following the Django and generally accepted security conventions
 
 #### Configuration sources
 
@@ -76,7 +78,7 @@ TODO Describes the python/django designs
 
 ### Frontend Architecture
 
-TODO Describes how frontend calls works.
+InvenTree's frontend is primarily a single-page application (SPA) built with React.
 
 #### Coupling to the backend
 
