@@ -1336,6 +1336,7 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
+HEADLESS_CLIENTS = 'browser'
 MFA_ENABLED = get_boolean_setting(
     'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
 )  # TODO re-implement
@@ -1345,6 +1346,7 @@ MFA_SUPPORTED_TYPES = get_setting(
     ['totp', 'recovery_codes'],
     typecast=list,
 )
+MFA_TRUST_ENABLED = True
 
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'

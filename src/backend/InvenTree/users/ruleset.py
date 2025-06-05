@@ -1,17 +1,13 @@
 """Ruleset definitions which control the InvenTree user permissions."""
 
-import enum
-
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from generic.enums import StringEnum
 
-class RuleSetEnum(str, enum.Enum):
+
+class RuleSetEnum(StringEnum):
     """Enumeration of ruleset names."""
-
-    def __str__(self):
-        """Return the string representation of the ruleset."""
-        return str(self.value)
 
     ADMIN = 'admin'
     PART_CATEGORY = 'part_category'

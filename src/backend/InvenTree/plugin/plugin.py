@@ -1,6 +1,5 @@
 """Base Class for InvenTree plugins."""
 
-import enum
 import inspect
 import warnings
 from datetime import datetime
@@ -16,17 +15,14 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import InvenTree.helpers
+from generic.enums import StringEnum
 from plugin.helpers import get_git_log
 
 logger = structlog.get_logger('inventree')
 
 
-class PluginMixinEnum(str, enum.Enum):
+class PluginMixinEnum(StringEnum):
     """Enumeration of the available plugin mixin types."""
-
-    def __str__(self):
-        """Return the string representation of the mixin."""
-        return self.value
 
     BASE = 'base'
 

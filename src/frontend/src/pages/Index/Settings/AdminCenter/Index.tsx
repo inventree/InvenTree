@@ -26,7 +26,10 @@ import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
-import type { PanelType } from '../../../../components/panels/Panel';
+import type {
+  PanelGroupType,
+  PanelType
+} from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
@@ -109,7 +112,7 @@ export default function AdminCenter() {
     return [
       {
         name: 'user',
-        label: t`User Management`,
+        label: t`Users / Access`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
@@ -236,6 +239,52 @@ export default function AdminCenter() {
       }
     ];
   }, [user]);
+  const grouping: PanelGroupType[] = useMemo(() => {
+    return [
+      {
+        id: 'ops',
+        label: t`Operations`,
+        panelIDs: [
+          'user',
+          'barcode-history',
+          'background',
+          'errors',
+          'currencies'
+        ]
+      },
+      {
+        id: 'data',
+        label: t`Data Management`,
+        panelIDs: [
+          'import',
+          'export',
+          'project-codes',
+          'custom-states',
+          'custom-units'
+        ]
+      },
+      {
+        id: 'reporting',
+        label: t`Reporting`,
+        panelIDs: ['labels', 'reports']
+      },
+      {
+        id: 'extend',
+        label: t`Extend / Integrate`,
+        panelIDs: ['plugin', 'machine']
+      },
+      {
+        id: 'plm',
+        label: t`PLM`,
+        panelIDs: [
+          'part-parameters',
+          'category-parameters',
+          'location-types',
+          'stocktake'
+        ]
+      }
+    ];
+  }, []);
 
   return (
     <>
@@ -250,7 +299,9 @@ export default function AdminCenter() {
           <PanelGroup
             pageKey='admin-center'
             panels={adminCenterPanels}
+            groups={grouping}
             collapsible={true}
+            markCustomPanels={true}
             model='admincenter'
             id={null}
           />

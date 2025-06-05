@@ -262,26 +262,19 @@ export function handleReset(
 export function handleMfaLogin(
   navigate: NavigateFunction,
   location: Location<any>,
-  values: { code: string },
+  values: { code: string; remember?: boolean },
   setError: (message: string | undefined) => void
 ) {
-  const { setAuthenticated, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
   })
     .then((response) => {
-      setError(undefined);
-      setAuthContext(response.data?.data);
-      setAuthenticated();
-
-      fetchUserState().finally(() => {
-        observeProfile();
-        followRedirect(navigate, location?.state);
-      });
+      handleSuccessFullAuth(response, navigate, location, setError);
     })
     .catch((err) => {
+      // Already logged in, but with a different session
       if (err?.response?.status == 409) {
         notifications.show({
           title: t`Already logged in`,
@@ -289,6 +282,19 @@ export function handleMfaLogin(
           color: 'red',
           autoClose: false
         });
+        // MFA trust flow pending
+      } else if (err?.response?.status == 401) {
+        const mfa_trust = err.response.data.data.flows.find(
+          (flow: any) => flow.id == FlowEnum.MfaTrust
+        );
+        if (mfa_trust?.is_pending) {
+          setAuthContext(err.response.data.data);
+          authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+            trust: values.remember ?? false
+          }).then((response) => {
+            handleSuccessFullAuth(response, navigate, location, setError);
+          });
+        }
       } else {
         const errors = err.response?.data?.errors;
         let msg = t`An error occurred`;
@@ -350,6 +356,35 @@ export const checkLoginState = async (
     navigate('/login', { state: redirect });
   }
 };
+
+function handleSuccessFullAuth(
+  response?: any,
+  navigate?: NavigateFunction,
+  location?: Location<any>,
+  setError?: (message: string | undefined) => void
+) {
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
+
+  if (setError) {
+    // If an error function is provided, clear any previous errors
+    setError(undefined);
+  }
+
+  if (response.data?.data) {
+    setAuthContext(response.data?.data);
+  }
+  setAuthenticated();
+
+  fetchUserState().finally(() => {
+    observeProfile();
+    fetchGlobalStates(navigate);
+
+    if (navigate) {
+      followRedirect(navigate, location?.state);
+    }
+  });
+}
 
 /*
  * Return the value of the CSRF cookie, if available
