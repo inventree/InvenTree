@@ -158,6 +158,12 @@ function ParameterFilter({
         />
       );
     } else {
+      let placeholder: string = t`Enter a value`;
+
+      if (template.units) {
+        placeholder += ` [${template.units}]`;
+      }
+
       return (
         <Group
           gap='xs'
@@ -177,6 +183,7 @@ function ParameterFilter({
                 closeFilter();
               }
             }}
+            placeholder={placeholder}
             defaultValue={filterValue}
             rightSection={clearFilterButton}
             leftSectionWidth={75}
