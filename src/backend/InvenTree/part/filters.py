@@ -362,28 +362,35 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
         # Boolean filtering is limited to exact matches
         func = ''
 
-    elif template.units:
+    elif value_numeric is None and template.units:
         # Convert the raw value to the units of the template parameter
         try:
-            value = InvenTree.conversion.convert_physical_value(value, template.units)
-
+            value_numeric = InvenTree.conversion.convert_physical_value(
+                value, template.units
+            )
         except Exception:
             # The value cannot be converted - return an empty queryset
             return queryset.none()
 
+    # Query for 'numeric' value - this has priority over 'string' value
     q1 = Q(**{
         'parameters__template': template,
         'parameters__data_numeric__isnull': False,
         f'parameters__data_numeric{func}': value_numeric,
     })
 
+    # Query for 'string' value
     q2 = Q(**{
         'parameters__template': template,
         'parameters__data_numeric__isnull': True,
         f'parameters__data{func}': str(value),
     })
 
-    queryset = queryset.filter(q1 | q2).distinct()
+    if value_numeric is not None:
+        queryset = queryset.filter(q1 | q2).distinct()
+    else:
+        # If the value is not numeric, we only filter by the string value
+        queryset = queryset.filter(q2).distinct()
 
     return queryset
 
