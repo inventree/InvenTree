@@ -321,7 +321,8 @@ export function UserTable({
           onClick: () => {
             setSelectedUser(record.pk);
             setPassword.open();
-          }
+          },
+          hidden: !user.isSuperuser()
         },
         {
           icon: <IconLock />,
