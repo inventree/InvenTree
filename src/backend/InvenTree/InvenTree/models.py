@@ -1035,10 +1035,11 @@ def notify_staff_users_of_error(instance, label: str, context: dict):
     """Helper function to notify staff users of an error."""
     import common.models
     import common.notifications
+    from plugin.builtin.integration.core_notifications import InvenTreeUINotifications
 
     try:
         # Get all staff users
-        staff_users = get_user_model().objects.filter(is_staff=True)
+        staff_users = get_user_model().objects.filter(is_active=True, is_staff=True)
 
         target_users = []
 
@@ -1055,7 +1056,7 @@ def notify_staff_users_of_error(instance, label: str, context: dict):
                 label,
                 context=context,
                 targets=target_users,
-                delivery_methods={common.notifications.UIMessageNotification},
+                delivery_methods={InvenTreeUINotifications},
             )
 
     except Exception as exc:

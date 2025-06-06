@@ -274,14 +274,26 @@ def trigger_notification(
 
     # Send out via all registered notification methods
     for plugin in registry.with_mixin(PluginMixinEnum.NOTIFICATION):
-        # Plugin may optionally filter target users
-        filtered_users = plugin.filter_targets(list(valid_users))
-
         # Skip if the plugin is *not* in the "delivery_methods" list?
-        if delivery_methods and plugin.slug not in delivery_methods:
+        match = not delivery_methods
+
+        for notification_class in delivery_methods or []:
+            if type(notification_class) is str:
+                if plugin.slug == notification_class:
+                    match = True
+                    break
+
+            elif hasattr(notification_class, 'SLUG'):
+                if plugin.slug == notification_class.SLUG:
+                    match = True
+                    break
+
+        if not match:
             continue
 
         try:
+            # Plugin may optionally filter target users
+            filtered_users = plugin.filter_targets(list(valid_users))
             plugin.send_notification(obj, category, filtered_users, context)
         except Exception:
             log_error('send_notification', plugin=plugin.slug)
