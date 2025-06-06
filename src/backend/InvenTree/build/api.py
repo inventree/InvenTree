@@ -12,7 +12,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-import build.admin
 import build.serializers
 import common.models
 import part.models as part_models

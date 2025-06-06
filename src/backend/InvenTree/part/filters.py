@@ -9,11 +9,6 @@ Useful References:
 - https://docs.djangoproject.com/en/4.0/ref/models/expressions/
 - https://stackoverflow.com/questions/42543978/django-1-11-annotating-a-subquery-aggregate
 
-Relevant PRs:
-
-- https://github.com/inventree/InvenTree/pull/2797/
-- https://github.com/inventree/InvenTree/pull/2827
-
 """
 
 from decimal import Decimal
@@ -38,6 +33,8 @@ from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
 
+import InvenTree.conversion
+import InvenTree.helpers
 import part.models
 import stock.models
 from build.status_codes import BuildStatusGroups
@@ -343,7 +340,58 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     Returns:
         A queryset of Part objects filtered by the given parameter
     """
-    # TODO
+    try:
+        template = part.models.PartParameterTemplate.objects.get(pk=template_id)
+    except (ValueError, part.models.PartParameterTemplate.DoesNotExist):
+        # Return queryset unchanged if the template does not exist
+        return queryset
+
+    # Construct a "numeric" value
+    try:
+        value_numeric = float(value)
+    except (ValueError, TypeError):
+        value_numeric = None
+
+    if template.checkbox:
+        # Account for 'boolean' parameter values
+        # Convert to "True" or "False" string in this case
+        bool_value = InvenTree.helpers.str2bool(value)
+        value_numeric = 1 if bool_value else 0
+        value = str(bool_value)
+
+        # Boolean filtering is limited to exact matches
+        func = ''
+
+    elif value_numeric is None and template.units:
+        # Convert the raw value to the units of the template parameter
+        try:
+            value_numeric = InvenTree.conversion.convert_physical_value(
+                value, template.units
+            )
+        except Exception:
+            # The value cannot be converted - return an empty queryset
+            return queryset.none()
+
+    # Query for 'numeric' value - this has priority over 'string' value
+    q1 = Q(**{
+        'parameters__template': template,
+        'parameters__data_numeric__isnull': False,
+        f'parameters__data_numeric{func}': value_numeric,
+    })
+
+    # Query for 'string' value
+    q2 = Q(**{
+        'parameters__template': template,
+        'parameters__data_numeric__isnull': True,
+        f'parameters__data{func}': str(value),
+    })
+
+    if value_numeric is not None:
+        queryset = queryset.filter(q1 | q2).distinct()
+    else:
+        # If the value is not numeric, we only filter by the string value
+        queryset = queryset.filter(q2).distinct()
+
     return queryset
 
 
