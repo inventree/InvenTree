@@ -338,7 +338,7 @@ export function PurchaseOrderLineItemTable({
 
       return [
         {
-          hidden: received || !orderOpen,
+          hidden: received || !orderPlaced,
           title: t`Receive line item`,
           icon: <IconSquareArrowRight />,
           color: 'green',
@@ -377,7 +377,7 @@ export function PurchaseOrderLineItemTable({
         })
       ];
     },
-    [orderId, user, orderOpen]
+    [orderId, user, orderOpen, orderPlaced]
   );
 
   // Custom table actions

@@ -60,7 +60,7 @@ export default function useCalendar({
   endpoint: ApiEndpoints;
   queryParams?: any;
 }): CalendarState {
-  const ref = useRef<FullCalendar | null>(null);
+  const ref = useRef<FullCalendar>(null as any);
 
   const filterSet = useFilterSet(`calendar-${name}`);
 

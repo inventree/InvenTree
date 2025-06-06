@@ -74,6 +74,7 @@ export default function DateField({
       description={definition.description}
       placeholder={definition.placeholder}
       leftSection={definition.icon}
+      highlightToday
     />
   );
 }

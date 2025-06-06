@@ -128,11 +128,13 @@ test('Part - Editing', async ({ browser }) => {
 
   // Test URL validation
   await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill with an empty URL
   await page.getByLabel('text-field-link').fill('');
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
 });
@@ -403,6 +405,41 @@ test('Parts - Parameters', async ({ browser }) => {
     .click();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Parts - Parameter Filtering', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/' });
+
+  await loadTab(page, 'Part Parameters');
+  await clearTableFilters(page);
+
+  // All parts should be available (no filters applied)
+  await page.getByText('/ 425').waitFor();
+
+  const clickOnParamFilter = async (name: string) => {
+    const button = await page
+      .getByRole('button', { name: `${name} Not sorted` })
+      .getByRole('button')
+      .first();
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+  };
+
+  const clearParamFilter = async (name: string) => {
+    await clickOnParamFilter(name);
+    await page.getByLabel(`clear-filter-${name}`).click();
+  };
+
+  // Let's filter by color
+  await clickOnParamFilter('Color');
+  await page.getByRole('option', { name: 'Red' }).click();
+
+  // Only 10 parts available
+  await page.getByText('/ 10').waitFor();
+
+  // Reset the filter
+  await clearParamFilter('Color');
+  await page.getByText('/ 425').waitFor();
 });
 
 test('Parts - Notes', async ({ browser }) => {
