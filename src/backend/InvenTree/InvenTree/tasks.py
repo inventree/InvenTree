@@ -470,6 +470,9 @@ def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
         from common.notifications import trigger_notification
+        from plugin.builtin.integration.core_notifications import (
+            InvenTreeUINotifications,
+        )
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
@@ -537,7 +540,7 @@ def check_for_updates():
             None,
             'update_available',
             targets=get_user_model().objects.filter(is_superuser=True),
-            delivery_methods=['inventree-ui-notification'],
+            delivery_methods={InvenTreeUINotifications},
             context={
                 'name': _('Update Available'),
                 'message': _('An update for InvenTree is available'),

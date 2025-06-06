@@ -25,13 +25,12 @@ class NotificationMixin:
     class MixinMeta:
         """Meta for mixin."""
 
-        MIXIN_NAME = 'Notification'
+        MIXIN_NAME = PluginMixinEnum.NOTIFICATION
 
     def __init__(self):
         """Register mixin."""
         super().__init__()
         self.add_mixin(PluginMixinEnum.NOTIFICATION, True, __class__)
-        self.notification_methods = getattr(self, 'NOTIFICATION_METHODS', [])
 
     def filter_targets(self, targets: list[User]) -> list[User]:
         """Filter notification targets based on the plugin's logic."""
