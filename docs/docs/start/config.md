@@ -468,6 +468,10 @@ The following [plugin](../plugins/index.md) configuration options are available:
 
 If required, [global settings values](../settings/global.md#override-global-settings) can be overridden by the system administrator.
 
+To override global settings, provide a "dictionary" of settings overrides in the configuration file, or via an environment variable.
+
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | GLOBAL_SETTINGS_OVERRIDES | global_settings_overrides | JSON object containing global settings overrides | *Not specified* |
+
+Overriding a global setting will mark the setting as "read-only" in the user interface, and prevent it from being changed by user action. Additionally, the associated value stored in the database will be set to the value specified in the override.
