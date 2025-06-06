@@ -245,6 +245,7 @@ export function usePartParameterFields({
         type: fieldType,
         field_type: fieldType,
         choices: fieldType === 'choice' ? choices : undefined,
+        default: fieldType === 'boolean' ? 'false' : undefined,
         adjustValue: (value: any) => {
           // Coerce boolean value into a string (required by backend)
           return value.toString();

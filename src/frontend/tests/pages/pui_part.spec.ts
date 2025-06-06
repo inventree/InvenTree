@@ -407,6 +407,41 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+test('Parts - Parameter Filtering', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/' });
+
+  await loadTab(page, 'Part Parameters');
+  await clearTableFilters(page);
+
+  // All parts should be available (no filters applied)
+  await page.getByText('/ 425').waitFor();
+
+  const clickOnParamFilter = async (name: string) => {
+    const button = await page
+      .getByRole('button', { name: `${name} Not sorted` })
+      .getByRole('button')
+      .first();
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+  };
+
+  const clearParamFilter = async (name: string) => {
+    await clickOnParamFilter(name);
+    await page.getByLabel(`clear-filter-${name}`).click();
+  };
+
+  // Let's filter by color
+  await clickOnParamFilter('Color');
+  await page.getByRole('option', { name: 'Red' }).click();
+
+  // Only 10 parts available
+  await page.getByText('/ 10').waitFor();
+
+  // Reset the filter
+  await clearParamFilter('Color');
+  await page.getByText('/ 425').waitFor();
+});
+
 test('Parts - Notes', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/notes' });
 
