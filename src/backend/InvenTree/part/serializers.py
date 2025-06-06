@@ -18,7 +18,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from sql_util.utils import SubqueryCount, SubquerySum
+from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
@@ -33,7 +33,6 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
-from build.status_codes import BuildStatusGroups
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -817,16 +816,9 @@ class PartSerializer(
             )
         )
 
-        # Filter to limit builds to "active"
-        build_filter = Q(status__in=BuildStatusGroups.ACTIVE_CODES)
-
         # Annotate with the total 'building' quantity
         queryset = queryset.annotate(
-            building=Coalesce(
-                SubquerySum('builds__quantity', filter=build_filter),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
+            building=part_filters.annotate_in_production_quantity()
         )
 
         # Annotate with the number of 'suppliers'

@@ -318,8 +318,14 @@ def define_env(env):
             json.dump(data, f, indent=4)
 
     @env.macro
-    def rendersetting(key: str, setting: dict):
-        """Render a provided setting object into a table row."""
+    def rendersetting(key: str, setting: dict, short: bool = False):
+        """Render a provided setting object into a table row.
+
+        Arguments:
+            key: The name of the setting to extract information for.
+            setting: The setting object to render.
+            short: If True, return a short version of the setting (default: False)
+        """
         name = setting['name']
         description = setting['description']
         default = setting.get('default')
@@ -328,37 +334,44 @@ def define_env(env):
         default = f'`{default}`' if default else ''
         units = f'`{units}`' if units else ''
 
-        return (
-            f'| <div title="{key}">{name}</div> | {description} | {default} | {units} |'
-        )
+        if short:
+            return f'<span title="{key}"><strong>{name}</strong></span>'
+
+        return f'| <div title="{key}"><strong>{name}</strong></div> | {description} | {default} | {units} |'
 
     @env.macro
-    def globalsetting(key: str):
+    def globalsetting(key: str, short: bool = False):
         """Extract information on a particular global setting.
 
         Arguments:
             key: The name of the global setting to extract information for.
+            short: If True, return a short version of the setting (default: False)
         """
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
 
-        observe_setting(key, 'global')
+        # Settings are only 'observed' if they are displayed in full
+        if not short:
+            observe_setting(key, 'global')
 
-        return rendersetting(key, setting)
+        return rendersetting(key, setting, short=short)
 
     @env.macro
-    def usersetting(key: str):
+    def usersetting(key: str, short: bool = False):
         """Extract information on a particular user setting.
 
         Arguments:
             key: The name of the user setting to extract information for.
+            short: If True, return a short version of the setting (default: False)
         """
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
 
-        observe_setting(key, 'user')
+        # Settings are only 'observed' if they are displayed in full
+        if not short:
+            observe_setting(key, 'user')
 
-        return rendersetting(key, setting)
+        return rendersetting(key, setting, short=short)
 
     @env.macro
     def tags_and_filters():

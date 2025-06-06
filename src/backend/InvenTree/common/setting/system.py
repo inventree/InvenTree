@@ -756,6 +756,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'BUILDORDER_EXTERNAL_BUILDS': {
+        'name': _('External Build Orders'),
+        'description': _('Enable external build order functionality'),
+        'default': False,
+        'validator': bool,
+    },
     'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
         'name': _('Block Until Tests Pass'),
         'description': _(

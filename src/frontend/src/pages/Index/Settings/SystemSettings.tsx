@@ -248,6 +248,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
+              'BUILDORDER_EXTERNAL_BUILDS',
               'BUILDORDER_REQUIRE_RESPONSIBLE',
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',

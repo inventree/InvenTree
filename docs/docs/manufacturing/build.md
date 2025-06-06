@@ -36,6 +36,8 @@ The build calendar allows the user to navigate month-by-month and display the fi
 
 ## Build Order Details
 
+Select an individual build order from the build order table to navigate to the Build Order detail page. The build order detail page provides a comprehensive overview of the build order, including all relevant information and actions.
+
 ### Build Order Reference
 
 Each Build Order is uniquely identified by its *Reference* field. Read more about [reference fields](../settings/reference.md).
@@ -181,6 +183,10 @@ Build order notes (which support markdown formatting) are displayed in the *Note
 
 {{ image("build/build_notes.png", title="Notes") }}
 
+## External Build Orders
+
+InvenTree supports the creation of *external build orders*, which are used to manage the manufacturing of parts by an external supplier. Read more about [external build orders](./external.md).
+
 ## Create Build Order
 
 To create a build order for your part, you have two options:
@@ -266,6 +272,7 @@ The following [global settings](../settings/global.md) are available for adjusti
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("BUILDORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("BUILDORDER_EXTERNAL_BUILDS") }}
 {{ globalsetting("BUILDORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("BUILDORDER_REQUIRE_ACTIVE_PART") }}
 {{ globalsetting("BUILDORDER_REQUIRE_LOCKED_PART") }}
