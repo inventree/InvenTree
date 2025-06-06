@@ -350,7 +350,9 @@ def define_env(env):
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
 
-        observe_setting(key, 'global')
+        # Settings are only 'observed' if they are displayed in full
+        if not short:
+            observe_setting(key, 'global')
 
         return rendersetting(key, setting, short=short)
 
@@ -365,7 +367,9 @@ def define_env(env):
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
 
-        observe_setting(key, 'user')
+        # Settings are only 'observed' if they are displayed in full
+        if not short:
+            observe_setting(key, 'user')
 
         return rendersetting(key, setting, short=short)
 
