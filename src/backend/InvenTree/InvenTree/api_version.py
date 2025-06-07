@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 345
+INVENTREE_API_VERSION = 346
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v346 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9718
+    - Adds "read_only" field to the GlobalSettings API endpoint(s)
+
 v345 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9745
     - Adds barcode information to SalesOrderShipment API endpoint
 
