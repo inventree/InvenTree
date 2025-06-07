@@ -104,7 +104,11 @@ export default function CurrencyManagementPanel() {
       <CurrencyTable setInfo={setInfo} />
       <Divider />
       <GlobalSettingList
-        keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
+        keys={[
+          'INVENTREE_DEFAULT_CURRENCY',
+          'CURRENCY_UPDATE_PLUGIN',
+          'CURRENCY_UPDATE_INTERVAL'
+        ]}
       />
     </Stack>
   );
