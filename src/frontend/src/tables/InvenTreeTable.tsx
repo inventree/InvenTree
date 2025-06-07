@@ -9,7 +9,8 @@ import {
   DataTable,
   type DataTableCellClickHandler,
   type DataTableRowExpansionProps,
-  type DataTableSortStatus
+  type DataTableSortStatus,
+  useDataTableColumns
 } from 'mantine-datatable';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -147,6 +148,19 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
 
+  // Key used for caching table data
+  const cacheKey = useMemo(() => {
+    const key: string = `table-${tableState.tableKey}`;
+
+    // Remove anything after (and including) "mantine"
+    const mantineIndex = key.indexOf('-mantine');
+    if (mantineIndex >= 0) {
+      return key.substring(0, mantineIndex);
+    } else {
+      return key;
+    }
+  }, [tableState.tableKey]);
+
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
@@ -164,7 +178,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     enabled: !!url && !tableData,
-    queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
+    queryKey: ['options', url, cacheKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
     gcTime: 5000,
@@ -202,8 +216,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
               }
             });
 
-            const cacheKey = tableState.tableKey.replaceAll('-', '');
-
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
           }
@@ -230,8 +242,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return;
     }
 
-    const cacheKey = tableState.tableKey.replaceAll('-', '');
-
     // First check the local cache
     const cachedNames = getTableColumnNames(cacheKey);
 
@@ -242,7 +252,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     }
 
     tableOptionQuery.refetch();
-  }, [url, props.params, props.enableColumnCaching]);
+  }, [cacheKey, url, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
@@ -295,7 +305,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         return {
           ...col,
           hidden: hidden,
-          noWrap: true,
+          resizable: col.resizable ?? true,
           title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
         };
       });
@@ -306,6 +316,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         accessor: '--actions--',
         title: '   ',
         hidden: false,
+        resizable: false,
         switchable: false,
         width: 50,
         render: (record: any, index?: number | undefined) => (
@@ -341,6 +352,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
       newColumns.filter((col) => col.hidden).map((col) => col.accessor)
     );
   }
+
+  // Final state of the table columns
+  const tableColumns = useDataTableColumns({
+    key: cacheKey,
+    columns: dataColumns
+  });
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -759,20 +776,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
                 enableSelection ? onSelectedRecordsChange : undefined
               }
               rowExpansion={rowExpansion}
-              // rowStyle={rowStyleCallback}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
               records={tableState.records}
-              columns={dataColumns}
+              storeColumnsKey={cacheKey}
+              columns={tableColumns.effectiveColumns}
               onCellClick={supportsCellClick ? handleCellClick : undefined}
               noHeader={tableProps.noHeader ?? false}
               defaultColumnProps={{
-                noWrap: true,
-                textAlign: 'left',
-                cellsStyle: () => (theme) => ({
-                  // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
-                  overflow: 'hidden'
-                })
+                textAlign: 'left'
               }}
               onCellContextMenu={
                 supportsContextMenu ? handleCellContextMenu : undefined

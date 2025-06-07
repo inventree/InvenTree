@@ -1398,6 +1398,22 @@ TESTING_TABLE_EVENTS = False
 # Flag to allow pricing recalculations during testing
 TESTING_PRICING = False
 
+# Global settings overrides
+# If provided, these values will override any "global" settings (and prevent them from being set)
+GLOBAL_SETTINGS_OVERRIDES = get_setting(
+    'INVENTREE_GLOBAL_SETTINGS', 'global_settings', typecast=dict
+)
+
+# Override site URL setting
+if SITE_URL:
+    GLOBAL_SETTINGS_OVERRIDES['INVENTREE_BASE_URL'] = SITE_URL
+
+if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
+    logger.info('Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES))
+    for key in GLOBAL_SETTINGS_OVERRIDES:
+        # Set the global setting
+        logger.debug('- Override value for %s = ********', key)
+
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
     'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
