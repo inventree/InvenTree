@@ -1403,6 +1403,10 @@ GLOBAL_SETTINGS_OVERRIDES = get_setting(
     'INVENTREE_GLOBAL_SETTINGS', 'global_settings', typecast=dict
 )
 
+# Override site URL setting
+if SITE_URL:
+    GLOBAL_SETTINGS_OVERRIDES['INVENTREE_BASE_URL'] = SITE_URL
+
 if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
     logger.info('Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES))
     for key in GLOBAL_SETTINGS_OVERRIDES:
