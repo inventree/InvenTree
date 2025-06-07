@@ -360,6 +360,30 @@ class ExtendedUserSerializer(UserSerializer):
         return instance
 
 
+class UserSetPasswordSerializer(serializers.Serializer):
+    """Serializer for setting a password for a user."""
+
+    class Meta:
+        """Meta options for UserSetPasswordSerializer."""
+
+        model = User
+        fields = ['password', 'override_warning']
+
+    password = serializers.CharField(
+        label=_('Password'),
+        help_text=_('Password for the user'),
+        write_only=True,
+        required=True,
+        style={'input_type': 'password'},
+    )
+    override_warning = serializers.BooleanField(
+        label=_('Override warning'),
+        help_text=_('Override the warning about password rules'),
+        write_only=True,
+        required=False,
+    )
+
+
 class MeUserSerializer(ExtendedUserSerializer):
     """API serializer specifically for the 'me' endpoint."""
 

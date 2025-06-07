@@ -27,6 +27,52 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await page.getByLabel('action-button-add-user').click();
   await page.getByRole('button', { name: 'Submit' }).waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Unlock user
+  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
+    button: 'right'
+  });
+  await page.getByRole('button', { name: 'Unlock user' }).click();
+  await page
+    .getByRole('row', { name: 'ian Ian Inactive 1 No No Yes' })
+    .locator('span')
+    .nth(2)
+    .waitFor();
+  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
+    button: 'right'
+  });
+
+  // Lock user
+  await page.getByRole('button', { name: 'Lock user' }).click();
+  await page
+    .getByRole('row', { name: 'ian Ian Inactive 1 No No No' })
+    .locator('span')
+    .nth(2)
+    .waitFor();
+
+  // Change password
+  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
+    button: 'right'
+  });
+  await page.getByRole('button', { name: 'Change Password' }).click();
+  await page.getByLabel('text-field-password').fill('123');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText("['This password is too short").waitFor();
+  await page
+    .locator('label')
+    .filter({ hasText: 'Override warning' })
+    .locator('div')
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Password updated').click();
+
+  // Open profile
+  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
+    button: 'right'
+  });
+  await page.getByRole('button', { name: 'Open Profile' }).click();
+  await page.getByText('User: ian', { exact: true }).click();
 });
 
 /**
