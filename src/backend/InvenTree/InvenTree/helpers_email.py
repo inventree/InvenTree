@@ -51,7 +51,9 @@ def is_email_configured():
     return configured
 
 
-def send_email(subject, body, recipients, from_email=None, html_message=None):
+def send_email(
+    subject, body, recipients: list[str], from_email=None, html_message=None
+):
     """Send an email with the specified subject and body, to the specified recipients list."""
     if isinstance(recipients, str):
         recipients = [recipients]
