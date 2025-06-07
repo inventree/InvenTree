@@ -306,7 +306,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
           ...col,
           hidden: hidden,
           resizable: col.resizable ?? true,
-          noWrap: true,
           title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
         };
       });
@@ -785,12 +784,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               onCellClick={supportsCellClick ? handleCellClick : undefined}
               noHeader={tableProps.noHeader ?? false}
               defaultColumnProps={{
-                noWrap: true,
-                textAlign: 'left',
-                cellsStyle: () => (theme) => ({
-                  // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
-                  overflow: 'hidden'
-                })
+                textAlign: 'left'
               }}
               onCellContextMenu={
                 supportsContextMenu ? handleCellContextMenu : undefined
