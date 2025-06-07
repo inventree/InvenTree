@@ -354,9 +354,9 @@ mkdocstrings[python]==0.29.1 \
     # via
     #   -r docs/requirements.in
     #   mkdocstrings-python
-mkdocstrings-python==1.16.12 \
-    --hash=sha256:22ded3a63b3d823d57457a70ff9860d5a4de9e8b1e482876fc9baabaf6f5f374 \
-    --hash=sha256:9b9eaa066e0024342d433e332a41095c4e429937024945fea511afe58f63175d
+mkdocstrings-python==1.16.11 \
+    --hash=sha256:25d96cc9c1f9c272ea1bd8222c900b5f852bf46c984003e9c7c56eaa4696190f \
+    --hash=sha256:935f95efa887f99178e4a7becaaa1286fb35adafffd669b04fd611d97c00e5ce
     # via mkdocstrings
 neoteroi-mkdocs==1.1.2 \
     --hash=sha256:95a8b8e6b89a54a6a731e68329c7bb03e86f46deb74fe2a95de307c9702e7af9 \

@@ -1,5 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Group } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  SegmentedControl,
+  Select,
+  TextInput
+} from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -14,6 +20,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { IconCircleX } from '@tabler/icons-react';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
@@ -90,6 +97,115 @@ function ParameterCell({
   );
 }
 
+function ParameterFilter({
+  template,
+  filterValue,
+  setFilter,
+  clearFilter,
+  closeFilter
+}: {
+  template: any;
+  filterValue?: string;
+  setFilter: (templateId: number, value: string, operator: string) => void;
+  clearFilter: (templateId: number) => void;
+  closeFilter: () => void;
+}) {
+  const [operator, setOperator] = useState<string>('=');
+
+  const clearFilterButton = useMemo(() => {
+    return (
+      <ActionIcon
+        aria-label={`clear-filter-${template.name}`}
+        variant='transparent'
+        color='red'
+        size='sm'
+        onClick={() => {
+          clearFilter(template.pk);
+          closeFilter();
+        }}
+      >
+        <IconCircleX />
+      </ActionIcon>
+    );
+  }, [clearFilter, template.pk]);
+
+  // Filter input element (depends on template type)
+  return useMemo(() => {
+    if (template.checkbox) {
+      setOperator('=');
+      return (
+        <Select
+          aria-label={`filter-${template.name}`}
+          data={[t`True`, t`False`]}
+          value={filterValue}
+          defaultValue={filterValue}
+          onChange={(val) => setFilter(template.pk, val ?? '', '')}
+          placeholder={t`Select a choice`}
+          rightSection={clearFilterButton}
+        />
+      );
+    } else if (!!template.choices) {
+      setOperator('=');
+      return (
+        <Select
+          aria-label={`filter-${template.name}`}
+          data={template.choices
+            .split(',')
+            .map((choice: string) => choice.trim())}
+          value={filterValue}
+          defaultValue={filterValue}
+          onChange={(val) => setFilter(template.pk, val ?? '', '')}
+          placeholder={t`Select a choice`}
+          searchable
+          rightSection={clearFilterButton}
+        />
+      );
+    } else {
+      let placeholder: string = t`Enter a value`;
+
+      if (template.units) {
+        placeholder += ` [${template.units}]`;
+      }
+
+      return (
+        <Group gap='xs' align='left'>
+          <TextInput
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                setFilter(
+                  template.pk,
+                  event.currentTarget.value || '',
+                  operator
+                );
+                closeFilter();
+              }
+            }}
+            aria-label={`filter-${template.name}`}
+            placeholder={placeholder}
+            defaultValue={filterValue}
+            rightSection={clearFilterButton}
+            leftSectionWidth={75}
+            leftSectionProps={{
+              style: {
+                paddingRight: '10px'
+              }
+            }}
+            leftSection={
+              <SegmentedControl
+                defaultValue='='
+                value={operator}
+                onChange={(value: string) => setOperator(value)}
+                size='xs'
+                data={['=', '<', '>']}
+              />
+            }
+          />
+        </Group>
+      );
+    }
+  }, [template, filterValue, setFilter, clearFilterButton, operator]);
+}
+
 export default function ParametricPartTable({
   categoryId
 }: Readonly<{
@@ -114,6 +230,61 @@ export default function ParametricPartTable({
     },
     refetchOnMount: true
   });
+
+  // Filters against selected part parameters
+  const [parameterFilters, setParameterFilters] = useState<any>({});
+
+  const clearParameterFilter = useCallback(
+    (templateId: number) => {
+      const filterName = `parameter_${templateId}`;
+
+      setParameterFilters((prev: any) => {
+        const newFilters = { ...prev };
+        Object.keys(newFilters).forEach((key: string) => {
+          // Remove any filters that match the template ID
+          if (key.startsWith(filterName)) {
+            delete newFilters[key];
+          }
+        });
+
+        return newFilters;
+      });
+
+      table.refreshTable();
+    },
+    [setParameterFilters, table.refreshTable]
+  );
+
+  const addParameterFilter = useCallback(
+    (templateId: number, value: string, operator: string) => {
+      // First, clear any existing filters for this template
+      clearParameterFilter(templateId);
+
+      // Map the operator to a more API-friendly format
+      const operations: Record<string, string> = {
+        '=': '',
+        '<': 'lt',
+        '>': 'gt',
+        '<=': 'lte',
+        '>=': 'gte'
+      };
+
+      const op = operations[operator] ?? '';
+      let filterName = `parameter_${templateId}`;
+
+      if (op) {
+        filterName += `_${op}`;
+      }
+
+      setParameterFilters((prev: any) => ({
+        ...prev,
+        [filterName]: value?.trim() ?? ''
+      }));
+
+      table.refreshTable();
+    },
+    [setParameterFilters, clearParameterFilter, table.refreshTable]
+  );
 
   const [selectedPart, setSelectedPart] = useState<number>(0);
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
@@ -186,6 +357,10 @@ export default function ParametricPartTable({
         title += ` [${template.units}]`;
       }
 
+      const filterKey = Object.keys(parameterFilters).find((key: string) =>
+        key.startsWith(`parameter_${template.pk}`)
+      );
+
       return {
         accessor: `parameter_${template.pk}`,
         title: title,
@@ -199,10 +374,20 @@ export default function ParametricPartTable({
             template={template}
             canEdit={user.hasChangeRole(UserRoles.part)}
           />
+        ),
+        filtering: !!filterKey,
+        filter: ({ close }: { close: () => void }) => (
+          <ParameterFilter
+            template={template}
+            filterValue={filterKey && parameterFilters[filterKey]}
+            setFilter={addParameterFilter}
+            clearFilter={clearParameterFilter}
+            closeFilter={close}
+          />
         )
       };
     });
-  }, [user, categoryParameters.data]);
+  }, [user, categoryParameters.data, parameterFilters]);
 
   const onParameterClick = useCallback((template: number, part: any) => {
     setSelectedTemplate(template);
@@ -275,7 +460,8 @@ export default function ParametricPartTable({
             category: categoryId,
             cascade: true,
             category_detail: true,
-            parameters: true
+            parameters: true,
+            ...parameterFilters
           },
           onCellClick: ({ event, record, index, column, columnIndex }) => {
             cancelEvent(event);

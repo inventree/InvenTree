@@ -1,6 +1,7 @@
 """Main entry point for the documentation build process."""
 
 import json
+import logging
 import os
 import subprocess
 import textwrap
@@ -12,6 +13,8 @@ import yaml
 
 # Debugging output - useful for diagnosing CI build issues
 print('loading ./docs/main.py...')
+
+logging.getLogger('openapidocs').setLevel(logging.ERROR)
 
 # Print out some useful debugging information
 # Ref: https://docs.readthedocs.io/en/stable/reference/environment-variables.html
@@ -39,9 +42,24 @@ global REPORT_CONTEXT
 
 # Read in the InvenTree settings file
 here = Path(__file__).parent
+
 gen_base = here.joinpath('generated')
 
-with open(gen_base.joinpath('inventree_settings.json'), encoding='utf-8') as sf:
+# File where we expect to find the settings definitions
+settings_file = gen_base.joinpath('inventree_settings.json')
+
+# File where we will *store* information on the settings we have observed
+observed_settings_file = gen_base.joinpath('observed_settings.json')
+
+# Overwrite the observed settings file
+with open(observed_settings_file, 'w', encoding='utf-8') as f:
+    data = {'global': {}, 'user': {}}
+
+    # Write an empty dict to the file
+    # This is used to track which settings we have observed during the build process
+    f.write(json.dumps(data, indent=4))
+
+with open(settings_file, encoding='utf-8') as sf:
     settings = json.load(sf)
 
     GLOBAL_SETTINGS = settings['global']
@@ -88,8 +106,6 @@ def check_link(url) -> bool:
         if url in cache:
             return True
 
-    print(f'Checking external URL: {url}')
-
     attempts = 5
 
     while attempts > 0:
@@ -105,7 +121,7 @@ def check_link(url) -> bool:
 
         attempts -= 1
 
-        print(f' - URL check failed with status code {response.status_code}')
+        print(f'URL check failed with status code {response.status_code}')
 
     return False
 
@@ -127,6 +143,18 @@ def get_build_environment() -> str:
 
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
+    config = env.config
+    assets_dir = config.get('assets_dir', None)
+
+    if assets_dir is None:
+        # Construct the assets directory based on the current build environment
+        rtd_version = os.environ.get('READTHEDOCS_VERSION')
+        rtd_language = os.environ.get('READTHEDOCS_LANGUAGE')
+
+        if rtd_version and rtd_language:
+            assets_dir = f'/{rtd_language}/{rtd_version}/assets'
+        else:
+            assets_dir = '/assets'
 
     @env.macro
     def sourcedir(dirname: str, branch=None):
@@ -267,6 +295,28 @@ def define_env(env):
 
         return includefile(fn, f'Template: {base}', fmt='html')
 
+    def observe_setting(key: str, group: str):
+        """Record that a particular setting has been observed.
+
+        This is used to ensure that all settings are documented in the generated documentation.
+
+        Arguments:
+            key: The name of the setting to observe
+            group: The group of the setting (e.g. 'global', 'user')
+        """
+        # Read the observed settings file
+        with open(observed_settings_file, encoding='utf-8') as f:
+            data = json.load(f)
+
+        if group not in data:
+            data[group] = {}
+
+        data[group][key] = True
+
+        # Write the updated data back to the file
+        with open(observed_settings_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+
     @env.macro
     def rendersetting(key: str, setting: dict):
         """Render a provided setting object into a table row."""
@@ -292,6 +342,8 @@ def define_env(env):
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
 
+        observe_setting(key, 'global')
+
         return rendersetting(key, setting)
 
     @env.macro
@@ -303,6 +355,8 @@ def define_env(env):
         """
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
+
+        observe_setting(key, 'user')
 
         return rendersetting(key, setting)
 
@@ -363,3 +417,75 @@ def define_env(env):
         t = f' <i>{title}</i>' if title else ''
 
         return f"<i class='ti ti-{source}' style='font-size: {size};{c}'></i>{t}"
+
+    @env.macro
+    def image(
+        source: str,
+        title: Optional[str] = '',
+        iid: Optional[str] = '',
+        alt: Optional[str] = '',
+        base: Optional[str] = '',
+        maxwidth: Optional[str] = '',
+        maxheight: Optional[str] = '',
+    ):
+        """Render an image within the documentation.
+
+        Arguments:
+            title: The title of the image (default: '')
+            source: The name of the image to display (e.g. 'check', 'cross', etc.)
+            iid: The ID of the image (default: '')
+            alt: The alt text for the image (default: '')
+            base: The base directory for the image (default: './assets/images/')
+            maxwidth: The maximum width of the image (default: '')
+            maxheight: The maximum height of the image (default: '')
+
+        - This will render an image which can be clicked on to expand to full size.
+        - It will also validate that the image exists in the specified directory.
+
+        The image must be located in the './docs/assets/images/' directory
+        """
+        # Allow external images too - without validation
+        if source.startswith('http'):
+            img = source
+        else:
+            basedir = os.path.dirname(__file__)
+            basedir = os.path.join(basedir, 'docs', 'assets', 'images')
+
+            if base:
+                basedir = os.path.abspath(os.path.join(basedir, base))
+            filename = os.path.join(basedir, source)
+
+            if not os.path.exists(filename):
+                raise FileNotFoundError(f'Image {filename} does not exist.')
+
+            # Now, create a proper URL to the image
+            img = os.path.join(assets_dir, 'images', base, source)
+
+        if not title:
+            title = os.path.splitext(source)[0]
+
+        if not iid:
+            iid = title.replace(' ', '_').replace('-', '_')
+
+        if not alt:
+            alt = iid
+
+        styles = []
+
+        if maxwidth:
+            styles.append(f'max-width: {maxwidth};')
+        if maxheight:
+            styles.append(f'max-height: {maxheight};')
+
+        style = f"style='{' '.join(styles)}' " if styles else ''
+
+        return textwrap.dedent(f"""
+        <figure class='image image-inventree'>
+            <a href='#{iid}'>
+                <img class='img-inline' src='{img}' alt='{alt}' title='{title}' {style}/>
+            </a>
+            <a href='#_' class='overlay' id='{iid}'>
+                <img src='{img}' alt='{alt}' />
+            </a>
+        </figure>
+        """)
