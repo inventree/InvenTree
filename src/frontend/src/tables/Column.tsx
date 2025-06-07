@@ -16,6 +16,7 @@ import type { ApiFormFieldType } from '@lib/types/Forms';
  * @param filter - A custom filter function
  * @param filtering - Whether the column is filterable
  * @param width - The width of the column
+ * @param resizable - Whether the column is resizable (defaults to true)
  * @param noWrap - Whether the column should wrap
  * @param ellipsis - Whether the column should be ellipsized
  * @param textAlign - The text alignment of the column
@@ -36,6 +37,7 @@ export type TableColumnProps<T = any> = {
   filter?: any;
   filtering?: boolean;
   width?: number;
+  resizable?: boolean;
   noWrap?: boolean;
   ellipsis?: boolean;
   textAlign?: 'left' | 'center' | 'right';
