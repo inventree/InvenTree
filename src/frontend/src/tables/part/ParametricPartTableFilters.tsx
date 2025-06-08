@@ -147,20 +147,11 @@ function GenericFilterRow({
             defaultValue={'='}
             onChange={(value) => {
               setOp(value ?? '=');
-              // props.setFilter(props.template.pk, value ?? '', value ?? '=');
             }}
             size='xs'
             disabled={readonly}
           />
         </div>
-        // <SegmentedControl
-        //   defaultValue='='
-        //   value={op}
-        //   onChange={(value: string) => setOp(value)}
-        //   size='xs'
-        //   data={['=', '<', '>']}
-        //   disabled={readonly}
-        // />
       }
       leftSectionWidth={75}
       leftSectionProps={{
