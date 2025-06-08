@@ -13,10 +13,12 @@ import { useEffect, useMemo, useState } from 'react';
 // Define set of allowed operators for parameter filters
 export const PARAMETER_FILTER_OPERATORS: Record<string, string> = {
   '=': '',
-  '<': '_lt',
   '>': '_gt',
+  '>=': '_gte',
+  '<': '_lt',
   '<=': '_lte',
-  '>=': '_gte'
+  '!=': '_ne',
+  '~': '_icontains'
 };
 
 type ParameterFilterProps = {
