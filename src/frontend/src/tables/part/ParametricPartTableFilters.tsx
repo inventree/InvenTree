@@ -1,13 +1,16 @@
 import { t } from '@lingui/core/macro';
-import {
-  ActionIcon,
-  SegmentedControl,
-  Select,
-  Stack,
-  TextInput
-} from '@mantine/core';
+import { ActionIcon, Select, Stack, TextInput } from '@mantine/core';
 import { IconCircleX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
+
+// Define set of allowed operators for parameter filters
+export const PARAMETER_FILTER_OPERATORS: Record<string, string> = {
+  '=': '',
+  '<': '_lt',
+  '>': '_gt',
+  '<=': '_lte',
+  '>=': '_gte'
+};
 
 type ParameterFilterProps = {
   template: any;
@@ -132,16 +135,34 @@ function GenericFilterRow({
         }
       }}
       leftSection={
-        <SegmentedControl
-          defaultValue='='
-          value={op}
-          onChange={(value: string) => setOp(value)}
-          size='xs'
-          data={['=', '<', '>']}
-          disabled={readonly}
-        />
+        <div onMouseDown={(e) => e.stopPropagation()}>
+          <Select
+            onClick={(event) => {
+              event?.stopPropagation();
+            }}
+            aria-label={`filter-${props.template.name}-operator`}
+            data={Object.keys(PARAMETER_FILTER_OPERATORS)}
+            value={op}
+            searchable={false}
+            defaultValue={'='}
+            onChange={(value) => {
+              setOp(value ?? '=');
+              // props.setFilter(props.template.pk, value ?? '', value ?? '=');
+            }}
+            size='xs'
+            disabled={readonly}
+          />
+        </div>
+        // <SegmentedControl
+        //   defaultValue='='
+        //   value={op}
+        //   onChange={(value: string) => setOp(value)}
+        //   size='xs'
+        //   data={['=', '<', '>']}
+        //   disabled={readonly}
+        // />
       }
-      leftSectionWidth={85}
+      leftSectionWidth={75}
       leftSectionProps={{
         style: {
           paddingRight: '10px'
@@ -187,8 +208,6 @@ function GenericParameterFilter(props: ParameterFilterProps) {
  * @param closeFilter - Function to close the filter UI
  */
 export function ParameterFilter(props: ParameterFilterProps) {
-  const [operator, setOperator] = useState<string>('=');
-
   // Filter input element (depends on template type)
   return useMemo(() => {
     if (props.template.checkbox) {
@@ -198,5 +217,5 @@ export function ParameterFilter(props: ParameterFilterProps) {
     } else {
       return <GenericParameterFilter {...props} />;
     }
-  }, [props, operator]);
+  }, [props]);
 }

@@ -28,7 +28,10 @@ import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
-import { ParameterFilter } from './ParametricPartTableFilters';
+import {
+  PARAMETER_FILTER_OPERATORS,
+  ParameterFilter
+} from './ParametricPartTableFilters';
 
 // Render an individual parameter cell
 function ParameterCell({
@@ -211,20 +214,11 @@ export default function ParametricPartTable({
   const parametricQueryFilters = useMemo(() => {
     const filters: Record<string, string> = {};
 
-    // Map the operator to the query parameter suffix
-    const operations: Record<string, string> = {
-      '=': '',
-      '<': '_lt',
-      '>': '_gt',
-      '<=': '_lte',
-      '>=': '_gte'
-    };
-
     Object.keys(parameterFilters).forEach((key: string) => {
       const paramFilters: any = parameterFilters[key];
 
       Object.keys(paramFilters).forEach((operator: string) => {
-        const name = `${key}${operations[operator] || ''}`;
+        const name = `${key}${PARAMETER_FILTER_OPERATORS[operator] || ''}`;
         const value = paramFilters[operator];
 
         filters[name] = value;
@@ -305,10 +299,7 @@ export default function ParametricPartTable({
         title += ` [${template.units}]`;
       }
 
-      const filterKey = Object.keys(parameterFilters).find((key: string) => {
-        const filterRegex = new RegExp(`^parameter_${template.pk}(_.*)?$`);
-        return filterRegex.test(key);
-      });
+      const filters = parameterFilters[`parameter_${template.pk}`] || {};
 
       return {
         accessor: `parameter_${template.pk}`,
@@ -324,7 +315,7 @@ export default function ParametricPartTable({
             canEdit={user.hasChangeRole(UserRoles.part)}
           />
         ),
-        filtering: !!filterKey,
+        filtering: Object.keys(filters).length > 0,
         filter: ({ close }: { close: () => void }) => {
           return (
             <ParameterFilter
