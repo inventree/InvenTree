@@ -15,6 +15,7 @@ from rest_framework.exceptions import PermissionDenied
 from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
+import common.settings
 import common.validators
 import generic.states.custom
 from importer.registry import register_importer
@@ -123,7 +124,27 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'model_name',
             'api_url',
             'typ',
+            'read_only',
         ]
+
+    read_only = serializers.SerializerMethodField(
+        read_only=True,
+        help_text=_(
+            'Indicates if the setting is overridden by an environment variable'
+        ),
+        label=_('Override'),
+    )
+
+    def get_read_only(self, obj) -> bool:
+        """Return True if the setting 'read_only' (cannot be edited).
+
+        A setting may be "read-only" if:
+
+        - It is overridden by an environment variable.
+        """
+        overrides = common.settings.global_setting_overrides()
+
+        return obj.key in overrides
 
 
 class UserSettingsSerializer(SettingsSerializer):

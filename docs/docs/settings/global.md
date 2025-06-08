@@ -244,3 +244,11 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 ### Project Codes
 
 Refer to the [project code settings](../concepts/project_codes.md).
+
+## Override Global Settings
+
+If desired, specific *global settings* can be overridden via environment variables or the configuration file.
+
+Overriding a global setting will mark the setting as "read-only" in the user interface, and prevent it from being changed by user action. Additionally, the associated value stored in the database will be set to the value specified in the override.
+
+Refer to the [configuration guide](../start/config.md#override-global-settings) for more information on how to override global settings.
