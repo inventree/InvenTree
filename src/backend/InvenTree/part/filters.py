@@ -389,13 +389,6 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     # Some filters are only applicable to string values
     text_only = any([func in ['icontains'], value_numeric is None])
 
-    print('Filtering by parameter:')
-    print(f'  Template: {template.name} (ID: {template.id})')
-    print('- func:', func)
-    print('- text_only:', text_only)
-    print('- value:', value)
-    print('- value_numeric:', value_numeric)
-
     # Ensure the function starts with a double underscore
     if func and not func.startswith('__'):
         func = f'__{func}'
