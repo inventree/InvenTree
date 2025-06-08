@@ -389,26 +389,39 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     # Some filters are only applicable to string values
     text_only = any([func in ['icontains'], value_numeric is None])
 
+    print('Filtering by parameter:')
+    print(f'  Template: {template.name} (ID: {template.id})')
+    print('- func:', func)
+    print('- text_only:', text_only)
+    print('- value:', value)
+    print('- value_numeric:', value_numeric)
+
     # Ensure the function starts with a double underscore
     if func and not func.startswith('__'):
         func = f'__{func}'
 
     # Query for 'numeric' value - this has priority over 'string' value
-    q1 = Q(**{
+    data_numeric = {
         'parameters__template': template,
         'parameters__data_numeric__isnull': False,
         f'parameters__data_numeric{func}': value_numeric,
-    })
+    }
+
+    query_numeric = Q(**data_numeric)
 
     # Query for 'string' value
-    q2 = Q(**{
+    data_text = {
         'parameters__template': template,
-        'parameters__data_numeric__isnull': True,
         f'parameters__data{func}': str(value),
-    })
+    }
+
+    if not text_only:
+        data_text['parameters__data_numeric__isnull'] = True
+
+    query_text = Q(**data_text)
 
     # Combine the queries based on whether we are filtering by text or numeric value
-    q = q2 if text_only else q1 | q2
+    q = query_text if text_only else query_text | query_numeric
 
     # Special handling for the '__ne' (not equal) operator
     # In this case, we want the *opposite* of the above queries
