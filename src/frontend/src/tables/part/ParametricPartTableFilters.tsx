@@ -1,5 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { ActionIcon, Select, Stack, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Divider,
+  Group,
+  Select,
+  Stack,
+  TextInput
+} from '@mantine/core';
 import { IconCircleX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -120,49 +127,45 @@ function GenericFilterRow({
   }, [operator]);
 
   return (
-    <TextInput
-      aria-label={`filter-${props.template.name}`}
-      placeholder={placeholder}
-      defaultValue={value}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') {
-          props.setFilter(
-            props.template.pk,
-            event.currentTarget.value || '',
-            op
-          );
-          props.closeFilter();
+    <Group gap='xs' wrap='nowrap'>
+      <div onMouseDown={(e) => e.stopPropagation()} style={{ width: 75 }}>
+        <Select
+          onClick={(event) => {
+            event?.stopPropagation();
+          }}
+          aria-label={`filter-${props.template.name}-operator`}
+          data={Object.keys(PARAMETER_FILTER_OPERATORS)}
+          value={op}
+          searchable={false}
+          clearable={false}
+          defaultValue={'='}
+          onChange={(value) => {
+            setOp(value ?? '=');
+          }}
+          size='sm'
+          disabled={readonly}
+          width={75}
+        />
+      </div>
+      <TextInput
+        aria-label={`filter-${props.template.name}`}
+        placeholder={placeholder}
+        defaultValue={value}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            props.setFilter(
+              props.template.pk,
+              event.currentTarget.value || '',
+              op
+            );
+            props.closeFilter();
+          }
+        }}
+        rightSection={
+          readonly && <ClearFilterButton props={props} operator={op} />
         }
-      }}
-      leftSection={
-        <div onMouseDown={(e) => e.stopPropagation()}>
-          <Select
-            onClick={(event) => {
-              event?.stopPropagation();
-            }}
-            aria-label={`filter-${props.template.name}-operator`}
-            data={Object.keys(PARAMETER_FILTER_OPERATORS)}
-            value={op}
-            searchable={false}
-            defaultValue={'='}
-            onChange={(value) => {
-              setOp(value ?? '=');
-            }}
-            size='xs'
-            disabled={readonly}
-          />
-        </div>
-      }
-      leftSectionWidth={75}
-      leftSectionProps={{
-        style: {
-          paddingRight: '10px'
-        }
-      }}
-      rightSection={
-        readonly && <ClearFilterButton props={props} operator={op} />
-      }
-    />
+      />
+    </Group>
   );
 }
 
@@ -184,6 +187,7 @@ function GenericParameterFilter(props: ParameterFilterProps) {
           />
         );
       })}
+      <Divider />
       {/* Render an empty row for adding a new filter */}
       <GenericFilterRow props={props} value='' operator='=' />
     </Stack>
