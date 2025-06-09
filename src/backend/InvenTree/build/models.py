@@ -745,6 +745,11 @@ class Build(
 
             trigger_event(BuildEvents.ISSUED, id=self.pk)
 
+            from build.tasks import check_build_stock
+
+            # Run checks on required parts
+            InvenTree.tasks.offload_task(check_build_stock, self, group='build')
+
     @transaction.atomic
     def hold_build(self):
         """Mark the Build as ON HOLD."""
@@ -1463,19 +1468,12 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
     ):
         return
 
-    from . import tasks as build_tasks
-
     if instance:
         if created:
             # A new Build has just been created
 
             # Generate initial BuildLine objects for the Build
             instance.create_build_line_items()
-
-            # Run checks on required parts
-            InvenTree.tasks.offload_task(
-                build_tasks.check_build_stock, instance, group='build'
-            )
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(
