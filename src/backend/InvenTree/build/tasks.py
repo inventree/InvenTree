@@ -11,7 +11,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from allauth.account.models import EmailAddress
 
 import build.models as build_models
 import common.notifications
@@ -171,9 +170,13 @@ def check_build_stock(build: build_models.Build):
     # Are there any users subscribed to these parts?
     subscribers = build.part.get_subscribers()
 
-    emails = EmailAddress.objects.filter(user__in=subscribers)
+    recipients = set()
 
-    if len(emails) > 0:
+    for subscriber in subscribers:
+        if email := InvenTree.helpers_email.get_email_for_user(subscriber):
+            recipients.add(email)
+
+    if len(recipients) > 0:
         logger.info('Notifying users of stock required for build %s', build.pk)
 
         context = {
@@ -192,10 +195,8 @@ def check_build_stock(build: build_models.Build):
 
         subject = _('Stock required for build order')
 
-        recipients = emails.values_list('email', flat=True)
-
         InvenTree.helpers_email.send_email(
-            subject, '', recipients, html_message=html_message
+            subject, '', list(recipients), html_message=html_message
         )
 
 
