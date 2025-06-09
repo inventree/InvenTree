@@ -131,11 +131,11 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         # Anymail: pre-processing
         if settings.INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
             for a in email_messages:
-                if a.extra_headers and 'Message-ID' in a.extra_headers:
+                if a.extra_headers and common.models.HEADER_MSG_ID in a.extra_headers:
                     # Remove the Message-ID header from the email
                     # This is because some ESPs do not like it being set
                     # in the headers, and will ignore the email
-                    a.extra_headers.pop('Message-ID')
+                    a.extra_headers.pop(common.models.HEADER_MSG_ID)
                 # Add tracking if requested: TODO
                 # a.track_opens = True
 

@@ -2433,6 +2433,10 @@ class Priority(models.IntegerChoices):
     VERY_LOW = 5
 
 
+HEADER_PRIORITY = 'X-Priority'
+HEADER_MSG_ID = 'Message-ID'
+
+
 class EmailMessage(models.Model):
     """Model for storing email messages sent or received by the system.
 
@@ -2644,13 +2648,13 @@ def issue_mail(
             message.extra_headers[key] = value
 
     # Stabilize the message ID before creating the object
-    if 'Message-ID' not in message.extra_headers:
-        message.extra_headers['Message-ID'] = make_msgid(domain=DNS_NAME)
+    if HEADER_MSG_ID not in message.extra_headers:
+        message.extra_headers[HEADER_MSG_ID] = make_msgid(domain=DNS_NAME)
 
     # TODO add `References` field for the thread ID
 
     # Add headers for flags
-    message.extra_headers['X-Priority'] = str(prio)
+    message.extra_headers[HEADER_PRIORITY] = str(prio)
 
     # And now send
     return message.send()
@@ -2668,14 +2672,14 @@ def log_email_messages(email_messages) -> list[EmailMessage]:
     for msg in email_messages:
         try:
             new_obj = EmailMessage.objects.create(
-                message_id_key=msg.extra_headers.get('Message-ID'),
+                message_id_key=msg.extra_headers.get(HEADER_MSG_ID),
                 subject=msg.subject,
                 body=msg.body,
                 to=msg.to,
                 sender=msg.from_email,
                 status=EmailMessage.EmailStatus.ANNOUNCED,
                 direction=EmailMessage.EmailDirection.OUTBOUND,
-                priority=msg.extra_headers.get('X-Priority', '3'),
+                priority=msg.extra_headers.get(HEADER_PRIORITY, '3'),
                 headers=msg.extra_headers,
                 full_message=msg,
             )
@@ -2699,7 +2703,7 @@ def handle_inbound(sender, event, esp_name, **kwargs):
     r_sender = message.envelope_sender or message.from_email.addr_spec
 
     EmailMessage.objects.create(
-        message_id_key=event.message['Message-ID'],
+        message_id_key=event.message[HEADER_MSG_ID],
         subject=message.subject,
         body=message.text,
         to=r_to,
