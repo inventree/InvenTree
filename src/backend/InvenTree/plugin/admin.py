@@ -78,17 +78,4 @@ class PluginConfigAdmin(admin.ModelAdmin):
     search_fields = ['name', 'key']
 
 
-class NotificationUserSettingAdmin(admin.ModelAdmin):
-    """Admin class for NotificationUserSetting."""
-
-    model = models.NotificationUserSetting
-
-    read_only_fields = ['key']
-
-    def has_add_permission(self, request):
-        """Notifications should not be changed."""
-        return False
-
-
 admin.site.register(models.PluginConfig, PluginConfigAdmin)
-admin.site.register(models.NotificationUserSetting, NotificationUserSettingAdmin)

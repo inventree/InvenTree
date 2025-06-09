@@ -8,12 +8,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
-from plugin.models import (
-    NotificationUserSetting,
-    PluginConfig,
-    PluginSetting,
-    PluginUserSetting,
-)
+from plugin.models import PluginConfig, PluginSetting, PluginUserSetting
 
 
 class MetadataSerializer(serializers.ModelSerializer):
@@ -289,16 +284,6 @@ class PluginUserSettingSerializer(GenericReferencedSettingSerializer):
     user = serializers.PrimaryKeyRelatedField(
         read_only=True, help_text=_('The user for which this setting applies')
     )
-
-
-class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
-    """Serializer for the PluginSetting model."""
-
-    MODEL = NotificationUserSetting
-    EXTRA_FIELDS = ['method']
-
-    method = serializers.CharField(read_only=True)
-    typ = serializers.CharField(read_only=True)
 
 
 class PluginRegistryErrorSerializer(serializers.Serializer):

@@ -53,8 +53,6 @@ from InvenTree.permissions import (
     IsSuperuserOrSuperScope,
     UserSettingsPermissionsOrScope,
 )
-from plugin.models import NotificationUserSetting
-from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin:
@@ -304,36 +302,6 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         return common.models.InvenTreeUserSetting.get_setting_object(
             key, user=self.request.user, cache=False, create=True
         )
-
-
-class NotificationUserSettingsList(SettingsList):
-    """API endpoint for accessing a list of notification user settings objects."""
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
-
-    def filter_queryset(self, queryset):
-        """Only list settings which apply to the current user."""
-        try:
-            user = self.request.user
-        except AttributeError:
-            return NotificationUserSetting.objects.none()
-
-        queryset = super().filter_queryset(queryset)
-        queryset = queryset.filter(user=user)
-        return queryset
-
-
-class NotificationUserSettingsDetail(RetrieveUpdateAPI):
-    """Detail view for an individual "notification user setting" object.
-
-    - User can only view / edit settings their own settings objects
-    """
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
 
 
 class NotificationMessageMixin:
@@ -901,24 +869,6 @@ settings_api_urls = [
             ),
             # User Settings List
             path('', UserSettingsList.as_view(), name='api-user-setting-list'),
-        ]),
-    ),
-    # Notification settings
-    path(
-        'notification/',
-        include([
-            # Notification Settings Detail
-            path(
-                '<int:pk>/',
-                NotificationUserSettingsDetail.as_view(),
-                name='api-notification-setting-detail',
-            ),
-            # Notification Settings List
-            path(
-                '',
-                NotificationUserSettingsList.as_view(),
-                name='api-notification-setting-list',
-            ),
         ]),
     ),
     # Global settings

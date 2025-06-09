@@ -349,39 +349,3 @@ class PluginUserSetting(common.models.BaseInvenTreeSetting):
                     kwargs['settings'] = mixin_user_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
-
-
-class NotificationUserSetting(common.models.BaseInvenTreeSetting):
-    """This model represents notification settings for a user."""
-
-    typ = 'notification'
-    extra_unique_fields = ['method', 'user']
-
-    class Meta:
-        """Meta for NotificationUserSetting."""
-
-        unique_together = [('method', 'user', 'key')]
-
-    @classmethod
-    def get_setting_definition(cls, key, **kwargs):
-        """Override setting_definition to use notification settings."""
-        from common.notifications import storage
-
-        kwargs['settings'] = storage.user_settings
-
-        return super().get_setting_definition(key, **kwargs)
-
-    method = models.CharField(max_length=255, verbose_name=_('Method'))
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        verbose_name=_('User'),
-        help_text=_('User'),
-    )
-
-    def __str__(self) -> str:
-        """Nice name of printing."""
-        return f'{self.key} (for {self.user}): {self.value}'
