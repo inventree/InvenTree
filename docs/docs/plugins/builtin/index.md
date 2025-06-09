@@ -18,8 +18,8 @@ The following builtin plugins are available in InvenTree:
 | [BOM Exporter](./bom_exporter.md) | Custom [exporter](../mixins/export.md) for BOM data | Yes |
 | [Currency Exchange](./currency_exchange.md) | Currency exchange rate plugin | Yes |
 | [DigiKey](./digikey.md) | DigiKey barcode support | No |
+| [Email Notification](./email_notification.md) | Email notification plugin | Yes |
 | [InvenTree Barcode](./inventree_barcode.md) | Internal barcode support | Yes |
-| [InvenTree Core Notifications](./notifications.md) | Core notification system | Yes |
 | [InvenTree Exporter](./inventree_exporter.md) | Custom [exporter](../mixins/export.md) for InvenTree data | Yes |
 | [Label Printer](./inventree_label.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
 | [Label Machine](./inventree_label_machine.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
@@ -27,8 +27,10 @@ The following builtin plugins are available in InvenTree:
 | [LCSC](./lcsc.md) | LCSC barcode support | No |
 | [Mouser](./mouser.md) | Mouser barcode support | No |
 | [Parameter Exporter](./part_parameter_exporter.md) | Custom [exporter](../mixins/export.md) for part parameter data | Yes |
-| [Part Notifications](./part_notifications.md) | Notifications for part changes | No |
+| [Part Update Notifications](./part_notifications.md) | Notifications for part changes | No |
+| [Slack Notification](./slack_notification.md) | Slack notification plugin | No |
 | [TME](./tme.md) | TME barcode support | No |
+| [UI Notification](./ui_notification.md) | UI notification plugin | Yes |
 
 ### Plugin Table
 

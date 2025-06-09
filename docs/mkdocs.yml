@@ -224,6 +224,7 @@ nav:
       - Label Printing Mixin: plugins/mixins/label.md
       - Locate Mixin: plugins/mixins/locate.md
       - Navigation Mixin: plugins/mixins/navigation.md
+      - Notification Mixin: plugins/mixins/notification.md
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
@@ -239,6 +240,7 @@ nav:
       - BOM Exporter: plugins/builtin/bom_exporter.md
       - Currency Exchange: plugins/builtin/currency_exchange.md
       - DigiKey: plugins/builtin/digikey.md
+      - Email Notifications: plugins/builtin/email_notification.md
       - InvenTree Barcode: plugins/builtin/inventree_barcode.md
       - InvenTree Exporter: plugins/builtin/inventree_exporter.md
       - Label Printer: plugins/builtin/inventree_label.md
@@ -246,10 +248,11 @@ nav:
       - Label Sheet: plugins/builtin/inventree_label_sheet.md
       - LCSC: plugins/builtin/lcsc.md
       - Mouser: plugins/builtin/mouser.md
-      - Notification: plugins/builtin/notifications.md
       - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
-      - Part Notifications: plugins/builtin/part_notifications.md
+      - Part Update Notification: plugins/builtin/part_notifications.md
+      - Slack Notifications: plugins/builtin/slack_notification.md
       - TME: plugins/builtin/tme.md
+      - UI Notifications: plugins/builtin/ui_notification.md
     - Third-Party: plugins/integrate.md
 
 # Plugins

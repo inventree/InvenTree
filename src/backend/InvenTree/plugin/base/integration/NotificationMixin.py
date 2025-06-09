@@ -39,7 +39,7 @@ class NotificationMixin:
 
     def send_notification(
         self, target: Model, category: str, users: list, context: dict
-    ):
+    ) -> None:
         """Send notification to the specified target users.
 
         Arguments:
