@@ -5,6 +5,7 @@ import {
   IconDeviceDesktop,
   IconFileAnalytics,
   IconLock,
+  IconPlugConnected,
   IconSearch,
   IconUserCircle
 } from '@tabler/icons-react';
@@ -108,6 +109,12 @@ export default function UserSettings() {
             keys={['REPORT_INLINE', 'LABEL_INLINE', 'LABEL_DEFAULT_PRINTER']}
           />
         )
+      },
+      {
+        name: 'plugins',
+        label: t`Plugin Settings`,
+        icon: <IconPlugConnected />,
+        content: <Skeleton />
       }
     ];
   }, []);
