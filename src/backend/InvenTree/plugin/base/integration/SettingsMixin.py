@@ -23,6 +23,7 @@ class SettingsMixin:
     """Mixin that enables global settings for the plugin."""
 
     SETTINGS: dict[str, SettingsKeyType] = {}
+    USER_SETTINGS: dict[str, SettingsKeyType] = {}
 
     class MixinMeta:
         """Meta for mixin."""
@@ -34,6 +35,7 @@ class SettingsMixin:
         super().__init__()
         self.add_mixin(PluginMixinEnum.SETTINGS, 'has_settings', __class__)
         self.settings = getattr(self, 'SETTINGS', {})
+        self.user_settings = getattr(self, 'USER_SETTINGS', {})
 
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
@@ -45,11 +47,15 @@ class SettingsMixin:
         logger.debug('Activating plugin settings')
 
         registry.mixins_settings = {}
+        registry.mixins_user_settings = {}
 
         for slug, plugin in plugins:
             if plugin.mixin_enabled('settings'):
-                plugin_setting = plugin.settings
+                plugin_setting = plugin.settings or {}
                 registry.mixins_settings[slug] = plugin_setting
+
+                plugin_user_setting = plugin.user_settings or {}
+                registry.mixins_user_settings[slug] = plugin_user_setting
 
     @classmethod
     def _deactivate_mixin(cls, registry, **kwargs):
@@ -63,12 +69,12 @@ class SettingsMixin:
         """Does this plugin use custom global settings."""
         return bool(self.settings)
 
-    def get_setting(self, key, cache=False, backup_value=None):
+    def get_setting(self, key: str, cache: bool = False, backup_value=None):
         """Return the 'value' of the setting associated with this plugin.
 
         Arguments:
             key: The 'name' of the setting value to be retrieved
-            cache: Whether to use RAM cached value (default = False)
+            cache: Whether to use cached value (default = False)
             backup_value: A backup value to return if the setting is not found
         """
         from plugin.models import PluginSetting
@@ -93,6 +99,43 @@ class SettingsMixin:
             return
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
+
+    def get_user_setting(self, key: str, user, cache: bool = False, backup_value=None):
+        """Return the 'value' of the user setting associated with this plugin.
+
+        Arguments:
+            key: The 'name' of the user setting value to be retrieved
+            user: The user for which the setting is to be retrieved
+            cache: Whether to use cached value (default = False)
+            backup_value: A backup value to return if the setting is not found
+        """
+        from plugin.models import PluginUserSetting
+
+        return PluginUserSetting.get_setting(
+            key,
+            plugin=self.plugin_config(),
+            user=user,
+            cache=cache,
+            backup_value=backup_value,
+            settings=self.user_settings,
+        )
+
+    def set_user_setting(self, key, value, user):
+        """Set user setting value by key."""
+        from plugin.models import PluginUserSetting
+        from plugin.registry import registry
+
+        try:
+            plugin = registry.get_plugin_config(self.plugin_slug(), self.plugin_name())
+        except (OperationalError, ProgrammingError):
+            plugin = None
+
+        if not plugin:  # pragma: no cover
+            # Cannot find associated plugin model, return
+            logger.error("Plugin configuration not found for plugin '%s'", self.slug)
+            return
+
+        PluginUserSetting.set_setting(key, value, user, user=user, plugin=plugin)
 
     def check_settings(self):
         """Check if all required settings for this machine are defined.

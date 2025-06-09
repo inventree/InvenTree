@@ -46,6 +46,18 @@ class PluginSettingInline(admin.TabularInline):
         return False
 
 
+class PluginUserSettingInline(admin.TabularInline):
+    """Inline admin class for PluginUserSetting."""
+
+    model = models.PluginUserSetting
+
+    read_only_fields = ['key']
+
+    def has_add_permission(self, request, obj):
+        """The plugin user settings should not be meddled with manually."""
+        return False
+
+
 class PluginConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields."""
 
@@ -61,8 +73,9 @@ class PluginConfigAdmin(admin.ModelAdmin):
     ]
     list_filter = ['active']
     actions = [plugin_activate, plugin_deactivate]
-    inlines = [PluginSettingInline]
+    inlines = [PluginSettingInline, PluginUserSettingInline]
     exclude = ['metadata']
+    search_fields = ['name', 'key']
 
 
 class NotificationUserSettingAdmin(admin.ModelAdmin):

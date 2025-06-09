@@ -292,6 +292,65 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         return super().get_setting_definition(key, **kwargs)
 
 
+class PluginUserSetting(common.models.BaseInvenTreeSetting):
+    """This model represents user-specific settings for individual plugins.
+
+    In contrast with the PluginSetting model, which holds global settings for plugins,
+    this model allows for user-specific settings that can be defined by each user.
+    """
+
+    typ = 'plugin_user'
+    extra_unique_fields = ['plugin', 'user']
+
+    class Meta:
+        """Meta for PluginUserSetting."""
+
+        unique_together = [('plugin', 'user', 'key')]
+
+    plugin = models.ForeignKey(
+        PluginConfig,
+        related_name='user_settings',
+        null=False,
+        verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=False,
+        verbose_name=_('User'),
+        help_text=_('User'),
+        related_name='plugin_settings',
+    )
+
+    def __str__(self) -> str:
+        """Nice name of printing."""
+        return f'{self.key} (for {self.user}): {self.value}'
+
+    @classmethod
+    def get_setting_definition(cls, key, **kwargs):
+        """In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS', which is a dict object that fully defines all the setting parameters.
+
+        Here, unlike the BaseInvenTreeSetting, we do not know the definitions of all settings
+        'ahead of time' (as they are defined externally in the plugins).
+
+        Settings can be provided by the caller, as kwargs['settings'].
+
+        If not provided, we'll look at the plugin registry to see what settings are available,
+        (if the plugin is specified!)
+        """
+        if 'settings' not in kwargs:
+            plugin = kwargs.pop('plugin', None)
+
+            if plugin:
+                mixin_user_settings = getattr(registry, 'mixins_user_settings', None)
+                if mixin_user_settings:
+                    kwargs['settings'] = mixin_user_settings.get(plugin.key, {})
+
+        return super().get_setting_definition(key, **kwargs)
+
+
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
 
