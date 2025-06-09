@@ -1339,15 +1339,49 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
                     pass
 
         queryset = self.filter_parametric_data(queryset)
+        queryset = self.order_by_parameter(queryset)
 
         return queryset
 
     def filter_parametric_data(self, queryset):
         """Filter queryset against part parameters.
 
-        Here we can perform a number of different functions:
+        Used to filter returned parts based on their parameter values.
 
-        Ordering Based on Parameter Value:
+        To filter based on parameter value, supply query parameters like:
+        - parameter_<x>=<value>
+        - parameter_<x>_gt=<value>
+        - parameter_<x>_lte=<value>
+
+        where:
+            - <x> is the ID of the PartParameterTemplate.
+            - <value> is the value to filter against.
+        """
+        # Allowed lookup operations for parameter values
+        operators = '|'.join(part.filters.PARAMETER_FILTER_OPERATORS)
+
+        regex_pattern = rf'^parameter_(\d+)(_({operators}))?$'
+
+        for param in self.request.query_params:
+            result = re.match(regex_pattern, param)
+
+            if not result:
+                continue
+
+            template_id = result.group(1)
+            operator = result.group(3) or ''
+
+            value = self.request.query_params.get(param, None)
+
+            queryset = part.filters.filter_by_parameter(
+                queryset, template_id, value, func=operator
+            )
+
+        return queryset
+
+    def order_by_parameter(self, queryset):
+        """Perform queryset ordering based on parameter value.
+
         - Used if the 'ordering' query param points to a parameter
         - e.g. '&ordering=param_<id>' where <id> specifies the PartParameterTemplate
         - Only parts which have a matching parameter are returned

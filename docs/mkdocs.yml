@@ -233,6 +233,23 @@ nav:
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
+    - Builtin Plugins:
+      - Builtin Plugins: plugins/builtin/index.md
+      - Auto Issue: plugins/builtin/auto_issue.md
+      - BOM Exporter: plugins/builtin/bom_exporter.md
+      - Currency Exchange: plugins/builtin/currency_exchange.md
+      - DigiKey: plugins/builtin/digikey.md
+      - InvenTree Barcode: plugins/builtin/inventree_barcode.md
+      - InvenTree Exporter: plugins/builtin/inventree_exporter.md
+      - Label Printer: plugins/builtin/inventree_label.md
+      - Label Machine: plugins/builtin/inventree_label_machine.md
+      - Label Sheet: plugins/builtin/inventree_label_sheet.md
+      - LCSC: plugins/builtin/lcsc.md
+      - Mouser: plugins/builtin/mouser.md
+      - Notification: plugins/builtin/notifications.md
+      - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
+      - Part Notifications: plugins/builtin/part_notifications.md
+      - TME: plugins/builtin/tme.md
     - Third-Party: plugins/integrate.md
 
 # Plugins
@@ -247,6 +264,7 @@ plugins:
   - mkdocs-simple-hooks:
       hooks:
         on_config: "docs.docs.hooks:on_config"
+        on_post_build: "docs.docs.hooks:on_post_build"
   - macros:
       include_dir: docs/_includes
       module_name: main
@@ -277,6 +295,7 @@ plugins:
         'sref/ci-pre.md': 'https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml' # https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml
         'sref/test-sample.md': 'https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py' # https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py
         'sref/coverage.md': 'https://coveralls.io/github/inventree/InvenTree' # https://coveralls.io/github/inventree/InvenTree
+        'sref/error-codes.md': 'settings/error_codes.md'
 
 # Extensions
 markdown_extensions:
