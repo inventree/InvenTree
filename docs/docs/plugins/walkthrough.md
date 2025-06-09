@@ -9,7 +9,7 @@ A walkthrough showing how to build a part panel plugin.
 
 By the end of the walkthrough, you will have created a plugin that adds a new part panel to display an image carousel from the images attached to the current part.
 
-![Attachment Carousel in Inventree panel screenshot](../../assets/images/plugin/plugin_attachment_carousel.png "Attachment Carousel in Inventree panel screenshot")
+![Attachment Carousel in Inventree panel screenshot](../assets/images/plugin/plugin_attachment_carousel.png "Attachment Carousel in Inventree panel screenshot")
 
 #### Prerequisites
 This is a basic walkthrough and not a guide on how to code in Python or React. It is presumed you have the following,
@@ -33,7 +33,7 @@ create-inventree-plugin
 
 After the plugin wizard has launched, enter the name as `Attachment Carousel` and fill out the other questions until you reach the plugin structure information questions.
 
-![Plugin Wizard Screenshot](../../assets/images/plugin/plugin_wizard.png "Plugin Wizard Screenshot")
+![Plugin Wizard Screenshot](../assets/images/plugin/plugin_wizard.png "Plugin Wizard Screenshot")
 
 At the plugin structure information questions,
 
@@ -42,12 +42,12 @@ At the plugin structure information questions,
 * Select `Custom panel items`
 * Select `None` for the `DevOps support`
 
-![Plugin Wizard Screenshot showing mixins](../../assets/images/plugin/plugin_wizard_mixins.png "Plugin Wizard Screenshot showing mixins")
-![Plugin Wizard Screenshot showing items](../../assets/images/plugin/plugin_wizard_items.png "Plugin Wizard Screenshot showing items")
+![Plugin Wizard Screenshot showing mixins](../assets/images/plugin/plugin_wizard_mixins.png "Plugin Wizard Screenshot showing mixins")
+![Plugin Wizard Screenshot showing items](../assets/images/plugin/plugin_wizard_items.png "Plugin Wizard Screenshot showing items")
 
 After the Plugin Creator has finished you should have a new project that looks like this,
 
-![VS Code screenshot](../../assets/images/plugin/plugin_vscode_layout.png "VS Code screenshot")
+![VS Code screenshot](../assets/images/plugin/plugin_vscode_layout.png "VS Code screenshot")
 
 #### A Brief Overview of the Environment
 
@@ -67,11 +67,11 @@ npm run dev
 ```
 This should launch the local development server,
 
-![Vite screenshot](../../assets/images/plugin/plugin_vite_running.png "Vite screenshot")
+![Vite screenshot](../assets/images/plugin/plugin_vite_running.png "Vite screenshot")
 
 If you browse to the address provided you should see the default plugin website,
 
-![Vite website screenshot](../../assets/images/plugin/plugin_vite_dev_site.png "Vite website screenshot")
+![Vite website screenshot](../assets/images/plugin/plugin_vite_dev_site.png "Vite website screenshot")
 
 
 ### Creating the Carousel
@@ -136,7 +136,7 @@ export default function App() {
 
 Run the Vite development environment again and browse to the website. You should now see the Mantine UI carousel.
 
-![Mantine UI carousel screenshot](../../assets/images/plugin/plugin_vite_mantine_carousel.png "Mantine UI carousel screenshot")
+![Mantine UI carousel screenshot](../assets/images/plugin/plugin_vite_mantine_carousel.png "Mantine UI carousel screenshot")
 
 ### Adding The Carousel to an Inventree Panel
 
@@ -171,12 +171,12 @@ vite run build --emptyOutDir
 
 Depending on how you are running Inventree, [install the plugin](./install.md), enable it, and view the resulting panel,
 
-![Attachment Carousel Screenshot](../../assets/images/plugin/plugin_attachment_carousel_icon_wrong.png "Attachment Carousel Screenshot")
+![Attachment Carousel Screenshot](../assets/images/plugin/plugin_attachment_carousel_icon_wrong.png "Attachment Carousel Screenshot")
 
 !!! info "Tip"
     If you do not see the `Attachment Carousel` panel listed, make sure you have `Enable interface integration` turned on (it is disabled by default)
 
-![Attachment Carousel in Inventree panel screenshot](../../assets/images/plugin/plugin_interface_integration.png "Attachment Carousel in Inventree panel screenshot")
+![Attachment Carousel in Inventree panel screenshot](../assets/images/plugin/plugin_interface_integration.png "Attachment Carousel in Inventree panel screenshot")
 
 ### Connecting the Carousel to Inventree Part Attachments via the Frontend
 
@@ -378,7 +378,7 @@ panels.append({
 })
 ```
 
-![Attachment Carousel in Inventree panel with updated icon screenshot](../../assets/images/plugin/plugin_attachment_carousel_icon.png "Attachment Carousel in Inventree panel screenshot updated icon screenshot")
+![Attachment Carousel in Inventree panel with updated icon screenshot](../assets/images/plugin/plugin_attachment_carousel_icon.png "Attachment Carousel in Inventree panel screenshot updated icon screenshot")
 
 ### Adding Plugin Admin Options
 
@@ -428,7 +428,7 @@ export default function App({ context }: { context: any }) {
 
 Now you have two options that change the behaviour of the plugin.
 
-![Attachment Carousel Inventree Admin interface screenshot](../../assets/images/plugin/plugin_admin_interface.png "Attachment Carousel Inventree Admin interface screenshot")
+![Attachment Carousel Inventree Admin interface screenshot](../assets/images/plugin/plugin_admin_interface.png "Attachment Carousel Inventree Admin interface screenshot")
 
 ### Using CSS to Enhance the User Experience
 
@@ -491,4 +491,4 @@ panels.append({
 
 Update the plugin in Inventree and the walkthrough is complete!
 
-![Attachment Carousel in Inventree panel screenshot](../../assets/images/plugin/plugin_attachment_carousel.png "Attachment Carousel in Inventree panel screenshot")
+![Attachment Carousel in Inventree panel screenshot](../assets/images/plugin/plugin_attachment_carousel.png "Attachment Carousel in Inventree panel screenshot")
