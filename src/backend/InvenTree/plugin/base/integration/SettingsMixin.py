@@ -1,6 +1,6 @@
 """Plugin mixin class for SettingsMixin."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -12,8 +12,13 @@ logger = structlog.get_logger('inventree')
 
 # import only for typechecking, otherwise this throws a model is unready error
 if TYPE_CHECKING:
+    from django.contrib.auth.models import User
+
     from common.models import SettingsKeyType
 else:
+
+    class User:
+        """Dummy class, so that python throws no error."""
 
     class SettingsKeyType:
         """Dummy class, so that python throws no error."""
@@ -69,7 +74,9 @@ class SettingsMixin:
         """Does this plugin use custom global settings."""
         return bool(self.settings) or bool(self.user_settings)
 
-    def get_setting(self, key: str, cache: bool = False, backup_value=None):
+    def get_setting(
+        self, key: str, cache: bool = False, backup_value: Any = None
+    ) -> Any:
         """Return the 'value' of the setting associated with this plugin.
 
         Arguments:
@@ -83,8 +90,13 @@ class SettingsMixin:
             key, plugin=self.plugin_config(), cache=cache, backup_value=backup_value
         )
 
-    def set_setting(self, key, value, user=None):
-        """Set plugin setting value by key."""
+    def set_setting(self, key: str, value: Any, **kwargs) -> None:
+        """Set plugin setting value by key.
+
+        Arguments:
+            key: The 'name' of the setting value to be set
+            value: The value to be set for the setting
+        """
         from plugin.models import PluginSetting
         from plugin.registry import registry
 
@@ -98,9 +110,11 @@ class SettingsMixin:
             logger.error("Plugin configuration not found for plugin '%s'", self.slug)
             return
 
-        PluginSetting.set_setting(key, value, user, plugin=plugin)
+        PluginSetting.set_setting(key, value, plugin=plugin)
 
-    def get_user_setting(self, key: str, user, cache: bool = False, backup_value=None):
+    def get_user_setting(
+        self, key: str, user: User, cache: bool = False, backup_value: Any = None
+    ) -> Any:
         """Return the 'value' of the user setting associated with this plugin.
 
         Arguments:
@@ -120,8 +134,14 @@ class SettingsMixin:
             settings=self.user_settings,
         )
 
-    def set_user_setting(self, key, value, user):
-        """Set user setting value by key."""
+    def set_user_setting(self, key: str, value: Any, user: User) -> None:
+        """Set user setting value by key.
+
+        Arguments:
+            key: The 'name' of the user setting value to be set
+            value: The value to be set for the user setting
+            user: The user for which the setting is to be set
+        """
         from plugin.models import PluginUserSetting
         from plugin.registry import registry
 
