@@ -63,6 +63,47 @@ test('Plugins - Settings', async ({ browser, request }) => {
   await page.getByText('Mouser Electronics').click();
 });
 
+test('Plugins - User Settings', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser);
+
+  // Ensure that the SampleIntegration plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'sample',
+    state: true
+  });
+
+  // Navigate to user settings
+  await navigate(page, 'settings/user/');
+  await loadTab(page, 'Plugin Settings');
+
+  // User settings for the "Sample Plugin" should be visible
+  await page.getByRole('button', { name: 'Sample Plugin' }).click();
+
+  await page.getByText('User Setting 1').waitFor();
+  await page.getByText('User Setting 2').waitFor();
+  await page.getByText('User Setting 3').waitFor();
+
+  // Check for expected setting options
+  await page.getByLabel('edit-setting-USER_SETTING_3').click();
+
+  const val = await page.getByLabel('choice-field-value').inputValue();
+
+  await page.getByLabel('choice-field-value').click();
+
+  await page.getByRole('option', { name: 'Choice X' }).waitFor();
+  await page.getByRole('option', { name: 'Choice Y' }).waitFor();
+  await page.getByRole('option', { name: 'Choice Z' }).waitFor();
+
+  // Change the value of USER_SETTING_3
+  await page
+    .getByRole('option', { name: val == 'Choice X' ? 'Choice Z' : 'Choice X' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Setting USER_SETTING_3 updated successfully').waitFor();
+});
+
 // Test base plugin functionality
 test('Plugins - Functionality', async ({ browser }) => {
   // Navigate and select the plugin

@@ -448,8 +448,10 @@ class PluginUserSettingList(APIView):
 class PluginUserSettingDetail(RetrieveUpdateAPI):
     """Detail endpoint for a plugin-specific user setting."""
 
+    lookup_field = 'key'
     queryset = PluginUserSetting.objects.all()
     serializer_class = PluginSerializers.PluginUserSettingSerializer
+    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
 
     def get_object(self):
         """Lookup the plugin user setting object, based on the URL."""
@@ -468,9 +470,6 @@ class PluginUserSettingDetail(RetrieveUpdateAPI):
         return PluginUserSetting.get_setting_object(
             setting_key, plugin=plugin.plugin_config(), user=self.request.user
         )
-
-    # Staff permission required
-    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
 
 
 class RegistryStatusView(APIView):
