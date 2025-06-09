@@ -7,7 +7,6 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -168,36 +167,28 @@ def check_build_stock(build: build_models.Build):
         return
 
     # Are there any users subscribed to these parts?
-    subscribers = build.part.get_subscribers()
+    targets = build.part.get_subscribers()
 
-    recipients = set()
+    if build.responsible:
+        targets.append(build.responsible)
 
-    for subscriber in subscribers:
-        if email := InvenTree.helpers_email.get_email_for_user(subscriber):
-            recipients.add(email)
+    name = _('Stock required for build order')
 
-    if len(recipients) > 0:
-        logger.info('Notifying users of stock required for build %s', build.pk)
+    context = {
+        'build': build,
+        'name': name,
+        'part': build.part,
+        'lines': lines,
+        'link': InvenTree.helpers_model.construct_absolute_url(
+            build.get_absolute_url()
+        ),
+        'message': _(f'Build order {build} requires additional stock'),
+        'template': {'html': 'email/build_order_required_stock.html', 'subject': name},
+    }
 
-        context = {
-            'link': InvenTree.helpers_model.construct_absolute_url(
-                build.get_absolute_url()
-            ),
-            'build': build,
-            'part': build.part,
-            'lines': lines,
-        }
-
-        # Render the HTML message
-        html_message = render_to_string(
-            'email/build_order_required_stock.html', context
-        )
-
-        subject = _('Stock required for build order')
-
-        InvenTree.helpers_email.send_email(
-            subject, '', list(recipients), html_message=html_message
-        )
+    common.notifications.trigger_notification(
+        build, BuildEvents.STOCK_REQUIRED, targets=targets, context=context
+    )
 
 
 def create_child_builds(build_id: int) -> None:
