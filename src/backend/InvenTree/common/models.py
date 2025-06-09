@@ -2639,7 +2639,7 @@ def issue_mail(
         message.attach_alternative(html_message, 'text/html')
 
     # Add any extra headers
-    if headers:
+    if headers is not None:
         for key, value in headers.items():
             message.extra_headers[key] = value
 
@@ -2650,8 +2650,7 @@ def issue_mail(
     # TODO add `References` field for the thread ID
 
     # Add headers for flags
-    if prio != Priority.NORMAL:
-        message.extra_headers['X-Priority'] = str(prio)
+    message.extra_headers['X-Priority'] = str(prio)
 
     # And now send
     return message.send()
