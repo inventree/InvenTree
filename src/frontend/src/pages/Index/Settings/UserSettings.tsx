@@ -9,7 +9,7 @@ import {
   IconSearch,
   IconUserCircle
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { lazy, useMemo } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 import PageTitle from '../../../components/nav/PageTitle';
@@ -17,9 +17,12 @@ import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
+import { Loadable } from '../../../functions/loading';
 import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';
 import { AccountContent } from './AccountSettings/UserPanel';
+
+const UserPluginSettings = Loadable(lazy(() => import('./UserPluginSettings')));
 
 /**
  * User settings page
@@ -114,7 +117,7 @@ export default function UserSettings() {
         name: 'plugins',
         label: t`Plugin Settings`,
         icon: <IconPlugConnected />,
-        content: <Skeleton />
+        content: <UserPluginSettings />
       }
     ];
   }, []);
