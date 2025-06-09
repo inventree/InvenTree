@@ -5,7 +5,7 @@ title: Basic Plugin Walkthrough
 ## Attachment Carousel
 
 ### Overview
-A walkthrough showing how to build a part panel plugin. 
+A walkthrough showing how to build a part panel plugin.
 
 By the end of the walkthrough, you will have created a plugin that adds a new part panel to display an image carousel from the images attached to the current part.
 
@@ -21,7 +21,7 @@ This is a basic walkthrough and not a guide on how to code in Python or React. I
 * Basic React knowledge
 * Optional:
     * Vite knowledge
-    * [Mantine UI](https://mantine.dev/) knowledge ([Inventree and Mantine UI](https://docs.inventree.org/en/stable/extend/plugins/ui/?h=mantine#mantine))
+    * [Mantine UI](https://mantine.dev/) knowledge ([Inventree and Mantine UI](./mixins/ui.md#mantine))
 
 
 ### Creating the Plugin Environment
@@ -37,7 +37,7 @@ After the plugin wizard has launched, enter the name as `Attachment Carousel` an
 
 At the plugin structure information questions,
 
-* Select `UserInterfaceMixin` 
+* Select `UserInterfaceMixin`
 * `Add User Interface Support`
 * Select `Custom panel items`
 * Select `None` for the `DevOps support`
@@ -51,11 +51,11 @@ After the Plugin Creator has finished you should have a new project that looks l
 
 #### A Brief Overview of the Environment
 
-`attachment_carousel` contains several files, but the main file is `core.py` which is the Python entry point for the plugin. Once created, this folder will also contain the bundled frontend code and any [static file assets](https://docs.inventree.org/en/stable/extend/plugins/#static-files).
+`attachment_carousel` contains several files, but the main file is `core.py` which is the Python entry point for the plugin. Once created, this folder will also contain the bundled frontend code and any [static file assets](./index.md#static-files).
 
 `frontend/src` contains the frontend React TypeScript code,
-* `App.tsx` - The applicaiton component
-* `main.tsx` - The standalone development entry point (this is only required for testing) 
+* `App.tsx` - The application component
+* `main.tsx` - The standalone development entry point (this is only required for testing)
 * `Panel.tsx` - The Inventree panel entry point
 
 ### Testing the Plugin Environment
@@ -103,7 +103,7 @@ createRoot(document.getElementById('root')!).render(
 )
 ```
 
-Edit `App.tsx` to add the relevent carousel code,
+Edit `App.tsx` to add the relevant carousel code,
 
 ``` TypeScript
 import { Carousel } from '@mantine/carousel';
@@ -150,7 +150,7 @@ import '@mantine/carousel/styles.css';
 
 /**
  * Render the AttachmentCarouselPanel component.
- * 
+ *
  * @param target - The target HTML element to render the panel into
  * @param context - The context object to pass to the panel
  */
@@ -169,7 +169,7 @@ Generate the Vite bundle via terminal,
 vite run build --emptyOutDir
 ```
 
-Depending on how you are running Inventree, [install the plugin](https://docs.inventree.org/en/stable/extend/plugins/install/), enable it, and view the resulting panel,
+Depending on how you are running Inventree, [install the plugin](./install.md), enable it, and view the resulting panel,
 
 ![Attachment Carousel Screenshot](../../assets/images/plugin/plugin_attachment_carousel_icon_wrong.png "Attachment Carousel Screenshot")
 
@@ -245,7 +245,7 @@ export default function Test({ context }: { context: any }) {
 }
 ```
 
-Upload some appropriately sized images in the specified file type (see code), re-bundle the plugin, and update it in Inventree. 
+Upload some appropriately sized images in the specified file type (see code), re-bundle the plugin, and update it in Inventree.
 
 You should now see the carousel displaying images from the attachments on the part. Upload images to different parts and see how the carousel changes based on the part you are viewing.
 
@@ -273,7 +273,7 @@ Back to the walkthrough, open `core.py` in the `attachment_carousel` folder and 
 
         # Only display this panel for the 'part' target
         if context.get('target_model') == 'part':
-            
+
 +           part = Part.objects.get(pk=context.get('target_id'))
 +           part_attachments = part.attachments
 +           attachments = part_attachments.filter(Q(attachment__endswith='.jpg') | Q(attachment__endswith='.jpeg'))
@@ -297,11 +297,11 @@ Back to the walkthrough, open `core.py` in the `attachment_carousel` folder and 
 +                       'attachments': attachment_urls,
                     }
                 })
-        
+
         return panels
 ```
 
-Now the backend collects the attachment details and passes them to the frontend, whilst also only displaying the panel if attachments are found. 
+Now the backend collects the attachment details and passes them to the frontend, whilst also only displaying the panel if attachments are found.
 
 Next, modify `App.tsx` to use this new information,
 
@@ -382,7 +382,7 @@ panels.append({
 
 ### Adding Plugin Admin Options
 
-Plugin settings can be added to allow the end user to change certain settings from the admin panel. 
+Plugin settings can be added to allow the end user to change certain settings from the admin panel.
 
 In this walkthrough add settings to allow the user to show/hide the `indicators` (the pill buttons at the bottom of the panel) and enable/disable `loop` functionality (the ability to loop through all the images).
 
@@ -452,7 +452,7 @@ Create a new file called `App.css` and add the following,
 }
 ```
 
-Vite will automatically bundle all the CSS files in the project to `static/assets/sytle.css`, but it will not automatically add a reference to the stylesheet. Add the reference manually to `Panel.tsx`,
+Vite will automatically bundle all the CSS files in the project to `static/assets/style.css`, but it will not automatically add a reference to the stylesheet. Add the reference manually to `Panel.tsx`,
 
 ``` TypeScript
 ...
@@ -471,7 +471,7 @@ export function renderAttachmentCarouselPanel(target: HTMLElement, context: any)
 }
 ```
 
-The reference requires the host and the [plugin-name](https://docs.inventree.org/en/latest/extend/plugins/#static-files). Rather than statically coding these references, the host reference may be retrieved via the context and the plugin-name may be passed via additional context data. In this example it is passed as the `slug`, as by default the slug is the plugin name. Add this additional context data via `core.py`,
+The reference requires the host and the [plugin-name](./index.md##static-files). Rather than statically coding these references, the host reference may be retrieved via the context and the plugin-name may be passed via additional context data. In this example it is passed as the `slug`, as by default the slug is the plugin name. Add this additional context data via `core.py`,
 
 ``` diff
 panels.append({
@@ -492,4 +492,3 @@ panels.append({
 Update the plugin in Inventree and the walkthrough is complete!
 
 ![Attachment Carousel in Inventree panel screenshot](../../assets/images/plugin/plugin_attachment_carousel.png "Attachment Carousel in Inventree panel screenshot")
-
