@@ -62,11 +62,12 @@ function post(path: string, params: any, method = 'post') {
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
-export const doBasicLogin = async (
+export async function doBasicLogin(
   username: string,
   password: string,
-  navigate: NavigateFunction
-) => {
+  navigate: NavigateFunction,
+  code?: string
+) {
   const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
@@ -104,16 +105,9 @@ export const doBasicLogin = async (
         success = true;
       }
     })
-    .catch((err) => {
+    .catch(async (err) => {
       if (err?.response?.status == 401) {
-        setAuthContext(err.response.data?.data);
-        const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
-        );
-        if (mfa_flow && mfa_flow.is_pending == true) {
-          success = true;
-          navigate('/mfa');
-        }
+        await handlePossibleMFAError(err);
       } else if (err?.response?.status == 409) {
         notifications.show({
           title: t`Already logged in`,
@@ -133,7 +127,40 @@ export const doBasicLogin = async (
     clearUserState();
   }
   return success;
-};
+
+  async function handlePossibleMFAError(err: any) {
+    setAuthContext(err.response.data?.data);
+    const mfa_flow = err.response.data.data.flows.find(
+      (flow: any) => flow.id == FlowEnum.MfaAuthenticate
+    );
+    if (mfa_flow?.is_pending) {
+      // MFA is required - we might already have a code
+      if (code && code.length > 0) {
+        const rslt = await handleMfaLogin(
+          navigate,
+          undefined,
+          { code: code },
+          () => {}
+        );
+        if (rslt) {
+          setAuthenticated(true);
+          loginDone = true;
+          success = true;
+          notifications.show({
+            title: t`MFA Login successful`,
+            message: t`MFA details were automatically provided in the browser`,
+            color: 'green'
+          });
+        }
+      }
+      // No code or success - off to the mfa page
+      if (!loginDone) {
+        success = true;
+        navigate('/mfa');
+      }
+    }
+  }
+}
 
 /**
  * Logout the user from the current session
@@ -259,19 +286,25 @@ export function handleReset(
   });
 }
 
-export function handleMfaLogin(
+export async function handleMfaLogin(
   navigate: NavigateFunction,
-  location: Location<any>,
+  location: Location<any> | undefined,
   values: { code: string; remember?: boolean },
   setError: (message: string | undefined) => void
 ) {
   const { setAuthContext } = useServerApiState.getState();
 
-  authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
-    code: values.code
-  })
+  const result = await authApi(
+    apiUrl(ApiEndpoints.auth_login_2fa),
+    undefined,
+    'post',
+    {
+      code: values.code
+    }
+  )
     .then((response) => {
       handleSuccessFullAuth(response, navigate, location, setError);
+      return true;
     })
     .catch((err) => {
       // Already logged in, but with a different session
@@ -304,7 +337,9 @@ export function handleMfaLogin(
         }
         setError(msg);
       }
+      return false;
     });
+  return result;
 }
 
 /**
@@ -380,7 +415,7 @@ function handleSuccessFullAuth(
     observeProfile();
     fetchGlobalStates(navigate);
 
-    if (navigate) {
+    if (navigate && location) {
       followRedirect(navigate, location?.state);
     }
   });
