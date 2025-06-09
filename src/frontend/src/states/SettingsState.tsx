@@ -117,10 +117,12 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
  */
 interface CreatePluginSettingStateProps {
   plugin: string;
+  endpoint: ApiEndpoints;
 }
 
 export const createPluginSettingsState = ({
-  plugin
+  plugin,
+  endpoint
 }: CreatePluginSettingStateProps) => {
   const pathParams: PathParams = { plugin };
 
@@ -128,13 +130,13 @@ export const createPluginSettingsState = ({
     settings: [],
     lookup: {},
     loaded: false,
-    endpoint: ApiEndpoints.plugin_setting_list,
+    endpoint: endpoint,
     pathParams,
     fetchSettings: async () => {
       let success = true;
 
       await api
-        .get(apiUrl(ApiEndpoints.plugin_setting_list, undefined, { plugin }))
+        .get(apiUrl(endpoint, undefined, { plugin }))
         .then((response) => {
           const settings = response.data;
           set({

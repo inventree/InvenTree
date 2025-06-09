@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
@@ -193,11 +194,28 @@ export function PluginSettingList({
   pluginKey
 }: Readonly<{ pluginKey: string }>) {
   const pluginSettingsStore = useRef(
-    createPluginSettingsState({ plugin: pluginKey })
+    createPluginSettingsState({
+      plugin: pluginKey,
+      endpoint: ApiEndpoints.plugin_setting_list
+    })
   ).current;
   const pluginSettings = useStore(pluginSettingsStore);
 
   return <SettingList settingsState={pluginSettings} />;
+}
+
+export function PluginUserSettingList({
+  pluginKey
+}: Readonly<{ pluginKey: string }>) {
+  const pluginUserSettingsState = useRef(
+    createPluginSettingsState({
+      plugin: pluginKey,
+      endpoint: ApiEndpoints.plugin_user_setting_list
+    })
+  ).current;
+  const pluginUserSettings = useStore(pluginUserSettingsState);
+
+  return <SettingList settingsState={pluginUserSettings} />;
 }
 
 export function MachineSettingList({
