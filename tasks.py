@@ -536,6 +536,14 @@ def setup_dev(c, tests=False):
 
 
 # Setup / maintenance tasks
+
+
+@task
+def shell(c):
+    """Launch a Django shell."""
+    manage(c, 'shell', pty=True)
+
+
 @task
 def superuser(c):
     """Create a superuser/admin account for the database."""
@@ -1831,6 +1839,7 @@ development = Collection(
     server,
     setup_dev,
     setup_test,
+    shell,
     test,
     test_translations,
     translate,

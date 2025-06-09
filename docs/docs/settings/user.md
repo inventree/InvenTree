@@ -25,7 +25,6 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("PART_SHOW_QUANTITY_IN_FORMS") }}
 {{ usersetting("DISPLAY_SCHEDULE_TAB") }}
 {{ usersetting("DISPLAY_STOCKTAKE_TAB") }}
-{{ usersetting("TABLE_STRING_MAX_LENGTH") }}
 {{ usersetting("ENABLE_LAST_BREADCRUMB") }}
 
 ### Search Settings
