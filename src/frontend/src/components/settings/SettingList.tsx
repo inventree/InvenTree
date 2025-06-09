@@ -31,15 +31,24 @@ import { SettingItem } from './SettingItem';
 export function SettingList({
   settingsState,
   keys,
-  onChange
+  onChange,
+  onLoaded
 }: Readonly<{
   settingsState: SettingsStateProps;
   keys?: string[];
   onChange?: () => void;
+  onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
   useEffect(() => {
     settingsState.fetchSettings();
-  }, []);
+  }, [keys]);
+
+  useEffect(() => {
+    if (settingsState.loaded) {
+      // Call the onLoaded callback if provided
+      onLoaded?.(settingsState);
+    }
+  }, [settingsState.loaded, settingsState.settings]);
 
   const api = useApi();
 
@@ -205,8 +214,12 @@ export function PluginSettingList({
 }
 
 export function PluginUserSettingList({
-  pluginKey
-}: Readonly<{ pluginKey: string }>) {
+  pluginKey,
+  onLoaded
+}: Readonly<{
+  pluginKey: string;
+  onLoaded?: (settings: SettingsStateProps) => void;
+}>) {
   const pluginUserSettingsState = useRef(
     createPluginSettingsState({
       plugin: pluginKey,
@@ -215,7 +228,7 @@ export function PluginUserSettingList({
   ).current;
   const pluginUserSettings = useStore(pluginUserSettingsState);
 
-  return <SettingList settingsState={pluginUserSettings} />;
+  return <SettingList settingsState={pluginUserSettings} onLoaded={onLoaded} />;
 }
 
 export function MachineSettingList({
