@@ -9,10 +9,10 @@ from plugin.helpers import MixinNotImplementedError
 class MailMixin:
     """Mixin that provides support for processing mails before/after going to the sending/receiving commands.
 
-    Implementing classes must provide a "process_mail" function:
+    Implementing classes must provide a "process_mail_out" function:
     """
 
-    def process_mail(self, mail: EmailMessage, *args, **kwargs) -> None:
+    def process_mail_out(self, mail: EmailMessage, *args, **kwargs) -> None:
         """Function to handle a mail.
 
         Must be overridden by plugin

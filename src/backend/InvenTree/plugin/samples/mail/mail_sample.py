@@ -17,7 +17,7 @@ class MailPluginSample(MailMixin, InvenTreePlugin):
     SLUG = 'samplemail'
     TITLE = 'Sample Mail Plugin'
 
-    def process_mail(self, mail, *args, **kwargs):
+    def process_mail_out(self, mail, *args, **kwargs):
         """Custom mail processing."""
         print(f"Processing mail: '{mail}'")
         print('args:', str(args))

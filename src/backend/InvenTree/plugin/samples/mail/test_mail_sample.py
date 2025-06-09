@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from common.models import InvenTreeSetting
 from plugin import InvenTreePlugin, registry
-from plugin.base.mail.mail import process_mail
+from plugin.base.mail.mail import process_mail_out
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import MailMixin
 
@@ -20,13 +20,13 @@ class MailPluginSampleTests(TestCase):
         config.save()
 
         # Disabled -> no processing
-        self.assertFalse(process_mail('test.event'))
+        self.assertFalse(process_mail_out('test.event'))
 
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_MAILS', True, change_user=None)
 
         # Check that an event is issued
         with self.assertLogs(logger='inventree', level='DEBUG') as cm:
-            process_mail('test.event')
+            process_mail_out('test.event')
         self.assertIn('Mail `test.event` triggered in sample plugin', str(cm[1]))
 
     def test_mixin(self):
@@ -37,4 +37,4 @@ class MailPluginSampleTests(TestCase):
                 pass
 
             plugin = Wrong()
-            plugin.process_mail('abc')
+            plugin.process_mail_out('abc')

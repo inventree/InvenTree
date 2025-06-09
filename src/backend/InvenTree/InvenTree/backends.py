@@ -116,10 +116,10 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         Args:
             email_messages (list): List of EmailMessage objects to send.
         """
-        from plugin.base.mail.mail import process_mail
+        from plugin.base.mail.mail import process_mail_out
 
         # Issue mails to plugins
-        process_mail(email_messages)
+        process_mail_out(email_messages)
 
         # Process
         msg_ids: list[common.models.EmailMessage] = []

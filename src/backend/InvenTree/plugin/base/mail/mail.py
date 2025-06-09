@@ -10,7 +10,7 @@ from plugin.plugin import PluginMixinEnum
 from plugin.registry import registry
 
 
-def process_mail(
+def process_mail_out(
     email_messages: list[Union[EmailMessage, EmailMultiAlternatives]],
 ) -> bool:
     """Process email messages with plugins.
@@ -32,7 +32,7 @@ def process_mail(
     for plugin in registry.with_mixin(PluginMixinEnum.MAIL):
         for message in email_messages:
             try:
-                plugin.process_mail(message)
+                plugin.process_mail_out(message)
             except Exception:  # pragma: no cover
                 logger.exception(
                     'Exception during mail processing for plugin %s', plugin.slug
