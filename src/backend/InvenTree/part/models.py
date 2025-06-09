@@ -657,7 +657,7 @@ class Part(
                 if raise_error:
                     raise ValidationError({'name': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_name')
+                log_error('validate_part_name', plugin=plugin.slug)
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -678,7 +678,7 @@ class Part(
                 if raise_error:
                     raise ValidationError({'IPN': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_ipn')
+                log_error('validate_part_ipn', plugin=plugin.slug)
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -767,11 +767,11 @@ class Part(
         # First, throw the serial number against each of the loaded validation plugins
         from plugin import PluginMixinEnum, registry
 
-        try:
-            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-                # Run the serial number through each custom validator
-                # If the plugin returns 'True' we will skip any subsequent validation
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            # Run the serial number through each custom validator
+            # If the plugin returns 'True' we will skip any subsequent validation
 
+            try:
                 result = False
 
                 if hasattr(plugin, 'validate_serial_number'):
@@ -788,14 +788,14 @@ class Part(
 
                 if result is True:
                     return True
-        except ValidationError as exc:
-            if raise_error:
-                # Re-throw the error
-                raise exc
-            else:
-                return False
-        except Exception:
-            log_error('part.validate_serial_number')
+            except ValidationError as exc:
+                if raise_error:
+                    # Re-throw the error
+                    raise exc
+                else:
+                    return False
+            except Exception:
+                log_error('validate_serial_number', plugin=plugin.slug)
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -896,7 +896,7 @@ class Part(
                     if result is not None:
                         return str(result)
                 except Exception:
-                    log_error(f'{plugin.slug}.get_latest_serial_number')
+                    log_error('get_latest_serial_number', plugin=plugin.slug)
 
         # No plugin returned a result, so we will run the default query
         stock = (
@@ -3991,7 +3991,7 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
                 # Re-throw the ValidationError against the 'data' field
                 raise ValidationError({'data': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_parameter')
+                log_error('validate_part_parameter', plugin=plugin.slug)
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.

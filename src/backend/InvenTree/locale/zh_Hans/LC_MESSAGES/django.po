@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-09 19:12+0000\n"
-"PO-Revision-Date: 2025-05-14 11:50\n"
+"PO-Revision-Date: 2025-06-02 01:32\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -27,7 +27,7 @@ msgstr "未找到 API 端点"
 
 #: InvenTree/api.py:432
 msgid "List of items or filters must be provided for bulk operation"
-msgstr ""
+msgstr "批量操作必须提供物品或过滤器列表"
 
 #: InvenTree/api.py:439
 msgid "Items must be provided as a list"
@@ -47,7 +47,7 @@ msgstr "提供了无效的过滤器"
 
 #: InvenTree/api.py:465
 msgid "All filter must only be used with true"
-msgstr ""
+msgstr "所有过滤器只能使用true"
 
 #: InvenTree/api.py:470
 msgid "No items match the provided criteria"
@@ -592,23 +592,23 @@ msgstr "负责人"
 
 #: build/api.py:202
 msgid "Created before"
-msgstr ""
+msgstr "创建于"
 
 #: build/api.py:206
 msgid "Created after"
-msgstr ""
+msgstr "在此之后创建"
 
 #: build/api.py:210
 msgid "Has start date"
-msgstr ""
+msgstr "有开始日期"
 
 #: build/api.py:218
 msgid "Start date before"
-msgstr ""
+msgstr "开始日期之前"
 
 #: build/api.py:222
 msgid "Start date after"
-msgstr ""
+msgstr "开始日期晚于"
 
 #: build/api.py:226
 msgid "Has target date"

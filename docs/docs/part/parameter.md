@@ -7,13 +7,11 @@ title: Part Parameters
 A part *parameter* describes a particular "attribute" or "property" of a specific part.
 
 Part parameters are located in the "Parameters" tab, on each part detail page.
-There is no limit for the number of part parameters and they are fully customizable through the use of [parameters templates](#parameter-templates).
+There is no limit for the number of part parameters and they are fully customizable through the use of [parameter templates](#parameter-templates).
 
 Here is an example of parameters for a capacitor:
 
-{% with id="part_parameters_example", url="part/part_parameters_example.png", description="Part Parameters Example List" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_parameters_example.png", "Part Parameters Example") }}
 
 ## Parameter Templates
 
@@ -42,9 +40,7 @@ To create a template:
 
 An existing template can be edited by clicking on the "Edit" button associated with that template:
 
-{% with id="part_parameter_template", url="part/parameter_template_edit.png", description="Edit Parameter Template" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/parameter_template_edit.png", "Edit Parameter Template") }}
 
 ### Create Parameter
 
@@ -52,9 +48,7 @@ After [creating a template](#create-template) or using the existing templates, y
 
 To add a parameter, navigate to a specific part detail page, click on the "Parameters" tab then click on the "New Parameters" button, the `Create Part Parameter` form will be displayed:
 
-{% with id="create_part_parameter", url="part/create_part_parameter.png", description="Create Part Parameter Form" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/create_part_parameter.png", "Create Part Parameter Form") }}
 
 Select the parameter `Template` you would like to use for this parameter, fill-out the `Data` field (value of this specific parameter) and click the "Submit" button.
 
@@ -64,17 +58,61 @@ Parametric tables gather all parameters from all parts inside a particular [part
 
 To access a category's parametric table, click on the "Parameters" tab within the category view:
 
-{% with id="parametric_table_tab", url="part/parametric_table_tab.png", description="Parametric Table Tab" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/parametric_table_tab.png", "Parametric Table Tab") }}
 
 ### Sorting by Parameter Value
 
 The parametric parts table allows the returned parts to be sorted by particular parameter values. Click on the header of a particular parameter column to sort results by that parameter:
 
-{% with id="sort_by_param", url="part/part_sort_by_param.png", description="Sort by Parameter" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_sort_by_param.png", "Sort by Parameter") }}
+
+### Filtering by Parameter Value
+
+The parametric parts table allows the returned parts to be filtered by particular parameter values. Click on the {{ icon("filter") }} button associated with the particular parameter, and enter the value you wish to filter against:
+
+{{ image("part/filter_by_param.png", "Filter by Parameter") }}
+
+The available filter options depend on the type of parameter being filtered. For example, a parameter with a limited set of choices will allow you to filter by those choices, while a numeric parameter will allow you to filter against a specific value and operator (e.g. greater than, less than, etc.).
+
+#### Filtering by Multiple Parameters
+
+Multiple parameters can be used to filter the parametric table. Simply add a new filter for each parameter you wish to filter against. The results will be filtered to include only parts which match *all* of the specified filters.
+
+Each parameter column indicates whether a filter is currently applied:
+
+{{ image("part/multiple_param_filters.png", "Multiple Parameter Filters") }}
+
+#### Multiple Filters Against the Same Parameter
+
+It is possible to apply multiple filters against the same parameter. For example, you can filter for parts with a *Resistance* parameter greater than 10kΩ and less than 100kΩ by adding two filters for the *Resistance* parameter:
+
+{{ image("part/multiple_filters_same_param.png", "Multiple Filters on Same Parameter") }}
+
+#### Unit-Aware Filtering
+
+When filtering against a parameter which has a unit defined, you can specify the value in any compatible unit. The system will automatically convert the value to the base unit defined for that parameter template.
+
+For example, to show all parts with a *Resistance* parameter of greater than 10kΩ, you can enter `10k` or `10000` in the filter field, and the system will correctly interpret this as 10,000 ohms.
+
+{{ image("part/filter_with_unit.png", "Unit Aware Filters") }}
+
+#### Removing Filters
+
+To remove a filter against a given parameter, click on the {{ icon("circle-x", color='red') }} button associated with that filter:
+
+{{ image("part/remove_param_filter.png", "Remove Parameter Filter") }}
+
+#### Available Filter Operators
+
+The following filter operators are available for parameter filtering:
+
+- `=`: Equal to
+- `>`: Greater than
+- `>=`: Greater than or equal to
+- `<`: Less than
+- `<=`: Less than or equal to
+- `!=`: Not equal to
+- `~`: Contains (for text parameters)
 
 ## Parameter Units
 
@@ -89,23 +127,15 @@ The in-built conversion functionality means that parameter values can be input i
 
 If a part parameter is created with a value which is incompatible with the units specified for the template, it will be rejected:
 
-{% with id="invalid_units", url="part/part_invalid_units.png", description="Invalid Parameter Units" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_invalid_units.png", "Invalid Parameter Units") }}
 
-This behaviour can be disabled if required, so that any parameter value is accepted:
+This behaviour can be disabled if required, so that any parameter value is accepted.
 
-{% with id="enforce_units", url="part/part_parameters_enforce.png", description="Enforce part parameters" %}
-{% include 'img.html' %}
-{% endwith %}
-
-### Parameter Sorting
+### Parameter Unit Sorting
 
 Parameter sorting takes unit conversion into account, meaning that values provided in different (but compatible) units are sorted correctly:
 
-{% with id="sort_by_param_units", url="part/part_sorting_units.png", description="Sort by Parameter Units" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_sorting_units.png", "Sort by Parameter Units") }}
 
 ### Selection Lists
 

@@ -451,6 +451,15 @@ class SettingsTest(InvenTreeTestCase):
                         f'Non-boolean default value specified for {key}'
                     )  # pragma: no cover
 
+    @override_settings(
+        GLOBAL_SETTINGS_OVERRIDES={'INVENTREE_INSTANCE': 'Overridden Instance Name'}
+    )
+    def test_override(self):
+        """Test override of global settings."""
+        self.assertEqual(
+            get_global_setting('INVENTREE_INSTANCE'), 'Overridden Instance Name'
+        )
+
     def test_global_setting_caching(self):
         """Test caching operations for the global settings class."""
         key = 'PART_NAME_FORMAT'

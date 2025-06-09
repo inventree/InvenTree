@@ -42,7 +42,7 @@ def print_label(plugin_slug: str, **kwargs):
 
         if user:
             # Log an error message to the database
-            log_error('plugin.print_label')
+            log_error('print_label', plugin=plugin.slug)
             logger.exception(
                 "Label printing failed: Sending notification to user '%s'", user
             )  # pragma: no cover

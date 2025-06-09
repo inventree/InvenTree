@@ -403,9 +403,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             try:
                 plugin.add_report_context(self, instance, request, context)
             except Exception:
-                InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.add_report_context'
-                )
+                InvenTree.exceptions.log_error('add_report_context', plugin=plugin.slug)
 
         return context
 
@@ -495,7 +493,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         plugin.report_callback(self, instance, report, request)
                     except Exception:
                         InvenTree.exceptions.log_error(
-                            f'plugins.{plugin.slug}.report_callback'
+                            'report_callback', plugin=plugin.slug
                         )
 
                 # Update the progress of the report generation
@@ -617,9 +615,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             try:
                 plugin.add_label_context(self, instance, request, context)
             except Exception:
-                InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.add_label_context'
-                )
+                InvenTree.exceptions.log_error('add_label_context', plugin=plugin.slug)
 
         return context
 
@@ -684,7 +680,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             raise e
         except Exception as e:
             output.delete()
-            InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
+            InvenTree.exceptions.log_error('print_labels', plugin=plugin.slug)
             raise ValidationError([_('Error printing labels'), str(e)])
 
         output.refresh_from_db()
