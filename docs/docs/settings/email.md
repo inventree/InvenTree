@@ -38,6 +38,4 @@ Most popular providers are supported:
 
 Superusers can view the email log in the [Admin Center](./admin.md#admin-center). This is useful for debugging and tracking email delivery / receipt.
 
-{% with id="email_settings", url="admin/email_settings.png", description="Email Control Pane" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/email_settings.png", "Email Control Pane") }}
