@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -31,7 +32,7 @@ from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.base.ui.api import ui_plugins_api_urls
-from plugin.models import PluginConfig, PluginSetting
+from plugin.models import PluginConfig, PluginSetting, PluginUserSetting
 from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
 
@@ -381,10 +382,7 @@ class PluginAllSettingList(APIView):
 
 
 class PluginSettingDetail(RetrieveUpdateAPI):
-    """Detail endpoint for a plugin-specific setting.
-
-    Note that these cannot be created or deleted via the API
-    """
+    """Detail endpoint for a plugin-specific setting."""
 
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
@@ -409,6 +407,66 @@ class PluginSettingDetail(RetrieveUpdateAPI):
 
         return PluginSetting.get_setting_object(
             setting_key, plugin=plugin.plugin_config()
+        )
+
+    # Staff permission required
+    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
+
+
+class PluginUserSettingList(APIView):
+    """List endpoint for all user settings for a specific plugin.
+
+    - GET: return all user settings for a plugin config
+    """
+
+    # Allow any logged in user to read this endpoint
+    # Note that the returned settings are user-specific
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        responses={200: PluginSerializers.PluginUserSettingSerializer(many=True)}
+    )
+    def get(self, request, plugin):
+        """Get all user settings for a plugin config."""
+        # look up the plugin
+        plugin = check_plugin(plugin, None)
+
+        settings = getattr(plugin, 'user_settings', {})
+
+        settings_dict = PluginUserSetting.all_settings(
+            settings_definition=settings,
+            plugin=plugin.plugin_config(),
+            user=request.user,
+        )
+
+        results = PluginSerializers.PluginUserSettingSerializer(
+            list(settings_dict.values()), many=True
+        ).data
+        return Response(results)
+
+
+class PluginUserSettingDetail(RetrieveUpdateAPI):
+    """Detail endpoint for a plugin-specific user setting."""
+
+    queryset = PluginUserSetting.objects.all()
+    serializer_class = PluginSerializers.PluginUserSettingSerializer
+
+    def get_object(self):
+        """Lookup the plugin user setting object, based on the URL."""
+        setting_key = self.kwargs['key']
+
+        # Look up plugin
+        plugin = check_plugin(self.kwargs.get('plugin', None), None)
+
+        settings = getattr(plugin, 'user_settings', {})
+
+        if setting_key not in settings:
+            raise NotFound(
+                detail=f"Plugin '{plugin.slug}' has no user setting matching '{setting_key}'"
+            )
+
+        return PluginUserSetting.get_setting_object(
+            setting_key, plugin=plugin.plugin_config(), user=self.request.user
         )
 
     # Staff permission required
@@ -484,6 +542,21 @@ plugin_api_urls = [
             path(
                 '<str:plugin>/',
                 include([
+                    path(
+                        'user-settings/',
+                        include([
+                            re_path(
+                                r'^(?P<key>\w+)/',
+                                PluginUserSettingDetail.as_view(),
+                                name='api-plugin-user-setting-detail',
+                            ),
+                            path(
+                                '',
+                                PluginUserSettingList.as_view(),
+                                name='api-plugin-user-setting-list',
+                            ),
+                        ]),
+                    ),
                     path(
                         'settings/',
                         include([
