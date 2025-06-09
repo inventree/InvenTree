@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 346
+INVENTREE_API_VERSION = 347
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v347 -> 2026-06-09 : https://github.com/inventree/InvenTree/pull/9735
+    - Adds PluginUserSetting model (and associated endpoints)
+    - Remove NotificationSetting model (and associated endpoints)
 
 v346 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9718
     - Adds "read_only" field to the GlobalSettings API endpoint(s)
