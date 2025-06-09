@@ -326,6 +326,10 @@ def annotate_sub_categories():
     )
 
 
+"""A list of valid operators for filtering part parameters."""
+PARAMETER_FILTER_OPERATORS: list[str] = ['gt', 'gte', 'lt', 'lte', 'ne', 'icontains']
+
+
 def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     """Filter the given queryset by a given template parameter.
 
@@ -340,6 +344,9 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     Returns:
         A queryset of Part objects filtered by the given parameter
     """
+    if func and func not in PARAMETER_FILTER_OPERATORS:
+        raise ValueError(f'Invalid parameter filter function supplied: {func}.')
+
     try:
         template = part.models.PartParameterTemplate.objects.get(pk=template_id)
     except (ValueError, part.models.PartParameterTemplate.DoesNotExist):
@@ -372,27 +379,49 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
             # The value cannot be converted - return an empty queryset
             return queryset.none()
 
+    # Special handling for the "not equal" operator
+    if func == 'ne':
+        invert = True
+        func = ''
+    else:
+        invert = False
+
+    # Some filters are only applicable to string values
+    text_only = any([func in ['icontains'], value_numeric is None])
+
+    # Ensure the function starts with a double underscore
+    if func and not func.startswith('__'):
+        func = f'__{func}'
+
     # Query for 'numeric' value - this has priority over 'string' value
-    q1 = Q(**{
+    data_numeric = {
         'parameters__template': template,
         'parameters__data_numeric__isnull': False,
         f'parameters__data_numeric{func}': value_numeric,
-    })
+    }
+
+    query_numeric = Q(**data_numeric)
 
     # Query for 'string' value
-    q2 = Q(**{
+    data_text = {
         'parameters__template': template,
-        'parameters__data_numeric__isnull': True,
         f'parameters__data{func}': str(value),
-    })
+    }
 
-    if value_numeric is not None:
-        queryset = queryset.filter(q1 | q2).distinct()
+    if not text_only:
+        data_text['parameters__data_numeric__isnull'] = True
+
+    query_text = Q(**data_text)
+
+    # Combine the queries based on whether we are filtering by text or numeric value
+    q = query_text if text_only else query_text | query_numeric
+
+    # Special handling for the '__ne' (not equal) operator
+    # In this case, we want the *opposite* of the above queries
+    if invert:
+        return queryset.exclude(q).distinct()
     else:
-        # If the value is not numeric, we only filter by the string value
-        queryset = queryset.filter(q2).distinct()
-
-    return queryset
+        return queryset.filter(q).distinct()
 
 
 def order_by_parameter(queryset, template_id: int, ascending=True):

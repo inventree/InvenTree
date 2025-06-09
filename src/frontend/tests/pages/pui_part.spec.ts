@@ -199,7 +199,9 @@ test('Parts - Allocations', async ({ browser }) => {
   // Expand allocations against BO0001
   await build_order_cell.click();
   await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
-  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Factory/Office Block/Room 101', exact: true })
+    .waitFor();
   await build_order_cell.click();
 
   // Check row options for BO0001

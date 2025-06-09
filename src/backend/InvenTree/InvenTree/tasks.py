@@ -641,7 +641,12 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
         logger.info('There are %s pending migrations', n)
-        set_global_setting('_PENDING_MIGRATIONS', n, None)
+
+        try:
+            set_global_setting('_PENDING_MIGRATIONS', n, None)
+        except Exception:
+            # If the setting cannot be set, we just log a warning
+            logger.error('Could not clear _PENDING_MIGRATIONS flag')
 
     logger.info('Checking for pending database migrations')
 
