@@ -431,10 +431,10 @@ class PluginUserSettingList(APIView):
         # look up the plugin
         plugin = check_plugin(plugin, None)
 
-        settings = getattr(plugin, 'user_settings', {})
+        user_settings = getattr(plugin, 'user_settings', {})
 
         settings_dict = PluginUserSetting.all_settings(
-            settings_definition=settings,
+            settings_definition=user_settings,
             plugin=plugin.plugin_config(),
             user=request.user,
         )

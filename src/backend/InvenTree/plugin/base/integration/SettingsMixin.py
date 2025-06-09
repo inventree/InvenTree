@@ -67,7 +67,7 @@ class SettingsMixin:
     @property
     def has_settings(self):
         """Does this plugin use custom global settings."""
-        return bool(self.settings)
+        return bool(self.settings) or bool(self.user_settings)
 
     def get_setting(self, key: str, cache: bool = False, backup_value=None):
         """Return the 'value' of the setting associated with this plugin.

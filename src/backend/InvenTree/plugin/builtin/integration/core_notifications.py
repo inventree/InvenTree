@@ -50,7 +50,7 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
         NotificationMessage.objects.bulk_create(entries)
 
 
-class InvenTreeEmailNotifications(NotificationMixin, InvenTreePlugin):
+class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlugin):
     """Plugin mixin class for supporting email notification methods."""
 
     NAME = 'InvenTreeEmailNotifications'
@@ -59,6 +59,15 @@ class InvenTreeEmailNotifications(NotificationMixin, InvenTreePlugin):
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated email notification methods')
     VERSION = '1.0.0'
+
+    USER_SETTINGS = {
+        'NOTIFY_BY_EMAIL': {
+            'name': _('Allow email notifications'),
+            'description': _('Allow email notifications to be sent to this user'),
+            'default': True,
+            'validator': bool,
+        }
+    }
 
     def send_notification(
         self, target: Model, category: str, users: list[User], context: dict
