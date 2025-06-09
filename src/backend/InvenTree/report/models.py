@@ -531,7 +531,6 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     raise ValidationError(f'Template file {t_name} does not exist')
 
                 outputs.append(report)
-
                 self.handle_attachment(
                     instance, report, report_name, request, debug_mode
                 )
