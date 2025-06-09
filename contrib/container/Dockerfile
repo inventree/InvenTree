@@ -37,6 +37,7 @@ ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 # InvenTree configuration files
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
+ENV INVENTREE_OIDC_PRIVATE_KEY_FILE="${INVENTREE_DATA_DIR}/oidc.pem"
 ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DATA_DIR}/plugins.txt"
 
 # Worker configuration (can be altered by user)
@@ -108,7 +109,7 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
 FROM prebuild AS frontend
 
 RUN apk add --no-cache --update nodejs npm yarn bash
-RUN npm install -g --ignore-scripts n
+RUN npm install -g --ignore-scripts n@10.1.0
 RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
@@ -152,7 +153,7 @@ RUN pip install --require-hashes -r base_requirements.txt --no-cache
 # Install nodejs / npm / yarn
 
 RUN apk add --no-cache --update nodejs npm yarn bash
-RUN npm install -g --ignore-scripts n
+RUN npm install -g --ignore-scripts n@10.1.0
 RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
 

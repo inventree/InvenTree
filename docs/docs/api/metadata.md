@@ -4,7 +4,7 @@ title: Model Metadata
 
 ## Model Metadata
 
-The API is *self describing* in that it provides metadata about the various fields available at any given endpoint. External applications (such as the [python interface](../api/python/python.md)) can introspect the API to determine information about the model fields.
+The API is *self describing* in that it provides metadata about the various fields available at any given endpoint. External applications (such as the [python interface](../api/python/index.md)) can introspect the API to determine information about the model fields.
 
 !!! tip "API Forms"
     The various forms implemented in the InvenTree web interface make heavy use of this metadata feature
@@ -13,11 +13,9 @@ The API is *self describing* in that it provides metadata about the various fiel
 
 To request metadata about a particular API endpoint, simply perform an `OPTIONS` method request against the API URL.
 
-For example, to view the metadata available for creating a new [Part Category](../part/part.md#part-category), an `OPTIONS` request to `/api/part/category/` yields:
+For example, to view the metadata available for creating a new [Part Category](../part/index.md#part-category), an `OPTIONS` request to `/api/part/category/` yields:
 
-{% with id="api_cat_options", url="api/api_category_options.png", description="Part category options" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_category_options.png", "Part category options") }}
 
 You can see here a detailed list of the various fields which are available for this API endpoint.
 
@@ -33,9 +31,7 @@ The `OPTIONS` endpoint provides the following information:
 
 Specific details are provided on the available attributes of each field:
 
-{% with id="api_fields", url="api/api_metadata_fields.png", description="Metadata fields" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_metadata_fields.png", "Metadata fields") }}
 
 ### Field Types
 
@@ -82,10 +78,5 @@ Field *label* and *help text* values are localized using the [community contribu
 
 For example, the same forms (in the web interface) are served via identical API requests, with the locale information determined "on the fly":
 
-{% with id="api_english", url="api/api_english.png", description="API forms (english)" %}
-{% include 'img.html' %}
-{% endwith %}
-
-{% with id="api_german", url="api/api_german.png", description="API forms (german)" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_english.png", "API forms (english)") }}
+{{ image("api/api_german.png", "API forms (german)") }}

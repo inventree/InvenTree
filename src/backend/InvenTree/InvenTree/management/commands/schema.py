@@ -1,4 +1,4 @@
-"""Check if there are any pending database migrations, and run them."""
+"""Extended schema generator."""
 
 from pathlib import Path
 from typing import TypeVar
@@ -108,3 +108,5 @@ class Command(spectacular.Command):
         settings.SPECTACULAR_SETTINGS['APPEND_COMPONENTS'] = components
 
         super().handle(*args, **kwargs)
+
+        return 'done'

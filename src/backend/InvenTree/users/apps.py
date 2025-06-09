@@ -30,7 +30,9 @@ class UsersConfig(AppConfig):
 
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             try:
-                self.assign_permissions()
+                from users.tasks import rebuild_all_permissions
+
+                rebuild_all_permissions()
             except (OperationalError, ProgrammingError):
                 pass
 
@@ -38,24 +40,6 @@ class UsersConfig(AppConfig):
                 self.update_owners()
             except (OperationalError, ProgrammingError):
                 pass
-
-    def assign_permissions(self):
-        """Update role permissions for existing groups."""
-        from django.contrib.auth.models import Group
-
-        from users.models import RuleSet, update_group_roles
-
-        # First, delete any rule_set objects which have become outdated!
-        for rule in RuleSet.objects.all():
-            if (
-                rule.name not in RuleSet.RULESET_NAMES
-            ):  # pragma: no cover  # can not change ORM without the app being loaded
-                logger.info('Deleting outdated ruleset: %s', rule.name)
-                rule.delete()
-
-        # Update group permission assignments for all groups
-        for group in Group.objects.all():
-            update_group_roles(group)
 
     def update_owners(self):
         """Create an 'owner' object for each user and group instance."""

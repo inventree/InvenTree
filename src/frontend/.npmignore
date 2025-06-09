@@ -1,0 +1,14 @@
+# Testing code
+playwright.config.ts
+playwright/
+tests/
+test-results/
+
+# Source files (not part of public API)
+src/
+
+# Build output
+node_modules/
+
+# Other files
+.gitignore

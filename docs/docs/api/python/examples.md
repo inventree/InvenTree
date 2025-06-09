@@ -67,7 +67,7 @@ print("Minimum stock:", part.minimum_stock)
 
 ### Adding Parameters
 
-Each [part](../../part/part.md) can have multiple [parameters](../../part/parameter.md). For the example of the sofa (above) *length* and *weight* make sense. Each parameter has a parameter template that combines the parameter name with a unit. So we first have to create the parameter templates and afterwards add the parameter values to the sofa.
+Each [part](../../part/index.md) can have multiple [parameters](../../part/parameter.md). For the example of the sofa (above) *length* and *weight* make sense. Each parameter has a parameter template that combines the parameter name with a unit. So we first have to create the parameter templates and afterwards add the parameter values to the sofa.
 
 ```python
 from inventree.part import Parameter
@@ -190,7 +190,7 @@ item.transferStock(loc, quantity=50)
 
 ### Delete a Part
 
-To delete a [Part instance](../../part/part.md), first in needs to be marked as *inactive* (otherwise it will throw an error):
+To delete a [Part instance](../../part/index.md), first in needs to be marked as *inactive* (otherwise it will throw an error):
 
 ```python
 from inventree.part import Part

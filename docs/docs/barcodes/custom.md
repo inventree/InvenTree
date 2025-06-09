@@ -6,7 +6,7 @@ title: Custom Barcodes
 
 With the provision of [internal](./internal.md) and [external](./external.md) barcode support, a lot of potential use-cases are already supported directly by InvenTree.
 
-However, if further customization is required, or a bespoke barcode workflow which is not supported already, then this can easily be implemented using the [plugin system](../extend/plugins/barcode.md).
+However, if further customization is required, or a bespoke barcode workflow which is not supported already, then this can easily be implemented using the [plugin system](../plugins/mixins/barcode.md).
 
 A custom barcode plugin can be used to (for example) perform a particular action when a barcode is scanned.
 
@@ -22,7 +22,7 @@ The barcode is tested as follows, in decreasing order of priority:
 
 - [Internal Barcode Plugin](./internal.md)
 - [External Barcode Plugin](./external.md)
-- [Custom Barcode Plugins](../extend/plugins/barcode.md)
+- [Custom Barcode Plugins](../plugins/mixins/barcode.md)
 
 !!! tip "Plugin Loading Order"
     The first custom plugin to return a result "wins". As the loading order of custom plugins is not defined (or configurable), take special care if you are running multiple plugins which support barcode actions.

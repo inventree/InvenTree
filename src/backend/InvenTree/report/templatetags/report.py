@@ -5,7 +5,7 @@ import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from django import template
 from django.apps.registry import apps
@@ -451,7 +451,7 @@ def render_html_text(text: str, **kwargs):
 
 @register.simple_tag
 def format_number(
-    number,
+    number: Union[int, float, Decimal],
     decimal_places: Optional[int] = None,
     integer: bool = False,
     leading: int = 0,
@@ -460,6 +460,7 @@ def format_number(
     """Render a number with optional formatting options.
 
     Arguments:
+        number: The number to be formatted
         decimal_places: Number of decimal places to render
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)

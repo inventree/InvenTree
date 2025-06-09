@@ -1,3 +1,4 @@
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { useInvenTreeContext } from './PluginContext';
 import RemoteComponent from './RemoteComponent';
 
@@ -21,13 +22,13 @@ export default function PluginSettingsPanel({
 }: Readonly<{
   pluginAdmin: PluginAdminInterface;
 }>) {
-  const pluginContext = useInvenTreeContext();
+  const ctx: InvenTreePluginContext = useInvenTreeContext();
 
   return (
     <RemoteComponent
       source={pluginAdmin.source}
       defaultFunctionName='renderPluginSettings'
-      context={{ ...pluginContext, context: pluginAdmin.context }}
+      context={{ ...ctx, context: pluginAdmin.context }}
     />
   );
 }

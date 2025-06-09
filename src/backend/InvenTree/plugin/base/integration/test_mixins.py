@@ -205,7 +205,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             NAME = 'Sample API Caller'
 
             SETTINGS = {
-                'API_TOKEN': {'name': 'API Token', 'protected': True},
+                'API_TOKEN': {
+                    'name': 'API Token',
+                    'protected': True,
+                    'default': 'reqres-free-v1',
+                },
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
@@ -215,6 +219,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
+            API_TOKEN = 'x-api-key'
 
             @property
             def api_url(self):
@@ -285,6 +290,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
 
+        # Set API TOKEN
+        self.mixin.set_setting('API_TOKEN', 'reqres-free-v1')
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
@@ -295,6 +302,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertTrue(result)
+        self.assertNotIn('error', result)
         self.assertEqual(result['name'], 'morpheus')
 
         # api_call with endpoint with leading slash

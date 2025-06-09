@@ -1,7 +1,7 @@
 """Provides a JSON API for the Company app."""
 
 from django.db.models import Q
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
@@ -306,7 +306,7 @@ class SupplierPartFilter(rest_filters.FilterSet):
         label=_('Company'), queryset=Company.objects.all(), method='filter_company'
     )
 
-    def filter_company(self, queryset, name, value):
+    def filter_company(self, queryset, name, value: int):
         """Filter the queryset by either manufacturer or supplier."""
         return queryset.filter(
             Q(manufacturer_part__manufacturer=value) | Q(supplier=value)
@@ -511,13 +511,12 @@ manufacturer_part_api_urls = [
             ),
         ]),
     ),
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': ManufacturerPart},
+                MetadataView.as_view(model=ManufacturerPart),
                 name='api-manufacturer-part-metadata',
             ),
             path(
@@ -533,13 +532,12 @@ manufacturer_part_api_urls = [
 
 
 supplier_part_api_urls = [
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': SupplierPart},
+                MetadataView.as_view(model=SupplierPart),
                 name='api-supplier-part-metadata',
             ),
             path('', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
@@ -557,8 +555,8 @@ company_api_urls = [
     path(
         'price-break/',
         include([
-            re_path(
-                r'^(?P<pk>\d+)/?',
+            path(
+                '<int:pk>/',
                 SupplierPriceBreakDetail.as_view(),
                 name='api-part-supplier-price-detail',
             ),
@@ -569,13 +567,12 @@ company_api_urls = [
             ),
         ]),
     ),
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': Company},
+                MetadataView.as_view(model=Company),
                 name='api-company-metadata',
             ),
             path('', CompanyDetail.as_view(), name='api-company-detail'),
@@ -584,13 +581,12 @@ company_api_urls = [
     path(
         'contact/',
         include([
-            re_path(
-                r'^(?P<pk>\d+)/?',
+            path(
+                '<int:pk>/',
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': Contact},
+                        MetadataView.as_view(model=Contact),
                         name='api-contact-metadata',
                     ),
                     path('', ContactDetail.as_view(), name='api-contact-detail'),

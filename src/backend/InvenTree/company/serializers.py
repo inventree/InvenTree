@@ -169,7 +169,7 @@ class CompanySerializer(
         read_only=True,
     )
 
-    primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
+    primary_address = AddressSerializer(allow_null=True, read_only=True)
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
@@ -463,7 +463,7 @@ class SupplierPartSerializer(
     )
 
     MPN = serializers.CharField(
-        source='manufacturer_part.MPN', read_only=True, label=_('MPN')
+        source='manufacturer_part.MPN', read_only=True, allow_null=True, label=_('MPN')
     )
 
     # Date fields

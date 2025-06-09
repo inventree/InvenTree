@@ -1,9 +1,10 @@
 import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { PathParams } from '@lib/types/Core';
 import { useApi } from '../contexts/ApiContext';
-import type { ApiEndpoints } from '../enums/ApiEndpoints';
-import { type PathParams, apiUrl } from '../states/ApiState';
 
 export interface UseInstanceResult {
   instance: any;

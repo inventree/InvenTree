@@ -53,11 +53,11 @@ Physical units are supported by the following InvenTree subsystems:
 
 ### Part
 
-The [unit of measure](../part/part.md#units-of-measure) field for the [Part](../part/part.md) model uses real-world units.
+The [unit of measure](../part/index.md#units-of-measure) field for the [Part](../part/index.md) model uses real-world units.
 
 ### Supplier Part
 
-The [supplier part](../part/part.md/#supplier-parts) model uses real-world units to convert between supplier part quantities and internal stock quantities. Unit conversion rules ensure that only compatible unit types can be supplied
+The [supplier part](../part/index.md/#supplier-parts) model uses real-world units to convert between supplier part quantities and internal stock quantities. Unit conversion rules ensure that only compatible unit types can be supplied
 
 ### Part Parameter
 

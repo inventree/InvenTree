@@ -22,7 +22,7 @@ In running InvenTree via [docker compose](./docker_install.md), the database pro
 
 The InvenTree web server is responsible for serving the InvenTree web interface to users. The web server is a [Django](https://www.djangoproject.com/) application, which is run using the [Gunicorn](https://gunicorn.org/) WSGI server.
 
-The web server interfaces with the backend database and provides a [REST API](../api/api.md) (via the [Django REST framework](https://www.django-rest-framework.org/)) which is used by the frontend web interface.
+The web server interfaces with the backend database and provides a [REST API](../api/index.md) (via the [Django REST framework](https://www.django-rest-framework.org/)) which is used by the frontend web interface.
 
 In running InvenTree via [docker compose](./docker_install.md), the web server process is managed by the `inventree-server` service, which runs from a custom docker image.
 

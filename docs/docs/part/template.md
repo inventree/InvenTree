@@ -23,13 +23,10 @@ The template / variant relationship is subtly different to the category / part r
 
 Any part can be set as "Template" part. To do so:
 
-1. navigate to a specific part detail page
-0. click on the "Details" tab
-0. locate the part options on the right-hand side
-0. toggle the `Template` option so it shows green / slider to the right:
-{% with id="enable_template_part", url="part/enable_template_part.png", description="Enable Template Part Option" %}
-{% include 'img.html' %}
-{% endwith %}
+1. Navigate to a specific part detail page
+2. Click on the "Details" tab
+3. Locate the part options on the right-hand side
+4. Toggle the `Template` option so it shows green / slider to the right:
 
 ### Create Variant
 

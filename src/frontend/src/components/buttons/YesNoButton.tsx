@@ -18,7 +18,7 @@ export function PassFailButton({
 
   return (
     <Badge
-      color={v ? 'lime.5' : 'red.6'}
+      color={v ? 'green' : 'red'}
       variant='filled'
       radius='lg'
       size='sm'

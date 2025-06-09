@@ -9,8 +9,8 @@ A *Stocktake* refers to a "snapshot" of stock levels for a particular part, at a
 In particular, an individual *Stocktake* record tracks the following information:
 
 - The date of the Stocktake event
-- A reference to the [part](./part.md) which is being counted
-- The total number of individual [stock items](../stock/stock.md) available
+- A reference to the [part](./index.md) which is being counted
+- The total number of individual [stock items](../stock/index.md) available
 - The total stock quantity of available stock
 - The total cost of stock on hand
 
@@ -31,15 +31,11 @@ Historical stocktake data for a particular part can be viewed in the *Stocktake*
 
 This tab displays a chart of historical stock quantity and cost data, and corresponding tabulated data:
 
-{% with id="stocktake_tab", url="part/part_stocktake_tab.png", description="Part stocktake tab" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_tab.png", "Part stocktake tab") }}
 
 If this tab is not visible, ensure that the *Part Stocktake* [user setting](../settings/user.md) is enabled in the *Display Settings* section.
 
-{% with id="stocktake_tab_enable", url="part/part_stocktake_enable_tab.png", description="Enable stocktake tab" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_enable_tab.png", "Enable stocktake tab") }}
 
 !!! info "Permission Required"
     The stocktake tab will be unavailable if your user account does not have the [required permissions](#stocktake-permissions)
@@ -61,9 +57,7 @@ Stocktake reports are made available for download as a tabulated `.csv` file, wh
 
 There are a number of configuration options available in the [settings view](../settings/global.md):
 
-{% with id="stocktake_settings", url="part/part_stocktake_settings.png", description="Stocktake settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_settings.png", "Stocktake settings") }}
 
 ### Enable Stocktake
 
@@ -71,7 +65,7 @@ Enable or disable stocktake functionality. Note that by default, stocktake funct
 
 ### Automatic Stocktake Period
 
-Configure the number of days between genenration of [automatic stocktake reports](#automatic-stocktake). If this value is set to zero, automatic stocktake reports will not be generated.
+Configure the number of days between generation of [automatic stocktake reports](#automatic-stocktake). If this value is set to zero, automatic stocktake reports will not be generated.
 
 ### Delete Old Reports
 
@@ -81,9 +75,7 @@ Configure how many days stocktake reports will be retained, before being deleted
 
 The *Stocktake Settings* display also provides a table of historical stocktake reports:
 
-{% with id="stocktake_report_table", url="part/part_stocktake_report_table.png", description="Stocktake reports" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_report_table.png", "Stocktake report table") }}
 
 ## Stocktake Permissions
 
@@ -101,41 +93,33 @@ Manual stocktake can be performed via the web interface in a number of locations
 
 When performing a stocktake, various options are presented to the user:
 
-{% with id="stocktake_generate", url="part/part_stocktake_generate.png", description="Generate stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_generate.png", "Generate stocktake report") }}
 
 | Option | Description |
 | --- | --- |
-| Part | Limit stocktake context to a part. If the selected part is a [template part](./part.md#template), any variant parts will also be included in the stocktake |
-| Category | Limit stocktake context to a single [part category](./part.md#part-category). Parts which exist in child categories (under the selected parent category) will also be included. |
-| Location | Limit stocktake context to a single [stock location](../stock/stock.md#stock-location). Any parts which have stock items contained in this location (or any child locations) will be included in the stocktake |
+| Part | Limit stocktake context to a part. If the selected part is a [template part](./index.md#template), any variant parts will also be included in the stocktake |
+| Category | Limit stocktake context to a single [part category](./index.md#part-category). Parts which exist in child categories (under the selected parent category) will also be included. |
+| Location | Limit stocktake context to a single [stock location](../stock/index.md#stock-location). Any parts which have stock items contained in this location (or any child locations) will be included in the stocktake |
 | Generate Report | Select this option to generate a [stocktake report](#stocktake-reports) for the selected parts. |
 | Update Parts | Select this option to save a new stocktake record for each selected part. |
 
 ### Part Stocktake
 
-A stockake report for a single part can be generated from the *Stocktake Tab* on the part page:
+A stocktake report for a single part can be generated from the *Stocktake Tab* on the part page:
 
-{% with id="stocktake_part", url="part/part_stocktake_from_part.png", description="Generate part stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_from_part.png", "Generate part stocktake report") }}
 
 ### Category Stocktake
 
 A stocktake report for a part category can be generated from the *Part Category* page:
 
-{% with id="stocktake_category", url="part/part_stocktake_from_category.png", description="Generate category stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_from_category.png", "Generate category stocktake report") }}
 
 ### Location Stocktake
 
 A stocktake report for a stock location can be generated from the *Stock Location* page:
 
-{% with id="stocktake_location", url="part/part_stocktake_from_location.png", description="Generate location stocktake report" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stocktake_from_location.png", "Generate location stocktake report") }}
 
 ### Automatic Stocktake
 
@@ -143,4 +127,16 @@ If enabled, stocktake reports can be generated automatically at a configured int
 
 ### API Functionality
 
-Stocktake actions can also be performed via the [API](../api/api.md).
+Stocktake actions can also be performed via the [API](../api/index.md).
+
+## Stocktake Settings
+
+The following settings are available for stocktake:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("STOCKTAKE_ENABLE") }}
+{{ globalsetting("STOCKTAKE_EXCLUDE_EXTERNAL") }}
+{{ globalsetting("STOCKTAKE_AUTO_DAYS") }}
+{{ globalsetting("STOCKTAKE_DELETE_REPORT_DAYS") }}
+{{ globalsetting("DISPLAY_PROFILE_INFO") }}

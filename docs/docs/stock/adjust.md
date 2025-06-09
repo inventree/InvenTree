@@ -8,41 +8,31 @@ InvenTree provides simple yet powerful management of stock levels. Multiple stoc
 
 Stock adjustments can be accessed in any stock items table using the "Stock Options" dropdown entries:
 
-{% with id="stock_options", url="stock/stock_options.png", description="Stock Options" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_options.png", "Stock Options") }}
 
 ### Move Stock
 
 Multiple stock items can be moved to a new location in a single operation. Each item is moved to the selected location, and a stock tracking entry is added to the stock item history.
 
-{% with id="stock_move", url="stock/stock_move.png", description="Stock movement" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_move.png", "Stock Move") }}
 
 ### Add Stock
 
 Add parts to a stock item record - for example putting parts back into stock. The in-stock quantity for each selected item is increased by the given amount.
 
-{% with id="stock_add", url="stock/stock_add.png", description="Stock addition" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_add.png", "Stock Add") }}
 
 ### Remove Stock
 
 Remove parts from a stock item record - for example taking parts from stock for use. The in-stock quantity for each selected item is decreased by the given amount.
 
-{% with id="stock_remove", url="stock/stock_remove.png", description="Stock removal" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_remove.png", "Stock Remove") }}
 
 ### Count Stock
 
 Count stock items (stocktake) to record the number of items in stock at a given point of time. The quantity for each part is pre-filled with the current quantity based on stock item history.
 
-{% with id="stock_count", url="stock/stock_count.png", description="Stock count" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_count.png", "Stock Count") }}
 
 ### Merge Stock
 
@@ -68,12 +58,10 @@ then the merge would not be possible.
 
 If the conditions are met, the process of merging will add up the stock quantity for all items involved in the merge and create a new stock item with the final calculated quantity.
 
-To merge stock items, check two or more items in a stock table and click on the <span class='fas fa-boxes'></span> icon above the table, then click on "<span class='fas fa-object-group'></span> Merge Stock" menu option.
+To merge stock items, check two or more items in a stock table and click on the {{ icon("packages", title="Stock Actions") }} icon above the table, then click on {{ icon("arrow-merge", title="Merge") }} menu option.
 
 In the Merge Stock Items form, user can decide to allow mismatched suppliers or status to be merged together (disabled by default).
 
-{% with id="stock_item_merge", url="stock/stock_item_merge.png", description="Stock Item Merge" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_item_merge.png", "Stock Item Merge") }}
 
 Select the location for the new stock item and confirm the merge, then click on <span class="badge inventree confirm">Submit</span> to process the merge.

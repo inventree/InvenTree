@@ -13,32 +13,20 @@ Users can select to receive notifications when certain events occur.
     Each user must have a valid email address associated with their account to receive email notifications
 
 Notifications are also shown in the user interface. New notifications are announced in the header.
-{% with id="notification_header", url="part/notification_header.png", description="One new notification in the header" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("part/notification_header.png", "Notification header") }}
 
 They can be viewed in a flyout.
-{% with id="notification_flyout", url="part/notification_flyout.png", description="One new notification in the flyout" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("part/notification_flyout.png", "Notification flyout") }}
 
 All current notifications are listed in the inbox.
-{% with id="notification_inbox", url="part/notification_inbox.png", description="One new notification in the notification inbox" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("part/notification_inbox.png", "Notification inbox") }}
 
 All past notification are listed in the history. They can be deleted one-by-one or all at once from there.
-{% with id="notification_history", url="part/notification_history.png", description="One old notification in the notification history" %}
-{% include 'img.html' %}
-{% endwith %}
 
-## Subscription List
-
-Users can view the parts and categories they are subscribed to on the InvenTree home page:
-
-{% with id="cat_subs", url="part/cat_subs.png", description="Category subscription list" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/notification_history.png", "Notification history") }}
 
 ## Part Notification Events
 
@@ -50,7 +38,7 @@ Any users who are subscribed to notifications for the part in question will rece
 
 ### Build Order Notification
 
-When a new [Build Order](../build/build.md) is created, the InvenTree software checks to see if any of the parts required to complete the order are low on stock.
+When a new [Build Order](../manufacturing/build.md) is created, the InvenTree software checks to see if any of the parts required to complete the order are low on stock.
 
 If there are any parts with low stock, a notification is generated for any users subscribed to notifications for the part being built.
 
@@ -67,15 +55,11 @@ When subscribed to a *Part*, a user will receive notifications when events occur
 
 If a user is subscribed to a particular part, it will be indicated as shown below:
 
-{% with id="part_sub_on", url="part/part_subscribe_on.png", description="Subscribe" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_subscribe_on.png", "Part subscribed") }}
 
 If the user is not subscribed, the subscription icon is greyed out, as shown here:
 
-{% with id="part_sub_off", url="part/part_subscribe_off.png", description="Subscribe" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_subscribe_off.png", "Part not subscribed") }}
 
 Clicking on this icon will toggle the subscription status for this part.
 
@@ -88,8 +72,4 @@ When subscribed to a *Part Category*, a user will receive notifications when par
 - Any parts contained in the category
 - Any parts contained in the lower level categories
 
-Subscribing to a part category operates in the same manner as for a part - simply click on the notification icon:
-
-{% with id="cat_sub", url="part/category_notification.png", description="Subscribe to part category" %}
-{% include 'img.html' %}
-{% endwith %}
+Subscribing to a part category operates in the same manner as for a part - simply click on the notification icon.

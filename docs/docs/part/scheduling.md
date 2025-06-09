@@ -29,6 +29,4 @@ Additionally, any orders with a target date in the "past" are also ignored for t
 
 Finally, any unexpected or unscheduled stock operations which are not associated with future orders cannot be predicted or displayed in the scheduling tab.
 
-{% with id="scheduling", url="part/scheduling.png", description="Part Scheduling View" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/scheduling.png", "Part Scheduling View") }}

@@ -1,7 +1,6 @@
 """Main JSON interface views."""
 
 import json
-import sys
 from pathlib import Path
 
 from django.conf import settings
@@ -11,23 +10,22 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from django_q.models import OrmQ
-from drf_spectacular.utils import OpenApiResponse, extend_schema
-from rest_framework import permissions, serializers
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
+from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import InvenTree.version
-import users.models
 from common.settings import get_global_setting
 from InvenTree import helpers
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
-from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
+from users.permissions import check_user_permission
 
 from .helpers import plugins_info
 from .helpers_email import is_email_configured
@@ -80,8 +78,8 @@ def read_license_file(path: Path) -> list:
 class LicenseViewSerializer(serializers.Serializer):
     """Serializer for license information."""
 
-    backend = serializers.CharField(help_text='Backend licenses texts', read_only=True)
-    frontend = serializers.CharField(
+    backend = serializers.ListField(help_text='Backend licenses texts', read_only=True)
+    frontend = serializers.ListField(
         help_text='Frontend licenses texts', read_only=True
     )
 
@@ -89,7 +87,7 @@ class LicenseViewSerializer(serializers.Serializer):
 class LicenseView(APIView):
     """Simple JSON endpoint for InvenTree license information."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
@@ -114,7 +112,7 @@ class VersionViewSerializer(serializers.Serializer):
         api = serializers.IntegerField()
         commit_hash = serializers.CharField()
         commit_date = serializers.CharField()
-        commit_branch = serializers.CharField()
+        commit_branch = serializers.CharField(allow_null=True)
         python = serializers.CharField()
         django = serializers.CharField()
 
@@ -123,7 +121,6 @@ class VersionViewSerializer(serializers.Serializer):
 
         doc = serializers.URLField()
         code = serializers.URLField()
-        credit = serializers.URLField()
         app = serializers.URLField()
         bug = serializers.URLField()
 
@@ -136,7 +133,7 @@ class VersionViewSerializer(serializers.Serializer):
 class VersionView(APIView):
     """Simple JSON endpoint for InvenTree version information."""
 
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
 
     @extend_schema(responses={200: OpenApiResponse(response=VersionViewSerializer)})
     def get(self, request, *args, **kwargs):
@@ -156,7 +153,6 @@ class VersionView(APIView):
             'links': {
                 'doc': InvenTree.version.inventreeDocUrl(),
                 'code': InvenTree.version.inventreeGithubUrl(),
-                'credit': InvenTree.version.inventreeCreditsUrl(),
                 'app': InvenTree.version.inventreeAppUrl(),
                 'bug': f'{InvenTree.version.inventreeGithubUrl()}issues',
             },
@@ -167,9 +163,9 @@ class VersionInformationSerializer(serializers.Serializer):
     """Serializer for a single version."""
 
     version = serializers.CharField()
-    date = serializers.CharField()
-    gh = serializers.CharField()
-    text = serializers.CharField()
+    date = serializers.DateField()
+    gh = serializers.CharField(allow_null=True)
+    text = serializers.ListField(child=serializers.CharField())
     latest = serializers.BooleanField()
 
     class Meta:
@@ -178,23 +174,44 @@ class VersionInformationSerializer(serializers.Serializer):
         fields = '__all__'
 
 
-class VersionApiSerializer(serializers.Serializer):
-    """Serializer for the version api endpoint."""
-
-    VersionInformationSerializer(many=True)
-
-
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='versions',
+            type=int,
+            description='Number of versions to return.',
+            default=10,
+        ),
+        OpenApiParameter(
+            name='start_version',
+            type=int,
+            description='First version to report. Defaults to return the latest {versions} versions.',
+        ),
+    ]
+)
 class VersionTextView(ListAPI):
     """Simple JSON endpoint for InvenTree version text."""
 
     serializer_class = VersionInformationSerializer
 
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
 
-    @extend_schema(responses={200: OpenApiResponse(response=VersionApiSerializer)})
+    # Specifically disable pagination for this view
+    pagination_class = None
+
     def list(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
-        return JsonResponse(inventreeApiText())
+        versions = request.query_params.get('versions')
+        start_version = request.query_params.get('start_version')
+
+        api_kwargs = {}
+        if versions is not None:
+            api_kwargs['versions'] = int(versions)
+        if start_version is not None:
+            api_kwargs['start_version'] = int(start_version)
+
+        version_data = inventreeApiText(**api_kwargs)
+        return JsonResponse(list(version_data.values()), safe=False)
 
 
 class InfoApiSerializer(serializers.Serializer):
@@ -212,11 +229,11 @@ class InfoApiSerializer(serializers.Serializer):
 
         logo = serializers.CharField()
         splash = serializers.CharField()
-        login_message = serializers.CharField()
-        navbar_message = serializers
+        login_message = serializers.CharField(allow_null=True)
+        navbar_message = serializers.CharField(allow_null=True)
 
     server = serializers.CharField(read_only=True)
-    id = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True, allow_null=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -229,15 +246,13 @@ class InfoApiSerializer(serializers.Serializer):
     email_configured = serializers.BooleanField(read_only=True)
     debug_mode = serializers.BooleanField(read_only=True)
     docker_mode = serializers.BooleanField(read_only=True)
-    default_locale = serializers.ChoiceField(
-        choices=settings.LOCALE_CODES, read_only=True
-    )
+    default_locale = serializers.CharField(read_only=True)
     customize = CustomizeSerializer(read_only=True)
     system_health = serializers.BooleanField(read_only=True)
     database = serializers.CharField(read_only=True)
     platform = serializers.CharField(read_only=True)
     installer = serializers.CharField(read_only=True)
-    target = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True, allow_null=True)
     django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
 
@@ -248,7 +263,7 @@ class InfoView(APIView):
     Use to confirm that the server is running, etc.
     """
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
 
     def worker_pending_tasks(self):
         """Return the current number of outstanding background tasks."""
@@ -331,7 +346,7 @@ class InfoView(APIView):
 class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
 
     def not_found(self, request):
         """Return a 404 error."""
@@ -373,6 +388,20 @@ class NotFoundView(APIView):
         return self.not_found(request)
 
 
+class BulkRequestSerializer(serializers.Serializer):
+    """Parameters for selecting items for bulk operations."""
+
+    items = serializers.ListField(
+        label='A list of primary key values',
+        child=serializers.IntegerField(),
+        required=False,
+    )
+
+    filters = serializers.DictField(
+        label='A dictionary of filter values', required=False
+    )
+
+
 class BulkOperationMixin:
     """Mixin class for handling bulk data operations.
 
@@ -393,10 +422,11 @@ class BulkOperationMixin:
 
         items = request.data.pop('items', None)
         filters = request.data.pop('filters', None)
+        all_filter = request.GET.get('all', None)
 
         queryset = model.objects.all()
 
-        if not items and not filters:
+        if not items and not filters and all_filter is None:
             raise ValidationError({
                 'non_field_errors': _(
                     'List of items or filters must be provided for bulk operation'
@@ -429,6 +459,11 @@ class BulkOperationMixin:
                 raise ValidationError({
                     'non_field_errors': _('Invalid filters provided')
                 })
+
+        if all_filter and not helpers.str2bool(all_filter):
+            raise ValidationError({
+                'non_field_errors': _('All filter must only be used with true')
+            })
 
         if queryset.count() == 0:
             raise ValidationError({
@@ -532,6 +567,7 @@ class BulkDeleteMixin(BulkOperationMixin):
         """
         return queryset
 
+    @extend_schema(request=BulkRequestSerializer)
     def delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
@@ -553,7 +589,7 @@ class BulkDeleteMixin(BulkOperationMixin):
             for item in queryset:
                 item.delete()
 
-        return Response({'success': f'Deleted {n_deleted} items'}, status=204)
+        return Response({'success': f'Deleted {n_deleted} items'}, status=200)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
@@ -566,6 +602,7 @@ class APISearchViewSerializer(serializers.Serializer):
     search = serializers.CharField()
     search_regex = serializers.BooleanField(default=False, required=False)
     search_whole = serializers.BooleanField(default=False, required=False)
+    search_notes = serializers.BooleanField(default=False, required=False)
     limit = serializers.IntegerField(default=1, required=False)
     offset = serializers.IntegerField(default=0, required=False)
 
@@ -579,7 +616,7 @@ class APISearchView(GenericAPIView):
     Is much more efficient and simplifies code!
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = APISearchViewSerializer
 
     def get_result_types(self):
@@ -627,6 +664,7 @@ class APISearchView(GenericAPIView):
             'search': '',
             'search_regex': False,
             'search_whole': False,
+            'search_notes': False,
             'limit': 1,
             'offset': 0,
         }
@@ -665,14 +703,9 @@ class APISearchView(GenericAPIView):
 
                 # Check permissions and update results dict with particular query
                 model = view.serializer_class.Meta.model
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-                table = f'{app_label}_{model_name}'
 
                 try:
-                    if users.models.RuleSet.check_table_permission(
-                        request.user, table, 'view'
-                    ):
+                    if check_user_permission(request.user, model, 'view'):
                         results[key] = view.list(request, *args, **kwargs).data
                     else:
                         results[key] = {
@@ -689,34 +722,32 @@ class APISearchView(GenericAPIView):
 class MetadataView(RetrieveUpdateAPI):
     """Generic API endpoint for reading and editing metadata for a model."""
 
-    MODEL_REF = 'model'
+    model = None  # Placeholder for the model class
 
-    def get_model_type(self):
-        """Return the model type associated with this API instance."""
-        model = self.kwargs.get(self.MODEL_REF, None)
-
-        if 'lookup_field' in self.kwargs:
-            # Set custom lookup field (instead of default 'pk' value) if supplied
-            self.lookup_field = self.kwargs.pop('lookup_field')
-
+    @classmethod
+    def as_view(cls, model, lookup_field=None, **initkwargs):
+        """Override to ensure model specific rendering."""
         if model is None:
             raise ValidationError(
-                f"MetadataView called without '{self.MODEL_REF}' parameter"
+                "MetadataView defined without 'model' arg"
             )  # pragma: no cover
+        initkwargs['model'] = model
 
-        return model
+        # Set custom lookup field (instead of default 'pk' value) if supplied
+        if lookup_field:
+            initkwargs['lookup_field'] = lookup_field
+
+        return super().as_view(**initkwargs)
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
-        return self.get_model_type()
+        return self.model
 
     def get_queryset(self):
         """Return the queryset for this endpoint."""
-        return self.get_model_type().objects.all()
+        return self.model.objects.all()
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
         # Detect if we are currently generating the OpenAPI schema
-        if 'spectacular' in sys.argv:
-            return MetadataSerializer(Part, *args, **kwargs)  # pragma: no cover
-        return MetadataSerializer(self.get_model_type(), *args, **kwargs)
+        return MetadataSerializer(self.model, *args, **kwargs)

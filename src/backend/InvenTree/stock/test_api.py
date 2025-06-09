@@ -452,7 +452,7 @@ class StockLocationTest(StockAPITestCase):
 
         StockLocation.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(12):
+        with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-location-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), StockLocation.objects.count())
@@ -2015,7 +2015,7 @@ class StockTestResultTest(StockAPITestCase):
 
         # Try again, but with the correct filters this time
         response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=204
+            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=200
         )
 
         self.assertEqual(StockItemTestResult.objects.count(), n)

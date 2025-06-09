@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import django_q.models
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
@@ -28,6 +30,7 @@ from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
 
 
+@extend_schema_field(OpenApiTypes.STR)
 class SettingsValueField(serializers.Field):
     """Custom serializer field for a settings value."""
 
@@ -35,7 +38,7 @@ class SettingsValueField(serializers.Field):
         """Return the object instance, not the attribute value."""
         return instance
 
-    def to_representation(self, instance):
+    def to_representation(self, instance) -> str:
         """Return the value of the setting.
 
         Protected settings are returned as '***'
@@ -47,7 +50,7 @@ class SettingsValueField(serializers.Field):
         else:
             return str(instance.value)
 
-    def to_internal_value(self, data):
+    def to_internal_value(self, data) -> str:
         """Return the internal value of the setting."""
         if data is None:
             return ''
@@ -120,7 +123,28 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'model_name',
             'api_url',
             'typ',
+            'read_only',
         ]
+
+    read_only = serializers.SerializerMethodField(
+        read_only=True,
+        help_text=_(
+            'Indicates if the setting is overridden by an environment variable'
+        ),
+        label=_('Override'),
+    )
+
+    def get_read_only(self, obj) -> bool:
+        """Return True if the setting 'read_only' (cannot be edited).
+
+        A setting may be "read-only" if:
+
+        - It is overridden by an environment variable.
+        """
+        from common.settings import global_setting_overrides
+
+        overrides = global_setting_overrides()
+        return obj.key in overrides
 
 
 class UserSettingsSerializer(SettingsSerializer):
@@ -425,7 +449,7 @@ class AllUnitListResponseSerializer(serializers.Serializer):
 
     default_system = serializers.CharField()
     available_systems = serializers.ListField(child=serializers.CharField())
-    available_units = Unit(many=True)
+    available_units = serializers.DictField(child=Unit())
 
 
 class ErrorMessageSerializer(InvenTreeModelSerializer):
@@ -616,7 +640,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
-        from users.models import check_user_permission
+        from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
 
@@ -809,6 +833,4 @@ class DataOutputSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
-    output = InvenTreeAttachmentSerializerField(
-        required=False, allow_null=True, read_only=True
-    )
+    output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)

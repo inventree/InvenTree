@@ -6,7 +6,7 @@ title: Bulk Deletion
 
 While deleting items individually via the API is supported, it can prove inefficient (time consuming) when multiple items are to be deleted sequentially.
 
-For example, if the user wishes to delete a large number items (such as lines from a [Bill of Materials](../build/bom.md)), these items are deleted sequentially, with each `DELETE` separate request requiring network transfer, database access, cleanup, etc.
+For example, if the user wishes to delete a large number items (such as lines from a [Bill of Materials](../manufacturing/bom.md)), these items are deleted sequentially, with each `DELETE` separate request requiring network transfer, database access, cleanup, etc.
 
 A much more efficient approach is to allow for "bulk deletion" of multiple database items in a single transaction. This means that only one network request is required, and only a single database access request.
 

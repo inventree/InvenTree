@@ -7,6 +7,6 @@ import { CodeEditorComponent } from './CodeEditor';
 export const CodeEditor: Editor = {
   key: 'code',
   name: t`Code`,
-  icon: IconCode,
+  icon: <IconCode size={18} />,
   component: CodeEditorComponent
 };

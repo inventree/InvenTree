@@ -30,6 +30,7 @@ export default function DashboardMenu({
   onAddWidget,
   onStartEdit,
   onStartRemove,
+  onClear,
   onAcceptLayout
 }: Readonly<{
   editing: boolean;
@@ -37,6 +38,7 @@ export default function DashboardMenu({
   onAddWidget: () => void;
   onStartEdit: () => void;
   onStartRemove: () => void;
+  onClear: () => void;
   onAcceptLayout: () => void;
 }>) {
   const user = useUserState();
@@ -116,6 +118,15 @@ export default function DashboardMenu({
                   onClick={onStartRemove}
                 >
                   <Trans>Remove Widgets</Trans>
+                </Menu.Item>
+              )}
+
+              {!editing && !removing && (
+                <Menu.Item
+                  leftSection={<IconLayoutGridRemove color='red' size={14} />}
+                  onClick={onClear}
+                >
+                  <Trans>Clear Widgets</Trans>
                 </Menu.Item>
               )}
 

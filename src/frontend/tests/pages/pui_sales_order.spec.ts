@@ -4,15 +4,13 @@ import {
   clearTableFilters,
   globalSearch,
   loadTab,
-  navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
-import { doQuickLogin } from '../login.ts';
+import { doCachedLogin } from '../login.ts';
 
-test('Sales Orders - Tabs', async ({ page }) => {
-  await doQuickLogin(page);
+test('Sales Orders - Tabs', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/index/' });
 
-  await navigate(page, 'sales/index/');
   await page.waitForURL('**/web/sales/**');
 
   await loadTab(page, 'Sales Orders');
@@ -63,10 +61,12 @@ test('Sales Orders - Tabs', async ({ page }) => {
   await loadTab(page, 'Notes');
 });
 
-test('Sales Orders - Basic Tests', async ({ page }) => {
-  await doQuickLogin(page);
+test('Sales Orders - Basic Tests', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Sales' }).click();
+  await page.waitForURL('**/sales/index/**');
+
   await loadTab(page, 'Sales Orders');
 
   await clearTableFilters(page);
@@ -102,10 +102,12 @@ test('Sales Orders - Basic Tests', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
-test('Sales Orders - Shipments', async ({ page }) => {
-  await doQuickLogin(page);
+test('Sales Orders - Shipments', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Sales' }).click();
+  await page.waitForURL('**/sales/index/**');
+
   await loadTab(page, 'Sales Orders');
 
   await clearTableFilters(page);
@@ -131,7 +133,7 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Edit' }).click();
 
   // Ensure the form has loaded
-  await page.waitForTimeout(500);
+  await page.waitForLoadState('networkidle');
 
   let tracking_number = await page
     .getByLabel('text-field-tracking_number')
@@ -201,10 +203,11 @@ test('Sales Orders - Shipments', async ({ page }) => {
     .click();
 });
 
-test('Sales Orders - Duplicate', async ({ page }) => {
-  await doQuickLogin(page);
+test('Sales Orders - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/sales-order/11/detail'
+  });
 
-  await navigate(page, 'sales/sales-order/11/detail');
   await page.getByLabel('action-menu-order-actions').click();
   await page.getByLabel('action-menu-order-actions-duplicate').click();
 

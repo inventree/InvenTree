@@ -1,7 +1,7 @@
 import { LoadingOverlay } from '@mantine/core';
 
-import type { ModelType } from '../../enums/ModelType';
-import type { UserRoles } from '../../enums/Roles';
+import type { ModelType } from '@lib/enums/ModelType';
+import type { UserRoles } from '@lib/enums/Roles';
 import { useUserState } from '../../states/UserState';
 import ClientError from '../errors/ClientError';
 import PermissionDenied from '../errors/PermissionDenied';

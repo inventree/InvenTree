@@ -39,6 +39,9 @@ def setup_tracing(
         headers: The headers to send with the traces.
         resources_input: The resources to send with the traces.
         console: Whether to output the traces to the console.
+        auth: Dict with auth information
+        is_http: Whether to use HTTP or gRPC for the exporter.
+        append_http: Whether to append '/v1/traces' to the endpoint.
     """
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return

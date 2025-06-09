@@ -17,7 +17,7 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     NAME = 'TMEPlugin'
     TITLE = _('Supplier Integration - TME')
     DESCRIPTION = _('Provides support for scanning TME barcodes')
-    VERSION = '1.0.0'
+    VERSION = '1.0.1'
     AUTHOR = _('InvenTree contributors')
 
     DEFAULT_SUPPLIER_NAME = 'TME'
@@ -26,6 +26,7 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             'name': _('Supplier'),
             'description': _("The Supplier which acts as 'TME'"),
             'model': 'company.company',
+            'model_filters': {'is_supplier': True},
         }
     }
 

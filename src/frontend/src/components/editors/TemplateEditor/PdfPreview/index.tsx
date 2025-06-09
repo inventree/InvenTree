@@ -7,6 +7,6 @@ import { PdfPreviewComponent } from './PdfPreview';
 export const PdfPreview: PreviewArea = {
   key: 'pdf-preview',
   name: t`PDF Preview`,
-  icon: IconFileTypePdf,
+  icon: <IconFileTypePdf size={18} />,
   component: PdfPreviewComponent
 };

@@ -8,8 +8,8 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useUserState } from '../../states/UserState';
 import { ContactTable } from '../../tables/company/ContactTable';
-import { UserTable } from '../../tables/core/UserTable';
 import { GroupTable } from '../../tables/settings/GroupTable';
+import { UserTable } from '../../tables/settings/UserTable';
 
 export default function CoreIndex() {
   const user = useUserState();
@@ -20,7 +20,7 @@ export default function CoreIndex() {
         name: 'users',
         label: t`Users`,
         icon: <IconUser />,
-        content: <UserTable />
+        content: <UserTable directLink />
       },
       {
         name: 'groups',

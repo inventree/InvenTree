@@ -4,7 +4,7 @@ title: Pricing Support
 
 ## Pricing
 
-Pricing is an inherently complex topic, often subject to the particular requirements of the user. InvenTree attempts to provide a comprehensive pricing architecture which is useful without being proscriptive.
+Pricing is an inherently complex topic, often subject to the particular requirements of the user. InvenTree attempts to provide a comprehensive pricing architecture which is useful without being prescriptive.
 
 InvenTree provides support for multiple currencies, allowing pricing information to be stored with base currency rates.
 
@@ -50,11 +50,11 @@ While InvenTree can support any of the currencies defined in the ISO 3166 standa
 
 ### Exchange Rate Data
 
-The exchange rate data is provided by a [currency plugin](../extend/plugins/currency.md) which fetches exchange rate data from an external source.
+The exchange rate data is provided by a [currency plugin](../plugins/mixins/currency.md) which fetches exchange rate data from an external source.
 
 InvenTree includes a default currency plugin which fetches exchange rate data from the [frankfurter](https://frankfurter.dev/) API, which is an open source currency API made freely available.
 
-However, the user can configure a custom currency plugin to fetch exchange rate data from a different source. If a different currency exchange backend is needed, or a custom implementation is desired, the currency exchange framework can be extended [via plugins](../extend/plugins/currency.md). Plugins which implement custom currency exchange frameworks can be easily integrated into the InvenTree framework.
+However, the user can configure a custom currency plugin to fetch exchange rate data from a different source. If a different currency exchange backend is needed, or a custom implementation is desired, the currency exchange framework can be extended [via plugins](../plugins/mixins/currency.md). Plugins which implement custom currency exchange frameworks can be easily integrated into the InvenTree framework.
 
 ### Exchange Rate Updates
 

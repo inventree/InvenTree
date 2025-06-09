@@ -72,9 +72,8 @@ def extract_column_names(data_file) -> list:
     headers = []
 
     for idx, header in enumerate(data.headers):
-        header = header.strip()
-
         if header:
+            header = str(header).strip()
             headers.append(header)
         else:
             # If the header is empty, generate a default header

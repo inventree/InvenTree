@@ -175,7 +175,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 {
                     'key': 'sample-template-editor',
                     'title': 'Sample Template Editor',
-                    'icon': 'keywords',
+                    'icon': 'ti:tags:outline',
                     'source': self.plugin_static_file(
                         'sample_template.js:getTemplateEditor'
                     ),
@@ -190,10 +190,21 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             {
                 'key': 'sample-template-preview',
                 'title': 'Sample Template Preview',
-                'icon': 'category',
+                'icon': 'ti:category:outline',
                 'source': self.plugin_static_file(
                     'sample_preview.js:getTemplatePreview'
                 ),
+            }
+        ]
+
+    def get_ui_navigation_items(self, request, context, **kwargs):
+        """Return a list of custom navigation items."""
+        return [
+            {
+                'key': 'sample-nav-item',
+                'title': 'Sample Nav Item',
+                'icon': 'ti:menu',
+                'options': {'url': '/sample/page/'},
             }
         ]
 

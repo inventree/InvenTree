@@ -10,14 +10,14 @@ The InvenTree project follows a formalized release numbering scheme, according t
 
 The head of the *stable* code branch represents the most recent stable tagged release of InvenTree.
 
-!!! info "<span class='fab fa-docker'></span> Stable Docker"
+!!! info "{{ icon("brand-docker") }} Stable Docker"
     To pull down the latest *stable* release of InvenTree in docker, use `inventree/inventree:stable`
 
 ### Development Branch
 
 The head of the *master* code branch represents the "latest and greatest" working codebase. All features and bug fixes are merged into the master branch, in addition to relevant stable release branches.
 
-!!! info "<span class='fab fa-docker'></span> Latest Docker"
+!!! info "{{ icon("brand-docker") }} Latest Docker"
     To pull down the latest *development* version of InvenTree in docker, use `inventree/inventree:latest`
 
 ## Stable Releases

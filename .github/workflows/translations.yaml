@@ -49,11 +49,14 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add src/backend/InvenTree/locale/en/LC_MESSAGES/django.po src/frontend/src/locales/en/messages.po
+          echo "Adding commit (or ignoring if no changes)"
           git commit -m "add translations" || true
+          echo "Removing all other changes"
           git reset --hard
-          git reset HEAD~
+          echo "Resetting to HEAD~"
+          git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@2cc7959c565767d6bc118118d6df3b63bf361370 # pin@v2
+        uses: crowdin/github-action@b8012bd5491b8aa8578b73ab5b5f5e7c94aaa6e2 # pin@v2
         with:
           upload_sources: true
           upload_translations: false

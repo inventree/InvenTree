@@ -37,9 +37,7 @@ The following options are available to control the behavior of part revisions.
 
 Note that these options can be changed in the InvenTree settings:
 
-{% with id="part_revision_settings", url="part/part_revision_settings.png", description="Part revision settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_revision_settings.png", "Part revision settings") }}
 
 * **Enable Revisions**: If this setting is enabled, parts can have revisions. If this setting is disabled, parts cannot have revisions.
 * **Assembly Revisions Only**: If this setting is enabled, only assembly parts can have revisions. This is useful if you only want to track revisions of assemblies, and not individual parts.
@@ -50,9 +48,7 @@ To create a new revision for a given part, navigate to the part detail page, and
 
 Select the "Duplicate Part" action, to create a new copy of the selected part. This will open the "Duplicate Part" form:
 
-{% with id="part_create_revision", url="part/part_create_revision.png", description="Create part revision" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_create_revision.png", "Create part revision") }}
 
 In this form, make the following updates:
 
@@ -63,16 +59,12 @@ Once these changes (and any other required changes) are made, press *Submit* to 
 
 Once the form is submitted (without any errors), you will be redirected to the new part revision. Here you can see that it is linked to the original part:
 
-{% with id="part_revision_b", url="part/part_revision_b.png", description="Revision B" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_revision_b.png", "Part revision B") }}
 
 ## Revision Navigation
 
 When multiple revisions exist for a particular part, you can navigate between revisions using the *Select Part Revision* drop-down which renders at the top of the part page:
 
-{% with id="part_revision_select", url="part/part_revision_select.png", description="Select part revision" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_revision_select.png", "Select part revision") }}
 
 Note that this revision selector is only visible when multiple revisions exist for the part.
