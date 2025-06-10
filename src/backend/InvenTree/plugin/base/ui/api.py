@@ -40,7 +40,7 @@ class PluginUIFeatureList(APIView):
                 except Exception:
                     # Custom features could not load for this plugin
                     # Log the error and continue
-                    log_error(f'{_plugin.slug}.get_ui_features')
+                    log_error('get_ui_features', plugin=_plugin.slug)
                     continue
 
                 if plugin_features and type(plugin_features) is list:
@@ -65,7 +65,7 @@ class PluginUIFeatureList(APIView):
                         except Exception:
                             # Custom features could not load
                             # Log the error and continue
-                            log_error(f'{_plugin.slug}.get_ui_features')
+                            log_error('get_ui_features', plugin=_plugin.slug)
                             continue
 
         return Response(features)

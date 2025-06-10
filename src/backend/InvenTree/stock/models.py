@@ -608,7 +608,7 @@ class StockItem(
                 serial_int = plugin.convert_serial_to_int(serial)
             except Exception:
                 InvenTree.exceptions.log_error(
-                    f'plugin.{plugin.slug}.convert_serial_to_int'
+                    'convert_serial_to_int', plugin=plugin.slug
                 )
                 serial_int = None
 
@@ -808,7 +808,7 @@ class StockItem(
                 raise ValidationError({'batch': exc.message})
             except Exception:
                 InvenTree.exceptions.log_error(
-                    f'plugin.{plugin.slug}.validate_batch_code'
+                    'validate_batch_code', plugin=plugin.slug
                 )
 
     def clean(self):

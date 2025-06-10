@@ -1,6 +1,5 @@
 import type { InvenTreeIconType, TablerIconType } from '@lib/types/Icons';
 import {
-  Icon123,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
   IconBell,
@@ -61,6 +60,7 @@ import {
   IconMapPinHeart,
   IconMinusVertical,
   IconNotes,
+  IconNumber123,
   IconNumbers,
   IconPackage,
   IconPackageImport,
@@ -122,7 +122,7 @@ const icons: InvenTreeIconType = {
   ordering: IconShoppingCart,
   building: IconTool,
   category: IconBinaryTree2,
-  IPN: Icon123,
+  IPN: IconNumber123,
   revision: IconGitBranch,
   units: IconRulerMeasure,
   keywords: IconTag,

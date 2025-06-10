@@ -33,6 +33,7 @@ export interface Setting {
   plugin?: string;
   method?: string;
   required?: boolean;
+  read_only?: boolean;
 }
 
 export interface SettingChoice {
@@ -48,6 +49,7 @@ export interface SettingsStateProps {
   settings: Setting[];
   lookup: SettingsLookup;
   fetchSettings: () => Promise<boolean>;
+  loaded: boolean;
   endpoint: ApiEndpoints;
   pathParams?: PathParams;
   getSetting: (key: string, default_value?: string) => string; // Return a raw setting value

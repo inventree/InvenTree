@@ -233,6 +233,23 @@ nav:
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
+    - Builtin Plugins:
+      - Builtin Plugins: plugins/builtin/index.md
+      - Auto Issue: plugins/builtin/auto_issue.md
+      - BOM Exporter: plugins/builtin/bom_exporter.md
+      - Currency Exchange: plugins/builtin/currency_exchange.md
+      - DigiKey: plugins/builtin/digikey.md
+      - InvenTree Barcode: plugins/builtin/inventree_barcode.md
+      - InvenTree Exporter: plugins/builtin/inventree_exporter.md
+      - Label Printer: plugins/builtin/inventree_label.md
+      - Label Machine: plugins/builtin/inventree_label_machine.md
+      - Label Sheet: plugins/builtin/inventree_label_sheet.md
+      - LCSC: plugins/builtin/lcsc.md
+      - Mouser: plugins/builtin/mouser.md
+      - Notification: plugins/builtin/notifications.md
+      - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
+      - Part Notifications: plugins/builtin/part_notifications.md
+      - TME: plugins/builtin/tme.md
     - Third-Party: plugins/integrate.md
 
 # Plugins
@@ -247,6 +264,7 @@ plugins:
   - mkdocs-simple-hooks:
       hooks:
         on_config: "docs.docs.hooks:on_config"
+        on_post_build: "docs.docs.hooks:on_post_build"
   - macros:
       include_dir: docs/_includes
       module_name: main
@@ -261,6 +279,24 @@ plugins:
             show_symbol_type_toc: true
             show_root_heading: false
             show_root_toc_entry: false
+  - redirects:
+      redirect_maps:
+        'sref/faq.md': 'faq.md' #  https://docs.inventree.org/en/latest/faq/
+        'sref/contrib.md': 'develop/contributing.md'  #  https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md.
+        'sref/docs.md': 'index.md' #   https://docs.inventree.org/en/latest/
+        'sref/api.md': 'api/index.md' #  https://demo.inventree.org/api-doc/
+        'sref/code.md': 'https://github.com/inventree/InvenTree/tree/master' #  https://github.com/inventree/InvenTree/tree/master
+        'sref/oci-image.md': 'https://hub.docker.com/r/inventree/inventree/tags' #  https://hub.docker.com/r/inventree/inventree/tags
+        'sref/releases.md': 'https://github.com/inventree/InvenTree/releases' # https://github.com/inventree/InvenTree/releases
+        'sref/issues.md': 'https://github.com/inventree/InvenTree/issues' # https://github.com/inventree/InvenTree/issues
+        'sref/security-policy.md': 'https://github.com/inventree/InvenTree/security/policy' # https://github.com/inventree/InvenTree/security/policy
+        'sref/security-history.md': 'https://huntr.dev/repos/inventree/inventree/' # https://huntr.dev/repos/inventree/inventree/
+        'sref/ci.md': 'https://github.com/inventree/InvenTree/actions' # https://github.com/inventree/InvenTree/actions
+        'sref/ci-sample.md': 'https://github.com/inventree/InvenTree/blob/master/.github/workflows/qc_checks.yaml' # https://github.com/inventree/InvenTree/blob/master/.github/workflows/qc_checks.yaml
+        'sref/ci-pre.md': 'https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml' # https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml
+        'sref/test-sample.md': 'https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py' # https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py
+        'sref/coverage.md': 'https://coveralls.io/github/inventree/InvenTree' # https://coveralls.io/github/inventree/InvenTree
+        'sref/error-codes.md': 'settings/error_codes.md'
 
 # Extensions
 markdown_extensions:

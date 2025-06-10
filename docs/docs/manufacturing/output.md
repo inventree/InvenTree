@@ -14,25 +14,19 @@ With reference to a [build order](./build.md), a *Build Output* is a finished pr
 
 The *Incomplete Outputs* tab displays any outstanding / in-progress build outputs for the current build order.
 
-{% with id="build-outputs-incomplete", url="build/build_outputs_incomplete.png", description="Incomplete build outputs" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_outputs_incomplete.png", "Incomplete build outputs") }}
 
 ### Completed Outputs
 
 The *Completed Outputs* tab displays any [completed](#complete-build-output) or [scrapped](#scrap-build-output) outputs for the current build order.
 
-{% with id="build-outputs-complete", url="build/build_outputs_complete.png", description="Complete build outputs" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_outputs_complete.png", "Completed build outputs") }}
 
 ## Create Build Output
 
 Create a new build output by pressing the <span class="badge inventree add">{{ icon("plus-circle") }} New Build Output</span> button under the [incomplete outputs](#incomplete-outputs) tab:
 
-{% with id="build_output_create", url="build/build_output_create.png", description="Create build output" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_output_create.png", "Create build output") }}
 
 ### Create Options
 
@@ -55,9 +49,7 @@ Refer to the [serial number generation guide](../stock/tracking.md#generating-se
 
 An individual build output is completed by selecting the "Complete build output" button associated with that build output:
 
-{% with id="build_output_complete", url="build/build_output_complete.png", description="Complete build output" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_output_complete.png", "Complete build output") }}
 
 Here the user can select the destination location for the build output, as well as the stock item status.
 
@@ -84,9 +76,7 @@ The following options are available when completing a build output:
 
 An individual build output is completed by selecting the *Scrap build output* button associated with that build output:
 
-{% with id="build_output_scrap", url="build/build_output_scrap.png", description="Scrap build output" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_output_scrap.png", "Scrap build output") }}
 
 Marking the build output(s) as scrapped performs the following actions:
 
@@ -109,9 +99,7 @@ The following options are available when scrapping a build order:
 
 *Deleting* a build output causes the build output to be cancelled, and removed from the database entirely. Use this option when the build output does not physically exist (or was never built) and should not be tracked in the database.
 
-{% with id="build_output_delete", url="build/build_output_delete.png", description="Delete build output" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_output_delete.png", "Delete build output") }}
 
 Marking the build output(s) as deleted performs the following actions:
 

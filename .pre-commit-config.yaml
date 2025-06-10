@@ -17,7 +17,7 @@ repos:
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.0
+    rev: v0.11.13
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -28,7 +28,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.6.6
+    rev: 0.7.12
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -40,15 +40,15 @@ repos:
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, --no-strip-extras, --generate-hashes]
+        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
         files: contrib/dev_reqs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [docs/requirements.in, -o, docs/requirements.txt, --no-strip-extras, --generate-hashes]
+        args: [docs/requirements.in, -o, docs/requirements.txt, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes]
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.36.4
@@ -70,13 +70,13 @@ repos:
           src/frontend/vite.config.ts |
       )$
 -   repo: https://github.com/biomejs/pre-commit
-    rev: v1.9.4
+    rev: v2.0.0-beta.5
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         files: ^src/frontend/.*\.(js|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.0
+    rev: v8.27.2
     hooks:
     -   id: gitleaks
         language_version: 1.23.6

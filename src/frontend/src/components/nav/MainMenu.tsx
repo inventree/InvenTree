@@ -21,7 +21,6 @@ import {
   IconMoonStars,
   IconSettings,
   IconSun,
-  IconUserBolt,
   IconUserCog
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -110,15 +109,19 @@ export function MainMenu() {
             <Trans>Change Color Mode</Trans>
           </Menu.Item>
           {user?.is_staff && <Menu.Divider />}
-          {user?.is_staff && (
-            <Menu.Item
-              leftSection={<IconUserBolt />}
-              component={Link}
-              to='/settings/admin'
-            >
-              <Trans>Admin Center</Trans>
-            </Menu.Item>
-          )}
+          <Menu.Item
+            onClick={toggleColorScheme}
+            leftSection={
+              colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />
+            }
+            c={
+              colorScheme === 'dark'
+                ? vars.colors.yellow[4]
+                : vars.colors.blue[6]
+            }
+          >
+            <Trans>Change Color Mode</Trans>
+          </Menu.Item>
           <Menu.Divider />
           <Menu.Item
             leftSection={<IconLogout />}
@@ -133,6 +136,7 @@ export function MainMenu() {
     </>
   );
 }
+
 function AuthContextInformation({
   server,
   auth_context

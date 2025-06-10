@@ -24,6 +24,8 @@ import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
 
+import type { JSX } from 'react';
+
 type AboutLookupRef = {
   ref: string;
   title: JSX.Element;
