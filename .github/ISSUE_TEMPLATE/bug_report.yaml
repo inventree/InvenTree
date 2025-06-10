@@ -54,13 +54,25 @@ body:
       label: "Version Information"
       description: "The version info block."
       placeholder: "You can get this by going to the `About InvenTree` section in the upper right corner and clicking on the `copy version information` button"
-  - type: checkboxes
-    id: can-reproduce
+  - type: dropdown
+    id: tried-reproduce
     attributes:
-      label: "Please verify if you can reproduce this bug on the demo site."
-      description: "You can sign in at [InvenTree Demo](https://demo.inventree.org) with admin:inventree. Note that this instance runs on the latest dev version, so your bug may be fixed there."
+      label: Try to reproduce on the demo site
+      description: You can sign in at [InvenTree Demo](https://demo.inventree.org) with admin:inventree. Note that this instance runs on the latest dev version, so your bug may be fixed there.
       options:
-        - label: "I can reproduce this bug on the demo site."
+        - I tried to reproduce
+        - I did not try to reproduce
+    validations:
+      required: true
+  - type: dropdown
+    id: result-reproduce
+    attributes:
+      label: Is the bug reproducible on the demo site?
+      options:
+        - Reproducible
+        - Not reproducible
+    validations:
+      required: true
   - type: textarea
     id: logs
     attributes:
