@@ -2,11 +2,6 @@
 title: Architecture
 ---
 
-## Project Overview
-
-TODO Describes the components of the ecosystem.
-
-
 ## Typical Deployment
 
 InvenTree is a classical Django Application and supports the WSGI interface standard. The following diagram shows a typical and recommended deployment architecture of InvenTree.
@@ -68,26 +63,19 @@ The backend aims to be:
 - Tested reasonably throughout with transparent test coverage
 - Following the Django and generally accepted security conventions
 
-#### Configuration sources
-
-#### Middlewares and templateting
-
-#### Built-in apps
-
-#### Plugin system
-
 ### Frontend Architecture
 
-InvenTree's frontend is primarily a single-page application (SPA) built with React.
+InvenTree's frontend is primarily a single-page application (SPA) built with React, mantine and yarn/vite for bundling.
+
+#### Serving the frontend
+It is statically pre-build and is served by the Django application as a bundle of static files. No node executable or bundling technology is required to run the frontend in production. It is however possible to use the development server for the frontend stack together with a development or production instance of the backend.
+
+Frontend and backend do not need to be serverd by the same server or on the same domain, only the API versions need to match.
 
 #### Coupling to the backend
 
-#### Translations
+The frontend is not coupled during the lifetime of the application but it can be primed via the `INVENTREE_SETTINGS` global variable (rendered by the `spa_settings` tag).
 
-#### Library / exported components
+These settings can configure the base url, available backends, environment details and more.
 
-## Security
-
-TODO Security aspects of the architecture and SDLC
-
-### Assurances
+To facilitate this the html structure for the frontend is run through a performance-optimized template. There is only a very limited amount of rendering done to keep response times and surface for  security threads low.
