@@ -200,7 +200,7 @@ pushes changes in user profile to backend
 function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
   const uid = useUserState.getState().userId();
   if (uid) {
-    api.patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });
+    api.patch(apiUrl(ApiEndpoints.user_me_profile), { [key]: val });
   } else {
     console.log('user not logged in, not patching');
   }
