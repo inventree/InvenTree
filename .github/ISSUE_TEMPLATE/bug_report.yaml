@@ -37,15 +37,15 @@ body:
       label: "Expected behaviour"
       description: "A clear and concise description of what you expected to happen."
       placeholder: "..."
-  - type: checkboxes
+  - type: dropdown
     id: deployment
     attributes:
       label: "Deployment Method"
       options:
-        - label: "Docker"
-        - label: "Package"
-        - label: "Bare metal"
-        - label: "Other - added info in Steps to Reproduce"
+        - "Docker"
+        - Package"
+        - Bare metal"
+        - "Other - added info in Steps to Reproduce"
   - type: textarea
     id: version-info
     validations:
