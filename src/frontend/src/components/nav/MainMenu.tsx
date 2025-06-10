@@ -14,6 +14,7 @@ import {
   UnstyledButton,
   useMantineColorScheme
 } from '@mantine/core';
+import { IconUserBolt } from '@tabler/icons-react';
 import {
   IconChevronDown,
   IconInfoCircle,
@@ -33,6 +34,7 @@ import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { ServerAPIProps } from '../../states/states';
 import { vars } from '../../theme';
+
 export function MainMenu() {
   const navigate = useNavigate();
   const [user, username] = useUserState(
@@ -43,7 +45,6 @@ export function MainMenu() {
     state.server,
     state.auth_context
   ]);
-
   return (
     <>
       {user?.is_superuser && (
@@ -59,7 +60,6 @@ export function MainMenu() {
           </HoverCard.Dropdown>
         </HoverCard>
       )}
-
       <Menu width={260} position='bottom-end'>
         <Menu.Target>
           <UnstyledButton className={classes.layoutHeaderUser}>
@@ -95,19 +95,15 @@ export function MainMenu() {
               <Trans>System Settings</Trans>
             </Menu.Item>
           )}
-          <Menu.Item
-            onClick={toggleColorScheme}
-            leftSection={
-              colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />
-            }
-            c={
-              colorScheme === 'dark'
-                ? vars.colors.yellow[4]
-                : vars.colors.blue[6]
-            }
-          >
-            <Trans>Change Color Mode</Trans>
-          </Menu.Item>
+          {user?.is_staff && (
+            <Menu.Item
+              leftSection={<IconUserBolt />}
+              component={Link}
+              to='/settings/admin'
+            >
+              <Trans>Admin Center</Trans>
+            </Menu.Item>
+          )}
           {user?.is_staff && <Menu.Divider />}
           <Menu.Item
             onClick={toggleColorScheme}
