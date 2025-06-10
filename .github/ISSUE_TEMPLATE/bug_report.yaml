@@ -6,7 +6,7 @@ body:
     id: no-duplicate-issues
     attributes:
       label: "Please verify that this bug has NOT been raised before."
-      description: "Search in the issues sections by clicking [HERE](https://github.com/inventree/inventree/issues?q=) and read the [Frequently Asked Questions](https://docs.inventree.org/en/latest/faq/)!"
+      description: "Search in the issues sections by clicking [HERE](https://github.com/inventree/inventree/issues?q=) and read the [Frequently Asked Questions](https://docs.inventree.org/en/latest/sref/faq)!"
       options:
         - label: "I checked and didn't find a similar issue"
           required: true
