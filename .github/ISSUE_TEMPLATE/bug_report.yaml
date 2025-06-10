@@ -42,10 +42,10 @@ body:
     attributes:
       label: "Deployment Method"
       options:
-        - "Docker"
-        - Package"
-        - Bare metal"
-        - "Other - added info in Steps to Reproduce"
+        - Docker
+        - Package
+        - Bare metal
+        - Other - added info in Steps to Reproduce
   - type: textarea
     id: version-info
     validations:
@@ -60,8 +60,8 @@ body:
       label: Try to reproduce on the demo site
       description: You can sign in at [InvenTree Demo](https://demo.inventree.org) with admin:inventree. Note that this instance runs on the latest dev version, so your bug may be fixed there.
       options:
-        - I tried to reproduce
         - I did not try to reproduce
+        - I tried to reproduce
     validations:
       required: true
   - type: dropdown
@@ -69,8 +69,8 @@ body:
     attributes:
       label: Is the bug reproducible on the demo site?
       options:
-        - Reproducible
         - Not reproducible
+        - Reproducible
     validations:
       required: true
   - type: textarea
