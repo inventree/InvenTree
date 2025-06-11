@@ -22,6 +22,11 @@ def is_true(x):
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
 
 
+def is_devcontainer_environment():
+    """Check if the InvenTree environment is running in a development container."""
+    return is_true(os.environ.get('INVENTREE_DEVCONTAINER', 'False'))
+
+
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
     return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
@@ -217,7 +222,7 @@ def envcheck_invoke_cmd():
     intendded = ['/bin/invoke', '/bin/inv']
 
     correct_cmd: Optional[str] = None
-    if is_rtd_environment() or is_docker_environment():
+    if is_rtd_environment() or is_docker_environment() or is_devcontainer_environment():
         pass
     elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
         correct_cmd = 'inventree run invoke'
