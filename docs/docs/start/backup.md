@@ -54,10 +54,6 @@ When performing an update of your InvenTree installation - via either [docker](.
 
 If desired, InvenTree can be configured to perform automated daily backups. The run-time setting to control this is found in the *Server Configuration* tab.
 
-{% with id="auto-backup", url="start/auto-backup.png", description="Automatic daily backup" %}
-{% include 'img.html' %}
-{% endwith %}
-
 !!! tip "Optional Feature"
     Automated backup is disabled by default, and must be enabled by an admin user
 

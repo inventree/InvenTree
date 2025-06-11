@@ -13,7 +13,8 @@ export enum FlowEnum {
   ProviderToken = 'provider_token',
   MfaAuthenticate = 'mfa_authenticate',
   Reauthenticate = 'reauthenticate',
-  MfaReauthenticate = 'mfa_reauthenticate'
+  MfaReauthenticate = 'mfa_reauthenticate',
+  MfaTrust = 'mfa_trust'
 }
 
 export interface Flow {

@@ -445,3 +445,177 @@ class PartParameterTest(InvenTreeAPITestCase):
         for idx, expected in expectation.items():
             actual = get_param_value(response, template.pk, idx)
             self.assertEqual(actual, expected)
+
+
+class PartParameterFilterTest(InvenTreeAPITestCase):
+    """Unit tests for filtering parts by parameter values."""
+
+    superuser = True
+
+    @classmethod
+    def setUpTestData(cls):
+        """Setup test data for the filtering tests."""
+        super().setUpTestData()
+
+        cls.url = reverse('api-part-list')
+
+        # Create a number of part parameter templates
+        cls.template_length = PartParameterTemplate.objects.create(
+            name='Length', description='Length of the part', units='mm'
+        )
+
+        cls.template_width = PartParameterTemplate.objects.create(
+            name='Width', description='Width of the part', units='mm'
+        )
+
+        cls.template_ionized = PartParameterTemplate.objects.create(
+            name='Ionized', description='Is the part ionized?', checkbox=True
+        )
+
+        cls.template_color = PartParameterTemplate.objects.create(
+            name='Color', description='Color of the part', choices='red,green,blue'
+        )
+
+        cls.category = PartCategory.objects.create(
+            name='Test Category', description='A category for testing part parameters'
+        )
+
+        # Create a number of parts
+        parts = [
+            Part(
+                name=f'Part {i}',
+                description=f'Description for part {i}',
+                category=cls.category,
+                IPN=f'PART-{i:03d}',
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+            )
+            for i in range(1, 51)
+        ]
+
+        Part.objects.bulk_create(parts)
+
+        # Create parameters for each part
+        parameters = []
+
+        for ii, part in enumerate(Part.objects.all()):
+            parameters.append(
+                PartParameter(
+                    part=part,
+                    template=cls.template_length,
+                    data=(ii * 10) + 5,  # Length in mm
+                    data_numeric=(ii * 10) + 5,  # Numeric value for length
+                )
+            )
+
+            parameters.append(
+                PartParameter(
+                    part=part,
+                    template=cls.template_width,
+                    data=(50 - ii) * 5 + 2,  # Width in mm
+                    data_numeric=(50 - ii) * 5 + 2,  # Width in mm
+                )
+            )
+
+            if ii < 25:
+                parameters.append(
+                    PartParameter(
+                        part=part,
+                        template=cls.template_ionized,
+                        data='true'
+                        if ii % 5 == 0
+                        else 'false',  # Ionized every second part
+                        data_numeric=1
+                        if ii % 5 == 0
+                        else 0,  # Ionized every second part
+                    )
+                )
+
+            if ii < 15:
+                parameters.append(
+                    PartParameter(
+                        part=part,
+                        template=cls.template_color,
+                        data=['red', 'green', 'blue'][ii % 3],  # Cycle through colors
+                        data_numeric=None,  # No numeric value for color
+                    )
+                )
+
+        # Bulk create all parameters
+        PartParameter.objects.bulk_create(parameters)
+
+    def test_filter_by_length(self):
+        """Test basic filtering by length parameter."""
+        length_filters = [
+            ('_lt', '25', 2),
+            ('_lt', '25 mm', 2),
+            ('_gt', '1 inch', 47),
+            ('', '105', 1),
+            ('_lt', '2 mile', 50),
+        ]
+
+        for operator, value, expected_count in length_filters:
+            filter_name = f'parameter_{self.template_length.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count)
+
+    def test_filter_by_width(self):
+        """Test basic filtering by width parameter."""
+        width_filters = [
+            ('_lt', '102', 19),
+            ('_lte', '102 mm', 20),
+            ('_gte', '0.1 yards', 33),
+            ('', '52mm', 1),
+        ]
+
+        for operator, value, expected_count in width_filters:
+            filter_name = f'parameter_{self.template_width.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count)
+
+    def test_filter_by_ionized(self):
+        """Test filtering by ionized parameter."""
+        ionized_filters = [
+            ('', 'true', 5),  # Ionized parts
+            ('', 'false', 20),  # Non-ionized parts
+        ]
+
+        for operator, value, expected_count in ionized_filters:
+            filter_name = f'parameter_{self.template_ionized.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count)
+
+    def test_filter_by_color(self):
+        """Test filtering by color parameter."""
+        for color in ['red', 'green', 'blue']:
+            response = self.get(
+                self.url,
+                {f'parameter_{self.template_color.pk}': color},
+                expected_code=200,
+            ).data
+
+            self.assertEqual(len(response), 5)
+
+    def test_filter_multiple(self):
+        """Test filtering by multiple parameters."""
+        data = {f'parameter_{self.template_length.pk}_lt': '225'}
+        response = self.get(self.url, data)
+        self.assertEqual(len(response.data), 22)
+
+        data[f'parameter_{self.template_width.pk}_gt'] = '150'
+        response = self.get(self.url, data)
+        self.assertEqual(len(response.data), 21)
+
+        data[f'parameter_{self.template_ionized.pk}'] = 'true'
+        response = self.get(self.url, data)
+        self.assertEqual(len(response.data), 5)
+
+        for color in ['red', 'green', 'blue']:
+            data[f'parameter_{self.template_color.pk}'] = color
+            response = self.get(self.url, data)
+            self.assertEqual(len(response.data), 1)

@@ -22,9 +22,7 @@ Below is the list of available stock status codes and their meaning:
 
 The *status* of a given stock item is displayed on the stock item detail page:
 
-{% with id="stock_status_label", url="stock/stock_status_label.png", description="Stock Status Label" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_status_label.png", title="Stock status label") }}
 
 **Source Code**
 
@@ -48,6 +46,4 @@ The default status code for any newly created Stock Item is <span class='badge i
 
 To update the status code for an individual stock item, open the *Edit Stock Item* dialog and then select the required status code in the *Status* field
 
-{% with id="stock_status_edit", url="stock/stock_status_edit.png", description="Edit stock item status" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_status_edit.png", title="Edit stock item status") }}
