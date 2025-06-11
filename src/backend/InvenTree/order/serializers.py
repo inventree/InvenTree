@@ -1311,6 +1311,7 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
             'reference',
             'tracking_number',
             'invoice_number',
+            'barcode_hash',
             'link',
             'notes',
         ]

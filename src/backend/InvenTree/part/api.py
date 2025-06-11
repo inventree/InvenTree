@@ -1358,8 +1358,9 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
             - <value> is the value to filter against.
         """
         # Allowed lookup operations for parameter values
-        operations = '|'.join(['gt', 'lt', 'gte', 'lte'])
-        regex_pattern = rf'^parameter_(\d+)(_({operations}))?$'
+        operators = '|'.join(part.filters.PARAMETER_FILTER_OPERATORS)
+
+        regex_pattern = rf'^parameter_(\d+)(_({operators}))?$'
 
         for param in self.request.query_params:
             result = re.match(regex_pattern, param)
@@ -1369,9 +1370,6 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
 
             template_id = result.group(1)
             operator = result.group(3) or ''
-
-            if operator:
-                operator = '__' + operator
 
             value = self.request.query_params.get(param, None)
 

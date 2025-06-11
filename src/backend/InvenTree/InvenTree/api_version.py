@@ -1,15 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 345
+INVENTREE_API_VERSION = 347
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v345 -> 2025-04-22 : https://github.com/inventree/InvenTree/pull/9312
+v347 -> 2025-04-22 : https://github.com/inventree/InvenTree/pull/9312
     - Adds "external" flag for BuildOrder
     - Adds link between PurchaseOrderLineItem and BuildOrder
+
+v346 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9718
+    - Adds "read_only" field to the GlobalSettings API endpoint(s)
+
+v345 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9745
+    - Adds barcode information to SalesOrderShipment API endpoint
 
 v344 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9714
     - Updates alauth version and adds device trust as a factor

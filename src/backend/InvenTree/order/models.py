@@ -2028,6 +2028,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
 
 class SalesOrderShipment(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
@@ -2046,6 +2047,11 @@ class SalesOrderShipment(
         reference: Custom reference text for this shipment (e.g. consignment number?)
         notes: Custom notes field for this shipment
     """
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SS'
 
     class Meta:
         """Metaclass defines extra model options."""

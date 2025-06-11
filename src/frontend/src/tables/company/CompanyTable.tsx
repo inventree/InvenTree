@@ -43,6 +43,7 @@ export function CompanyTable({
       {
         accessor: 'name',
         sortable: true,
+        switchable: false,
         render: (record: any) => {
           return (
             <Group gap='xs' wrap='nowrap'>
