@@ -42,6 +42,8 @@ test('Tables - Filters', async ({ browser }) => {
 test('Tables - Columns', async ({ browser }) => {
   // Go to the "stock list" page
   const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'stock/location/index/stock-items'
   });
 
