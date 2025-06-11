@@ -14,6 +14,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
 import InvenTree.permissions
@@ -1702,6 +1703,23 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
     ]
 
 
+class PartParameterBulkCreate(CreateAPIView):
+    """Bulk create part parameters.
+
+    - POST: Bulk create part parameters
+    """
+
+    serializer_class = part_serializers.PartParameterBulkSerializer
+    queryset = PartParameter.objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this API endpoint."""
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+
+        return super().get_serializer(*args, **kwargs)
+
+
 class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
 
@@ -2183,6 +2201,11 @@ part_api_urls = [
                         name='api-part-parameter-detail',
                     ),
                 ]),
+            ),
+            path(
+                'bulk/',
+                PartParameterBulkCreate.as_view(),
+                name='api-part-parameter-bulk-create',
             ),
             path('', PartParameterList.as_view(), name='api-part-parameter-list'),
         ]),

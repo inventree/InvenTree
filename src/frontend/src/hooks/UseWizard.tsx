@@ -12,6 +12,7 @@ import WizardDrawer from '../components/wizards/WizardDrawer';
 export interface WizardProps {
   title: string;
   steps: string[];
+  disableManualStepChange?: boolean;
   renderStep: (step: number) => ReactNode;
   canStepForward?: (step: number) => boolean;
   canStepBackward?: (step: number) => boolean;
@@ -111,6 +112,7 @@ export default function useWizard(props: WizardProps): WizardState {
     previousStep,
     wizard: (
       <WizardDrawer
+        disableManualStepChange={props.disableManualStepChange}
         title={props.title}
         currentStep={currentStep}
         steps={props.steps}

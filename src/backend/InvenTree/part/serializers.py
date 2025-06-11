@@ -473,6 +473,25 @@ class PartParameterSerializer(
     )
 
 
+class TemplateUniquenessListSerializer(serializers.ListSerializer):
+    """List serializer that validates unique fields for bulk create."""
+
+    validators = [
+        InvenTree.serializers.ListUniqueValidator(unique_field_names=['template'])
+    ]
+
+
+class PartParameterBulkSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """JSON serializers for the PartParameter model."""
+
+    class Meta:
+        """Metaclass defining serializer fields."""
+
+        model = PartParameter
+        fields = ['pk', 'part', 'template', 'data', 'data_numeric']
+        list_serializer_class = TemplateUniquenessListSerializer
+
+
 class DuplicatePartSerializer(serializers.Serializer):
     """Serializer for specifying options when duplicating a Part.
 

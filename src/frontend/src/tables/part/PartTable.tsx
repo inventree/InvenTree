@@ -7,9 +7,11 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { IconShoppingCart } from '@tabler/icons-react';
+import { IconFileImport, IconShoppingCart } from '@tabler/icons-react';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
@@ -356,6 +358,9 @@ export function PartListTable({
   });
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
+  const importPartWizard = ImportPartWizard({
+    categoryId: initialPartData.category
+  });
 
   const tableActions = useMemo(() => {
     return [
@@ -390,6 +395,14 @@ export function PartListTable({
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add Part`}
         onClick={() => newPart.open()}
+      />,
+      <ActionButton
+        key='import-part'
+        hidden={!user.hasAddRole(UserRoles.part)}
+        tooltip={t`Import Part`}
+        color='green'
+        icon={<IconFileImport />}
+        onClick={() => importPartWizard.openWizard()}
       />
     ];
   }, [user, table.hasSelectedRecords]);
@@ -399,6 +412,7 @@ export function PartListTable({
       {newPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}

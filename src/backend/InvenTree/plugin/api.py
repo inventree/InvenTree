@@ -30,6 +30,7 @@ from InvenTree.mixins import (
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
+from plugin.base.supplier.api import supplier_api_urls
 from plugin.base.ui.api import ui_plugins_api_urls
 from plugin.models import PluginConfig, PluginSetting
 from plugin.plugin import InvenTreePlugin
@@ -525,4 +526,5 @@ plugin_api_urls = [
             path('', PluginList.as_view(), name='api-plugin-list'),
         ]),
     ),
+    path('supplier/', include(supplier_api_urls)),
 ]
