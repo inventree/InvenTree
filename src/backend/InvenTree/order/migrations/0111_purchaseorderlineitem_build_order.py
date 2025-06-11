@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("build", "0057_build_external"),
-        ("order", "0109_salesorder_issue_date"),
+        ("order", "0110_salesordershipment_barcode_data_and_more"),
     ]
 
     operations = [
