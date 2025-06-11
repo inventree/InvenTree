@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:15
     restart: unless-stopped
-    expose:
+    ports:
       - 5432/tcp
     volumes:
       - ../dev-db/:/var/lib/postgresql/data:z
@@ -14,7 +14,7 @@ services:
   redis:
     image: redis:7.0
     restart: always
-    expose:
+    ports:
       - 6379
 
   inventree:
