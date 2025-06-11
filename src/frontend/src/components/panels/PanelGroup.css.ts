@@ -8,3 +8,7 @@ export const selectedPanelTab = style({
     }
   }
 });
+
+export const selectedPanelTabLabel = style({
+  textAlign: 'left'
+});
