@@ -10821,3 +10821,99 @@ msgstr "Read the docs"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignore and continue to Desktop view"
+
+#: src/tables/part/BomTable.tsx
+msgid "Part is Locked"
+msgstr "Part is Locked"
+
+#: src/tables/part/BomTable.tsx
+msgid "BOM cannot be edited - part is locked"
+msgstr "BOM cannot be edited - part is locked"
+
+#: src/tables/part/BomTable.tsx
+msgid "Flat BOM View"
+msgstr "Flat BOM View"
+
+#: src/tables/part/BomTable.tsx
+msgid "Showing all components at all levels needed to build this part. Quantities shown include multipliers for assemblies."
+msgstr "Showing all components at all levels needed to build this part. Quantities shown include multipliers for assemblies."
+
+#: src/tables/part/BomTable.tsx
+msgid "Export Complete"
+msgstr "Export Complete"
+
+#: src/tables/part/BomTable.tsx
+msgid "Saved as ${filename}"
+msgstr "Saved as ${filename}"
+
+#: src/tables/part/BomTable.tsx
+msgid "View BOM"
+msgstr "View BOM"
+
+#: src/tables/part/BomTable.tsx
+msgid "Validate BOM Line"
+msgstr "Validate BOM Line"
+
+#: src/tables/part/BomTable.tsx
+msgid "Edit Substitutes"
+msgstr "Edit Substitutes"
+
+#: src/tables/part/BomTable.tsx
+msgid "Show Direct BOM"
+msgstr "Show Direct BOM"
+
+#: src/tables/part/BomTable.tsx
+msgid "Show Flat BOM"
+msgstr "Show Flat BOM"
+
+#: src/tables/part/BomTable.tsx
+msgid "Flat BOM"
+msgstr "Flat BOM"
+
+#: src/tables/part/BomTable.tsx
+msgid "Export CSV"
+msgstr "Export CSV"
+
+#: src/tables/part/BomTable.tsx
+msgid "Export JSON"
+msgstr "Export JSON"
+
+#: src/tables/part/BomTable.tsx
+msgid "Validate BOM"
+msgstr "Validate BOM"
+
+#: src/tables/part/BomTable.tsx
+msgid "Add BOM Item"
+msgstr "Add BOM Item"
+
+#: src/tables/part/BomTable.tsx
+msgid "Loading complete BOM hierarchy..."
+msgstr "Loading complete BOM hierarchy..."
+
+#: src/tables/part/BomTable.tsx
+msgid "Select Columns to Export"
+msgstr "Select Columns to Export"
+
+#: src/tables/part/BomTable.tsx
+msgid "Choose which columns you want to include in your export:"
+msgstr "Choose which columns you want to include in your export:"
+
+#: src/tables/part/BomTable.tsx
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/tables/part/BomTable.tsx
+msgid "Part Name"
+msgstr "Part Name"    
+
+#: src/tables/part/BomTable.tsx
+msgid "Internal Reference"
+msgstr "Internal Reference"  
+
+#: src/tables/part/BomTable.tsx
+msgid "Consolidate Identical Parts (Sum Quantities)"
+msgstr "Consolidate Identical Parts (Sum Quantities)"  
+
+#: src/tables/part/BomTable.tsx
+msgid "Groups parts that appear multiple times and sums their quantities"
+msgstr "Groups parts that appear multiple times and sums their quantities" 

@@ -91,6 +91,8 @@ export type InvenTreeTableProps<T = any> = {
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => MantineStyleProp | undefined;
+  rowClassName?: (record: T) => string;
+  sx?: MantineStyleProp;
   modelField?: string;
   onCellContextMenu?: (record: T, event: any) => void;
   minHeight?: number;
