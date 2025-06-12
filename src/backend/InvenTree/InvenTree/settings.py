@@ -67,7 +67,6 @@ BASE_DIR = config.get_base_dir()
 # Load configuration data
 CONFIG = config.load_config_data(set_cache=True)
 
-
 # Load VERSION data if it exists
 version_file = config.get_root_dir().joinpath('VERSION')
 if version_file.exists():
@@ -165,7 +164,6 @@ logger = structlog.getLogger('inventree')
 
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
-
 
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
