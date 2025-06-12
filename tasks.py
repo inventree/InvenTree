@@ -319,6 +319,7 @@ def content_excludes(
 
     # Optionally exclude user session information
     if not allow_session:
+        excludes.append('sessions.session')
         excludes.append('usersessions.usersession')
 
     return ' '.join([f'--exclude {e}' for e in excludes])
