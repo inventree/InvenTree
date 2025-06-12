@@ -171,6 +171,7 @@ class BuildSerializer(
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
         part_detail = kwargs.pop('part_detail', True)
+        kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
 
