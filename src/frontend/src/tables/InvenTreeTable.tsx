@@ -34,6 +34,7 @@ import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 
+const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
@@ -313,7 +314,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     // If row actions are available, add a column for them
     if (tableProps.rowActions) {
       cols.push({
-        accessor: '--actions--',
+        accessor: ACTIONS_COLUMN_ACCESSOR,
         title: '   ',
         hidden: false,
         resizable: false,
@@ -358,6 +359,23 @@ export function InvenTreeTable<T extends Record<string, any>>({
     key: cacheKey,
     columns: dataColumns
   });
+
+  // Ensure that the "actions" column is always at the end of the list
+  // This effect is necessary as sometimes the underlying mantine-datatable columns change
+  useEffect(() => {
+    const idx: number = tableColumns.columnsOrder.indexOf(
+      ACTIONS_COLUMN_ACCESSOR
+    );
+
+    if (idx >= 0 && idx < tableColumns.columnsOrder.length - 1) {
+      // Actions column is not at the end of the list - move it there
+      const newOrder = tableColumns.columnsOrder.filter(
+        (col) => col != ACTIONS_COLUMN_ACCESSOR
+      );
+      newOrder.push(ACTIONS_COLUMN_ACCESSOR);
+      tableColumns.setColumnsOrder(newOrder);
+    }
+  }, [tableColumns.columnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -559,13 +577,22 @@ export function InvenTreeTable<T extends Record<string, any>>({
   }, [tableState.queryFilters]);
 
   useEffect(() => {
-    tableState.setIsLoading(
+    const loading: boolean =
       isFetching ||
-        isLoading ||
-        tableOptionQuery.isFetching ||
-        tableOptionQuery.isLoading
-    );
-  }, [isFetching, isLoading, tableOptionQuery]);
+      isLoading ||
+      tableOptionQuery.isFetching ||
+      tableOptionQuery.isLoading;
+
+    if (loading != tableState.isLoading) {
+      tableState.setIsLoading(loading);
+    }
+  }, [
+    isFetching,
+    isLoading,
+    tableOptionQuery.isFetching,
+    tableOptionQuery.isLoading,
+    tableState.isLoading
+  ]);
 
   // Update tableState.records when new data received
   useEffect(() => {

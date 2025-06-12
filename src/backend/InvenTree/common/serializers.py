@@ -15,7 +15,6 @@ from rest_framework.exceptions import PermissionDenied
 from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
-import common.settings
 import common.validators
 import generic.states.custom
 from importer.registry import register_importer
@@ -142,8 +141,9 @@ class GlobalSettingsSerializer(SettingsSerializer):
 
         - It is overridden by an environment variable.
         """
-        overrides = common.settings.global_setting_overrides()
+        from common.settings import global_setting_overrides
 
+        overrides = global_setting_overrides()
         return obj.key in overrides
 
 

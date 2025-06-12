@@ -1,4 +1,4 @@
 # Packages needed for CI/packages
-requests==2.32.3
+requests==2.32.4
 pyyaml==6.0.2
 jc==1.25.4

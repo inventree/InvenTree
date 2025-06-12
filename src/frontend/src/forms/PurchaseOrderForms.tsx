@@ -64,8 +64,13 @@ export function usePurchaseOrderLineItemFields({
   orderId?: number;
   create?: boolean;
 }) {
+  const globalSettings = useGlobalSettingsState();
+
   const [purchasePrice, setPurchasePrice] = useState<string>('');
   const [autoPricing, setAutoPricing] = useState(true);
+
+  // Internal part information
+  const [part, setPart] = useState<any>({});
 
   useEffect(() => {
     if (autoPricing) {
@@ -91,6 +96,9 @@ export function usePurchaseOrderLineItemFields({
           supplier_detail: true,
           active: true,
           part_active: true
+        },
+        onValueChange: (value, record) => {
+          setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
           return {
@@ -119,6 +127,14 @@ export function usePurchaseOrderLineItemFields({
       destination: {
         icon: <IconSitemap />
       },
+      build_order: {
+        disabled: !part?.assembly,
+        filters: {
+          external: true,
+          outstanding: true,
+          part: part?.pk
+        }
+      },
       notes: {
         icon: <IconNotes />
       },
@@ -127,12 +143,24 @@ export function usePurchaseOrderLineItemFields({
       }
     };
 
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', false)) {
+      delete fields.build_order;
+    }
+
     if (create) {
       fields['merge_items'] = {};
     }
 
     return fields;
-  }, [create, orderId, supplierId, autoPricing, purchasePrice]);
+  }, [
+    create,
+    orderId,
+    part,
+    globalSettings,
+    supplierId,
+    autoPricing,
+    purchasePrice
+  ]);
 
   return fields;
 }

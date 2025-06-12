@@ -199,7 +199,9 @@ test('Parts - Allocations', async ({ browser }) => {
   // Expand allocations against BO0001
   await build_order_cell.click();
   await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
-  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Factory/Office Block/Room 101', exact: true })
+    .waitFor();
   await build_order_cell.click();
 
   // Check row options for BO0001
@@ -504,4 +506,20 @@ test('Parts - Bulk Edit', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
+});
+
+test('Parts - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/74/details'
+  });
+
+  // Open "duplicate part" dialog
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-duplicate').click();
+
+  // Check for expected fields
+  await page.getByText('Copy Image', { exact: true }).waitFor();
+  await page.getByText('Copy Notes', { exact: true }).waitFor();
+  await page.getByText('Copy Parameters', { exact: true }).waitFor();
+  await page.getByText('Copy Tests', { exact: true }).waitFor();
 });
