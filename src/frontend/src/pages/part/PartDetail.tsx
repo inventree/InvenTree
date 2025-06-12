@@ -320,11 +320,12 @@ export default function PartDetail() {
         hidden: true // TODO: Expose "can_build" to the API
       },
       {
-        type: 'string',
+        type: 'progressbar',
         name: 'building',
-        unit: true,
         label: t`In Production`,
-        hidden: !part.assembly || !part.building
+        progress: part.building,
+        total: part.scheduled_to_build,
+        hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
       }
     ];
 
