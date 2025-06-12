@@ -837,6 +837,10 @@ export default function PartDetail() {
           },
           copy_parameters: {
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: part.testable,
+            hidden: !part.testable
           }
         }
       }

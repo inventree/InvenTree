@@ -2320,12 +2320,14 @@ class Part(
                     sub.save()
 
     @transaction.atomic
-    def copy_parameters_from(self, other, **kwargs):
+    def copy_parameters_from(self, other: Part, **kwargs) -> None:
         """Copy all parameter values from another Part instance."""
         clear = kwargs.get('clear', True)
 
         if clear:
             self.get_parameters().delete()
+
+        parameters = []
 
         for parameter in other.get_parameters():
             # If this part already has a parameter pointing to the same template,
@@ -2342,7 +2344,31 @@ class Part(
             parameter.part = self
             parameter.pk = None
 
-            parameter.save()
+            parameters.append(parameter)
+
+        PartParameter.objects.bulk_create(parameters)
+
+    @transaction.atomic
+    def copy_tests_from(self, other: Part, **kwargs) -> None:
+        """Copy all test templates from another Part instance.
+
+        Note: We only copy the direct test templates, not ones inherited from parent parts.
+        """
+        templates = []
+        parts = self.get_ancestors(include_self=True)
+
+        for template in other.test_templates.all():
+            # Skip if a test template already exists for this part / key combination
+            if PartTestTemplate.objects.filter(
+                key=template.key, part__in=parts
+            ).exists():
+                continue
+
+            template.pk = None
+            template.part = self
+            templates.append(templates)
+
+        PartTestTemplate.objects.bulk_create(templates)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
@@ -3644,10 +3670,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
                 'part': _('Test templates can only be created for testable parts')
             })
 
-        # Check that this test is unique within the part tree
-        tests = PartTestTemplate.objects.filter(
-            key=self.key, part__tree_id=self.part.tree_id
-        ).exclude(pk=self.pk)
+        # Check that this test is unique for this part
+        # (including template parts of which this part is a variant)
+        parts = self.part.get_ancestors(include_self=True)
+
+        tests = PartTestTemplate.objects.filter(key=self.key, part__in=parts).exclude(
+            pk=self.pk
+        )
 
         if tests.exists():
             raise ValidationError({

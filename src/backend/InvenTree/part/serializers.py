@@ -482,7 +482,14 @@ class DuplicatePartSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['part', 'copy_image', 'copy_bom', 'copy_parameters', 'copy_notes']
+        fields = [
+            'part',
+            'copy_image',
+            'copy_bom',
+            'copy_parameters',
+            'copy_notes',
+            'copy_tests',
+        ]
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
@@ -517,6 +524,13 @@ class DuplicatePartSerializer(serializers.Serializer):
         help_text=_('Copy notes from original part'),
         required=False,
         default=True,
+    )
+
+    copy_tests = serializers.BooleanField(
+        label=_('Copy Tests'),
+        help_text=_('Copy test templates from original part'),
+        required=False,
+        default=False,
     )
 
 
@@ -1073,19 +1087,22 @@ class PartSerializer(
         if duplicate:
             original = duplicate['part']
 
-            if duplicate['copy_bom']:
+            if duplicate.get('copy_bom', False):
                 instance.copy_bom_from(original)
 
-            if duplicate['copy_notes']:
+            if duplicate.get('copy_notes', False):
                 instance.notes = original.notes
                 instance.save()
 
-            if duplicate['copy_image']:
+            if duplicate.get('copy_image', False):
                 instance.image = original.image
                 instance.save()
 
-            if duplicate['copy_parameters']:
+            if duplicate.get('copy_parameters', False):
                 instance.copy_parameters_from(original)
+
+            if duplicate.get('copy_tests', False):
+                instance.copy_tests_from(original)
 
         # Duplicate parameter data from part category (and parents)
         if copy_category_parameters and instance.category is not None:
