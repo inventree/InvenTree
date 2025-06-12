@@ -152,6 +152,18 @@ export function ApiFormField({
             }}
           />
         );
+      case 'password':
+        return (
+          <TextField
+            definition={{ ...reducedDefinition, type: 'password' }}
+            controller={controller}
+            fieldName={fieldName}
+            onChange={onChange}
+            onKeyDown={(value) => {
+              onKeyDown?.(value);
+            }}
+          />
+        );
       case 'icon':
         return (
           <IconField definition={fieldDefinition} controller={controller} />
