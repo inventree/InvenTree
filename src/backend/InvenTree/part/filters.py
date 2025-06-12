@@ -44,7 +44,9 @@ from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 def annotate_in_production_quantity(reference=''):
     """Annotate the 'in production' quantity for each part in a queryset.
 
-    Sum the 'quantity' field for all stock items which are 'in production' for each part.
+    - Sum the 'quantity' field for all stock items which are 'in production' for each part.
+    - This is the total quantity of "incomplete build outputs" for all active builds
+    - This will return the same quantity as the 'quantity_in_production' method on the Part model
 
     Arguments:
         reference: Reference to the part from the current queryset (default = '')
@@ -55,6 +57,28 @@ def annotate_in_production_quantity(reference=''):
 
     return Coalesce(
         SubquerySum(f'{reference}stock_items__quantity', filter=building_filter),
+        Decimal(0),
+        output_field=DecimalField(),
+    )
+
+
+def annotate_scheduled_to_build_quantity(reference: str = ''):
+    """Annotate the 'scheduled to build' quantity for each part in a queryset.
+
+    - This is total scheduled quantity for all build orders which are 'active'
+    - This may be different to the "in production" quantity
+    - This will return the same quantity as the 'quantity_being_built' method no the Part model
+    """
+    building_filter = Q(status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    return Coalesce(
+        SubquerySum(
+            ExpressionWrapper(
+                F(f'{reference}builds__quantity') - F(f'{reference}builds__completed'),
+                output_field=DecimalField(),
+            ),
+            filter=building_filter,
+        ),
         Decimal(0),
         output_field=DecimalField(),
     )

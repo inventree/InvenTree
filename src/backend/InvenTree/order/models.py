@@ -30,6 +30,7 @@ import order.validators
 import report.mixins
 import stock.models
 import users.models as UserModels
+from build.status_codes import BuildStatus
 from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
@@ -279,7 +280,7 @@ class Order(
 
     Instances of this class:
 
-    - PuchaseOrder
+    - PurchaseOrder
     - SalesOrder
 
     Attributes:
@@ -558,7 +559,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     @classmethod
     def get_status_class(cls):
-        """Return the PurchasOrderStatus class."""
+        """Return the PurchaseOrderStatus class."""
         return PurchaseOrderStatusGroups
 
     @classmethod
@@ -923,7 +924,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             status: The StockStatus to assign to the item (default: StockStatus.OK)
 
         Keyword Arguments:
-            barch_code: Optional batch code for the new StockItem
+            batch_code: Optional batch code for the new StockItem
             serials: Optional list of serial numbers to assign to the new StockItem(s)
             notes: Optional notes field for the StockItem
             packaging: Optional packaging field for the StockItem
@@ -1005,20 +1006,61 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 serialize = False
                 serials = [None]
 
+            # Construct dataset for receiving items
+            data = {
+                'part': line.part.part,
+                'supplier_part': line.part,
+                'location': location,
+                'quantity': 1 if serialize else stock_quantity,
+                'purchase_order': self,
+                'status': status,
+                'batch': batch_code,
+                'expiry_date': expiry_date,
+                'packaging': packaging,
+                'purchase_price': unit_purchase_price,
+            }
+
+            if build_order := line.build_order:
+                # Receiving items against an "external" build order
+
+                if not build_order.external:
+                    raise ValidationError(
+                        'Cannot receive items against an internal build order'
+                    )
+
+                if build_order.part != data['part']:
+                    raise ValidationError(
+                        'Cannot receive items against a build order for a different part'
+                    )
+
+                if not location and build_order.destination:
+                    # Override with the build order destination (if not specified)
+                    data['location'] = location = build_order.destination
+
+                if build_order.active:
+                    # An 'active' build order marks the items as "in production"
+                    data['build'] = build_order
+                    data['is_building'] = True
+                elif build_order.status == BuildStatus.COMPLETE:
+                    # A 'completed' build order marks the items as "completed"
+                    data['build'] = build_order
+                    data['is_building'] = False
+
+                    # Increase the 'completed' quantity for the build order
+                    build_order.completed += stock_quantity
+                    build_order.save()
+
+                elif build_order.status == BuildStatus.CANCELLED:
+                    # A 'cancelled' build order is ignored
+                    pass
+                else:
+                    # Un-handled state - raise an error
+                    raise ValidationError(
+                        "Cannot receive items against a build order in state '{build_order.status}'"
+                    )
+
             for sn in serials:
-                item = stock.models.StockItem(
-                    part=line.part.part,
-                    supplier_part=line.part,
-                    location=location,
-                    quantity=1 if serialize else stock_quantity,
-                    purchase_order=self,
-                    status=status,
-                    batch=batch_code,
-                    expiry_date=expiry_date,
-                    packaging=packaging,
-                    serial=sn,
-                    purchase_price=unit_purchase_price,
-                )
+                item = stock.models.StockItem(serial=sn, **data)
 
                 # Assign the provided barcode
                 if barcode:
@@ -1639,6 +1681,11 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     Attributes:
         order: Reference to a PurchaseOrder object
+        part: Reference to a SupplierPart object
+        received: Number of items received
+        purchase_price: Unit purchase price for this line item
+        build_order: Link to an external BuildOrder to be fulfilled by this line item
+        destination: Destination for received items
     """
 
     class Meta:
@@ -1669,6 +1716,25 @@ class PurchaseOrderLineItem(OrderLineItem):
             # Supplier part *must* point to the same supplier!
             if self.part.supplier != self.order.supplier:
                 raise ValidationError({'part': _('Supplier part must match supplier')})
+
+        if self.build_order:
+            if not self.build_order.external:
+                raise ValidationError({
+                    'build_order': _('Build order must be marked as external')
+                })
+
+            if part := self.part.part:
+                if not part.assembly:
+                    raise ValidationError({
+                        'build_order': _(
+                            'Build orders can only be linked to assembly parts'
+                        )
+                    })
+
+                if self.build_order.part != self.part.part:
+                    raise ValidationError({
+                        'build_order': _('Build order part must match line item part')
+                    })
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
@@ -1726,6 +1792,17 @@ class PurchaseOrderLineItem(OrderLineItem):
     def price(self):
         """Return the 'purchase_price' field as 'price'."""
         return self.purchase_price
+
+    build_order = models.ForeignKey(
+        'build.Build',
+        on_delete=models.SET_NULL,
+        blank=True,
+        related_name='external_line_items',
+        limit_choices_to={'external': True},
+        null=True,
+        verbose_name=_('Build Order'),
+        help_text=_('External Build Order to be fulfilled by this line item'),
+    )
 
     destination = TreeForeignKey(
         'stock.StockLocation',
@@ -2544,7 +2621,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     @transaction.atomic
     def hold_order(self):
-        """Attempt to tranasition to ON_HOLD status."""
+        """Attempt to transition to ON_HOLD status."""
         return self.handle_transition(
             self.status, ReturnOrderStatus.ON_HOLD.value, self, self._action_hold
         )

@@ -1,4 +1,5 @@
-import { ApiEndpoints, apiUrl } from '@lib/index';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
