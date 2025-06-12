@@ -1627,6 +1627,24 @@ class Part(
 
         return quantity
 
+    @property
+    def quantity_in_production(self):
+        """Quantity of this part currently actively in production.
+
+        Note: This may return a different value to `quantity_being_built`
+        """
+        quantity = 0
+
+        items = self.stock_items.filter(
+            is_building=True, build__status__in=BuildStatusGroups.ACTIVE_CODES
+        )
+
+        for item in items:
+            # The remaining items in the build
+            quantity += item.quantity
+
+        return quantity
+
     def build_order_allocations(self, **kwargs):
         """Return all 'BuildItem' objects which allocate this part to Build objects."""
         include_variants = kwargs.get('include_variants', True)
