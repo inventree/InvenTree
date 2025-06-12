@@ -665,6 +665,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         help_text=_('Destination for received items'),
     )
 
+    delivery_address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Delivery Address'),
+        help_text=_('Delivery address for this order'),
+        related_name='+',
+    )
+
     @transaction.atomic
     def add_line_item(
         self,
