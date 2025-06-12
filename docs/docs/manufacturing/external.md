@@ -41,21 +41,32 @@ The process for managing external build orders in InvenTree is as follows:
 
 ### Create Build Order
 
-Create a new build order, specifying the assembly part and the quantity to be manufactured. When creating the new build order, select the "External" option to indicate that this is an external build order:
+Create a new build order, specifying the assembly part and the quantity to be manufactured. When creating the new build order, select the "External" option to indicate that this is an external build order. The Build detail page will indicate that this is an external build order:
 
-... TODO ... screenshot
+{{ image("build/external_build_detail.png", "External build order detail") }}
+
+Additionally, the *Incomplete Outputs* panel will indicate that the build order is linked to an external purchase order, and that the outputs will be generated when the purchase order items are received.
+
+{{ image("build/external_build_fulfilment.png", "External build order fulfillment") }}
 
 ### Create Purchase Order
 
-... TODO ... description
-... TODO ... screenshot
+Once the build order has been created, a purchase order provides the link between the build order and the incoming goods (which will fulfil the build order).
+
+Create a purchase order against the external supplier which will be responsible for manufacturing the assembly. This assumes that there is already a [supplier part](../purchasing/supplier.md#supplier-parts) which links the assembled part to the external supplier.
 
 ### Add Items to Purchase Order
 
-... TODO ... description
-... TODO ... screenshot
+Once the purchase order has been created, add the assembly part to the purchase order. When adding the line item to the purchase order, ensure that the "Build Order" field is set to the external build order that was created earlier. This links the purchase order to the build order, allowing InvenTree to automatically allocate the received items to the build order when they are received.
 
-### Link Purchase Order to Build Order
+{{ image("build/external_build_select_build.png", "Link items to build order") }}
 
-... TODO ... description
-... TODO ... screenshot
+### Receive Items
+
+Follow the normal process for receiving items against the purchase order. When the items are received from the external supplier, they will be marked as "build outputs" against the external build order.
+
+{{ image("build/external_build_receive_items.png", "Receive items against purchase order") }}
+
+The received items will now be registered as "incomplete outputs" against the external build order:
+
+{{ image("build/external_build_incomplete.png", "Incomplete build outputs") }}
