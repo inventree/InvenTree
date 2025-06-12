@@ -84,6 +84,7 @@
         "dayjs": "^1.11.13",
         "dompurify": "^3.2.4",
         "easymde": "^2.18.0",
+        "embla-carousel": ">=8.0.0",
         "embla-carousel-react": "^8.6.0",
         "fuse.js": "^7.0.0",
         "html5-qrcode": "^2.3.8",
