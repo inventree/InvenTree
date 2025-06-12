@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-18 22:04\n"
+"PO-Revision-Date: 2025-06-07 05:57\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -32,11 +32,11 @@ msgstr "Сталася помилка під час рендерингу цьо�
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:103
 msgid "Error while scanning"
-msgstr ""
+msgstr "Помилка при скануванні"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:117
 msgid "Error while stopping"
-msgstr ""
+msgstr "Помилка при припиненні"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:159
 msgid "Start scanning by selecting a camera and pressing the play button."
@@ -54,7 +54,7 @@ msgstr "Почати сканування"
 #: src/tables/general/BarcodeScanTable.tsx:55
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:63
 msgid "Barcode"
-msgstr ""
+msgstr "Штрих-код"
 
 #: src/components/barcodes/BarcodeInput.tsx:35
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:9
@@ -64,23 +64,23 @@ msgstr "Сканувати"
 
 #: src/components/barcodes/BarcodeInput.tsx:53
 msgid "Camera Input"
-msgstr ""
+msgstr "Запис камери"
 
 #: src/components/barcodes/BarcodeInput.tsx:63
 msgid "Scanner Input"
-msgstr ""
+msgstr "Сканер вводу"
 
 #: src/components/barcodes/BarcodeInput.tsx:105
 msgid "Barcode Data"
-msgstr ""
+msgstr "Дані штрихкоду"
 
 #: src/components/barcodes/BarcodeInput.tsx:109
 msgid "No barcode data"
-msgstr ""
+msgstr "Немає даних штрих-коду"
 
 #: src/components/barcodes/BarcodeInput.tsx:110
 msgid "Scan or enter barcode data"
-msgstr ""
+msgstr "Сканувати або ввести дані штрихкоду"
 
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/editors/NotesEditor.tsx:74
@@ -108,7 +108,7 @@ msgstr "Помилка"
 
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:39
 msgid "Enter barcode data"
-msgstr ""
+msgstr "Введіть дані штрихкоду"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:32
 #: src/components/buttons/ScanButton.tsx:15
@@ -116,32 +116,32 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:416
 #: src/forms/PurchaseOrderForms.tsx:520
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Сканувати штрих-код"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:83
 msgid "No matching item found"
-msgstr ""
+msgstr "Відповідного елементу не знайдено"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:90
 #: src/pages/Index/Scan.tsx:129
 msgid "Failed to scan barcode"
-msgstr ""
+msgstr "Не вдалося сканувати штрих-код"
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Low (7%)"
-msgstr ""
+msgstr "Низький (7%)"
 
 #: src/components/barcodes/QRCode.tsx:95
 msgid "Medium (15%)"
-msgstr ""
+msgstr "Середній (15%)"
 
 #: src/components/barcodes/QRCode.tsx:96
 msgid "Quartile (25%)"
-msgstr ""
+msgstr "Квартиль (25%)"
 
 #: src/components/barcodes/QRCode.tsx:97
 msgid "High (30%)"
-msgstr ""
+msgstr "Високий (30\\%)"
 
 #: src/components/barcodes/QRCode.tsx:107
 msgid "Custom barcode"
@@ -153,15 +153,15 @@ msgstr "Власний штрих-код зареєстрований для ц�
 
 #: src/components/barcodes/QRCode.tsx:127
 msgid "Barcode Data:"
-msgstr ""
+msgstr "Дані штрихкоду:"
 
 #: src/components/barcodes/QRCode.tsx:138
 msgid "Select Error Correction Level"
-msgstr ""
+msgstr "Виберіть рівень коригування помилок"
 
 #: src/components/barcodes/QRCode.tsx:170
 msgid "Failed to link barcode"
-msgstr ""
+msgstr "Не вдалося прив'язати штрих-код"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetail.tsx:240
@@ -174,13 +174,13 @@ msgstr "Посилання"
 
 #: src/components/barcodes/QRCode.tsx:200
 msgid "This will remove the link to the associated barcode"
-msgstr ""
+msgstr "Це призведе до видалення посилання з відповідного штрихкоду"
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:190
 #: src/forms/PurchaseOrderForms.tsx:511
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Відв'язати штрих-код"
 
 #: src/components/buttons/AdminButton.tsx:85
 msgid "Open in admin interface"
@@ -200,11 +200,11 @@ msgstr "Копіювати"
 
 #: src/components/buttons/PrintingActions.tsx:51
 msgid "Printing Labels"
-msgstr ""
+msgstr "Друк етикеток"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Reports"
-msgstr ""
+msgstr "Друк звітів"
 
 #: src/components/buttons/PrintingActions.tsx:77
 #~ msgid "Printing"
@@ -281,7 +281,7 @@ msgstr ""
 
 #: src/components/buttons/ScanButton.tsx:19
 msgid "Open Barcode Scanner"
-msgstr ""
+msgstr "Відкрити сканер штрих-кодів"
 
 #: src/components/buttons/ScanButton.tsx:20
 #~ msgid "Open QR code scanner"
@@ -297,11 +297,11 @@ msgstr "Відкрити екран"
 
 #: src/components/buttons/StarredToggleButton.tsx:59
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Відписатися від сповіщень"
 
 #: src/components/buttons/StarredToggleButton.tsx:60
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "Підписатися на сповіщення"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -324,50 +324,50 @@ msgstr "Ні"
 #: src/components/calendar/Calendar.tsx:93
 #: src/components/calendar/Calendar.tsx:156
 msgid "Calendar Filters"
-msgstr ""
+msgstr "Фільтри календаря"
 
 #: src/components/calendar/Calendar.tsx:108
 msgid "Previous month"
-msgstr ""
+msgstr "Попередній місяць"
 
 #: src/components/calendar/Calendar.tsx:117
 msgid "Select month"
-msgstr ""
+msgstr "Оберіть місяць"
 
 #: src/components/calendar/Calendar.tsx:138
 msgid "Next month"
-msgstr ""
+msgstr "Наступний місяць"
 
 #: src/components/calendar/Calendar.tsx:169
 #: src/tables/InvenTreeTableHeader.tsx:248
 msgid "Download data"
-msgstr ""
+msgstr "Завантажити дані"
 
 #: src/components/calendar/OrderCalendar.tsx:133
 msgid "Order Updated"
-msgstr ""
+msgstr "Замовлення оновлено"
 
 #: src/components/calendar/OrderCalendar.tsx:143
 msgid "Error updating order"
-msgstr ""
+msgstr "Помилка під час оновлення замовлення"
 
 #: src/components/calendar/OrderCalendar.tsx:179
 #: src/tables/Filter.tsx:140
 msgid "Overdue"
-msgstr ""
+msgstr "Прострочено"
 
 #: src/components/dashboard/DashboardLayout.tsx:285
 msgid "No Widgets Selected"
-msgstr ""
+msgstr "Жодного віджету не обрано"
 
 #: src/components/dashboard/DashboardLayout.tsx:288
 msgid "Use the menu to add widgets to the dashboard"
-msgstr ""
+msgstr "Використовуйте меню, щоб додати віджети до панелі керування"
 
 #: src/components/dashboard/DashboardMenu.tsx:60
 #: src/components/dashboard/DashboardMenu.tsx:127
 msgid "Accept Layout"
-msgstr ""
+msgstr "Прийняти макет сторінки"
 
 #: src/components/dashboard/DashboardMenu.tsx:92
 #: src/components/nav/NavigationDrawer.tsx:71
@@ -379,51 +379,51 @@ msgstr "Дешборд"
 
 #: src/components/dashboard/DashboardMenu.tsx:100
 msgid "Edit Layout"
-msgstr ""
+msgstr "Редагувати макет сторінки"
 
 #: src/components/dashboard/DashboardMenu.tsx:109
 msgid "Add Widget"
-msgstr ""
+msgstr "Додати віджет"
 
 #: src/components/dashboard/DashboardMenu.tsx:118
 msgid "Remove Widgets"
-msgstr ""
+msgstr "Видалити віджети"
 
 #: src/components/dashboard/DashboardWidget.tsx:63
 msgid "Remove this widget from the dashboard"
-msgstr ""
+msgstr "Видалити цей віджет з панелі керування"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:77
 msgid "Filter dashboard widgets"
-msgstr ""
+msgstr "Фільтрувати віджети панелі керування"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:98
 msgid "Add this widget to the dashboard"
-msgstr ""
+msgstr "Додати цей віджет до панелі керування"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:123
 msgid "No Widgets Available"
-msgstr ""
+msgstr "Віджети відсутні"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:124
 msgid "There are no more widgets available for the dashboard"
-msgstr ""
+msgstr "Немає більше віджетів для цієї панелі керування"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:22
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Вироби, на які підписано"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:23
 msgid "Show the number of parts which you have subscribed to"
-msgstr ""
+msgstr "Показати кількість виробів, які ви відстежуєте"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:29
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Категорії на які підписані"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:30
 msgid "Show the number of part categories which you have subscribed to"
-msgstr ""
+msgstr "Показати кількість категорій виробів, які ви відстежуєте"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:38
 #: src/pages/part/PartSchedulingDetail.tsx:306
@@ -1594,7 +1594,7 @@ msgstr "Невідома помилка"
 
 #: src/components/items/InfoItem.tsx:27
 msgid "None"
-msgstr ""
+msgstr "Нічого"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
