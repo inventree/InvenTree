@@ -66,23 +66,34 @@ import { StatusFilterOptions } from '../tables/Filter';
 export function useStockFields({
   partId,
   stockItem,
-  create = false
+  create = false,
+  supplierPartId,
+  pricing
 }: {
   partId?: number;
   stockItem?: any;
   create: boolean;
+  supplierPartId?: number;
+  pricing?: { [priceBreak: number]: [number, string] };
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
   // Keep track of the "part" instance
   const [partInstance, setPartInstance] = useState<any>({});
 
-  const [supplierPart, setSupplierPart] = useState<number | null>(null);
+  const [supplierPart, setSupplierPart] = useState<number | null>(
+    supplierPartId ?? null
+  );
 
   const [nextBatchCode, setNextBatchCode] = useState<string>('');
   const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
 
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState<number | null>(null);
+  const [purchasePrice, setPurchasePrice] = useState<number | null>(null);
+  const [purchasePriceCurrency, setPurchasePriceCurrency] = useState<
+    string | null
+  >(null);
 
   const batchGenerator = useBatchCodeGenerator((value: any) => {
     if (value) {
@@ -100,6 +111,25 @@ export function useStockFields({
     }
   });
 
+  // Update pricing when quantity changes
+  useEffect(() => {
+    if (quantity === null || quantity === undefined || !pricing) return;
+
+    // Find the highest price break that is less than or equal to the quantity
+    const priceBreak = Object.entries(pricing)
+      .sort(([a], [b]) => Number.parseInt(b) - Number.parseInt(a))
+      .find(([br]) => quantity >= Number.parseInt(br));
+
+    if (priceBreak) {
+      setPurchasePrice(priceBreak[1][0]);
+      setPurchasePriceCurrency(priceBreak[1][1]);
+    }
+  }, [pricing, quantity]);
+
+  useEffect(() => {
+    if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
+  }, [partInstance, supplierPart, supplierPartId]);
+
   useEffect(() => {
     if (partInstance?.pk) {
       // Update the generators whenever the part ID changes
@@ -112,7 +142,7 @@ export function useStockFields({
     const fields: ApiFormFieldSet = {
       part: {
         value: partInstance.pk,
-        disabled: !create,
+        disabled: !create || !!partId,
         filters: {
           active: create ? true : undefined
         },
@@ -136,6 +166,7 @@ export function useStockFields({
       },
       supplier_part: {
         hidden: partInstance?.purchaseable == false,
+        disabled: !!supplierPartId,
         value: supplierPart,
         onValueChange: (value) => {
           setSupplierPart(value);
@@ -170,8 +201,10 @@ export function useStockFields({
       quantity: {
         hidden: !create,
         description: t`Enter initial quantity for this stock item`,
+        value: quantity,
         onValueChange: (value) => {
           batchGenerator.update({ quantity: value });
+          setQuantity(value);
         }
       },
       serial_numbers: {
@@ -204,10 +237,18 @@ export function useStockFields({
         }
       },
       purchase_price: {
-        icon: <IconCurrencyDollar />
+        icon: <IconCurrencyDollar />,
+        value: purchasePrice,
+        onValueChange: (value) => {
+          setPurchasePrice(value);
+        }
       },
       purchase_price_currency: {
-        icon: <IconCoins />
+        icon: <IconCoins />,
+        value: purchasePriceCurrency,
+        onValueChange: (value) => {
+          setPurchasePriceCurrency(value);
+        }
       },
       packaging: {
         icon: <IconPackage />
@@ -236,7 +277,10 @@ export function useStockFields({
     supplierPart,
     nextSerialNumber,
     nextBatchCode,
-    create
+    create,
+    supplierPartId,
+    purchasePrice,
+    purchasePriceCurrency
   ]);
 }
 

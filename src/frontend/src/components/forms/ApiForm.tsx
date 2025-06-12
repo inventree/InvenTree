@@ -114,6 +114,8 @@ export function OptionsApiForm({
 
     if (!_props.fields) return _props;
 
+    _props.fields = { ..._props.fields };
+
     for (const [k, v] of Object.entries(_props.fields)) {
       _props.fields[k] = constructField({
         field: v,

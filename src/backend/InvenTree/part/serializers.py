@@ -491,6 +491,10 @@ class PartParameterBulkSerializer(InvenTree.serializers.InvenTreeModelSerializer
         fields = ['pk', 'part', 'template', 'data', 'data_numeric']
         list_serializer_class = TemplateUniquenessListSerializer
 
+    def __init__(self, *args, **kwargs):
+        """Custom initialization method for the serializer."""
+        serializers.ModelSerializer.__init__(self, *args, **kwargs)
+
 
 class DuplicatePartSerializer(serializers.Serializer):
     """Serializer for specifying options when duplicating a Part.

@@ -31,9 +31,12 @@ import {
 } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../App';
+import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import useWizard from '../../hooks/UseWizard';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StandaloneField } from '../forms/StandaloneField';
 
 type SearchResult = {
@@ -416,6 +419,41 @@ const ParametersStep = ({
   );
 };
 
+const StockStep = ({
+  importResult,
+  nextStep
+}: {
+  importResult: ImportResult;
+  nextStep: () => void;
+}) => {
+  return (
+    <Stack>
+      <Text size='sm'>
+        <Trans>Create initial stock for the imported part.</Trans>
+      </Text>
+
+      <StockItemTable
+        tableName='initial-stock-creation'
+        allowAdd
+        showPricing
+        showLocation
+        params={{
+          part: importResult.part_id,
+          supplier_part: importResult.supplier_part_id,
+          pricing: importResult.pricing,
+          openNewStockItem: false
+        }}
+      />
+
+      <Group justify='flex-end'>
+        <Button onClick={nextStep}>
+          <Trans>Next</Trans>
+        </Button>
+      </Group>
+    </Stack>
+  );
+};
+
 export default function ImportPartWizard({
   categoryId,
   partId
@@ -427,24 +465,44 @@ export default function ImportPartWizard({
     supplier: string;
     searchResult: SearchResult;
   }>();
-  const [category, setCategory] = useState<number>();
   const [importResult, setImportResult] = useState<ImportResult>();
   const [isImporting, setIsImporting] = useState(false);
   const [parameterErrors, setParameterErrors] = useState<string[] | null>(null);
+
+  const partFields = usePartFields({ create: false });
+  const editPart = useEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: importResult?.part_id,
+    title: t`Edit Part`,
+    fields: partFields
+  });
 
   // Render the select wizard step
   const renderStep = useCallback(
     (step: number) => {
       return (
         <Stack gap='xs'>
+          {editPart.modal}
+
           {step > 0 && supplierPart && (
             <SearchResult
               searchResult={supplierPart?.searchResult}
               partId={partId}
               rightSection={
-                <Link to={`/part/${importResult?.part_id}`} target='_blank'>
-                  <InvenTreeIcon icon='part' />
-                </Link>
+                importResult && (
+                  <Group gap='xs'>
+                    <Link to={`/part/${importResult.part_id}`} target='_blank'>
+                      <InvenTreeIcon icon='part' />
+                    </Link>
+                    <ActionIcon
+                      onClick={() => {
+                        editPart.open();
+                      }}
+                    >
+                      <InvenTreeIcon icon='edit' />
+                    </ActionIcon>
+                  </Group>
+                )
               }
             />
           )}
@@ -464,7 +522,6 @@ export default function ImportPartWizard({
               isImporting={isImporting}
               categoryId={categoryId}
               importPart={async (categoryId) => {
-                setCategory(categoryId);
                 setIsImporting(true);
                 try {
                   const importResult = await api.post(
@@ -569,11 +626,10 @@ export default function ImportPartWizard({
           )}
 
           {step === 3 && (
-            <Stack>
-              <Text size='sm'>
-                <Trans>Create initial stock for the imported part.</Trans>
-              </Text>
-            </Stack>
+            <StockStep
+              importResult={importResult!}
+              nextStep={() => wizard.nextStep()}
+            />
           )}
 
           {step === 4 && (
@@ -584,6 +640,33 @@ export default function ImportPartWizard({
                   {supplierPart?.supplier}.
                 </Trans>
               </Text>
+
+              <Group justify='flex-end'>
+                <Button
+                  component={Link}
+                  to={`/part/${importResult?.part_id}`}
+                  variant='light'
+                >
+                  <Trans>Open Part</Trans>
+                </Button>
+                <Button
+                  component={Link}
+                  to={`/purchasing/supplier-part/${importResult?.supplier_part_id}`}
+                  variant='light'
+                >
+                  <Trans>Open Supplier Part</Trans>
+                </Button>
+                <Button
+                  component={Link}
+                  to={`/purchasing/manufacturer-part/${importResult?.manufacturer_part_id}`}
+                  variant='light'
+                >
+                  <Trans>Open Manufacturer Part</Trans>
+                </Button>
+                <Button onClick={() => wizard.closeWizard()}>
+                  <Trans>Close</Trans>
+                </Button>
+              </Group>
             </Stack>
           )}
         </Stack>
@@ -595,9 +678,18 @@ export default function ImportPartWizard({
       supplierPart,
       importResult,
       isImporting,
-      parameterErrors
+      parameterErrors,
+      editPart.modal
     ]
   );
+
+  const onClose = useCallback(() => {
+    setSupplierPart(undefined);
+    setImportResult(undefined);
+    setIsImporting(false);
+    setParameterErrors(null);
+    wizard.setStep(0);
+  }, []);
 
   // Create the wizard manager
   const wizard = useWizard({
@@ -609,6 +701,7 @@ export default function ImportPartWizard({
       t`Stock`,
       t`Done`
     ],
+    onClose,
     renderStep: renderStep,
     disableManualStepChange: true
   });
