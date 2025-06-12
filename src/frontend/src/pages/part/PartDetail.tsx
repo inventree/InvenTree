@@ -830,7 +830,8 @@ export default function PartDetail() {
             value: true
           },
           copy_bom: {
-            value: globalSettings.isSet('PART_COPY_BOM')
+            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !part.assembly
           },
           copy_notes: {
             value: true
