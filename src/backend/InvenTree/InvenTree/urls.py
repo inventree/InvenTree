@@ -137,6 +137,8 @@ backendpatterns = [
     ),  # Add a redirect for login views
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
+    # Emails
+    path('anymail/', include('anymail.urls')),
 ]
 
 urlpatterns = []
