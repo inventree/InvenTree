@@ -7,8 +7,11 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import { IconPackageImport } from '@tabler/icons-react';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -175,6 +178,10 @@ export function SupplierPartTable({
     successMessage: t`Supplier part created`
   });
 
+  const importPartWizard = ImportPartWizard({
+    partId: params?.part
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -182,6 +189,14 @@ export function SupplierPartTable({
         tooltip={t`Add supplier part`}
         onClick={() => addSupplierPart.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
+      />,
+      <ActionButton
+        key='import-part'
+        icon={<IconPackageImport />}
+        color='green'
+        tooltip={t`Import supplier part`}
+        onClick={() => importPartWizard.openWizard()}
+        hidden={!user.hasAddRole(UserRoles.part) || !params?.part}
       />
     ];
   }, [user]);
@@ -258,6 +273,7 @@ export function SupplierPartTable({
       {addSupplierPart.modal}
       {editSupplierPart.modal}
       {deleteSupplierPart.modal}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.supplier_part_list)}
         tableState={table}

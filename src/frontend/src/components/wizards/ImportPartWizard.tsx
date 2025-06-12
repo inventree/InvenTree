@@ -38,6 +38,7 @@ import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import useWizard from '../../hooks/UseWizard';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StandaloneField } from '../forms/StandaloneField';
+import { RenderRemoteInstance } from '../render/Instance';
 
 type SearchResult = {
   id: string;
@@ -477,6 +478,45 @@ export default function ImportPartWizard({
     fields: partFields
   });
 
+  const importPart = useCallback(
+    async ({
+      categoryId,
+      partId
+    }: { categoryId?: number; partId?: number }) => {
+      setIsImporting(true);
+      try {
+        const importResult = await api.post(
+          apiUrl(ApiEndpoints.plugin_supplier_import),
+          {
+            category_id: categoryId,
+            part_import_id: supplierPart?.searchResult.id,
+            supplier: supplierPart?.supplier,
+            part_id: partId
+          },
+          {
+            timeout: 30000 // 30 seconds
+          }
+        );
+        setImportResult(importResult.data);
+        showNotification({
+          title: t`Success`,
+          message: t`Part imported successfully!`,
+          color: 'green'
+        });
+        wizard.nextStep();
+        setIsImporting(false);
+      } catch {
+        showNotification({
+          title: t`Error`,
+          message: t`Failed to import part`,
+          color: 'red'
+        });
+        setIsImporting(false);
+      }
+    },
+    [supplierPart]
+  );
+
   // Render the select wizard step
   const renderStep = useCallback(
     (step: number) => {
@@ -517,46 +557,42 @@ export default function ImportPartWizard({
             />
           )}
 
-          {step === 1 && (
+          {!partId && step === 1 && (
             <CategoryStep
               isImporting={isImporting}
               categoryId={categoryId}
-              importPart={async (categoryId) => {
-                setIsImporting(true);
-                try {
-                  const importResult = await api.post(
-                    apiUrl(ApiEndpoints.plugin_supplier_import),
-                    {
-                      category_id: categoryId,
-                      part_import_id: supplierPart?.searchResult.id,
-                      supplier: supplierPart?.supplier,
-                      part_id: partId
-                    },
-                    {
-                      timeout: 30000 // 30 seconds
-                    }
-                  );
-                  setImportResult(importResult.data);
-                  showNotification({
-                    title: t`Success`,
-                    message: t`Part imported successfully!`,
-                    color: 'green'
-                  });
-                  wizard.nextStep();
-                  setIsImporting(false);
-                } catch {
-                  showNotification({
-                    title: t`Error`,
-                    message: t`Failed to import part`,
-                    color: 'red'
-                  });
-                  setIsImporting(false);
-                }
+              importPart={(categoryId) => {
+                importPart({ categoryId });
               }}
             />
           )}
 
-          {step === 2 && (
+          {!!partId && step === 1 && (
+            <Stack>
+              <RenderRemoteInstance model={ModelType.part} pk={partId} />
+
+              <Text>
+                <Trans>
+                  Are you sure, you want to import the supplier and manufacturer
+                  part into this part?
+                </Trans>
+              </Text>
+
+              <Group justify='flex-end'>
+                <Button
+                  disabled={isImporting}
+                  onClick={() => {
+                    importPart({ partId });
+                  }}
+                  loading={isImporting}
+                >
+                  <Trans>Import</Trans>
+                </Button>
+              </Group>
+            </Stack>
+          )}
+
+          {!partId && step === 2 && (
             <ParametersStep
               importResult={importResult!}
               isImporting={isImporting}
@@ -625,14 +661,14 @@ export default function ImportPartWizard({
             />
           )}
 
-          {step === 3 && (
+          {step === (!partId ? 3 : 2) && (
             <StockStep
               importResult={importResult!}
               nextStep={() => wizard.nextStep()}
             />
           )}
 
-          {step === 4 && (
+          {step === (!partId ? 4 : 3) && (
             <Stack>
               <Text size='sm'>
                 <Trans>
@@ -679,6 +715,7 @@ export default function ImportPartWizard({
       importResult,
       isImporting,
       parameterErrors,
+      importPart,
       editPart.modal
     ]
   );
@@ -697,7 +734,7 @@ export default function ImportPartWizard({
     steps: [
       t`Search Supplier Part`,
       // if partId is provided, a inventree part already exists, just import the mp/sp
-      ...(!partId ? [t`Category`, t`Parameters`] : []),
+      ...(!partId ? [t`Category`, t`Parameters`] : [t`Confirm import`]),
       t`Stock`,
       t`Done`
     ],

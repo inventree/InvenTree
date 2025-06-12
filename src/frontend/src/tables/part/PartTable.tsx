@@ -7,7 +7,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { IconFileImport, IconShoppingCart } from '@tabler/icons-react';
+import { IconPackageImport, IconShoppingCart } from '@tabler/icons-react';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
@@ -401,7 +401,7 @@ export function PartListTable({
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Import Part`}
         color='green'
-        icon={<IconFileImport />}
+        icon={<IconPackageImport />}
         onClick={() => importPartWizard.openWizard()}
       />
     ];
