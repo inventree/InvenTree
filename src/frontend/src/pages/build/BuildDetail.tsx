@@ -8,6 +8,7 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
+  IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -25,6 +26,7 @@ import {
   type DetailsField,
   DetailsTable
 } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -49,12 +51,14 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
@@ -64,6 +68,7 @@ export default function BuildDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
@@ -123,6 +128,24 @@ export default function BuildDetail() {
         icon: 'status',
         hidden:
           !build.status_custom_key || build.status_custom_key == build.status
+      },
+      {
+        type: 'boolean',
+        name: 'external',
+        label: t`External`,
+        icon: 'manufacturers',
+        hidden: !build.external
+      },
+      {
+        type: 'text',
+        name: 'purchase_order',
+        label: t`Purchase Order`,
+        icon: 'purchase_orders',
+        copy: true,
+        hidden: !build.external,
+        value_formatter: () => {
+          return 'TODO: external PO';
+        }
       },
       {
         type: 'text',
@@ -287,9 +310,37 @@ export default function BuildDetail() {
       },
       {
         name: 'line-items',
-        label: t`Line Items`,
+        label: t`Required Stock`,
         icon: <IconListNumbers />,
         content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
+      },
+      {
+        name: 'allocated-stock',
+        label: t`Allocated Stock`,
+        icon: <IconList />,
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED,
+        content: build.pk ? (
+          <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
+        name: 'consumed-stock',
+        label: t`Consumed Stock`,
+        icon: <IconListCheck />,
+        content: (
+          <StockItemTable
+            allowAdd={false}
+            tableName='build-consumed'
+            showLocation={false}
+            params={{
+              consumed_by: id
+            }}
+          />
+        )
       },
       {
         name: 'incomplete-outputs',
@@ -320,32 +371,18 @@ export default function BuildDetail() {
         )
       },
       {
-        name: 'allocated-stock',
-        label: t`Allocated Stock`,
-        icon: <IconList />,
-        hidden:
-          build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED,
+        name: 'external-purchase-orders',
+        label: t`External Orders`,
+        icon: <IconShoppingCart />,
         content: build.pk ? (
-          <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
+          <PurchaseOrderTable externalBuildId={build.pk} />
         ) : (
           <Skeleton />
-        )
-      },
-      {
-        name: 'consumed-stock',
-        label: t`Consumed Stock`,
-        icon: <IconListCheck />,
-        content: (
-          <StockItemTable
-            allowAdd={false}
-            tableName='build-consumed'
-            showLocation={false}
-            params={{
-              consumed_by: id
-            }}
-          />
-        )
+        ),
+        hidden:
+          !user.hasViewRole(UserRoles.purchase_order) ||
+          !build.external ||
+          !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
       {
         name: 'child-orders',
@@ -377,7 +414,7 @@ export default function BuildDetail() {
         model_id: build.pk
       })
     ];
-  }, [build, id, user, buildStatus]);
+  }, [build, id, user, buildStatus, globalSettings]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 
@@ -531,6 +568,12 @@ export default function BuildDetail() {
             status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
+          />,
+          <DetailsBadge
+            label={t`External`}
+            color='blue'
+            key='external'
+            visible={build.external}
           />
         ];
   }, [build, instanceQuery]);

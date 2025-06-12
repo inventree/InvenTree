@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 348
 
 
 INVENTREE_API_TEXT = """
+v348 -> 2025-04-22 : https://github.com/inventree/InvenTree/pull/9312
+    - Adds "external" flag for BuildOrder
+    - Adds link between PurchaseOrderLineItem and BuildOrder
 
 v348 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9574
     - Remove the 'create_child_builds' flag from the BuildOrder creation API endpoint

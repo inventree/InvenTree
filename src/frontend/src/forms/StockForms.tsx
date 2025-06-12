@@ -32,7 +32,7 @@ import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/index';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
