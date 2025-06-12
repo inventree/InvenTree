@@ -8,6 +8,7 @@ import random
 import shutil
 import string
 from pathlib import Path
+from typing import Optional
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -68,6 +69,11 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
+def get_config_dir() -> Path:
+    """Returns the InvenTree configuration directory."""
+    return get_base_dir().joinpath('config').resolve()
+
+
 def ensure_dir(path: Path, storage=None) -> None:
     """Ensure that a directory exists.
 
@@ -90,7 +96,7 @@ def get_config_file(create=True) -> Path:
 
     Note: It will be created it if does not already exist!
     """
-    base_dir = get_base_dir()
+    base_dir = get_config_dir()
 
     cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
 
@@ -110,6 +116,7 @@ def get_config_file(create=True) -> Path:
         shutil.copyfile(cfg_template, cfg_filename)
         print(f'Created config file {cfg_filename}')
 
+    check_config_dir('INVENTREE_CONFIG_FILE', cfg_filename, base_dir)
     return cfg_filename
 
 
@@ -319,6 +326,7 @@ def get_plugin_file():
             '# InvenTree Plugins (uses PIP framework to install)\n\n'
         )
 
+    check_config_dir('INVENTREE_PLUGIN_FILE', plugin_file)
     return plugin_file
 
 
@@ -345,9 +353,16 @@ def get_secret_key():
     # Look for secret key file
     if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
         secret_key_file = Path(secret_key_file).resolve()
+    elif (
+        secret_key_file := get_base_dir().joinpath('secret_key.txt')
+        and secret_key_file
+        and secret_key_file.exists()
+    ):
+        pass
     else:
         # Default location for secret key file
-        secret_key_file = get_base_dir().joinpath('secret_key.txt').resolve()
+        secret_key_file = get_config_dir().joinpath('secret_key.txt').resolve()
+    check_config_dir('INVENTREE_SECRET_KEY_FILE', secret_key_file)
 
     if not secret_key_file.exists():
         logger.info("Generating random key file at '%s'", secret_key_file)
@@ -383,9 +398,17 @@ def get_oidc_private_key():
         get_setting(
             'INVENTREE_OIDC_PRIVATE_KEY_FILE',
             'oidc_private_key_file',
-            get_base_dir().joinpath('oidc.pem'),
+            get_config_dir().joinpath('oidc.pem'),
         )
     )
+
+    # Trying old default location
+    if not key_loc.exists():
+        old_def_path = get_base_dir().joinpath('oidc.pem')
+        if old_def_path.exists():
+            key_loc = old_def_path.resolve()
+
+    check_config_dir('INVENTREE_OIDC_PRIVATE_KEY_FILE', key_loc)
     if key_loc.exists():
         return key_loc.read_text()
     else:
@@ -407,8 +430,7 @@ def get_oidc_private_key():
                     encryption_algorithm=serialization.NoEncryption(),
                 )
             )
-        RSA_KEY = key_loc.read_text()
-    return RSA_KEY
+        return key_loc.read_text()
 
 
 def get_custom_file(
@@ -494,3 +516,20 @@ def get_frontend_settings(debug=True):
         frontend_settings['url_compatibility'] = True
 
     return frontend_settings
+
+
+def check_config_dir(
+    setting_name: str, current_path: Path, config_dir: Optional[Path] = None
+) -> None:
+    """Warn if the config directory is not used."""
+    if not config_dir:
+        config_dir = get_config_dir()
+
+    if not current_path.is_relative_to(config_dir):
+        logger.warning(
+            "INVE-W10 - Config for '%s' not in recommended directory '%s'.",
+            setting_name,
+            config_dir,
+        )
+
+    return
