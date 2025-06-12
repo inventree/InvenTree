@@ -12,6 +12,7 @@ import {
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { ModelType } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
@@ -257,7 +258,8 @@ export default function BuildOrderTestTable({
           },
           rowActions: rowActions,
           tableFilters: tableFilters,
-          tableActions: tableActions
+          tableActions: tableActions,
+          modelType: ModelType.stockitem
         }}
       />
     </>
