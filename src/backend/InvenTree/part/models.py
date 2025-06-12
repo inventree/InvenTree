@@ -2358,6 +2358,10 @@ class Part(
         templates = []
         parts = self.get_ancestors(include_self=True)
 
+        # Prevent tests from being created for non-testable parts
+        if not self.testable:
+            return
+
         for template in other.test_templates.all():
             # Skip if a test template already exists for this part / key combination
             if PartTestTemplate.objects.filter(
