@@ -95,7 +95,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
             name__iexact=data['sku'],
             purchaseable=True,
             defaults={
-                'name': data['name'],
+                'name': data['sku'],
                 'description': data['description'],
                 'link': data['link'],
                 **kwargs,
