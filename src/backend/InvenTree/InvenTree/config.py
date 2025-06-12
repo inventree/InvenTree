@@ -69,9 +69,14 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
+def get_root_dir() -> Path:
+    """Returns the InvenTree root directory."""
+    return get_base_dir().parent.parent.parent
+
+
 def get_config_dir() -> Path:
     """Returns the InvenTree configuration directory."""
-    return get_base_dir().joinpath('config').resolve()
+    return get_root_dir().joinpath('config').resolve()
 
 
 def ensure_dir(path: Path, storage=None) -> None:
@@ -96,15 +101,19 @@ def get_config_file(create=True) -> Path:
 
     Note: It will be created it if does not already exist!
     """
-    base_dir = get_config_dir()
+    conf_dir = get_config_dir()
+    base_dir = get_base_dir()
 
     cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
 
     if cfg_filename:
         cfg_filename = Path(cfg_filename.strip()).resolve()
+    elif get_base_dir().joinpath('config.yaml').exists():
+        # If the config file is in the old directory, use that
+        cfg_filename = base_dir.joinpath('config.yaml').resolve()
     else:
         # Config file is *not* specified - use the default
-        cfg_filename = base_dir.joinpath('config.yaml').resolve()
+        cfg_filename = conf_dir.joinpath('config.yaml').resolve()
 
     if not cfg_filename.exists() and create:
         print(
@@ -116,7 +125,7 @@ def get_config_file(create=True) -> Path:
         shutil.copyfile(cfg_template, cfg_filename)
         print(f'Created config file {cfg_filename}')
 
-    check_config_dir('INVENTREE_CONFIG_FILE', cfg_filename, base_dir)
+    check_config_dir('INVENTREE_CONFIG_FILE', cfg_filename, conf_dir)
     return cfg_filename
 
 
@@ -353,12 +362,8 @@ def get_secret_key():
     # Look for secret key file
     if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
         secret_key_file = Path(secret_key_file).resolve()
-    elif (
-        secret_key_file := get_base_dir().joinpath('secret_key.txt')
-        and secret_key_file
-        and secret_key_file.exists()
-    ):
-        pass
+    elif get_base_dir().joinpath('secret_key.txt').exists():
+        secret_key_file = get_base_dir().joinpath('secret_key.txt')
     else:
         # Default location for secret key file
         secret_key_file = get_config_dir().joinpath('secret_key.txt').resolve()
