@@ -40,7 +40,11 @@ from InvenTree.serializers import (
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
-from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
+from stock.serializers import (
+    LocationBriefSerializer,
+    StockItemSerializerBrief,
+    StockStatusCustomSerializer,
+)
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -69,6 +73,7 @@ class BuildSerializer(
             'completed',
             'completion_date',
             'destination',
+            'external',
             'parent',
             'part',
             'part_name',
@@ -581,11 +586,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
-    status_custom_key = serializers.ChoiceField(
-        choices=StockStatus.items(custom=True),
-        default=StockStatus.OK.value,
-        label=_('Status'),
-    )
+    status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     accept_incomplete_allocation = serializers.BooleanField(
         default=False,
@@ -1431,7 +1432,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
     build_detail = BuildSerializer(
-        label=_('Build'), source='build', part_detail=False, many=False, read_only=True
+        label=_('Build'),
+        source='build',
+        part_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     # Annotated (calculated) fields

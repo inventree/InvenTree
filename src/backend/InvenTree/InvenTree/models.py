@@ -10,7 +10,7 @@ from django.db import models
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.urls import reverse
+from django.urls import resolve, reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
@@ -102,7 +102,7 @@ class PluginValidationMixin(DiffMixin):
                 import InvenTree.exceptions
 
                 InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.validate_model_instance'
+                    'validate_model_instance', plugin=plugin.slug
                 )
                 raise ValidationError(_('Error running plugin validation'))
 
@@ -139,7 +139,7 @@ class PluginValidationMixin(DiffMixin):
                 # Plugin might raise a ValidationError to prevent deletion
                 raise e
             except Exception:
-                log_error('plugin.validate_model_deletion')
+                log_error('validate_model_deletion', plugin=plugin.slug)
                 continue
 
         super().delete()
@@ -587,7 +587,16 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
 
         # 3. Update the tree structure
         if tree_id:
-            self.__class__.objects.partial_rebuild(tree_id)
+            try:
+                self.__class__.objects.partial_rebuild(tree_id)
+            except Exception:
+                logger.warning(
+                    'Failed to rebuild tree for %s <%s>',
+                    self.__class__.__name__,
+                    self.pk,
+                )
+                # If the partial rebuild fails, rebuild the entire tree
+                self.__class__.objects.rebuild()
         else:
             self.__class__.objects.rebuild()
 
@@ -947,7 +956,7 @@ class InvenTreeBarcodeMixin(models.Model):
         )
 
     def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a QR code for this model instance."""
+        """Return a string for formatting a QR code for this model instance."""
         from plugin.base.barcodes.helper import generate_barcode
 
         return generate_barcode(self)
@@ -958,7 +967,17 @@ class InvenTreeBarcodeMixin(models.Model):
 
         if hasattr(self, 'get_api_url'):
             api_url = self.get_api_url()
-            data['api_url'] = f'{api_url}{self.pk}/'
+            data['api_url'] = api_url = f'{api_url}{self.pk}/'
+
+            # Attempt to serialize the object too
+            try:
+                match = resolve(api_url)
+                view_class = match.func.view_class
+                serializer_class = view_class.serializer_class
+                serializer = serializer_class(self)
+                data['instance'] = serializer.data
+            except Exception:
+                pass
 
         if hasattr(self, 'get_absolute_url'):
             data['web_url'] = self.get_absolute_url()
@@ -966,7 +985,7 @@ class InvenTreeBarcodeMixin(models.Model):
         return data
 
     @property
-    def barcode(self):
+    def barcode(self) -> str:
         """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode()
 

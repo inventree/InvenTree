@@ -165,6 +165,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SEARCH_NOTES': {
+        'name': _('Search Notes'),
+        'description': _(
+            "Search queries return results for matches from the item's notes"
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PART_SHOW_QUANTITY_IN_FORMS': {
         'name': _('Show Quantity in Forms'),
         'description': _('Display available part quantity in some forms'),
@@ -216,12 +224,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': True,
         'validator': bool,
-    },
-    'TABLE_STRING_MAX_LENGTH': {
-        'name': _('Table String Length'),
-        'description': _('Maximum length limit for strings displayed in table views'),
-        'validator': [int, MinValueValidator(0)],
-        'default': 100,
     },
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),

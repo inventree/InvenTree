@@ -11,12 +11,14 @@ import {
   openFilterDrawer,
   setTableChoiceFilter
 } from '../helpers.ts';
-import { doQuickLogin } from '../login.ts';
+import { doCachedLogin } from '../login.ts';
 
-test('Purchase Orders - Table', async ({ page }) => {
-  await doQuickLogin(page);
+test('Purchase Orders - Table', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.waitForURL('**/purchasing/index/**');
+
   await loadTab(page, 'Purchase Orders');
   await activateTableView(page);
 
@@ -42,10 +44,11 @@ test('Purchase Orders - Table', async ({ page }) => {
   await page.getByText('2025-07-17').waitFor(); // Target Date
 });
 
-test('Purchase Orders - Calendar', async ({ page }) => {
-  await doQuickLogin(page);
+test('Purchase Orders - Calendar', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.waitForURL('**/purchasing/index/**');
   await loadTab(page, 'Purchase Orders');
 
   // Ensure view is in "calendar" mode
@@ -66,10 +69,11 @@ test('Purchase Orders - Calendar', async ({ page }) => {
   await activateTableView(page);
 });
 
-test('Purchase Orders - Barcodes', async ({ page }) => {
-  await doQuickLogin(page);
+test('Purchase Orders - Barcodes', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/13/detail'
+  });
 
-  await navigate(page, 'purchasing/purchase-order/13/detail');
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
@@ -126,10 +130,11 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
-test('Purchase Orders - General', async ({ page }) => {
-  await doQuickLogin(page);
+test('Purchase Orders - General', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.waitForURL('**/purchasing/index/**');
 
   await page.getByRole('cell', { name: 'PO0012' }).click();
   await page.waitForTimeout(200);
@@ -179,10 +184,15 @@ test('Purchase Orders - General', async ({ page }) => {
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });
 
-test('Purchase Orders - Filters', async ({ page }) => {
-  await doQuickLogin(page, 'reader', 'readonly');
+test('Purchase Orders - Filters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'reader',
+    password: 'readonly'
+  });
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.waitForURL('**/purchasing/index/**');
+
   await loadTab(page, 'Purchase Orders');
   await activateTableView(page);
 
@@ -204,11 +214,13 @@ test('Purchase Orders - Filters', async ({ page }) => {
   await page.getByRole('option', { name: 'Target Date After' }).waitFor();
 });
 
-test('Purchase Orders - Order Parts', async ({ page }) => {
-  await doQuickLogin(page);
+test('Purchase Orders - Order Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   // Open "Order Parts" wizard from the "parts" table
   await page.getByRole('tab', { name: 'Parts' }).click();
+  await page.waitForURL('**/part/category/index/**');
+
   await page
     .getByLabel('panel-tabs-partcategory')
     .getByRole('tab', { name: 'Parts' })
@@ -271,6 +283,8 @@ test('Purchase Orders - Order Parts', async ({ page }) => {
   await page.getByText('PRJ-PHO').click();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
+  await page.getByLabel('number-field-quantity').fill('100');
+
   // Add the part to the purchase order
   await page.getByLabel('action-button-add-to-selected').click();
   await page.getByLabel('number-field-quantity').fill('100');
@@ -284,10 +298,12 @@ test('Purchase Orders - Order Parts', async ({ page }) => {
 /**
  * Tests for receiving items against a purchase order
  */
-test('Purchase Orders - Receive Items', async ({ page }) => {
-  await doQuickLogin(page);
+test('Purchase Orders - Receive Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.waitForURL('**/purchasing/index/**');
+
   await page.getByRole('cell', { name: 'PO0014' }).click();
 
   await loadTab(page, 'Order Details');
@@ -351,10 +367,11 @@ test('Purchase Orders - Receive Items', async ({ page }) => {
   await page.getByRole('cell', { name: 'bucket' }).first().waitFor();
 });
 
-test('Purchase Orders - Duplicate', async ({ page }) => {
-  await doQuickLogin(page);
+test('Purchase Orders - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/13/detail'
+  });
 
-  await navigate(page, 'purchasing/purchase-order/13/detail');
   await page.getByLabel('action-menu-order-actions').click();
   await page.getByLabel('action-menu-order-actions-duplicate').click();
 

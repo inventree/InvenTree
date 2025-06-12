@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconChecklist,
@@ -8,11 +8,17 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
+  IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -20,6 +26,7 @@ import {
   type DetailsField,
   DetailsTable
 } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -37,24 +44,21 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
@@ -64,6 +68,7 @@ export default function BuildDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
@@ -123,6 +128,24 @@ export default function BuildDetail() {
         icon: 'status',
         hidden:
           !build.status_custom_key || build.status_custom_key == build.status
+      },
+      {
+        type: 'boolean',
+        name: 'external',
+        label: t`External`,
+        icon: 'manufacturers',
+        hidden: !build.external
+      },
+      {
+        type: 'text',
+        name: 'purchase_order',
+        label: t`Purchase Order`,
+        icon: 'purchase_orders',
+        copy: true,
+        hidden: !build.external,
+        value_formatter: () => {
+          return 'TODO: external PO';
+        }
       },
       {
         type: 'text',
@@ -287,37 +310,9 @@ export default function BuildDetail() {
       },
       {
         name: 'line-items',
-        label: t`Line Items`,
+        label: t`Required Stock`,
         icon: <IconListNumbers />,
         content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
-      },
-      {
-        name: 'incomplete-outputs',
-        label: t`Incomplete Outputs`,
-        icon: <IconClipboardList />,
-        content: build.pk ? (
-          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
-        ) : (
-          <Skeleton />
-        ),
-        hidden:
-          build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED
-      },
-      {
-        name: 'complete-outputs',
-        label: t`Completed Outputs`,
-        icon: <IconClipboardCheck />,
-        content: (
-          <StockItemTable
-            allowAdd={false}
-            tableName='build-outputs'
-            params={{
-              build: id,
-              is_building: false
-            }}
-          />
-        )
       },
       {
         name: 'allocated-stock',
@@ -346,6 +341,48 @@ export default function BuildDetail() {
             }}
           />
         )
+      },
+      {
+        name: 'incomplete-outputs',
+        label: t`Incomplete Outputs`,
+        icon: <IconClipboardList />,
+        content: build.pk ? (
+          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED
+      },
+      {
+        name: 'complete-outputs',
+        label: t`Completed Outputs`,
+        icon: <IconClipboardCheck />,
+        content: (
+          <StockItemTable
+            allowAdd={false}
+            tableName='completed-build-outputs'
+            params={{
+              build: id,
+              is_building: false
+            }}
+          />
+        )
+      },
+      {
+        name: 'external-purchase-orders',
+        label: t`External Orders`,
+        icon: <IconShoppingCart />,
+        content: build.pk ? (
+          <PurchaseOrderTable externalBuildId={build.pk} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          !user.hasViewRole(UserRoles.purchase_order) ||
+          !build.external ||
+          !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
       {
         name: 'child-orders',
@@ -377,7 +414,7 @@ export default function BuildDetail() {
         model_id: build.pk
       })
     ];
-  }, [build, id, user, buildStatus]);
+  }, [build, id, user, buildStatus, globalSettings]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 
@@ -531,6 +568,12 @@ export default function BuildDetail() {
             status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
+          />,
+          <DetailsBadge
+            label={t`External`}
+            color='blue'
+            key='external'
+            visible={build.external}
           />
         ];
   }, [build, instanceQuery]);
@@ -569,6 +612,7 @@ export default function BuildDetail() {
             pageKey='build'
             panels={buildPanels}
             instance={build}
+            reloadInstance={refreshInstance}
             model={ModelType.build}
             id={build.pk}
           />

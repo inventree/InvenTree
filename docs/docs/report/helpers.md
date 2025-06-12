@@ -33,6 +33,8 @@ Result: {{ myvar }}
 {% endraw %}
 ```
 
+Note the use of the `as` keyword to assign the output of the function to a variable. This can be used to assign the result of a function to a named variable, which can then be used later in the template.
+
 ## Data Structure Access
 
 A number of helper functions are available for accessing data contained in a particular structure format:
@@ -146,7 +148,7 @@ Generate a list of all active customers:
 
 ### Advanced Database Queries
 
-More advanced database filtering should be achieved using a [report plugin](../extend/plugins/report.md), and adding custom context data to the report template.
+More advanced database filtering should be achieved using a [report plugin](../plugins/mixins/report.md), and adding custom context data to the report template.
 
 ## Number Formatting
 
@@ -464,7 +466,7 @@ If you have a custom logo, but explicitly wish to load the InvenTree logo itself
 
 ## Report Assets
 
-[Report Assets](./templates.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
+[Report Assets](./index.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
 
 You can add asset images to the reports and labels by using the `{% raw %}{% asset ... %}{% endraw %}` template tag:
 
@@ -487,7 +489,7 @@ If you need to load a part parameter for a particular Part, within the context o
 
 ### Example
 
-The following example assumes that you have a report or label which contains a valid [Part](../part/part.md) instance:
+The following example assumes that you have a report or label which contains a valid [Part](../part/index.md) instance:
 
 ```
 {% raw %}

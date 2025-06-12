@@ -1,4 +1,8 @@
-import { Trans, t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
@@ -7,14 +11,12 @@ import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { CopyButton } from '../../components/buttons/CopyButton';
 import { StylishText } from '../../components/items/StylishText';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { RowAction } from '../../tables/RowActions';
 import { BooleanColumn } from '../ColumnRenderers';
-import { type TableFilter, UserFilter } from '../Filter';
+import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ApiTokenTable({

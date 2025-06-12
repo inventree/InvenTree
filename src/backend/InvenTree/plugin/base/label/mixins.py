@@ -73,7 +73,7 @@ class LabelPrintingMixin:
 
         Arguments:
             label: The LabelTemplate object to render against
-            item: The model instance to render
+            instance: The model instance to render
             request: The HTTP request object which triggered this print job
         Keyword Arguments:
             pdf_data: The raw PDF data of the rendered label (if already rendered)

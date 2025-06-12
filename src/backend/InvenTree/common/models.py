@@ -4,7 +4,6 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import enum
 import hashlib
 import hmac
 import json
@@ -40,23 +39,39 @@ from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
-import common.currency
 import common.validators
-import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
-import InvenTree.tasks
-import InvenTree.validators
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
+from common.settings import global_setting_overrides
+from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 
 logger = structlog.get_logger('inventree')
+
+
+class RenderMeta(models.enums.ChoicesMeta):
+    """Metaclass for rendering choices."""
+
+    choice_fnc = None
+
+    @property
+    def choices(self):
+        """Return a list of choices for the enum class."""
+        fnc = getattr(self, 'choice_fnc', None)
+        if fnc:
+            return fnc()
+        return []
+
+
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+    """Class for creating enumerated string choices for schema rendering."""
 
 
 class MetaMixin(models.Model):
@@ -1143,10 +1158,41 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         If so, set the "SERVER_RESTART_REQUIRED" setting to True
         """
+        overrides = global_setting_overrides()
+
+        # If an override is specified for this setting, use that value
+        if self.key in overrides:
+            self.value = overrides[self.key]
+
         super().save()
 
         if self.requires_restart() and not InvenTree.ready.isImportingData():
             InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
+
+    @classmethod
+    def get_setting_default(cls, key, **kwargs):
+        """Return the default value a particular setting."""
+        overrides = global_setting_overrides()
+
+        if key in overrides:
+            # If an override is specified for this setting, use that value
+            return overrides[key]
+
+        return super().get_setting_default(key, **kwargs)
+
+    @classmethod
+    def get_setting(cls, key, backup_value=None, **kwargs):
+        """Get the value of a particular setting.
+
+        If it does not exist, return the backup value (default = None)
+        """
+        overrides = global_setting_overrides()
+
+        if key in overrides:
+            # If an override is specified for this setting, use that value
+            return overrides[key]
+
+        return super().get_setting(key, backup_value=backup_value, **kwargs)
 
     """
     Dict of all global settings values:
@@ -1766,15 +1812,15 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     reload_unit_registry()
 
 
-def rename_attachment(instance, filename):
+def rename_attachment(instance, filename: str):
     """Callback function to rename an uploaded attachment file.
 
-    Arguments:
-        - instance: The Attachment instance
-        - filename: The original filename of the uploaded file
+    Args:
+        instance (Attachment): The Attachment instance for which the file is being renamed.
+        filename (str): The original filename of the uploaded file.
 
     Returns:
-        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
+        str: The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'.
     """
     # Remove any illegal characters from the filename
     illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
@@ -1810,6 +1856,11 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         """Metaclass options."""
 
         verbose_name = _('Attachment')
+
+    class ModelChoices(RenderChoices):
+        """Model choices for attachments."""
+
+        choice_fnc = common.validators.attachment_model_options
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
@@ -1859,7 +1910,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     model_type = models.CharField(
         max_length=100,
         validators=[common.validators.validate_attachment_model_type],
-        help_text=_('Target model type for this image'),
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for image'),
     )
 
     model_id = models.PositiveIntegerField()
@@ -2334,12 +2386,8 @@ class DataOutput(models.Model):
         errors: JSON field for storing any errors generated during the data output generation process
     """
 
-    class DataOutputTypes(str, enum.Enum):
+    class DataOutputTypes(StringEnum):
         """Enum for data output types."""
-
-        def __str__(self):
-            """Return the string representation of the data output type."""
-            return str(self.value)
 
         LABEL = 'label'
         REPORT = 'report'

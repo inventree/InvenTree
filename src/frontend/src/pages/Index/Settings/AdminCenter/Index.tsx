@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
   IconClipboardCheck,
@@ -21,10 +21,14 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
-import type { PanelType } from '../../../../components/panels/Panel';
+import type {
+  PanelGroupType,
+  PanelType
+} from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
@@ -86,14 +90,6 @@ const CustomStateTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomStateTable'))
 );
 
-const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
-);
-
-const PartParameterTemplateTable = Loadable(
-  lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
-);
-
 const PartCategoryTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartCategoryTemplateTable'))
 );
@@ -111,9 +107,10 @@ export default function AdminCenter() {
     return [
       {
         name: 'user',
-        label: t`User Management`,
+        label: t`Users / Access`,
         icon: <IconUsersGroup />,
-        content: <UserManagementPanel />
+        content: <UserManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'import',
@@ -178,19 +175,22 @@ export default function AdminCenter() {
         name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />
+        content: <PartParameterPanel />,
+        hidden: !user.hasViewRole(UserRoles.part)
       },
       {
         name: 'category-parameters',
         label: t`Category Parameters`,
         icon: <IconSitemap />,
-        content: <PartCategoryTemplateTable />
+        content: <PartCategoryTemplateTable />,
+        hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
         name: 'stocktake',
         label: t`Stocktake`,
         icon: <IconClipboardCheck />,
-        content: <StocktakePanel />
+        content: <StocktakePanel />,
+        hidden: !user.hasViewRole(UserRoles.stocktake)
       },
       {
         name: 'labels',
@@ -208,19 +208,68 @@ export default function AdminCenter() {
         name: 'location-types',
         label: t`Location Types`,
         icon: <IconPackages />,
-        content: <LocationTypesTable />
+        content: <LocationTypesTable />,
+        hidden: !user.hasViewRole(UserRoles.stock_location)
       },
       {
         name: 'plugin',
         label: t`Plugins`,
         icon: <IconPlugConnected />,
-        content: <PluginManagementPanel />
+        content: <PluginManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'machine',
         label: t`Machines`,
         icon: <IconDevicesPc />,
-        content: <MachineManagementPanel />
+        content: <MachineManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
+      }
+    ];
+  }, [user]);
+  const grouping: PanelGroupType[] = useMemo(() => {
+    return [
+      {
+        id: 'ops',
+        label: t`Operations`,
+        panelIDs: [
+          'user',
+          'barcode-history',
+          'background',
+          'errors',
+          'currencies'
+        ]
+      },
+      {
+        id: 'data',
+        label: t`Data Management`,
+        panelIDs: [
+          'import',
+          'export',
+          'project-codes',
+          'custom-states',
+          'custom-units'
+        ]
+      },
+      {
+        id: 'reporting',
+        label: t`Reporting`,
+        panelIDs: ['labels', 'reports']
+      },
+      {
+        id: 'extend',
+        label: t`Extend / Integrate`,
+        panelIDs: ['plugin', 'machine']
+      },
+      {
+        id: 'plm',
+        label: t`PLM`,
+        panelIDs: [
+          'part-parameters',
+          'category-parameters',
+          'location-types',
+          'stocktake'
+        ]
       }
     ];
   }, []);
@@ -238,7 +287,9 @@ export default function AdminCenter() {
           <PanelGroup
             pageKey='admin-center'
             panels={adminCenterPanels}
+            groups={grouping}
             collapsible={true}
+            markCustomPanels={true}
             model='admincenter'
             id={null}
           />

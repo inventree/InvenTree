@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Container,
   Flex,
@@ -24,15 +24,19 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -41,15 +45,12 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
@@ -63,8 +64,13 @@ export function usePurchaseOrderLineItemFields({
   orderId?: number;
   create?: boolean;
 }) {
+  const globalSettings = useGlobalSettingsState();
+
   const [purchasePrice, setPurchasePrice] = useState<string>('');
   const [autoPricing, setAutoPricing] = useState(true);
+
+  // Internal part information
+  const [part, setPart] = useState<any>({});
 
   useEffect(() => {
     if (autoPricing) {
@@ -90,6 +96,9 @@ export function usePurchaseOrderLineItemFields({
           supplier_detail: true,
           active: true,
           part_active: true
+        },
+        onValueChange: (value, record) => {
+          setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
           return {
@@ -118,6 +127,14 @@ export function usePurchaseOrderLineItemFields({
       destination: {
         icon: <IconSitemap />
       },
+      build_order: {
+        disabled: !part?.assembly,
+        filters: {
+          external: true,
+          outstanding: true,
+          part: part?.pk
+        }
+      },
       notes: {
         icon: <IconNotes />
       },
@@ -126,12 +143,24 @@ export function usePurchaseOrderLineItemFields({
       }
     };
 
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', false)) {
+      delete fields.build_order;
+    }
+
     if (create) {
       fields['merge_items'] = {};
     }
 
     return fields;
-  }, [create, orderId, supplierId, autoPricing, purchasePrice]);
+  }, [
+    create,
+    orderId,
+    part,
+    globalSettings,
+    supplierId,
+    autoPricing,
+    purchasePrice
+  ]);
 
   return fields;
 }

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Badge,
@@ -18,16 +18,16 @@ import { DateInput, type DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import type {
+  FilterSetState,
+  TableFilter,
+  TableFilterChoice,
+  TableFilterType
+} from '@lib/types/Filters';
 import { IconCheck } from '@tabler/icons-react';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import { StylishText } from '../components/items/StylishText';
-import type { FilterSetState } from '../hooks/UseFilterSet';
-import {
-  type TableFilter,
-  type TableFilterChoice,
-  type TableFilterType,
-  getTableFilterOptions
-} from './Filter';
+import { getTableFilterOptions } from './Filter';
 
 /*
  * Render a single table filter item

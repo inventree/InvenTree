@@ -1,16 +1,20 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import { RenderInstance } from '../../components/render/Instance';
 import { RenderStockLocation } from '../../components/render/Stock';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -23,7 +27,6 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
@@ -34,13 +37,13 @@ import {
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -62,6 +65,7 @@ export function PurchaseOrderLineItemTable({
 }>) {
   const table = useTable('purchase-order-line-item');
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   // Data import
@@ -142,6 +146,23 @@ export function PurchaseOrderLineItemTable({
         sortable: false
       },
       ReferenceColumn({}),
+      {
+        accessor: 'build_order',
+        title: t`Build Order`,
+        sortable: true,
+        render: (record: any) => {
+          if (record.build_order_detail) {
+            return (
+              <RenderInstance
+                instance={record.build_order_detail}
+                model={ModelType.build}
+              />
+            );
+          } else {
+            return '-';
+          }
+        }
+      },
       {
         accessor: 'quantity',
         title: t`Quantity`,
@@ -276,7 +297,7 @@ export function PurchaseOrderLineItemTable({
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
 
-  const editPurchaseOrderFields = usePurchaseOrderLineItemFields({
+  const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
     supplierId: supplierId
@@ -286,7 +307,7 @@ export function PurchaseOrderLineItemTable({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Edit Line Item`,
-    fields: editPurchaseOrderFields,
+    fields: editLineItemFields,
     table: table
   });
 
@@ -317,7 +338,7 @@ export function PurchaseOrderLineItemTable({
 
       return [
         {
-          hidden: received || !orderOpen,
+          hidden: received || !orderPlaced,
           title: t`Receive line item`,
           icon: <IconSquareArrowRight />,
           color: 'green',
@@ -326,6 +347,13 @@ export function PurchaseOrderLineItemTable({
             receiveLineItems.open();
           }
         },
+        RowViewAction({
+          hidden: !record.build_order,
+          title: t`View Build Order`,
+          modelType: ModelType.build,
+          modelId: record.build_order,
+          navigate: navigate
+        }),
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
@@ -349,7 +377,7 @@ export function PurchaseOrderLineItemTable({
         })
       ];
     },
-    [orderId, user, orderOpen]
+    [orderId, user, orderOpen, orderPlaced]
   );
 
   // Custom table actions

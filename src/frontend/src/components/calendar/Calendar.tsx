@@ -4,7 +4,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
-import { t } from '@lingui/macro';
+import type { TableFilter } from '@lib/types/Filters';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Box,
@@ -25,9 +26,9 @@ import {
   IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
-import type { TableFilter } from '../../tables/Filter';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 import { TableSearchInput } from '../../tables/Search';
 import { Boundary } from '../Boundary';
@@ -51,12 +52,12 @@ export default function Calendar({
   filters,
   state,
   ...calendarProps
-}: InvenTreeCalendarProps) {
+}: Readonly<InvenTreeCalendarProps>) {
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  const [locale] = useLocalState((s) => [s.language]);
+  const [locale] = useLocalState(useShallow((s) => [s.language]));
 
   const selectMonth = useCallback(
     (date: DateValue) => {

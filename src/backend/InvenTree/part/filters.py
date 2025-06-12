@@ -9,11 +9,6 @@ Useful References:
 - https://docs.djangoproject.com/en/4.0/ref/models/expressions/
 - https://stackoverflow.com/questions/42543978/django-1-11-annotating-a-subquery-aggregate
 
-Relevant PRs:
-
-- https://github.com/inventree/InvenTree/pull/2797/
-- https://github.com/inventree/InvenTree/pull/2827
-
 """
 
 from decimal import Decimal
@@ -38,6 +33,8 @@ from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
 
+import InvenTree.conversion
+import InvenTree.helpers
 import part.models
 import stock.models
 from build.status_codes import BuildStatusGroups
@@ -47,7 +44,9 @@ from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 def annotate_in_production_quantity(reference=''):
     """Annotate the 'in production' quantity for each part in a queryset.
 
-    Sum the 'quantity' field for all stock items which are 'in production' for each part.
+    - Sum the 'quantity' field for all stock items which are 'in production' for each part.
+    - This is the total quantity of "incomplete build outputs" for all active builds
+    - This will return the same quantity as the 'quantity_in_production' method on the Part model
 
     Arguments:
         reference: Reference to the part from the current queryset (default = '')
@@ -58,6 +57,28 @@ def annotate_in_production_quantity(reference=''):
 
     return Coalesce(
         SubquerySum(f'{reference}stock_items__quantity', filter=building_filter),
+        Decimal(0),
+        output_field=DecimalField(),
+    )
+
+
+def annotate_scheduled_to_build_quantity(reference: str = ''):
+    """Annotate the 'scheduled to build' quantity for each part in a queryset.
+
+    - This is total scheduled quantity for all build orders which are 'active'
+    - This may be different to the "in production" quantity
+    - This will return the same quantity as the 'quantity_being_built' method no the Part model
+    """
+    building_filter = Q(status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    return Coalesce(
+        SubquerySum(
+            ExpressionWrapper(
+                F(f'{reference}builds__quantity') - F(f'{reference}builds__completed'),
+                output_field=DecimalField(),
+            ),
+            filter=building_filter,
+        ),
         Decimal(0),
         output_field=DecimalField(),
     )
@@ -112,8 +133,8 @@ def annotate_total_stock(reference: str = '', filter: Q = None):
     - Aggregates the 'quantity' of each relevant stock item
 
     Args:
-        reference: The relationship reference of the part from the current model e.g. 'part'
-        stock_filter: Q object which defines how to filter the stock items
+        reference (str): The relationship reference of the part from the current model e.g. 'part'
+        filter (Q): Q object which defines how to filter the stock items
     """
     # Stock filter only returns 'in stock' items
     stock_filter = stock.models.StockItem.IN_STOCK_FILTER
@@ -329,6 +350,10 @@ def annotate_sub_categories():
     )
 
 
+"""A list of valid operators for filtering part parameters."""
+PARAMETER_FILTER_OPERATORS: list[str] = ['gt', 'gte', 'lt', 'lte', 'ne', 'icontains']
+
+
 def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     """Filter the given queryset by a given template parameter.
 
@@ -343,8 +368,84 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     Returns:
         A queryset of Part objects filtered by the given parameter
     """
-    # TODO
-    return queryset
+    if func and func not in PARAMETER_FILTER_OPERATORS:
+        raise ValueError(f'Invalid parameter filter function supplied: {func}.')
+
+    try:
+        template = part.models.PartParameterTemplate.objects.get(pk=template_id)
+    except (ValueError, part.models.PartParameterTemplate.DoesNotExist):
+        # Return queryset unchanged if the template does not exist
+        return queryset
+
+    # Construct a "numeric" value
+    try:
+        value_numeric = float(value)
+    except (ValueError, TypeError):
+        value_numeric = None
+
+    if template.checkbox:
+        # Account for 'boolean' parameter values
+        # Convert to "True" or "False" string in this case
+        bool_value = InvenTree.helpers.str2bool(value)
+        value_numeric = 1 if bool_value else 0
+        value = str(bool_value)
+
+        # Boolean filtering is limited to exact matches
+        func = ''
+
+    elif value_numeric is None and template.units:
+        # Convert the raw value to the units of the template parameter
+        try:
+            value_numeric = InvenTree.conversion.convert_physical_value(
+                value, template.units
+            )
+        except Exception:
+            # The value cannot be converted - return an empty queryset
+            return queryset.none()
+
+    # Special handling for the "not equal" operator
+    if func == 'ne':
+        invert = True
+        func = ''
+    else:
+        invert = False
+
+    # Some filters are only applicable to string values
+    text_only = any([func in ['icontains'], value_numeric is None])
+
+    # Ensure the function starts with a double underscore
+    if func and not func.startswith('__'):
+        func = f'__{func}'
+
+    # Query for 'numeric' value - this has priority over 'string' value
+    data_numeric = {
+        'parameters__template': template,
+        'parameters__data_numeric__isnull': False,
+        f'parameters__data_numeric{func}': value_numeric,
+    }
+
+    query_numeric = Q(**data_numeric)
+
+    # Query for 'string' value
+    data_text = {
+        'parameters__template': template,
+        f'parameters__data{func}': str(value),
+    }
+
+    if not text_only:
+        data_text['parameters__data_numeric__isnull'] = True
+
+    query_text = Q(**data_text)
+
+    # Combine the queries based on whether we are filtering by text or numeric value
+    q = query_text if text_only else query_text | query_numeric
+
+    # Special handling for the '__ne' (not equal) operator
+    # In this case, we want the *opposite* of the above queries
+    if invert:
+        return queryset.exclude(q).distinct()
+    else:
+        return queryset.filter(q).distinct()
 
 
 def order_by_parameter(queryset, template_id: int, ascending=True):

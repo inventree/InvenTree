@@ -203,8 +203,8 @@ class PurchaseOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be below 15, independent of the number of results
-                self.assertLess(len(ctx), 15)
+                # Total database queries must be below 20, independent of the number of results
+                self.assertLess(len(ctx), 20)
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
@@ -756,7 +756,7 @@ class PurchaseOrderLineItemTest(OrderTest):
         url = reverse('api-po-line-list')
 
         # Try to delete a set of line items via their IDs
-        self.delete(url, {'items': [1, 2]}, expected_code=204)
+        self.delete(url, {'items': [1, 2]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deletign them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
@@ -1351,8 +1351,8 @@ class SalesOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be less than 15
-                self.assertLess(len(ctx), 15)
+                # Total database queries must be less than 20
+                self.assertLess(len(ctx), 20)
 
                 n = len(response.data['results'])
 

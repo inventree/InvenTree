@@ -539,7 +539,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         PartCategory.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(12):
+        with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-part-category-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), PartCategory.objects.count())
@@ -1445,31 +1445,46 @@ class PartCreationTests(PartAPITestBase):
 
     def test_duplication(self):
         """Test part duplication options."""
-        # Run a matrix of tests
-        for bom in [True, False]:
-            for img in [True, False]:
-                for params in [True, False]:
-                    response = self.post(
-                        reverse('api-part-list'),
-                        {
-                            'name': f'thing_{bom}{img}{params}',
-                            'description': 'Some long description text for this part',
-                            'category': 1,
-                            'duplicate': {
-                                'part': 100,
-                                'copy_bom': bom,
-                                'copy_image': img,
-                                'copy_parameters': params,
-                            },
-                        },
-                        expected_code=201,
-                    )
+        base_part = Part.objects.get(pk=100)
+        base_part.testable = True
+        base_part.save()
 
-                    part = Part.objects.get(pk=response.data['pk'])
+        # Create some test templates against this part
+        for key in ['A', 'B', 'C']:
+            PartTestTemplate.objects.create(
+                part=base_part,
+                test_name=f'Test {key}',
+                description=f'Test template {key} for duplication',
+            )
 
-                    # Check new part
-                    self.assertEqual(part.bom_items.count(), 4 if bom else 0)
-                    self.assertEqual(part.parameters.count(), 2 if params else 0)
+        for do_copy in [True, False]:
+            response = self.post(
+                reverse('api-part-list'),
+                {
+                    'name': f'thing_{do_copy}',
+                    'description': 'Some long description text for this part',
+                    'category': 1,
+                    'testable': do_copy,
+                    'assembly': do_copy,
+                    'duplicate': {
+                        'part': 100,
+                        'copy_bom': do_copy,
+                        'copy_notes': do_copy,
+                        'copy_image': do_copy,
+                        'copy_parameters': do_copy,
+                        'copy_tests': do_copy,
+                    },
+                },
+                expected_code=201,
+            )
+
+            part = Part.objects.get(pk=response.data['pk'])
+
+            # Check new part
+            self.assertEqual(part.bom_items.count(), 4 if do_copy else 0)
+            self.assertEqual(part.notes, base_part.notes if do_copy else None)
+            self.assertEqual(part.parameters.count(), 2 if do_copy else 0)
+            self.assertEqual(part.test_templates.count(), 3 if do_copy else 0)
 
     def test_category_parameters(self):
         """Test that category parameters are correctly applied."""

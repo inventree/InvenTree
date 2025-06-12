@@ -10,9 +10,9 @@ export const api = axios.create({});
  * Setup default settings for the Axios API instance.
  */
 export function setApiDefaults() {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
 
-  api.defaults.baseURL = host;
+  api.defaults.baseURL = getHost();
   api.defaults.timeout = 5000;
 
   api.defaults.withCredentials = true;

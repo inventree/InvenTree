@@ -262,6 +262,8 @@ def notify_overdue_build_order(bo: build_models.Build):
     if bo.responsible:
         targets.append(bo.responsible)
 
+    targets.extend(bo.part.get_subscribers())
+
     name = _('Overdue Build Order')
 
     context = {

@@ -1,6 +1,6 @@
 import test from '@playwright/test';
 import { globalSearch, loadTab, navigate } from './helpers';
-import { doQuickLogin } from './login';
+import { doCachedLogin } from './login';
 
 // Helper function to open the export data dialog
 const openExportDialog = async (page) => {
@@ -11,11 +11,12 @@ const openExportDialog = async (page) => {
 };
 
 // Test data export for various order types
-test('Exporting - Orders', async ({ page }) => {
-  await doQuickLogin(page, 'steven', 'wizardstaff');
-
-  // Download list of purchase orders
-  await navigate(page, 'purchasing/index/purchase-orders');
+test('Exporting - Orders', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'purchasing/index/purchase-orders'
+  });
 
   await openExportDialog(page);
 
@@ -69,8 +70,11 @@ test('Exporting - Orders', async ({ page }) => {
 });
 
 // Test for custom BOM exporter
-test('Exporting - BOM', async ({ page }) => {
-  await doQuickLogin(page, 'steven', 'wizardstaff');
+test('Exporting - BOM', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff'
+  });
 
   await globalSearch(page, 'MAST');
   await page.getByLabel('search-group-results-part').locator('a').click();

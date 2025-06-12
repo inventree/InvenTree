@@ -2,10 +2,11 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+import InvenTree.permissions
 from InvenTree.exceptions import log_error
 from plugin import PluginMixinEnum, registry
 
@@ -20,7 +21,7 @@ class ActionPluginSerializer(serializers.Serializer):
 class ActionPluginView(GenericAPIView):
     """Endpoint for running custom action plugins."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = ActionPluginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -39,7 +40,7 @@ class ActionPluginView(GenericAPIView):
                     plugin.perform_action(request.user, data=data)
                     return Response(plugin.get_response(request.user, data=data))
             except Exception:
-                log_error('action_plugin')
+                log_error('perform_action', plugin=plugin.slug)
 
         # If we got to here, no matching action was found
         return Response({'error': _('No matching action found'), 'action': action})

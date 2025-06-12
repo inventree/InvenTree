@@ -1,6 +1,8 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../../App';
 import type { PreviewAreaComponent } from '../TemplateEditor';
 
@@ -50,8 +52,37 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           throw new Error(preview.data);
         }
 
-        if (preview?.data?.output) {
-          preview = await api.get(preview.data.output, {
+        let outputUrl = preview?.data?.output;
+        if (preview.data && !preview.data.complete) {
+          outputUrl = await new Promise((res, rej) => {
+            let cnt = 0;
+            const interval = setInterval(() => {
+              api
+                .get(apiUrl(ApiEndpoints.data_output, preview.data.pk))
+                .then((response) => {
+                  if (response.data.error) {
+                    clearInterval(interval);
+                    rej(response.data.error);
+                  }
+
+                  if (response.data.complete) {
+                    clearInterval(interval);
+                    res(response.data.output);
+                  }
+
+                  // timeout after 1 minute
+                  if (cnt > 2 * 60) {
+                    clearInterval(interval);
+                    rej('Timeout');
+                  }
+                  cnt++;
+                });
+            }, 500);
+          });
+        }
+
+        if (outputUrl) {
+          preview = await api.get(outputUrl, {
             responseType: 'blob'
           });
         }

@@ -3,18 +3,21 @@ import { test } from '../baseFixtures.ts';
 import {
   activateCalendarView,
   clearTableFilters,
+  clickOnRowMenu,
   getRowFromCell,
   loadTab,
   navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
-import { doQuickLogin } from '../login.ts';
+import { doCachedLogin } from '../login.ts';
 
-test('Build Order - Basic Tests', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Basic Tests', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  await page.getByRole('tab', { name: 'Manufacturing' }).click();
+  await page.waitForURL('**/manufacturing/index/**');
+
   await loadTab(page, 'Build Orders');
 
   await clearTableFilters(page);
@@ -63,7 +66,7 @@ test('Build Order - Basic Tests', async ({ page }) => {
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
   await loadTab(page, 'Incomplete Outputs');
-  await loadTab(page, 'Line Items');
+  await loadTab(page, 'Required Stock');
   await loadTab(page, 'Allocated Stock');
 
   // Check for expected text in the table
@@ -91,8 +94,8 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .waitFor();
 });
 
-test('Build Order - Calendar', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Calendar', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/index/buildorders');
   await activateCalendarView(page);
@@ -114,8 +117,8 @@ test('Build Order - Calendar', async ({ page }) => {
   await page.context().close();
 });
 
-test('Build Order - Edit', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Edit', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/22/');
 
@@ -141,8 +144,8 @@ test('Build Order - Edit', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Build Order - Build Outputs', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Build Outputs', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/index/');
   await loadTab(page, 'Build Orders');
@@ -217,8 +220,8 @@ test('Build Order - Build Outputs', async ({ page }) => {
   await page.getByText('Build outputs have been completed').waitFor();
 });
 
-test('Build Order - Allocation', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Allocation', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/1/line-items');
 
@@ -236,7 +239,9 @@ test('Build Order - Allocation', async ({ page }) => {
   // Expand this row
   await cell.click();
   await page.getByRole('cell', { name: '2022-4-27', exact: true }).waitFor();
-  await page.getByRole('cell', { name: 'Reel Storage', exact: true }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Electronics Lab/Reel Storage', exact: true })
+    .waitFor();
 
   // Navigate to the "Incomplete Outputs" tab
   await loadTab(page, 'Incomplete Outputs');
@@ -317,8 +322,8 @@ test('Build Order - Allocation', async ({ page }) => {
     .waitFor();
 });
 
-test('Build Order - Filters', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Filters', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/index/buildorders');
 
@@ -351,8 +356,8 @@ test('Build Order - Filters', async ({ page }) => {
   await page.getByText('Pending Approval').first().waitFor();
 });
 
-test('Build Order - Duplicate', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/24/details');
   await page.getByLabel('action-menu-build-order-').click();
@@ -368,4 +373,54 @@ test('Build Order - Duplicate', async ({ page }) => {
   await page.getByRole('tab', { name: 'Build Details' }).click();
 
   await page.getByText('Pending').first().waitFor();
+});
+
+// Tests for external build orders
+test('Build Order - External', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'manufacturing/index/' });
+  await loadTab(page, 'Build Orders');
+
+  // Filter to show only external builds
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'External', 'Yes');
+  await page.getByRole('cell', { name: 'BO0026' }).waitFor();
+  await page.getByRole('cell', { name: 'BO0025' }).click();
+  await page
+    .locator('span')
+    .filter({ hasText: /^External$/ })
+    .waitFor();
+
+  await loadTab(page, 'Allocated Stock');
+  await loadTab(page, 'Incomplete Outputs');
+  await page
+    .getByText('This build order is fulfilled by an external purchase order')
+    .waitFor();
+
+  await loadTab(page, 'External Orders');
+  await page.getByRole('cell', { name: 'PO0016' }).click();
+
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Received Stock');
+  await loadTab(page, 'Line Items');
+
+  const cell = await page.getByRole('cell', {
+    name: '002.01-PCBA',
+    exact: true
+  });
+  await clickOnRowMenu(cell);
+
+  await page.getByRole('menuitem', { name: 'Receive line item' }).waitFor();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).waitFor();
+  await page.getByRole('menuitem', { name: 'Edit' }).waitFor();
+  await page.getByRole('menuitem', { name: 'View Build Order' }).click();
+
+  // Wait for navigation back to build order detail page
+  await page.getByText('Build Order: BO0025', { exact: true }).waitFor();
+
+  // Let's look at BO0026 too
+  await navigate(page, 'manufacturing/build-order/26/details');
+  await loadTab(page, 'External Orders');
+
+  await page.getByRole('cell', { name: 'PO0017' }).waitFor();
+  await page.getByRole('cell', { name: 'PO0018' }).waitFor();
 });

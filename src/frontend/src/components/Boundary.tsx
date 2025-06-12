@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert } from '@mantine/core';
 import { ErrorBoundary, type FallbackRender } from '@sentry/react';
 import { IconExclamationCircle } from '@tabler/icons-react';
@@ -23,7 +23,7 @@ export function Boundary({
 }: Readonly<{
   children: ReactNode;
   label: string;
-  fallback?: React.ReactElement | FallbackRender;
+  fallback?: React.ReactElement<any> | FallbackRender;
 }>): ReactNode {
   const onError = useCallback(
     (error: unknown, componentStack: string | undefined, eventId: string) => {

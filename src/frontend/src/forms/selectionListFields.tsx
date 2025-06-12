@@ -1,13 +1,11 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
 import { useMemo } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 
 function BuildAllocateLineRow({

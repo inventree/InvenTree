@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import include, path
 
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 import importer.models
 import importer.registry
 import importer.serializers
+import InvenTree.permissions
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
@@ -21,14 +22,14 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from users.models import check_user_permission
+from users.permissions import check_user_permission
 
 
 class DataImporterPermission(permissions.BasePermission):
     """Mixin class for determining if the user has correct permissions."""
 
     def has_permission(self, request, view):
-        """Class level permission checks are handled via permissions.IsAuthenticated."""
+        """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
         return True
 
     def has_object_permission(self, request, view, obj):
@@ -53,13 +54,25 @@ class DataImporterPermissionMixin:
     """Mixin class for checking permissions on DataImporter objects."""
 
     # Default permissions: User must be authenticated
-    permission_classes = [permissions.IsAuthenticated, DataImporterPermission]
+    permission_classes = [
+        InvenTree.permissions.IsAuthenticatedOrReadScope,
+        DataImporterPermission,
+    ]
+
+
+class DataImporterModelSerializer(serializers.Serializer):
+    """Model references to map info that might get imported."""
+
+    serializer = serializers.CharField(read_only=True)
+    model_type = serializers.CharField(read_only=True)
+    api_url = serializers.URLField(read_only=True, allow_null=True)
 
 
 class DataImporterModelList(APIView):
     """API endpoint for displaying a list of models available for import."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    serializer_class = DataImporterModelSerializer(many=True)
 
     def get(self, request):
         """Return a list of models available for import."""
@@ -101,7 +114,8 @@ class DataImportSessionDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
 class DataImportSessionAcceptFields(APIView):
     """API endpoint to accept the field mapping for a DataImportSession."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    serializer_class = None
 
     @extend_schema(
         responses={200: importer.serializers.DataImportSessionSerializer(many=False)}

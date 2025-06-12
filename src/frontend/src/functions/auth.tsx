@@ -1,14 +1,16 @@
-import { t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
+import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl, useServerApiState } from '../states/ApiState';
+import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
-import { FlowEnum, type Provider, fetchGlobalStates } from '../states/states';
+import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -60,12 +62,13 @@ function post(path: string, params: any, method = 'post') {
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
-export const doBasicLogin = async (
+export async function doBasicLogin(
   username: string,
   password: string,
-  navigate: NavigateFunction
-) => {
-  const { host } = useLocalState.getState();
+  navigate: NavigateFunction,
+  code?: string
+) {
+  const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
@@ -79,6 +82,8 @@ export const doBasicLogin = async (
 
   let loginDone = false;
   let success = false;
+
+  const host: string = getHost();
 
   // Attempt login with
   await api
@@ -100,16 +105,9 @@ export const doBasicLogin = async (
         success = true;
       }
     })
-    .catch((err) => {
+    .catch(async (err) => {
       if (err?.response?.status == 401) {
-        setAuthContext(err.response.data?.data);
-        const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
-        );
-        if (mfa_flow && mfa_flow.is_pending == true) {
-          success = true;
-          navigate('/mfa');
-        }
+        await handlePossibleMFAError(err);
       } else if (err?.response?.status == 409) {
         notifications.show({
           title: t`Already logged in`,
@@ -129,7 +127,40 @@ export const doBasicLogin = async (
     clearUserState();
   }
   return success;
-};
+
+  async function handlePossibleMFAError(err: any) {
+    setAuthContext(err.response.data?.data);
+    const mfa_flow = err.response.data.data.flows.find(
+      (flow: any) => flow.id == FlowEnum.MfaAuthenticate
+    );
+    if (mfa_flow?.is_pending) {
+      // MFA is required - we might already have a code
+      if (code && code.length > 0) {
+        const rslt = await handleMfaLogin(
+          navigate,
+          undefined,
+          { code: code },
+          () => {}
+        );
+        if (rslt) {
+          setAuthenticated(true);
+          loginDone = true;
+          success = true;
+          notifications.show({
+            title: t`MFA Login successful`,
+            message: t`MFA details were automatically provided in the browser`,
+            color: 'green'
+          });
+        }
+      }
+      // No code or success - off to the mfa page
+      if (!loginDone) {
+        success = true;
+        navigate('/mfa');
+      }
+    }
+  }
+}
 
 /**
  * Logout the user from the current session
@@ -156,7 +187,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 };
 
 export const doSimpleLogin = async (email: string) => {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const mail = await axios
     .post(
       apiUrl(ApiEndpoints.user_simple_login),
@@ -164,7 +195,7 @@ export const doSimpleLogin = async (email: string) => {
         email: email
       },
       {
-        baseURL: host,
+        baseURL: getHost(),
         timeout: 2000
       }
     )
@@ -179,7 +210,7 @@ function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
-  const { language, setLanguage, usertheme, setTheme } =
+  const { language, setLanguage, userTheme, setTheme, setWidgets, setLayouts } =
     useLocalState.getState();
   if (user) {
     if (user.profile?.language && language != user.profile.language) {
@@ -194,14 +225,14 @@ function observeProfile() {
 
     if (user.profile?.theme) {
       // extract keys of usertheme and set them to the values of user.profile.theme
-      const newTheme = Object.keys(usertheme).map((key) => {
+      const newTheme = Object.keys(userTheme).map((key) => {
         return {
-          key: key as keyof typeof usertheme,
+          key: key as keyof typeof userTheme,
           value: user.profile.theme[key] as string
         };
       });
       const diff = newTheme.filter(
-        (item) => usertheme[item.key] !== item.value
+        (item) => userTheme[item.key] !== item.value
       );
       if (diff.length > 0) {
         showNotification({
@@ -211,6 +242,15 @@ function observeProfile() {
         });
         setTheme(newTheme);
       }
+    }
+
+    if (user.profile?.widgets) {
+      const data = user.profile.widgets;
+      // split data into widgets and layouts (either might be undefined)
+      const widgets = data.widgets ?? [];
+      const layouts = data.layouts ?? {};
+      setWidgets(widgets, true);
+      setLayouts(layouts, true);
     }
   }
 }
@@ -246,29 +286,28 @@ export function handleReset(
   });
 }
 
-export function handleMfaLogin(
+export async function handleMfaLogin(
   navigate: NavigateFunction,
-  location: Location<any>,
-  values: { code: string },
+  location: Location<any> | undefined,
+  values: { code: string; remember?: boolean },
   setError: (message: string | undefined) => void
 ) {
-  const { setAuthenticated, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
-  authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
-    code: values.code
-  })
+  const result = await authApi(
+    apiUrl(ApiEndpoints.auth_login_2fa),
+    undefined,
+    'post',
+    {
+      code: values.code
+    }
+  )
     .then((response) => {
-      setError(undefined);
-      setAuthContext(response.data?.data);
-      setAuthenticated();
-
-      fetchUserState().finally(() => {
-        observeProfile();
-        followRedirect(navigate, location?.state);
-      });
+      handleSuccessFullAuth(response, navigate, location, setError);
+      return true;
     })
     .catch((err) => {
+      // Already logged in, but with a different session
       if (err?.response?.status == 409) {
         notifications.show({
           title: t`Already logged in`,
@@ -276,6 +315,19 @@ export function handleMfaLogin(
           color: 'red',
           autoClose: false
         });
+        // MFA trust flow pending
+      } else if (err?.response?.status == 401) {
+        const mfa_trust = err.response.data.data.flows.find(
+          (flow: any) => flow.id == FlowEnum.MfaTrust
+        );
+        if (mfa_trust?.is_pending) {
+          setAuthContext(err.response.data.data);
+          authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+            trust: values.remember ?? false
+          }).then((response) => {
+            handleSuccessFullAuth(response, navigate, location, setError);
+          });
+        }
       } else {
         const errors = err.response?.data?.errors;
         let msg = t`An error occurred`;
@@ -285,7 +337,9 @@ export function handleMfaLogin(
         }
         setError(msg);
       }
+      return false;
     });
+  return result;
 }
 
 /**
@@ -338,6 +392,35 @@ export const checkLoginState = async (
   }
 };
 
+function handleSuccessFullAuth(
+  response?: any,
+  navigate?: NavigateFunction,
+  location?: Location<any>,
+  setError?: (message: string | undefined) => void
+) {
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
+
+  if (setError) {
+    // If an error function is provided, clear any previous errors
+    setError(undefined);
+  }
+
+  if (response.data?.data) {
+    setAuthContext(response.data?.data);
+  }
+  setAuthenticated();
+
+  fetchUserState().finally(() => {
+    observeProfile();
+    fetchGlobalStates(navigate);
+
+    if (navigate && location) {
+      followRedirect(navigate, location?.state);
+    }
+  });
+}
+
 /*
  * Return the value of the CSRF cookie, if available
  */
@@ -359,7 +442,7 @@ export function clearCsrfCookie() {
 }
 
 export async function ProviderLogin(
-  provider: Provider,
+  provider: AuthProvider,
   process: 'login' | 'connect' = 'login'
 ) {
   await ensureCsrf();

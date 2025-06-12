@@ -1,5 +1,6 @@
-import { Trans, t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, {
   useCallback,
@@ -10,18 +11,17 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { Setting, SettingsStateProps } from '@lib/types/Settings';
 import { useApi } from '../../contexts/ApiContext';
-import type { ModelType } from '../../enums/ModelType';
 import { useEditApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import {
-  type SettingsStateProps,
   createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
-import type { Setting } from '../../states/states';
 import { SettingItem } from './SettingItem';
 
 /**
@@ -132,6 +132,10 @@ export function SettingList({
     },
     [settingsState]
   );
+
+  if (!settingsState?.loaded) {
+    return <Skeleton animate />;
+  }
 
   return (
     <>
