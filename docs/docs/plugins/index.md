@@ -28,7 +28,8 @@ To install and run the plugin creator:
 pip install inventree-plugin-creator
 create-inventree-plugin
 ```
-#### Basic Plugin Walkthrough
+
+### Basic Plugin Walkthrough
 
 Check out our [basic plugin walkthrough](../plugins/walkthrough.md) to learn how to create an example plugin. This guide will take you through the steps to add a new part panel that displays an image carousel from images attached to the selected part.
 
