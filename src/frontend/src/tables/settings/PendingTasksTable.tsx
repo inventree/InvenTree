@@ -3,6 +3,11 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { UserRoles } from '@lib/index';
+import { notifications, showNotification } from '@mantine/notifications';
+import { IconTrashXFilled, IconX } from '@tabler/icons-react';
+import { api } from '../../App';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
@@ -48,6 +53,41 @@ export default function PendingTasksTable({
     ];
   }, []);
 
+  const tableActions = useMemo(() => {
+    return [
+      <ActionButton
+        key='remove-all'
+        icon={<IconTrashXFilled />}
+        tooltip={t`Remove all pending tasks`}
+        onClick={() => {
+          api
+            .delete(`${apiUrl(ApiEndpoints.task_pending_list)}?all=true`)
+            .then(() => {
+              notifications.show({
+                id: 'notes',
+                title: t`Success`,
+                message: t`All pending tasks deleted`,
+                color: 'green'
+              });
+              table.refreshTable();
+            })
+            .catch((err) => {
+              showNotification({
+                title: t`Error while deleting all pending tasks`,
+                message:
+                  err.response.data?.non_field_errors ??
+                  err.message ??
+                  t`Unknown error`,
+                color: 'red',
+                icon: <IconX />
+              });
+            });
+        }}
+        hidden={!user.hasAddRole(UserRoles.admin)}
+      />
+    ];
+  }, [user]);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiEndpoints.task_pending_list)}
@@ -56,7 +96,8 @@ export default function PendingTasksTable({
       props={{
         afterBulkDelete: onRecordsUpdated,
         enableBulkDelete: user.isStaff(),
-        enableSelection: true
+        enableSelection: true,
+        tableActions: tableActions
       }}
     />
   );

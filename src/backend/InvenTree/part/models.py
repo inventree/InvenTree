@@ -657,7 +657,7 @@ class Part(
                 if raise_error:
                     raise ValidationError({'name': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_name')
+                log_error('validate_part_name', plugin=plugin.slug)
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -678,7 +678,7 @@ class Part(
                 if raise_error:
                     raise ValidationError({'IPN': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_ipn')
+                log_error('validate_part_ipn', plugin=plugin.slug)
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -767,11 +767,11 @@ class Part(
         # First, throw the serial number against each of the loaded validation plugins
         from plugin import PluginMixinEnum, registry
 
-        try:
-            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-                # Run the serial number through each custom validator
-                # If the plugin returns 'True' we will skip any subsequent validation
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            # Run the serial number through each custom validator
+            # If the plugin returns 'True' we will skip any subsequent validation
 
+            try:
                 result = False
 
                 if hasattr(plugin, 'validate_serial_number'):
@@ -788,14 +788,14 @@ class Part(
 
                 if result is True:
                     return True
-        except ValidationError as exc:
-            if raise_error:
-                # Re-throw the error
-                raise exc
-            else:
-                return False
-        except Exception:
-            log_error('part.validate_serial_number')
+            except ValidationError as exc:
+                if raise_error:
+                    # Re-throw the error
+                    raise exc
+                else:
+                    return False
+            except Exception:
+                log_error('validate_serial_number', plugin=plugin.slug)
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -896,7 +896,7 @@ class Part(
                     if result is not None:
                         return str(result)
                 except Exception:
-                    log_error(f'{plugin.slug}.get_latest_serial_number')
+                    log_error('get_latest_serial_number', plugin=plugin.slug)
 
         # No plugin returned a result, so we will run the default query
         stock = (
@@ -2320,12 +2320,14 @@ class Part(
                     sub.save()
 
     @transaction.atomic
-    def copy_parameters_from(self, other, **kwargs):
+    def copy_parameters_from(self, other: Part, **kwargs) -> None:
         """Copy all parameter values from another Part instance."""
         clear = kwargs.get('clear', True)
 
         if clear:
             self.get_parameters().delete()
+
+        parameters = []
 
         for parameter in other.get_parameters():
             # If this part already has a parameter pointing to the same template,
@@ -2342,7 +2344,37 @@ class Part(
             parameter.part = self
             parameter.pk = None
 
-            parameter.save()
+            parameters.append(parameter)
+
+        if len(parameters) > 0:
+            PartParameter.objects.bulk_create(parameters)
+
+    @transaction.atomic
+    def copy_tests_from(self, other: Part, **kwargs) -> None:
+        """Copy all test templates from another Part instance.
+
+        Note: We only copy the direct test templates, not ones inherited from parent parts.
+        """
+        templates = []
+        parts = self.get_ancestors(include_self=True)
+
+        # Prevent tests from being created for non-testable parts
+        if not self.testable:
+            return
+
+        for template in other.test_templates.all():
+            # Skip if a test template already exists for this part / key combination
+            if PartTestTemplate.objects.filter(
+                key=template.key, part__in=parts
+            ).exists():
+                continue
+
+            template.pk = None
+            template.part = self
+            templates.append(template)
+
+        if len(templates) > 0:
+            PartTestTemplate.objects.bulk_create(templates)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
@@ -3644,10 +3676,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
                 'part': _('Test templates can only be created for testable parts')
             })
 
-        # Check that this test is unique within the part tree
-        tests = PartTestTemplate.objects.filter(
-            key=self.key, part__tree_id=self.part.tree_id
-        ).exclude(pk=self.pk)
+        # Check that this test is unique for this part
+        # (including template parts of which this part is a variant)
+        parts = self.part.get_ancestors(include_self=True)
+
+        tests = PartTestTemplate.objects.filter(key=self.key, part__in=parts).exclude(
+            pk=self.pk
+        )
 
         if tests.exists():
             raise ValidationError({
@@ -3991,7 +4026,7 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
                 # Re-throw the ValidationError against the 'data' field
                 raise ValidationError({'data': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_parameter')
+                log_error('validate_part_parameter', plugin=plugin.slug)
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.
