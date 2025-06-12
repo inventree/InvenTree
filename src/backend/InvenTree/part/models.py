@@ -2346,7 +2346,8 @@ class Part(
 
             parameters.append(parameter)
 
-        PartParameter.objects.bulk_create(parameters)
+        if len(parameters) > 0:
+            PartParameter.objects.bulk_create(parameters)
 
     @transaction.atomic
     def copy_tests_from(self, other: Part, **kwargs) -> None:
@@ -2366,9 +2367,10 @@ class Part(
 
             template.pk = None
             template.part = self
-            templates.append(templates)
+            templates.append(template)
 
-        PartTestTemplate.objects.bulk_create(templates)
+        if len(templates) > 0:
+            PartTestTemplate.objects.bulk_create(templates)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
