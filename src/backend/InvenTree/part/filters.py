@@ -46,6 +46,7 @@ def annotate_in_production_quantity(reference=''):
 
     - Sum the 'quantity' field for all stock items which are 'in production' for each part.
     - This is the total quantity of "incomplete build outputs" for all active builds
+    - This will return the same quantity as the 'quantity_in_production' method on the Part model
 
     Arguments:
         reference: Reference to the part from the current queryset (default = '')
@@ -66,6 +67,7 @@ def annotate_scheduled_to_build_quantity(reference: str = ''):
 
     - This is total scheduled quantity for all build orders which are 'active'
     - This may be different to the "in production" quantity
+    - This will return the same quantity as the 'quantity_being_built' method no the Part model
     """
     building_filter = Q(status__in=BuildStatusGroups.ACTIVE_CODES)
 
