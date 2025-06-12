@@ -46,9 +46,12 @@ test('Login - Failures', async ({ page }) => {
 
 test('Login - Change Password', async ({ page }) => {
   await doLogin(page, 'noaccess', 'youshallnotpass');
+  await page.waitForLoadState('networkidle');
 
   // Navigate to the 'change password' page
   await navigate(page, 'settings/user/account');
+  await page.waitForLoadState('networkidle');
+
   await page.getByLabel('action-menu-account-actions').click();
   await page.getByLabel('action-menu-account-actions-change-password').click();
 

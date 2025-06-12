@@ -21,7 +21,7 @@ test('Permissions - Admin', async ({ browser, request }) => {
   // Check for expected tabs
   await loadTab(page, 'Machines');
   await loadTab(page, 'Plugins');
-  await loadTab(page, 'User Management');
+  await loadTab(page, 'Users / Access');
 
   // Let's create a new user
   await page.getByLabel('action-button-add-user').click();

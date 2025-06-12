@@ -20,7 +20,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -32,7 +32,7 @@ import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/index';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,

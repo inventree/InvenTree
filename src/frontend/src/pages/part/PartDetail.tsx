@@ -288,11 +288,12 @@ export default function PartDetail() {
         name: 'required',
         label: t`Required for Orders`,
         hidden: part.required <= 0,
-        icon: 'tick_off'
+        icon: 'stocktake'
       },
       {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
+        icon: 'tick_off',
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
@@ -303,6 +304,7 @@ export default function PartDetail() {
       },
       {
         type: 'progressbar',
+        icon: 'tick_off',
         name: 'allocated_to_sales_orders',
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
@@ -320,11 +322,12 @@ export default function PartDetail() {
         hidden: true // TODO: Expose "can_build" to the API
       },
       {
-        type: 'string',
+        type: 'progressbar',
         name: 'building',
-        unit: true,
         label: t`In Production`,
-        hidden: !part.assembly || !part.building
+        progress: part.building,
+        total: part.scheduled_to_build,
+        hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
       }
     ];
 
@@ -830,13 +833,18 @@ export default function PartDetail() {
             value: true
           },
           copy_bom: {
-            value: globalSettings.isSet('PART_COPY_BOM')
+            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !part.assembly
           },
           copy_notes: {
             value: true
           },
           copy_parameters: {
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: part.testable,
+            hidden: !part.testable
           }
         }
       }

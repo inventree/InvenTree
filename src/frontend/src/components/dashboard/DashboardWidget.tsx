@@ -4,6 +4,8 @@ import { IconX } from '@tabler/icons-react';
 
 import { Boundary } from '../Boundary';
 
+import type { JSX } from 'react';
+
 /**
  * Dashboard widget properties.
  *

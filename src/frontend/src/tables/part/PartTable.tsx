@@ -35,6 +35,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Part`,
       sortable: true,
       noWrap: true,
+      switchable: false,
       render: (record: any) => PartColumn({ part: record })
     },
     {

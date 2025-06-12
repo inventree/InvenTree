@@ -41,7 +41,10 @@ test('Plugins - Settings', async ({ browser, request }) => {
 
   // Edit numerical value
   await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
-  const originalValue = await page.getByLabel('number-field-value').innerText();
+  const originalValue = await page
+    .getByLabel('number-field-value')
+    .inputValue();
+
   await page
     .getByLabel('number-field-value')
     .fill(originalValue == '999' ? '1000' : '999');

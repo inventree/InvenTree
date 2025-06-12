@@ -46,9 +46,8 @@ For models which provide this metadata field, access is also provided via the AP
 
 For example:
 
-{% with id="metadata_api", url="plugin/model_metadata_api.png", description="Access model metadata via API", maxheight="400px" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/model_metadata_api.png", "Access model metadata via API", maxheight="400px") }}
+
 
 #### PUT vs PATCH
 
