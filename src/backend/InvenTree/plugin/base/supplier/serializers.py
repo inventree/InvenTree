@@ -1,5 +1,7 @@
 """Serializer definitions for the supplier plugin base."""
 
+from typing import Any, Optional
+
 from rest_framework import serializers
 
 import part.models as part_models
@@ -35,7 +37,7 @@ class SearchResultSerializer(serializers.Serializer):
     image_url = serializers.CharField()
     existing_part_id = serializers.SerializerMethodField()
 
-    def get_existing_part_id(self, value):
+    def get_existing_part_id(self, value) -> Optional[int]:
         """Return the ID of the existing part if available."""
         return getattr(value.existing_part, 'pk', None)
 
@@ -53,7 +55,7 @@ class ImportParameterSerializer(serializers.Serializer):
     parameter_template = serializers.SerializerMethodField()
     on_category = serializers.BooleanField()
 
-    def get_parameter_template(self, value):
+    def get_parameter_template(self, value) -> Optional[int]:
         """Return the ID of the parameter template if available."""
         return getattr(value.parameter_template, 'pk', None)
 
@@ -99,6 +101,6 @@ class ImportResultSerializer(serializers.Serializer):
     pricing = serializers.SerializerMethodField()
     parameters = ImportParameterSerializer(many=True)
 
-    def get_pricing(self, value: dict[str, list[tuple[int, str]]]):
+    def get_pricing(self, value: Any) -> list[tuple[float, str]]:
         """Return the pricing data as a dictionary."""
         return value['pricing']

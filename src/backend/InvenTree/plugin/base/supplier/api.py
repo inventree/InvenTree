@@ -3,6 +3,7 @@
 from django.db import transaction
 from django.urls import path
 
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -33,7 +34,17 @@ class SearchPart(APIView):
         permissions.IsAuthenticatedOrReadScope,
         permissions.RolePermission,
     ]
+    serializer_class = SearchResultSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='supplier', description='Supplier slug', required=True
+            ),
+            OpenApiParameter(name='term', description='Search term', required=True),
+        ],
+        responses={200: SearchResultSerializer(many=True)},
+    )
     def get(self, request):
         """Search parts by supplier."""
         supplier_slug = request.query_params.get('supplier', '')
@@ -70,7 +81,11 @@ class ImportPart(APIView):
         permissions.IsAuthenticatedOrReadScope,
         permissions.RolePermission,
     ]
+    serializer_class = ImportResultSerializer
 
+    @extend_schema(
+        request=ImportRequestSerializer, responses={200: ImportResultSerializer}
+    )
     def post(self, request):
         """Import a part by supplier."""
         serializer = ImportRequestSerializer(data=request.data)
