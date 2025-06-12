@@ -181,6 +181,7 @@ class ScheduleMixin:
                     obj['args'] = f"'{slug}', '{func_name}'"
 
                 tasks = Schedule.objects.filter(name=task_name)
+
                 if len(tasks) > 1:
                     logger.info(
                         "Found multiple tasks; Adding a new scheduled task '%s'",
@@ -191,10 +192,12 @@ class ScheduleMixin:
                 elif len(tasks) == 1:
                     # Scheduled task already exists - update it!
                     logger.info("Updating scheduled task '%s'", task_name)
-                    instance = Schedule.objects.get(name=task_name)
-                    for item in obj:
-                        setattr(instance, item, obj[item])
-                    instance.save()
+                    instance = Schedule.objects.filter(name=task_name).first()
+
+                    if instance:
+                        for item in obj:
+                            setattr(instance, item, obj[item])
+                        instance.save()
                 else:
                     logger.info("Adding scheduled task '%s'", task_name)
                     # Create a new scheduled task
