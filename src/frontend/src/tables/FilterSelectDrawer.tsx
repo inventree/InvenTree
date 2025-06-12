@@ -143,7 +143,7 @@ function FilterElement({
       return (
         <Select
           data={valueOptions}
-          searchable={filterProps.type == 'choice'}
+          searchable={true}
           label={t`Value`}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}

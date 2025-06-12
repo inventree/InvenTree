@@ -72,6 +72,7 @@ function BooleanParameterFilter(props: ParameterFilterProps) {
       onChange={(val) => props.setFilter(props.template.pk, val ?? '', '=')}
       placeholder={t`Select a choice`}
       rightSection={<ClearFilterButton props={props} />}
+      rightSectionPointerEvents={'inherit'}
     />
   );
 }
@@ -97,6 +98,7 @@ function ChoiceParameterFilter(props: ParameterFilterProps) {
       placeholder={t`Select a choice`}
       searchable
       rightSection={<ClearFilterButton props={props} />}
+      rightSectionPointerEvents={'inherit'}
     />
   );
 }
@@ -166,6 +168,7 @@ function GenericFilterRow({
         rightSection={
           readonly && <ClearFilterButton props={props} operator={op} />
         }
+        rightSectionPointerEvents={'inherit'}
       />
     </Group>
   );

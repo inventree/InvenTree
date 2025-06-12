@@ -212,7 +212,10 @@ function BasePanelGroup({
           orientation='vertical'
           keepMounted={false}
           aria-label={`panel-group-${pageKey}`}
-          classNames={{ tab: classes.selectedPanelTab }}
+          classNames={{
+            tab: classes.selectedPanelTab,
+            tabLabel: classes.selectedPanelTabLabel
+          }}
         >
           <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
             {groupedPanels.map((group) => (
