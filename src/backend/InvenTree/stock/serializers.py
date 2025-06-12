@@ -143,20 +143,24 @@ class GenerateSerialNumberSerializer(serializers.Serializer):
     Any of the provided write-only fields can be used for additional context.
 
     Note that in the case where multiple serial numbers are required,
-    the "serial" field will return a string with multiple serial numbers separated by a comma.
+    the "serial_number" field will return a string with multiple serial numbers
+    separated by a comma.
     """
 
     class Meta:
         """Metaclass options."""
 
-        fields = ['serial', 'part', 'quantity']
+        fields = ['serial_number', 'part', 'quantity']
 
-        read_only_fields = ['serial']
+        read_only_fields = ['serial_number']
 
         write_only_fields = ['part', 'quantity']
 
-    serial = serializers.CharField(
-        read_only=True, help_text=_('Generated serial number'), label=_('Serial Number')
+    serial_number = serializers.CharField(
+        read_only=True,
+        allow_null=True,
+        help_text=_('Generated serial number'),
+        label=_('Serial Number'),
     )
 
     part = serializers.PrimaryKeyRelatedField(

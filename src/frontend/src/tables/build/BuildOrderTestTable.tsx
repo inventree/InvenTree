@@ -2,15 +2,10 @@ import { t } from '@lingui/core/macro';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -25,7 +20,6 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { LocationColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import type { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -234,13 +228,6 @@ export default function BuildOrderTestTable({
     return [];
   }, []);
 
-  const rowActions = useCallback(
-    (record: any): RowAction[] => {
-      return [];
-    },
-    [user]
-  );
-
   return (
     <>
       {createTestResult.modal}
@@ -255,9 +242,9 @@ export default function BuildOrderTestTable({
             tests: true,
             build: buildId
           },
-          rowActions: rowActions,
           tableFilters: tableFilters,
-          tableActions: tableActions
+          tableActions: tableActions,
+          modelType: ModelType.stockitem
         }}
       />
     </>

@@ -76,7 +76,7 @@ class LocatePluginView(GenericAPIView):
             except (ValueError, StockItem.DoesNotExist):
                 raise NotFound(f"StockItem matching PK '{item_pk}' not found")
             except Exception:
-                log_error('locate_stock_item')
+                log_error('locate_stock_item', plugin=plugin.slug)
                 return ValidationError('Error locating stock item')
 
         elif location_pk:
@@ -98,7 +98,7 @@ class LocatePluginView(GenericAPIView):
             except (ValueError, StockLocation.DoesNotExist):
                 raise NotFound(f"StockLocation matching PK '{location_pk}' not found")
             except Exception:
-                log_error('locate_stock_location')
+                log_error('locate_stock_location', plugin=plugin.slug)
                 return ValidationError('Error locating stock location')
         else:
             raise ParseError("Must supply either 'item' or 'location' parameter")

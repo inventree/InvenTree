@@ -46,9 +46,7 @@ Untracked stock items are allocated against the *Build Order* itself. We do not 
 
 Navigate to the *Allocate Stock* tab to view the stock allocation table:
 
-{% with id="build_allocate_detail", url="build/build_allocate_detail.png", description="Allocate stock" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_allocate_detail.png", "Allocate stock") }}
 
 In this example, there are two BOM line items which have been partially allocated to the build. Each line has a progress bar indicating how much of the required stock has been allocated.
 
@@ -57,19 +55,13 @@ Clicking on a particular row expands the row, showing a list of stock items whic
 !!! info "Multiple Allocations"
     Note that multiple stock items can be allocated to the given BOM line, if a single stock item does not have sufficient stock
 
-{% with id="build_allocation_expand", url="build/build_allocation_expand.png", description="Allocate expand" %}
-{% include "img.html" %}
-{% endwith %}
-
 ## Manual Stock Allocation
 
 For each line in the BOM, stock will be automatically allocated if one (and only one) stock item (for the referenced part) is found (within the specified *source location* for the build):
 
 Selecting *Allocate Stock* opens a dialog window which displays the stock items which will be allocated to the build during the auto allocation process:
 
-{% with id="build_auto", url="build/build_auto_allocate.png", description="Auto allocate" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_auto_allocate.png", "Auto allocate") }}
 
 Note here that there are two parts in the BOM which can be automatically allocated, as they only have a single corresponding StockItem available.
 However the other BOM line item exists in multiple locations, and thus cannot be automatically allocated. These will need to be manually selected by the user.
@@ -92,9 +84,7 @@ To speed up the allocation process, the *Auto Allocate* button can be used to al
 
 The *Automatic Allocation* dialog is presented as shown below:
 
-{% with id="auto_allocate_dialog", url="build/auto_allocate_dialog.png", description="Automatic allocation dialog" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/auto_allocate_dialog.png", "Automatic allocation dialog") }}
 
 **Source Location**
 
@@ -122,9 +112,7 @@ Allocating tracked stock items to particular build outputs is performed in the *
 
 In the *Pending Items* tab, we can see that each build output has a stock allocation requirement which must be met before that build output can be completed:
 
-{% with id="build_allocate_tracked_parts", url="build/build_allocate_tracked_parts.png", description="Allocate tracked parts" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_allocate_tracked_parts.png", "Allocate tracked parts") }}
 
 Here we can see that the incomplete build outputs (serial numbers 15 and 14) now have a progress bar indicating the status of tracked stock item allocation:
 
@@ -145,9 +133,7 @@ Here we can see that the incomplete build outputs (serial numbers 15 and 14) now
 
 Once all build outputs have been completed, the build order itself can be completed by selecting the *Complete Build* button:
 
-{% with id="build_complete", url="build/complete_build.png", description="Complete build order" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_complete.png", "Complete build") }}
 
 ### Allocated Stock
 

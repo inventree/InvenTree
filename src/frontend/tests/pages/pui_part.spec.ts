@@ -128,11 +128,13 @@ test('Part - Editing', async ({ browser }) => {
 
   // Test URL validation
   await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill with an empty URL
   await page.getByLabel('text-field-link').fill('');
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
 });
@@ -197,7 +199,9 @@ test('Parts - Allocations', async ({ browser }) => {
   // Expand allocations against BO0001
   await build_order_cell.click();
   await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
-  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Factory/Office Block/Room 101', exact: true })
+    .waitFor();
   await build_order_cell.click();
 
   // Check row options for BO0001
@@ -405,6 +409,41 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+test('Parts - Parameter Filtering', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/' });
+
+  await loadTab(page, 'Part Parameters');
+  await clearTableFilters(page);
+
+  // All parts should be available (no filters applied)
+  await page.getByText('/ 425').waitFor();
+
+  const clickOnParamFilter = async (name: string) => {
+    const button = await page
+      .getByRole('button', { name: `${name} Not sorted` })
+      .getByRole('button')
+      .first();
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+  };
+
+  const clearParamFilter = async (name: string) => {
+    await clickOnParamFilter(name);
+    await page.getByLabel(`clear-filter-${name}`).click();
+  };
+
+  // Let's filter by color
+  await clickOnParamFilter('Color');
+  await page.getByRole('option', { name: 'Red' }).click();
+
+  // Only 10 parts available
+  await page.getByText('/ 10').waitFor();
+
+  // Reset the filter
+  await clearParamFilter('Color');
+  await page.getByText('/ 425').waitFor();
+});
+
 test('Parts - Notes', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/notes' });
 
@@ -467,4 +506,20 @@ test('Parts - Bulk Edit', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
+});
+
+test('Parts - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/74/details'
+  });
+
+  // Open "duplicate part" dialog
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-duplicate').click();
+
+  // Check for expected fields
+  await page.getByText('Copy Image', { exact: true }).waitFor();
+  await page.getByText('Copy Notes', { exact: true }).waitFor();
+  await page.getByText('Copy Parameters', { exact: true }).waitFor();
+  await page.getByText('Copy Tests', { exact: true }).waitFor();
 });

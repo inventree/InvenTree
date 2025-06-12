@@ -84,6 +84,8 @@ def migrate_part_units(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('part', '0110_alter_part_units'),
     ]

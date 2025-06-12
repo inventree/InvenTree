@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Stack, Text } from '@mantine/core';
+import { Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, {
   useCallback,
@@ -132,6 +132,10 @@ export function SettingList({
     },
     [settingsState]
   );
+
+  if (!settingsState?.loaded) {
+    return <Skeleton animate />;
+  }
 
   return (
     <>
