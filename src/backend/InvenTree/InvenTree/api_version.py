@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 348
 
 
 INVENTREE_API_TEXT = """
+v348 -> 2025-04-22 : https://github.com/inventree/InvenTree/pull/9312
+    - Adds "external" flag for BuildOrder
+    - Adds link between PurchaseOrderLineItem and BuildOrder
 
 v348 -> 2026-06-09 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)

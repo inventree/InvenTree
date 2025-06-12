@@ -73,6 +73,7 @@ class BuildSerializer(
             'completed',
             'completion_date',
             'destination',
+            'external',
             'parent',
             'part',
             'part_name',
