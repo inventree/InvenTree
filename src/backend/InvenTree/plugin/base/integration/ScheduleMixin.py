@@ -192,7 +192,7 @@ class ScheduleMixin:
                 elif len(tasks) == 1:
                     # Scheduled task already exists - update it!
                     logger.info("Updating scheduled task '%s'", task_name)
-                    instance = Schedule.objects.filter(name=task_name).first()
+                    instance = tasks.first()
 
                     if instance:
                         for item in obj:
