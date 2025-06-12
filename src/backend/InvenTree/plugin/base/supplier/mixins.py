@@ -102,7 +102,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
         """Return the import data for the given part ID."""
         raise NotImplementedError('This method needs to be overridden.')
 
-    def get_pricing_data(self, data: PartData) -> dict[int, tuple[int, str]]:
+    def get_pricing_data(self, data: PartData) -> dict[int, tuple[float, str]]:
         """Return a dictionary of pricing data for the given part data."""
         raise NotImplementedError('This method needs to be overridden.')
 
@@ -215,8 +215,3 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
                 part_models.PartRelated.objects.create(part_1=part, part_2=p)
             except ValidationError:
                 pass  # pass, duplicate relationship detected
-
-    def get_unknown_manufacturer(self):
-        """Return the 'unknown manufacturer' company object."""
-        mft_pk = 1  # self.plugin.get_setting("UNKNOWN_MANUFACTURER") # TODO: get from settings
-        return company.models.Company.objects.get(pk=mft_pk)
