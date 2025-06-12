@@ -7,7 +7,6 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { ModelType } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
@@ -237,7 +236,6 @@ export default function BuildOrderTestTable({
         tableState={table}
         columns={tableColumns}
         props={{
-          modelType: ModelType.stockitem,
           params: {
             part_detail: true,
             location_detail: true,

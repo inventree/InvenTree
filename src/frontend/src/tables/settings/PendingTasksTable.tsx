@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { UserRoles } from '@lib/index';
 import { notifications, showNotification } from '@mantine/notifications';
 import { IconTrashXFilled, IconX } from '@tabler/icons-react';
 import { api } from '../../App';
