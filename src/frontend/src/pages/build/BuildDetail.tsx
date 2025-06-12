@@ -310,37 +310,9 @@ export default function BuildDetail() {
       },
       {
         name: 'line-items',
-        label: t`Line Items`,
+        label: t`Required Stock`,
         icon: <IconListNumbers />,
         content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
-      },
-      {
-        name: 'incomplete-outputs',
-        label: t`Incomplete Outputs`,
-        icon: <IconClipboardList />,
-        content: build.pk ? (
-          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
-        ) : (
-          <Skeleton />
-        ),
-        hidden:
-          build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED
-      },
-      {
-        name: 'complete-outputs',
-        label: t`Completed Outputs`,
-        icon: <IconClipboardCheck />,
-        content: (
-          <StockItemTable
-            allowAdd={false}
-            tableName='build-outputs'
-            params={{
-              build: id,
-              is_building: false
-            }}
-          />
-        )
       },
       {
         name: 'allocated-stock',
@@ -366,6 +338,34 @@ export default function BuildDetail() {
             showLocation={false}
             params={{
               consumed_by: id
+            }}
+          />
+        )
+      },
+      {
+        name: 'incomplete-outputs',
+        label: t`Incomplete Outputs`,
+        icon: <IconClipboardList />,
+        content: build.pk ? (
+          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED
+      },
+      {
+        name: 'complete-outputs',
+        label: t`Completed Outputs`,
+        icon: <IconClipboardCheck />,
+        content: (
+          <StockItemTable
+            allowAdd={false}
+            tableName='build-outputs'
+            params={{
+              build: id,
+              is_building: false
             }}
           />
         )
