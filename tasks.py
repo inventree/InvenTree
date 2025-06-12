@@ -274,6 +274,7 @@ def content_excludes(
     allow_tokens: bool = True,
     allow_plugins: bool = True,
     allow_sso: bool = True,
+    allow_session: bool = True,
 ):
     """Returns a list of content types to exclude from import / export.
 
@@ -282,6 +283,7 @@ def content_excludes(
         allow_tokens (bool): Allow tokens to be exported / imported
         allow_plugins (bool): Allow plugin information to be exported / imported
         allow_sso (bool): Allow SSO tokens to be exported / imported
+        allow_session (bool): Allow user session data to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -319,6 +321,11 @@ def content_excludes(
     if not allow_sso:
         excludes.append('socialaccount.socialapp')
         excludes.append('socialaccount.socialtoken')
+
+    # Optionally exclude user session information
+    if not allow_session:
+        excludes.append('sessions.session')
+        excludes.append('usersessions.usersession')
 
     return ' '.join([f'--exclude {e}' for e in excludes])
 
@@ -829,6 +836,7 @@ def update(
         'include_tokens': 'Include API tokens in the output file (default = False)',
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
+        'include_session': 'Include user session data in the output file (default = False)',
         'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
     }
 )
@@ -840,6 +848,7 @@ def export_records(
     include_tokens=False,
     exclude_plugins=False,
     include_sso=False,
+    include_session=False,
     retain_temp=False,
 ):
     """Export all database records to a file.
@@ -873,6 +882,7 @@ def export_records(
     excludes = content_excludes(
         allow_tokens=include_tokens,
         allow_plugins=not exclude_plugins,
+        allow_session=include_session,
         allow_sso=include_sso,
     )
 
