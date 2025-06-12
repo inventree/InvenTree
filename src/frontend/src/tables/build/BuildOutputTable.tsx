@@ -24,6 +24,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
@@ -45,6 +46,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
+import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -337,6 +339,17 @@ export default function BuildOutputTable({
     }
   });
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by stock status`,
+        choiceFunction: StatusFilterOptions(ModelType.stockitem)
+      }
+    ];
+  }, []);
+
   const tableActions = useMemo(() => {
     return [
       <ActionButton
@@ -595,6 +608,7 @@ export default function BuildOutputTable({
             enableLabels: true,
             enableReports: true,
             dataFormatter: formatRecords,
+            tableFilters: tableFilters,
             tableActions: tableActions,
             rowActions: rowActions,
             enableSelection: true,
