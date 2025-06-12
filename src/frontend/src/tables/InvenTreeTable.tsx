@@ -559,13 +559,22 @@ export function InvenTreeTable<T extends Record<string, any>>({
   }, [tableState.queryFilters]);
 
   useEffect(() => {
-    tableState.setIsLoading(
+    const loading: boolean =
       isFetching ||
-        isLoading ||
-        tableOptionQuery.isFetching ||
-        tableOptionQuery.isLoading
-    );
-  }, [isFetching, isLoading, tableOptionQuery]);
+      isLoading ||
+      tableOptionQuery.isFetching ||
+      tableOptionQuery.isLoading;
+
+    if (loading != tableState.isLoading) {
+      tableState.setIsLoading(loading);
+    }
+  }, [
+    isFetching,
+    isLoading,
+    tableOptionQuery.isFetching,
+    tableOptionQuery.isLoading,
+    tableState.isLoading
+  ]);
 
   // Update tableState.records when new data received
   useEffect(() => {

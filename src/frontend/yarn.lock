@@ -3540,9 +3540,9 @@ mantine-contextmenu@^7.15.3:
   integrity sha512-qbkbumlcxvUDavqnBZHLhskXxF9mhTD3F+mQjDc2JEqGZbPr4XHRTxFw0BAc34yKOY04Iv8WGHVwastdJHOO/A==
 
 mantine-datatable@^7.15.1:
-  version "7.15.1"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.15.1.tgz#c89d55c290e3d65ed7fde777a8db938122663d5f"
-  integrity sha512-MwehjtkdT6FQfuPgTXmGA2Y3DmHdCdLzcl4G4LoccSpG2ul2RwEdCO/dQmrPBsNo4mMepNN9dE3/1vSuYsU+7Q==
+  version "7.17.1"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.17.1.tgz#155373bfa318d5463f1aa8468b8117f97b033a2e"
+  integrity sha512-5GBpSTZyvVGqe2TqEaBYrZQyQjLgHuMqkb2wry+wPvwalRY0oFKG1kdFd43bxch9FOG0K0CREEa6+cYIDby55Q==
 
 marked@^4.1.0:
   version "4.3.0"

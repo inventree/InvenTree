@@ -362,7 +362,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName='build-outputs'
+            tableName='completed-build-outputs'
             params={{
               build: id,
               is_building: false
