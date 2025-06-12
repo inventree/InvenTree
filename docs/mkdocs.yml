@@ -167,6 +167,7 @@ nav:
     - Build Orders: manufacturing/build.md
     - Build Outputs: manufacturing/output.md
     - Allocating Stock: manufacturing/allocate.md
+    - External Manufacturing: manufacturing/external.md
     - Example Build Order: manufacturing/example.md
   - Purchasing:
     - Purchasing: purchasing/index.md
@@ -282,6 +283,7 @@ plugins:
             show_root_toc_entry: false
   - redirects:
       redirect_maps:
+        'sref/faq.md': 'faq.md' #  https://docs.inventree.org/en/latest/faq/
         'sref/contrib.md': 'develop/contributing.md'  #  https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md.
         'sref/docs.md': 'index.md' #   https://docs.inventree.org/en/latest/
         'sref/api.md': 'api/index.md' #  https://demo.inventree.org/api-doc/
