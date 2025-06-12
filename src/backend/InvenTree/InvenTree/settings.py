@@ -308,6 +308,8 @@ INSTALLED_APPS = [
     'oauth2_provider',  # OAuth2 provider and API access
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
+    # Migrations management
+    'django_linear_migrations',
     'django_remake_migrations',
 ]
 
