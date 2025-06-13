@@ -529,3 +529,52 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class ListUniqueValidator:
+    """List validator that validates unique fields for bulk create.
+
+    See: https://github.com/encode/django-rest-framework/issues/6395#issuecomment-452412653
+    """
+
+    message = 'This field must be unique.'
+
+    def __init__(self, unique_field_names):
+        """Initialize the validator with a list of unique field names."""
+        self.unique_field_names = unique_field_names
+
+    @staticmethod
+    def has_duplicates(counter):
+        """Check if there are any duplicate values in the counter."""
+        return any(count for count in counter.values() if count > 1)
+
+    def __call__(self, value):
+        """Validate that the specified fields are unique across the list of items."""
+        from collections import Counter
+
+        field_counters = {
+            field_name: Counter(
+                item[field_name] for item in value if field_name in item
+            )
+            for field_name in self.unique_field_names
+        }
+        has_duplicates = any(
+            ListUniqueValidator.has_duplicates(counter)
+            for counter in field_counters.values()
+        )
+        if has_duplicates:
+            errors = []
+            for item in value:
+                error = {}
+                for field_name in self.unique_field_names:
+                    counter = field_counters[field_name]
+                    if counter[item.get(field_name)] > 1:
+                        error[field_name] = self.message
+                errors.append(error)
+            raise ValidationError(errors)
+
+    def __repr__(self):
+        """Return a string representation of the validator."""
+        return (
+            f'<{self.__class__.__name__}(unique_field_names={self.unique_field_names})>'
+        )

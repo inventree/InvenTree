@@ -526,7 +526,9 @@ export function StockItemTable({
 
   const newStockItemFields = useStockFields({
     create: true,
-    partId: params.part
+    partId: params.part,
+    supplierPartId: params.supplier_part,
+    pricing: params.pricing
   });
 
   const newStockItem = useCreateApiFormModal({
@@ -537,7 +539,7 @@ export function StockItemTable({
       part: params.part,
       location: params.location
     },
-    follow: true,
+    follow: params.openNewStockItem ?? true,
     table: table,
     modelType: ModelType.stockitem
   });

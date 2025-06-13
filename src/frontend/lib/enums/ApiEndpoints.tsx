@@ -109,6 +109,7 @@ export enum ApiEndpoints {
   part_list = 'part/',
   part_parameter_list = 'part/parameter/',
   part_parameter_template_list = 'part/parameter/template/',
+  part_parameter_bulk = 'part/parameter/bulk/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
   part_serial_numbers = 'part/:id/serial-numbers/',
@@ -218,6 +219,8 @@ export enum ApiEndpoints {
 
   // Special plugin endpoints
   plugin_locate_item = 'locate/',
+  plugin_supplier_search = 'supplier/search/',
+  plugin_supplier_import = 'supplier/import/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',
