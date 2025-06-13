@@ -23,7 +23,18 @@ In addition to the [global context](#global-context), all *report* templates hav
 
 {{ report_context("base", "report") }}
 
-`merge` exposes the selected items in the `items` context variable. {{ templatefile("report/inventree_stock_report_merge.html") }} shows an example on how to use this context variable.
+When using the `merge` context variable, the selected items are available in the `instances` list. {{ templatefile("report/inventree_stock_report_merge.html") }} shows a complete example. To access individual item attributes, you can either loop through the instances or access them by index like this:
+
+```html
+<!-- Loop through all instances -->
+{% for item in instances %}
+    <div>Item: {{ item.name }}</div>
+{% endfor %}
+
+<!-- Access specific instance by index -->
+<div>First item: {{ instances.0.name }}</div>
+<div>Second item: {{ instances.1.name }}</div>
+```
 
 Note that custom plugins may also add additional context variables to the report context.
 
