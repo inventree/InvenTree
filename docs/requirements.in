@@ -7,3 +7,4 @@ mkdocs-simple-hooks>=0.1,<1.0
 mkdocs-include-markdown-plugin
 neoteroi-mkdocs
 mkdocstrings[python]>=0.25.0,<=0.29.1
+mkdocs-mermaid2-plugin

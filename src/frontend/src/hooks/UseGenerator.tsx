@@ -6,6 +6,13 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../App';
 
+export type GeneratorProps = {
+  endpoint: ApiEndpoints;
+  key: string;
+  initialQuery?: Record<string, any>;
+  onGenerate?: (value: any) => void;
+};
+
 export type GeneratorState = {
   query: Record<string, any>;
   result: any;
@@ -17,11 +24,7 @@ export type GeneratorState = {
  * We can pass additional parameters to the query, and update the query as needed.
  * Each update calls a new query to the API, and the result is stored in the state.
  */
-export function useGenerator(
-  endpoint: ApiEndpoints,
-  key: string,
-  onGenerate?: (value: any) => void
-): GeneratorState {
+export function useGenerator(props: GeneratorProps): GeneratorState {
   // Track the result
   const [result, setResult] = useState<any>(null);
 
@@ -29,7 +32,7 @@ export function useGenerator(
   const [query, setQuery] = useState<Record<string, any>>({});
 
   // Prevent rapid updates
-  const [debouncedQuery] = useDebouncedValue<Record<string, any>>(query, 250);
+  const [debouncedQuery] = useDebouncedValue<Record<string, any>>(query, 100);
 
   // Callback to update the generator query
   const update = useCallback(
@@ -42,27 +45,44 @@ export function useGenerator(
           ...params
         }));
       }
-
-      queryGenerator.refetch();
     },
     []
   );
 
   // API query handler
   const queryGenerator = useQuery({
-    enabled: false,
-    queryKey: ['generator', key, endpoint, debouncedQuery],
+    enabled: true,
+    queryKey: [
+      'generator',
+      props.key,
+      props.endpoint,
+      props.initialQuery,
+      debouncedQuery
+    ],
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
-      return api.post(apiUrl(endpoint), debouncedQuery).then((response) => {
-        const value = response?.data[key];
-        setResult(value);
+      const generatorQuery = {
+        ...debouncedQuery,
+        ...(props.initialQuery ?? {})
+      };
 
-        if (onGenerate) {
-          onGenerate(value);
-        }
+      return api
+        .post(apiUrl(props.endpoint), generatorQuery)
+        .then((response) => {
+          const value = response?.data[props.key];
+          setResult(value);
 
-        return response;
-      });
+          props.onGenerate?.(value);
+
+          return response;
+        })
+        .catch((error) => {
+          console.error(
+            `Error generating ${props.key} @ ${props.endpoint}:`,
+            error
+          );
+        });
     }
   });
 
@@ -74,19 +94,33 @@ export function useGenerator(
 }
 
 // Generate a batch code with provided data
-export function useBatchCodeGenerator(onGenerate: (value: any) => void) {
-  return useGenerator(
-    ApiEndpoints.generate_batch_code,
-    'batch_code',
-    onGenerate
-  );
+export function useBatchCodeGenerator({
+  initialQuery,
+  onGenerate
+}: {
+  initialQuery?: Record<string, any>;
+  onGenerate?: (value: any) => void;
+}): GeneratorState {
+  return useGenerator({
+    endpoint: ApiEndpoints.generate_batch_code,
+    key: 'batch_code',
+    initialQuery: initialQuery,
+    onGenerate: onGenerate
+  });
 }
 
 // Generate a serial number with provided data
-export function useSerialNumberGenerator(onGenerate: (value: any) => void) {
-  return useGenerator(
-    ApiEndpoints.generate_serial_number,
-    'serial_number',
-    onGenerate
-  );
+export function useSerialNumberGenerator({
+  initialQuery,
+  onGenerate
+}: {
+  initialQuery?: Record<string, any>;
+  onGenerate?: (value: any) => void;
+}): GeneratorState {
+  return useGenerator({
+    endpoint: ApiEndpoints.generate_serial_number,
+    key: 'serial_number',
+    initialQuery: initialQuery,
+    onGenerate: onGenerate
+  });
 }
