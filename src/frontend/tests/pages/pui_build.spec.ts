@@ -167,6 +167,8 @@ test('Build Order - Build Outputs', async ({ browser }) => {
     .getByLabel('text-field-serial_numbers')
     .getAttribute('placeholder');
 
+  expect(placeholder).toContain('Next serial number');
+
   let sn = 1;
 
   if (!!placeholder && placeholder.includes('Next serial number')) {
