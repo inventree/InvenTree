@@ -672,7 +672,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         verbose_name=_('Delivery Address'),
         help_text=_('Delivery address for this order'),
-        related_name='+',
+        related_name='purchase_orders',
     )
 
     @transaction.atomic
