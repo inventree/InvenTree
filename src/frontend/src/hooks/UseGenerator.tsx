@@ -53,16 +53,21 @@ export function useGenerator(
     enabled: false,
     queryKey: ['generator', key, endpoint, debouncedQuery],
     queryFn: async () => {
-      return api.post(apiUrl(endpoint), debouncedQuery).then((response) => {
-        const value = response?.data[key];
-        setResult(value);
+      return api
+        .post(apiUrl(endpoint), debouncedQuery)
+        .then((response) => {
+          const value = response?.data[key];
+          setResult(value);
 
-        if (onGenerate) {
-          onGenerate(value);
-        }
+          if (onGenerate) {
+            onGenerate(value);
+          }
 
-        return response;
-      });
+          return response;
+        })
+        .catch((error) => {
+          console.error(`Error generating ${key} @ ${endpoint}:`, error);
+        });
     }
   });
 
@@ -74,7 +79,7 @@ export function useGenerator(
 }
 
 // Generate a batch code with provided data
-export function useBatchCodeGenerator(onGenerate: (value: any) => void) {
+export function useBatchCodeGenerator(onGenerate?: (value: any) => void) {
   return useGenerator(
     ApiEndpoints.generate_batch_code,
     'batch_code',
@@ -83,7 +88,7 @@ export function useBatchCodeGenerator(onGenerate: (value: any) => void) {
 }
 
 // Generate a serial number with provided data
-export function useSerialNumberGenerator(onGenerate: (value: any) => void) {
+export function useSerialNumberGenerator(onGenerate?: (value: any) => void) {
   return useGenerator(
     ApiEndpoints.generate_serial_number,
     'serial_number',

@@ -79,34 +79,20 @@ export function useStockFields({
 
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
-  const [nextBatchCode, setNextBatchCode] = useState<string>('');
-  const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
-
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (value) {
-      setNextBatchCode(`${t`Next batch code`}: ${value}`);
-    } else {
-      setNextBatchCode('');
-    }
-  });
-
-  const serialGenerator = useSerialNumberGenerator((value: any) => {
-    if (value) {
-      setNextSerialNumber(`${t`Next serial number`}: ${value}`);
-    } else {
-      setNextSerialNumber('');
-    }
-  });
+  const batchGenerator = useBatchCodeGenerator();
+  const serialGenerator = useSerialNumberGenerator();
 
   useEffect(() => {
-    if (partInstance?.pk) {
+    const id: number = partInstance?.pk || partId;
+
+    if (id) {
       // Update the generators whenever the part ID changes
-      batchGenerator.update({ part: partInstance.pk });
-      serialGenerator.update({ part: partInstance.pk });
+      batchGenerator.update({ part: id });
+      serialGenerator.update({ part: id });
     }
-  }, [partInstance.pk]);
+  }, [partId, partInstance.pk]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -181,16 +167,22 @@ export function useStockFields({
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder: nextSerialNumber
+        placeholder:
+          serialGenerator.result &&
+          t`Next serial number: ${serialGenerator.result}`
       },
       serial: {
+        placeholder:
+          serialGenerator.result &&
+          t`Next serial number: ${serialGenerator.result}`,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder: nextBatchCode
+        placeholder:
+          batchGenerator.result && t`Next batch code: ${batchGenerator.result}`
       },
       status_custom_key: {
         label: t`Stock Status`
@@ -234,8 +226,8 @@ export function useStockFields({
     partId,
     globalSettings,
     supplierPart,
-    nextSerialNumber,
-    nextBatchCode,
+    serialGenerator.result,
+    batchGenerator.result,
     create
   ]);
 }
