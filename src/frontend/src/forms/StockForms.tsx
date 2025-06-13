@@ -56,7 +56,6 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 
@@ -81,18 +80,17 @@ export function useStockFields({
 
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
 
-  const batchGenerator = useBatchCodeGenerator();
-  const serialGenerator = useSerialNumberGenerator();
-
-  useEffect(() => {
-    const id: number = partInstance?.pk || partId;
-
-    if (id) {
-      // Update the generators whenever the part ID changes
-      batchGenerator.update({ part: id });
-      serialGenerator.update({ part: id });
+  const batchGenerator = useBatchCodeGenerator({
+    initialQuery: {
+      part: partInstance?.pk || partId
     }
-  }, [partId, partInstance.pk]);
+  });
+
+  const serialGenerator = useSerialNumberGenerator({
+    initialQuery: {
+      part: partInstance?.pk || partId
+    }
+  });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -319,21 +317,21 @@ export function useStockItemSerializeFields({
   partId: number;
   trackable: boolean;
 }) {
-  const snPlaceholder = useSerialNumberPlaceholder({
-    partId: partId,
-    key: 'stock-item-serialize',
-    enabled: trackable
+  const serialGenerator = useSerialNumberGenerator({
+    initialQuery: {
+      part: partId
+    }
   });
 
   return useMemo(() => {
     return {
       quantity: {},
       serial_numbers: {
-        placeholder: snPlaceholder
+        placeholder: serialGenerator.result
       },
       destination: {}
     };
-  }, [snPlaceholder]);
+  }, [serialGenerator.result]);
 }
 
 function StockItemDefaultMove({
