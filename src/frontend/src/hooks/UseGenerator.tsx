@@ -29,7 +29,7 @@ export function useGenerator(
   const [query, setQuery] = useState<Record<string, any>>({});
 
   // Prevent rapid updates
-  const [debouncedQuery] = useDebouncedValue<Record<string, any>>(query, 250);
+  const [debouncedQuery] = useDebouncedValue<Record<string, any>>(query, 100);
 
   // Callback to update the generator query
   const update = useCallback(
@@ -42,16 +42,16 @@ export function useGenerator(
           ...params
         }));
       }
-
-      queryGenerator.refetch();
     },
     []
   );
 
   // API query handler
   const queryGenerator = useQuery({
-    enabled: false,
+    enabled: true,
     queryKey: ['generator', key, endpoint, debouncedQuery],
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
         .post(apiUrl(endpoint), debouncedQuery)

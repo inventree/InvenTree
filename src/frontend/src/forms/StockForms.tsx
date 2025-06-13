@@ -167,22 +167,17 @@ export function useStockFields({
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder:
-          serialGenerator.result &&
-          t`Next serial number: ${serialGenerator.result}`
+        placeholder: serialGenerator.result
       },
       serial: {
-        placeholder:
-          serialGenerator.result &&
-          t`Next serial number: ${serialGenerator.result}`,
+        placeholder: serialGenerator.result,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder:
-          batchGenerator.result && t`Next batch code: ${batchGenerator.result}`
+        placeholder: batchGenerator.result
       },
       status_custom_key: {
         label: t`Stock Status`

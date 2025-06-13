@@ -25,8 +25,10 @@ import {
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useBatchCodeGenerator } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
@@ -170,11 +172,21 @@ export function useBuildOrderOutputFields({
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
 
-  const serialPlaceholder = useSerialNumberPlaceholder({
-    partId: build.part_detail?.pk,
-    key: 'build-output',
-    enabled: build.part_detail?.trackable
-  });
+  const serialGenerator = useSerialNumberGenerator();
+  const batchGenerator = useBatchCodeGenerator();
+
+  useEffect(() => {
+    const id = build.part || build.part_detail?.pk;
+
+    if (id) {
+      serialGenerator.update({
+        part: id
+      });
+      batchGenerator.update({
+        part: id
+      });
+    }
+  }, [build.part, build.part_detail.pk]);
 
   return useMemo(() => {
     return {
@@ -186,9 +198,11 @@ export function useBuildOrderOutputFields({
       },
       serial_numbers: {
         hidden: !trackable,
-        placeholder: serialPlaceholder
+        placeholder: serialGenerator.result
       },
-      batch_code: {},
+      batch_code: {
+        placeholder: batchGenerator.result
+      },
       location: {
         value: location,
         onValueChange: (value: any) => {
@@ -199,7 +213,7 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       }
     };
-  }, [quantity, serialPlaceholder, trackable]);
+  }, [quantity, batchGenerator.result, serialGenerator.result, trackable]);
 }
 
 function BuildOutputFormRow({
