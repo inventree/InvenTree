@@ -46,7 +46,6 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         );
 
         if (preview.status !== 200 && preview.status !== 201) {
-          console.log('error:', preview.data);
           let message: string =
             preview.data?.toString() ?? t`Error rendering preview`;
 
