@@ -91,6 +91,8 @@ nav:
         - Custom Barcodes: barcodes/custom.md
     - Development:
       - Contributing: develop/contributing.md
+      - Architecture: develop/architecture.md
+      - Roadmap: develop/roadmap.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
     - Mobile App:
@@ -167,6 +169,7 @@ nav:
     - Build Orders: manufacturing/build.md
     - Build Outputs: manufacturing/output.md
     - Allocating Stock: manufacturing/allocate.md
+    - External Manufacturing: manufacturing/external.md
     - Example Build Order: manufacturing/example.md
   - Purchasing:
     - Purchasing: purchasing/index.md
@@ -260,6 +263,9 @@ plugins:
       opening_tag: "{!"
       closing_tag: "!}"
   - search
+  - mermaid2:
+      # version: 11.6.0
+      javascript: javascripts/mermaid.min.js
   - git-revision-date-localized
   - mkdocs-simple-hooks:
       hooks:
@@ -281,9 +287,12 @@ plugins:
             show_root_toc_entry: false
   - redirects:
       redirect_maps:
+        'sref/faq.md': 'faq.md' #  https://docs.inventree.org/en/latest/faq/
         'sref/contrib.md': 'develop/contributing.md'  #  https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md.
         'sref/docs.md': 'index.md' #   https://docs.inventree.org/en/latest/
         'sref/api.md': 'api/index.md' #  https://demo.inventree.org/api-doc/
+        'sref/architecture.md': 'develop/architecture.md'
+        'sref/roadmap.md': 'develop/roadmap.md'
         'sref/code.md': 'https://github.com/inventree/InvenTree/tree/master' #  https://github.com/inventree/InvenTree/tree/master
         'sref/oci-image.md': 'https://hub.docker.com/r/inventree/inventree/tags' #  https://hub.docker.com/r/inventree/inventree/tags
         'sref/releases.md': 'https://github.com/inventree/InvenTree/releases' # https://github.com/inventree/InvenTree/releases
@@ -310,7 +319,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          # format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:mermaid2.fence_mermaid_custom
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg
