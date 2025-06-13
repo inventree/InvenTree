@@ -6,7 +6,6 @@ import structlog
 
 from build.events import BuildEvents
 from build.models import Build
-from order.events import SalesOrderEvents
 from plugin import InvenTreePlugin
 from plugin.mixins import EventMixin, SettingsMixin
 
@@ -19,7 +18,6 @@ class AutoCreateBuildsPlugin(EventMixin, SettingsMixin, InvenTreePlugin):
     This plugin can be used to automatically create new build orders based on certain events:
 
     - When a build order is issued, automatically generate child build orders for sub-assemblies
-    - When a sales order is issued, automatically generate build orders for assembled items
 
     Build orders are only created for parts which are have insufficient stock to fulfill the order.
     """
@@ -38,7 +36,15 @@ class AutoCreateBuildsPlugin(EventMixin, SettingsMixin, InvenTreePlugin):
             ),
             'validator': bool,
             'default': True,
-        }
+        },
+        'AUTO_CANCEL_CHILD_BUILDS': {
+            'name': _('Cancel Child Builds'),
+            'description': _(
+                'Automatically cancel child builds when the parent build is cancelled'
+            ),
+            'validator': bool,
+            'default': True,
+        },
         # TODO: Future work - allow auto-creation of build orders for sales orders
         # 'AUTO_CREATE_FOR_SALES_ORDERS': {
         #     'name': _('Create Build Orders for Sales Orders'),
@@ -52,16 +58,18 @@ class AutoCreateBuildsPlugin(EventMixin, SettingsMixin, InvenTreePlugin):
 
     def wants_process_event(self, event) -> bool:
         """Return whether given event should be processed or not."""
-        return event in [BuildEvents.ISSUED, SalesOrderEvents.ISSUED]
+        return event in [BuildEvents.CANCELLED, BuildEvents.ISSUED]
 
     def process_event(self, event, *args, **kwargs):
         """Process the triggered event."""
-        print('process_event:', event)
-
         if event == BuildEvents.ISSUED:
             # Find the build order which was issued
-            if build_id := kwargs.pop('build_id', None):
+            if build_id := kwargs.get('id'):
                 self.process_build(build_id)
+
+        elif event == BuildEvents.CANCELLED:
+            if build_id := kwargs.get('id'):
+                self.cancel_build(build_id)
 
     def process_build(self, build_id: int):
         """Process a build order when it is issued."""
@@ -85,3 +93,18 @@ class AutoCreateBuildsPlugin(EventMixin, SettingsMixin, InvenTreePlugin):
             print('- checking subassembly:', subassembly)
 
             # Determine if there is sufficient stock for the sub-assembly
+
+    def cancel_build(self, build_id: int):
+        """Cancel child builds when the parent build is cancelled."""
+        if not self.get_setting('AUTO_CANCEL_CHILD_BUILDS', backup_value=False):
+            return
+
+        try:
+            build = Build.objects.get(pk=build_id)
+        except (ValueError, Build.DoesNotExist):
+            logger.error('Invalid build ID provided', build_id=build_id)
+            return
+
+        print('Cancelling child builds for:', build)
+
+        # Cancel all child builds associated with this build
