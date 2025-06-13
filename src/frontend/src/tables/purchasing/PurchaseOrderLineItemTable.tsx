@@ -52,12 +52,14 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 export function PurchaseOrderLineItemTable({
   order,
+  orderDetailRefresh,
   orderId,
   currency,
   supplierId,
   params
 }: Readonly<{
   order: any;
+  orderDetailRefresh: any;
   orderId: number;
   currency: string;
   supplierId?: number;
@@ -292,6 +294,7 @@ export function PurchaseOrderLineItemTable({
       ...initialData,
       purchase_price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -308,6 +311,7 @@ export function PurchaseOrderLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: editLineItemFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -315,6 +319,7 @@ export function PurchaseOrderLineItemTable({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
