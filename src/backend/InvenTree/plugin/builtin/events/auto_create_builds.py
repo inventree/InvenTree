@@ -1,18 +1,21 @@
 """Plugin to automatically create build orders for assemblies."""
 
+from decimal import Decimal
+
 from django.utils.translation import gettext_lazy as _
 
 import structlog
 
 from build.events import BuildEvents
 from build.models import Build
+from build.status_codes import BuildStatus
 from plugin import InvenTreePlugin
-from plugin.mixins import EventMixin, SettingsMixin
+from plugin.mixins import EventMixin
 
 logger = structlog.get_logger('inventree')
 
 
-class AutoCreateBuildsPlugin(EventMixin, SettingsMixin, InvenTreePlugin):
+class AutoCreateBuildsPlugin(EventMixin, InvenTreePlugin):
     """Plugin which automatically creates build orders for assemblies.
 
     This plugin can be used to automatically create new build orders based on certain events:
@@ -28,52 +31,16 @@ class AutoCreateBuildsPlugin(EventMixin, SettingsMixin, InvenTreePlugin):
     DESCRIPTION = _('Automatically create build orders for assemblies')
     VERSION = '1.0.0'
 
-    SETTINGS = {
-        'AUTO_CREATE_FOR_BUILD_ORDERS': {
-            'name': _('Create Child Build Orders'),
-            'description': _(
-                'Automatically create build orders for subassemblies when a build order is issued'
-            ),
-            'validator': bool,
-            'default': True,
-        },
-        'AUTO_CANCEL_CHILD_BUILDS': {
-            'name': _('Cancel Child Builds'),
-            'description': _(
-                'Automatically cancel child builds when the parent build is cancelled'
-            ),
-            'validator': bool,
-            'default': True,
-        },
-        # TODO: Future work - allow auto-creation of build orders for sales orders
-        # 'AUTO_CREATE_FOR_SALES_ORDERS': {
-        #     'name': _('Create Build Orders for Sales Orders'),
-        #     'description': _(
-        #         'Automatically create build orders for assembled items when a sales order is issued'
-        #     ),
-        #     'validator': bool,
-        #     'default': True,
-        # },
-    }
-
     def wants_process_event(self, event) -> bool:
         """Return whether given event should be processed or not."""
-        return event in [BuildEvents.CANCELLED, BuildEvents.ISSUED]
+        return event in [BuildEvents.CANCELLED]
 
     def process_event(self, event, *args, **kwargs):
         """Process the triggered event."""
-        if event == BuildEvents.ISSUED:
-            # Find the build order which was issued
-            if build_id := kwargs.get('id'):
-                self.process_build(build_id)
+        build_id = kwargs.get('id')
 
-        elif event == BuildEvents.CANCELLED:
-            if build_id := kwargs.get('id'):
-                self.cancel_build(build_id)
-
-    def process_build(self, build_id: int):
-        """Process a build order when it is issued."""
-        if not self.get_setting('AUTO_CREATE_FOR_BUILD_ORDERS', backup_value=False):
+        if not build_id:
+            logger.error('No build ID provided for event', event=event)
             return
 
         try:
@@ -82,29 +49,55 @@ class AutoCreateBuildsPlugin(EventMixin, SettingsMixin, InvenTreePlugin):
             logger.error('Invalid build ID provided', build_id=build_id)
             return
 
-        print('Processing build order:', build)
+        if event == BuildEvents.ISSUED:
+            self.process_build(build)
 
+    def process_build(self, build: Build):
+        """Process a build order when it is issued."""
         # Iterate through all sub-assemblies for the build order
         for bom_item in build.part.get_bom_items().filter(
             consumable=False, sub_part__assembly=True
         ):
             subassembly = bom_item.sub_part
 
-            print('- checking subassembly:', subassembly)
+            with_variants = bom_item.allow_variants
+
+            # Quantity required for this particular build order
+            build_quantity = bom_item.get_required_quantity(build.quantity)
+
+            # Total existing stock for the sub-assembly
+            stock_quantity = subassembly.get_stock_count(include_variants=with_variants)
+
+            # How many of the sub-assembly are already allocated?
+            allocated_quantity = subassembly.allocation_count(
+                include_variants=with_variants
+            )
+
+            # Quantity of item already scheduled for production?
+            in_production_quantity = subassembly.quantity_being_built
 
             # Determine if there is sufficient stock for the sub-assembly
+            required_quantity = (
+                Decimal(build_quantity)
+                + Decimal(subassembly.minimum_stock)
+                + Decimal(allocated_quantity)
+                - Decimal(stock_quantity)
+                - Decimal(in_production_quantity)
+            )
 
-    def cancel_build(self, build_id: int):
-        """Cancel child builds when the parent build is cancelled."""
-        if not self.get_setting('AUTO_CANCEL_CHILD_BUILDS', backup_value=False):
-            return
+            if required_quantity <= 0:
+                # No need to build this sub-assembly
+                continue
 
-        try:
-            build = Build.objects.get(pk=build_id)
-        except (ValueError, Build.DoesNotExist):
-            logger.error('Invalid build ID provided', build_id=build_id)
-            return
-
-        print('Cancelling child builds for:', build)
-
-        # Cancel all child builds associated with this build
+            # Generate a new build order for the sub-assembly
+            Build.objects.create(
+                part=subassembly,
+                parent=build,
+                project_code=build.project_code,
+                quantity=required_quantity,
+                responsible=build.responsible,
+                sales_order=build.sales_order,
+                start_date=build.start_date,
+                status=BuildStatus.PENDING,
+                target_date=build.target_date,
+            )
