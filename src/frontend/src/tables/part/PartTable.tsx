@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { type ReactNode, useMemo, useState, useCallback } from 'react';
-import { IconShoppingCart, IconEdit } from '@tabler/icons-react';
+import { IconShoppingCart } from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -24,8 +24,8 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import { type RowAction, RowEditAction } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the part table
