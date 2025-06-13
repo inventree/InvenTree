@@ -295,16 +295,20 @@ function LineItemFormRow({
   }, [record.destination]);
 
   // Batch code generator
-  const batchCodeGenerator = useBatchCodeGenerator((value: any) => {
-    if (value) {
-      props.changeFn(props.idx, 'batch_code', value);
+  const batchCodeGenerator = useBatchCodeGenerator({
+    onGenerate: (value: any) => {
+      if (value) {
+        props.changeFn(props.idx, 'batch_code', value);
+      }
     }
   });
 
   // Serial number generator
-  const serialNumberGenerator = useSerialNumberGenerator((value: any) => {
-    if (value) {
-      props.changeFn(props.idx, 'serial_numbers', value);
+  const serialNumberGenerator = useSerialNumberGenerator({
+    onGenerate: (value: any) => {
+      if (value) {
+        props.changeFn(props.idx, 'serial_numbers', value);
+      }
     }
   });
 
@@ -478,8 +482,10 @@ function LineItemFormRow({
             fieldDefinition={{
               field_type: 'number',
               value: props.item.quantity,
-              onValueChange: (value) =>
-                props.changeFn(props.idx, 'quantity', value)
+              onValueChange: (value) => {
+                props.changeFn(props.idx, 'quantity', value);
+                serialNumberGenerator.update({ quantity: value });
+              }
             }}
             error={props.rowErrors?.quantity?.message}
           />

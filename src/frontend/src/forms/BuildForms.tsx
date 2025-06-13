@@ -25,8 +25,10 @@ import {
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useBatchCodeGenerator } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
@@ -44,9 +46,9 @@ export function useBuildOrderFields({
 
   const [batchCode, setBatchCode] = useState<string>('');
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (!batchCode) {
-      setBatchCode(value);
+  const batchGenerator = useBatchCodeGenerator({
+    onGenerate: (value: any) => {
+      setBatchCode((batch: any) => batch || value);
     }
   });
 
@@ -96,6 +98,9 @@ export function useBuildOrderFields({
         icon: <IconTruckDelivery />
       },
       batch: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`,
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
@@ -143,7 +148,7 @@ export function useBuildOrderFields({
     }
 
     return fields;
-  }, [create, destination, batchCode, globalSettings]);
+  }, [create, destination, batchCode, batchGenerator.result, globalSettings]);
 }
 
 export function useBuildOrderOutputFields({
@@ -170,10 +175,17 @@ export function useBuildOrderOutputFields({
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
 
-  const serialPlaceholder = useSerialNumberPlaceholder({
-    partId: build.part_detail?.pk,
-    key: 'build-output',
-    enabled: build.part_detail?.trackable
+  const serialGenerator = useSerialNumberGenerator({
+    initialQuery: {
+      part: build.part || build.part_detail?.pk
+    }
+  });
+
+  const batchGenerator = useBatchCodeGenerator({
+    initialQuery: {
+      part: build.part || build.part_detail?.pk,
+      quantity: build.quantity
+    }
   });
 
   return useMemo(() => {
@@ -186,9 +198,15 @@ export function useBuildOrderOutputFields({
       },
       serial_numbers: {
         hidden: !trackable,
-        placeholder: serialPlaceholder
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
-      batch_code: {},
+      batch_code: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`
+      },
       location: {
         value: location,
         onValueChange: (value: any) => {
@@ -199,7 +217,7 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       }
     };
-  }, [quantity, serialPlaceholder, trackable]);
+  }, [quantity, batchGenerator.result, serialGenerator.result, trackable]);
 }
 
 function BuildOutputFormRow({
