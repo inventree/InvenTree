@@ -33,7 +33,7 @@ class AutoCreateBuildsPlugin(EventMixin, InvenTreePlugin):
 
     def wants_process_event(self, event) -> bool:
         """Return whether given event should be processed or not."""
-        return event in [BuildEvents.CANCELLED]
+        return event in [BuildEvents.ISSUED]
 
     def process_event(self, event, *args, **kwargs):
         """Process the triggered event."""
