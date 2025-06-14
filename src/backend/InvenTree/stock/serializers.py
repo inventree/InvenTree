@@ -437,6 +437,8 @@ class StockItemSerializer(
             'stocktake_date',
             'stocktake_user',
             'updated',
+            'status',
+            'status_custom_key',
         ]
 
         """
