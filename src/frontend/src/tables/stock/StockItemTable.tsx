@@ -15,7 +15,6 @@ import {
   type StockOperationProps,
   useAddStockItem,
   useAssignStockItem,
-  useChangeStockStatus,
   useCountStockItem,
   useDeleteStockItem,
   useMergeStockItem,
@@ -24,7 +23,10 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useBulkEditApiFormModal,
+  useCreateApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
@@ -552,17 +554,27 @@ export function StockItemTable({
   const addStock = useAddStockItem(tableActionParams);
   const removeStock = useRemoveStockItem(tableActionParams);
   const countStock = useCountStockItem(tableActionParams);
-  const changeStockStatus = useChangeStockStatus(tableActionParams);
   const mergeStock = useMergeStockItem(tableActionParams);
   const assignStock = useAssignStockItem(tableActionParams);
   const deleteStock = useDeleteStockItem(tableActionParams);
 
+  const changeStockStatus = useBulkEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    items: table.selectedIds,
+    title: t`Change Stock Status`,
+    fields: {
+      status_custom_key: {
+        label: t`Stock Status`
+      }
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const tableActions = useMemo(() => {
     const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
     const can_add_stock = user.hasAddRole(UserRoles.stock);
+    const can_edit_stock = user.hasChangeRole(UserRoles.stock);
     const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-    const can_add_order = user.hasAddRole(UserRoles.purchase_order);
-    const can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
       <ActionDropdown
         key='stock-actions'
@@ -614,7 +626,7 @@ export function StockItemTable({
             name: t`Change stock status`,
             icon: <InvenTreeIcon icon='info' iconProps={{ color: 'blue' }} />,
             tooltip: t`Change the status of stock items`,
-            disabled: !can_add_stock,
+            disabled: !can_edit_stock,
             onClick: () => {
               changeStockStatus.open();
             }

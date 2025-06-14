@@ -146,7 +146,6 @@ export enum ApiEndpoints {
   stock_remove = 'stock/remove/',
   stock_add = 'stock/add/',
   stock_count = 'stock/count/',
-  stock_change_status = 'stock/change_status/',
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
