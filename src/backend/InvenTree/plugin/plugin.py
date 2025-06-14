@@ -132,14 +132,21 @@ class MetaBase:
     def is_active(self):
         """Return True if this plugin is currently active."""
         # Builtin plugins are always considered "active"
-        if self.is_builtin:
-            return True
-
         config = self.plugin_config()
 
-        if config:
-            return config.active
-        return False  # pragma: no cover
+        if not config:
+            # If no config is found, then the plugin is not active
+            return False
+
+        if self.is_builtin and config.is_mandatory():
+            return True
+
+        return config.active
+
+    def activate(self, active: bool = True) -> None:
+        """Activate or deactivate the plugin."""
+        config = self.plugin_config()
+        config.activate(active)
 
 
 class MixinBase:

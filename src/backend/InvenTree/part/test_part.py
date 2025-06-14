@@ -7,11 +7,8 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from allauth.account.models import EmailAddress
-
 import part.settings
 from common.models import NotificationEntry, NotificationMessage
-from common.notifications import UIMessageNotification, storage
 from common.settings import get_global_setting, set_global_setting
 from InvenTree import version
 from InvenTree.templatetags import inventree_extras
@@ -766,67 +763,33 @@ class PartSubscriptionTests(InvenTreeTestCase):
         self.assertTrue(self.part.is_starred_by(self.user))
 
 
-class BaseNotificationIntegrationTest(InvenTreeTestCase):
-    """Integration test for notifications."""
+class PartNotificationTest(InvenTreeTestCase):
+    """Integration test for part notifications."""
 
     fixtures = ['location', 'category', 'part', 'stock']
 
-    @classmethod
-    def setUpTestData(cls):
-        """Add an email address as part of initialization."""
-        super().setUpTestData()
-
-        # Add email address
-        EmailAddress.objects.create(user=cls.user, email='test@testing.com')
-
-        # Define part that will be tested
-        cls.part = Part.objects.get(name='R_2K2_0805')
-
-    def _notification_run(self, run_class=None):
-        """Run a notification test suit through.
-
-        If you only want to test one class pass it to run_class
-        """
-        # reload notification methods
-        storage.collect(run_class)
-
+    def test_low_stock_notification(self):
+        """Test that a low stocknotification is generated."""
         NotificationEntry.objects.all().delete()
+        NotificationMessage.objects.all().delete()
 
-        # There should be no notification runs
+        part = Part.objects.get(name='R_2K2_0805')
+
+        part.minimum_stock = part.get_stock_count() + 1
+
+        part.save()
+
+        # There should be no notifications created yet,
+        # as there are no "subscribed" users for this part
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
+        self.assertEqual(NotificationMessage.objects.all().count(), 0)
 
-        # Test that notifications run through without errors
-        self.part.minimum_stock = (
-            self.part.get_stock_count() + 1
-        )  # make sure minimum is one higher than current count
-        self.part.save()
-
-        # There should be no notification as no-one is subscribed
-        self.assertEqual(NotificationEntry.objects.all().count(), 0)
-
-        # Subscribe and run again
+        # Subscribe the user to the part
         addUserPermission(self.user, 'part', 'part', 'view')
         self.user.is_active = True
         self.user.save()
-        self.part.set_starred(self.user, True)
-        self.part.save()
+        part.set_starred(self.user, True)
+        part.save()
 
-        # There should be 1 (or 2) notifications - in some cases an error is generated, which creates a subsequent notification
-        self.assertIn(NotificationEntry.objects.all().count(), [1, 2])
-
-
-class PartNotificationTest(BaseNotificationIntegrationTest):
-    """Integration test for part notifications."""
-
-    def test_notification(self):
-        """Test that a notification is generated."""
-        self._notification_run(UIMessageNotification)
-
-        # There should be 1 notification message right now
-        self.assertEqual(NotificationMessage.objects.all().count(), 1)
-
-        # Try again -> cover the already send line
-        self.part.save()
-
-        # There should not be more messages
+        self.assertGreaterEqual(NotificationEntry.objects.all().count(), 1)
         self.assertEqual(NotificationMessage.objects.all().count(), 1)

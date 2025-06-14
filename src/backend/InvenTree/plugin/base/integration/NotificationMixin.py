@@ -39,7 +39,7 @@ class NotificationMixin:
 
     def send_notification(
         self, target: Model, category: str, users: list, context: dict
-    ) -> None:
+    ) -> bool:
         """Send notification to the specified target users.
 
         Arguments:
@@ -47,5 +47,8 @@ class NotificationMixin:
             category (str): The category of the notification.
             users (list): List of users to send the notification to.
             context (dict): Context data for the notification.
+
+        Returns:
+            bool: True if the notification was sent successfully, False otherwise.
         """
         # The default implementation does nothing

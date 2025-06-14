@@ -28,11 +28,14 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
 
     def send_notification(
         self, target: Model, category: str, users: list[User], context: dict
-    ):
+    ) -> bool:
         """Create a UI notification entry for specified users."""
         from common.models import NotificationMessage
 
         entries = []
+
+        if not users:
+            return False
 
         # Bulk create notification messages for all provided users
         for user in users:
@@ -48,6 +51,8 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
             )
 
         NotificationMessage.objects.bulk_create(entries)
+
+        return True
 
 
 class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlugin):
@@ -71,17 +76,16 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
 
     def send_notification(
         self, target: Model, category: str, users: list[User], context: dict
-    ):
+    ) -> bool:
         """Send notification to the specified targets."""
         # Ignore if there is no template provided to render
         if not context.get('template'):
-            return
+            return False
 
         html_message = render_to_string(context['template']['html'], context)
 
         # Prefix the 'instance title' to the email subject
         instance_title = get_global_setting('INVENTREE_INSTANCE')
-
         subject = context['template'].get('subject', '')
 
         if instance_title:
@@ -90,6 +94,10 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
         recipients = []
 
         for user in users:
+            # Skip if the user does not want to receive email notifications
+            if not self.get_user_setting('NOTIFY_BY_EMAIL', user, backup_value=False):
+                continue
+
             if email := InvenTree.helpers_email.get_email_for_user(user):
                 recipients.append(email)
 
@@ -97,6 +105,9 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
             InvenTree.helpers_email.send_email(
                 subject, '', recipients, html_message=html_message
             )
+            return True
+
+        return False
 
 
 class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlugin):
@@ -119,7 +130,7 @@ class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
 
     def send_notification(
         self, target: Model, category: str, users: list[User], context: dict
-    ):
+    ) -> bool:
         """Send the notifications out via slack."""
         url = self.get_setting('NOTIFICATION_SLACK_URL')
 
@@ -153,4 +164,5 @@ class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
                 ],
             },
         )
+
         return ret.ok

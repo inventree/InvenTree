@@ -272,6 +272,9 @@ def trigger_notification(
         )
     )
 
+    # Track whether any notifications were sent
+    result = False
+
     # Send out via all registered notification methods
     for plugin in registry.with_mixin(PluginMixinEnum.NOTIFICATION):
         # Skip if the plugin is *not* in the "delivery_methods" list?
@@ -293,9 +296,11 @@ def trigger_notification(
         try:
             # Plugin may optionally filter target users
             filtered_users = plugin.filter_targets(list(valid_users))
-            plugin.send_notification(obj, category, filtered_users, context)
+            if plugin.send_notification(obj, category, filtered_users, context):
+                result = True
         except Exception:
             log_error('send_notification', plugin=plugin.slug)
 
     # Log the notification entry
-    common.models.NotificationEntry.notify(category, obj_ref_value)
+    if result:
+        common.models.NotificationEntry.notify(category, obj_ref_value)
