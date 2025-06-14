@@ -460,6 +460,7 @@ class DataExportViewMixin:
                 export_format,
                 export_context,
                 output.id,
+                group='exporter',
             )
 
             output.refresh_from_db()
