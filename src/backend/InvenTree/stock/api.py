@@ -171,12 +171,6 @@ class StockAdjustView(CreateAPI):
         return context
 
 
-class StockChangeStatus(StockAdjustView):
-    """API endpoint to change the status code of multiple StockItem objects."""
-
-    serializer_class = StockSerializers.StockChangeStatusSerializer
-
-
 class StockCount(StockAdjustView):
     """Endpoint for counting stock (performing a stocktake)."""
 
@@ -956,7 +950,9 @@ class StockApiMixin:
         return super().get_serializer(*args, **kwargs)
 
 
-class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
+class StockList(
+    DataExportViewMixin, BulkUpdateMixin, StockApiMixin, ListCreateDestroyAPIView
+):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)
@@ -1561,7 +1557,6 @@ stock_api_urls = [
     path('transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
     path('assign/', StockAssign.as_view(), name='api-stock-assign'),
     path('merge/', StockMerge.as_view(), name='api-stock-merge'),
-    path('change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
     # StockItemTestResult API endpoints
     path(
         'test/',
