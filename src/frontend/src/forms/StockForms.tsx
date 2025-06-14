@@ -183,9 +183,6 @@ export function useStockFields({
           batchGenerator.result &&
           `${t`Next batch code`}: ${batchGenerator.result}`
       },
-      status_custom_key: {
-        label: t`Stock Status`
-      },
       expiry_date: {
         icon: <IconCalendarExclamation />,
         hidden: !globalSettings.isSet('STOCK_ENABLE_EXPIRY'),
