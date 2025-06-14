@@ -135,7 +135,7 @@ Generate a list of all active customers:
 {% raw %}
 {% load report %}
 
-{% filter_db_model company.company is_customer=True active=True as active_customers %}
+{% filter_db_model 'company.company' is_customer=True active=True as active_customers %}
 
 <ul>
     {% for customer in active_customers %}
