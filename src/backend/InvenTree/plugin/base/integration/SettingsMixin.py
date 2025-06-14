@@ -1,6 +1,6 @@
 """Plugin mixin class for SettingsMixin."""
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -90,12 +90,15 @@ class SettingsMixin:
             key, plugin=self.plugin_config(), cache=cache, backup_value=backup_value
         )
 
-    def set_setting(self, key: str, value: Any, **kwargs) -> None:
+    def set_setting(
+        self, key: str, value: Any, user: Optional[User] = None, **kwargs
+    ) -> None:
         """Set plugin setting value by key.
 
         Arguments:
             key: The 'name' of the setting value to be set
             value: The value to be set for the setting
+            user: The user who is making the change (optional)
         """
         from plugin.models import PluginSetting
         from plugin.registry import registry
