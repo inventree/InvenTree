@@ -1127,10 +1127,10 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         for item in items:
             # Ignore items which are already in the desired status
-            if item.status == status:
+            if item.get_custom_status() == status:
                 continue
 
-            item.status_custom_key = status
+            item.set_status(status)
             item.save(add_note=False)
 
             # Create a new transaction note for each item
