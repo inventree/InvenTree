@@ -438,7 +438,6 @@ class StockItemSerializer(
             'stocktake_user',
             'updated',
             'status',
-            'status_custom_key',
         ]
 
         """
@@ -1802,6 +1801,10 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 # Required fields
                 stock_item = item['pk']
                 quantity = item['quantity']
+
+                # Update the 'status' fi
+                if status := item.get('status', None):
+                    stock_item.set_status(status)
 
                 # Optional fields
                 kwargs = {}
