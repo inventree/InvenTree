@@ -1,12 +1,9 @@
 """Background task definitions for the BuildOrder app."""
 
-import random
-import time
 from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -189,59 +186,6 @@ def check_build_stock(build: build_models.Build):
     common.notifications.trigger_notification(
         build, BuildEvents.STOCK_REQUIRED, targets=targets, context=context
     )
-
-
-def create_child_builds(build_id: int) -> None:
-    """Create child build orders for a given parent build.
-
-    - Will create a build order for each assembly part in the BOM
-    - Runs recursively, also creating child builds for each sub-assembly part
-    """
-    try:
-        build_order = build_models.Build.objects.get(pk=build_id)
-    except (build_models.Build.DoesNotExist, ValueError):
-        return
-
-    assembly_items = build_order.part.get_bom_items().filter(sub_part__assembly=True)
-
-    # Random delay, to reduce likelihood of race conditions from multiple build orders being created simultaneously
-    time.sleep(random.random())
-
-    with transaction.atomic():
-        # Atomic transaction to ensure that all child build orders are created together, or not at all
-        # This is critical to prevent duplicate child build orders being created (e.g. if the task is re-run)
-
-        sub_build_ids = []
-
-        for item in assembly_items:
-            quantity = item.quantity * build_order.quantity
-
-            # Check if the child build order has already been created
-            if build_models.Build.objects.filter(
-                part=item.sub_part,
-                parent=build_order,
-                quantity=quantity,
-                status__in=BuildStatusGroups.ACTIVE_CODES,
-            ).exists():
-                continue
-
-            sub_order = build_models.Build.objects.create(
-                part=item.sub_part,
-                quantity=quantity,
-                title=build_order.title,
-                batch=build_order.batch,
-                parent=build_order,
-                target_date=build_order.target_date,
-                sales_order=build_order.sales_order,
-                issued_by=build_order.issued_by,
-                responsible=build_order.responsible,
-            )
-
-            sub_build_ids.append(sub_order.pk)
-
-        for pk in sub_build_ids:
-            # Offload the child build order creation to the background task queue
-            InvenTree.tasks.offload_task(create_child_builds, pk, group='build')
 
 
 def notify_overdue_build_order(bo: build_models.Build):

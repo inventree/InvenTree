@@ -239,6 +239,7 @@ nav:
       - Label Printer: plugins/machines/label_printer.md
     - Builtin Plugins:
       - Builtin Plugins: plugins/builtin/index.md
+      - Auto Create Builds: plugins/builtin/auto_create_builds.md
       - Auto Issue: plugins/builtin/auto_issue.md
       - BOM Exporter: plugins/builtin/bom_exporter.md
       - Currency Exchange: plugins/builtin/currency_exchange.md

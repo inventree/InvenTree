@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-12 08:28+0000\n"
-"PO-Revision-Date: 2025-06-12 08:31\n"
+"POT-Creation-Date: 2025-06-14 01:28+0000\n"
+"PO-Revision-Date: 2025-06-14 01:30\n"
 "Last-Translator: \n"
 "Language-Team: Estonian\n"
 "Language: et_EE\n"
@@ -108,8 +108,8 @@ msgstr "Pane kuupäev"
 msgid "Invalid decimal value"
 msgstr ""
 
-#: InvenTree/fields.py:210 InvenTree/models.py:896 build/serializers.py:527
-#: build/serializers.py:598 company/models.py:834 order/models.py:1621
+#: InvenTree/fields.py:210 InvenTree/models.py:896 build/serializers.py:495
+#: build/serializers.py:566 company/models.py:834 order/models.py:1621
 #: part/models.py:3416
 #: report/templates/report/inventree_build_order_report.html:172
 #: stock/models.py:2708 stock/models.py:2832 stock/serializers.py:756
@@ -540,8 +540,8 @@ msgid "Include Variants"
 msgstr ""
 
 #: build/api.py:84 build/api.py:470 build/api.py:782 build/models.py:268
-#: build/serializers.py:1255 build/serializers.py:1377
-#: build/serializers.py:1428 company/models.py:1044 company/serializers.py:432
+#: build/serializers.py:1222 build/serializers.py:1344
+#: build/serializers.py:1395 company/models.py:1044 company/serializers.py:432
 #: order/api.py:292 order/api.py:296 order/api.py:897 order/api.py:1136
 #: order/api.py:1139 order/models.py:1770 order/models.py:1940
 #: order/models.py:1941 part/api.py:1482 part/api.py:1485 part/api.py:1551
@@ -646,11 +646,11 @@ msgstr ""
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
-#: build/api.py:453 build/serializers.py:1393 part/models.py:4386
+#: build/api.py:453 build/serializers.py:1360 part/models.py:4386
 msgid "Consumable"
 msgstr ""
 
-#: build/api.py:456 build/serializers.py:1396 part/models.py:4380
+#: build/api.py:456 build/serializers.py:1363 part/models.py:4380
 msgid "Optional"
 msgstr "Valikuline"
 
@@ -663,7 +663,7 @@ msgstr ""
 msgid "Tracked"
 msgstr "Jälgitud"
 
-#: build/api.py:465 build/serializers.py:1399 part/models.py:1229
+#: build/api.py:465 build/serializers.py:1366 part/models.py:1229
 msgid "Testable"
 msgstr ""
 
@@ -729,7 +729,7 @@ msgstr ""
 msgid "Build Order Reference"
 msgstr ""
 
-#: build/models.py:244 build/serializers.py:1390 order/models.py:602
+#: build/models.py:244 build/serializers.py:1357 order/models.py:602
 #: order/models.py:1182 order/models.py:1614 order/models.py:2486
 #: part/models.py:4401
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -759,7 +759,7 @@ msgstr ""
 msgid "SalesOrder to which this build is allocated"
 msgstr ""
 
-#: build/models.py:287 build/serializers.py:1105
+#: build/models.py:287 build/serializers.py:1073
 msgid "Source Location"
 msgstr ""
 
@@ -807,12 +807,12 @@ msgstr "Koostamise olek"
 msgid "Build status code"
 msgstr ""
 
-#: build/models.py:341 build/serializers.py:377 order/serializers.py:792
+#: build/models.py:341 build/serializers.py:345 order/serializers.py:792
 #: stock/models.py:1023 stock/serializers.py:84 stock/serializers.py:1651
 msgid "Batch Code"
 msgstr ""
 
-#: build/models.py:345 build/serializers.py:378
+#: build/models.py:345 build/serializers.py:346
 msgid "Batch code for this build output"
 msgstr ""
 
@@ -902,7 +902,7 @@ msgstr ""
 msgid "A build order has been completed"
 msgstr ""
 
-#: build/models.py:895 build/serializers.py:425
+#: build/models.py:895 build/serializers.py:393
 msgid "Serial numbers must be provided for trackable parts"
 msgstr ""
 
@@ -918,18 +918,18 @@ msgstr ""
 msgid "Build output does not match Build Order"
 msgstr ""
 
-#: build/models.py:1093 build/serializers.py:304 build/serializers.py:353
-#: build/serializers.py:973 order/models.py:705 order/serializers.py:604
+#: build/models.py:1093 build/serializers.py:272 build/serializers.py:321
+#: build/serializers.py:941 order/models.py:705 order/serializers.py:604
 #: order/serializers.py:787 part/serializers.py:1694 stock/models.py:863
 #: stock/models.py:1730 stock/serializers.py:727
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1097 build/serializers.py:308
+#: build/models.py:1097 build/serializers.py:276
 msgid "Quantity cannot be greater than the output quantity"
 msgstr ""
 
-#: build/models.py:1162 build/serializers.py:616
+#: build/models.py:1162 build/serializers.py:584
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr ""
@@ -942,8 +942,8 @@ msgstr ""
 msgid "Build object"
 msgstr ""
 
-#: build/models.py:1584 build/models.py:1843 build/serializers.py:292
-#: build/serializers.py:338 build/serializers.py:1411 common/models.py:1287
+#: build/models.py:1584 build/models.py:1843 build/serializers.py:260
+#: build/serializers.py:306 build/serializers.py:1378 common/models.py:1287
 #: order/models.py:1597 order/models.py:2371 order/serializers.py:1678
 #: order/serializers.py:2139 part/models.py:3403 part/models.py:4374
 #: part/serializers.py:274
@@ -990,7 +990,7 @@ msgstr ""
 msgid "Selected stock item does not match BOM line"
 msgstr ""
 
-#: build/models.py:1833 build/serializers.py:956 build/serializers.py:1264
+#: build/models.py:1833 build/serializers.py:924 build/serializers.py:1231
 #: order/serializers.py:1515 order/serializers.py:1536
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
 #: stock/models.py:452 stock/serializers.py:101 stock/serializers.py:825
@@ -1014,69 +1014,61 @@ msgstr ""
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:117
+#: build/serializers.py:115
 msgid "Build Level"
 msgstr ""
 
-#: build/serializers.py:126 part/stocktake.py:219
+#: build/serializers.py:124 part/stocktake.py:219
 msgid "Part Name"
 msgstr "Osa nimi"
 
-#: build/serializers.py:144
+#: build/serializers.py:142
 msgid "Project Code Label"
 msgstr ""
 
-#: build/serializers.py:156
-msgid "Create Child Builds"
-msgstr ""
-
-#: build/serializers.py:157
-msgid "Automatically generate child build orders"
-msgstr ""
-
-#: build/serializers.py:240 build/serializers.py:982
+#: build/serializers.py:208 build/serializers.py:950
 msgid "Build Output"
 msgstr ""
 
-#: build/serializers.py:252
+#: build/serializers.py:220
 msgid "Build output does not match the parent build"
 msgstr ""
 
-#: build/serializers.py:256
+#: build/serializers.py:224
 msgid "Output part does not match BuildOrder part"
 msgstr ""
 
-#: build/serializers.py:260
+#: build/serializers.py:228
 msgid "This build output has already been completed"
 msgstr ""
 
-#: build/serializers.py:274
+#: build/serializers.py:242
 msgid "This build output is not fully allocated"
 msgstr ""
 
-#: build/serializers.py:293 build/serializers.py:339
+#: build/serializers.py:261 build/serializers.py:307
 msgid "Enter quantity for build output"
 msgstr ""
 
-#: build/serializers.py:361
+#: build/serializers.py:329
 msgid "Integer quantity required for trackable parts"
 msgstr ""
 
-#: build/serializers.py:367
+#: build/serializers.py:335
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr ""
 
-#: build/serializers.py:384 order/serializers.py:808 order/serializers.py:1682
+#: build/serializers.py:352 order/serializers.py:808 order/serializers.py:1682
 #: stock/serializers.py:738
 msgid "Serial Numbers"
 msgstr ""
 
-#: build/serializers.py:385
+#: build/serializers.py:353
 msgid "Enter serial numbers for build outputs"
 msgstr ""
 
-#: build/serializers.py:390 build/serializers.py:515 build/serializers.py:585
-#: build/serializers.py:1268 build/serializers.py:1272 order/serializers.py:776
+#: build/serializers.py:358 build/serializers.py:483 build/serializers.py:553
+#: build/serializers.py:1235 build/serializers.py:1239 order/serializers.py:776
 #: order/serializers.py:923 order/serializers.py:2030 part/serializers.py:1312
 #: stock/serializers.py:110 stock/serializers.py:647 stock/serializers.py:749
 #: stock/serializers.py:913 stock/serializers.py:1041 stock/serializers.py:1501
@@ -1084,289 +1076,289 @@ msgstr ""
 msgid "Location"
 msgstr "Asukoht"
 
-#: build/serializers.py:391
+#: build/serializers.py:359
 msgid "Stock location for build output"
 msgstr ""
 
-#: build/serializers.py:406
+#: build/serializers.py:374
 msgid "Auto Allocate Serial Numbers"
 msgstr ""
 
-#: build/serializers.py:408
+#: build/serializers.py:376
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:441 order/serializers.py:901 stock/api.py:1077
+#: build/serializers.py:409 order/serializers.py:901 stock/api.py:1077
 #: stock/models.py:1753
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
 
-#: build/serializers.py:483 build/serializers.py:539 build/serializers.py:623
+#: build/serializers.py:451 build/serializers.py:507 build/serializers.py:591
 msgid "A list of build outputs must be provided"
 msgstr ""
 
-#: build/serializers.py:516
+#: build/serializers.py:484
 msgid "Stock location for scrapped outputs"
 msgstr ""
 
-#: build/serializers.py:522
+#: build/serializers.py:490
 msgid "Discard Allocations"
 msgstr ""
 
-#: build/serializers.py:523
+#: build/serializers.py:491
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "Tühista kõik laoseisu eraldised mahakantud väljundite jaoks"
 
-#: build/serializers.py:528
+#: build/serializers.py:496
 msgid "Reason for scrapping build output(s)"
 msgstr ""
 
-#: build/serializers.py:586
+#: build/serializers.py:554
 msgid "Location for completed build outputs"
 msgstr ""
 
-#: build/serializers.py:594
+#: build/serializers.py:562
 msgid "Accept Incomplete Allocation"
 msgstr ""
 
-#: build/serializers.py:595
+#: build/serializers.py:563
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr ""
 
-#: build/serializers.py:710
+#: build/serializers.py:678
 msgid "Consume Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:711
+#: build/serializers.py:679
 msgid "Consume any stock which has already been allocated to this build"
 msgstr ""
 
-#: build/serializers.py:717
+#: build/serializers.py:685
 msgid "Remove Incomplete Outputs"
 msgstr ""
 
-#: build/serializers.py:718
+#: build/serializers.py:686
 msgid "Delete any build outputs which have not been completed"
 msgstr ""
 
-#: build/serializers.py:745
+#: build/serializers.py:713
 msgid "Not permitted"
 msgstr ""
 
-#: build/serializers.py:746
+#: build/serializers.py:714
 msgid "Accept as consumed by this build order"
 msgstr ""
 
-#: build/serializers.py:747
+#: build/serializers.py:715
 msgid "Deallocate before completing this build order"
 msgstr ""
 
-#: build/serializers.py:774
+#: build/serializers.py:742
 msgid "Overallocated Stock"
 msgstr ""
 
-#: build/serializers.py:777
+#: build/serializers.py:745
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr ""
 
-#: build/serializers.py:788
+#: build/serializers.py:756
 msgid "Some stock items have been overallocated"
 msgstr ""
 
-#: build/serializers.py:793
+#: build/serializers.py:761
 msgid "Accept Unallocated"
 msgstr ""
 
-#: build/serializers.py:795
+#: build/serializers.py:763
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr ""
 
-#: build/serializers.py:806
+#: build/serializers.py:774
 msgid "Required stock has not been fully allocated"
 msgstr ""
 
-#: build/serializers.py:811 order/serializers.py:445 order/serializers.py:1583
+#: build/serializers.py:779 order/serializers.py:445 order/serializers.py:1583
 msgid "Accept Incomplete"
 msgstr ""
 
-#: build/serializers.py:813
+#: build/serializers.py:781
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr ""
 
-#: build/serializers.py:824
+#: build/serializers.py:792
 msgid "Required build quantity has not been completed"
 msgstr ""
 
-#: build/serializers.py:836
+#: build/serializers.py:804
 msgid "Build order has open child build orders"
 msgstr ""
 
-#: build/serializers.py:839
+#: build/serializers.py:807
 msgid "Build order must be in production state"
 msgstr ""
 
-#: build/serializers.py:842
+#: build/serializers.py:810
 msgid "Build order has incomplete outputs"
 msgstr ""
 
-#: build/serializers.py:881
+#: build/serializers.py:849
 msgid "Build Line"
 msgstr ""
 
-#: build/serializers.py:889
+#: build/serializers.py:857
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:897
+#: build/serializers.py:865
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:928
+#: build/serializers.py:896
 msgid "Build Line Item"
 msgstr ""
 
-#: build/serializers.py:946
+#: build/serializers.py:914
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:962 stock/serializers.py:1370
+#: build/serializers.py:930 stock/serializers.py:1370
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:1005 order/serializers.py:1569
+#: build/serializers.py:973 order/serializers.py:1569
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:1011
+#: build/serializers.py:979
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:1019
+#: build/serializers.py:987
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:1043 order/serializers.py:1842
+#: build/serializers.py:1011 order/serializers.py:1842
 msgid "Allocation items must be provided"
 msgstr ""
 
-#: build/serializers.py:1107
+#: build/serializers.py:1075
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr ""
 
-#: build/serializers.py:1116
+#: build/serializers.py:1084
 msgid "Exclude Location"
 msgstr ""
 
-#: build/serializers.py:1117
+#: build/serializers.py:1085
 msgid "Exclude stock items from this selected location"
 msgstr ""
 
-#: build/serializers.py:1122
+#: build/serializers.py:1090
 msgid "Interchangeable Stock"
 msgstr ""
 
-#: build/serializers.py:1123
+#: build/serializers.py:1091
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr ""
 
-#: build/serializers.py:1128
+#: build/serializers.py:1096
 msgid "Substitute Stock"
 msgstr ""
 
-#: build/serializers.py:1129
+#: build/serializers.py:1097
 msgid "Allow allocation of substitute parts"
 msgstr ""
 
-#: build/serializers.py:1134
+#: build/serializers.py:1102
 msgid "Optional Items"
 msgstr "Valikained"
 
-#: build/serializers.py:1135
+#: build/serializers.py:1103
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/serializers.py:1157
+#: build/serializers.py:1124
 msgid "Failed to start auto-allocation task"
 msgstr ""
 
-#: build/serializers.py:1231
+#: build/serializers.py:1198
 msgid "BOM Reference"
 msgstr ""
 
-#: build/serializers.py:1237
+#: build/serializers.py:1204
 msgid "BOM Part ID"
 msgstr ""
 
-#: build/serializers.py:1244
+#: build/serializers.py:1211
 msgid "BOM Part Name"
 msgstr ""
 
-#: build/serializers.py:1279 build/serializers.py:1435
+#: build/serializers.py:1246 build/serializers.py:1402
 msgid "Build"
 msgstr ""
 
-#: build/serializers.py:1287 company/models.py:662 order/api.py:305
+#: build/serializers.py:1254 company/models.py:662 order/api.py:305
 #: order/api.py:310 order/api.py:525 order/serializers.py:596
 #: stock/models.py:959 stock/serializers.py:631
 msgid "Supplier Part"
 msgstr ""
 
-#: build/serializers.py:1295 stock/serializers.py:662
+#: build/serializers.py:1262 stock/serializers.py:662
 msgid "Allocated Quantity"
 msgstr ""
 
-#: build/serializers.py:1372
+#: build/serializers.py:1339
 msgid "Build Reference"
 msgstr ""
 
-#: build/serializers.py:1382
+#: build/serializers.py:1349
 msgid "Part Category Name"
 msgstr ""
 
-#: build/serializers.py:1402 common/setting/system.py:453 part/models.py:1223
+#: build/serializers.py:1369 common/setting/system.py:453 part/models.py:1223
 msgid "Trackable"
 msgstr "Jälgitav"
 
-#: build/serializers.py:1405
+#: build/serializers.py:1372
 msgid "Inherited"
 msgstr ""
 
-#: build/serializers.py:1408 part/models.py:4434
+#: build/serializers.py:1375 part/models.py:4434
 msgid "Allow Variants"
 msgstr ""
 
-#: build/serializers.py:1413 build/serializers.py:1417 part/models.py:4232
+#: build/serializers.py:1380 build/serializers.py:1384 part/models.py:4232
 #: part/models.py:4710 stock/api.py:831
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:1446
+#: build/serializers.py:1413
 msgid "Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:1448 company/serializers.py:424
+#: build/serializers.py:1415 company/serializers.py:424
 #: order/serializers.py:1278 part/serializers.py:967 part/serializers.py:1727
 msgid "On Order"
 msgstr ""
 
-#: build/serializers.py:1450 order/serializers.py:1279 part/serializers.py:1731
+#: build/serializers.py:1417 order/serializers.py:1279 part/serializers.py:1731
 msgid "In Production"
 msgstr ""
 
-#: build/serializers.py:1452 part/serializers.py:995
+#: build/serializers.py:1419 part/serializers.py:995
 msgid "External Stock"
 msgstr ""
 
-#: build/serializers.py:1453 part/serializers.py:1760
+#: build/serializers.py:1420 part/serializers.py:1760
 msgid "Available Stock"
 msgstr "Saadaval laos"
 
-#: build/serializers.py:1455
+#: build/serializers.py:1422
 msgid "Available Substitute Stock"
 msgstr ""
 
-#: build/serializers.py:1458
+#: build/serializers.py:1425
 msgid "Available Variant Stock"
 msgstr ""
 
@@ -1396,15 +1388,15 @@ msgstr "Katkestatud"
 msgid "Complete"
 msgstr "Valmis"
 
-#: build/tasks.py:193
+#: build/tasks.py:190
 msgid "Stock required for build order"
 msgstr ""
 
-#: build/tasks.py:267
+#: build/tasks.py:211
 msgid "Overdue Build Order"
 msgstr ""
 
-#: build/tasks.py:272
+#: build/tasks.py:216
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr ""
@@ -2209,7 +2201,7 @@ msgstr ""
 #: common/setting/system.py:294 common/setting/system.py:302
 #: common/setting/system.py:309 common/setting/system.py:318
 #: common/setting/system.py:561 common/setting/system.py:581
-#: common/setting/system.py:678 common/setting/system.py:1068
+#: common/setting/system.py:672 common/setting/system.py:1062
 msgid "days"
 msgstr "päeva"
 
@@ -2682,508 +2674,500 @@ msgid "Serial numbers for stock items must be globally unique"
 msgstr ""
 
 #: common/setting/system.py:644
-msgid "Autofill Serial Numbers"
-msgstr ""
-
-#: common/setting/system.py:645
-msgid "Autofill serial numbers in forms"
-msgstr ""
-
-#: common/setting/system.py:650
 msgid "Delete Depleted Stock"
 msgstr ""
 
-#: common/setting/system.py:651
+#: common/setting/system.py:645
 msgid "Determines default behavior when a stock item is depleted"
 msgstr ""
 
-#: common/setting/system.py:656
+#: common/setting/system.py:650
 msgid "Batch Code Template"
 msgstr ""
 
-#: common/setting/system.py:657
+#: common/setting/system.py:651
 msgid "Template for generating default batch codes for stock items"
 msgstr ""
 
-#: common/setting/system.py:661
+#: common/setting/system.py:655
 msgid "Stock Expiry"
 msgstr ""
 
-#: common/setting/system.py:662
+#: common/setting/system.py:656
 msgid "Enable stock expiry functionality"
 msgstr ""
 
-#: common/setting/system.py:667
+#: common/setting/system.py:661
 msgid "Sell Expired Stock"
 msgstr ""
 
-#: common/setting/system.py:668
+#: common/setting/system.py:662
 msgid "Allow sale of expired stock"
 msgstr ""
 
-#: common/setting/system.py:673
+#: common/setting/system.py:667
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/setting/system.py:675
+#: common/setting/system.py:669
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/setting/system.py:682
+#: common/setting/system.py:676
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/setting/system.py:683
+#: common/setting/system.py:677
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/setting/system.py:688
+#: common/setting/system.py:682
 msgid "Stock Ownership Control"
 msgstr ""
 
-#: common/setting/system.py:689
+#: common/setting/system.py:683
 msgid "Enable ownership control over stock locations and items"
 msgstr ""
 
-#: common/setting/system.py:694
+#: common/setting/system.py:688
 msgid "Stock Location Default Icon"
 msgstr ""
 
-#: common/setting/system.py:695
+#: common/setting/system.py:689
 msgid "Stock location default icon (empty means no icon)"
 msgstr ""
 
-#: common/setting/system.py:700
+#: common/setting/system.py:694
 msgid "Show Installed Stock Items"
 msgstr ""
 
-#: common/setting/system.py:701
+#: common/setting/system.py:695
 msgid "Display installed stock items in stock tables"
 msgstr ""
 
-#: common/setting/system.py:706
+#: common/setting/system.py:700
 msgid "Check BOM when installing items"
 msgstr ""
 
-#: common/setting/system.py:708
+#: common/setting/system.py:702
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr ""
 
-#: common/setting/system.py:714
+#: common/setting/system.py:708
 msgid "Allow Out of Stock Transfer"
 msgstr ""
 
-#: common/setting/system.py:716
+#: common/setting/system.py:710
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr ""
 
-#: common/setting/system.py:722
+#: common/setting/system.py:716
 msgid "Build Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:723
+#: common/setting/system.py:717
 msgid "Required pattern for generating Build Order reference field"
 msgstr ""
 
-#: common/setting/system.py:728 common/setting/system.py:788
-#: common/setting/system.py:808 common/setting/system.py:844
+#: common/setting/system.py:722 common/setting/system.py:782
+#: common/setting/system.py:802 common/setting/system.py:838
 msgid "Require Responsible Owner"
 msgstr ""
 
-#: common/setting/system.py:729 common/setting/system.py:789
-#: common/setting/system.py:809 common/setting/system.py:845
+#: common/setting/system.py:723 common/setting/system.py:783
+#: common/setting/system.py:803 common/setting/system.py:839
 msgid "A responsible owner must be assigned to each order"
 msgstr ""
 
-#: common/setting/system.py:734
+#: common/setting/system.py:728
 msgid "Require Active Part"
 msgstr ""
 
-#: common/setting/system.py:735
+#: common/setting/system.py:729
 msgid "Prevent build order creation for inactive parts"
 msgstr ""
 
-#: common/setting/system.py:740
+#: common/setting/system.py:734
 msgid "Require Locked Part"
 msgstr ""
 
-#: common/setting/system.py:741
+#: common/setting/system.py:735
 msgid "Prevent build order creation for unlocked parts"
 msgstr ""
 
-#: common/setting/system.py:746
+#: common/setting/system.py:740
 msgid "Require Valid BOM"
 msgstr ""
 
-#: common/setting/system.py:747
+#: common/setting/system.py:741
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr ""
 
-#: common/setting/system.py:752
+#: common/setting/system.py:746
 msgid "Require Closed Child Orders"
 msgstr ""
 
-#: common/setting/system.py:754
+#: common/setting/system.py:748
 msgid "Prevent build order completion until all child orders are closed"
 msgstr ""
 
-#: common/setting/system.py:760
+#: common/setting/system.py:754
 msgid "External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:761
+#: common/setting/system.py:755
 msgid "Enable external build order functionality"
 msgstr ""
 
-#: common/setting/system.py:766
+#: common/setting/system.py:760
 msgid "Block Until Tests Pass"
 msgstr ""
 
-#: common/setting/system.py:768
+#: common/setting/system.py:762
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr ""
 
-#: common/setting/system.py:774
+#: common/setting/system.py:768
 msgid "Enable Return Orders"
 msgstr ""
 
-#: common/setting/system.py:775
+#: common/setting/system.py:769
 msgid "Enable return order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:780
+#: common/setting/system.py:774
 msgid "Return Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:782
+#: common/setting/system.py:776
 msgid "Required pattern for generating Return Order reference field"
 msgstr ""
 
-#: common/setting/system.py:794
+#: common/setting/system.py:788
 msgid "Edit Completed Return Orders"
 msgstr ""
 
-#: common/setting/system.py:796
+#: common/setting/system.py:790
 msgid "Allow editing of return orders after they have been completed"
 msgstr ""
 
-#: common/setting/system.py:802
+#: common/setting/system.py:796
 msgid "Sales Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:803
+#: common/setting/system.py:797
 msgid "Required pattern for generating Sales Order reference field"
 msgstr ""
 
-#: common/setting/system.py:814
+#: common/setting/system.py:808
 msgid "Sales Order Default Shipment"
 msgstr ""
 
-#: common/setting/system.py:815
+#: common/setting/system.py:809
 msgid "Enable creation of default shipment with sales orders"
 msgstr ""
 
-#: common/setting/system.py:820
+#: common/setting/system.py:814
 msgid "Edit Completed Sales Orders"
 msgstr ""
 
-#: common/setting/system.py:822
+#: common/setting/system.py:816
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr ""
 
-#: common/setting/system.py:828
+#: common/setting/system.py:822
 msgid "Mark Shipped Orders as Complete"
 msgstr ""
 
-#: common/setting/system.py:830
+#: common/setting/system.py:824
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr ""
 
-#: common/setting/system.py:836
+#: common/setting/system.py:830
 msgid "Purchase Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:838
+#: common/setting/system.py:832
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr ""
 
-#: common/setting/system.py:850
+#: common/setting/system.py:844
 msgid "Edit Completed Purchase Orders"
 msgstr ""
 
-#: common/setting/system.py:852
+#: common/setting/system.py:846
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr ""
 
-#: common/setting/system.py:858
+#: common/setting/system.py:852
 msgid "Convert Currency"
 msgstr ""
 
-#: common/setting/system.py:859
+#: common/setting/system.py:853
 msgid "Convert item value to base currency when receiving stock"
 msgstr ""
 
-#: common/setting/system.py:864
+#: common/setting/system.py:858
 msgid "Auto Complete Purchase Orders"
 msgstr ""
 
-#: common/setting/system.py:866
+#: common/setting/system.py:860
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr ""
 
-#: common/setting/system.py:873
+#: common/setting/system.py:867
 msgid "Enable password forgot"
 msgstr ""
 
-#: common/setting/system.py:874
+#: common/setting/system.py:868
 msgid "Enable password forgot function on the login pages"
 msgstr ""
 
-#: common/setting/system.py:879
+#: common/setting/system.py:873
 msgid "Enable registration"
 msgstr ""
 
-#: common/setting/system.py:880
+#: common/setting/system.py:874
 msgid "Enable self-registration for users on the login pages"
 msgstr ""
 
-#: common/setting/system.py:885
+#: common/setting/system.py:879
 msgid "Enable SSO"
 msgstr ""
 
-#: common/setting/system.py:886
+#: common/setting/system.py:880
 msgid "Enable SSO on the login pages"
 msgstr ""
 
-#: common/setting/system.py:891
+#: common/setting/system.py:885
 msgid "Enable SSO registration"
 msgstr ""
 
-#: common/setting/system.py:893
+#: common/setting/system.py:887
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr ""
 
-#: common/setting/system.py:899
+#: common/setting/system.py:893
 msgid "Enable SSO group sync"
 msgstr ""
 
-#: common/setting/system.py:901
+#: common/setting/system.py:895
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:907
+#: common/setting/system.py:901
 msgid "SSO group key"
 msgstr ""
 
-#: common/setting/system.py:908
+#: common/setting/system.py:902
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:913
+#: common/setting/system.py:907
 msgid "SSO group map"
 msgstr ""
 
-#: common/setting/system.py:915
+#: common/setting/system.py:909
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr ""
 
-#: common/setting/system.py:921
+#: common/setting/system.py:915
 msgid "Remove groups outside of SSO"
 msgstr ""
 
-#: common/setting/system.py:923
+#: common/setting/system.py:917
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr ""
 
-#: common/setting/system.py:929
+#: common/setting/system.py:923
 msgid "Email required"
 msgstr ""
 
-#: common/setting/system.py:930
+#: common/setting/system.py:924
 msgid "Require user to supply mail on signup"
 msgstr ""
 
-#: common/setting/system.py:935
+#: common/setting/system.py:929
 msgid "Auto-fill SSO users"
 msgstr ""
 
-#: common/setting/system.py:936
+#: common/setting/system.py:930
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr ""
 
-#: common/setting/system.py:941
+#: common/setting/system.py:935
 msgid "Mail twice"
 msgstr ""
 
-#: common/setting/system.py:942
+#: common/setting/system.py:936
 msgid "On signup ask users twice for their mail"
 msgstr ""
 
-#: common/setting/system.py:947
+#: common/setting/system.py:941
 msgid "Password twice"
 msgstr ""
 
-#: common/setting/system.py:948
+#: common/setting/system.py:942
 msgid "On signup ask users twice for their password"
 msgstr ""
 
-#: common/setting/system.py:953
+#: common/setting/system.py:947
 msgid "Allowed domains"
 msgstr ""
 
-#: common/setting/system.py:955
+#: common/setting/system.py:949
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr ""
 
-#: common/setting/system.py:961
+#: common/setting/system.py:955
 msgid "Group on signup"
 msgstr ""
 
-#: common/setting/system.py:963
+#: common/setting/system.py:957
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr ""
 
-#: common/setting/system.py:969
+#: common/setting/system.py:963
 msgid "Enforce MFA"
 msgstr ""
 
-#: common/setting/system.py:970
+#: common/setting/system.py:964
 msgid "Users must use multifactor security."
 msgstr ""
 
-#: common/setting/system.py:975
+#: common/setting/system.py:969
 msgid "Check plugins on startup"
 msgstr ""
 
-#: common/setting/system.py:977
+#: common/setting/system.py:971
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr ""
 
-#: common/setting/system.py:984
+#: common/setting/system.py:978
 msgid "Check for plugin updates"
 msgstr ""
 
-#: common/setting/system.py:985
+#: common/setting/system.py:979
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr ""
 
-#: common/setting/system.py:991
+#: common/setting/system.py:985
 msgid "Enable URL integration"
 msgstr ""
 
-#: common/setting/system.py:992
+#: common/setting/system.py:986
 msgid "Enable plugins to add URL routes"
 msgstr ""
 
-#: common/setting/system.py:998
+#: common/setting/system.py:992
 msgid "Enable navigation integration"
 msgstr ""
 
-#: common/setting/system.py:999
+#: common/setting/system.py:993
 msgid "Enable plugins to integrate into navigation"
 msgstr ""
 
-#: common/setting/system.py:1005
+#: common/setting/system.py:999
 msgid "Enable app integration"
 msgstr ""
 
-#: common/setting/system.py:1006
+#: common/setting/system.py:1000
 msgid "Enable plugins to add apps"
 msgstr ""
 
-#: common/setting/system.py:1012
+#: common/setting/system.py:1006
 msgid "Enable schedule integration"
 msgstr ""
 
-#: common/setting/system.py:1013
+#: common/setting/system.py:1007
 msgid "Enable plugins to run scheduled tasks"
 msgstr ""
 
-#: common/setting/system.py:1019
+#: common/setting/system.py:1013
 msgid "Enable event integration"
 msgstr ""
 
-#: common/setting/system.py:1020
+#: common/setting/system.py:1014
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/setting/system.py:1026
+#: common/setting/system.py:1020
 msgid "Enable interface integration"
 msgstr "Luba liidese integreerimine"
 
-#: common/setting/system.py:1027
+#: common/setting/system.py:1021
 msgid "Enable plugins to integrate into the user interface"
 msgstr "Luba pluginatel integreeruda kasutajaliidesesse"
 
-#: common/setting/system.py:1033
+#: common/setting/system.py:1027
 msgid "Enable project codes"
 msgstr ""
 
-#: common/setting/system.py:1034
+#: common/setting/system.py:1028
 msgid "Enable project codes for tracking projects"
 msgstr ""
 
-#: common/setting/system.py:1039
+#: common/setting/system.py:1033
 msgid "Stocktake Functionality"
 msgstr ""
 
-#: common/setting/system.py:1041
+#: common/setting/system.py:1035
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr ""
 
-#: common/setting/system.py:1047
+#: common/setting/system.py:1041
 msgid "Exclude External Locations"
 msgstr ""
 
-#: common/setting/system.py:1049
+#: common/setting/system.py:1043
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr ""
 
-#: common/setting/system.py:1055
+#: common/setting/system.py:1049
 msgid "Automatic Stocktake Period"
 msgstr ""
 
-#: common/setting/system.py:1057
+#: common/setting/system.py:1051
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr ""
 
-#: common/setting/system.py:1063
+#: common/setting/system.py:1057
 msgid "Report Deletion Interval"
 msgstr ""
 
-#: common/setting/system.py:1065
+#: common/setting/system.py:1059
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1072
+#: common/setting/system.py:1066
 msgid "Display Users full names"
 msgstr ""
 
-#: common/setting/system.py:1073
+#: common/setting/system.py:1067
 msgid "Display Users full names instead of usernames"
 msgstr ""
 
-#: common/setting/system.py:1078
+#: common/setting/system.py:1072
 msgid "Display User Profiles"
 msgstr ""
 
-#: common/setting/system.py:1079
+#: common/setting/system.py:1073
 msgid "Display Users Profiles on their profile page"
 msgstr ""
 
-#: common/setting/system.py:1084
+#: common/setting/system.py:1078
 msgid "Enable Test Station Data"
 msgstr ""
 
-#: common/setting/system.py:1085
+#: common/setting/system.py:1079
 msgid "Enable test station data collection for test results"
 msgstr ""
 
-#: common/setting/system.py:1090
+#: common/setting/system.py:1084
 msgid "Create Template on Upload"
 msgstr ""
 
-#: common/setting/system.py:1092
+#: common/setting/system.py:1086
 msgid "Create a new test template when uploading test data which does not match an existing template"
 msgstr "Loo uus testimall testandmete üleslaadimisel, mis ei vasta olemasolevale mallile"
 
@@ -6636,6 +6620,7 @@ msgid "Provides native support for barcodes"
 msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:30
+#: plugin/builtin/events/auto_create_builds.py:30
 #: plugin/builtin/events/auto_issue_orders.py:19
 #: plugin/builtin/exporter/bom_exporter.py:61
 #: plugin/builtin/exporter/inventree_exporter.py:17
@@ -6673,6 +6658,14 @@ msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:45
 msgid "Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances"
+msgstr ""
+
+#: plugin/builtin/events/auto_create_builds.py:28
+msgid "Auto Create Builds"
+msgstr ""
+
+#: plugin/builtin/events/auto_create_builds.py:31
+msgid "Automatically create build orders for assemblies"
 msgstr ""
 
 #: plugin/builtin/events/auto_issue_orders.py:17
