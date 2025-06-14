@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 349
+INVENTREE_API_VERSION = 350
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v350 -> 2025-06-14 : https://github.com/inventree/InvenTree/pull/9779
+    - Remove "StockChangeStatusSerializer" API endpoint
+    - Add "BulkUpdateMixin" to "StockList" API endpoint
+
 v349 -> 2025-06-13 : https://github.com/inventree/InvenTree/pull/9574
     - Remove the 'create_child_builds' flag from the BuildOrder creation API endpoint
 
