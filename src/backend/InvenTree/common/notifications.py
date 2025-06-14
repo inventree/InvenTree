@@ -283,10 +283,9 @@ def trigger_notification(
                     match = True
                     break
 
-            elif hasattr(notification_class, 'SLUG'):
-                if plugin.slug == notification_class.SLUG:
-                    match = True
-                    break
+            elif getattr(notification_class, 'SLUG', None) == plugin.slug:
+                match = True
+                break
 
         if not match:
             continue
@@ -297,3 +296,6 @@ def trigger_notification(
             plugin.send_notification(obj, category, filtered_users, context)
         except Exception:
             log_error('send_notification', plugin=plugin.slug)
+
+    # Log the notification entry
+    common.models.NotificationEntry.notify(category, obj_ref_value)
