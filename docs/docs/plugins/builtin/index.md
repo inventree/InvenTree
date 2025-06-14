@@ -14,6 +14,7 @@ The following builtin plugins are available in InvenTree:
 
 | Plugin Name | Description | Mandatory |
 | ----------- | ----------- | --------- |
+| [Auto Create Child Builds](./auto_create_builds.md) | Automatically create child build orders for sub-assemblies | No |
 | [Auto Issue Orders](./auto_issue.md) | Automatically issue pending orders when target date is reached | No |
 | [BOM Exporter](./bom_exporter.md) | Custom [exporter](../mixins/export.md) for BOM data | Yes |
 | [Currency Exchange](./currency_exchange.md) | Currency exchange rate plugin | Yes |
