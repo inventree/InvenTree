@@ -13,9 +13,7 @@ InvenTree provides a powerful REST API for interacting with inventory data on th
 
 The API is self-documenting, and the documentation is provided alongside any InvenTree installation instance. If (for example) you have an InvenTree instance running at `http://127.0.0.1:8000` then the API documentation is available at `http://127.0.0.1:8000/api-doc/`
 
-{% with id="api_doc", url="api/api_doc.png", description="API documentation" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_doc.png", "API documentation") }}
 
 ### Browseble API
 
@@ -50,7 +48,7 @@ Users can authenticate against the API using basic authentication - specifically
 Each user is assigned an authentication token which can be used to access the API. This token is persistent for that user (unless invalidated by an administrator) and can be used across multiple sessions.
 
 !!! info "Token Administration"
-    User tokens can be created and/or invalidated via the user settings, admin center or admin interface.
+    User tokens can be created and/or invalidated via the user settings, [Admin Center](../settings/admin.md#admin-center) or admin interface.
 
 #### Requesting a Token
 
@@ -152,15 +150,11 @@ Once a user has *authenticated* via the API, a list of the available roles can b
 
 For example, when accessing the API from a *superuser* account:
 
-{% with id="api_roles", url="api/api_roles.png", description="API superuser roles" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_roles.png", "API superuser roles") }}
 
 Or, when accessing the API from an account which has read-only permissions:
 
-{% with id="api_roles_2", url="api/api_roles_2.png", description="API user roles" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_roles_2.png", "API user roles") }}
 
 ### Permission Denied
 

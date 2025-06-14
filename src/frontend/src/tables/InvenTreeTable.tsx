@@ -9,7 +9,8 @@ import {
   DataTable,
   type DataTableCellClickHandler,
   type DataTableRowExpansionProps,
-  type DataTableSortStatus
+  type DataTableSortStatus,
+  useDataTableColumns
 } from 'mantine-datatable';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -33,6 +34,7 @@ import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 
+const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
@@ -147,6 +149,19 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
 
+  // Key used for caching table data
+  const cacheKey = useMemo(() => {
+    const key: string = `table-${tableState.tableKey}`;
+
+    // Remove anything after (and including) "mantine"
+    const mantineIndex = key.indexOf('-mantine');
+    if (mantineIndex >= 0) {
+      return key.substring(0, mantineIndex);
+    } else {
+      return key;
+    }
+  }, [tableState.tableKey]);
+
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
@@ -164,7 +179,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     enabled: !!url && !tableData,
-    queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
+    queryKey: ['options', url, cacheKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
     gcTime: 5000,
@@ -202,8 +217,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
               }
             });
 
-            const cacheKey = tableState.tableKey.replaceAll('-', '');
-
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
           }
@@ -230,8 +243,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return;
     }
 
-    const cacheKey = tableState.tableKey.replaceAll('-', '');
-
     // First check the local cache
     const cachedNames = getTableColumnNames(cacheKey);
 
@@ -242,7 +253,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     }
 
     tableOptionQuery.refetch();
-  }, [url, props.params, props.enableColumnCaching]);
+  }, [cacheKey, url, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
@@ -295,7 +306,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         return {
           ...col,
           hidden: hidden,
-          noWrap: true,
+          resizable: col.resizable ?? true,
           title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
         };
       });
@@ -303,9 +314,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
     // If row actions are available, add a column for them
     if (tableProps.rowActions) {
       cols.push({
-        accessor: '--actions--',
+        accessor: ACTIONS_COLUMN_ACCESSOR,
         title: '   ',
         hidden: false,
+        resizable: false,
         switchable: false,
         width: 50,
         render: (record: any, index?: number | undefined) => (
@@ -341,6 +353,29 @@ export function InvenTreeTable<T extends Record<string, any>>({
       newColumns.filter((col) => col.hidden).map((col) => col.accessor)
     );
   }
+
+  // Final state of the table columns
+  const tableColumns = useDataTableColumns({
+    key: cacheKey,
+    columns: dataColumns
+  });
+
+  // Ensure that the "actions" column is always at the end of the list
+  // This effect is necessary as sometimes the underlying mantine-datatable columns change
+  useEffect(() => {
+    const idx: number = tableColumns.columnsOrder.indexOf(
+      ACTIONS_COLUMN_ACCESSOR
+    );
+
+    if (idx >= 0 && idx < tableColumns.columnsOrder.length - 1) {
+      // Actions column is not at the end of the list - move it there
+      const newOrder = tableColumns.columnsOrder.filter(
+        (col) => col != ACTIONS_COLUMN_ACCESSOR
+      );
+      newOrder.push(ACTIONS_COLUMN_ACCESSOR);
+      tableColumns.setColumnsOrder(newOrder);
+    }
+  }, [tableColumns.columnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -542,13 +577,22 @@ export function InvenTreeTable<T extends Record<string, any>>({
   }, [tableState.queryFilters]);
 
   useEffect(() => {
-    tableState.setIsLoading(
+    const loading: boolean =
       isFetching ||
-        isLoading ||
-        tableOptionQuery.isFetching ||
-        tableOptionQuery.isLoading
-    );
-  }, [isFetching, isLoading, tableOptionQuery]);
+      isLoading ||
+      tableOptionQuery.isFetching ||
+      tableOptionQuery.isLoading;
+
+    if (loading != tableState.isLoading) {
+      tableState.setIsLoading(loading);
+    }
+  }, [
+    isFetching,
+    isLoading,
+    tableOptionQuery.isFetching,
+    tableOptionQuery.isLoading,
+    tableState.isLoading
+  ]);
 
   // Update tableState.records when new data received
   useEffect(() => {
@@ -759,20 +803,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
                 enableSelection ? onSelectedRecordsChange : undefined
               }
               rowExpansion={rowExpansion}
-              // rowStyle={rowStyleCallback}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
               records={tableState.records}
-              columns={dataColumns}
+              storeColumnsKey={cacheKey}
+              columns={tableColumns.effectiveColumns}
               onCellClick={supportsCellClick ? handleCellClick : undefined}
               noHeader={tableProps.noHeader ?? false}
               defaultColumnProps={{
-                noWrap: true,
-                textAlign: 'left',
-                cellsStyle: () => (theme) => ({
-                  // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
-                  overflow: 'hidden'
-                })
+                textAlign: 'left'
               }}
               onCellContextMenu={
                 supportsContextMenu ? handleCellContextMenu : undefined

@@ -12,7 +12,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-import build.admin
 import build.serializers
 import common.models
 import part.models as part_models
@@ -34,7 +33,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = Build
-        fields = ['sales_order']
+        fields = ['sales_order', 'external']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
@@ -356,6 +355,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'project_code',
         'priority',
         'level',
+        'external',
     ]
 
     ordering_field_aliases = {

@@ -112,9 +112,7 @@ To merge (combine) multiple labels into a single output (for example printing mu
 
 If label printing plugins are enabled, they are able to be used directly from the InvenTree web interface:
 
-{% with id="label_print", url="plugin/print_label_select_plugin.png", description="Print label via plugin" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/print_label_select_plugin.png", "Print label via plugin") }}
 
 ### App Integration
 

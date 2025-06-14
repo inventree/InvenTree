@@ -3,28 +3,16 @@ import {
   type InvenTreePluginContext
 } from '../types/Plugins';
 
-function extractVersion(version: string) {
-  // Extract the version number from the string
-  const [major, minor, patch] = version
-    .split('.')
-    .map((v) => Number.parseInt(v, 10));
-
-  return { major, minor, patch };
-}
-
 /**
- * Check th e
+ * Check that the plugin version matches the expected version.
+ * This is a helper function which only generates a warning if there is a mismatch.
  */
 export function checkPluginVersion(context: InvenTreePluginContext) {
-  const pluginVersion = extractVersion(INVENTREE_PLUGIN_VERSION);
-  const systemVersion = extractVersion(context.version.inventree);
+  const systemVersion: string = context?.version?.inventree || '';
 
-  const mismatch = `Plugin version mismatch! Expected version ${INVENTREE_PLUGIN_VERSION}, got ${context.version}`;
-
-  // A major version mismatch indicates a potentially breaking change
-  if (pluginVersion.major !== systemVersion.major) {
-    console.warn(mismatch);
-  } else if (INVENTREE_PLUGIN_VERSION != context.version.inventree) {
-    console.info(mismatch);
+  if (INVENTREE_PLUGIN_VERSION != systemVersion) {
+    console.info(
+      `Plugin version mismatch! Expected version ${INVENTREE_PLUGIN_VERSION}, got ${systemVersion}`
+    );
   }
 }

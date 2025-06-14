@@ -23,9 +23,7 @@ An external stock location can be used to indicate that items in there might not
 for immediate usage. Stock items in an external location are marked with an additional icon
 in the build order line items view where the material is allocated.
 
-{% with id="stock_external_icon", url="stock/stock_external_icon.png", description="External stock indication" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/stock_external_icon.png", title="External stock indication") }}
 
 Anyhow there is no limitation on the stock item. It can be allocated as usual.
 

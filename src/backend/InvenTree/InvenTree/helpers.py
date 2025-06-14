@@ -510,7 +510,7 @@ def increment_serial_number(serial, part=None):
             if result is not None:
                 return str(result)
         except Exception:
-            log_error(f'{plugin.slug}.increment_serial_number')
+            log_error('increment_serial_number', plugin=plugin.slug)
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
@@ -716,10 +716,11 @@ def extract_serial_numbers(
         raise ValidationError([_('No serial numbers found')])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
+        n = len(serials)
+        q = expected_quantity
+
         raise ValidationError([
-            _(
-                f'Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})'
-            )
+            _(f'Number of unique serial numbers ({n}) must match quantity ({q})')
         ])
 
     return serials

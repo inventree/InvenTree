@@ -28,6 +28,10 @@ import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
+import {
+  PARAMETER_FILTER_OPERATORS,
+  ParameterFilter
+} from './ParametricPartTableFilters';
 
 // Render an individual parameter cell
 function ParameterCell({
@@ -115,6 +119,115 @@ export default function ParametricPartTable({
     refetchOnMount: true
   });
 
+  /* Store filters against selected part parameters.
+   * These are stored in the format:
+   * {
+   *   parameter_1: {
+   *    '=': 'value1',
+   *    '<': 'value2',
+   *    ...
+   *   },
+   *   parameter_2: {
+   *    '=': 'value3',
+   *   },
+   *   ...
+   * }
+   *
+   * Which allows multiple filters to be applied against each parameter template.
+   */
+  const [parameterFilters, setParameterFilters] = useState<any>({});
+
+  /* Remove filters for a specific parameter template
+   * - If no operator is specified, remove all filters for this template
+   * - If an operator is specified, remove filters for that operator only
+   */
+  const clearParameterFilter = useCallback(
+    (templateId: number, operator?: string) => {
+      const filterName = `parameter_${templateId}`;
+
+      if (!operator) {
+        // If no operator is specified, remove all filters for this template
+        setParameterFilters((prev: any) => {
+          const newFilters = { ...prev };
+          // Remove any filters that match the template ID
+          Object.keys(newFilters).forEach((key: string) => {
+            if (key == filterName) {
+              delete newFilters[key];
+            }
+          });
+          return newFilters;
+        });
+
+        return;
+      }
+
+      // An operator is specified, so we remove filters for that operator only
+      setParameterFilters((prev: any) => {
+        const filters = { ...prev };
+
+        const paramFilters = filters[filterName] || {};
+
+        if (paramFilters[operator]) {
+          // Remove the specific operator filter
+          delete paramFilters[operator];
+        }
+
+        return {
+          ...filters,
+          [filterName]: paramFilters
+        };
+      });
+
+      table.refreshTable();
+    },
+    [setParameterFilters, table.refreshTable]
+  );
+
+  /**
+   * Add (or update) a filter for a specific parameter template.
+   * @param templateId - The ID of the parameter template to filter on.
+   * @param value - The value to filter by.
+   * @param operator - The operator to use for filtering (e.g., '=', '<', '>', etc.).
+   */
+  const addParameterFilter = useCallback(
+    (templateId: number, value: string, operator: string) => {
+      const filterName = `parameter_${templateId}`;
+
+      setParameterFilters((prev: any) => {
+        const filters = { ...prev };
+        const paramFilters = filters[filterName] || {};
+
+        paramFilters[operator] = value;
+
+        return {
+          ...filters,
+          [filterName]: paramFilters
+        };
+      });
+
+      table.refreshTable();
+    },
+    [setParameterFilters, clearParameterFilter, table.refreshTable]
+  );
+
+  // Construct the query filters for the table based on the parameter filters
+  const parametricQueryFilters = useMemo(() => {
+    const filters: Record<string, string> = {};
+
+    Object.keys(parameterFilters).forEach((key: string) => {
+      const paramFilters: any = parameterFilters[key];
+
+      Object.keys(paramFilters).forEach((operator: string) => {
+        const name = `${key}${PARAMETER_FILTER_OPERATORS[operator] || ''}`;
+        const value = paramFilters[operator];
+
+        filters[name] = value;
+      });
+    });
+
+    return filters;
+  }, [parameterFilters]);
+
   const [selectedPart, setSelectedPart] = useState<number>(0);
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
   const [selectedParameter, setSelectedParameter] = useState<number>(0);
@@ -186,6 +299,8 @@ export default function ParametricPartTable({
         title += ` [${template.units}]`;
       }
 
+      const filters = parameterFilters[`parameter_${template.pk}`] || {};
+
       return {
         accessor: `parameter_${template.pk}`,
         title: title,
@@ -199,10 +314,22 @@ export default function ParametricPartTable({
             template={template}
             canEdit={user.hasChangeRole(UserRoles.part)}
           />
-        )
+        ),
+        filtering: Object.keys(filters).length > 0,
+        filter: ({ close }: { close: () => void }) => {
+          return (
+            <ParameterFilter
+              template={template}
+              filters={parameterFilters[`parameter_${template.pk}`] || {}}
+              setFilter={addParameterFilter}
+              clearFilter={clearParameterFilter}
+              closeFilter={close}
+            />
+          );
+        }
       };
     });
-  }, [user, categoryParameters.data]);
+  }, [user, categoryParameters.data, parameterFilters]);
 
   const onParameterClick = useCallback((template: number, part: any) => {
     setSelectedTemplate(template);
@@ -275,7 +402,8 @@ export default function ParametricPartTable({
             category: categoryId,
             cascade: true,
             category_detail: true,
-            parameters: true
+            parameters: true,
+            ...parametricQueryFilters
           },
           onCellClick: ({ event, record, index, column, columnIndex }) => {
             cancelEvent(event);

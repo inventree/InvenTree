@@ -17,7 +17,6 @@ from allauth.socialaccount.signals import social_account_updated
 import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
-from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
 
 logger = structlog.get_logger('inventree')
@@ -178,7 +177,7 @@ class InvenTreeConfig(AppConfig):
         try:
             if django_q.models.OrmQ.objects.count() == 0:
                 InvenTree.tasks.offload_task(
-                    InvenTree.tasks.heartbeat, force_async=True
+                    InvenTree.tasks.heartbeat, force_async=True, group='heartbeat'
                 )
         except Exception:
             pass
@@ -255,7 +254,6 @@ class InvenTreeConfig(AppConfig):
     def update_site_url(self):
         """Update the site URL setting.
 
-        - If a fixed SITE_URL is specified (via configuration), it should override the INVENTREE_BASE_URL setting
         - If multi-site support is enabled, update the site URL for the current site
         """
         if not InvenTree.ready.canAppAccessDatabase():
@@ -265,22 +263,16 @@ class InvenTreeConfig(AppConfig):
             return
 
         if settings.SITE_URL:
-            try:
-                if get_global_setting('INVENTREE_BASE_URL') != settings.SITE_URL:
-                    set_global_setting('INVENTREE_BASE_URL', settings.SITE_URL)
-                    logger.info('Updated INVENTREE_SITE_URL to %s', settings.SITE_URL)
-            except Exception:
-                pass
-
             # If multi-site support is enabled, update the site URL for the current site
             try:
                 from django.contrib.sites.models import Site
 
                 site = Site.objects.get_current()
-                site.domain = settings.SITE_URL
-                site.save()
 
-                logger.info('Updated current site URL to %s', settings.SITE_URL)
+                if site and site.domain != settings.SITE_URL:
+                    site.domain = settings.SITE_URL
+                    site.save()
+                    logger.info('Updated current site URL to %s', settings.SITE_URL)
 
             except Exception:
                 pass

@@ -4,7 +4,7 @@ title: InvenTree Configuration
 
 ## InvenTree Configuration
 
-While many InvenTree options can be configured at "run time", there are a number of system configuration parameters which need to be set *before* running InvenTree. Admin users will need to adjust the InvenTree installation to meet the particular needs of their setup. For example, pointing to the correct database backend, or specifying a list of allowed hosts.
+While many InvenTree options can be configured at "run time" (see [System Settings](../settings/admin.md#system-settings)), there are a number of system configuration parameters which need to be set *before* running InvenTree. Admin users will need to adjust the InvenTree installation to meet the particular needs of their setup. For example, pointing to the correct database backend, or specifying a list of allowed hosts.
 
 InvenTree system settings can be specified either via environment variables, or in a configuration file.
 
@@ -463,3 +463,13 @@ The following [plugin](../plugins/index.md) configuration options are available:
 | INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Disable Plugin installation via API - only use plugins.txt file | False |
 | INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
 | INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
+
+## Override Global Settings
+
+If required, [global settings values](../settings/global.md#override-global-settings) can be overridden by the system administrator.
+
+To override global settings, provide a "dictionary" of settings overrides in the configuration file, or via an environment variable.
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| GLOBAL_SETTINGS_OVERRIDES | global_settings_overrides | JSON object containing global settings overrides | *Not specified* |

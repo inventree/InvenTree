@@ -3539,10 +3539,10 @@ mantine-contextmenu@^7.15.3:
   resolved "https://registry.yarnpkg.com/mantine-contextmenu/-/mantine-contextmenu-7.15.3.tgz#d335d6ed504a8bebd2d6a598fd78325627f7f501"
   integrity sha512-qbkbumlcxvUDavqnBZHLhskXxF9mhTD3F+mQjDc2JEqGZbPr4XHRTxFw0BAc34yKOY04Iv8WGHVwastdJHOO/A==
 
-mantine-datatable@^7.15.1:
-  version "7.15.1"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.15.1.tgz#c89d55c290e3d65ed7fde777a8db938122663d5f"
-  integrity sha512-MwehjtkdT6FQfuPgTXmGA2Y3DmHdCdLzcl4G4LoccSpG2ul2RwEdCO/dQmrPBsNo4mMepNN9dE3/1vSuYsU+7Q==
+mantine-datatable@^7.17.1:
+  version "7.17.1"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.17.1.tgz#155373bfa318d5463f1aa8468b8117f97b033a2e"
+  integrity sha512-5GBpSTZyvVGqe2TqEaBYrZQyQjLgHuMqkb2wry+wPvwalRY0oFKG1kdFd43bxch9FOG0K0CREEa6+cYIDby55Q==
 
 marked@^4.1.0:
   version "4.3.0"
@@ -4813,9 +4813,9 @@ undici-types@~6.21.0:
   integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
 
 undici@^5.25.4:
-  version "5.28.5"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.28.5.tgz#b2b94b6bf8f1d919bc5a6f31f2c01deb02e54d4b"
-  integrity sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==
+  version "5.29.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.29.0.tgz#419595449ae3f2cdcba3580a2e8903399bd1f5a3"
+  integrity sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==
   dependencies:
     "@fastify/busboy" "^2.0.0"
 

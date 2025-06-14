@@ -25,8 +25,11 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_COMPANY_NAME") }}
 {{ globalsetting("INVENTREE_INSTANCE") }}
 {{ globalsetting("INVENTREE_INSTANCE_TITLE") }}
+{{ globalsetting("INVENTREE_INSTANCE_ID") }}
+{{ globalsetting("INVENTREE_ANNOUNCE_ID") }}
 {{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
+{{ globalsetting("DISPLAY_PROFILE_INFO") }}
 {{ globalsetting("INVENTREE_UPDATE_CHECK_INTERVAL") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE") }}
@@ -101,6 +104,8 @@ Configuration of pricing data and currency support:
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("INVENTREE_DEFAULT_CURRENCY") }}
 {{ globalsetting("CURRENCY_CODES") }}
+{{ globalsetting("CURRENCY_UPDATE_PLUGIN") }}
+{{ globalsetting("CURRENCY_UPDATE_INTERVAL") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
 {{ globalsetting("PRICING_UPDATE_DAYS") }}
@@ -130,6 +135,15 @@ Configuration of report generation:
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
 {{ globalsetting("REPORT_LOG_ERRORS") }}
+
+### Label Printing
+
+Configuration of label printing:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("LABEL_ENABLE") }}
+{{ globalsetting("LABEL_DPI") }}
 
 ### Parts
 
@@ -183,7 +197,6 @@ Configuration of stock item options
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("SERIAL_NUMBER_GLOBALLY_UNIQUE") }}
-{{ globalsetting("SERIAL_NUMBER_AUTOFILL") }}
 {{ globalsetting("STOCK_DELETE_DEPLETED_DEFAULT") }}
 {{ globalsetting("STOCK_BATCH_CODE_TEMPLATE") }}
 {{ globalsetting("STOCK_ENABLE_EXPIRY") }}
@@ -226,3 +239,15 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
 {{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}
+
+### Project Codes
+
+Refer to the [project code settings](../concepts/project_codes.md).
+
+## Override Global Settings
+
+If desired, specific *global settings* can be overridden via environment variables or the configuration file.
+
+Overriding a global setting will mark the setting as "read-only" in the user interface, and prevent it from being changed by user action. Additionally, the associated value stored in the database will be set to the value specified in the override.
+
+Refer to the [configuration guide](../start/config.md#override-global-settings) for more information on how to override global settings.
