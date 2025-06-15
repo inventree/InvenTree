@@ -181,6 +181,11 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         """Create supplier part and purchase_order."""
         super().setUp()
 
+        registry.set_plugin_state('digikeyplugin', True)
+        registry.set_plugin_state('mouserplugin', True)
+        registry.set_plugin_state('lcscplugin', True)
+        registry.set_plugin_state('tmeplugin', True)
+
         self.loc_1 = StockLocation.objects.create(name='Location 1')
         self.loc_2 = StockLocation.objects.create(name='Location 2')
 
