@@ -10827,3 +10827,98 @@ msgstr "閲讀文檔"
 msgid "Ignore and continue to Desktop view"
 msgstr "忽略並繼續到桌面視圖"
 
+#: src/tables/part/BomTable.tsx
+msgid "Part is Locked"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "BOM cannot be edited - part is locked"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Flat BOM View"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Showing all components at all levels needed to build this part. Quantities shown include multipliers for assemblies."
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Export Complete"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Saved as ${filename}"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "View BOM"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Validate BOM Line"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Edit Substitutes"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Show Direct BOM"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Show Flat BOM"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Flat BOM"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Export CSV"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Export JSON"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Validate BOM"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Add BOM Item"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Loading complete BOM hierarchy..."
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Select Columns to Export"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Choose which columns you want to include in your export:"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Cancel"
+msgstr ""
+
+#: src/tables/part/BomTable.tsx
+msgid "Part Name"
+msgstr ""    
+
+#: src/tables/part/BomTable.tsx
+msgid "Internal Reference"
+msgstr ""  
+
+#: src/tables/part/BomTable.tsx
+msgid "Consolidate Identical Parts (Sum Quantities)"
+msgstr ""  
+
+#: src/tables/part/BomTable.tsx
+msgid "Groups parts that appear multiple times and sums their quantities"
+msgstr "" 
