@@ -19,6 +19,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         """Ensure the digikey plugin is enabled."""
         super().setUp()
         registry.set_plugin_state('digikeyplugin', True)
+        registry.set_plugin_state('mouserplugin', True)
+        registry.set_plugin_state('lcscplugin', True)
+        registry.set_plugin_state('tmeplugin', True)
 
     @classmethod
     def setUpTestData(cls):
@@ -110,6 +113,16 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
     def test_old_mouser_barcode(self):
         """Test old mouser barcode with messed up header."""
+        plugin = registry.get_plugin('mouserplugin')
+        plugin.activate(False)
+
+        # Initial scan should fail - plugin not enabled
+        self.post(
+            self.SCAN_URL, data={'barcode': MOUSER_BARCODE_OLD}, expected_code=400
+        )
+
+        plugin.activate()
+
         result = self.post(
             self.SCAN_URL, data={'barcode': MOUSER_BARCODE_OLD}, expected_code=200
         )
