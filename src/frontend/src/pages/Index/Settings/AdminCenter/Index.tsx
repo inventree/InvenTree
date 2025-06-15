@@ -269,11 +269,6 @@ export default function AdminCenter() {
         panelIDs: ['labels', 'reports']
       },
       {
-        id: 'extend',
-        label: t`Extend / Integrate`,
-        panelIDs: ['plugin', 'machine']
-      },
-      {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
@@ -282,6 +277,11 @@ export default function AdminCenter() {
           'location-types',
           'stocktake'
         ]
+      },
+      {
+        id: 'extend',
+        label: t`Extend / Integrate`,
+        panelIDs: ['plugin', 'machine']
       }
     ];
   }, []);

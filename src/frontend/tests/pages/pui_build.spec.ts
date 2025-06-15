@@ -3,6 +3,7 @@ import { test } from '../baseFixtures.ts';
 import {
   activateCalendarView,
   clearTableFilters,
+  clickOnRowMenu,
   getRowFromCell,
   loadTab,
   navigate,
@@ -65,7 +66,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
   await loadTab(page, 'Incomplete Outputs');
-  await loadTab(page, 'Line Items');
+  await loadTab(page, 'Required Stock');
   await loadTab(page, 'Allocated Stock');
 
   // Check for expected text in the table
@@ -165,6 +166,8 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   const placeholder = await page
     .getByLabel('text-field-serial_numbers')
     .getAttribute('placeholder');
+
+  expect(placeholder).toContain('Next serial number');
 
   let sn = 1;
 
@@ -372,4 +375,54 @@ test('Build Order - Duplicate', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Build Details' }).click();
 
   await page.getByText('Pending').first().waitFor();
+});
+
+// Tests for external build orders
+test('Build Order - External', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'manufacturing/index/' });
+  await loadTab(page, 'Build Orders');
+
+  // Filter to show only external builds
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'External', 'Yes');
+  await page.getByRole('cell', { name: 'BO0026' }).waitFor();
+  await page.getByRole('cell', { name: 'BO0025' }).click();
+  await page
+    .locator('span')
+    .filter({ hasText: /^External$/ })
+    .waitFor();
+
+  await loadTab(page, 'Allocated Stock');
+  await loadTab(page, 'Incomplete Outputs');
+  await page
+    .getByText('This build order is fulfilled by an external purchase order')
+    .waitFor();
+
+  await loadTab(page, 'External Orders');
+  await page.getByRole('cell', { name: 'PO0016' }).click();
+
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Received Stock');
+  await loadTab(page, 'Line Items');
+
+  const cell = await page.getByRole('cell', {
+    name: '002.01-PCBA',
+    exact: true
+  });
+  await clickOnRowMenu(cell);
+
+  await page.getByRole('menuitem', { name: 'Receive line item' }).waitFor();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).waitFor();
+  await page.getByRole('menuitem', { name: 'Edit' }).waitFor();
+  await page.getByRole('menuitem', { name: 'View Build Order' }).click();
+
+  // Wait for navigation back to build order detail page
+  await page.getByText('Build Order: BO0025', { exact: true }).waitFor();
+
+  // Let's look at BO0026 too
+  await navigate(page, 'manufacturing/build-order/26/details');
+  await loadTab(page, 'External Orders');
+
+  await page.getByRole('cell', { name: 'PO0017' }).waitFor();
+  await page.getByRole('cell', { name: 'PO0018' }).waitFor();
 });

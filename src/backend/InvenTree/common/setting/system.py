@@ -640,12 +640,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'SERIAL_NUMBER_AUTOFILL': {
-        'name': _('Autofill Serial Numbers'),
-        'description': _('Autofill serial numbers in forms'),
-        'default': False,
-        'validator': bool,
-    },
     'STOCK_DELETE_DEPLETED_DEFAULT': {
         'name': _('Delete Depleted Stock'),
         'description': _('Determines default behavior when a stock item is depleted'),
@@ -753,6 +747,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _(
             'Prevent build order completion until all child orders are closed'
         ),
+        'default': False,
+        'validator': bool,
+    },
+    'BUILDORDER_EXTERNAL_BUILDS': {
+        'name': _('External Build Orders'),
+        'description': _('Enable external build order functionality'),
         'default': False,
         'validator': bool,
     },

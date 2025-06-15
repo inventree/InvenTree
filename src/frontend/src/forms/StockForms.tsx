@@ -32,7 +32,7 @@ import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/index';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
@@ -56,7 +56,6 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 
@@ -79,34 +78,19 @@ export function useStockFields({
 
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
-  const [nextBatchCode, setNextBatchCode] = useState<string>('');
-  const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
-
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (value) {
-      setNextBatchCode(`${t`Next batch code`}: ${value}`);
-    } else {
-      setNextBatchCode('');
+  const batchGenerator = useBatchCodeGenerator({
+    initialQuery: {
+      part: partInstance?.pk || partId
     }
   });
 
-  const serialGenerator = useSerialNumberGenerator((value: any) => {
-    if (value) {
-      setNextSerialNumber(`${t`Next serial number`}: ${value}`);
-    } else {
-      setNextSerialNumber('');
+  const serialGenerator = useSerialNumberGenerator({
+    initialQuery: {
+      part: partInstance?.pk || partId
     }
   });
-
-  useEffect(() => {
-    if (partInstance?.pk) {
-      // Update the generators whenever the part ID changes
-      batchGenerator.update({ part: partInstance.pk });
-      serialGenerator.update({ part: partInstance.pk });
-    }
-  }, [partInstance.pk]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -181,16 +165,23 @@ export function useStockFields({
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder: nextSerialNumber
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
       serial: {
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder: nextBatchCode
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`
       },
       status_custom_key: {
         label: t`Stock Status`
@@ -234,8 +225,8 @@ export function useStockFields({
     partId,
     globalSettings,
     supplierPart,
-    nextSerialNumber,
-    nextBatchCode,
+    serialGenerator.result,
+    batchGenerator.result,
     create
   ]);
 }
@@ -332,21 +323,23 @@ export function useStockItemSerializeFields({
   partId: number;
   trackable: boolean;
 }) {
-  const snPlaceholder = useSerialNumberPlaceholder({
-    partId: partId,
-    key: 'stock-item-serialize',
-    enabled: trackable
+  const serialGenerator = useSerialNumberGenerator({
+    initialQuery: {
+      part: partId
+    }
   });
 
   return useMemo(() => {
     return {
       quantity: {},
       serial_numbers: {
-        placeholder: snPlaceholder
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
       destination: {}
     };
-  }, [snPlaceholder]);
+  }, [serialGenerator.result]);
 }
 
 function StockItemDefaultMove({
