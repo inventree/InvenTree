@@ -178,6 +178,11 @@ export default function BuildDetail() {
         label: t`Build Quantity`
       },
       {
+        type: 'text',
+        name: 'can_build',
+        label: t`Can Build`
+      },
+      {
         type: 'progressbar',
         name: 'completed',
         icon: 'progress',
