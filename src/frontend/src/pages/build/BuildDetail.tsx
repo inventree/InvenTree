@@ -186,6 +186,11 @@ export default function BuildDetail() {
         label: t`Completed Outputs`
       },
       {
+        type: 'text',
+        name: 'can_build',
+        label: t`Can Build`
+      },
+      {
         type: 'link',
         name: 'sales_order',
         label: t`Sales Order`,

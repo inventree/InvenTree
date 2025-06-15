@@ -1,4 +1,6 @@
 import { t } from '@lingui/core/macro';
+import { Text } from '@mantine/core';
+
 import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -48,6 +50,7 @@ import {
   TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Construct a table of build orders, according to the provided parameters
@@ -111,6 +114,40 @@ export function BuildOrderTable({
       {
         accessor: 'priority',
         sortable: true
+      },
+      {
+        accessor: 'can_build',
+        title: t`Can Build`,
+        sortable: true,
+        render: (record: any) => {
+          if (record.can_build === null || record.can_build === undefined) {
+            return '-';
+          }
+
+          if (
+            !Number.isFinite(record.can_build) ||
+            Number.isNaN(record.can_build)
+          ) {
+            return '-';
+          }
+
+          const can_build = Math.trunc(record.can_build);
+          const value = (
+            <Text c={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
+          );
+
+          const extra = [];
+
+          if (can_build <= 0) {
+            extra.push(
+              <Text key='no-build' c='red'>{t`No available stock`}</Text>
+            );
+          }
+
+          return (
+            <TableHoverCard value={value} extra={extra} title={t`Can Build`} />
+          );
+        }
       },
       BooleanColumn({
         accessor: 'external',
