@@ -1487,8 +1487,8 @@ Environment:
 Debug        {is_debug_environment()}
 Devcontainer {is_devcontainer_environment()}
 Docker       {is_docker_environment()}
-RTD          {is_rtd_environment()}
 PKG          {is_pkg_installer()}
+RTD          {is_rtd_environment()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
