@@ -410,6 +410,7 @@ function ProgressBarValue(props: Readonly<FieldProps>) {
 
   return (
     <ProgressBar
+      size='lg'
       value={props.field_data.progress}
       maximum={props.field_data.total}
       progressLabel
