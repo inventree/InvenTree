@@ -99,6 +99,7 @@ class BuildSerializer(
             'responsible_detail',
             'priority',
             'level',
+            'can_build',
         ]
 
         read_only_fields = [
@@ -122,6 +123,10 @@ class BuildSerializer(
 
     part_name = serializers.CharField(
         source='part.name', read_only=True, label=_('Part Name')
+    )
+
+    can_build = serializers.FloatField(
+        source='part.can_build', read_only=True, label=_('Can Build')
     )
 
     quantity = InvenTreeDecimalField()
