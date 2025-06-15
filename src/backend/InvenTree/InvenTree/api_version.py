@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 350
 
 
 INVENTREE_API_TEXT = """
-v339 - 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
+v350 - 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
 
