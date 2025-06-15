@@ -841,44 +841,6 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
   return fields;
 }
 
-function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
-  if (!items) {
-    return {};
-  }
-
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
-
-  const fields: ApiFormFieldSet = {
-    items: {
-      field_type: 'table',
-      value: items.map((elem) => {
-        return elem.pk;
-      }),
-      modelRenderer: (row: TableFieldRowProps) => {
-        return (
-          <StockOperationsRow
-            props={row}
-            key={row.item}
-            merge
-            record={records[row.item]}
-          />
-        );
-      },
-      headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
-        { title: '', style: { width: '50px' } }
-      ]
-    },
-    status: {},
-    note: {}
-  };
-
-  return fields;
-}
-
 function stockMergeFields(items: any[]): ApiFormFieldSet {
   if (!items) {
     return {};
@@ -1144,16 +1106,6 @@ export function useCountStockItem(props: StockOperationProps) {
     endpoint: ApiEndpoints.stock_count,
     title: t`Count Stock`,
     successMessage: t`Stock counted`
-  });
-}
-
-export function useChangeStockStatus(props: StockOperationProps) {
-  return stockOperationModal({
-    ...props,
-    fieldGenerator: stockChangeStatusFields,
-    endpoint: ApiEndpoints.stock_change_status,
-    title: t`Change Stock Status`,
-    successMessage: t`Stock status changed`
   });
 }
 
