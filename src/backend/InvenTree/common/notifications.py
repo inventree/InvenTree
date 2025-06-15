@@ -230,7 +230,7 @@ def trigger_notification(
         target_exclude = set()
 
     # Collect possible targets
-    if not targets:
+    if not targets and target_fnc:
         targets = target_fnc(*target_args, **target_kwargs)
 
     # Convert list of targets to a list of users
