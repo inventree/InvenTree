@@ -18,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
@@ -207,7 +208,8 @@ export default function SystemSettings() {
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON'
+              'PART_CATEGORY_DEFAULT_ICON',
+              'PART_PARAMETER_ENFORCE_UNITS'
             ]}
           />
         )
@@ -220,7 +222,6 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'SERIAL_NUMBER_GLOBALLY_UNIQUE',
-              'SERIAL_NUMBER_AUTOFILL',
               'STOCK_DELETE_DEPLETED_DEFAULT',
               'STOCK_BATCH_CODE_TEMPLATE',
               'STOCK_ENABLE_EXPIRY',
@@ -246,6 +247,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
+              'BUILDORDER_EXTERNAL_BUILDS',
               'BUILDORDER_REQUIRE_RESPONSIBLE',
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',
@@ -308,7 +310,7 @@ export default function SystemSettings() {
 
   const user = useUserState();
 
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   if (!user.isLoggedIn()) {
     return <Skeleton />;

@@ -12,8 +12,10 @@ import { RenderUser } from '../../components/render/User';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import {
+  BooleanColumn,
   CreationDateColumn,
   DateColumn,
   PartColumn,
@@ -59,6 +61,7 @@ export function BuildOrderTable({
   parentBuildId?: number;
   salesOrderId?: number;
 }>) {
+  const globalSettings = useGlobalSettingsState();
   const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
 
   const tableColumns = useMemo(() => {
@@ -75,6 +78,11 @@ export function BuildOrderTable({
         sortable: true,
         switchable: true,
         title: t`IPN`
+      },
+      {
+        accessor: 'part_detail.revision',
+        title: t`Revision`,
+        sortable: true
       },
       {
         accessor: 'title',
@@ -104,6 +112,13 @@ export function BuildOrderTable({
         accessor: 'priority',
         sortable: true
       },
+      BooleanColumn({
+        accessor: 'external',
+        title: t`External`,
+        sortable: true,
+        switchable: true,
+        hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      }),
       CreationDateColumn({}),
       StartDateColumn({}),
       TargetDateColumn({}),
@@ -121,7 +136,7 @@ export function BuildOrderTable({
       },
       ResponsibleColumn({})
     ];
-  }, [parentBuildId]);
+  }, [parentBuildId, globalSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
@@ -155,6 +170,12 @@ export function BuildOrderTable({
       HasProjectCodeFilter(),
       IssuedByFilter(),
       ResponsibleFilter(),
+      {
+        name: 'external',
+        label: t`External`,
+        description: t`Show external build orders`,
+        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      },
       PartCategoryFilter()
     ];
 
@@ -169,7 +190,7 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [partId]);
+  }, [partId, globalSettings]);
 
   const user = useUserState();
 

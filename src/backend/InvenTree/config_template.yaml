@@ -211,3 +211,8 @@ ldap:
 #   hide_password_reset: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
+
+# Override global settings
+#global_settings:
+#  INVENTREE_DEFAULT_CURRENCY: 'CNY'
+#  INVENTREE_RESTRICT_ABOUT: true

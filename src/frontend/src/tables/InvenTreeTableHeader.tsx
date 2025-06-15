@@ -208,7 +208,7 @@ export default function InvenTreeTableHeader({
           )}
           {tableProps.enableRefresh && (
             <ActionIcon variant='transparent' aria-label='table-refresh'>
-              <Tooltip label={t`Refresh data`}>
+              <Tooltip label={t`Refresh data`} position='top-end'>
                 <IconRefresh
                   onClick={() => {
                     tableState.refreshTable();
@@ -235,7 +235,7 @@ export default function InvenTreeTableHeader({
                 variant='transparent'
                 aria-label='table-select-filters'
               >
-                <Tooltip label={t`Table Filters`}>
+                <Tooltip label={t`Table Filters`} position='top-end'>
                   <IconFilter
                     onClick={() => setFiltersVisible(!filtersVisible)}
                   />
@@ -245,7 +245,7 @@ export default function InvenTreeTableHeader({
           )}
           {tableUrl && tableProps.enableDownload && (
             <ActionIcon variant='transparent' aria-label='table-export-data'>
-              <Tooltip label={t`Download data`} position='bottom'>
+              <Tooltip label={t`Download data`} position='top-end'>
                 <IconDownload onClick={exportModal.open} />
               </Tooltip>
             </ActionIcon>

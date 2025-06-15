@@ -19,6 +19,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 
+import build.models
 import common.models
 import common.settings
 import company.models
@@ -323,6 +324,22 @@ class PurchaseOrderFilter(OrderFilter):
     completed_after = InvenTreeDateFilter(
         label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
     )
+
+    external_build = rest_filters.ModelChoiceFilter(
+        queryset=build.models.Build.objects.filter(external=True),
+        method='filter_external_build',
+        label=_('External Build Order'),
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('External Build Order'))
+    )
+    def filter_external_build(self, queryset, name, build):
+        """Filter to only include orders which fill fulfil the provided Build Order.
+
+        To achieve this, we return any order which has a line item which is allocated to the build order.
+        """
+        return queryset.filter(lines__build_order=build).distinct()
 
 
 class PurchaseOrderMixin:

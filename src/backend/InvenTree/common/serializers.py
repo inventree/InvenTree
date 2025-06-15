@@ -123,7 +123,28 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'model_name',
             'api_url',
             'typ',
+            'read_only',
         ]
+
+    read_only = serializers.SerializerMethodField(
+        read_only=True,
+        help_text=_(
+            'Indicates if the setting is overridden by an environment variable'
+        ),
+        label=_('Override'),
+    )
+
+    def get_read_only(self, obj) -> bool:
+        """Return True if the setting 'read_only' (cannot be edited).
+
+        A setting may be "read-only" if:
+
+        - It is overridden by an environment variable.
+        """
+        from common.settings import global_setting_overrides
+
+        overrides = global_setting_overrides()
+        return obj.key in overrides
 
 
 class UserSettingsSerializer(SettingsSerializer):
@@ -812,6 +833,4 @@ class DataOutputSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
-    output = InvenTreeAttachmentSerializerField(
-        required=False, allow_null=True, read_only=True
-    )
+    output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)

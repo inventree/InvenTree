@@ -159,7 +159,7 @@ export default function PartDetail() {
       data.latest_serial_number = serials.latest;
     }
 
-    // Construct the details tables
+    // Top left - core part information
     const tl: DetailsField[] = [
       {
         type: 'string',
@@ -246,6 +246,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Top right - stock availability information
     const tr: DetailsField[] = [
       {
         type: 'string',
@@ -287,11 +288,12 @@ export default function PartDetail() {
         name: 'required',
         label: t`Required for Orders`,
         hidden: part.required <= 0,
-        icon: 'tick_off'
+        icon: 'stocktake'
       },
       {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
+        icon: 'tick_off',
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
@@ -302,6 +304,7 @@ export default function PartDetail() {
       },
       {
         type: 'progressbar',
+        icon: 'tick_off',
         name: 'allocated_to_sales_orders',
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
@@ -319,14 +322,16 @@ export default function PartDetail() {
         hidden: true // TODO: Expose "can_build" to the API
       },
       {
-        type: 'string',
+        type: 'progressbar',
         name: 'building',
-        unit: true,
         label: t`In Production`,
-        hidden: !part.assembly || !part.building
+        progress: part.building,
+        total: part.scheduled_to_build,
+        hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
       }
     ];
 
+    // Bottom left - part attributes
     const bl: DetailsField[] = [
       {
         type: 'boolean',
@@ -389,6 +394,7 @@ export default function PartDetail() {
       }
     ];
 
+    // Bottom right - other part information
     const br: DetailsField[] = [
       {
         type: 'string',
@@ -416,6 +422,16 @@ export default function PartDetail() {
         label: t`Default Supplier`,
         model: ModelType.supplierpart,
         hidden: !part.default_supplier
+      },
+      {
+        name: 'default_expiry',
+        label: t`Default Expiry`,
+        hidden: !part.default_expiry,
+        icon: 'calendar',
+        type: 'string',
+        value_formatter: () => {
+          return `${part.default_expiry} ${t`days`}`;
+        }
       }
     ];
 
@@ -817,13 +833,18 @@ export default function PartDetail() {
             value: true
           },
           copy_bom: {
-            value: globalSettings.isSet('PART_COPY_BOM')
+            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !part.assembly
           },
           copy_notes: {
             value: true
           },
           copy_parameters: {
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: part.testable,
+            hidden: !part.testable
           }
         }
       }

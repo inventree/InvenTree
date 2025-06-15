@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "0.0.8",
+    "version": "0.1.0",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -88,7 +88,7 @@
         "fuse.js": "^7.0.0",
         "html5-qrcode": "^2.3.8",
         "mantine-contextmenu": "^7.15.3",
-        "mantine-datatable": "^7.15.1",
+        "mantine-datatable": "^7.17.1",
         "qrcode": "^1.5.4",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
@@ -101,7 +101,7 @@
         "react-window": "1.8.10",
         "recharts": "^2.15.0",
         "styled-components": "^6.1.14",
-        "zustand": "^4.5.5"
+        "zustand": "^5.0.3"
     },
     "devDependencies": {
         "@babel/core": "^7.26.10",

@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-15 23:09\n"
+"PO-Revision-Date: 2025-06-03 00:39\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -161,7 +161,7 @@ msgstr "Fehlerkorrektur-Level auswählen"
 
 #: src/components/barcodes/QRCode.tsx:170
 msgid "Failed to link barcode"
-msgstr ""
+msgstr "Fehler beim Verknüpfen des Barcodes"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetail.tsx:240
@@ -200,11 +200,11 @@ msgstr "Kopieren"
 
 #: src/components/buttons/PrintingActions.tsx:51
 msgid "Printing Labels"
-msgstr ""
+msgstr "Drucke Etiketten"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Reports"
-msgstr ""
+msgstr "Drucke Berichte"
 
 #: src/components/buttons/PrintingActions.tsx:77
 #~ msgid "Printing"
@@ -328,28 +328,28 @@ msgstr ""
 
 #: src/components/calendar/Calendar.tsx:108
 msgid "Previous month"
-msgstr ""
+msgstr "Vorheriger Monat"
 
 #: src/components/calendar/Calendar.tsx:117
 msgid "Select month"
-msgstr ""
+msgstr "Monat auswählen"
 
 #: src/components/calendar/Calendar.tsx:138
 msgid "Next month"
-msgstr ""
+msgstr "Nächsten Monat"
 
 #: src/components/calendar/Calendar.tsx:169
 #: src/tables/InvenTreeTableHeader.tsx:248
 msgid "Download data"
-msgstr ""
+msgstr "Daten herunterladen"
 
 #: src/components/calendar/OrderCalendar.tsx:133
 msgid "Order Updated"
-msgstr ""
+msgstr "Bestellung aktualisiert"
 
 #: src/components/calendar/OrderCalendar.tsx:143
 msgid "Error updating order"
-msgstr ""
+msgstr "Fehler beim Aktualisieren der Bestellung"
 
 #: src/components/calendar/OrderCalendar.tsx:179
 #: src/tables/Filter.tsx:140
@@ -358,11 +358,11 @@ msgstr "Überfällig"
 
 #: src/components/dashboard/DashboardLayout.tsx:285
 msgid "No Widgets Selected"
-msgstr ""
+msgstr "Keine Widgets ausgewählt"
 
 #: src/components/dashboard/DashboardLayout.tsx:288
 msgid "Use the menu to add widgets to the dashboard"
-msgstr ""
+msgstr "Verwenden Sie das Menü, um Widgets zum Dashboard hinzuzufügen"
 
 #: src/components/dashboard/DashboardMenu.tsx:60
 #: src/components/dashboard/DashboardMenu.tsx:127
@@ -383,11 +383,11 @@ msgstr "Layout bearbeiten"
 
 #: src/components/dashboard/DashboardMenu.tsx:109
 msgid "Add Widget"
-msgstr ""
+msgstr "Widget hinzufügen"
 
 #: src/components/dashboard/DashboardMenu.tsx:118
 msgid "Remove Widgets"
-msgstr ""
+msgstr "Widgets entfernen"
 
 #: src/components/dashboard/DashboardWidget.tsx:63
 msgid "Remove this widget from the dashboard"

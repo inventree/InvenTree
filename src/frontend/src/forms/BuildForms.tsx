@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Stack, Table } from '@mantine/core';
+import { Alert, List, Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -29,8 +29,10 @@ import {
   RenderStockLocation
 } from '../components/render/Stock';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useBatchCodeGenerator } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
@@ -48,9 +50,9 @@ export function useBuildOrderFields({
 
   const [batchCode, setBatchCode] = useState<string>('');
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (!batchCode) {
-      setBatchCode(value);
+  const batchGenerator = useBatchCodeGenerator({
+    onGenerate: (value: any) => {
+      setBatchCode((batch: any) => batch || value);
     }
   });
 
@@ -100,6 +102,9 @@ export function useBuildOrderFields({
         icon: <IconTruckDelivery />
       },
       batch: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`,
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
@@ -130,7 +135,8 @@ export function useBuildOrderFields({
         filters: {
           is_active: true
         }
-      }
+      },
+      external: {}
     };
 
     if (create) {
@@ -141,8 +147,12 @@ export function useBuildOrderFields({
       delete fields.project_code;
     }
 
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', true)) {
+      delete fields.external;
+    }
+
     return fields;
-  }, [create, destination, batchCode, globalSettings]);
+  }, [create, destination, batchCode, batchGenerator.result, globalSettings]);
 }
 
 export function useBuildOrderOutputFields({
@@ -169,10 +179,17 @@ export function useBuildOrderOutputFields({
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
 
-  const serialPlaceholder = useSerialNumberPlaceholder({
-    partId: build.part_detail?.pk,
-    key: 'build-output',
-    enabled: build.part_detail?.trackable
+  const serialGenerator = useSerialNumberGenerator({
+    initialQuery: {
+      part: build.part || build.part_detail?.pk
+    }
+  });
+
+  const batchGenerator = useBatchCodeGenerator({
+    initialQuery: {
+      part: build.part || build.part_detail?.pk,
+      quantity: build.quantity
+    }
   });
 
   return useMemo(() => {
@@ -185,9 +202,15 @@ export function useBuildOrderOutputFields({
       },
       serial_numbers: {
         hidden: !trackable,
-        placeholder: serialPlaceholder
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
-      batch_code: {},
+      batch_code: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`
+      },
       location: {
         value: location,
         onValueChange: (value: any) => {
@@ -198,7 +221,7 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       }
     };
-  }, [quantity, serialPlaceholder, trackable]);
+  }, [quantity, batchGenerator.result, serialGenerator.result, trackable]);
 }
 
 function BuildOutputFormRow({
@@ -375,6 +398,16 @@ export function useScrapBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
     method: 'POST',
     title: t`Scrap Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Scrap Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>
+            {t`Selected build outputs will be completed, but marked as scrapped`}
+          </List.Item>
+          <List.Item>{t`Allocated stock items will be consumed`}</List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been scrapped`,
@@ -421,6 +454,16 @@ export function useCancelBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
     method: 'POST',
     title: t`Cancel Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Cancel Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>{t`Selected build outputs will be removed`}</List.Item>
+          <List.Item>
+            {t`Allocated stock items will be returned to stock`}
+          </List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been cancelled`,

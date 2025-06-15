@@ -18,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { useShallow } from 'zustand/react/shallow';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { useUserState } from '../../states/UserState';
@@ -25,10 +26,9 @@ import { vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
-  const [user, username] = useUserState((state) => [
-    state.user,
-    state.username
-  ]);
+  const [user, username] = useUserState(
+    useShallow((state) => [state.user, state.username])
+  );
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   return (
@@ -67,16 +67,6 @@ export function MainMenu() {
             <Trans>System Settings</Trans>
           </Menu.Item>
         )}
-        <Menu.Item
-          onClick={toggleColorScheme}
-          leftSection={colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />}
-          c={
-            colorScheme === 'dark' ? vars.colors.yellow[4] : vars.colors.blue[6]
-          }
-        >
-          <Trans>Change Color Mode</Trans>
-        </Menu.Item>
-        {user?.is_staff && <Menu.Divider />}
         {user?.is_staff && (
           <Menu.Item
             leftSection={<IconUserBolt />}
@@ -86,6 +76,16 @@ export function MainMenu() {
             <Trans>Admin Center</Trans>
           </Menu.Item>
         )}
+        {user?.is_staff && <Menu.Divider />}
+        <Menu.Item
+          onClick={toggleColorScheme}
+          leftSection={colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />}
+          c={
+            colorScheme === 'dark' ? vars.colors.yellow[4] : vars.colors.blue[6]
+          }
+        >
+          <Trans>Change Color Mode</Trans>
+        </Menu.Item>
         <Menu.Divider />
         <Menu.Item
           leftSection={<IconLogout />}

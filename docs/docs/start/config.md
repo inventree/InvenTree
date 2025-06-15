@@ -4,7 +4,7 @@ title: InvenTree Configuration
 
 ## InvenTree Configuration
 
-While many InvenTree options can be configured at "run time", there are a number of system configuration parameters which need to be set *before* running InvenTree. Admin users will need to adjust the InvenTree installation to meet the particular needs of their setup. For example, pointing to the correct database backend, or specifying a list of allowed hosts.
+While many InvenTree options can be configured at "run time" (see [System Settings](../settings/admin.md#system-settings)), there are a number of system configuration parameters which need to be set *before* running InvenTree. Admin users will need to adjust the InvenTree installation to meet the particular needs of their setup. For example, pointing to the correct database backend, or specifying a list of allowed hosts.
 
 InvenTree system settings can be specified either via environment variables, or in a configuration file.
 
@@ -75,7 +75,7 @@ The site URL is the URL that users will use to access the InvenTree server. For 
 
 ### Timezone
 
-By default, the InvenTree server is configured to use the UTC timezone. This can be adjusted to your desired local timezone. You can refer to [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of available timezones. Use the values specified in the *TZ Identifier* column in the linked page.
+By default, the InvenTree server is configured to use the UTC timezone. This can be adjusted to your desired local timezone. You can refer to [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of available timezones. Use the values specified in the *TZ Identifier* column in the linked page. For example, to change to the United States Pacific timezone, set `INVENTREE_TIMEZONE='America/Los_Angeles'`.
 
 Date and time values are stored in the database in UTC format, and are converted to the selected timezone for display in the user interface or API.
 
@@ -91,7 +91,7 @@ The following debugging / logging options are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | False |
+| INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
 | INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
@@ -101,7 +101,7 @@ The following debugging / logging options are available:
 
 ### Debug Mode
 
-Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./intro.md#debug-mode).
+Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./index.md#debug-mode).
 
 ### Query Count Logging
 
@@ -143,7 +143,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 
 ### Debug Mode
 
-Note that in [debug mode](./intro.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development. The following settings are internally overridden in debug mode with the values specified below:
+Note that in [debug mode](./index.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development. The following settings are internally overridden in debug mode with the values specified below:
 
 | Setting | Value in Debug Mode | Description |
 | --- | --- | --- |
@@ -218,7 +218,7 @@ You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, o
 !!! info "Administrator Account"
     Providing `INVENTREE_ADMIN` credentials will result in the provided account being created with *superuser* permissions when InvenTree is started.
 
-## Secret Key material
+## Secret Key Material
 
 InvenTree requires secret keys for providing cryptographic signing and oidc private keys- this should be a secret (and unpredictable) value.
 
@@ -455,7 +455,7 @@ If you want to remove the InvenTree branding as far as possible from your end-us
 
 ## Plugin Options
 
-The following [plugin](../extend/plugins.md) configuration options are available:
+The following [plugin](../plugins/index.md) configuration options are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
@@ -463,3 +463,13 @@ The following [plugin](../extend/plugins.md) configuration options are available
 | INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Disable Plugin installation via API - only use plugins.txt file | False |
 | INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
 | INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
+
+## Override Global Settings
+
+If required, [global settings values](../settings/global.md#override-global-settings) can be overridden by the system administrator.
+
+To override global settings, provide a "dictionary" of settings overrides in the configuration file, or via an environment variable.
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| GLOBAL_SETTINGS_OVERRIDES | global_settings_overrides | JSON object containing global settings overrides | *Not specified* |

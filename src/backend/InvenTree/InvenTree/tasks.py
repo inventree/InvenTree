@@ -629,17 +629,24 @@ def get_migration_plan():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def check_for_migrations(force: bool = False, reload_registry: bool = True):
+def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
     """Checks if migrations are needed.
 
     If the setting auto_update is enabled we will start updating.
+
+    Returns bool indicating if migrations are up to date
     """
     from plugin import registry
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
         logger.info('There are %s pending migrations', n)
-        set_global_setting('_PENDING_MIGRATIONS', n, None)
+
+        try:
+            set_global_setting('_PENDING_MIGRATIONS', n, None)
+        except Exception:
+            # If the setting cannot be set, we just log a warning
+            logger.error('Could not clear _PENDING_MIGRATIONS flag')
 
     logger.info('Checking for pending database migrations')
 
@@ -654,14 +661,14 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True):
     # Check if there are any open migrations
     if not plan:
         set_pending_migrations(0)
-        return
+        return True
 
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
     if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
         logger.info('Auto-update is disabled - skipping migrations')
-        return
+        return False
 
     # Log open migrations
     for migration in plan:
@@ -695,6 +702,8 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True):
         # We should be current now - triggering full reload to make sure all models
         # are loaded fully in their new state.
         registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+    return True
 
 
 def email_user(user_id: int, subject: str, message: str) -> None:

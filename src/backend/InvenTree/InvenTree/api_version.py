@@ -1,15 +1,49 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 339
+INVENTREE_API_VERSION = 350
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v339 - 2025-04-18 : https://github.com/inventree/InvenTree/pull/8191
+v339 - 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
+
+v349 -> 2025-06-13 : https://github.com/inventree/InvenTree/pull/9574
+    - Remove the 'create_child_builds' flag from the BuildOrder creation API endpoint
+
+v348 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9312
+    - Adds "external" flag for BuildOrder
+    - Adds link between PurchaseOrderLineItem and BuildOrder
+
+v347 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9764
+    - Adds "copy_tests" field to the DuplicatePart API endpoint
+
+v346 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9718
+    - Adds "read_only" field to the GlobalSettings API endpoint(s)
+
+v345 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9745
+    - Adds barcode information to SalesOrderShipment API endpoint
+
+v344 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9714
+    - Updates alauth version and adds device trust as a factor
+
+v343 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9717
+    - Add ISO currency codes to the description text for currency options
+
+v342 -> 2025-05-09 : https://github.com/inventree/InvenTree/pull/9651
+    - Fix serializer to match Generate API for serial numbers
+
+v341 -> 2025-04-21 : https://github.com/inventree/InvenTree/pull/9547
+    - Require pagination limit on list queries
+
+v340 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9546
+    - Add nullable to various fields to make them not required
+
+v339 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9283
+    - Remove need for source in /plugins/ui/features
 
 v338 -> 2025-04-15 : https://github.com/inventree/InvenTree/pull/9333
     - Adds oAuth2 support for the API

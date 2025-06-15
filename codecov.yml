@@ -1,8 +1,36 @@
+flags:
+  apps:
+    paths:
+      - src/backend/InvenTree/build
+      - src/backend/InvenTree/company
+      - src/backend/InvenTree/data_exporter
+      - src/backend/InvenTree/importer
+      - src/backend/InvenTree/machine
+      - src/backend/InvenTree/order
+      - src/backend/InvenTree/part
+      - src/backend/InvenTree/plugin
+      - src/backend/InvenTree/report
+      - src/backend/InvenTree/stock
+      - src/backend/InvenTree/users
+      - src/backend/InvenTree/web
+  general:
+    paths:
+      - src/backend/InvenTree/generic
+      - src/backend/InvenTree/common
+
 coverage:
   status:
     project:
       default:
         target: 82%
+      apps:
+        flags:
+          - apps
+        target: 90%
+      general:
+        flags:
+          - general
+        target: 95%
     patch: off
 
 github_checks:

@@ -65,7 +65,10 @@ class AllowedURLValidator(validators.URLValidator):
         # Determine if 'strict' URL validation is required (i.e. if the URL must have a schema prefix)
         strict_urls = get_global_setting('INVENTREE_STRICT_URLS', cache=False)
 
-        if not strict_urls:
+        if value is not None:
+            value = str(value).strip()
+
+        if value and not strict_urls:
             # Allow URLs which do not have a provided schema
             if '://' not in value:
                 # Validate as if it were http

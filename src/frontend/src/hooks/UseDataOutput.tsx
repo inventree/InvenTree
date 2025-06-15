@@ -1,6 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
+import { useDocumentVisibility } from '@mantine/hooks';
 import { notifications, showNotification } from '@mantine/notifications';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -21,6 +22,8 @@ export default function useDataOutput({
 }) {
   const api = useApi();
 
+  const visibility = useDocumentVisibility();
+
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export default function useDataOutput({
   }, [id, title]);
 
   const progress = useQuery({
-    enabled: !!id && loading,
+    enabled: !!id && loading && visibility === 'visible',
     refetchInterval: 500,
     queryKey: ['data-output', id, title],
     queryFn: () =>

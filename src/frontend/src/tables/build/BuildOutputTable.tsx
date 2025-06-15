@@ -6,10 +6,12 @@ import {
   Group,
   Paper,
   Space,
+  Stack,
   Text
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
+  IconBuildingFactory2,
   IconCircleCheck,
   IconCircleX,
   IconExclamationCircle
@@ -22,6 +24,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
@@ -43,6 +46,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
+import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -335,6 +339,17 @@ export default function BuildOutputTable({
     }
   });
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by stock status`,
+        choiceFunction: StatusFilterOptions(ModelType.stockitem)
+      }
+    ];
+  }, []);
+
   const tableActions = useMemo(() => {
     return [
       <ActionButton
@@ -373,11 +388,11 @@ export default function BuildOutputTable({
       <AddItemButton
         key='add-build-output'
         tooltip={t`Add Build Output`}
-        hidden={!user.hasAddRole(UserRoles.build)}
+        hidden={build.external || !user.hasAddRole(UserRoles.build)}
         onClick={addBuildOutput.open}
       />
     ];
-  }, [user, table.selectedRecords, table.hasSelectedRecords]);
+  }, [build, user, table.selectedRecords, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -568,32 +583,44 @@ export default function BuildOutputTable({
         opened={drawerOpen}
         close={closeDrawer}
       />
-      <InvenTreeTable
-        tableState={table}
-        url={apiUrl(ApiEndpoints.stock_item_list)}
-        columns={tableColumns}
-        props={{
-          params: {
-            part_detail: true,
-            location_detail: true,
-            tests: true,
-            is_building: true,
-            build: buildId
-          },
-          enableLabels: true,
-          enableReports: true,
-          dataFormatter: formatRecords,
-          tableActions: tableActions,
-          rowActions: rowActions,
-          enableSelection: true,
-          onRowClick: (record: any) => {
-            if (hasTrackedItems && !!record.serial) {
-              setSelectedOutputs([record]);
-              openDrawer();
+      <Stack gap='xs'>
+        {build.external && (
+          <Alert
+            color='blue'
+            icon={<IconBuildingFactory2 />}
+            title={t`External Build`}
+          >
+            {t`This build order is fulfilled by an external purchase order`}
+          </Alert>
+        )}
+        <InvenTreeTable
+          tableState={table}
+          url={apiUrl(ApiEndpoints.stock_item_list)}
+          columns={tableColumns}
+          props={{
+            params: {
+              part_detail: true,
+              location_detail: true,
+              tests: true,
+              is_building: true,
+              build: buildId
+            },
+            enableLabels: true,
+            enableReports: true,
+            dataFormatter: formatRecords,
+            tableFilters: tableFilters,
+            tableActions: tableActions,
+            rowActions: rowActions,
+            enableSelection: true,
+            onRowClick: (record: any) => {
+              if (hasTrackedItems && !!record.serial) {
+                setSelectedOutputs([record]);
+                openDrawer();
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      </Stack>
     </>
   );
 }
