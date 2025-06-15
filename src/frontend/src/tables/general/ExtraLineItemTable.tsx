@@ -27,11 +27,13 @@ import {
 export default function ExtraLineItemTable({
   endpoint,
   orderId,
+  orderDetailRefresh,
   currency,
   role
 }: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
+  orderDetailRefresh: any;
   currency: string;
   role: UserRoles;
 }>) {
@@ -89,6 +91,7 @@ export default function ExtraLineItemTable({
       ...initialData,
       price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -97,6 +100,7 @@ export default function ExtraLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: extraLineItemFields(),
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -104,6 +108,7 @@ export default function ExtraLineItemTable({
     url: endpoint,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
