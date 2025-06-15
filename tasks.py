@@ -1468,25 +1468,27 @@ Environment {sys.prefix}
 Invoke Tool {invoke_path}
 
 Installation paths:
-Base        {local_dir()}
-Config      {get_config_file()}
-Plugin File {get_plugin_file() or NOT_SPECIFIED}
-Media       {get_media_dir(error=False) or NOT_SPECIFIED}
-Static      {get_static_dir(error=False) or NOT_SPECIFIED}
-Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
+Base         {local_dir()}
+Config       {get_config_file()}
+Plugin File  {get_plugin_file() or NOT_SPECIFIED}
+Media        {get_media_dir(error=False) or NOT_SPECIFIED}
+Static       {get_static_dir(error=False) or NOT_SPECIFIED}
+Backup       {get_backup_dir(error=False) or NOT_SPECIFIED}
 
 Versions:
-Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
-InvenTree   {InvenTreeVersion.inventreeVersion()}
-API         {InvenTreeVersion.inventreeApiVersion()}
-Node        {node if node else NA}
-Yarn        {yarn if yarn else NA}
+Python       {python_version()}
+Django       {InvenTreeVersion.inventreeDjangoVersion()}
+InvenTree    {InvenTreeVersion.inventreeVersion()}
+API          {InvenTreeVersion.inventreeApiVersion()}
+Node         {node if node else NA}
+Yarn         {yarn if yarn else NA}
 
 Environment:
-Docker      {is_docker_environment()}
-RTD         {is_rtd_environment()}
-PKG         {is_pkg_installer()}
+Debug        {is_debug_environment()}
+Devcontainer {is_devcontainer_environment()}
+Docker       {is_docker_environment()}
+RTD          {is_rtd_environment()}
+PKG          {is_pkg_installer()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
