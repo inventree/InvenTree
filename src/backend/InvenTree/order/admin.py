@@ -44,6 +44,7 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'address',
+        'delivery_address',
         'contact',
         'created_by',
         'destination',
