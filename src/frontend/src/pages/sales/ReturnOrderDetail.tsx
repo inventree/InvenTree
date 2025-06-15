@@ -298,6 +298,7 @@ export default function ReturnOrderDetail() {
                 <ReturnOrderLineItemTable
                   orderId={order.pk}
                   order={order}
+                  orderDetailRefresh={refreshInstance}
                   customerId={order.customer}
                   currency={orderCurrency}
                 />
@@ -311,6 +312,7 @@ export default function ReturnOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.return_order_extra_line_list}
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.return_order}
                 />

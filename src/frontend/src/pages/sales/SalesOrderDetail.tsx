@@ -343,6 +343,7 @@ export default function SalesOrderDetail() {
               <Accordion.Panel>
                 <SalesOrderLineItemTable
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   customerId={order.customer}
                   editable={
@@ -360,6 +361,7 @@ export default function SalesOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.sales_order_extra_line_list}
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.sales_order}
                 />
