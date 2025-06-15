@@ -20,12 +20,12 @@ export function PassFailButton({
   const pass = passText ?? t`Pass`;
   const fail = failText ?? t`Fail`;
 
-  const pColor = passColor ?? 'lime.5';
-  const fColor = failColor ?? 'red.6';
+  const pColor = passColor ?? 'green';
+  const fColor = failColor ?? 'red';
 
   return (
     <Badge
-      color={v ? 'green' : 'red'}
+      color={v ? passColor : failColor}
       variant='filled'
       radius='lg'
       size='sm'
