@@ -69,6 +69,7 @@ import {
   type StockOperationProps,
   useAddStockItem,
   useAssignStockItem,
+  useChangeStockStatus,
   useCountStockItem,
   useFindSerialNumberForm,
   useRemoveStockItem,
@@ -781,6 +782,12 @@ export default function StockDetail() {
     }
   });
 
+  const changeStockStatus = useChangeStockStatus({
+    items: [stockitem],
+    model: ModelType.stockitem,
+    refresh: refreshInstance
+  });
+
   const stockActions = useMemo(() => {
     // Can this stock item be transferred to a different location?
     const canTransfer =
@@ -929,6 +936,15 @@ export default function StockDetail() {
             hidden: !user.hasAddRole(UserRoles.stock),
             onClick: () => duplicateStockItem.open()
           }),
+          {
+            name: t`Change stock status`,
+            tooltip: t`Change stock item status`,
+            icon: <InvenTreeIcon icon='info' iconProps={{ color: 'blue' }} />,
+            disabled: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => {
+              changeStockStatus.open();
+            }
+          },
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.stock),
             onClick: () => editStockItem.open()
@@ -1013,6 +1029,7 @@ export default function StockDetail() {
 
   return (
     <>
+      {changeStockStatus.modal}
       {findBySerialNumber.modal}
       {scanIntoLocation.dialog}
       <InstanceDetail
