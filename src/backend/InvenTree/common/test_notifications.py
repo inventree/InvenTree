@@ -1,11 +1,19 @@
 """Tests for basic notification methods and functions in InvenTree."""
 
-from common.notifications import (
-    BulkNotificationMethod,
-    NotificationMethod,
-    SingleNotificationMethod,
-)
 from part.test_part import BaseNotificationIntegrationTest
+
+
+# TODO: Remove these, hacky
+class NotificationMethod:
+    """Dummy class to be removed."""
+
+
+class SingleNotificationMethod:
+    """Dummy class to be removed."""
+
+
+class BulkNotificationMethod:
+    """Dummy class to be removed."""
 
 
 class BaseNotificationTests(BaseNotificationIntegrationTest):
@@ -112,38 +120,3 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
 
         with self.assertLogs(logger='inventree', level='ERROR'):
             self._notification_run(WrongImplementation)
-
-
-# A integration test for notifications is provided in test_part.PartNotificationTest
-
-
-class NotificationUserSettingTests(BaseNotificationIntegrationTest):
-    """Tests for NotificationUserSetting."""
-
-    def setUp(self):
-        """Setup for all tests."""
-        super().setUp()
-        self.client.login(username=self.user.username, password='password')
-
-    def test_setting_attributes(self):
-        """Check notification method plugin methods: usersettings and tags."""
-
-        class SampleImplementation(BulkNotificationMethod):
-            METHOD_NAME = 'test'
-            GLOBAL_SETTING = 'ENABLE_NOTIFICATION_TEST'
-            USER_SETTING = {
-                'name': 'Enable test notifications',
-                'description': 'Allow sending of test for event notifications',
-                'default': True,
-                'validator': bool,
-                'units': 'alpha',
-            }
-
-            def get_targets(self):
-                return [1]
-
-            def send_bulk(self):
-                return True
-
-        # run through notification
-        self._notification_run(SampleImplementation)

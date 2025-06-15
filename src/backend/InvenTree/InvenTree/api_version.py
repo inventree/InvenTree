@@ -14,6 +14,10 @@ v348 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9312
     - Adds "external" flag for BuildOrder
     - Adds link between PurchaseOrderLineItem and BuildOrder
 
+v348 -> 2026-06-09 : https://github.com/inventree/InvenTree/pull/9735
+    - Adds PluginUserSetting model (and associated endpoints)
+    - Remove NotificationSetting model (and associated endpoints)
+
 v347 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9764
     - Adds "copy_tests" field to the DuplicatePart API endpoint
 
