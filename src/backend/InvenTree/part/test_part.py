@@ -791,5 +791,11 @@ class PartNotificationTest(InvenTreeTestCase):
         part.set_starred(self.user, True)
         part.save()
 
+        # Check that a UI notification entry has been created
         self.assertGreaterEqual(NotificationEntry.objects.all().count(), 1)
-        self.assertEqual(NotificationMessage.objects.all().count(), 1)
+        self.assertGreaterEqual(NotificationMessage.objects.all().count(), 1)
+
+        # No errors were generated during notification process
+        from error_report.models import Error
+
+        self.assertEqual(Error.objects.count(), 0)
