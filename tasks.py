@@ -1457,6 +1457,17 @@ def version(c):
     NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
     NA = wrap_color('N/A', '93')
 
+    platform = NOT_SPECIFIED
+
+    if is_pkg_installer():
+        platform = 'Package Installer'
+    elif is_docker_environment():
+        platform = 'Docker'
+    elif is_devcontainer_environment():
+        platform = 'Devcontainer'
+    elif is_rtd_environment():
+        platform = 'ReadTheDocs'
+
     print(
         f"""
 InvenTree - inventree.org
@@ -1484,9 +1495,8 @@ Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
 Environment:
-Docker      {is_docker_environment()}
-RTD         {is_rtd_environment()}
-PKG         {is_pkg_installer()}
+Platform    {platform}
+Debug       {is_debug_environment()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
