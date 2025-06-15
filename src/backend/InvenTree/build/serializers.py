@@ -992,7 +992,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
 
 class BuildAllocationSerializer(serializers.Serializer):
-    """DRF serializer for allocation stock items against a build order."""
+    """Serializer for allocating stock items against a build order."""
 
     class Meta:
         """Serializer metaclass."""
@@ -1287,6 +1287,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'build',
             'bom_item',
             'quantity',
+            'consumed',
+            'allocations',
             'part',
             # Build detail fields
             'build_reference',
@@ -1376,6 +1378,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     quantity = serializers.FloatField(label=_('Quantity'))
+    consumed = serializers.FloatField(label=_('Consumed'))
 
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
@@ -1410,7 +1413,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     # Annotated (calculated) fields
 
     # Total quantity of allocated stock
-    allocated = serializers.FloatField(label=_('Allocated Stock'), read_only=True)
+    allocated = serializers.FloatField(label=_('Allocated'), read_only=True)
 
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
 
@@ -1638,3 +1641,167 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         )
 
         return queryset
+
+
+class BuildConsumeAllocationSerializer(serializers.Serializer):
+    """Serializer for an individual BuildItem to be consumed against a BuildOrder."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = ['build_item', 'quantity']
+
+    build_item = serializers.PrimaryKeyRelatedField(
+        queryset=BuildItem.objects.all(), many=False, allow_null=False, required=True
+    )
+
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
+    )
+
+    def validate_quantity(self, quantity):
+        """Perform validation on the 'quantity' field."""
+        if quantity <= 0:
+            raise ValidationError(_('Quantity must be greater than zero'))
+
+        return quantity
+
+    def validate(self, data):
+        """Validate the serializer data."""
+        data = super().validate(data)
+
+        build_item = data['build_item']
+        quantity = data['quantity']
+
+        if quantity > build_item.quantity:
+            raise ValidationError({
+                'quantity': _('Consumed quantity exceeds allocated quantity')
+            })
+
+        return data
+
+
+class BuildConsumeLineItemSerializer(serializers.Serializer):
+    """Serializer for an individual BuildLine to be consumed against a BuildOrder."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = ['build_line']
+
+    build_line = serializers.PrimaryKeyRelatedField(
+        queryset=BuildLine.objects.all(), many=False, allow_null=False, required=True
+    )
+
+
+class BuildConsumeSerializer(serializers.Serializer):
+    """Serializer for consuming allocations against a BuildOrder.
+
+    - Consumes allocated stock items, increasing the 'consumed' field for each BuildLine.
+    - Stock can be consumed by passing either a list of BuildItem objects, or a list of BuildLine objects.
+    """
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = ['items', 'lines', 'notes']
+
+    items = BuildConsumeAllocationSerializer(many=True, required=False)
+
+    lines = BuildConsumeLineItemSerializer(many=True, required=False)
+
+    notes = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Optional notes for the stock consumption'),
+        required=False,
+        allow_blank=True,
+    )
+
+    def validate_items(self, items):
+        """Validate the BuildItem list passed to the serializer."""
+        build_order = self.context['build']
+
+        seen = set()
+
+        for item in items:
+            build_item = item['build_item']
+
+            # BuildItem must point to the correct build order
+            if build_item.build != build_order:
+                raise ValidationError(
+                    _('Build item must point to the correct build order')
+                )
+
+            # Prevent duplicate item allocation
+            if build_item.pk in seen:
+                raise ValidationError(_('Duplicate build item allocation'))
+
+            seen.add(build_item.pk)
+
+        return items
+
+    def validate_lines(self, lines):
+        """Validate the BuildLine list passed to the serializer."""
+        build_order = self.context['build']
+
+        seen = set()
+
+        for line in lines:
+            build_line = line['build_line']
+
+            # BuildLine must point to the correct build order
+            if build_line.build != build_order:
+                raise ValidationError(
+                    _('Build line must point to the correct build order')
+                )
+
+            # Prevent duplicate line allocation
+            if build_line.pk in seen:
+                raise ValidationError(_('Duplicate build line allocation'))
+
+            seen.add(build_line.pk)
+
+        return lines
+
+    def validate(self, data):
+        """Validate the serializer data."""
+        items = data.get('items', [])
+        lines = data.get('lines', [])
+
+        if len(items) == 0 and len(lines) == 0:
+            raise ValidationError(_('At least one item or line must be provided'))
+
+        return data
+
+    def save(self):
+        """Perform the stock consumption step."""
+        data = self.validated_data
+        request = self.context.get('request')
+        notes = data.get('notes', '')
+
+        items = data.get('items', [])
+        lines = data.get('lines', [])
+
+        with transaction.atomic():
+            # Process the provided BuildItem objects
+            for item in items:
+                build_item = item['build_item']
+                quantity = item['quantity']
+
+                build_item.complete_allocation(
+                    quantity=quantity,
+                    notes=notes,
+                    user=request.user if request else None,
+                )
+
+            # Process the provided BuildLine objects
+            for line in lines:
+                build_line = line['build_line']
+
+                # In this case, perform full consumption of all allocated stock
+                for item in build_line.allocations.all():
+                    item.complete_allocation(
+                        quantity=item.quantity,
+                        notes=notes,
+                        user=request.user if request else None,
+                    )
