@@ -99,7 +99,7 @@ headers = {
 response = request.get('http://localhost:8080/api/part/', data=data, headers=headers)
 ```
 
-### oAuth2 / OIDC
+### oAuth2 and OIDC
 
 !!! warning "Experimental"
     This is an experimental feature that needs to be specifically enabled. See [Experimental features](../settings/experimental.md) for more information.
