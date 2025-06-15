@@ -1457,7 +1457,7 @@ def version(c):
     NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
     NA = wrap_color('N/A', '93')
 
-    platform = 'Unknown'
+    platform = NOT_SPECIFIED
 
     if is_pkg_installer():
         platform = 'Package Installer'
