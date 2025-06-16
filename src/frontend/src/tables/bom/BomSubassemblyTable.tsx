@@ -1,7 +1,11 @@
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable, useDataTableColumns } from 'mantine-datatable';
-import { useState } from 'react';
+import {
+  DataTable,
+  type DataTableRowExpansionProps,
+  useDataTableColumns
+} from 'mantine-datatable';
+import { useMemo, useState } from 'react';
 import { api } from '../../App';
 
 /**
@@ -44,25 +48,30 @@ export default function BomSubassemblyTable({
     }
   });
 
+  const rowExpansionProps: DataTableRowExpansionProps<any> = useMemo(() => {
+    // const expanded = expandedRecords.map((id) => {
+
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) =>
+        record.sub_part_detail?.assembly,
+      expanded: {
+        recordIds: expandedRecords,
+        onRecordIdsChange: setExpandedRecords
+      },
+      content: (subassembly: any) => (
+        <BomSubassemblyTable columns={columns} partId={subassembly.sub_part} />
+      )
+    };
+  }, [columns, expandedRecords]);
+
   return (
     <DataTable
       noHeader
       withColumnBorders
       columns={tableColumns.effectiveColumns}
       records={subassemblyData.data || []}
-      // rowExpansion={{
-      //     allowMultiple: true,
-      //     expanded: {
-      //         recordIds: expandedRecords,
-      //         onRecordIdsChange: setExpandedRecords,
-      //     },
-      //     content: (subassembly: any) => (
-      //         <BomSubassemblyTable
-      //             columns={columns}
-      //             partId={subassembly.sub_part}
-      //         />
-      //     )
-      // }}
+      rowExpansion={rowExpansionProps}
     />
   );
 }
