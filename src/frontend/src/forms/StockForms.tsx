@@ -1018,7 +1018,7 @@ type apiModalFunc = (props: ApiFormModalProps) => {
   modal: JSX.Element;
 };
 
-function stockOperationModal({
+function useStockOperationModal({
   items,
   pk,
   model,
@@ -1114,7 +1114,7 @@ export type StockOperationProps = {
 };
 
 export function useAddStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
@@ -1124,7 +1124,7 @@ export function useAddStockItem(props: StockOperationProps) {
 }
 
 export function useRemoveStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
@@ -1134,7 +1134,7 @@ export function useRemoveStockItem(props: StockOperationProps) {
 }
 
 export function useTransferStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
@@ -1144,7 +1144,7 @@ export function useTransferStockItem(props: StockOperationProps) {
 }
 
 export function useCountStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
@@ -1154,7 +1154,7 @@ export function useCountStockItem(props: StockOperationProps) {
 }
 
 export function useChangeStockStatus(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
@@ -1164,7 +1164,7 @@ export function useChangeStockStatus(props: StockOperationProps) {
 }
 
 export function useMergeStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
@@ -1188,7 +1188,7 @@ export function useAssignStockItem(props: StockOperationProps) {
     return props.items?.filter((item) => item?.part_detail?.salable);
   }, [props.items]);
 
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     items: items,
     fieldGenerator: stockAssignFields,
@@ -1199,7 +1199,7 @@ export function useAssignStockItem(props: StockOperationProps) {
 }
 
 export function useDeleteStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockDeleteFields,
     endpoint: ApiEndpoints.stock_item_list,
