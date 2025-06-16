@@ -28,6 +28,14 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await page.getByRole('button', { name: 'Submit' }).waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
+  // Lock user
+  await page.getByRole('button', { name: 'Lock user' }).click();
+  await page
+    .getByRole('row', { name: 'ian Ian Inactive 1 No No No' })
+    .locator('span')
+    .nth(2)
+    .waitFor();
+
   // Unlock user
   await page.getByRole('cell', { name: 'Ian', exact: true }).click({
     button: 'right'
@@ -41,14 +49,6 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await page.getByRole('cell', { name: 'Ian', exact: true }).click({
     button: 'right'
   });
-
-  // Lock user
-  await page.getByRole('button', { name: 'Lock user' }).click();
-  await page
-    .getByRole('row', { name: 'ian Ian Inactive 1 No No No' })
-    .locator('span')
-    .nth(2)
-    .waitFor();
 
   // Change password
   await page.getByRole('cell', { name: 'Ian', exact: true }).click({
