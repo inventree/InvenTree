@@ -1,4 +1,5 @@
 import { ApiEndpoints, apiUrl } from '@lib/index';
+import { Group, Space } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
@@ -7,6 +8,8 @@ import {
 } from 'mantine-datatable';
 import { useMemo, useState } from 'react';
 import { api } from '../../App';
+import { PartColumn } from '../ColumnRenderers';
+import RowExpansionIcon from '../RowExpansionIcon';
 
 /**
  * Display a nested subassembly table for a Bill of Materials (BOM).
@@ -16,17 +19,42 @@ import { api } from '../../App';
  */
 export default function BomSubassemblyTable({
   columns,
-  partId
+  partId,
+  depth
 }: {
   columns: any[];
   partId: number | string;
+  depth: number;
 }) {
   const [expandedRecords, setExpandedRecords] = useState<string[]>([]);
 
-  // Observe column widths from parent table
+  const assemblyColumns: any[] = useMemo(() => {
+    return columns.map((col) => {
+      // Handle the 'part' column differently based on depth and subassembly ID
+      if (col.accessor == 'sub_part') {
+        return {
+          ...col,
+          render: (record: any) => (
+            <Group wrap='nowrap'>
+              <Space w={depth * 10} />
+              <RowExpansionIcon
+                enabled={record.sub_part_detail?.assembly}
+                expanded={expandedRecords.includes(record.pk)}
+              />
+              <PartColumn part={record.sub_part_detail} />
+            </Group>
+          )
+        };
+      } else {
+        return col;
+      }
+    });
+  }, [columns, expandedRecords]);
+
+  // Observe column widths from top-level BOM table
   const tableColumns = useDataTableColumns({
     key: 'table-bom',
-    columns: columns
+    columns: assemblyColumns
   });
 
   const subassemblyData = useQuery({
@@ -49,8 +77,6 @@ export default function BomSubassemblyTable({
   });
 
   const rowExpansionProps: DataTableRowExpansionProps<any> = useMemo(() => {
-    // const expanded = expandedRecords.map((id) => {
-
     return {
       allowMultiple: true,
       expandable: ({ record }: { record: any }) =>
@@ -59,11 +85,15 @@ export default function BomSubassemblyTable({
         recordIds: expandedRecords,
         onRecordIdsChange: setExpandedRecords
       },
-      content: (subassembly: any) => (
-        <BomSubassemblyTable columns={columns} partId={subassembly.sub_part} />
+      content: ({ record }: { record: any }) => (
+        <BomSubassemblyTable
+          columns={columns}
+          partId={record.sub_part}
+          depth={depth + 1}
+        />
       )
     };
-  }, [columns, expandedRecords]);
+  }, [columns, depth, expandedRecords]);
 
   return (
     <DataTable
