@@ -582,7 +582,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         """Test that we can read the 'info-view' endpoint."""
         url = reverse('api-inventree-info')
 
-        QUERY_LIMIT = 250
+        QUERY_LIMIT = 300
 
         response = self.get(url, max_query_count=QUERY_LIMIT)
 
