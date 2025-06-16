@@ -39,6 +39,8 @@ This will launch the backend server in the foreground, and will occupy the termi
 
 Now that the backend server is running, you can launch the frontend server. The frontend server is responsible for serving the React-based user interface, and provides a development environment for building and testing the frontend code.
 
+In a *separate terminal window*, run the following command to start the frontend server:
+
 ```bash
 invoke dev.frontend-server
 ```
