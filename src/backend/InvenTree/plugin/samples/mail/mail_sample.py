@@ -26,3 +26,13 @@ class MailPluginSample(MailMixin, InvenTreePlugin):
         # Issue warning that we can test for
         if settings.PLUGIN_TESTING:
             logger.debug('Mail `%s` triggered in sample plugin going out', mail)
+
+    def process_mail_in(self, mail, *args, **kwargs):
+        """Custom mail processing."""
+        print(f"Processing incoming mail: '{mail}'")
+        print('args:', str(args))
+        print('kwargs:', str(kwargs))
+
+        # Issue warning that we can test for
+        if settings.PLUGIN_TESTING:
+            logger.debug('Mail `%s` triggered in sample plugin coming in', mail)

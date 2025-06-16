@@ -48,6 +48,7 @@ import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
+import InvenTree.tasks
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import global_setting_overrides
@@ -2702,7 +2703,7 @@ def handle_inbound(sender, event, esp_name, **kwargs):
     r_to = message.envelope_recipient or [a.addr_spec for a in message.to]
     r_sender = message.envelope_sender or message.from_email.addr_spec
 
-    EmailMessage.objects.create(
+    msg = EmailMessage.objects.create(
         message_id_key=event.message[HEADER_MSG_ID],
         subject=message.subject,
         body=message.text,
@@ -2715,6 +2716,11 @@ def handle_inbound(sender, event, esp_name, **kwargs):
         headers=message._headers,
         full_message=message.html,
     )
+
+    # Schedule a task to process the email message
+    from InvenTree.plugin.base.mail.mail import process_mail_in
+
+    InvenTree.tasks.offload_task(process_mail_in, mail_id=msg.pk, group='mail')
 
 
 @receiver(tracking)
