@@ -2718,7 +2718,7 @@ def handle_inbound(sender, event, esp_name, **kwargs):
     )
 
     # Schedule a task to process the email message
-    from InvenTree.plugin.base.mail.mail import process_mail_in
+    from plugin.base.mail.mail import process_mail_in
 
     InvenTree.tasks.offload_task(process_mail_in, mail_id=msg.pk, group='mail')
 
