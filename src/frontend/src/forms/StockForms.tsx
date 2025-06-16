@@ -1061,25 +1061,29 @@ function stockOperationModal({
     return query_params;
   }, [baseParams, filters, model, pk]);
 
+  const [opened, setOpened] = useState<boolean>(false);
+
   const { data } = useQuery({
+    enabled: !!opened && !!pk,
     queryKey: ['stockitems', model, pk, items, params],
     queryFn: async () => {
       if (items) {
         return Array.isArray(items) ? items : [items];
       }
+
+      if (!pk || !opened) {
+        return [];
+      }
+
       const url = apiUrl(ApiEndpoints.stock_item_list);
 
       return api
         .get(url, {
           params: params
         })
-        .then((response) => {
-          if (response.status === 200) {
-            return response.data;
-          }
-        })
+        .then((response) => response.data ?? [])
         .catch(() => {
-          return null;
+          return [];
         });
     }
   });
@@ -1095,7 +1099,9 @@ function stockOperationModal({
     title: title,
     size: '80%',
     successMessage: successMessage,
-    onFormSuccess: () => refresh()
+    onFormSuccess: () => refresh(),
+    onClose: () => setOpened(false),
+    onOpen: () => setOpened(true)
   });
 }
 

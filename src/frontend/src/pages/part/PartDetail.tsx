@@ -1005,11 +1005,13 @@ export default function PartDetail() {
 
   return (
     <>
-      {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
-      {findBySerialNumber.modal}
+      {duplicatePart.modal}
+      {countStockItems.modal}
       {orderPartsWizard.wizard}
+      {findBySerialNumber.modal}
+      {transferStockItems.modal}
       <InstanceDetail
         status={requestStatus}
         loading={instanceQuery.isFetching}
@@ -1096,8 +1098,6 @@ export default function PartDetail() {
             model={ModelType.part}
             id={part.pk}
           />
-          {transferStockItems.modal}
-          {countStockItems.modal}
         </Stack>
       </InstanceDetail>
     </>
