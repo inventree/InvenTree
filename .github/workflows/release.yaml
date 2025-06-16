@@ -116,7 +116,7 @@ jobs:
       - name: Build documentation
         run: |
           invoke migrate
-          invoke int.export-definitions --basedir "docs"
+          invoke int.export-settings-definitions --filename docs/inventree_settings.json --overwrite
           invoke dev.schema --filename docs/schema.yml --ignore-warnings
           python docs/extract_schema.py docs/schema.yml
           mkdocs build  -f docs/mkdocs.yml
