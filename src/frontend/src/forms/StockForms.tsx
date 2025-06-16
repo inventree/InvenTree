@@ -1064,10 +1064,10 @@ function useStockOperationModal({
   const [opened, setOpened] = useState<boolean>(false);
 
   const { data } = useQuery({
-    enabled: !!opened && !!pk,
     queryKey: ['stockitems', opened, model, pk, items, params],
     queryFn: async () => {
       if (items) {
+        // If a list of items is provided, use that directly
         return Array.isArray(items) ? items : [items];
       }
 
