@@ -129,9 +129,18 @@ class MetaBase:
 
         return registry.get_plugin_config(self.plugin_slug())
 
-    def is_active(self):
-        """Return True if this plugin is currently active."""
-        # Builtin plugins are always considered "active"
+    def is_active(self, active_keys: Optional[list] = None) -> bool:
+        """Return True if this plugin is currently active.
+
+        Arguments:
+            active_keys (list, optional): List of keys to check for activation.
+                If provided, the plugin will only be considered active if it is
+                explicitly listed in this list. Defaults to None.
+        """
+        if active_keys and self.slug in active_keys:
+            # If the plugin slug is in the active keys, it is considered active
+            return True
+
         config = self.plugin_config()
 
         if not config:

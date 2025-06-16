@@ -1101,10 +1101,7 @@ def plugins_info(*args, **kwargs):
     if not settings.PLUGINS_ENABLED:
         return False
 
-    # Fetch plugins
-    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
-    # Format list
     return [
         {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
-        for plg in plug_list
+        for plg in registry.active_plugins()
     ]
