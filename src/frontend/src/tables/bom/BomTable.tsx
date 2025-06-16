@@ -19,10 +19,10 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
@@ -42,11 +42,14 @@ import {
   BooleanColumn,
   DescriptionColumn,
   NoteColumn,
+  PartColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
+import BomSubassemblyTable from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -92,32 +95,17 @@ export function BomTable({
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
-        render: (record) => {
-          const part = record.sub_part_detail;
-          const extra = [];
-
-          if (record.part != partId) {
-            extra.push(
-              <Text key='different-parent'>{t`This BOM item is defined for a different parent`}</Text>
-            );
-          }
-
-          return (
-            part && (
-              <TableHoverCard
-                value={
-                  <Thumbnail
-                    src={part.thumbnail || part.image}
-                    alt={part.description}
-                    text={part.full_name}
-                  />
-                }
-                extra={extra}
-                title={t`Part Information`}
+        render: (record) => (
+          <Group wrap='nowrap'>
+            {!isEditing && (
+              <RowExpansionIcon
+                enabled={record.sub_part_detail?.assembly}
+                expanded={table.isRowExpanded(record.pk)}
               />
-            )
-          );
-        }
+            )}
+            <PartColumn part={record.sub_part_detail} />
+          </Group>
+        )
       },
       {
         accessor: 'sub_part_detail.IPN',
@@ -310,7 +298,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [partId, params]);
+  }, [isEditing, partId, params]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -579,6 +567,30 @@ export function BomTable({
     ];
   }, [isEditing, partLocked, user]);
 
+  // If not in "editing" mode, the BOM can be expanded to show subassemblies
+  const rowExpansionProps: DataTableRowExpansionProps<any> | undefined =
+    useMemo(() => {
+      if (isEditing) {
+        return undefined;
+      }
+
+      const subassemblyColumns: any[] = tableColumns.filter(
+        (col) => !col.hidden && !table.hiddenColumns.includes(col.accessor)
+      );
+
+      return {
+        allowMultiple: true,
+        expandable: ({ record }: { record: any }) =>
+          table.isRowExpanded(record.pk) || record.sub_part_detail?.assembly,
+        content: ({ record }: { record: any }) => (
+          <BomSubassemblyTable
+            columns={subassemblyColumns}
+            partId={record.sub_part}
+          />
+        )
+      };
+    }, [isEditing, tableColumns, table.hiddenColumns, table.isRowExpanded]);
+
   return (
     <>
       {importBomItem.modal}
@@ -618,7 +630,8 @@ export function BomTable({
             enableSelection: isEditing && !partLocked,
             enableBulkDelete:
               isEditing && !partLocked && user.hasDeleteRole(UserRoles.part),
-            enableDownload: true
+            enableDownload: true,
+            rowExpansion: rowExpansionProps
           }}
         />
       </Stack>

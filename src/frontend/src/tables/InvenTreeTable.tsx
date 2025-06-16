@@ -632,6 +632,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
         props.onCellClick({ event, record, index, column, columnIndex });
       } else if (props.onRowClick) {
         props.onRowClick(record, index, event);
+      } else if (!!tableProps.rowExpansion) {
+        // No action here, handled by row expansion
       } else if (tableProps.modelType) {
         const accessor = tableProps.modelField ?? 'pk';
         const pk = resolveItem(record, accessor);
