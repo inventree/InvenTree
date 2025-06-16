@@ -82,7 +82,7 @@ cd src/frontend
 npx playwright test --ui
 ```
 
-This will first launch the backend server (at `http://localhost:8000`), and then run the tests against the frontend server (at `http://localhost:5173`). An interactive browser window will open, and you can run the tests individually or as a group.
+This will first launch the backend server (at http://localhost:8000), and then run the tests against the frontend server (at http://localhost:5173). An interactive browser window will open, and you can run the tests individually or as a group.
 
 ### Viewing Reports
 
