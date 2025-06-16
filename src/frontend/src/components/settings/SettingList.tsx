@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
@@ -30,15 +31,24 @@ import { SettingItem } from './SettingItem';
 export function SettingList({
   settingsState,
   keys,
-  onChange
+  onChange,
+  onLoaded
 }: Readonly<{
   settingsState: SettingsStateProps;
   keys?: string[];
   onChange?: () => void;
+  onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
   useEffect(() => {
     settingsState.fetchSettings();
-  }, []);
+  }, [keys]);
+
+  useEffect(() => {
+    if (settingsState.loaded) {
+      // Call the onLoaded callback if provided
+      onLoaded?.(settingsState);
+    }
+  }, [settingsState.loaded, settingsState.settings]);
 
   const api = useApi();
 
@@ -193,11 +203,32 @@ export function PluginSettingList({
   pluginKey
 }: Readonly<{ pluginKey: string }>) {
   const pluginSettingsStore = useRef(
-    createPluginSettingsState({ plugin: pluginKey })
+    createPluginSettingsState({
+      plugin: pluginKey,
+      endpoint: ApiEndpoints.plugin_setting_list
+    })
   ).current;
   const pluginSettings = useStore(pluginSettingsStore);
 
   return <SettingList settingsState={pluginSettings} />;
+}
+
+export function PluginUserSettingList({
+  pluginKey,
+  onLoaded
+}: Readonly<{
+  pluginKey: string;
+  onLoaded?: (settings: SettingsStateProps) => void;
+}>) {
+  const pluginUserSettingsState = useRef(
+    createPluginSettingsState({
+      plugin: pluginKey,
+      endpoint: ApiEndpoints.plugin_user_setting_list
+    })
+  ).current;
+  const pluginUserSettings = useStore(pluginUserSettingsState);
+
+  return <SettingList settingsState={pluginUserSettings} onLoaded={onLoaded} />;
 }
 
 export function MachineSettingList({

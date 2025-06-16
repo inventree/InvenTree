@@ -4,11 +4,9 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from allauth.account.models import EmailAddress
 
 import build.models as build_models
 import common.notifications
@@ -166,34 +164,28 @@ def check_build_stock(build: build_models.Build):
         return
 
     # Are there any users subscribed to these parts?
-    subscribers = build.part.get_subscribers()
+    targets = build.part.get_subscribers()
 
-    emails = EmailAddress.objects.filter(user__in=subscribers)
+    if build.responsible:
+        targets.append(build.responsible)
 
-    if len(emails) > 0:
-        logger.info('Notifying users of stock required for build %s', build.pk)
+    name = _('Stock required for build order')
 
-        context = {
-            'link': InvenTree.helpers_model.construct_absolute_url(
-                build.get_absolute_url()
-            ),
-            'build': build,
-            'part': build.part,
-            'lines': lines,
-        }
+    context = {
+        'build': build,
+        'name': name,
+        'part': build.part,
+        'lines': lines,
+        'link': InvenTree.helpers_model.construct_absolute_url(
+            build.get_absolute_url()
+        ),
+        'message': _(f'Build order {build} requires additional stock'),
+        'template': {'html': 'email/build_order_required_stock.html', 'subject': name},
+    }
 
-        # Render the HTML message
-        html_message = render_to_string(
-            'email/build_order_required_stock.html', context
-        )
-
-        subject = _('Stock required for build order')
-
-        recipients = emails.values_list('email', flat=True)
-
-        InvenTree.helpers_email.send_email(
-            subject, '', recipients, html_message=html_message
-        )
+    common.notifications.trigger_notification(
+        build, BuildEvents.STOCK_REQUIRED, targets=targets, context=context
+    )
 
 
 def notify_overdue_build_order(bo: build_models.Build):

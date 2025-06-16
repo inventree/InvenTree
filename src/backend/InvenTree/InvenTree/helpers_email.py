@@ -51,7 +51,9 @@ def is_email_configured():
     return configured
 
 
-def send_email(subject, body, recipients, from_email=None, html_message=None):
+def send_email(
+    subject, body, recipients: list[str], from_email=None, html_message=None
+):
     """Send an email with the specified subject and body, to the specified recipients list."""
     if isinstance(recipients, str):
         recipients = [recipients]
@@ -74,7 +76,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         # If we still don't have a valid from_email, then we can't send emails
         if not from_email:
             if settings.TESTING:
-                from_email = 'from@test.com'
+                from_email = 'test@test.inventree.org'
             else:
                 logger.error('send_email failed: DEFAULT_FROM_EMAIL not specified')
                 return

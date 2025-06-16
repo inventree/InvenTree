@@ -557,7 +557,15 @@ class BaseInvenTreeSetting(models.Model):
         if not setting and create:
             # Attempt to create a new settings object
             default_value = cls.get_setting_default(key, **kwargs)
-            setting = cls(key=key, value=default_value, **kwargs)
+
+            extra_fields = {}
+
+            # Provide extra default fields
+            for field in cls.extra_unique_fields:
+                if field in kwargs:
+                    extra_fields[field] = kwargs[field]
+
+            setting = cls(key=key, value=default_value, **extra_fields)
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
