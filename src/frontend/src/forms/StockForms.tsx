@@ -1065,7 +1065,7 @@ function stockOperationModal({
 
   const { data } = useQuery({
     enabled: !!opened && !!pk,
-    queryKey: ['stockitems', model, pk, items, params],
+    queryKey: ['stockitems', opened, model, pk, items, params],
     queryFn: async () => {
       if (items) {
         return Array.isArray(items) ? items : [items];
