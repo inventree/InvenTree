@@ -225,12 +225,18 @@ class PluginsRegistry:
         """
         from plugin.models import PluginConfig
 
-        # Pre-cache the plugin config objects, to prevent multiple database queries for plugin.is_active()
-        return list(
-            PluginConfig.objects.filter(active=True)
-            .values_list('key', flat=True)
-            .distinct()
-        )
+        try:
+            # Pre-cache the plugin config objects, to prevent multiple database queries for plugin.is_active()
+            keys = list(
+                PluginConfig.objects.filter(active=True)
+                .values_list('key', flat=True)
+                .distinct()
+            )
+        except Exception:
+            # Database may not yet be ready
+            keys = []
+
+        return keys
 
     def active_plugins(self) -> list:
         """Return a list of all active plugins."""

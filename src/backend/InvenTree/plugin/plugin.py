@@ -144,7 +144,6 @@ class MetaBase:
         config = self.plugin_config()
 
         if not config:
-            # If no config is found, then the plugin is not active
             return False
 
         if self.is_builtin and config.is_mandatory():
