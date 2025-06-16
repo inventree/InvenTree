@@ -4,7 +4,9 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconEdit,
   IconFileArrowLeft,
+  IconListCheck,
   IconLock,
   IconSwitch3
 } from '@tabler/icons-react';
@@ -75,6 +77,8 @@ export function BomTable({
   const user = useUserState();
   const table = useTable('bom');
   const navigate = useNavigate();
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const [importOpened, setImportOpened] = useState<boolean>(false);
 
@@ -493,13 +497,15 @@ export function BomTable({
           color: 'green',
           hidden:
             partLocked ||
+            !isEditing ||
             record.validated ||
             !user.hasChangeRole(UserRoles.part),
           icon: <IconCircleCheck />,
           onClick: () => validateBomItem(record)
         },
         RowEditAction({
-          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
+          hidden:
+            partLocked || !isEditing || !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             setSelectedBomItem(record);
             editBomItem.open();
@@ -508,7 +514,7 @@ export function BomTable({
         {
           title: t`Edit Substitutes`,
           color: 'blue',
-          hidden: partLocked || !user.hasAddRole(UserRoles.part),
+          hidden: partLocked || !isEditing || !user.hasAddRole(UserRoles.part),
           icon: <IconSwitch3 />,
           onClick: () => {
             setSelectedBomItem(record);
@@ -516,7 +522,8 @@ export function BomTable({
           }
         },
         RowDeleteAction({
-          hidden: partLocked || !user.hasDeleteRole(UserRoles.part),
+          hidden:
+            partLocked || !isEditing || !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             setSelectedBomItem(record);
             deleteBomItem.open();
@@ -524,33 +531,53 @@ export function BomTable({
         })
       ];
     },
-    [partId, partLocked, user]
+    [isEditing, partId, partLocked, user]
   );
 
   const tableActions = useMemo(() => {
     return [
       <ActionButton
         key='import-bom'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        hidden={partLocked || !user.hasAddRole(UserRoles.part) || isEditing}
         tooltip={t`Import BOM Data`}
         icon={<IconFileArrowLeft />}
         onClick={() => importBomItem.open()}
       />,
       <ActionButton
         key='validate-bom'
-        hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
+        hidden={partLocked || !user.hasChangeRole(UserRoles.part) || isEditing}
         tooltip={t`Validate BOM`}
-        icon={<IconCircleCheck />}
+        icon={<IconListCheck />}
         onClick={() => validateBom.open()}
       />,
       <AddItemButton
         key='add-bom-item'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        hidden={partLocked || !user.hasAddRole(UserRoles.part) || !isEditing}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}
+      />,
+      <ActionButton
+        key='edit-bom'
+        hidden={partLocked || !user.hasChangeRole(UserRoles.part) || isEditing}
+        tooltip={t`Edit BOM`}
+        icon={<IconEdit />}
+        onClick={() => {
+          setIsEditing(true);
+        }}
+      />,
+      <ActionButton
+        key='finish-editing'
+        hidden={!isEditing}
+        color='green'
+        tooltip={t`Finish Editing BOM`}
+        icon={<IconCircleCheck />}
+        onClick={() => {
+          setIsEditing(false);
+          table.refreshTable();
+        }}
       />
     ];
-  }, [partLocked, user]);
+  }, [isEditing, partLocked, user]);
 
   return (
     <>
@@ -587,8 +614,10 @@ export function BomTable({
             modelType: ModelType.part,
             modelField: 'sub_part',
             rowActions: rowActions,
-            enableSelection: !partLocked,
-            enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
+            hideActionsColumn: !isEditing,
+            enableSelection: isEditing && !partLocked,
+            enableBulkDelete:
+              isEditing && !partLocked && user.hasDeleteRole(UserRoles.part),
             enableDownload: true
           }}
         />
