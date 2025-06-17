@@ -57,7 +57,7 @@ export default function SalesOrderLineItemTable({
   editable
 }: Readonly<{
   orderId: number;
-  orderDetailRefresh: () => void
+  orderDetailRefresh: () => void;
   currency: string;
   customerId: number;
   editable: boolean;
