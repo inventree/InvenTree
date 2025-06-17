@@ -1246,12 +1246,14 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     total_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
 
     unallocated_stock = serializers.FloatField(
-        read_only=True, label=_('Available Stock')
+        source='available_stock', read_only=True, label=_('Available Stock')
     )
 
     can_build = serializers.FloatField(read_only=True, label=_('Can Build'))
 
-    ordering = serializers.FloatField(read_only=True, label=_('On Order'))
+    ordering = serializers.FloatField(
+        source='on_order', read_only=True, label=_('On Order')
+    )
 
     building = serializers.FloatField(
         read_only=True, label=_('In Production'), source='quantity_in_production'
@@ -1262,7 +1264,9 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     )
 
     required_for_build_orders = serializers.FloatField(
-        read_only=True, label=_('Required for Build Orders')
+        source='required_build_order_quantity',
+        read_only=True,
+        label=_('Required for Build Orders'),
     )
 
     allocated_to_build_orders = serializers.FloatField(
@@ -1272,7 +1276,9 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     )
 
     required_for_sales_orders = serializers.FloatField(
-        read_only=True, label=_('Required for Sales Orders')
+        source='required_sales_order_quantity',
+        read_only=True,
+        label=_('Required for Sales Orders'),
     )
 
     allocated_to_sales_orders = serializers.SerializerMethodField(
