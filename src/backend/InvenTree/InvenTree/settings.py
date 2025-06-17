@@ -71,7 +71,7 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.joinpath('VERSION')
+version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
 if version_file.exists():
     print('load version from file')
     load_dotenv(version_file)
