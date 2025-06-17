@@ -176,10 +176,24 @@ export function InvenTreeTable<T extends Record<string, any>>({
     );
   }, [props.tableFilters, fieldNames]);
 
+  // Build table properties based on provided props (and default props)
+  const tableProps: InvenTreeTableProps<T> = useMemo(() => {
+    return {
+      ...defaultInvenTreeTableProps,
+      ...props
+    };
+  }, [props]);
+
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     enabled: !!url && !tableData,
-    queryKey: ['options', url, cacheKey, props.enableColumnCaching],
+    queryKey: [
+      'options',
+      url,
+      cacheKey,
+      tableProps.params,
+      props.enableColumnCaching
+    ],
     retry: 3,
     refetchOnMount: true,
     gcTime: 5000,
@@ -254,14 +268,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     tableOptionQuery.refetch();
   }, [cacheKey, url, props.params, props.enableColumnCaching]);
-
-  // Build table properties based on provided props (and default props)
-  const tableProps: InvenTreeTableProps<T> = useMemo(() => {
-    return {
-      ...defaultInvenTreeTableProps,
-      ...props
-    };
-  }, [props]);
 
   const enableSelection: boolean = useMemo(() => {
     return tableProps.enableSelection || tableProps.enableBulkDelete || false;
@@ -450,13 +456,17 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ]
   );
 
+  const [sortingLoaded, setSortingLoaded] = useState<boolean>(false);
+
   useEffect(() => {
     const tableKey: string = tableState.tableKey.split('-')[0];
     const sorting: DataTableSortStatus = getTableSorting(tableKey);
 
-    if (sorting) {
+    if (sorting && !!sorting.columnAccessor && !!sorting.direction) {
       setSortStatus(sorting);
     }
+
+    setSortingLoaded(true);
   }, []);
 
   // Return the ordering parameter
@@ -492,6 +502,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
     const queryParams = getTableFilters(true);
 
     if (!url) {
+      // No URL supplied - do not load!
+      return [];
+    }
+
+    if (!sortingLoaded) {
+      // Sorting not yet loaded - do not load!
       return [];
     }
 
@@ -560,6 +576,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       url,
       tableState.page,
       props.params,
+      sortingLoaded,
       sortStatus.columnAccessor,
       sortStatus.direction,
       tableState.tableKey,

@@ -640,22 +640,28 @@ export default function StockDetail() {
   const editStockItemFields = useStockFields({
     create: false,
     stockItem: stockitem,
-    partId: stockitem.part
+    partId: stockitem.part,
+    modalId: 'edit-stock-item'
   });
 
   const editStockItem = useEditApiFormModal({
     url: ApiEndpoints.stock_item_list,
     pk: stockitem.pk,
     title: t`Edit Stock Item`,
+    modalId: 'edit-stock-item',
     fields: editStockItemFields,
     onFormSuccess: refreshInstance
   });
 
-  const duplicateStockItemFields = useStockFields({ create: true });
+  const duplicateStockItemFields = useStockFields({
+    create: true,
+    modalId: 'duplicate-stock-item'
+  });
 
   const duplicateStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     title: t`Add Stock Item`,
+    modalId: 'duplicate-stock-item',
     fields: duplicateStockItemFields,
     initialData: {
       ...stockitem
@@ -700,13 +706,15 @@ export default function StockDetail() {
 
   const serializeStockFields = useStockItemSerializeFields({
     partId: stockitem.part,
-    trackable: stockitem.part_detail?.trackable
+    trackable: stockitem.part_detail?.trackable,
+    modalId: 'stock-item-serialize'
   });
 
   const serializeStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_serialize,
     pk: stockitem.pk,
     title: t`Serialize Stock Item`,
+    modalId: 'stock-item-serialize',
     fields: serializeStockFields,
     initialData: {
       quantity: stockitem.quantity,
