@@ -1385,6 +1385,7 @@ def frontend_download(
             info(f'Downloaded frontend build to temporary file: {dst.name}')
 
             handle_extract(dst.name)
+            static(c)
 
     def check_already_current(tag=None, sha=None):
         """Check if the currently available frontend is already the requested one."""
