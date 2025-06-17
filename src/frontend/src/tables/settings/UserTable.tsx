@@ -225,9 +225,9 @@ export function UserDrawer({
  */
 export function UserTable({
   directLink
-}: {
+}: Readonly<{
   directLink?: boolean;
-}) {
+}>) {
   const table = useTable('users');
   const navigate = useNavigate();
   const user = useUserState();
