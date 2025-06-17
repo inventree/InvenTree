@@ -67,7 +67,7 @@ class RoleSerializer(InvenTreeModelSerializer):
             'is_superuser',
         ]
 
-    user = serializers.IntegerField(source='pk', read_only=True)
+    user = serializers.IntegerField(source='pk')
     roles = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField(allow_null=True)
 
