@@ -51,11 +51,13 @@ import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
   orderId,
+  orderDetailRefresh,
   currency,
   customerId,
   editable
 }: Readonly<{
   orderId: number;
+  orderDetailRefresh: () => void;
   currency: string;
   customerId: number;
   editable: boolean;
@@ -228,6 +230,7 @@ export default function SalesOrderLineItemTable({
       ...initialData,
       sale_price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -242,6 +245,7 @@ export default function SalesOrderLineItemTable({
     pk: selectedLineId,
     title: t`Edit Line Item`,
     fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -249,6 +253,7 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_line_list,
     pk: selectedLineId,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
