@@ -143,6 +143,12 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
+  const { instance: part_requirements } = useInstance({
+    endpoint: ApiEndpoints.part_requirements,
+    pk: id,
+    refetchOnMount: true
+  });
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
@@ -151,8 +157,11 @@ export default function PartDetail() {
     const data = { ...part };
 
     data.required =
-      (data?.required_for_build_orders ?? 0) +
-      (data?.required_for_sales_orders ?? 0);
+      (part_requirements?.required_build_order_quantity ?? 0) +
+      (part_requirements?.required_sales_order_quantity ?? 0);
+
+    // Extract requirements data
+    data.can_build = part_requirements?.can_build ?? 0;
 
     // Provide latest serial number info
     if (!!serials.latest) {
@@ -315,19 +324,19 @@ export default function PartDetail() {
             part.allocated_to_sales_orders <= 0)
       },
       {
-        type: 'string',
-        name: 'can_build',
-        unit: true,
-        label: t`Can Build`,
-        hidden: true // TODO: Expose "can_build" to the API
-      },
-      {
         type: 'progressbar',
         name: 'building',
         label: t`In Production`,
         progress: part.building,
         total: part.scheduled_to_build,
         hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
+      },
+      {
+        type: 'string',
+        name: 'can_build',
+        unit: true,
+        label: t`Can Build`,
+        hidden: !part.assembly
       }
     ];
 
@@ -488,7 +497,8 @@ export default function PartDetail() {
     id,
     serials,
     instanceQuery.isFetching,
-    instanceQuery.data
+    instanceQuery.data,
+    part_requirements
   ]);
 
   // Part data panels (recalculate when part data changes)
