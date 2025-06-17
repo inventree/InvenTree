@@ -570,6 +570,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       url,
       tableState.page,
       props.params,
+      sortingLoaded,
       sortStatus.columnAccessor,
       sortStatus.direction,
       tableState.tableKey,
