@@ -86,10 +86,23 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: build?.part,
+      hasPrimaryKey: true,
+      defaultValue: {}
+    });
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
     }
+
+    const data = {
+      ...build,
+      can_build: partRequirements?.can_build ?? 0
+    };
 
     const tl: DetailsField[] = [
       {
@@ -176,6 +189,11 @@ export default function BuildDetail() {
         type: 'text',
         name: 'quantity',
         label: t`Build Quantity`
+      },
+      {
+        type: 'text',
+        name: 'can_build',
+        label: t`Can Build`
       },
       {
         type: 'progressbar',
@@ -290,15 +308,15 @@ export default function BuildDetail() {
             pk={build.part}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={build} />
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={build} />
-        <DetailsTable fields={bl} item={build} />
-        <DetailsTable fields={br} item={build} />
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [build, instanceQuery]);
+  }, [build, instanceQuery, partRequirements]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [

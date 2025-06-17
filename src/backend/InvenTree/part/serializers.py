@@ -1279,7 +1279,7 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         read_only=True, label=_('Allocated to Sales Orders')
     )
 
-    def get_allocated_sales_order_quantity(self, part) -> float:
+    def get_allocated_to_sales_orders(self, part) -> float:
         """Return the allocated sales order quantity."""
         return part.sales_order_allocation_count(pending=True)
 

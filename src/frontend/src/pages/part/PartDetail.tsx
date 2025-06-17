@@ -143,9 +143,10 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  const { instance: part_requirements } = useInstance({
+  const { instance: partRequirements } = useInstance({
     endpoint: ApiEndpoints.part_requirements,
     pk: id,
+    hasPrimaryKey: true,
     refetchOnMount: true
   });
 
@@ -157,23 +158,23 @@ export default function PartDetail() {
     const data = { ...part };
 
     data.required =
-      (part_requirements?.required_for_build_orders ??
+      (partRequirements?.required_for_build_orders ??
         part?.required_for_build_orders ??
         0) +
-      (part_requirements?.required_for_sales_orders ??
+      (partRequirements?.required_for_sales_orders ??
         part?.required_for_sales_orders ??
         0);
 
     data.allocated =
-      (part_requirements?.allocated_to_build_orders ??
+      (partRequirements?.allocated_to_build_orders ??
         part?.allocated_to_build_orders ??
         0) +
-      (part_requirements?.allocated_to_sales_orders ??
+      (partRequirements?.allocated_to_sales_orders ??
         part?.allocated_to_sales_orders ??
         0);
 
     // Extract requirements data
-    data.can_build = part_requirements?.can_build ?? 0;
+    data.can_build = partRequirements?.can_build ?? 0;
 
     // Provide latest serial number info
     if (!!serials.latest) {
@@ -510,7 +511,7 @@ export default function PartDetail() {
     serials,
     instanceQuery.isFetching,
     instanceQuery.data,
-    part_requirements
+    partRequirements
   ]);
 
   // Part data panels (recalculate when part data changes)
