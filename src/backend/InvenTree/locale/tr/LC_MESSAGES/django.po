@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-14 01:28+0000\n"
-"PO-Revision-Date: 2025-06-14 01:30\n"
+"POT-Creation-Date: 2025-06-14 02:16+0000\n"
+"PO-Revision-Date: 2025-06-17 12:21\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -27,11 +27,11 @@ msgstr "API uç noktası bulunamadı"
 
 #: InvenTree/api.py:432
 msgid "List of items or filters must be provided for bulk operation"
-msgstr ""
+msgstr "Toplu işlem için öge veya filtre listesi sağlanmalıdır"
 
 #: InvenTree/api.py:439
 msgid "Items must be provided as a list"
-msgstr ""
+msgstr "Ögeler bir liste olarak sağlanmalıdır"
 
 #: InvenTree/api.py:447
 msgid "Invalid items list provided"
@@ -39,7 +39,7 @@ msgstr "Geçersiz ögeler listesi sağlandı"
 
 #: InvenTree/api.py:453
 msgid "Filters must be provided as a dict"
-msgstr ""
+msgstr "Filtreler bir sözlük olarak sağlanmalıdır"
 
 #: InvenTree/api.py:460
 msgid "Invalid filters provided"
@@ -47,11 +47,11 @@ msgstr "Geçersiz filtreler sağlandı"
 
 #: InvenTree/api.py:465
 msgid "All filter must only be used with true"
-msgstr ""
+msgstr "Tüm filtre yalnızca true ile kullanılmalıdır"
 
 #: InvenTree/api.py:470
 msgid "No items match the provided criteria"
-msgstr ""
+msgstr "Sağlanan ölçüte uygun bir eşleşme yok"
 
 #: InvenTree/api.py:713
 msgid "User does not have permission to view this model"
@@ -155,15 +155,16 @@ msgstr "Grup aralığı {group}, izin verilen miktarı aşmaktadır ({expected_q
 msgid "No serial numbers found"
 msgstr "Seri numarası bulunamadı"
 
-#: InvenTree/helpers.py:721
-msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "Benzersiz seri numaralarının sayısı ({len(serials)}) ile miktarın ({expected_quantity}) eşleşmesi gerekmektedir"
+#: InvenTree/helpers.py:723
+#, python-brace-format
+msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
+msgstr "Benzersiz seri numaralarının sayısı ({n}) girilen miktarla eşleşmeli ({q})"
 
-#: InvenTree/helpers.py:840
+#: InvenTree/helpers.py:841
 msgid "Remove HTML tags from this value"
 msgstr "Bu değerden HTML etiketlerini kaldır"
 
-#: InvenTree/helpers.py:919
+#: InvenTree/helpers.py:920
 msgid "Data contains prohibited markdown content"
 msgstr "Veriler yasaklanmış işaretleme içeriği içeriyor"
 
@@ -636,11 +637,11 @@ msgstr "En yakın tarih"
 
 #: build/api.py:271 order/api.py:239
 msgid "Max Date"
-msgstr ""
+msgstr "Max. Tarih"
 
 #: build/api.py:296 build/api.py:299 part/api.py:224
 msgid "Exclude Tree"
-msgstr ""
+msgstr "Ağacı Hariç Tut"
 
 #: build/api.py:409
 msgid "Build must be cancelled before it can be deleted"
@@ -711,7 +712,7 @@ msgstr "Üst yapım için geçersiz seçim"
 
 #: build/models.py:198
 msgid "Build orders can only be externally fulfilled for purchaseable parts"
-msgstr ""
+msgstr "Satın alınabilir parçaların yapım emirleri yalnızca harici olarak yapılabilir"
 
 #: build/models.py:205 order/models.py:364
 msgid "Responsible user or group must be specified"
@@ -769,11 +770,11 @@ msgstr "Bu yapım işi için stok alınacak konumu seçin (her hangi bir stok ko
 
 #: build/models.py:299
 msgid "External Build"
-msgstr ""
+msgstr "Harici Yapım"
 
 #: build/models.py:300
 msgid "This build order is fulfilled externally"
-msgstr ""
+msgstr "Bu yapım emri harici olarak yapılmıştır"
 
 #: build/models.py:305
 msgid "Destination Location"
@@ -1585,11 +1586,11 @@ msgstr "Bu mesajın alındığı uç nokta"
 
 #: common/models.py:1538
 msgid "Worked on"
-msgstr ""
+msgstr "Üzerinde çalışıldı"
 
 #: common/models.py:1539
 msgid "Was the work on this message finished?"
-msgstr ""
+msgstr "Bu mesajdaki iş bitirildi mi?"
 
 #: common/models.py:1665
 msgid "Id"
