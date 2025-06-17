@@ -143,12 +143,13 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  const { instance: partRequirements } = useInstance({
-    endpoint: ApiEndpoints.part_requirements,
-    pk: id,
-    hasPrimaryKey: true,
-    refetchOnMount: true
-  });
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: id,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -348,9 +349,9 @@ export default function PartDetail() {
       {
         type: 'number',
         name: 'can_build',
-        unit: true,
+        unit: part.units,
         label: t`Can Build`,
-        hidden: !part.assembly
+        hidden: !part.assembly || partRequirementsQuery.isFetching
       }
     ];
 
@@ -512,6 +513,7 @@ export default function PartDetail() {
     serials,
     instanceQuery.isFetching,
     instanceQuery.data,
+    partRequirementsQuery.isFetching,
     partRequirements
   ]);
 

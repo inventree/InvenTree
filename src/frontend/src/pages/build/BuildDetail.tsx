@@ -193,7 +193,9 @@ export default function BuildDetail() {
       {
         type: 'number',
         name: 'can_build',
-        label: t`Can Build`
+        unit: build.part_detail?.units,
+        label: t`Can Build`,
+        hidden: partRequirementsQuery.isFetching
       },
       {
         type: 'progressbar',
@@ -316,7 +318,12 @@ export default function BuildDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [build, instanceQuery, partRequirements]);
+  }, [
+    build,
+    instanceQuery,
+    partRequirements,
+    partRequirementsQuery.isFetching
+  ]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
