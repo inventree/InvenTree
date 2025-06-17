@@ -36,9 +36,11 @@ import { PartColumn } from '../tables/ColumnRenderers';
  * Field set for BuildOrder forms
  */
 export function useBuildOrderFields({
-  create
+  create,
+  modalId
 }: {
   create: boolean;
+  modalId: string;
 }): ApiFormFieldSet {
   const [destination, setDestination] = useState<number | null | undefined>(
     null
@@ -47,6 +49,7 @@ export function useBuildOrderFields({
   const [batchCode, setBatchCode] = useState<string>('');
 
   const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
     onGenerate: (value: any) => {
       setBatchCode((batch: any) => batch || value);
     }
@@ -152,9 +155,11 @@ export function useBuildOrderFields({
 }
 
 export function useBuildOrderOutputFields({
-  build
+  build,
+  modalId
 }: {
   build: any;
+  modalId: string;
 }): ApiFormFieldSet {
   const trackable: boolean = useMemo(() => {
     return build.part_detail?.trackable ?? false;
@@ -176,12 +181,14 @@ export function useBuildOrderOutputFields({
   }, [build]);
 
   const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
     initialQuery: {
       part: build.part || build.part_detail?.pk
     }
   });
 
   const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
     initialQuery: {
       part: build.part || build.part_detail?.pk,
       quantity: build.quantity
