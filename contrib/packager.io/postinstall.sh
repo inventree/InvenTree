@@ -53,8 +53,8 @@ create_admin
 
 # run updates
 stop_inventree
-update_or_install
 set_site
+update_or_install
 # Write config file
 if [ "${SETUP_CONF_LOADED}" = "true" ]; then
   set_env
