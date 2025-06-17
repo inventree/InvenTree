@@ -65,10 +65,12 @@ import { StatusFilterOptions } from '../tables/Filter';
 export function useStockFields({
   partId,
   stockItem,
+  modalId,
   create = false
 }: {
   partId?: number;
   stockItem?: any;
+  modalId: string;
   create: boolean;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
@@ -81,12 +83,14 @@ export function useStockFields({
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
 
   const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
     initialQuery: {
       part: partInstance?.pk || partId
     }
   });
 
   const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
     initialQuery: {
       part: partInstance?.pk || partId
     }
@@ -235,11 +239,15 @@ export function useStockFields({
  * Launch a form to create a new StockItem instance
  */
 export function useCreateStockItem() {
-  const fields = useStockFields({ create: true });
+  const fields = useStockFields({
+    create: true,
+    modalId: 'create-stock-item'
+  });
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     fields: fields,
+    modalId: 'create-stock-item',
     title: t`Add Stock Item`
   });
 }
@@ -318,12 +326,15 @@ export function useStockItemInstallFields({
  */
 export function useStockItemSerializeFields({
   partId,
-  trackable
+  trackable,
+  modalId
 }: {
   partId: number;
   trackable: boolean;
+  modalId: string;
 }) {
   const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
     initialQuery: {
       part: partId
     }

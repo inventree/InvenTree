@@ -271,11 +271,15 @@ export default function SalesOrderLineItemTable({
     table: table
   });
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'build-order-create-from-sales-order'
+  });
 
   const newBuildOrder = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
+    modalId: 'build-order-create-from-sales-order',
     fields: buildOrderFields,
     initialData: initialData,
     follow: true,

@@ -416,13 +416,17 @@ export default function BuildDetail() {
     ];
   }, [build, id, user, buildStatus, globalSettings]);
 
-  const buildOrderFields = useBuildOrderFields({ create: false });
+  const editBuildOrderFields = useBuildOrderFields({
+    create: false,
+    modalId: 'edit-build-order'
+  });
 
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
     title: t`Edit Build Order`,
-    fields: buildOrderFields,
+    modalId: 'edit-build-order',
+    fields: editBuildOrderFields,
     onFormSuccess: refreshInstance
   });
 
@@ -435,10 +439,16 @@ export default function BuildDetail() {
     return data;
   }, [build]);
 
+  const duplicateBuildOrderFields = useBuildOrderFields({
+    create: false,
+    modalId: 'duplicate-build-order'
+  });
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
-    fields: buildOrderFields,
+    modalId: 'duplicate-build-order',
+    fields: duplicateBuildOrderFields,
     initialData: duplicateBuildOrderInitialData,
     follow: true,
     modelType: ModelType.build
