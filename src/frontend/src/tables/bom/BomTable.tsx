@@ -145,6 +145,7 @@ export function BomTable({
       },
       {
         accessor: 'substitutes',
+        defaultVisible: false,
         render: (row) => {
           const substitutes = row.substitutes ?? [];
 
@@ -162,21 +163,24 @@ export function BomTable({
         }
       },
       BooleanColumn({
-        accessor: 'optional'
+        accessor: 'optional',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'consumable'
+        accessor: 'consumable',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'allow_variants'
+        accessor: 'allow_variants',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'inherited'
-        // TODO: Custom renderer for this column
-        // TODO: See bom.js for existing implementation
+        accessor: 'inherited',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'validated'
+        accessor: 'validated',
+        defaultVisible: false
       }),
       {
         accessor: 'price_range',
@@ -184,6 +188,7 @@ export function BomTable({
         ordering: 'pricing_max',
         sortable: true,
         switchable: true,
+        defaultVisible: false,
         render: (record: any) =>
           formatPriceRange(record.pricing_min, record.pricing_max)
       },

@@ -52,7 +52,7 @@ export type TableState = {
   hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
-  hiddenColumns: string[];
+  hiddenColumns: string[] | null;
   setHiddenColumns: (columns: string[]) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;

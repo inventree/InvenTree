@@ -73,9 +73,9 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   });
 
   // A list of hidden columns, saved to local storage
-  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
+  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[] | null>({
     key: `inventree-hidden-table-columns-${tableName}`,
-    defaultValue: []
+    defaultValue: null
   });
 
   // Search term

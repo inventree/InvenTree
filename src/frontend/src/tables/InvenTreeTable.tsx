@@ -273,6 +273,24 @@ export function InvenTreeTable<T extends Record<string, any>>({
     return tableProps.enableSelection || tableProps.enableBulkDelete || false;
   }, [tableProps]);
 
+  useEffect(() => {
+    // On first table render, "hide" any default hidden columns
+    if (tableProps.enableColumnSwitching == false) {
+      return;
+    }
+
+    if (tableState.hiddenColumns == null) {
+      const columnNames: string[] = columns
+        .filter((col) => {
+          // Find any switchable columns which are hidden by default
+          return col.switchable != false && col.defaultVisible == false;
+        })
+        .map((col) => col.accessor);
+
+      tableState.setHiddenColumns(columnNames);
+    }
+  }, [columns, tableProps.enableColumnSwitching, tableState.hiddenColumns]);
+
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
     if (props.enableColumnSwitching == false) {
@@ -303,11 +321,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     const cols: TableColumn[] = columns
       .filter((col) => col?.hidden != true)
       .map((col) => {
-        let hidden: boolean = col.hidden ?? false;
+        // If the column is *not* switchable, it is always visible
+        // Otherwise, check if it is "default hidden"
 
-        if (col.switchable ?? true) {
-          hidden = tableState.hiddenColumns.includes(col.accessor);
-        }
+        const hidden: boolean =
+          col.switchable == false
+            ? false
+            : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
         return {
           ...col,
