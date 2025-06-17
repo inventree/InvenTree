@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-14 01:28+0000\n"
-"PO-Revision-Date: 2025-06-14 01:30\n"
+"POT-Creation-Date: 2025-06-14 02:16+0000\n"
+"PO-Revision-Date: 2025-06-14 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Language: zh_TW\n"
@@ -155,15 +155,16 @@ msgstr "組範圍 {group} 超出了允許的數量 ({expected_quantity})"
 msgid "No serial numbers found"
 msgstr "未找到序列號"
 
-#: InvenTree/helpers.py:721
-msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "唯一序列號的數量 ({len(serials)}) 必須與數量匹配 ({expected_quantity})"
+#: InvenTree/helpers.py:723
+#, python-brace-format
+msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
+msgstr ""
 
-#: InvenTree/helpers.py:840
+#: InvenTree/helpers.py:841
 msgid "Remove HTML tags from this value"
 msgstr "從這個值中刪除 HTML 標籤"
 
-#: InvenTree/helpers.py:919
+#: InvenTree/helpers.py:920
 msgid "Data contains prohibited markdown content"
 msgstr ""
 
