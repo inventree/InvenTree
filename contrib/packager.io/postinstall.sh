@@ -54,11 +54,11 @@ create_admin
 # run updates
 stop_inventree
 update_or_install
+set_site
 # Write config file
 if [ "${SETUP_CONF_LOADED}" = "true" ]; then
   set_env
 fi
-set_site
 start_inventree
 
 # show info
