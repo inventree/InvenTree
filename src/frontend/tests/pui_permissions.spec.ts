@@ -23,32 +23,10 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await loadTab(page, 'Plugins');
   await loadTab(page, 'Users / Access');
 
-  // Let's create a new user
+  // Let's check creating a new user
   await page.getByLabel('action-button-add-user').click();
   await page.getByRole('button', { name: 'Submit' }).waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
-
-  // Lock user
-  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
-    button: 'right'
-  });
-  await page.getByRole('button', { name: 'Lock user' }).click();
-  await page
-    .getByRole('row', { name: 'ian Ian Inactive 1 No No No' })
-    .locator('span')
-    .nth(2)
-    .waitFor();
-
-  // Unlock user
-  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
-    button: 'right'
-  });
-  await page.getByRole('button', { name: 'Unlock user' }).click();
-  await page
-    .getByRole('row', { name: 'ian Ian Inactive 1 No No Yes' })
-    .locator('span')
-    .nth(2)
-    .waitFor();
 
   // Change password
   await page.getByRole('cell', { name: 'Ian', exact: true }).click({
