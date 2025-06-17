@@ -44,7 +44,7 @@ export default function ReturnOrderLineItemTable({
 }: Readonly<{
   orderId: number;
   order: any;
-  orderDetailRefresh: () => void
+  orderDetailRefresh: () => void;
   customerId: number;
   currency: string;
 }>) {
