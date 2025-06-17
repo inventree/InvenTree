@@ -8,6 +8,7 @@ import type {
   BulkEditApiFormModalProps
 } from '@lib/types/Forms';
 import { OptionsApiForm } from '../components/forms/ApiForm';
+import { useModalState } from '../states/ModalState';
 import { useModal } from './UseModal';
 
 /**
@@ -16,6 +17,8 @@ import { useModal } from './UseModal';
 export function useApiFormModal(props: ApiFormModalProps) {
   const id = useId();
   const modalClose = useRef(() => {});
+
+  const modalState = useModalState();
 
   const modalId = useMemo(() => {
     return props.modalId ?? id;
@@ -50,8 +53,14 @@ export function useApiFormModal(props: ApiFormModalProps) {
   const modal = useModal({
     id: modalId,
     title: formProps.title,
-    onOpen: formProps.onOpen,
-    onClose: formProps.onClose,
+    onOpen: () => {
+      modalState.setModalOpen(modalId, true);
+      formProps.onOpen?.();
+    },
+    onClose: () => {
+      modalState.setModalOpen(modalId, false);
+      formProps.onClose?.();
+    },
     closeOnClickOutside: formProps.closeOnClickOutside,
     size: props.size ?? 'xl',
     children: (
