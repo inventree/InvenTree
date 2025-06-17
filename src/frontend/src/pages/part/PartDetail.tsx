@@ -157,8 +157,20 @@ export default function PartDetail() {
     const data = { ...part };
 
     data.required =
-      (part_requirements?.required_build_order_quantity ?? 0) +
-      (part_requirements?.required_sales_order_quantity ?? 0);
+      (part_requirements?.required_for_build_orders ??
+        part?.required_for_build_orders ??
+        0) +
+      (part_requirements?.required_for_sales_orders ??
+        part?.required_for_sales_orders ??
+        0);
+
+    data.allocated =
+      (part_requirements?.allocated_to_build_orders ??
+        part?.allocated_to_build_orders ??
+        0) +
+      (part_requirements?.allocated_to_sales_orders ??
+        part?.allocated_to_sales_orders ??
+        0);
 
     // Extract requirements data
     data.can_build = part_requirements?.can_build ?? 0;
