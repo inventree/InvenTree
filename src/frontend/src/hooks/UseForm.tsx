@@ -17,6 +17,10 @@ export function useApiFormModal(props: ApiFormModalProps) {
   const id = useId();
   const modalClose = useRef(() => {});
 
+  const modalId = useMemo(() => {
+    return props.modalId ?? id;
+  }, [props.modalId, id]);
+
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
       ...props,
@@ -44,6 +48,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
   );
 
   const modal = useModal({
+    id: modalId,
     title: formProps.title,
     onOpen: formProps.onOpen,
     onClose: formProps.onClose,
@@ -52,7 +57,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
     children: (
       <Stack gap={'xs'}>
         <Divider />
-        <OptionsApiForm props={formProps} id={id} />
+        <OptionsApiForm props={formProps} id={modalId} />
       </Stack>
     )
   });
