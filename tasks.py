@@ -1360,7 +1360,7 @@ def frontend_download(
         # if clean, delete static/web directory
         if clean:
             shutil.rmtree(dest_path, ignore_errors=True)
-            dest_path.mkdir()
+            dest_path.mkdir(parents=True, exist_ok=True)
             info(f'Cleaned directory: {dest_path}')
 
         # unzip build to static folder
