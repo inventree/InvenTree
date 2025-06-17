@@ -450,13 +450,17 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ]
   );
 
+  const [sortingLoaded, setSortingLoaded] = useState<boolean>(false);
+
   useEffect(() => {
     const tableKey: string = tableState.tableKey.split('-')[0];
     const sorting: DataTableSortStatus = getTableSorting(tableKey);
 
-    if (sorting) {
+    if (sorting && !!sorting.columnAccessor && !!sorting.direction) {
       setSortStatus(sorting);
     }
+
+    setSortingLoaded(true);
   }, []);
 
   // Return the ordering parameter
@@ -492,6 +496,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
     const queryParams = getTableFilters(true);
 
     if (!url) {
+      // No URL supplied - do not load!
+      return [];
+    }
+
+    if (!sortingLoaded) {
+      // Sorting not yet loaded - do not load!
       return [];
     }
 
