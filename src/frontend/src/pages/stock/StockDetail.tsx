@@ -258,18 +258,21 @@ export default function StockDetail() {
         type: 'number',
         name: 'quantity',
         label: t`Quantity`,
+        unit: part?.units,
         hidden: !!stockitem.serial && stockitem.quantity == 1
       },
       {
         type: 'number',
         name: 'available_stock',
         label: t`Available`,
+        unit: part?.units,
         icon: 'stock'
       },
       {
         type: 'number',
         name: 'allocated',
         label: t`Allocated to Orders`,
+        unit: part?.units,
         icon: 'tick_off',
         hidden: !stockitem.allocated
       },

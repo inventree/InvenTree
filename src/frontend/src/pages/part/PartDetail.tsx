@@ -251,20 +251,20 @@ export default function PartDetail() {
       {
         type: 'number',
         name: 'total_in_stock',
-        unit: true,
+        unit: part.units,
         label: t`In Stock`
       },
       {
         type: 'number',
         name: 'unallocated_stock',
-        unit: true,
+        unit: part.units,
         label: t`Available Stock`,
         hidden: part.total_in_stock == part.unallocated_stock
       },
       {
         type: 'number',
         name: 'variant_stock',
-        unit: true,
+        unit: part.units,
         label: t`Variant Stock`,
         hidden: !part.variant_stock,
         icon: 'stock'
@@ -272,7 +272,7 @@ export default function PartDetail() {
       {
         type: 'number',
         name: 'minimum_stock',
-        unit: true,
+        unit: part.units,
         label: t`Minimum Stock`,
         hidden: part.minimum_stock <= 0
       },
@@ -280,13 +280,14 @@ export default function PartDetail() {
         type: 'number',
         name: 'ordering',
         label: t`On order`,
-        unit: true,
+        unit: part.units,
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
         type: 'number',
         name: 'required',
         label: t`Required for Orders`,
+        unit: part.units,
         hidden: part.required <= 0,
         icon: 'stocktake'
       },

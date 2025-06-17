@@ -279,9 +279,14 @@ function NumberValue(props: Readonly<FieldProps>) {
     return <Text size='sm'>'---'</Text>;
   }
 
-  const renderedValue = <Text size='sm'>{formatDecimal(numberValue)}</Text>;
-
-  return renderedValue;
+  return (
+    <Group wrap='nowrap' gap='xs' justify='left'>
+      <Text size='sm'>{formatDecimal(numberValue)}</Text>
+      {!!props.field_data?.unit && (
+        <Text size='xs'>[{props.field_data?.unit}]</Text>
+      )}
+    </Group>
+  );
 }
 
 /**
