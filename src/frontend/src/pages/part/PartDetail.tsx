@@ -249,20 +249,20 @@ export default function PartDetail() {
     // Top right - stock availability information
     const tr: DetailsField[] = [
       {
-        type: 'string',
+        type: 'number',
         name: 'total_in_stock',
         unit: true,
         label: t`In Stock`
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'unallocated_stock',
         unit: true,
         label: t`Available Stock`,
         hidden: part.total_in_stock == part.unallocated_stock
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'variant_stock',
         unit: true,
         label: t`Variant Stock`,
@@ -270,21 +270,21 @@ export default function PartDetail() {
         icon: 'stock'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'minimum_stock',
         unit: true,
         label: t`Minimum Stock`,
         hidden: part.minimum_stock <= 0
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'ordering',
         label: t`On order`,
         unit: true,
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'required',
         label: t`Required for Orders`,
         hidden: part.required <= 0,
@@ -315,7 +315,7 @@ export default function PartDetail() {
             part.allocated_to_sales_orders <= 0)
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'can_build',
         unit: true,
         label: t`Can Build`,

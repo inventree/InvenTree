@@ -24,7 +24,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
-import { formatDate } from '../../defaults/formatters';
+import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
@@ -43,6 +43,7 @@ export type DetailsField = {
   copy?: boolean;
   value_formatter?: () => ValueFormatterReturn;
 } & (
+  | NumberDetailField
   | StringDetailField
   | BooleanField
   | LinkDetailField
@@ -55,6 +56,11 @@ type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
   type: 'string' | 'text' | 'date';
+  unit?: boolean;
+};
+
+type NumberDetailField = {
+  type: 'number';
   unit?: boolean;
 };
 
@@ -262,6 +268,22 @@ function DateValue(props: Readonly<FieldProps>) {
   return <Text size='sm'>{formatDate(props.field_value?.toString())}</Text>;
 }
 
+// Return a formatted "number" value, with optional unit
+function NumberValue(props: Readonly<FieldProps>) {
+  const value = props?.field_value;
+
+  // Convert to double
+  const numberValue = Number.parseFloat(value.toString());
+
+  if (value === null || value === undefined) {
+    return <Text size='sm'>'---'</Text>;
+  }
+
+  const renderedValue = <Text size='sm'>{formatDecimal(numberValue)}</Text>;
+
+  return renderedValue;
+}
+
 /**
  * Renders the value of a 'string' or 'text' field.
  * If owner is defined, only renders a badge
@@ -447,6 +469,8 @@ export function DetailsTableField({
         return StatusValue;
       case 'date':
         return DateValue;
+      case 'number':
+        return NumberValue;
       case 'text':
       case 'string':
       default:

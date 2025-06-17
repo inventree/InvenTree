@@ -255,19 +255,19 @@ export default function StockDetail() {
         )
       },
       {
-        type: 'text',
+        type: 'number',
         name: 'quantity',
         label: t`Quantity`,
         hidden: !!stockitem.serial && stockitem.quantity == 1
       },
       {
-        type: 'text',
+        type: 'number',
         name: 'available_stock',
         label: t`Available`,
         icon: 'stock'
       },
       {
-        type: 'text',
+        type: 'number',
         name: 'allocated',
         label: t`Allocated to Orders`,
         icon: 'tick_off',
