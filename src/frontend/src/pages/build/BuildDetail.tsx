@@ -186,12 +186,12 @@ export default function BuildDetail() {
 
     const tr: DetailsField[] = [
       {
-        type: 'text',
+        type: 'number',
         name: 'quantity',
         label: t`Build Quantity`
       },
       {
-        type: 'text',
+        type: 'number',
         name: 'can_build',
         label: t`Can Build`
       },
