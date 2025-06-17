@@ -33,7 +33,7 @@ export default function ExtraLineItemTable({
 }: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
-  orderDetailRefresh: any;
+  orderDetailRefresh: () => void;
   currency: string;
   role: UserRoles;
 }>) {
