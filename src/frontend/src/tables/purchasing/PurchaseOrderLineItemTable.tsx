@@ -59,7 +59,7 @@ export function PurchaseOrderLineItemTable({
   params
 }: Readonly<{
   order: any;
-  orderDetailRefresh: any;
+  orderDetailRefresh: () => void
   orderId: number;
   currency: string;
   supplierId?: number;
