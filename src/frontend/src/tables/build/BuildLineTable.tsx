@@ -419,7 +419,10 @@ export default function BuildLineTable({
     ];
   }, [hasOutput, isActive, table, output]);
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'new-build-order'
+  });
 
   const [initialData, setInitialData] = useState<any>({});
 
@@ -431,6 +434,7 @@ export default function BuildLineTable({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
     fields: buildOrderFields,
+    modalId: 'new-build-order',
     initialData: initialData,
     follow: true,
     modelType: ModelType.build

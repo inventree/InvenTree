@@ -296,6 +296,7 @@ function LineItemFormRow({
 
   // Batch code generator
   const batchCodeGenerator = useBatchCodeGenerator({
+    isEnabled: () => batchOpen,
     onGenerate: (value: any) => {
       if (value) {
         props.changeFn(props.idx, 'batch_code', value);
@@ -305,6 +306,7 @@ function LineItemFormRow({
 
   // Serial number generator
   const serialNumberGenerator = useSerialNumberGenerator({
+    isEnabled: () => batchOpen && trackable,
     onGenerate: (value: any) => {
       if (value) {
         props.changeFn(props.idx, 'serial_numbers', value);
