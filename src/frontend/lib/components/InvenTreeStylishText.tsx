@@ -3,8 +3,7 @@ import {
   type MantineTheme,
   Text,
   darken,
-  getThemeColor,
-  useMantineTheme
+  getThemeColor
 } from '@mantine/core';
 import { useMemo } from 'react';
 import type { JSX } from 'react';
@@ -13,19 +12,11 @@ import type { JSX } from 'react';
 const useThematicGradient = ({
   suppliedTheme
 }: {
-  suppliedTheme?: MantineTheme;
+  suppliedTheme: MantineTheme;
 }) => {
-  const theme = useMemo(() => {
-    if (suppliedTheme && suppliedTheme != undefined) {
-      return suppliedTheme;
-    }
-
-    return useMantineTheme();
-  }, [suppliedTheme, useMantineTheme]);
-
   const primary = useMemo(() => {
-    return getThemeColor(theme.primaryColor, theme);
-  }, [theme]);
+    return getThemeColor(suppliedTheme.primaryColor, suppliedTheme);
+  }, [suppliedTheme]);
 
   const secondary = useMemo(() => darken(primary, 0.25), [primary]);
 
@@ -34,14 +25,19 @@ const useThematicGradient = ({
   }, [primary, secondary]);
 };
 
-// A stylish text component that uses the primary color of the theme
-export function StylishText({
+/**
+ * A stylish text component that uses the primary color of the theme
+ * Note that the "theme" object must be provided by the parent component.
+ * - For plugins this theme object is provided.
+ * - For the main UI, we have a separate <StylishText> component
+ */
+export function InvenTreeStylishText({
   children,
   theme,
   size
 }: Readonly<{
   children: JSX.Element | string;
-  theme?: MantineTheme;
+  theme: MantineTheme;
   size?: MantineSize;
 }>) {
   const { primary, secondary } = useThematicGradient({ suppliedTheme: theme });

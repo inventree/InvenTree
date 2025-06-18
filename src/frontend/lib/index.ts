@@ -23,4 +23,4 @@ export {
 export { checkPluginVersion } from './functions/Plugins';
 
 // UI components
-export { StylishText } from './components/StylishText';
+export { InvenTreeStylishText } from './components/InvenTreeStylishText';

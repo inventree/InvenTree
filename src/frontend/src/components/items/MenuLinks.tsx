@@ -11,10 +11,10 @@ import {
 import { type JSX, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StylishText } from '@lib/components/StylishText';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { InvenTreeIcon } from '../../functions/icons';
+import { StylishText } from './StylishText';
 
 export interface MenuLinkItem {
   id: string;

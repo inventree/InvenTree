@@ -3,7 +3,6 @@ import { Trans } from '@lingui/react/macro';
 import { Accordion, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -12,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
+import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   useCreateApiFormModal,

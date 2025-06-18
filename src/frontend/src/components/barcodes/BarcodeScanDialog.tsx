@@ -1,4 +1,3 @@
-import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -12,6 +11,7 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { extractErrorMessage } from '../../functions/api';
 import { useUserState } from '../../states/UserState';
+import { StylishText } from '../items/StylishText';
 import { BarcodeInput } from './BarcodeInput';
 
 export type BarcodeScanResult = {

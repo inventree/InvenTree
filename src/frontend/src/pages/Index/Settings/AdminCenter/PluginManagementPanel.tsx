@@ -4,8 +4,8 @@ import { Accordion, Alert, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { lazy } from 'react';
 
-import { StylishText } from '@lib/components/StylishText';
 import { useShallow } from 'zustand/react/shallow';
+import { StylishText } from '../../../../components/items/StylishText';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useServerApiState } from '../../../../states/ApiState';

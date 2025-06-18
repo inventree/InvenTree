@@ -4,7 +4,6 @@ import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
-import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -16,6 +15,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
+import { StylishText } from '../../components/items/StylishText';
 import {
   TransferList,
   type TransferListItem

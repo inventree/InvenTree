@@ -1,4 +1,3 @@
-import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
@@ -11,6 +10,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { CopyButton } from '../../components/buttons/CopyButton';
+import { StylishText } from '../../components/items/StylishText';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';

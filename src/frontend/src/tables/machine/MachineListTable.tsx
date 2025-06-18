@@ -19,7 +19,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { Trans } from '@lingui/react/macro';
@@ -31,6 +30,7 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
+import { StylishText } from '../../components/items/StylishText';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
 import {
   DetailDrawer,

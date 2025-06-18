@@ -1,4 +1,3 @@
-import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
@@ -13,6 +12,7 @@ import {
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {} from '../../components/items/ActionDropdown';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';

@@ -14,7 +14,7 @@ import {
 import { IconAlertCircle, IconExclamationCircle } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 
-import { StylishText } from '@lib/components/StylishText';
+import { StylishText } from '../../../components/items/StylishText';
 import type { panelOptions } from '../PartPricingPanel';
 
 function AccordionControl(props: AccordionControlProps) {

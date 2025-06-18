@@ -17,9 +17,9 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { StylishText } from '@lib/components/StylishText';
 import useInstanceName from '../../hooks/UseInstanceName';
 import { useUserState } from '../../states/UserState';
+import { StylishText } from '../items/StylishText';
 
 /**
  * A menu for editing the dashboard layout
