@@ -111,6 +111,7 @@ export enum ApiEndpoints {
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
+  part_requirements = 'part/:id/requirements/',
   part_serial_numbers = 'part/:id/serial-numbers/',
   part_scheduling = 'part/:id/scheduling/',
   part_pricing_internal = 'part/internal-price/',
