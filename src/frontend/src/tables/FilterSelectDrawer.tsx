@@ -18,6 +18,7 @@ import { DateInput, type DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import type {
   FilterSetState,
   TableFilter,
@@ -26,7 +27,6 @@ import type {
 } from '@lib/types/Filters';
 import { IconCheck } from '@tabler/icons-react';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import { StylishText } from '../components/items/StylishText';
 import { getTableFilterOptions } from './Filter';
 
 /*

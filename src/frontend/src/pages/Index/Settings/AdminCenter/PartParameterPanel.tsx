@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Accordion } from '@mantine/core';
 
-import { StylishText } from '../../../../components/items/StylishText';
+import { StylishText } from '@lib/components/StylishText';
 import PartParameterTemplateTable from '../../../../tables/part/PartParameterTemplateTable';
 import SelectionListTable from '../../../../tables/part/SelectionListTable';
 

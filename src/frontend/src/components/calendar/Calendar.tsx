@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
+import { StylishText } from '@lib/components/StylishText';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import {
@@ -33,7 +34,6 @@ import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 import { TableSearchInput } from '../../tables/Search';
 import { Boundary } from '../Boundary';
 import { ActionButton } from '../buttons/ActionButton';
-import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;

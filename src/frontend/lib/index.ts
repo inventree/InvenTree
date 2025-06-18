@@ -21,3 +21,6 @@ export {
   navigateToLink
 } from './functions/Navigation';
 export { checkPluginVersion } from './functions/Plugins';
+
+// UI components
+export { StylishText } from './components/StylishText';

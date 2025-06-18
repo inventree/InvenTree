@@ -2,7 +2,7 @@ import { Trans } from '@lingui/react/macro';
 import { Divider, Stack } from '@mantine/core';
 import { lazy } from 'react';
 
-import { StylishText } from '../../../../components/items/StylishText';
+import { StylishText } from '@lib/components/StylishText';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 

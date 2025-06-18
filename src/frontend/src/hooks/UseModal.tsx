@@ -2,8 +2,8 @@ import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useCallback } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import type { UseModalProps, UseModalReturn } from '@lib/types/Modals';
-import { StylishText } from '../components/items/StylishText';
 
 export function useModal(props: UseModalProps): UseModalReturn {
   const onOpen = useCallback(() => {

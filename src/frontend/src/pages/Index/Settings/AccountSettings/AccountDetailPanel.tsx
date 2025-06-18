@@ -4,6 +4,7 @@ import { Badge, Group, Stack, Table } from '@mantine/core';
 import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +12,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
-import { StylishText } from '../../../../components/items/StylishText';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 

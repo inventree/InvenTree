@@ -28,6 +28,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -52,7 +53,6 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
