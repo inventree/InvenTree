@@ -143,6 +143,14 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: id,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
@@ -151,8 +159,23 @@ export default function PartDetail() {
     const data = { ...part };
 
     data.required =
-      (data?.required_for_build_orders ?? 0) +
-      (data?.required_for_sales_orders ?? 0);
+      (partRequirements?.required_for_build_orders ??
+        part?.required_for_build_orders ??
+        0) +
+      (partRequirements?.required_for_sales_orders ??
+        part?.required_for_sales_orders ??
+        0);
+
+    data.allocated =
+      (partRequirements?.allocated_to_build_orders ??
+        part?.allocated_to_build_orders ??
+        0) +
+      (partRequirements?.allocated_to_sales_orders ??
+        part?.allocated_to_sales_orders ??
+        0);
+
+    // Extract requirements data
+    data.can_build = partRequirements?.can_build ?? 0;
 
     // Provide latest serial number info
     if (!!serials.latest) {
@@ -316,19 +339,19 @@ export default function PartDetail() {
             part.allocated_to_sales_orders <= 0)
       },
       {
-        type: 'number',
-        name: 'can_build',
-        unit: true,
-        label: t`Can Build`,
-        hidden: true // TODO: Expose "can_build" to the API
-      },
-      {
         type: 'progressbar',
         name: 'building',
         label: t`In Production`,
         progress: part.building,
         total: part.scheduled_to_build,
         hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
+      },
+      {
+        type: 'number',
+        name: 'can_build',
+        unit: part.units,
+        label: t`Can Build`,
+        hidden: !part.assembly || partRequirementsQuery.isFetching
       }
     ];
 
@@ -489,7 +512,9 @@ export default function PartDetail() {
     id,
     serials,
     instanceQuery.isFetching,
-    instanceQuery.data
+    instanceQuery.data,
+    partRequirementsQuery.isFetching,
+    partRequirements
   ]);
 
   // Part data panels (recalculate when part data changes)
