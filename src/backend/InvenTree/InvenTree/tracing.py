@@ -68,9 +68,14 @@ def setup_tracing(
     headers = {k: v for k, v in headers.items() if v is not None}
 
     # Initialize the OTLP Resource
+    service_name = 'Unkown'
+    if InvenTree.ready.isInServerThread():
+        service_name = 'BACKEND'
+    elif InvenTree.ready.isInWorkerThread():
+        service_name = 'WORKER'
     resource = resources.Resource(
         attributes={
-            resources.SERVICE_NAME: 'BACKEND',
+            resources.SERVICE_NAME: service_name,
             resources.SERVICE_NAMESPACE: 'INVENTREE',
             resources.SERVICE_VERSION: inventreeVersion(),
             **resources_input,

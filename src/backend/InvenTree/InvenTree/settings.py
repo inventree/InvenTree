@@ -33,7 +33,11 @@ from InvenTree.config import (
 )
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
+from InvenTree.version import (
+    checkMinPythonVersion,
+    inventreeApiVersion,
+    inventreeCommitHash,
+)
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
@@ -801,6 +805,7 @@ inventree_tags = {
     'docker': DOCKER,
     'debug': DEBUG,
     'remote': REMOTE_LOGIN,
+    'commit': inventreeCommitHash(),
 }
 
 # sentry.io integration for error reporting
