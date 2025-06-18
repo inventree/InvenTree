@@ -23,10 +23,34 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await loadTab(page, 'Plugins');
   await loadTab(page, 'Users / Access');
 
-  // Let's create a new user
+  // Let's check creating a new user
   await page.getByLabel('action-button-add-user').click();
   await page.getByRole('button', { name: 'Submit' }).waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Change password
+  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
+    button: 'right'
+  });
+  await page.getByRole('button', { name: 'Change Password' }).click();
+  await page.getByLabel('text-field-password').fill('123');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText("['This password is too short").waitFor();
+  await page
+    .locator('label')
+    .filter({ hasText: 'Override warning' })
+    .locator('div')
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Password updated').click();
+
+  // Open profile
+  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
+    button: 'right'
+  });
+  await page.getByRole('button', { name: 'Open Profile' }).click();
+  await page.getByText('User: ian', { exact: true }).click();
 });
 
 /**
