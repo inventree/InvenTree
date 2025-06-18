@@ -16,7 +16,7 @@ const useThematicGradient = () => {
     return getThemeColor(theme.primaryColor, theme);
   }, [theme]);
 
-  const secondary = useMemo(() => darken(primary, 0.9), [primary]);
+  const secondary = useMemo(() => darken(primary, 0.25), [primary]);
 
   return useMemo(() => {
     return { primary, secondary };
