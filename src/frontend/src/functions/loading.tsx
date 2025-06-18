@@ -1,5 +1,5 @@
 import { Center, Loader, MantineProvider, Stack } from '@mantine/core';
-import { Suspense } from 'react';
+import { type JSX, Suspense } from 'react';
 
 import { colorSchema } from '../contexts/colorSchema';
 import { theme } from '../theme';

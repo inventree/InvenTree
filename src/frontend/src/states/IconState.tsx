@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-import { t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { t } from '@lingui/core/macro';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { generateUrl } from '../functions/urls';
-import { apiUrl } from './ApiState';
 
 type IconPackage = {
   name: string;

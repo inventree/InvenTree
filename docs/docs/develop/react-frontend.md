@@ -4,90 +4,60 @@ title: React Frontend Development
 
 ## Setup
 
-The following documentation details how to setup and run a development installation of the InvenTree frontend user interface.
-
-### Prerequisites
-
-To run the frontend development server, you will need to have the following installed:
-
-- Node.js
-- Yarn
-
-!!! note "Devcontainer"
-    The [devcontainer](./devcontainer.md) setup already includes all prerequisite packages, and is ready to run the frontend server.
-
-### Install
-
-The React frontend requires its own packages that aren't installed via the usual [invoke](../start/invoke.md) tasks.
-
-#### Docker
-
-Run the following command:
-`docker compose run inventree-dev-server invoke int.frontend-compile`
-This will install the required packages for running the React frontend on your InvenTree dev server.
-
-#### Devcontainer
+The following documentation details how to setup and run a development installation of the InvenTree frontend user interface. It is assumed that you are using the [InvenTree devcontainer setup](./devcontainer.md).
 
 !!! warning "This guide assumes you already have a running devcontainer"
 
 !!! info "All these steps are performed within Visual Studio Code"
 
-Open a new terminal from the top menu by clicking `Terminal > New Terminal`
-Make sure this terminal is running within the virtual env. The start of the last line should display `(venv)`
+!!! note "Devcontainer"
+    The [devcontainer](./devcontainer.md) setup already includes all prerequisite packages, and is ready to run the frontend server.
 
-Run the command `invoke int.frontend-compile`. Wait for this to finish
+### Install Packages
 
-### Running
+First, ensure that all the required frontend packages are installed:
 
-After finishing the install, you need to launch a frontend server to be able to view the new UI.
+```bash
+invoke int.frontend-install
+```
 
-Using the previously described ways of running commands, execute the following:
-`invoke dev.frontend-server` in your environment
-This command does not run as a background daemon, and will occupy the window it's ran in.
+## Server Processes
 
-### Accessing
+The development environment requires two server processes to be running -  the backend server and the frontend server.
 
-When the frontend server is running, it will be available on port 5173.
-i.e: https://localhost:5173/
+### Backend Server
 
-!!! note "Backend Server"
-    The InvenTree backend server must also be running, for the frontend interface to have something to connect to! To launch a backend server, use the `invoke dev.server` command.
+Ensure that the backend server is running, before launching the frontend server. The backend server is responsible for serving the API endpoints that the frontend will connect to.
 
-### Debugging
+```bash
+invoke dev.server
+```
+
+This will launch the backend server in the foreground, and will occupy the terminal window it is run in.
+
+### Frontend Server
+
+Now that the backend server is running, you can launch the frontend server. The frontend server is responsible for serving the React-based user interface, and provides a development environment for building and testing the frontend code.
+
+In a *separate terminal window*, run the following command to start the frontend server:
+
+```bash
+invoke dev.frontend-server
+```
+
+When the frontend server is running, it will be available at https://localhost:5173/
+
+## Live Reloading
+
+Any changes made to the frontend code will automatically trigger a live reload of the frontend server. This means that you can make changes to the code, and see the results immediately in your browser without needing to manually refresh the page.
+
+## Debugging
 
 You can attach the vscode debugger to the frontend server to debug the frontend code. With the frontend server running, open the `Run and Debug` view in vscode and select `InvenTree Frontend - Vite` from the dropdown. Click the play button to start debugging. This will attach the debugger to the running vite server, and allow you to place breakpoints in the frontend code.
 
 !!! info "Backend Server"
     To debug the frontend code, the backend server must be running (in a separate process). Note that you cannot debug the backend server and the frontend server in the same vscode instance.
 
-### Information
-
-On Windows, any Docker interaction is run via WSL. Naturally, all containers and devcontainers run through WSL.
-The default configuration for the frontend server sets up file polling to enable hot reloading.
-This is in itself a huge performance hit. If you're running an older system, it might just be enough to block anything from running in the container.
-
-If you're having issues running the Frontend server, have a look at your Docker Desktop app.
-If you routinely see the container using almost ALL available CPU capacity, you need to turn off file polling.
-
-!!! warning "Turning off file polling requires you to restart the frontend server process upon each file change"
-
-Head to the following path: `src/frontend/vite.config.ts` and change:
-
-`const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');`
-to
-`const IS_IN_WSL = false;`
-
-!!! tip "Make sure to not commit this change!"
-
-!!! warning "This change will require you to restart the frontend server for every change you make in the frontend code"
-
-### Caveats
-
-When running the frontend development server, some features may not work entirely as expected! Please take the time to understand the flow of data when running the frontend development server, and how it interacts with the backend server!
-
-#### SSO Login
-
-When logging into the frontend dev server via SSO, the redirect URL may not redirect correctly.
 
 ## Testing
 
@@ -95,10 +65,11 @@ The frontend codebase it tested using [Playwright](https://playwright.dev/). The
 
 ### Install Playwright
 
-To install the required packages to run the tests, you can use the following command:
+To install the required packages to run the tests, you can use the following commands:
 
 ```bash
 cd src/frontend
+sudo npx playwright install-deps
 npx playwright install
 ```
 
@@ -111,7 +82,7 @@ cd src/frontend
 npx playwright test --ui
 ```
 
-This will first launch the backend server (at `http://localhost:8000`), and then run the tests against the frontend server (at `http://localhost:5173`). An interactive browser window will open, and you can run the tests individually or as a group.
+This will first launch the backend server (at http://localhost:8000), and then run the tests against the frontend server (at http://localhost:5173). An interactive browser window will open, and you can run the tests individually or as a group.
 
 ### Viewing Reports
 
@@ -134,3 +105,36 @@ npx playwright test --debug
 ```
 
 This will print out any errors to the console, allowing you to resolve issues before continuing. In all likelihood, your InvenTree installation needs to be updated, and simply running `invoke update` will allow you to continue.
+
+## Tips and Tricks
+
+### WSL
+
+On Windows, any Docker interaction is run via WSL. Naturally, all containers and devcontainers run through WSL.
+The default configuration for the frontend server sets up file polling to enable hot reloading.
+This is in itself a huge performance hit. If you're running an older system, it might just be enough to block anything from running in the container.
+
+If you're having issues running the Frontend server, have a look at your Docker Desktop app.
+If you routinely see the container using almost ALL available CPU capacity, you need to turn off file polling.
+
+!!! warning "Turning off file polling requires you to restart the frontend server process upon each file change"
+
+Head to the following path: `src/frontend/vite.config.ts` and change:
+
+```const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');```
+
+to
+
+```const IS_IN_WSL = false;```
+
+!!! tip "Make sure to not commit this change to Git!"
+
+!!! warning "This change will require you to restart the frontend server for every change you make in the frontend code"
+
+### Caveats
+
+When running the frontend development server, some features may not work entirely as expected! Please take the time to understand the flow of data when running the frontend development server, and how it interacts with the backend server!
+
+#### SSO Login
+
+When logging into the frontend dev server via SSO, the redirect URL may not redirect correctly.

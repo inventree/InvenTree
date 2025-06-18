@@ -23,7 +23,7 @@ class BaseMixinDefinition:
     """Mixin to test the meta functions of all mixins."""
 
     def test_mixin_name(self):
-        """Test that the mixin registers itseld correctly."""
+        """Test that the mixin registers itself correctly."""
         # mixin name
         self.assertIn(
             self.MIXIN_NAME,
@@ -154,7 +154,7 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
 
     MIXIN_HUMAN_NAME = 'Navigation Links'
     MIXIN_NAME = 'navigation'
-    MIXIN_ENABLE_CHECK = 'has_naviation'
+    MIXIN_ENABLE_CHECK = 'has_navigation'
 
     def setUp(self):
         """Setup for all tests."""
@@ -205,7 +205,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             NAME = 'Sample API Caller'
 
             SETTINGS = {
-                'API_TOKEN': {'name': 'API Token', 'protected': True},
+                'API_TOKEN': {
+                    'name': 'API Token',
+                    'protected': True,
+                    'default': 'reqres-free-v1',
+                },
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
@@ -215,6 +219,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
+            API_TOKEN = 'x-api-key'
 
             @property
             def api_url(self):
@@ -285,15 +290,19 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
 
+        # Set API TOKEN
+        self.mixin.set_setting('API_TOKEN', 'reqres-free-v1')
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
             json={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
+            timeout=5000,
         )
 
         self.assertTrue(result)
+        self.assertNotIn('error', result)
         self.assertEqual(result['name'], 'morpheus')
 
         # api_call with endpoint with leading slash

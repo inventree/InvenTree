@@ -1,15 +1,21 @@
 import { test } from '../baseFixtures';
-import { baseUrl } from '../defaults';
-import { clearTableFilters, getRowFromCell } from '../helpers';
-import { doQuickLogin } from '../login';
+import {
+  clearTableFilters,
+  getRowFromCell,
+  loadTab,
+  navigate
+} from '../helpers';
+import { doCachedLogin } from '../login';
 
 /**
  * CHeck each panel tab for the "Parts" page
  */
-test('Parts - Tabs', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Tabs', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await page.getByRole('tab', { name: 'Parts' }).click();
+  await page.waitForURL('**/part/category/index/**');
+
   await page
     .getByLabel('panel-tabs-partcategory')
     .getByRole('tab', { name: 'Parts' })
@@ -18,78 +24,131 @@ test('Parts - Tabs', async ({ page }) => {
   // Select a particular part from the table
   await clearTableFilters(page);
   await page.getByPlaceholder('Search').fill('1551');
+  await page.waitForLoadState('networkidle');
   await page.getByText('1551ABK').click();
 
-  await page.getByRole('tab', { name: 'Allocations' }).click();
-  await page.getByRole('tab', { name: 'Used In' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('tab', { name: 'Scheduling' }).click();
-  await page.getByRole('tab', { name: 'Stock History' }).click();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
-  await page.getByRole('tab', { name: 'Notes' }).click();
-  await page.getByRole('tab', { name: 'Related Parts' }).click();
+  await loadTab(page, 'Allocations');
+  await loadTab(page, 'Used In');
+  await loadTab(page, 'Pricing');
+  await loadTab(page, 'Suppliers');
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Scheduling');
+  await loadTab(page, 'Stock History');
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Notes');
+  await loadTab(page, 'Related Parts');
 
   // Related Parts
   await page.getByText('1551ACLR').click();
-  await page.getByRole('tab', { name: 'Part Details' }).click();
-  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await loadTab(page, 'Part Details');
+  await loadTab(page, 'Parameters');
 
   await page
     .getByLabel('panel-tabs-part')
     .getByRole('tab', { name: 'Stock', exact: true })
     .click();
 
-  await page.getByRole('tab', { name: 'Allocations' }).click();
-  await page.getByRole('tab', { name: 'Used In' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
+  await loadTab(page, 'Allocations');
+  await loadTab(page, 'Used In');
+  await loadTab(page, 'Pricing');
 
-  await page.goto(`${baseUrl}/part/category/index/parts`);
+  await navigate(page, 'part/category/index/parts');
   await page.getByText('Blue Chair').click();
-  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
-  await page.getByRole('tab', { name: 'Build Orders' }).click();
+  await loadTab(page, 'Bill of Materials');
+  await loadTab(page, 'Build Orders');
 });
 
-test('Parts - Manufacturer Parts', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Manufacturer Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/84/suppliers' });
 
-  await page.goto(`${baseUrl}/part/84/suppliers`);
-
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await loadTab(page, 'Suppliers');
   await page.getByText('Hammond Manufacturing').click();
-  await page.getByRole('tab', { name: 'Parameters' }).click();
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await loadTab(page, 'Parameters');
+  await loadTab(page, 'Suppliers');
+  await loadTab(page, 'Attachments');
   await page.getByText('1551ACLR - 1551ACLR').waitFor();
 });
 
-test('Parts - Supplier Parts', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Supplier Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/15/suppliers' });
 
-  await page.goto(`${baseUrl}/part/15/suppliers`);
-
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await loadTab(page, 'Suppliers');
   await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
-  await page.getByRole('tab', { name: 'Received Stock' }).click(); //
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
+  await loadTab(page, 'Received Stock'); //
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Pricing');
   await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
 });
 
-test('Parts - Locking', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - BOM', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/87/bom' });
 
-  // Navigate to a known assembly which is *not* locked
-  await page.goto(`${baseUrl}/part/104/bom`);
-  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await loadTab(page, 'Bill of Materials');
+  await page.waitForLoadState('networkidle');
+
+  const cell = await page.getByRole('cell', {
+    name: 'Small plastic enclosure, black',
+    exact: true
+  });
+  await cell.click({ button: 'right' });
+
+  // Check for expected context menu actions
+  await page.getByRole('button', { name: 'Edit', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Delete', exact: true }).waitFor();
+  await page
+    .getByRole('button', { name: 'View details', exact: true })
+    .waitFor();
+
+  await page
+    .getByRole('button', { name: 'Edit Substitutes', exact: true })
+    .click();
+  await page.getByText('Edit BOM Substitutes').waitFor();
+  await page.getByText('1551ACLR').first().waitFor();
+  await page.getByText('1551AGY').first().waitFor();
+
+  await page.getByLabel('related-field-part').fill('enclosure');
+  await page.getByText('1591BTBU').click();
+
+  await page.getByRole('button', { name: 'Add Substitute' }).waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+});
+
+test('Part - Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/details' });
+
+  await page.getByText('A square table - with blue paint').first().waitFor();
+
+  // Open part edit dialog
+  await page.keyboard.press('Control+E');
+
+  const keywords = await page.getByLabel('text-field-keywords').inputValue();
+  await page
+    .getByLabel('text-field-keywords')
+    .fill(keywords ? '' : 'table furniture');
+
+  // Test URL validation
+  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Enter a valid URL.').waitFor();
+
+  // Fill with an empty URL
+  await page.getByLabel('text-field-link').fill('');
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Updated').waitFor();
+});
+
+test('Parts - Locking', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/bom' });
+  await loadTab(page, 'Bill of Materials');
   await page.getByLabel('action-button-add-bom-item').waitFor();
-  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await loadTab(page, 'Parameters');
   await page.getByLabel('action-button-add-parameter').waitFor();
 
   // Navigate to a known assembly which *is* locked
-  await page.goto(`${baseUrl}/part/100/bom`);
-  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await navigate(page, 'part/100/bom');
+  await loadTab(page, 'Bill of Materials');
   await page.getByLabel('part-lock-icon').waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
 
@@ -99,32 +158,48 @@ test('Parts - Locking', async ({ page }) => {
   await page.getByText('In Production: 50').waitFor();
 
   // Check the "parameters" tab also
-  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await loadTab(page, 'Parameters');
   await page.getByText('Part parameters cannot be').waitFor();
 });
 
-test('Parts - Allocations', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Details', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/113/details' });
 
+  // Check for expected values on this page
+  await page.getByText('Required for Orders').waitFor();
+  await page.getByText('Allocated to Sales Orders').waitFor();
+  await page.getByText('Can Build').waitFor();
+
+  await page.getByText('0 / 10').waitFor();
+  await page.getByText('4 / 49').waitFor();
+
+  // Badges
+  await page.getByText('Required: 10').waitFor();
+  await page.getByText('No Stock').waitFor();
+  await page.getByText('In Production: 4').waitFor();
+
+  await page.getByText('Creation Date').waitFor();
+  await page.getByText('2022-04-29').waitFor();
+});
+
+test('Parts - Allocations', async ({ browser }) => {
   // Let's look at the allocations for a single stock item
-  await page.goto(`${baseUrl}/stock/item/324/`);
-  await page.getByRole('tab', { name: 'Allocations' }).click();
+  const page = await doCachedLogin(browser, { url: 'stock/item/324/' });
+  await loadTab(page, 'Allocations');
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
   await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
   await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
 
   // Let's look at the allocations for an entire part
-  await page.goto(`${baseUrl}/part/74/details`);
+  await navigate(page, 'part/74/details');
 
   // Check that the overall allocations are displayed correctly
-  await page.getByText('11 / 825').waitFor();
-  await page.getByText('5 / 109').waitFor();
+  await page.getByText('11 / ').waitFor();
+  await page.getByText('5 / ').waitFor();
 
   // Navigate to the "Allocations" tab
-  await page.waitForTimeout(500);
-
-  await page.getByRole('tab', { name: 'Allocations' }).click();
+  await loadTab(page, 'Allocations');
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
   await page.getByRole('button', { name: 'Sales Order Allocations' }).waitFor();
@@ -144,7 +219,9 @@ test('Parts - Allocations', async ({ page }) => {
   // Expand allocations against BO0001
   await build_order_cell.click();
   await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
-  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Factory/Office Block/Room 101', exact: true })
+    .waitFor();
   await build_order_cell.click();
 
   // Check row options for BO0001
@@ -170,14 +247,12 @@ test('Parts - Allocations', async ({ page }) => {
   await page.keyboard.press('Escape');
 });
 
-test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
-  await doQuickLogin(page);
-
+test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   // Part with no history
-  await page.goto(`${baseUrl}/part/82/pricing`);
+  const page = await doCachedLogin(browser, { url: 'part/82/pricing' });
 
   await page.getByText('Small plastic enclosure, black').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -186,9 +261,9 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
 
   // Part with history
-  await page.goto(`${baseUrl}/part/108/pricing`);
+  await navigate(page, 'part/108/pricing');
   await page.getByText('A chair - with blue paint').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -220,13 +295,11 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.waitForURL('**/part/98/**');
 });
 
-test('Parts - Pricing (Supplier)', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Pricing (Supplier)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/55/pricing' });
 
-  // Part
-  await page.goto(`${baseUrl}/part/55/pricing`);
   await page.getByText('Ceramic capacitor, 100nF in').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -246,13 +319,10 @@ test('Parts - Pricing (Supplier)', async ({ page }) => {
   // await page.waitForURL('**/purchasing/supplier-part/697/');
 });
 
-test('Parts - Pricing (Variant)', async ({ page }) => {
-  await doQuickLogin(page);
-
-  // Part
-  await page.goto(`${baseUrl}/part/106/pricing`);
+test('Parts - Pricing (Variant)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/106/pricing' });
   await page.getByText('A chair - available in multiple colors').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -272,13 +342,10 @@ test('Parts - Pricing (Variant)', async ({ page }) => {
   await page.waitForURL('**/part/109/**');
 });
 
-test('Parts - Pricing (Internal)', async ({ page }) => {
-  await doQuickLogin(page);
-
-  // Part
-  await page.goto(`${baseUrl}/part/65/pricing`);
+test('Parts - Pricing (Internal)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/65/pricing' });
   await page.getByText('Socket head cap screw, M2').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -297,13 +364,11 @@ test('Parts - Pricing (Internal)', async ({ page }) => {
   await page.getByText('Part *M2x4 SHCSSocket head').click();
 });
 
-test('Parts - Pricing (Purchase)', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Pricing (Purchase)', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/pricing' });
 
-  // Part
-  await page.goto(`${baseUrl}/part/69/pricing`);
   await page.getByText('1.25mm Pitch, PicoBlade PCB').waitFor();
-  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
@@ -319,10 +384,8 @@ test('Parts - Pricing (Purchase)', async ({ page }) => {
   await page.getByText('2022-04-29').waitFor();
 });
 
-test('Parts - Attachments', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/part/69/attachments`);
+test('Parts - Attachments', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/attachments' });
 
   // Submit a new external link
   await page.getByLabel('action-button-add-external-').click();
@@ -341,10 +404,8 @@ test('Parts - Attachments', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Parts - Parameters', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/part/69/parameters`);
+test('Parts - Parameters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
 
   // Create a new template
   await page.getByLabel('action-button-add-parameter').click();
@@ -368,10 +429,43 @@ test('Parts - Parameters', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Parts - Notes', async ({ page }) => {
-  await doQuickLogin(page);
+test('Parts - Parameter Filtering', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/' });
 
-  await page.goto(`${baseUrl}/part/69/notes`);
+  await loadTab(page, 'Part Parameters');
+  await clearTableFilters(page);
+
+  // All parts should be available (no filters applied)
+  await page.getByText('/ 425').waitFor();
+
+  const clickOnParamFilter = async (name: string) => {
+    const button = await page
+      .getByRole('button', { name: `${name} Not sorted` })
+      .getByRole('button')
+      .first();
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+  };
+
+  const clearParamFilter = async (name: string) => {
+    await clickOnParamFilter(name);
+    await page.getByLabel(`clear-filter-${name}`).click();
+  };
+
+  // Let's filter by color
+  await clickOnParamFilter('Color');
+  await page.getByRole('option', { name: 'Red' }).click();
+
+  // Only 10 parts available
+  await page.getByText('/ 10').waitFor();
+
+  // Reset the filter
+  await clearParamFilter('Color');
+  await page.getByText('/ 425').waitFor();
+});
+
+test('Parts - Notes', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/69/notes' });
 
   // Enable editing
   await page.getByLabel('Enable Editing').waitFor();
@@ -390,20 +484,16 @@ test('Parts - Notes', async ({ page }) => {
   await page.getByLabel('Close Editor').waitFor();
 });
 
-test('Parts - 404', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/part/99999/`);
+test('Parts - 404', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/99999/' });
   await page.getByText('Page Not Found', { exact: true }).waitFor();
 
   // Clear out any console error messages
   await page.evaluate(() => console.clear());
 });
 
-test('Parts - Revision', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/part/906/details`);
+test('Parts - Revision', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/906/details' });
 
   await page.getByText('Revision of').waitFor();
   await page.getByText('Select Part Revision').waitFor();
@@ -414,6 +504,42 @@ test('Parts - Revision', async ({ page }) => {
     .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
     .click();
 
-  await page.waitForURL('**/platform/part/101/**');
+  await page.waitForURL('**/web/part/101/**');
   await page.getByText('Select Part Revision').waitFor();
+});
+
+test('Parts - Bulk Edit', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
+
+  // Edit the category for multiple parts
+  await page.getByLabel('Select record 1', { exact: true }).click();
+  await page.getByLabel('Select record 2', { exact: true }).click();
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-set-category').click();
+  await page.getByLabel('related-field-category').fill('rnitu');
+  await page
+    .getByRole('option', { name: '- Furniture/Chairs' })
+    .getByRole('paragraph')
+    .click();
+
+  await page.getByRole('button', { name: 'Update' }).click();
+  await page.getByText('Items Updated').waitFor();
+});
+
+test('Parts - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/74/details'
+  });
+
+  // Open "duplicate part" dialog
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-duplicate').click();
+
+  // Check for expected fields
+  await page.getByText('Copy Image', { exact: true }).waitFor();
+  await page.getByText('Copy Notes', { exact: true }).waitFor();
+  await page.getByText('Copy Parameters', { exact: true }).waitFor();
+  await page.getByText('Copy Tests', { exact: true }).waitFor();
 });

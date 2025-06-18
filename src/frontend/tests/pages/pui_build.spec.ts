@@ -1,19 +1,26 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
-import { baseUrl } from '../defaults.ts';
 import {
+  activateCalendarView,
   clearTableFilters,
+  clickOnRowMenu,
   getRowFromCell,
+  loadTab,
+  navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
-import { doQuickLogin } from '../login.ts';
+import { doCachedLogin } from '../login.ts';
 
-test('Build Order - Basic Tests', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/part/`);
+test('Build Order - Basic Tests', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  await page.getByRole('tab', { name: 'Manufacturing' }).click();
+  await page.waitForURL('**/manufacturing/index/**');
+
+  await loadTab(page, 'Build Orders');
+
+  await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -56,11 +63,11 @@ test('Build Order - Basic Tests', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Click on some tabs
-  await page.getByRole('tab', { name: 'Attachments' }).click();
-  await page.getByRole('tab', { name: 'Notes' }).click();
-  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
-  await page.getByRole('tab', { name: 'Line Items' }).click();
-  await page.getByRole('tab', { name: 'Allocated Stock' }).click();
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Notes');
+  await loadTab(page, 'Incomplete Outputs');
+  await loadTab(page, 'Required Stock');
+  await loadTab(page, 'Allocated Stock');
 
   // Check for expected text in the table
   await page.getByText('R_10R_0402_1%').waitFor();
@@ -69,7 +76,7 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .waitFor();
 
   // Check "test results"
-  await page.getByRole('tab', { name: 'Test Results' }).click();
+  await loadTab(page, 'Test Results');
   await page.getByText('Quantity: 25').waitFor();
   await page.getByText('Continuity Checks').waitFor();
   await page
@@ -79,7 +86,7 @@ test('Build Order - Basic Tests', async ({ page }) => {
   await page.getByText('Add Test Result').waitFor();
 
   // Click through to the "parent" build
-  await page.getByRole('tab', { name: 'Build Details' }).click();
+  await loadTab(page, 'Build Details');
   await page.getByRole('link', { name: 'BO0010' }).click();
   await page
     .getByLabel('Build Details')
@@ -87,10 +94,33 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .waitFor();
 });
 
-test('Build Order - Edit', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Calendar', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
-  await page.goto(`${baseUrl}/manufacturing/build-order/22/`);
+  await navigate(page, 'manufacturing/index/buildorders');
+  await activateCalendarView(page);
+
+  // Export calendar data
+  await page.getByLabel('calendar-export-data').click();
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await page.getByText('Process completed successfully').waitFor();
+
+  // Check "part category" filter
+  await page.getByLabel('calendar-select-filters').click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByPlaceholder('Select filter').fill('category');
+  await page.getByRole('option', { name: 'Category', exact: true }).click();
+  await page.getByLabel('related-field-filter-category').click();
+  await page.getByText('Part category, level 1').waitFor();
+
+  // Required because we downloaded a file
+  await page.context().close();
+});
+
+test('Build Order - Edit', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
+
+  await navigate(page, 'manufacturing/build-order/22/');
 
   // Check for expected text items
   await page.getByText('Building for sales order').first().waitFor();
@@ -114,18 +144,20 @@ test('Build Order - Edit', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Build Order - Build Outputs', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Build Outputs', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
-  await page.goto(`${baseUrl}/manufacturing/index/`);
-  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
+  await navigate(page, 'manufacturing/index/');
+  await loadTab(page, 'Build Orders');
+
+  await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending').first().waitFor();
 
   await page.getByRole('cell', { name: 'BO0011' }).click();
-  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
+  await loadTab(page, 'Incomplete Outputs');
 
   // Create a new build output
   await page.getByLabel('action-button-add-build-output').click();
@@ -134,6 +166,8 @@ test('Build Order - Build Outputs', async ({ page }) => {
   const placeholder = await page
     .getByLabel('text-field-serial_numbers')
     .getAttribute('placeholder');
+
+  expect(placeholder).toContain('Next serial number');
 
   let sn = 1;
 
@@ -188,10 +222,10 @@ test('Build Order - Build Outputs', async ({ page }) => {
   await page.getByText('Build outputs have been completed').waitFor();
 });
 
-test('Build Order - Allocation', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Allocation', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
-  await page.goto(`${baseUrl}/manufacturing/build-order/1/line-items`);
+  await navigate(page, 'manufacturing/build-order/1/line-items');
 
   // Expand the R_10K_0805 line item
   await page.getByText('R_10K_0805_1%').first().click();
@@ -207,10 +241,12 @@ test('Build Order - Allocation', async ({ page }) => {
   // Expand this row
   await cell.click();
   await page.getByRole('cell', { name: '2022-4-27', exact: true }).waitFor();
-  await page.getByRole('cell', { name: 'Reel Storage', exact: true }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Electronics Lab/Reel Storage', exact: true })
+    .waitFor();
 
   // Navigate to the "Incomplete Outputs" tab
-  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
+  await loadTab(page, 'Incomplete Outputs');
 
   // Find output #7
   const output7 = await page
@@ -288,20 +324,27 @@ test('Build Order - Allocation', async ({ page }) => {
     .waitFor();
 });
 
-test('Build Order - Filters', async ({ page }) => {
-  await doQuickLogin(page);
+test('Build Order - Filters', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
-  await page.goto(`${baseUrl}/manufacturing/index/buildorders`);
+  await navigate(page, 'manufacturing/index/buildorders');
 
   await clearTableFilters(page);
-  await page.getByText('1 - 24 / 24').waitFor();
+
+  // Check for expected pagination text i.e. (1 - 24 / 24)
+  // Note: Due to other concurrent tests, the number of build orders may vary
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+  await page.getByRole('cell', { name: 'BO0023' }).waitFor();
 
   // Toggle 'Outstanding' filter
   await setTableChoiceFilter(page, 'Outstanding', 'Yes');
-  await page.getByText('1 - 18 / 18').waitFor();
+  await page.getByRole('cell', { name: 'BO0017' }).waitFor();
+
   await clearTableFilters(page);
   await setTableChoiceFilter(page, 'Outstanding', 'No');
+
   await page.getByText('1 - 6 / 6').waitFor();
+
   await clearTableFilters(page);
 
   // Filter by custom status code
@@ -313,4 +356,73 @@ test('Build Order - Filters', async ({ page }) => {
 
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending Approval').first().waitFor();
+});
+
+test('Build Order - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
+
+  await navigate(page, 'manufacturing/build-order/24/details');
+  await page.getByLabel('action-menu-build-order-').click();
+  await page.getByLabel('action-menu-build-order-actions-duplicate').click();
+
+  // Ensure a new reference is suggested
+  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+
+  // Submit the duplicate request and ensure it completes
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Build Details' }).waitFor();
+  await page.getByRole('tab', { name: 'Build Details' }).click();
+
+  await page.getByText('Pending').first().waitFor();
+});
+
+// Tests for external build orders
+test('Build Order - External', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'manufacturing/index/' });
+  await loadTab(page, 'Build Orders');
+
+  // Filter to show only external builds
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'External', 'Yes');
+  await page.getByRole('cell', { name: 'BO0026' }).waitFor();
+  await page.getByRole('cell', { name: 'BO0025' }).click();
+  await page
+    .locator('span')
+    .filter({ hasText: /^External$/ })
+    .waitFor();
+
+  await loadTab(page, 'Allocated Stock');
+  await loadTab(page, 'Incomplete Outputs');
+  await page
+    .getByText('This build order is fulfilled by an external purchase order')
+    .waitFor();
+
+  await loadTab(page, 'External Orders');
+  await page.getByRole('cell', { name: 'PO0016' }).click();
+
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Received Stock');
+  await loadTab(page, 'Line Items');
+
+  const cell = await page.getByRole('cell', {
+    name: '002.01-PCBA',
+    exact: true
+  });
+  await clickOnRowMenu(cell);
+
+  await page.getByRole('menuitem', { name: 'Receive line item' }).waitFor();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).waitFor();
+  await page.getByRole('menuitem', { name: 'Edit' }).waitFor();
+  await page.getByRole('menuitem', { name: 'View Build Order' }).click();
+
+  // Wait for navigation back to build order detail page
+  await page.getByText('Build Order: BO0025', { exact: true }).waitFor();
+
+  // Let's look at BO0026 too
+  await navigate(page, 'manufacturing/build-order/26/details');
+  await loadTab(page, 'External Orders');
+
+  await page.getByRole('cell', { name: 'PO0017' }).waitFor();
+  await page.getByRole('cell', { name: 'PO0018' }).waitFor();
 });

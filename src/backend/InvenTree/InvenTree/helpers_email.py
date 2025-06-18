@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core import mail as django_mail
 
 import structlog
+from allauth.account.models import EmailAddress
 
 import InvenTree.ready
 import InvenTree.tasks
@@ -30,15 +31,15 @@ def is_email_configured():
 
         # Display warning unless in test mode
         if not testing:  # pragma: no cover
-            logger.debug('EMAIL_HOST is not configured')
+            logger.debug('INVE-W7: EMAIL_HOST is not configured')
 
     # Display warning unless in test mode
     if not settings.EMAIL_HOST_USER and not testing:  # pragma: no cover
-        logger.debug('EMAIL_HOST_USER is not configured')
+        logger.debug('INVE-W7: EMAIL_HOST_USER is not configured')
 
     # Display warning unless in test mode
     if not settings.EMAIL_HOST_PASSWORD and testing:  # pragma: no cover
-        logger.debug('EMAIL_HOST_PASSWORD is not configured')
+        logger.debug('INVE-W7: EMAIL_HOST_PASSWORD is not configured')
 
     # Email sender must be configured
     if not settings.DEFAULT_FROM_EMAIL:
@@ -56,7 +57,6 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         recipients = [recipients]
 
     import InvenTree.ready
-    import InvenTree.status
 
     if InvenTree.ready.isImportingData():
         # If we are importing data, don't send emails
@@ -64,6 +64,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
 
     if not is_email_configured() and not settings.TESTING:
         # Email is not configured / enabled
+        logger.info('INVE-W7: Email will not be send, no mail server configured')
         return
 
     # If a *from_email* is not specified, ensure that the default is set
@@ -88,3 +89,19 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         html_message=html_message,
         group='notification',
     )
+
+
+def get_email_for_user(user) -> str:
+    """Find an email address for the specified user."""
+    # First check if the user has an associated email address
+    if user.email:
+        return user.email
+
+    # Otherwise, find first matching email
+    # Priority is given to primary or verified email addresses
+    if (
+        email := EmailAddress.objects.filter(user=user)
+        .order_by('-primary', '-verified')
+        .first()
+    ):
+        return email.email

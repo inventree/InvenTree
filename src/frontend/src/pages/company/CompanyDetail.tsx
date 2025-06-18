@@ -1,7 +1,6 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
-  IconBuildingFactory2,
   IconBuildingWarehouse,
   IconInfoCircle,
   IconMap2,
@@ -15,6 +14,10 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -35,16 +38,12 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -58,6 +57,7 @@ import { StockItemTable } from '../../tables/stock/StockItemTable';
 export type CompanyDetailProps = {
   title: string;
   breadcrumbs: Breadcrumb[];
+  last_crumb_url: string;
 };
 
 /**
@@ -176,21 +176,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: detailsPanel
       },
       {
-        name: 'manufactured-parts',
-        label: t`Manufactured Parts`,
-        icon: <IconBuildingFactory2 />,
-        hidden: !company?.is_manufacturer,
-        content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
-        )
-      },
-      {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
-        icon: <IconBuildingWarehouse />,
+        icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
         content: company?.pk && (
           <SupplierPartTable params={{ supplier: company.pk }} />
+        )
+      },
+      {
+        name: 'manufactured-parts',
+        label: t`Manufactured Parts`,
+        icon: <IconBuildingWarehouse />,
+        hidden: !company?.is_manufacturer,
+        content: company?.pk && (
+          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
         )
       },
       {
@@ -328,6 +328,12 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             actions={companyActions}
             imageUrl={company.image}
             breadcrumbs={props.breadcrumbs}
+            lastCrumb={[
+              {
+                name: company.name,
+                url: `${props.last_crumb_url}/${company.pk}/`
+              }
+            ]}
             badges={badges}
             editAction={editCompany.open}
             editEnabled={user.hasChangePermission(ModelType.company)}
@@ -336,6 +342,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             pageKey='company'
             panels={companyPanels}
             instance={company}
+            reloadInstance={refreshInstance}
             model={ModelType.company}
             id={company.pk}
           />

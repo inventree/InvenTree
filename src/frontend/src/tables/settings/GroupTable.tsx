@@ -1,30 +1,26 @@
-import { Trans, t } from '@lingui/macro';
-import {
-  Accordion,
-  Group,
-  LoadingOverlay,
-  Pill,
-  PillGroup,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Accordion, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/index';
+import { IconUsersGroup } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
+import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
+import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -51,32 +47,14 @@ export function GroupDrawer({
     pk: id,
     throwError: true,
     params: {
-      permission_detail: true
+      permission_detail: true,
+      role_detail: true,
+      user_detail: true
     }
   });
 
-  const permissionsAccordion = useMemo(() => {
-    if (!instance?.permissions) return null;
-
-    const data = instance.permissions;
-    return (
-      <Accordion w={'100%'}>
-        {Object.keys(data).map((key) => (
-          <Accordion.Item key={key} value={key}>
-            <Accordion.Control>
-              <Pill>{instance.permissions[key].length}</Pill> {key}
-            </Accordion.Control>
-            <Accordion.Panel>
-              <PillGroup>
-                {data[key].map((perm: string) => (
-                  <Pill key={perm}>{perm}</Pill>
-                ))}
-              </PillGroup>
-            </Accordion.Panel>
-          </Accordion.Item>
-        ))}
-      </Accordion>
-    );
+  const groupRoles: RuleSet[] = useMemo(() => {
+    return instance?.roles ?? [];
   }, [instance]);
 
   if (isFetching) {
@@ -97,27 +75,45 @@ export function GroupDrawer({
 
   return (
     <Stack>
-      <EditApiForm
-        props={{
-          url: ApiEndpoints.group_list,
-          pk: id,
-          fields: {
-            name: {}
-          },
-          onFormSuccess: () => {
-            refreshTable();
-            refreshInstance();
-          }
-        }}
-        id={`group-detail-drawer-${id}`}
-      />
-      <Group justify='space-between'>
-        <Title order={5}>
-          <Trans>Permission set</Trans>
-        </Title>
-        <AdminButton model={ModelType.group} id={instance.pk} />
-      </Group>
-      <Group>{permissionsAccordion}</Group>
+      <Accordion defaultValue={'details'}>
+        <Accordion.Item key='details' value='details'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>Group Details</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <EditApiForm
+              props={{
+                url: ApiEndpoints.group_list,
+                pk: id,
+                fields: {
+                  name: {
+                    label: t`Name`,
+                    description: t`Name of the user group`
+                  }
+                },
+                onFormSuccess: () => {
+                  refreshTable();
+                  refreshInstance();
+                }
+              }}
+              id={`group-detail-drawer-${id}`}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item key='roles' value='roles'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>Group Roles</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <RoleTable roles={groupRoles} editable />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </Stack>
   );
 }
@@ -125,7 +121,9 @@ export function GroupDrawer({
 /**
  * Table for displaying list of groups
  */
-export function GroupTable() {
+export function GroupTable({
+  directLink = false
+}: Readonly<{ directLink?: boolean }>) {
   const table = useTable('groups');
   const navigate = useNavigate();
   const user = useUserState();
@@ -163,7 +161,14 @@ export function GroupTable() {
             setSelectedGroup(record.pk);
             deleteGroup.open();
           }
-        })
+        }),
+        {
+          icon: <IconUsersGroup />,
+          title: t`Open Profile`,
+          onClick: () => {
+            navigate(getDetailUrl(ModelType.group, record.pk));
+          }
+        }
       ];
     },
     [user]
@@ -182,8 +187,13 @@ export function GroupTable() {
 
   const newGroup = useCreateApiFormModal({
     url: ApiEndpoints.group_list,
-    title: t`Add group`,
-    fields: { name: {} },
+    title: t`Add Group`,
+    fields: {
+      name: {
+        label: t`Name`,
+        description: t`Name of the user group`
+      }
+    },
     table: table
   });
 
@@ -202,30 +212,42 @@ export function GroupTable() {
     return actions;
   }, [user]);
 
+  // Determine whether the GroupTable is editable
+  const editable: boolean = useMemo(
+    () => !directLink && user.isStaff() && user.hasChangeRole(UserRoles.admin),
+    [user, directLink]
+  );
+
   return (
     <>
-      {newGroup.modal}
-      {deleteGroup.modal}
-      <DetailDrawer
-        title={t`Edit group`}
-        renderContent={(id) => {
-          if (!id || !id.startsWith('group-')) return false;
-          return (
-            <GroupDrawer
-              id={id.replace('group-', '')}
-              refreshTable={table.refreshTable}
-            />
-          );
-        }}
-      />
+      {editable && newGroup.modal}
+      {editable && deleteGroup.modal}
+      {editable && (
+        <DetailDrawer
+          size='xl'
+          title={t`Edit Group`}
+          renderContent={(id) => {
+            if (!id || !id.startsWith('group-')) return false;
+            return (
+              <GroupDrawer
+                id={id.replace('group-', '')}
+                refreshTable={table.refreshTable}
+              />
+            );
+          }}
+        />
+      )}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.group_list)}
         tableState={table}
         columns={columns}
         props={{
-          rowActions: rowActions,
-          tableActions: tableActions,
-          onRowClick: (record) => openDetailDrawer(record.pk)
+          rowActions: editable ? rowActions : undefined,
+          tableActions: editable ? tableActions : undefined,
+          modelType: directLink ? ModelType.group : undefined,
+          onRowClick: editable
+            ? (record) => openDetailDrawer(record.pk)
+            : undefined
         }}
       />
     </>

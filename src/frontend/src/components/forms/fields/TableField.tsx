@@ -1,14 +1,15 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
-import type { ApiFormFieldType } from './ApiFormField';
 
 export interface TableFieldRowProps {
   item: any;
@@ -132,15 +133,21 @@ export function TableField({
   );
 
   return (
-    <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
+    <Table
+      highlightOnHover
+      striped
+      aria-label={`table-field-${field.name}`}
+      style={{ width: '100%' }}
+    >
       <Table.Thead>
         <Table.Tr>
           {definition.headers?.map((header, index) => {
             return (
               <Table.Th
-                key={`table-header-${identifierString(header)}-${index}`}
+                key={`table-header-${identifierString(header.title)}-${index}`}
+                style={header.style}
               >
-                {header}
+                {header.title}
               </Table.Th>
             );
           })}
@@ -148,7 +155,7 @@ export function TableField({
       </Table.Thead>
 
       <Table.Tbody>
-        {value.length > 0 ? (
+        {(value?.length ?? 0) > 0 ? (
           value.map((item: any, idx: number) => {
             return (
               <TableFieldRow

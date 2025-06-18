@@ -33,12 +33,14 @@ class InvenTreeRestURLField(RestURLField):
         self.validators[-1].schemes = allowable_url_schemes()
 
     def run_validation(self, data=empty):
-        """Override default validation behaviour for this field type."""
+        """Override default validation behavior for this field type."""
         strict_urls = get_global_setting('INVENTREE_STRICT_URLS', cache=False)
 
-        if not strict_urls and data is not empty and '://' not in data:
-            # Validate as if there were a schema provided
-            data = 'http://' + data
+        if not strict_urls and data is not empty and data is not None:
+            data = str(data).strip()
+            if data and '://' not in data:
+                # Validate as if there were a schema provided
+                data = 'http://' + data
 
         return super().run_validation(data=data)
 
@@ -50,8 +52,8 @@ class InvenTreeURLField(models.URLField):
 
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField."""
-        # Max length for InvenTreeURLField is set to 200
-        kwargs['max_length'] = 200
+        # Max length for InvenTreeURLField is set to 2000
+        kwargs['max_length'] = 2000
         super().__init__(**kwargs)
 
 

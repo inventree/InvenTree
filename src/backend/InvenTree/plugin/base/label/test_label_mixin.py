@@ -13,10 +13,9 @@ from PIL import Image
 from InvenTree.settings import BASE_DIR
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
+from plugin import InvenTreePlugin, PluginMixinEnum, registry
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.helpers import MixinNotImplementedError
-from plugin.plugin import InvenTreePlugin
-from plugin.registry import registry
 from report.models import LabelTemplate
 from report.tests import PrintTestMixins
 from stock.models import StockItem, StockLocation
@@ -48,11 +47,11 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
     def test_installed(self):
         """Test that the sample printing plugin is installed."""
         # Get all label plugins
-        plugins = registry.with_mixin('labels', active=None)
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS, active=None)
         self.assertEqual(len(plugins), 4)
 
         # But, it is not 'active'
-        plugins = registry.with_mixin('labels', active=True)
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS, active=True)
         self.assertEqual(len(plugins), 3)
 
     def test_api(self):
@@ -77,12 +76,13 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         # Should be available via the API now
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 3)
 
         labels = [item['key'] for item in response.data]
 
+        self.assertIn('inventreelabel', labels)
+        self.assertIn('inventreelabelmachine', labels)
         self.assertIn('samplelabelprinter', labels)
-        self.assertIn('inventreelabelsheet', labels)
 
     def test_printing_process(self):
         """Test that a label can be printed."""
@@ -121,7 +121,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.assertIn('Plugin does not support label printing', str(response.data))
 
         # Find available plugins
-        plugins = registry.with_mixin('labels')
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS)
         self.assertGreater(len(plugins), 0)
 
         plugin = registry.get_plugin('samplelabelprinter')

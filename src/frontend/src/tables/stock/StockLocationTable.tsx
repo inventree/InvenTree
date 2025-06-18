@@ -1,24 +1,26 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
-import { useFilters } from '../../hooks/UseFilter';
+import { InvenTreeIcon } from '../../functions/icons';
 import {
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 
@@ -28,14 +30,6 @@ import { type RowAction, RowEditAction } from '../RowActions';
 export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('stocklocation');
   const user = useUserState();
-
-  const locationTypeFilters = useFilters({
-    url: apiUrl(ApiEndpoints.stock_location_type_list),
-    transform: (item) => ({
-      value: item.pk,
-      label: item.name
-    })
-  });
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -62,10 +56,12 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         name: 'location_type',
         label: t`Location Type`,
         description: t`Filter by location type`,
-        choices: locationTypeFilters.choices
+        apiUrl: apiUrl(ApiEndpoints.stock_location_type_list),
+        model: ModelType.stocklocationtype,
+        modelRenderer: (instance: any) => instance.name
       }
     ];
-  }, [locationTypeFilters.choices]);
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -125,10 +121,38 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
+  const setParent = useBulkEditApiFormModal({
+    url: ApiEndpoints.stock_location_list,
+    items: table.selectedIds,
+    title: t`Set Parent Location`,
+    fields: {
+      parent: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const tableActions = useMemo(() => {
     const can_add = user.hasAddRole(UserRoles.stock_location);
+    const can_edit = user.hasChangeRole(UserRoles.stock_location);
 
     return [
+      <ActionDropdown
+        tooltip={t`Location Actions`}
+        icon={<InvenTreeIcon icon='location' />}
+        disabled={!table.hasSelectedRecords}
+        actions={[
+          {
+            name: t`Set Parent`,
+            icon: <InvenTreeIcon icon='location' />,
+            tooltip: t`Set parent location for the selected items`,
+            hidden: !can_edit,
+            disabled: !table.hasSelectedRecords,
+            onClick: () => {
+              setParent.open();
+            }
+          }
+        ]}
+      />,
       <AddItemButton
         key='add-stock-location'
         tooltip={t`Add Stock Location`}
@@ -136,7 +160,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         hidden={!can_add}
       />
     ];
-  }, [user]);
+  }, [user, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -159,6 +183,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     <>
       {newLocation.modal}
       {editLocation.modal}
+      {setParent.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_location_list)}
         tableState={table}

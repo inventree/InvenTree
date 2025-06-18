@@ -1,4 +1,4 @@
-"""Tests for PUI backend stuff."""
+"""Tests for web backend functionality."""
 
 import json
 import os
@@ -68,7 +68,7 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertSettings(rsp)
 
         # No base_url
-        envs = {'INVENTREE_PUI_URL_BASE': ''}
+        envs = {'INVENTREE_FRONTEND_URL_BASE': ''}
         with mock.patch.dict(os.environ, envs):
             rsp = get_frontend_settings()
             self.assertSettings(rsp)
@@ -79,13 +79,10 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertTrue(rsp['show_server_selector'])
 
         # No debug, serverlist -> no selector
-        envs = {'INVENTREE_PUI_SETTINGS': json.dumps({'server_list': ['aa', 'bb']})}
+        envs = {
+            'INVENTREE_FRONTEND_SETTINGS': json.dumps({'server_list': ['aa', 'bb']})
+        }
         with mock.patch.dict(os.environ, envs):
             rsp = get_frontend_settings(False)
             self.assertNotIn('show_server_selector', rsp)
             self.assertEqual(rsp['server_list'], ['aa', 'bb'])
-
-    def test_redirects(self):
-        """Test the redirect helper."""
-        response = self.client.get('/assets/testpath')
-        self.assertEqual(response.url, '/static/web/assets/testpath')

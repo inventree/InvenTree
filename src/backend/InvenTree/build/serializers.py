@@ -31,18 +31,22 @@ import part.serializers as part_serializers
 from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
-from importer.mixins import DataImportExportSerializerMixin
+from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,
-    UserSerializer,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
-from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
+from stock.serializers import (
+    LocationBriefSerializer,
+    StockItemSerializerBrief,
+    StockStatusCustomSerializer,
+)
 from stock.status_codes import StockStatus
-from users.serializers import OwnerSerializer
+from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
@@ -62,7 +66,6 @@ class BuildSerializer(
         model = Build
         fields = [
             'pk',
-            'url',
             'title',
             'barcode_hash',
             'batch',
@@ -70,6 +73,7 @@ class BuildSerializer(
             'completed',
             'completion_date',
             'destination',
+            'external',
             'parent',
             'part',
             'part_name',
@@ -95,8 +99,6 @@ class BuildSerializer(
             'responsible_detail',
             'priority',
             'level',
-            # Additional fields used only for build order creation
-            'create_child_builds',
         ]
 
         read_only_fields = [
@@ -112,8 +114,6 @@ class BuildSerializer(
 
     level = serializers.IntegerField(label=_('Build Level'), read_only=True)
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     part_detail = part_serializers.PartBriefSerializer(
@@ -126,28 +126,25 @@ class BuildSerializer(
 
     quantity = InvenTreeDecimalField()
 
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(read_only=True, default=False)
 
     issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
-    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
+    responsible_detail = OwnerSerializer(
+        source='responsible', read_only=True, allow_null=True
+    )
 
     barcode_hash = serializers.CharField(read_only=True)
 
     project_code_label = serializers.CharField(
-        source='project_code.code', read_only=True, label=_('Project Code Label')
+        source='project_code.code',
+        read_only=True,
+        label=_('Project Code Label'),
+        allow_null=True,
     )
 
     project_code_detail = ProjectCodeSerializer(
-        source='project_code', many=False, read_only=True
-    )
-
-    create_child_builds = serializers.BooleanField(
-        default=False,
-        required=False,
-        write_only=True,
-        label=_('Create Child Builds'),
-        help_text=_('Automatically generate child build orders'),
+        source='project_code', many=False, read_only=True, allow_null=True
     )
 
     @staticmethod
@@ -174,19 +171,15 @@ class BuildSerializer(
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
         part_detail = kwargs.pop('part_detail', True)
-        create = kwargs.pop('create', False)
+        kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
 
-        if not create:
-            self.fields.pop('create_child_builds', None)
+        if isGeneratingSchema():
+            return
 
         if not part_detail:
             self.fields.pop('part_detail', None)
-
-    def skip_create_fields(self):
-        """Return a list of fields to skip during model creation."""
-        return ['create_child_builds']
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field."""
@@ -194,21 +187,6 @@ class BuildSerializer(
         Build.validate_reference_field(reference)
 
         return reference
-
-    @transaction.atomic
-    def create(self, validated_data):
-        """Save the Build object."""
-        build_order = super().create(validated_data)
-
-        create_child_builds = self.validated_data.pop('create_child_builds', False)
-
-        if create_child_builds:
-            # Pass child build creation off to the background thread
-            InvenTree.tasks.offload_task(
-                build.tasks.create_child_builds, build_order.pk, group='build'
-            )
-
-        return build_order
 
 
 class BuildOutputSerializer(serializers.Serializer):
@@ -253,11 +231,12 @@ class BuildOutputSerializer(serializers.Serializer):
             # The build output must have all tracked parts allocated
             if not build.is_output_fully_allocated(output):
                 # Check if the user has specified that incomplete allocations are ok
-                accept_incomplete = InvenTree.helpers.str2bool(
-                    self.context['request'].data.get(
-                        'accept_incomplete_allocation', False
+                if request := self.context.get('request'):
+                    accept_incomplete = InvenTree.helpers.str2bool(
+                        request.data.get('accept_incomplete_allocation', False)
                     )
-                )
+                else:
+                    accept_incomplete = False
 
                 if not accept_incomplete:
                     raise ValidationError(_('This build output is not fully allocated'))
@@ -423,7 +402,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             except DjangoValidationError as e:
                 raise ValidationError({'serial_numbers': e.messages})
 
-            # Check for conflicting serial numbesr
+            # Check for conflicting serial numbers
             existing = part.find_conflicting_serial_numbers(self.serials)
 
             if len(existing) > 0:
@@ -439,6 +418,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         """Generate the new build output(s)."""
         data = self.validated_data
 
+        request = self.context.get('request')
         build = self.get_build()
 
         build.create_build_output(
@@ -447,7 +427,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             batch=data.get('batch_code', ''),
             location=data.get('location', None),
             auto_allocate=data.get('auto_allocate', False),
-            user=self.context['request'].user,
+            user=request.user if request else None,
         )
 
 
@@ -531,7 +511,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to scrap the build outputs."""
         build = self.context['build']
-        request = self.context['request']
+        request = self.context.get('request')
         data = self.validated_data
         outputs = data.get('outputs', [])
 
@@ -544,7 +524,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
                     output,
                     quantity,
                     data.get('location', None),
-                    user=request.user,
+                    user=request.user if request else None,
                     notes=data.get('notes', ''),
                     discard_allocations=data.get('discard_allocations', False),
                 )
@@ -574,11 +554,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
-    status_custom_key = serializers.ChoiceField(
-        choices=StockStatus.items(custom=True),
-        default=StockStatus.OK.value,
-        label=_('Status'),
-    )
+    status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     accept_incomplete_allocation = serializers.BooleanField(
         default=False,
@@ -619,7 +595,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to complete the build outputs."""
         build = self.context['build']
-        request = self.context['request']
+        request = self.context.get('request')
 
         data = self.validated_data
 
@@ -642,7 +618,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
                 build.complete_build_output(
                     output,
-                    request.user,
+                    request.user if request else None,
                     location=location,
                     status=status,
                     notes=notes,
@@ -715,12 +691,12 @@ class BuildCancelSerializer(serializers.Serializer):
     def save(self):
         """Cancel the specified build."""
         build = self.context['build']
-        request = self.context['request']
+        request = self.context.get('request')
 
         data = self.validated_data
 
         build.cancel_build(
-            request.user,
+            request.user if request else None,
             remove_allocated_stock=data.get('remove_allocated_stock', False),
             remove_incomplete_outputs=data.get('remove_incomplete_outputs', False),
         )
@@ -837,13 +813,13 @@ class BuildCompleteSerializer(serializers.Serializer):
 
     def save(self):
         """Complete the specified build output."""
-        request = self.context['request']
+        request = self.context.get('request')
         build = self.context['build']
 
         data = self.validated_data
 
         build.complete_build(
-            request.user,
+            request.user if request else None,
             trim_allocated_stock=data.get(
                 'accept_overallocated', OverallocationChoice.REJECT
             )
@@ -1129,7 +1105,6 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
     def save(self):
         """Perform the auto-allocation step."""
-        import build.tasks
         import InvenTree.tasks
 
         data = self.validated_data
@@ -1203,6 +1178,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
@@ -1245,11 +1223,12 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         source='stock_item.part',
         many=False,
         read_only=True,
+        allow_null=True,
         pricing=False,
     )
 
     stock_item_detail = StockItemSerializerBrief(
-        source='stock_item', read_only=True, label=_('Stock Item')
+        source='stock_item', read_only=True, allow_null=True, label=_('Stock Item')
     )
 
     location = serializers.PrimaryKeyRelatedField(
@@ -1257,11 +1236,18 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     location_detail = LocationBriefSerializer(
-        label=_('Location'), source='stock_item.location', read_only=True
+        label=_('Location'),
+        source='stock_item.location',
+        read_only=True,
+        allow_null=True,
     )
 
     build_detail = BuildSerializer(
-        label=_('Build'), source='build_line.build', many=False, read_only=True
+        label=_('Build'),
+        source='build_line.build',
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     supplier_part_detail = company.serializers.SupplierPartSerializer(
@@ -1269,6 +1255,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         source='stock_item.supplier_part',
         many=False,
         read_only=True,
+        allow_null=True,
         brief=True,
     )
 
@@ -1337,6 +1324,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         build_detail = kwargs.pop('build_detail', True)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -1409,7 +1399,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
     build_detail = BuildSerializer(
-        label=_('Build'), source='build', part_detail=False, many=False, read_only=True
+        label=_('Build'),
+        source='build',
+        part_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     # Annotated (calculated) fields

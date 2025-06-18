@@ -1,11 +1,10 @@
-import { t } from '@lingui/macro';
-
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { t } from '@lingui/core/macro';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { ModelType } from '../../../../enums/ModelType';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
-export default function ReportTemplateTable() {
+function ReportTemplateTable() {
   return (
     <TemplateTable
       templateProps={{
@@ -32,4 +31,8 @@ export default function ReportTemplateTable() {
       }}
     />
   );
+}
+
+export default function ReportTemplatePanel() {
+  return <ReportTemplateTable />;
 }

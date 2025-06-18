@@ -1,6 +1,7 @@
-import { Center, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
 import { IconServer } from '@tabler/icons-react';
 
+import { useShallow } from 'zustand/react/shallow';
 import { useServerApiState } from '../../states/ApiState';
 import { ColorToggle } from '../items/ColorToggle';
 import { LanguageToggle } from '../items/LanguageToggle';
@@ -12,7 +13,7 @@ export function AuthFormOptions({
   hostname: string;
   toggleHostEdit: () => void;
 }>) {
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   return (
     <Center mx={'md'}>
@@ -21,7 +22,13 @@ export function AuthFormOptions({
         <LanguageToggle />
         {window.INVENTREE_SETTINGS.show_server_selector && (
           <Tooltip label={hostname}>
-            <IconServer onClick={toggleHostEdit} />
+            <ActionIcon
+              size='lg'
+              variant='transparent'
+              onClick={toggleHostEdit}
+            >
+              <IconServer />
+            </ActionIcon>
           </Tooltip>
         )}
         <Text c={'dimmed'}>

@@ -6,14 +6,13 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import F, Q
-from django.http import JsonResponse
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -21,27 +20,22 @@ from rest_framework.serializers import ValidationError
 import common.models
 import common.settings
 import InvenTree.helpers
+import InvenTree.permissions
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
 )
-from InvenTree.helpers import (
-    extract_serial_numbers,
-    generateTestKey,
-    is_ajax,
-    isNull,
-    str2bool,
-)
+from InvenTree.helpers import extract_serial_numbers, generateTestKey, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -72,7 +66,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 class GenerateBatchCode(GenericAPIView):
     """API endpoint for generating batch codes."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = StockSerializers.GenerateBatchCodeSerializer
 
     def post(self, request, *args, **kwargs):
@@ -88,7 +82,7 @@ class GenerateBatchCode(GenericAPIView):
 class GenerateSerialNumber(GenericAPIView):
     """API endpoint for generating serial numbers."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = StockSerializers.GenerateSerialNumberSerializer
 
     def post(self, request, *args, **kwargs):
@@ -363,7 +357,7 @@ class StockLocationMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint."""
@@ -372,7 +366,9 @@ class StockLocationMixin:
         return queryset
 
 
-class StockLocationList(DataExportViewMixin, StockLocationMixin, ListCreateAPI):
+class StockLocationList(
+    DataExportViewMixin, BulkUpdateMixin, StockLocationMixin, ListCreateAPI
+):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -957,7 +953,7 @@ class StockApiMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
@@ -1232,6 +1228,17 @@ class StockDetail(StockApiMixin, RetrieveUpdateDestroyAPI):
     """API detail endpoint for a single StockItem instance."""
 
 
+class StockItemSerialNumbers(RetrieveAPI):
+    """View extra serial number information for a given stock item.
+
+    Provides information on the "previous" and "next" stock items,
+    based on the serial number of the given stock item.
+    """
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockSerializers.StockItemSerialNumbersSerializer
+
+
 class StockItemTestResultMixin:
     """Mixin class for the StockItemTestResult API endpoints."""
 
@@ -1258,7 +1265,7 @@ class StockItemTestResultMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
@@ -1399,7 +1406,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_delta_model_map(self) -> dict:
         """Return a mapping of delta models to their respective models and serializers.
@@ -1465,8 +1472,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if is_ajax(request):
-            return JsonResponse(data, safe=False)
+
         return Response(data)
 
     def create(self, request, *args, **kwargs):
@@ -1503,7 +1509,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
     ordering_fields = ['date']
 
-    search_fields = ['title', 'notes']
+    search_fields = ['notes']
 
 
 stock_api_urls = [
@@ -1517,8 +1523,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocation},
+                        MetadataView.as_view(model=StockLocation),
                         name='api-location-metadata',
                     ),
                     path('', StockLocationDetail.as_view(), name='api-location-detail'),
@@ -1536,8 +1541,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocationType},
+                        MetadataView.as_view(model=StockLocationType),
                         name='api-location-type-metadata',
                     ),
                     path(
@@ -1567,8 +1571,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockItemTestResult},
+                        MetadataView.as_view(model=StockItemTestResult),
                         name='api-stock-test-result-metadata',
                     ),
                     path(
@@ -1610,8 +1613,7 @@ stock_api_urls = [
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': StockItem},
+                MetadataView.as_view(model=StockItem),
                 name='api-stock-item-metadata',
             ),
             path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),
@@ -1624,6 +1626,11 @@ stock_api_urls = [
                 'uninstall/',
                 StockItemUninstall.as_view(),
                 name='api-stock-item-uninstall',
+            ),
+            path(
+                'serial-numbers/',
+                StockItemSerialNumbers.as_view(),
+                name='api-stock-item-serial-numbers',
             ),
             path('', StockDetail.as_view(), name='api-stock-detail'),
         ]),

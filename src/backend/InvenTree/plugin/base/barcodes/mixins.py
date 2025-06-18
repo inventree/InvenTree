@@ -13,6 +13,7 @@ from InvenTree.exceptions import log_error
 from InvenTree.models import InvenTreeBarcodeMixin
 from order.models import PurchaseOrder
 from part.models import Part
+from plugin import PluginMixinEnum
 from plugin.base.integration.SettingsMixin import SettingsMixin
 
 logger = structlog.get_logger('inventree')
@@ -34,7 +35,7 @@ class BarcodeMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('barcode', 'has_barcode', __class__)
+        self.add_mixin(PluginMixinEnum.BARCODE, 'has_barcode', __class__)
 
     @property
     def has_barcode(self):
@@ -68,7 +69,7 @@ class BarcodeMixin:
 
         return True
 
-    def generate(self, model_instance: InvenTreeBarcodeMixin):
+    def generate(self, model_instance: InvenTreeBarcodeMixin) -> str:
         """Generate barcode data for the given model instance.
 
         Arguments:
@@ -104,7 +105,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('supplier-barcode', True, __class__)
+        self.add_mixin(PluginMixinEnum.SUPPLIER_BARCODE, True, __class__)
 
     def get_field_value(self, key, backup_value=None):
         """Return the value of a barcode field."""

@@ -120,6 +120,18 @@ function detect_local_env() {
     echo "# POI02| Printing local envs - after #++#"
     printenv
   fi
+
+  # Print branch and dir from VERSION file
+  if [ -f "${APP_HOME}/VERSION" ]; then
+    echo "# POI02| Loading environment variables from VERSION file"
+    content=$(cat "${APP_HOME}/VERSION")
+    # use grep to get the branch and target
+    INVENTREE_PKG_BRANCH=($(echo $content | grep -oP 'INVENTREE_PKG_BRANCH=\K[^ ]+'))
+    INVENTREE_PKG_TARGET=($(echo $content | grep -oP 'INVENTREE_PKG_TARGET=\K[^ ]+'))
+    echo "Running in a package environment build on branch $INVENTREE_PKG_BRANCH for target $INVENTREE_PKG_TARGET"
+  else
+    echo "# POI02| VERSION file not found"
+  fi
 }
 
 function detect_envs() {
@@ -169,6 +181,7 @@ function detect_envs() {
     export INVENTREE_PLUGINS_ENABLED=true
     export INVENTREE_PLUGIN_FILE=${CONF_DIR}/plugins.txt
     export INVENTREE_SECRET_KEY_FILE=${CONF_DIR}/secret_key.txt
+    export INVENTREE_OIDC_PRIVATE_KEY_FILE=${CONF_DIR}/oidc.pem
 
     export INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE:-sqlite3}
     export INVENTREE_DB_NAME=${INVENTREE_DB_NAME:-${DATA_DIR}/database.sqlite3}
@@ -327,6 +340,8 @@ function set_env() {
   sed -i s=#plugin_file:\ \'/path/to/plugins.txt\'=plugin_file:\ \'${INVENTREE_PLUGIN_FILE}\'=g ${INVENTREE_CONFIG_FILE}
   # Secret key file
   sed -i s=#secret_key_file:\ \'/etc/inventree/secret_key.txt\'=secret_key_file:\ \'${INVENTREE_SECRET_KEY_FILE}\'=g ${INVENTREE_CONFIG_FILE}
+  # OIDC private key file
+  sed -i s=#oidc_private_key_file:\ \'/etc/inventree/oidc.pem\'=oidc_private_key_file:\ \'${INVENTREE_OIDC_PRIVATE_KEY_FILE}\'=g ${INVENTREE_CONFIG_FILE}
   # Debug mode
   sed -i s=debug:\ True=debug:\ False=g ${INVENTREE_CONFIG_FILE}
 

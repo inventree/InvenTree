@@ -1,4 +1,15 @@
 {
+    "aliveStatusCodes": [
+        200,
+        201,
+        202,
+        204,
+        301,
+        302,
+        401,
+        403,
+        429
+    ],
     "ignorePatterns": [
         {
             "pattern": "http://inventree.localhost"
@@ -20,6 +31,9 @@
         },
         {
             "pattern": "https://opensource.org/license/MIT"
+        },
+        {
+            "pattern": "^https://dev.azure.com"
         }
     ]
 }

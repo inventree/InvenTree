@@ -10,13 +10,14 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
+from typing import Optional, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
-from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
+from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
@@ -62,7 +63,6 @@ from order import models as OrderModels
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
-    SalesOrderStatus,
     SalesOrderStatusGroups,
 )
 from stock import models as StockModels
@@ -129,6 +129,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     _icon = models.CharField(
         blank=True,
+        null=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
@@ -285,8 +286,15 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
         return prefetch.filter(category=self.id)
 
-    def get_subscribers(self, include_parents=True):
-        """Return a list of users who subscribe to this PartCategory."""
+    def get_subscribers(self, include_parents: bool = True) -> list[User]:
+        """Return a list of users who subscribe to this PartCategory.
+
+        Arguments:
+            include_parents (bool): If True, include users who subscribe to parent categories.
+
+        Returns:
+            list[User]: List of users who subscribe to this category.
+        """
         subscribers = set()
 
         if include_parents:
@@ -357,6 +365,38 @@ class PartManager(TreeManager):
                 'tags',
             )
         )
+
+
+class PartReportContext(report.mixins.BaseReportContext):
+    """Context for the part model.
+
+    Attributes:
+        bom_items: Query set of all BomItem objects associated with the Part
+        category: The PartCategory object associated with the Part
+        description: The description field of the Part
+        IPN: The IPN (internal part number) of the Part
+        name: The name of the Part
+        parameters: Dict object containing the parameters associated with the Part
+        part: The Part object itself
+        qr_data: Formatted QR code data for the Part
+        qr_url: Generated URL for embedding in a QR code
+        revision: The revision of the Part
+        test_template_list: List of test templates associated with the Part
+        test_templates: Dict object of test templates associated with the Part
+    """
+
+    bom_items: report.mixins.QuerySet[BomItem]
+    category: Optional[PartCategory]
+    description: str
+    IPN: Optional[str]
+    name: str
+    parameters: dict[str, str]
+    part: Part
+    qr_data: str
+    qr_url: str
+    revision: Optional[str]
+    test_template_list: report.mixins.QuerySet[PartTestTemplate]
+    test_templates: dict[str, PartTestTemplate]
 
 
 @cleanup.ignore
@@ -441,10 +481,10 @@ class Part(
         """Return the associated barcode model type code for this model."""
         return 'PA'
 
-    def report_context(self):
+    def report_context(self) -> PartReportContext:
         """Return custom report context information."""
         return {
-            'bom_items': self.get_bom_items(),
+            'bom_items': cast(report.mixins.QuerySet['BomItem'], self.get_bom_items()),
             'category': self.category,
             'description': self.description,
             'IPN': self.IPN,
@@ -603,9 +643,9 @@ class Part(
 
         This function is exposed to any Validation plugins, and thus can be customized.
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             # Run the name through each custom validator
             # If the plugin returns 'True' we will skip any subsequent validation
 
@@ -617,7 +657,7 @@ class Part(
                 if raise_error:
                     raise ValidationError({'name': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_name')
+                log_error('validate_part_name', plugin=plugin.slug)
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -625,9 +665,9 @@ class Part(
         - Validation is handled by custom plugins
         - By default, no validation checks are performed
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 result = plugin.validate_part_ipn(self.IPN, self)
 
@@ -638,7 +678,7 @@ class Part(
                 if raise_error:
                     raise ValidationError({'IPN': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_ipn')
+                log_error('validate_part_ipn', plugin=plugin.slug)
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -713,6 +753,7 @@ class Part(
         Arguments:
             serial: The proposed serial number
             stock_item: (optional) A StockItem instance which has this serial number assigned (e.g. testing for duplicates)
+            check_duplicates: If True, checks for duplicate serial numbers in the database.
             raise_error: If False, and ValidationError(s) will be handled
 
         Returns:
@@ -724,13 +765,13 @@ class Part(
         serial = str(serial).strip()
 
         # First, throw the serial number against each of the loaded validation plugins
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        try:
-            for plugin in registry.with_mixin('validation'):
-                # Run the serial number through each custom validator
-                # If the plugin returns 'True' we will skip any subsequent validation
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            # Run the serial number through each custom validator
+            # If the plugin returns 'True' we will skip any subsequent validation
 
+            try:
                 result = False
 
                 if hasattr(plugin, 'validate_serial_number'):
@@ -747,14 +788,14 @@ class Part(
 
                 if result is True:
                     return True
-        except ValidationError as exc:
-            if raise_error:
-                # Re-throw the error
-                raise exc
-            else:
-                return False
-        except Exception:
-            log_error('part.validate_serial_number')
+            except ValidationError as exc:
+                if raise_error:
+                    # Re-throw the error
+                    raise exc
+                else:
+                    return False
+            except Exception:
+                log_error('validate_serial_number', plugin=plugin.slug)
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -844,18 +885,18 @@ class Part(
         Returns:
             The latest serial number specified for this part, or None
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         if allow_plugins:
             # Check with plugin system
             # If any plugin returns a non-null result, that takes priority
-            for plugin in registry.with_mixin('validation'):
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
                 try:
                     result = plugin.get_latest_serial_number(self)
                     if result is not None:
                         return str(result)
                 except Exception:
-                    log_error(f'{plugin.slug}.get_latest_serial_number')
+                    log_error('get_latest_serial_number', plugin=plugin.slug)
 
         # No plugin returned a result, so we will run the default query
         stock = (
@@ -1071,6 +1112,7 @@ class Part(
         null=True,
         verbose_name=_('Link'),
         help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     image = StdImageField(
@@ -1395,8 +1437,17 @@ class Part(
         """
         return self.total_stock - self.allocation_count() + self.on_order
 
-    def get_subscribers(self, include_variants=True, include_categories=True):
+    def get_subscribers(
+        self, include_variants: bool = True, include_categories: bool = True
+    ) -> list[User]:
         """Return a list of users who are 'subscribed' to this part.
+
+        Arguments:
+            include_variants: If True, include users who are subscribed to a variant part
+            include_categories: If True, include users who are subscribed to the category
+
+        Returns:
+            list[User]: A list of users who are subscribed to this part
 
         A user may 'subscribe' to this part in the following ways:
 
@@ -1576,6 +1627,24 @@ class Part(
 
         return quantity
 
+    @property
+    def quantity_in_production(self):
+        """Quantity of this part currently actively in production.
+
+        Note: This may return a different value to `quantity_being_built`
+        """
+        quantity = 0
+
+        items = self.stock_items.filter(
+            is_building=True, build__status__in=BuildStatusGroups.ACTIVE_CODES
+        )
+
+        for item in items:
+            # The remaining items in the build
+            quantity += item.quantity
+
+        return quantity
+
     def build_order_allocations(self, **kwargs):
         """Return all 'BuildItem' objects which allocate this part to Build objects."""
         include_variants = kwargs.get('include_variants', True)
@@ -1730,7 +1799,7 @@ class Part(
 
         return bom_filter
 
-    def get_bom_items(self, include_inherited=True):
+    def get_bom_items(self, include_inherited=True) -> QuerySet[BomItem]:
         """Return a queryset containing all BOM items for this part.
 
         By default, will include inherited BOM items
@@ -2269,12 +2338,14 @@ class Part(
                     sub.save()
 
     @transaction.atomic
-    def copy_parameters_from(self, other, **kwargs):
+    def copy_parameters_from(self, other: Part, **kwargs) -> None:
         """Copy all parameter values from another Part instance."""
         clear = kwargs.get('clear', True)
 
         if clear:
             self.get_parameters().delete()
+
+        parameters = []
 
         for parameter in other.get_parameters():
             # If this part already has a parameter pointing to the same template,
@@ -2291,16 +2362,53 @@ class Part(
             parameter.part = self
             parameter.pk = None
 
-            parameter.save()
+            parameters.append(parameter)
 
-    def getTestTemplates(self, required=None, include_parent=True, enabled=None):
+        if len(parameters) > 0:
+            PartParameter.objects.bulk_create(parameters)
+
+    @transaction.atomic
+    def copy_tests_from(self, other: Part, **kwargs) -> None:
+        """Copy all test templates from another Part instance.
+
+        Note: We only copy the direct test templates, not ones inherited from parent parts.
+        """
+        templates = []
+        parts = self.get_ancestors(include_self=True)
+
+        # Prevent tests from being created for non-testable parts
+        if not self.testable:
+            return
+
+        for template in other.test_templates.all():
+            # Skip if a test template already exists for this part / key combination
+            if PartTestTemplate.objects.filter(
+                key=template.key, part__in=parts
+            ).exists():
+                continue
+
+            template.pk = None
+            template.part = self
+            templates.append(template)
+
+        if len(templates) > 0:
+            PartTestTemplate.objects.bulk_create(templates)
+
+    def getTestTemplates(
+        self, required=None, include_parent: bool = True, enabled=None
+    ) -> QuerySet[PartTestTemplate]:
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
 
+
         Args:
-            required: Set to True or False to filter by "required" status
-            include_parent: Set to True to traverse upwards
+            required (bool, optional): Filter templates by whether they are required. Defaults to None.
+            include_parent (bool, optional): Include templates from parent parts. Defaults to True.
+            enabled (bool, optional): Filter templates by their enabled status. Defaults to None.
+
+        Returns:
+            QuerySet: A queryset of matching test templates.
         """
         if include_parent:
             tests = PartTestTemplate.objects.filter(
@@ -2793,6 +2901,9 @@ class PartPricing(common.models.MetaMixin):
             for sub_part in bom_item.get_valid_parts_for_allocation():
                 # Check each part which *could* be used
 
+                if sub_part != bom_item.sub_part and not sub_part.active:
+                    continue
+
                 sub_part_pricing = sub_part.pricing
 
                 sub_part_min = self.convert(sub_part_pricing.overall_min)
@@ -3088,9 +3199,12 @@ class PartPricing(common.models.MetaMixin):
         min_sell_history = None
         max_sell_history = None
 
+        # Calculate sale price history too
+        parts = self.part.get_descendants(include_self=True)
+
         # Find all line items for shipped sales orders which reference this part
         line_items = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status=SalesOrderStatus.SHIPPED, part=self.part
+            order__status__in=SalesOrderStatusGroups.COMPLETE, part__in=parts
         )
 
         # Exclude line items which do not have associated pricing data
@@ -3369,7 +3483,7 @@ class PartStocktakeReport(models.Model):
         return os.path.basename(self.report.name)
 
     def get_absolute_url(self):
-        """Return the URL for the associaed report file for download."""
+        """Return the URL for the associated report file for download."""
         if self.report:
             return self.report.url
         return None
@@ -3580,10 +3694,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
                 'part': _('Test templates can only be created for testable parts')
             })
 
-        # Check that this test is unique within the part tree
-        tests = PartTestTemplate.objects.filter(
-            key=self.key, part__tree_id=self.part.tree_id
-        ).exclude(pk=self.pk)
+        # Check that this test is unique for this part
+        # (including template parts of which this part is a variant)
+        parts = self.part.get_ancestors(include_self=True)
+
+        tests = PartTestTemplate.objects.filter(key=self.key, part__in=parts).exclude(
+            pk=self.pk
+        )
 
         if tests.exists():
             raise ValidationError({
@@ -3915,9 +4032,9 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         self.calculate_numeric_value()
 
         # Run custom validation checks (via plugins)
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             # Note: The validate_part_parameter function may raise a ValidationError
             try:
                 result = plugin.validate_part_parameter(self, self.data)
@@ -3927,7 +4044,7 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
                 # Re-throw the ValidationError against the 'data' field
                 raise ValidationError({'data': exc.message})
             except Exception:
-                log_error(f'{plugin.slug}.validate_part_parameter')
+                log_error('validate_part_parameter', plugin=plugin.slug)
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.
@@ -4089,11 +4206,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class BomItem(
-    InvenTree.models.DataImportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -4112,23 +4225,6 @@ class BomItem(
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
-
-    # Fields available for bulk import
-    IMPORT_FIELDS = {
-        'quantity': {'required': True},
-        'reference': {},
-        'overage': {},
-        'allow_variants': {},
-        'inherited': {},
-        'optional': {},
-        'consumable': {},
-        'note': {},
-        'part': {'label': _('Part'), 'help_text': _('Part ID or part name')},
-        'part_id': {'label': _('Part ID'), 'help_text': _('Unique part ID value')},
-        'part_name': {'label': _('Part Name'), 'help_text': _('Part name')},
-        'part_ipn': {'label': _('Part IPN'), 'help_text': _('Part IPN value')},
-        'level': {'label': _('Level'), 'help_text': _('BOM level')},
-    }
 
     class Meta:
         """Metaclass providing extra model definition."""

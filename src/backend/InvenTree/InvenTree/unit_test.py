@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest import mock
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
@@ -25,16 +25,23 @@ from plugin import registry
 from plugin.models import PluginConfig
 
 
-def addUserPermission(user, permission):
-    """Shortcut function for adding a certain permission to a user."""
-    perm = Permission.objects.get(codename=permission)
-    user.user_permissions.add(perm)
+def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:
+    """Add a specific permission for the provided user.
 
+    Arguments:
+        user: The user to add the permission to
+        app_name: The name of the app (e.g. 'part')
+        model_name: The name of the model (e.g. 'location')
+        perm: The permission to add (e.g. 'add', 'change', 'delete', 'view')
+    """
+    # Get the permission object
+    permission = Permission.objects.get(
+        content_type__model=model_name, codename=f'{perm}_{model_name}'
+    )
 
-def addUserPermissions(user, permissions):
-    """Shortcut function for adding multiple permissions to a user."""
-    for permission in permissions:
-        addUserPermission(user, permission)
+    # Add the permission to the user
+    user.user_permissions.add(permission)
+    user.save()
 
 
 def getMigrationFileNames(app):
@@ -486,7 +493,13 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         )
 
     def download_file(
-        self, url, data, expected_code=None, expected_fn=None, decode=True, **kwargs
+        self,
+        url,
+        data=None,
+        expected_code=None,
+        expected_fn=None,
+        decode=True,
+        **kwargs,
     ):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
@@ -502,9 +515,11 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
-        result = re.search(r'attachment; filename="([\w\d\-.]+)"', disposition)
+        result = re.search(
+            r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
+        )
 
-        fn = result.groups()[0]
+        fn = result.groups()[1]
 
         if expected_fn is not None:
             self.assertRegex(fn, expected_fn)
@@ -523,6 +538,72 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         file.seek(0)
 
         return file
+
+    def export_data(
+        self,
+        url,
+        params=None,
+        export_format='csv',
+        export_plugin='inventree-exporter',
+        **kwargs,
+    ):
+        """Perform a data export operation against the provided URL.
+
+        Uses the 'data_exporter' functionality to override the POST response.
+
+        Arguments:
+            url: URL to perform the export operation against
+            params: Dictionary of parameters to pass to the export operation
+            export_format: Export format (default = 'csv')
+            export_plugin: Export plugin (default = 'inventree-exporter')
+
+        Returns:
+            A file object containing the exported dataset
+        """
+        # Ensure that the plugin registry is up-to-date
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+        download = kwargs.pop('download', True)
+        expected_code = kwargs.pop('expected_code', 200)
+
+        if not params:
+            params = {}
+
+        params = {
+            **params,
+            'export': True,
+            'export_format': export_format,
+            'export_plugin': export_plugin,
+        }
+
+        # Add in any other export specific kwargs
+        for key, value in kwargs.items():
+            if key.startswith('export_'):
+                params[key] = value
+
+        # Append URL params
+        url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
+
+        response = self.client.get(url, data=None, format='json')
+        self.check_response(url, response, expected_code=expected_code)
+
+        # Check that the response is of the correct type
+        data = response.data
+
+        if expected_code != 200:
+            # Response failed
+            return response.data
+
+        self.assertEqual(data['plugin'], export_plugin)
+        self.assertTrue(data['complete'])
+        filename = data.get('output')
+        self.assertIsNotNone(filename)
+
+        if download:
+            return self.download_file(filename, **kwargs)
+
+        else:
+            return response.data
 
     def process_csv(
         self,

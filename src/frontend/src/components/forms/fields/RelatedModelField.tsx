@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Input,
   darken,
@@ -15,10 +15,10 @@ import {
 } from 'react-hook-form';
 import Select from 'react-select';
 
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
 import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
-import type { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type
@@ -71,24 +71,30 @@ export function RelatedModelField({
         return;
       }
 
-      api.get(url).then((response) => {
-        const pk_field = definition.pk_field ?? 'pk';
-        if (response.data?.[pk_field]) {
-          const value = {
-            value: response.data[pk_field],
-            data: response.data
-          };
+      const params = definition?.filters ?? {};
 
-          // Run custom callback for this field (if provided)
-          if (definition.onValueChange) {
-            definition.onValueChange(response.data[pk_field], response.data);
+      api
+        .get(url, {
+          params: params
+        })
+        .then((response) => {
+          const pk_field = definition.pk_field ?? 'pk';
+          if (response.data?.[pk_field]) {
+            const value = {
+              value: response.data[pk_field],
+              data: response.data
+            };
+
+            // Run custom callback for this field (if provided)
+            if (definition.onValueChange) {
+              definition.onValueChange(response.data[pk_field], response.data);
+            }
+
+            setInitialData(value);
+            dataRef.current = [value];
+            setPk(response.data[pk_field]);
           }
-
-          setInitialData(value);
-          dataRef.current = [value];
-          setPk(response.data[pk_field]);
-        }
-      });
+        });
     } else {
       setPk(null);
     }

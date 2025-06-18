@@ -1,13 +1,16 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
+import { useShallow } from 'zustand/react/shallow';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { docLinks } from '../defaults/links';
 import { IS_DEV } from '../main';
 import { useLocalState } from '../states/LocalState';
 
 export default function MobileAppView() {
-  const [setAllowMobile] = useLocalState((state) => [state.setAllowMobile]);
+  const [setAllowMobile] = useLocalState(
+    useShallow((state) => [state.setAllowMobile])
+  );
 
   function ignore() {
     setAllowMobile(true);
@@ -23,7 +26,7 @@ export default function MobileAppView() {
             </Title>
             <Text>
               <Trans>
-                Platform UI is optimized for Tablets and Desktops, you can use
+                InvenTree UI is optimized for Tablets and Desktops, you can use
                 the official app for a mobile experience.
               </Trans>
             </Text>

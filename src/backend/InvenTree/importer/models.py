@@ -18,6 +18,7 @@ import importer.registry
 import importer.tasks
 import importer.validators
 import InvenTree.helpers
+from common.models import RenderChoices
 from importer.status_codes import DataImportStatusCode
 
 logger = structlog.get_logger('inventree')
@@ -37,6 +38,11 @@ class DataImportSession(models.Model):
         field_overrides: JSONField for field override values - used to force a value for a field
         field_filters: JSONField for field filter values - optional field API filters
     """
+
+    class ModelChoices(RenderChoices):
+        """Model choices for data import sessions."""
+
+        choice_fnc = importer.registry.supported_models
 
     @staticmethod
     def get_api_url():
@@ -77,6 +83,8 @@ class DataImportSession(models.Model):
         blank=False,
         max_length=100,
         validators=[importer.validators.validate_importer_model_type],
+        verbose_name=_('Model Type'),
+        help_text=_('Target model type for this import session'),
     )
 
     status = models.PositiveIntegerField(
@@ -111,17 +119,13 @@ class DataImportSession(models.Model):
     )
 
     @property
-    def field_mapping(self):
+    def field_mapping(self) -> dict:
         """Construct a dict of field mappings for this import session.
 
-        Returns: A dict of field: column mappings
+        Returns:
+            A dict of field -> column mappings
         """
-        mapping = {}
-
-        for i in self.column_mappings.all():
-            mapping[i.field] = i.column
-
-        return mapping
+        return {mapping.field: mapping.column for mapping in self.column_mappings.all()}
 
     @property
     def model_class(self):
@@ -138,13 +142,14 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
-    def extract_columns(self):
+    def extract_columns(self) -> None:
         """Run initial column extraction and mapping.
 
         This method is called when the import session is first created.
 
         - Extract column names from the data file
         - Create a default mapping for each field in the serializer
+        - Find a default "backup" value for each field (if one exists)
         """
         # Extract list of column names from the file
         self.columns = importer.operations.extract_column_names(self.data_file)
@@ -158,6 +163,7 @@ class DataImportSession(models.Model):
 
         matched_columns = set()
 
+        self.field_defaults = self.field_defaults or {}
         field_overrides = self.field_overrides or {}
 
         # Create a default mapping for each available field in the database
@@ -166,6 +172,11 @@ class DataImportSession(models.Model):
             # skip creating a mapping for this field
             if field in field_overrides:
                 continue
+
+            # Extract a "default" value for the field, if one exists
+            # Skip if one has already been provided by the user
+            if field not in self.field_defaults and 'default' in field_def:
+                self.field_defaults[field] = field_def['default']
 
             # Generate a list of possible column names for this field
             field_options = [
@@ -204,7 +215,7 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.MAPPING.value
         self.save()
 
-    def accept_mapping(self):
+    def accept_mapping(self) -> None:
         """Accept current mapping configuration.
 
         - Validate that the current column mapping is correct
@@ -243,7 +254,7 @@ class DataImportSession(models.Model):
         # No errors, so trigger the data import process
         self.trigger_data_import()
 
-    def trigger_data_import(self):
+    def trigger_data_import(self) -> None:
         """Trigger the data import process for this session.
 
         Offloads the task to the background worker process.
@@ -254,9 +265,9 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.IMPORTING.value
         self.save()
 
-        offload_task(importer.tasks.import_data, self.pk)
+        offload_task(importer.tasks.import_data, self.pk, group='importer')
 
-    def import_data(self):
+    def import_data(self) -> None:
         """Perform the data import process for this session."""
         # Clear any existing data rows
         self.rows.all().delete()
@@ -316,12 +327,12 @@ class DataImportSession(models.Model):
         return True
 
     @property
-    def row_count(self):
+    def row_count(self) -> int:
         """Return the number of rows in the import session."""
         return self.rows.count()
 
     @property
-    def completed_row_count(self):
+    def completed_row_count(self) -> int:
         """Return the number of completed rows for this session."""
         return self.rows.filter(complete=True).count()
 
@@ -349,7 +360,7 @@ class DataImportSession(models.Model):
         self._available_fields = fields
         return fields
 
-    def required_fields(self):
+    def required_fields(self) -> dict:
         """Returns information on which fields are *required* for import."""
         fields = self.available_fields()
 
@@ -558,7 +569,7 @@ class DataImportRow(models.Model):
         if not available_fields:
             available_fields = self.session.available_fields()
 
-        overrride_values = self.override_values
+        override_values = self.override_values
         default_values = self.default_values
 
         data = {}
@@ -566,8 +577,8 @@ class DataImportRow(models.Model):
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
             # Data override (force value and skip any further checks)
-            if field in overrride_values:
-                data[field] = overrride_values[field]
+            if field in override_values:
+                data[field] = override_values[field]
                 continue
 
             # Default value (if provided)
@@ -591,7 +602,7 @@ class DataImportRow(models.Model):
                 value = value or None
 
             # Use the default value, if provided
-            if value in [None, ''] and field in default_values:
+            if value is None and field in default_values:
                 value = default_values[field]
 
             data[field] = value
@@ -607,7 +618,9 @@ class DataImportRow(models.Model):
         - If available, we use the "default" values provided by the import session
         - If available, we use the "override" values provided by the import session
         """
-        data = self.default_values
+        data = {}
+
+        data.update(self.default_values)
 
         if self.data:
             data.update(self.data)
@@ -617,16 +630,19 @@ class DataImportRow(models.Model):
 
         return data
 
-    def construct_serializer(self):
+    def construct_serializer(self, request=None):
         """Construct a serializer object for this row."""
         if serializer_class := self.session.serializer_class:
-            return serializer_class(data=self.serializer_data())
+            return serializer_class(
+                data=self.serializer_data(), context={'request': request}
+            )
 
-    def validate(self, commit=False) -> bool:
+    def validate(self, commit=False, request=None) -> bool:
         """Validate the data in this row against the linked serializer.
 
         Arguments:
             commit: If True, the data is saved to the database (if validation passes)
+            request: The request object (if available) for extracting user information
 
         Returns:
             True if the data is valid, False otherwise
@@ -638,7 +654,7 @@ class DataImportRow(models.Model):
             # Row has already been completed
             return True
 
-        serializer = self.construct_serializer()
+        serializer = self.construct_serializer(request=request)
 
         if not serializer:
             self.errors = {
@@ -660,12 +676,12 @@ class DataImportRow(models.Model):
                 try:
                     serializer.save()
                     self.complete = True
-                    self.save()
 
-                    self.session.check_complete()
-
-                except Exception as e:
+                except ValueError as e:  # Exception as e:
                     self.errors = {'non_field_errors': str(e)}
                     result = False
+
+                self.save()
+                self.session.check_complete()
 
         return result

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import {
@@ -28,7 +28,8 @@ export enum PluginUIFeatureType {
   dashboard = 'dashboard',
   panel = 'panel',
   template_editor = 'template_editor',
-  template_preview = 'template_preview'
+  template_preview = 'template_preview',
+  navigation = 'navigation'
 }
 
 /**
@@ -82,9 +83,10 @@ export const getPluginTemplateEditor = (
     }));
 
     useEffect(() => {
+      let unmountHandler: (() => void) | undefined;
       (async () => {
         try {
-          func({
+          unmountHandler = await func({
             ref: elRef.current!,
             registerHandlers: ({ getCode, setCode }) => {
               setCodeRef.current = setCode;
@@ -101,6 +103,12 @@ export const getPluginTemplateEditor = (
           console.error(error);
         }
       })();
+
+      return () => {
+        if (typeof unmountHandler === 'function') {
+          unmountHandler();
+        }
+      };
     }, []);
 
     return (

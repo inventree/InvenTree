@@ -6,7 +6,7 @@ from datetime import datetime
 from distutils.sysconfig import get_python_lib
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from django.conf import settings
 from django.utils.text import slugify
@@ -15,9 +15,36 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import InvenTree.helpers
+from generic.enums import StringEnum
 from plugin.helpers import get_git_log
 
 logger = structlog.get_logger('inventree')
+
+
+class PluginMixinEnum(StringEnum):
+    """Enumeration of the available plugin mixin types."""
+
+    BASE = 'base'
+
+    ACTION = 'action'
+    API_CALL = 'api_call'
+    APP = 'app'
+    BARCODE = 'barcode'
+    CURRENCY_EXCHANGE = 'currencyexchange'
+    EVENTS = 'events'
+    EXPORTER = 'exporter'
+    ICON_PACK = 'icon_pack'
+    LABELS = 'labels'
+    LOCATE = 'locate'
+    NAVIGATION = 'navigation'
+    REPORT = 'report'
+    SCHEDULE = 'schedule'
+    SETTINGS = 'settings'
+    SETTINGS_CONTENT = 'settingscontent'
+    SUPPLIER_BARCODE = 'supplier-barcode'
+    URLS = 'urls'
+    USER_INTERFACE = 'ui'
+    VALIDATION = 'validation'
 
 
 class MetaBase:
@@ -126,12 +153,15 @@ class MixinBase:
         self._mixins = {}
         super().__init__(*args, **kwargs)
 
-    def mixin(self, key):
+    def mixin(self, key: str) -> bool:
         """Check if mixin is registered."""
+        key = str(key).lower()
         return key in self._mixins
 
-    def mixin_enabled(self, key):
+    def mixin_enabled(self, key: str) -> bool:
         """Check if mixin is registered, enabled and ready."""
+        key = str(key).lower()
+
         if self.mixin(key):
             fnc_name = self._mixins.get(key)
 
@@ -150,6 +180,8 @@ class MixinBase:
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
         """Add a mixin to the plugins registry."""
+        key = str(key).lower()
+
         self._mixins[key] = fnc_enabled
         self.setup_mixin(key, cls=cls)
 
@@ -230,7 +262,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         Set paths and load metadata.
         """
         super().__init__()
-        self.add_mixin('base')
+        self.add_mixin(PluginMixinEnum.BASE)
 
         self.define_package()
 
@@ -351,7 +383,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return self.check_package_path()
 
     @classmethod
-    def check_package_install_name(cls) -> [str, None]:
+    def check_package_install_name(cls) -> Union[str, None]:
         """Installable package name of the plugin.
 
         e.g. if this plugin was installed via 'pip install <x>',
@@ -363,7 +395,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return getattr(cls, 'package_name', None)
 
     @property
-    def package_install_name(self) -> [str, None]:
+    def package_install_name(self) -> Union[str, None]:
         """Installable package name of the plugin.
 
         e.g. if this plugin was installed via 'pip install <x>',

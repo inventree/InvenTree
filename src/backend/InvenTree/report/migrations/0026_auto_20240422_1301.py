@@ -46,9 +46,7 @@ def convert_legacy_labels(table_name, model_name, template_model):
         try:
             cursor.execute(query)
         except Exception:
-            # Table likely does not exist
-            if not InvenTree.ready.isInTestMode():
-                print(f"\nLegacy label table {table_name} not found - skipping migration")
+            # Table likely does not exist - database was created more recently
             return 0
 
         rows = cursor.fetchall()

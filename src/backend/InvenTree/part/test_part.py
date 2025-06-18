@@ -6,22 +6,16 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from allauth.account.models import EmailAddress
 
 import part.settings
-from common.models import (
-    InvenTreeSetting,
-    InvenTreeUserSetting,
-    NotificationEntry,
-    NotificationMessage,
-)
+from common.models import NotificationEntry, NotificationMessage
 from common.notifications import UIMessageNotification, storage
 from common.settings import get_global_setting, set_global_setting
 from InvenTree import version
 from InvenTree.templatetags import inventree_extras
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
 
 from .models import (
     Part,
@@ -53,34 +47,26 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test that the 'add."""
         self.assertEqual(int(inventree_extras.add(3, 5)), 8)
 
-    def test_plugins_enabled(self):
-        """Test the plugins_enabled tag."""
-        self.assertEqual(inventree_extras.plugins_enabled(), True)
-
-    def test_plugins_install_disabled(self):
-        """Test the plugins_install_disabled tag."""
-        self.assertEqual(inventree_extras.plugins_install_disabled(), False)
-
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
-    @override_settings(SITE_URL=None)
-    def test_inventree_base_url(self):
-        """Test that the base URL tag returns correctly."""
-        self.assertEqual(inventree_extras.inventree_base_url(), '')
+    def test_inventree_title(self):
+        """Test the 'inventree_title' setting."""
+        self.assertEqual(inventree_extras.inventree_title(), 'InvenTree')
 
-    def test_inventree_is_release(self):
-        """Test that the release version check functions as expected."""
+    def test_inventree_customize(self):
+        """Test the 'inventree_customize' template tag."""
+        self.assertEqual(inventree_extras.inventree_customize('abc'), '')
+
+    def test_inventree_version(self):
+        """Test the 'version' setting."""
         self.assertEqual(
-            inventree_extras.inventree_is_release(),
-            not version.isInvenTreeDevelopmentVersion(),
+            inventree_extras.inventree_version(), version.inventreeVersion()
         )
-
-    def test_inventree_docs_version(self):
-        """Test that the documentation version template tag returns correctly."""
-        self.assertEqual(
-            inventree_extras.inventree_docs_version(), version.inventreeDocsVersion()
+        self.assertNotEqual(
+            inventree_extras.inventree_version(shortstring=True),
+            version.inventreeVersion(),
         )
 
     def test_hash(self):
@@ -103,48 +89,63 @@ class TemplateTagTest(InvenTreeTestCase):
         else:
             self.assertEqual(len(d.split('-')), 3)
 
-    def test_github(self):
-        """Test that the github URL template tag returns correctly."""
-        self.assertIn('github.com', inventree_extras.inventree_github_url())
-
-    def test_docs(self):
-        """Test that the documentation URL template tag returns correctly."""
-        self.assertIn('docs.inventree.org', inventree_extras.inventree_docs_url())
-
     def test_keyvalue(self):
         """Test keyvalue template tag."""
         self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
 
-    def test_mail_configured(self):
-        """Test that mail configuration returns False."""
-        self.assertEqual(inventree_extras.mail_configured(), False)
+    def test_to_list(self):
+        """Test the 'to_list' template tag."""
+        self.assertEqual(inventree_extras.to_list(1, 2, 3), (1, 2, 3))
 
-    def test_user_settings(self):
-        """Test user settings."""
-        result = inventree_extras.user_settings(self.user)
-        self.assertEqual(len(result), len(InvenTreeUserSetting.SETTINGS))
+    def test_render_date(self):
+        """Test the 'render_date' template tag."""
+        self.assertEqual(inventree_extras.render_date('2021-01-01'), '2021-01-01')
 
-    def test_global_settings(self):
-        """Test global settings."""
-        result = inventree_extras.global_settings()
-        self.assertEqual(len(result), len(InvenTreeSetting.SETTINGS))
+        self.assertEqual(inventree_extras.render_date(None), None)
+        self.assertEqual(inventree_extras.render_date('  '), None)
+        self.assertEqual(inventree_extras.render_date('aaaa'), None)
+        self.assertEqual(inventree_extras.render_date(1234), 1234)
 
-    def test_visible_global_settings(self):
-        """Test that hidden global settings are actually hidden."""
-        result = inventree_extras.visible_global_settings()
+    def test_setting_object(self):
+        """Test the 'setting_object' template tag."""
+        # Normal
+        self.assertEqual(
+            inventree_extras.setting_object('PART_ALLOW_DUPLICATE_IPN').value, True
+        )
 
-        n = len(result)
+        # User
+        self.assertEqual(
+            inventree_extras.setting_object(
+                'PART_ALLOW_DUPLICATE_IPN', user=self.user
+            ).value,
+            '',
+        )
 
-        n_hidden = 0
-        n_visible = 0
+        # Method
+        self.assertEqual(
+            inventree_extras.setting_object(
+                'PART_ALLOW_DUPLICATE_IPN', method='abc', user=self.user
+            ).value,
+            '',
+        )
 
-        for val in InvenTreeSetting.SETTINGS.values():
-            if val.get('hidden', False):
-                n_hidden += 1
-            else:
-                n_visible += 1
+    def test_settings_value(self):
+        """Test the 'settings_value' template tag."""
+        # Normal
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN'), True
+        )
 
-        self.assertEqual(n, n_visible)
+        # User
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN', user=self.user),
+            '',
+        )
+        self.logout()
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN', user=self.user),
+            '',
+        )
 
 
 class PartTest(TestCase):
@@ -244,7 +245,7 @@ class PartTest(TestCase):
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
-        self.assertEqual(self.r1.get_absolute_url(), '/platform/part/3')
+        self.assertEqual(self.r1.get_absolute_url(), '/web/part/3')
 
     def test_category(self):
         """Test PartCategory path."""
@@ -804,6 +805,9 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Subscribe and run again
+        addUserPermission(self.user, 'part', 'part', 'view')
+        self.user.is_active = True
+        self.user.save()
         self.part.set_starred(self.user, True)
         self.part.save()
 

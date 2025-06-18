@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Button,
@@ -9,6 +9,8 @@ import {
 } from '@mantine/core';
 
 import { InvenTreeIcon } from '../../functions/icons';
+
+import type { JSX } from 'react';
 
 export function CopyButton({
   value,

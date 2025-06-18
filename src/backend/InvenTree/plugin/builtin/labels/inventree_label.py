@@ -1,7 +1,11 @@
 """Default label printing plugin (supports PDF generation)."""
 
+import io
+
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
+
+from pypdf import PdfWriter
 
 from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
@@ -50,7 +54,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             output = self.render_to_html(label, instance, None, **kwargs)
         else:
             # Output is already provided
-            output = kwargs['pdf_file']
+            output = kwargs.get('pdf_data')
 
         self.outputs.append(output)
 
@@ -65,15 +69,17 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             filename = 'labels.html'
         else:
             # Stitch together the PDF outputs
-            pages = []
+            pdf_writer = PdfWriter()
 
             for output in self.outputs:
-                doc = output.get_document()
+                output_file = io.BytesIO(output)
+                pdf_writer.append(output_file)
 
-                for page in doc.pages:
-                    pages.append(page)
+            pdf_file = io.BytesIO()
+            pdf_writer.write(pdf_file)
+            data = pdf_file.getvalue()
+            pdf_file.close()
 
-            data = self.outputs[0].get_document().copy(pages).write_pdf()
             filename = kwargs.get('filename', 'labels.pdf')
 
         return ContentFile(data, name=filename)

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Flex, Table } from '@mantine/core';
 import {
   IconAddressBook,
@@ -8,18 +8,19 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+} from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 
@@ -234,7 +235,12 @@ export function useReceiveReturnOrderLineItems(
           />
         );
       },
-      headers: [t`Part`, t`Quantity`, t`Status`]
+      headers: [
+        { title: t`Part`, style: { minWidth: '250px' } },
+        { title: t`Quantity`, style: { minWidth: '250px' } },
+        { title: t`Status`, style: { minWidth: '250px' } },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     location: {
       filters: {

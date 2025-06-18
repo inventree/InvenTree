@@ -3,6 +3,19 @@
 from os import environ
 
 
+def global_setting_overrides() -> dict:
+    """Return a dictionary of global settings overrides.
+
+    These values are set via environment variables or configuration file.
+    """
+    from django.conf import settings
+
+    if hasattr(settings, 'GLOBAL_SETTINGS_OVERRIDES'):
+        return settings.GLOBAL_SETTINGS_OVERRIDES or {}
+
+    return {}
+
+
 def get_global_setting(key, backup_value=None, enviroment_key=None, **kwargs):
     """Return the value of a global setting using the provided key."""
     from common.models import InvenTreeSetting

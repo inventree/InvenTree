@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Container,
   Drawer,
@@ -10,9 +10,9 @@ import {
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { AboutLinks, DocumentationLinks } from '../../defaults/links';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';
 import { useGlobalSettingsState } from '../../states/SettingsState';
@@ -106,6 +106,18 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         link: '/sales/',
         hidden: !user.hasViewRole(UserRoles.sales_order),
         icon: 'sales_orders'
+      },
+      {
+        id: 'users',
+        title: t`Users`,
+        link: '/core/index/users',
+        icon: 'user'
+      },
+      {
+        id: 'groups',
+        title: t`Groups`,
+        link: '/core/index/groups',
+        icon: 'group'
       }
     ];
   }, [user]);

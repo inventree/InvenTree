@@ -1,5 +1,5 @@
-import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconHash,
@@ -11,14 +11,17 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useAllocateToSalesOrderForm,
@@ -31,11 +34,9 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -50,11 +51,13 @@ import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
   orderId,
+  orderDetailRefresh,
   currency,
   customerId,
   editable
 }: Readonly<{
   orderId: number;
+  orderDetailRefresh: () => void;
   currency: string;
   customerId: number;
   editable: boolean;
@@ -207,7 +210,9 @@ export default function SalesOrderLineItemTable({
     ];
   }, [table.isRowExpanded]);
 
-  const [selectedLine, setSelectedLine] = useState<number>(0);
+  const [selectedLineId, setSelectedLineId] = useState<number>(0);
+
+  const [selectedSupplierPart, setSelectedSupplierPart] = useState<any>(null);
 
   const [initialData, setInitialData] = useState({});
 
@@ -225,6 +230,7 @@ export default function SalesOrderLineItemTable({
       ...initialData,
       sale_price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -236,21 +242,23 @@ export default function SalesOrderLineItemTable({
 
   const editLine = useEditApiFormModal({
     url: ApiEndpoints.sales_order_line_list,
-    pk: selectedLine,
+    pk: selectedLineId,
     title: t`Edit Line Item`,
     fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
   const deleteLine = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_line_list,
-    pk: selectedLine,
+    pk: selectedLineId,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
   const allocateSerialFields = useSalesOrderAllocateSerialsFields({
-    itemId: selectedLine,
+    itemId: selectedLineId,
     orderId: orderId
   });
 
@@ -258,16 +266,25 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_allocate_serials,
     pk: orderId,
     title: t`Allocate Serial Numbers`,
+    preFormContent: selectedSupplierPart ? (
+      <Paper withBorder p='sm'>
+        <RenderPart instance={selectedSupplierPart} />
+      </Paper>
+    ) : undefined,
     initialData: initialData,
     fields: allocateSerialFields,
     table: table
   });
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'build-order-create-from-sales-order'
+  });
 
   const newBuildOrder = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
+    modalId: 'build-order-create-from-sales-order',
     fields: buildOrderFields,
     initialData: initialData,
     follow: true,
@@ -382,7 +399,8 @@ export default function SalesOrderLineItemTable({
           icon: <IconHash />,
           color: 'green',
           onClick: () => {
-            setSelectedLine(record.pk);
+            setSelectedLineId(record.pk);
+            setSelectedSupplierPart(record?.part_detail ?? null);
             setInitialData({
               quantity: record.quantity - record.allocated
             });
@@ -422,7 +440,7 @@ export default function SalesOrderLineItemTable({
         RowEditAction({
           hidden: !editable || !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
-            setSelectedLine(record.pk);
+            setSelectedLineId(record.pk);
             editLine.open();
           }
         }),
@@ -436,7 +454,7 @@ export default function SalesOrderLineItemTable({
         RowDeleteAction({
           hidden: !editable || !user.hasDeleteRole(UserRoles.sales_order),
           onClick: () => {
-            setSelectedLine(record.pk);
+            setSelectedLineId(record.pk);
             deleteLine.open();
           }
         })

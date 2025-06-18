@@ -5,7 +5,7 @@ import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from django import template
 from django.apps.registry import apps
@@ -44,6 +44,8 @@ def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
     Example:
         {% filter_queryset companies is_supplier=True as suppliers %}
     """
+    if not isinstance(queryset, QuerySet):
+        return queryset
     return queryset.filter(**kwargs)
 
 
@@ -60,7 +62,10 @@ def filter_db_model(model_name: str, **kwargs) -> QuerySet:
     Example:
         {% filter_db_model 'part.partcategory' is_template=True as template_parts %}
     """
-    app_name, model_name = model_name.split('.')
+    try:
+        app_name, model_name = model_name.split('.')
+    except ValueError:
+        return None
 
     try:
         model = apps.get_model(app_name, model_name)
@@ -93,13 +98,7 @@ def getindex(container: list, index: int) -> Any:
 
     if index < 0 or index >= len(container):
         return None
-
-    try:
-        value = container[index]
-    except IndexError:
-        value = None
-
-    return value
+    return container[index]
 
 
 @register.simple_tag()
@@ -191,8 +190,8 @@ def uploaded_image(
         try:
             full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
             exists = full_path.exists() and full_path.is_file()
-        except Exception:
-            exists = False
+        except Exception:  # pragma: no cover
+            exists = False  # pragma: no cover
 
     if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
         logger.warning("File '%s' is not a valid image", filename)
@@ -302,10 +301,14 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
 
-    if preview:
-        img = part.image.preview.name
+    if not part.image:
+        img = None
+    elif preview:
+        img = None if not hasattr(part.image, 'preview') else part.image.preview.name
     elif thumbnail:
-        img = part.image.thumbnail.name
+        img = (
+            None if not hasattr(part.image, 'thumbnail') else part.image.thumbnail.name
+        )
     else:
         img = part.image.name
 
@@ -376,10 +379,14 @@ def internal_link(link, text) -> str:
     """
     text = str(text)
 
-    url = InvenTree.helpers_model.construct_absolute_url(link)
+    try:
+        url = InvenTree.helpers_model.construct_absolute_url(link)
+    except Exception:
+        url = None
 
     # If the base URL is not set, just return the text
     if not url:
+        logger.warning('Failed to construct absolute URL for internal link')
         return text
 
     return mark_safe(f'<a href="{url}">{text}</a>')
@@ -444,7 +451,7 @@ def render_html_text(text: str, **kwargs):
 
 @register.simple_tag
 def format_number(
-    number,
+    number: Union[int, float, Decimal],
     decimal_places: Optional[int] = None,
     integer: bool = False,
     leading: int = 0,
@@ -453,6 +460,7 @@ def format_number(
     """Render a number with optional formatting options.
 
     Arguments:
+        number: The number to be formatted
         decimal_places: Number of decimal places to render
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)
@@ -525,7 +533,10 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
-    dt = InvenTree.helpers.to_local_time(dt, timezone).date()
+    try:
+        dt = InvenTree.helpers.to_local_time(dt, timezone).date()
+    except TypeError:
+        return str(dt)
 
     if fmt:
         return dt.strftime(fmt)
@@ -558,15 +569,18 @@ def icon(name, **kwargs):
 
 
 @register.simple_tag()
-def include_icon_fonts():
+def include_icon_fonts(ttf: bool = False, woff: bool = False):
     """Return the CSS font-face rule for the icon fonts used on the current page (or all)."""
     fonts = []
 
+    if not ttf and not woff:
+        ttf = woff = True
+
     for font in common.icons.get_icon_packs().values():
         # generate the font src string (prefer ttf over woff, woff2 is not supported by weasyprint)
-        if 'truetype' in font.fonts:
+        if 'truetype' in font.fonts and ttf:
             font_format, url = 'truetype', font.fonts['truetype']
-        elif 'woff' in font.fonts:
+        elif 'woff' in font.fonts and woff:
             font_format, url = 'woff', font.fonts['woff']
 
         fonts.append(f"""

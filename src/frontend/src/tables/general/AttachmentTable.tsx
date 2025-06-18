@@ -1,8 +1,10 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import {
+  IconCircleCheck,
+  IconExclamationCircle,
   IconExternalLink,
   IconFileUpload,
   IconUpload,
@@ -10,23 +12,24 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { ActionButton } from '../../components/buttons/ActionButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { ProgressBar } from '../../components/items/ProgressBar';
 import { useApi } from '../../contexts/ApiContext';
 import { formatFileSize } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -89,6 +92,21 @@ function attachmentTableColumns(): TableColumn[] {
   ];
 }
 
+function UploadProgress({
+  filename,
+  progress
+}: {
+  filename: string;
+  progress: number;
+}) {
+  return (
+    <Stack gap='xs'>
+      <Text size='sm'>{t`Uploading file ${filename}`}</Text>
+      <ProgressBar value={progress} progressLabel={false} />
+    </Stack>
+  );
+}
+
 /**
  * Construct a table for displaying uploaded attachments
  */
@@ -130,15 +148,42 @@ export function AttachmentTable({
 
       setIsUploading(true);
 
+      const name: string = file.name;
+      const id: string = `attachment-upload-${model_type}-${model_id}-${file.name}`;
+
+      notifications.show({
+        id: id,
+        title: t`Uploading File`,
+        message: <UploadProgress filename={name} progress={0} />,
+        color: 'blue',
+        loading: true,
+        autoClose: false
+      });
+
       api
         .post(url, formData, {
-          timeout: 30 * 1000
+          timeout: 30 * 1000,
+          onUploadProgress: (progressEvent) => {
+            const progress = 100 * (progressEvent?.progress ?? 0);
+            notifications.update({
+              id: id,
+              title: t`Uploading File`,
+              color: 'blue',
+              loading: true,
+              autoClose: false,
+              message: <UploadProgress filename={name} progress={progress} />
+            });
+          }
         })
         .then((response) => {
-          notifications.show({
-            title: t`File uploaded`,
-            message: t`File ${file.name} uploaded successfully`,
-            color: 'green'
+          notifications.update({
+            id: id,
+            title: t`File Uploaded`,
+            message: t`File ${name} uploaded successfully`,
+            color: 'green',
+            autoClose: 3500,
+            icon: <IconCircleCheck />,
+            loading: false
           });
 
           table.refreshTable();
@@ -146,11 +191,15 @@ export function AttachmentTable({
           return response;
         })
         .catch((error) => {
-          console.error('error uploading attachment:', file, '->', error);
-          notifications.show({
+          console.error('Error uploading attachment:', file, '->', error);
+          notifications.update({
+            id: id,
             title: t`Upload Error`,
             message: t`File could not be uploaded`,
-            color: 'red'
+            color: 'red',
+            autoClose: 5000,
+            icon: <IconExclamationCircle />,
+            loading: false
           });
           return error;
         })
