@@ -13,6 +13,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import django.conf.locale
@@ -826,6 +827,7 @@ if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
 TRACING_ENABLED = get_boolean_setting(
     'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
 )
+TRACING_DETAILS: Optional[dict] = None
 
 if TRACING_ENABLED:  # pragma: no cover
     from InvenTree.tracing import setup_instruments, setup_tracing
@@ -839,33 +841,41 @@ if TRACING_ENABLED:  # pragma: no cover
     if _t_endpoint:
         logger.info('OpenTelemetry tracing enabled')
 
-        _t_resources = get_setting(
-            'INVENTREE_TRACING_RESOURCES',
-            'tracing.resources',
-            default_value=None,
-            typecast=dict,
+        TRACING_DETAILS = (
+            TRACING_DETAILS
+            if TRACING_DETAILS
+            else {
+                'endpoint': _t_endpoint,
+                'headers': _t_headers,
+                'resources_input': {
+                    **{'inventree.env.' + k: v for k, v in inventree_tags.items()},
+                    **get_setting(
+                        'INVENTREE_TRACING_RESOURCES',
+                        'tracing.resources',
+                        default_value=None,
+                        typecast=dict,
+                    ),
+                },
+                'console': get_boolean_setting(
+                    'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
+                ),
+                'auth': get_setting(
+                    'INVENTREE_TRACING_AUTH',
+                    'tracing.auth',
+                    default_value=None,
+                    typecast=dict,
+                ),
+                'is_http': get_setting(
+                    'INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True
+                ),
+                'append_http': get_boolean_setting(
+                    'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
+                ),
+            }
         )
-        cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
-        tracing_resources = {**cstm_tags, **_t_resources}
 
-        setup_tracing(
-            _t_endpoint,
-            _t_headers,
-            resources_input=tracing_resources,
-            console=get_boolean_setting(
-                'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
-            ),
-            auth=get_setting(
-                'INVENTREE_TRACING_AUTH',
-                'tracing.auth',
-                default_value=None,
-                typecast=dict,
-            ),
-            is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
-            append_http=get_boolean_setting(
-                'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
-            ),
-        )
+        # Run tracing/logging instrumentation
+        setup_tracing(**TRACING_DETAILS)
         # Run tracing/logging instrumentation
         setup_instruments()
     else:
