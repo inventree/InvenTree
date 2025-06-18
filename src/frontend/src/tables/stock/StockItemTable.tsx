@@ -526,12 +526,14 @@ export function StockItemTable({
 
   const newStockItemFields = useStockFields({
     create: true,
-    partId: params.part
+    partId: params.part,
+    modalId: 'add-stock-item'
   });
 
   const newStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     title: t`Add Stock Item`,
+    modalId: 'add-stock-item',
     fields: newStockItemFields,
     initialData: {
       part: params.part,

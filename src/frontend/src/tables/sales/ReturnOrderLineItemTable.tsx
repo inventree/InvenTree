@@ -38,11 +38,13 @@ import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export default function ReturnOrderLineItemTable({
   orderId,
   order,
+  orderDetailRefresh,
   customerId,
   currency
 }: Readonly<{
   orderId: number;
   order: any;
+  orderDetailRefresh: () => void;
   customerId: number;
   currency: string;
 }>) {
@@ -76,6 +78,7 @@ export default function ReturnOrderLineItemTable({
       order: orderId,
       price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -84,6 +87,7 @@ export default function ReturnOrderLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -91,6 +95,7 @@ export default function ReturnOrderLineItemTable({
     url: ApiEndpoints.return_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
