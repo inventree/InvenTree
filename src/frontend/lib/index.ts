@@ -9,6 +9,7 @@ export {
 // Common type definitions
 export { ApiEndpoints } from './enums/ApiEndpoints';
 export { ModelType } from './enums/ModelType';
+export type { ModelInformationDict } from './enums/ModelInformation';
 export { UserRoles, UserPermissions } from './enums/Roles';
 
 export type { InvenTreePluginContext } from './types/Plugins';
