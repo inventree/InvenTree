@@ -989,6 +989,7 @@ opentelemetry-api==1.34.0 \
     #   opentelemetry-instrumentation-redis
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-sqlite3
+    #   opentelemetry-instrumentation-system-metrics
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
@@ -1019,6 +1020,7 @@ opentelemetry-instrumentation==0.55b0 \
     #   opentelemetry-instrumentation-redis
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-sqlite3
+    #   opentelemetry-instrumentation-system-metrics
     #   opentelemetry-instrumentation-wsgi
 opentelemetry-instrumentation-dbapi==0.55b0 \
     --hash=sha256:dca1344a5d7303d0c225631262458835f80a2ed00d6e0a4053d9c47bbca41cb5 \
@@ -1039,6 +1041,10 @@ opentelemetry-instrumentation-requests==0.55b0 \
 opentelemetry-instrumentation-sqlite3==0.55b0 \
     --hash=sha256:9c1c9bd3409f2f6494f314c72c89785f45f94117562009d9fcae05f9862a4d9a \
     --hash=sha256:bfb5a8a6b5d545a5187a1d427417e92e7be47d9d28b315998d01dbc73b89402d
+    # via -r src/backend/requirements.in
+opentelemetry-instrumentation-system-metrics==0.55b0 \
+    --hash=sha256:23050f289e7c2062672781646deb9c39283fc35a1d1ba3f60856b8ecf45efd32 \
+    --hash=sha256:392b558b6d193ce3eb51a29be984badc5dd2c5a44c8716850d7624045d68cbc4
     # via -r src/backend/requirements.in
 opentelemetry-instrumentation-wsgi==0.55b0 \
     --hash=sha256:63d1851bf98dd2a119f41b8f9c5fd469e63e6e6e042be04196609f05df01b32e \
@@ -1210,6 +1216,18 @@ protobuf==5.29.5 \
     # via
     #   googleapis-common-protos
     #   opentelemetry-proto
+psutil==7.0.0 \
+    --hash=sha256:101d71dc322e3cffd7cea0650b09b3d08b8e7c4109dd6809fe452dfd00e58b25 \
+    --hash=sha256:1e744154a6580bc968a0195fd25e80432d3afec619daf145b9e5ba16cc1d688e \
+    --hash=sha256:1fcee592b4c6f146991ca55919ea3d1f8926497a713ed7faaf8225e174581e91 \
+    --hash=sha256:39db632f6bb862eeccf56660871433e111b6ea58f2caea825571951d4b6aa3da \
+    --hash=sha256:4b1388a4f6875d7e2aff5c4ca1cc16c545ed41dd8bb596cefea80111db353a34 \
+    --hash=sha256:4cf3d4eb1aa9b348dec30105c55cd9b7d4629285735a102beb4441e38db90553 \
+    --hash=sha256:7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456 \
+    --hash=sha256:84df4eb63e16849689f76b1ffcb36db7b8de703d1bc1fe41773db487621b6c17 \
+    --hash=sha256:a5f098451abc2828f7dc6b58d44b532b22f2088f4999a937557b603ce72b1993 \
+    --hash=sha256:ba3fcef7523064a6c9da440fc4d6bd07da93ac726b5733c29027d7dc95b39d99
+    # via opentelemetry-instrumentation-system-metrics
 py-moneyed==3.0 \
     --hash=sha256:4906f0f02cf2b91edba2e156f2d4e9a78f224059ab8c8fa2ff26230c75d894e8 \
     --hash=sha256:9583a14f99c05b46196193d8185206e9b73c8439fc8a5eee9cfc7e733676d9bb

@@ -11,6 +11,7 @@ from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor
+from opentelemetry.instrumentation.system_metrics import SystemMetricsInstrumentor
 from opentelemetry.sdk import _logs as logs
 from opentelemetry.sdk import resources
 from opentelemetry.sdk._logs import export as logs_export
@@ -155,6 +156,7 @@ def setup_instruments():
     DjangoInstrumentor().instrument()
     RedisInstrumentor().instrument()
     RequestsInstrumentor().instrument()
+    SystemMetricsInstrumentor().instrument()
 
     # DBs
     if settings.db_engine == 'sqlite':
