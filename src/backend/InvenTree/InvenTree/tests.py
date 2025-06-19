@@ -1199,7 +1199,7 @@ class TestSettings(InvenTreeTestCase):
         """Test get_config_file."""
         # normal run - not configured
 
-        valid = ['inventree/config.yaml', 'inventree/data/config.yaml']
+        valid = ['conf/config.yaml', 'inventree/data/config.yaml']
 
         trgt_path = str(config.get_config_file()).lower()
         self.assertTrue(
@@ -1219,7 +1219,7 @@ class TestSettings(InvenTreeTestCase):
         """Test get_plugin_file."""
         # normal run - not configured
 
-        valid = ['inventree/plugins.txt', 'inventree/data/plugins.txt']
+        valid = ['conf/plugins.txt', 'inventree/data/plugins.txt']
 
         trgt_path = str(config.get_plugin_file()).lower()
         self.assertTrue(
