@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 352
+INVENTREE_API_VERSION = 353
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v353 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9811
+    - Removes legacy "PartScheduling" API endpoints
+
 v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
     - Make PurchaseOrderLineItem link to BuildOrder reference nullable
     - Add valid fields to ordering field descriptions
