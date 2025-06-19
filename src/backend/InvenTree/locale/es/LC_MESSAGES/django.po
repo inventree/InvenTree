@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-14 01:28+0000\n"
-"PO-Revision-Date: 2025-06-14 01:30\n"
+"POT-Creation-Date: 2025-06-14 02:16+0000\n"
+"PO-Revision-Date: 2025-06-14 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -155,15 +155,16 @@ msgstr "Rango del grupo {group} supera la cantidad permitida ({expected_quantity
 msgid "No serial numbers found"
 msgstr "Numeros de serie no encontrados"
 
-#: InvenTree/helpers.py:721
-msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "Los números de serie únicos ({len(serials)}) debe coincidir con la cantidad ({expected_quantity})"
+#: InvenTree/helpers.py:723
+#, python-brace-format
+msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
+msgstr ""
 
-#: InvenTree/helpers.py:840
+#: InvenTree/helpers.py:841
 msgid "Remove HTML tags from this value"
 msgstr "Eliminar etiquetas HTML de este valor"
 
-#: InvenTree/helpers.py:919
+#: InvenTree/helpers.py:920
 msgid "Data contains prohibited markdown content"
 msgstr "Los datos contienen contenido de marcado prohibido"
 
