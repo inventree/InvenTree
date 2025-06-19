@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from allauth.account.models import EmailAddress
+from opentelemetry import trace
 
 import build.models as build_models
 import common.notifications
@@ -25,9 +26,11 @@ from build.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 from plugin.events import trigger_event
 
+tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
 
 
+@tracer.start_as_current_span('auto_allocate_build')
 def auto_allocate_build(build_id: int, **kwargs):
     """Run auto-allocation for a specified BuildOrder."""
     build_order = build_models.Build.objects.filter(pk=build_id).first()
@@ -42,6 +45,7 @@ def auto_allocate_build(build_id: int, **kwargs):
     build_order.auto_allocate_stock(**kwargs)
 
 
+@tracer.start_as_current_span('complete_build_allocations')
 def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
     build_order = build_models.Build.objects.filter(pk=build_id).first()
@@ -68,6 +72,7 @@ def complete_build_allocations(build_id: int, user_id: int):
     build_order.complete_allocations(user)
 
 
+@tracer.start_as_current_span('update_build_order_lines')
 def update_build_order_lines(bom_item_pk: int):
     """Update all BuildOrderLineItem objects which reference a particular BomItem.
 
@@ -114,6 +119,7 @@ def update_build_order_lines(bom_item_pk: int):
         )
 
 
+@tracer.start_as_current_span('check_build_stock')
 def check_build_stock(build: build_models.Build):
     """Check the required stock for a newly created build order.
 
@@ -199,6 +205,7 @@ def check_build_stock(build: build_models.Build):
         )
 
 
+@tracer.start_as_current_span('create_child_builds')
 def create_child_builds(build_id: int) -> None:
     """Create child build orders for a given parent build.
 
@@ -252,6 +259,7 @@ def create_child_builds(build_id: int) -> None:
             InvenTree.tasks.offload_task(create_child_builds, pk, group='build')
 
 
+@tracer.start_as_current_span('notify_overdue_build_order')
 def notify_overdue_build_order(bo: build_models.Build):
     """Notify appropriate users that a Build has just become 'overdue'."""
     targets = []
@@ -285,6 +293,7 @@ def notify_overdue_build_order(bo: build_models.Build):
     trigger_event(event_name, build_order=bo.pk)
 
 
+@tracer.start_as_current_span('check_overdue_build_orders')
 @InvenTree.tasks.scheduled_task(InvenTree.tasks.ScheduledTask.DAILY)
 def check_overdue_build_orders():
     """Check if any outstanding BuildOrders have just become overdue.

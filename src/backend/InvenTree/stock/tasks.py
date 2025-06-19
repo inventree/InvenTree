@@ -1,10 +1,13 @@
 """Background tasks for the stock app."""
 
 import structlog
+from opentelemetry import trace
 
+tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
 
 
+@tracer.start_as_current_span('rebuild_stock_item_tree')
 def rebuild_stock_item_tree(tree_id=None):
     """Rebuild the stock tree structure.
 
