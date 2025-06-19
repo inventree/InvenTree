@@ -26,13 +26,13 @@ bleach[css]==6.2.0 \
     --hash=sha256:117d9c6097a7c3d22fd578fcd8d35ff1e125df6736f554da4e432fdd63f31e5e \
     --hash=sha256:123e894118b8a599fd80d3ec1a6d4cc7ce4e5882b1317a7e1ba69b56e95f991f
     # via django-markdownify
-boto3==1.38.9 \
-    --hash=sha256:71f6d43f5bc156cc904f8dde9a2801adb222b81724fb9129f8ff6e7b9331e853 \
-    --hash=sha256:a9f8642e84589e7787da0d5d146a14d1eb9e3a4029893c88d1b4e11654cf8014
+boto3==1.38.39 \
+    --hash=sha256:22cca12cfe1b24670de53e3b8f4c69bdf34a2bd3e3363f72393b6b03bb0d78bc \
+    --hash=sha256:6472f7f3f13783e9c9c5d0042173b32a0e7000073d0a57a725d38cd157ce3332
     # via django-anymail
-botocore==1.38.9 \
-    --hash=sha256:2d954d3d9a6c7f86fbfbeb164223996c24b7b7726682bace61f86a7e10b531e6 \
-    --hash=sha256:53113040882192388e05edebee48d45c008fb4ba2739dc889ce09b2adc9e56e4
+botocore==1.38.39 \
+    --hash=sha256:2305f688e9328af473a504197584112f228513e06412038d83205ce8d1456f40 \
+    --hash=sha256:ee3aa03af1dabed4f3710cd64f6d9d488281eee720710bf1cf9f2b2fd30025ae
     # via
     #   boto3
     #   s3transfer
@@ -1589,9 +1589,9 @@ rpds-py==0.25.1 \
     # via
     #   jsonschema
     #   referencing
-s3transfer==0.12.0 \
-    --hash=sha256:35b314d7d82865756edab59f7baebc6b477189e6ab4c53050e28c1de4d9cce18 \
-    --hash=sha256:8ac58bc1989a3fdb7c7f3ee0918a66b160d038a147c7b5db1500930a607e9a1c
+s3transfer==0.13.0 \
+    --hash=sha256:0148ef34d6dd964d0d8cf4311b2b21c474693e57c2e069ec708ce043d2b527be \
+    --hash=sha256:f5e6db74eb7776a37208001113ea7aa97695368242b364d73e91c981ac522177
     # via boto3
 sentry-sdk==2.29.1 \
     --hash=sha256:8d4a0206b95fa5fe85e5e7517ed662e3888374bdc342c00e435e10e6d831aa6d \
