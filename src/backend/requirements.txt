@@ -401,6 +401,7 @@ django==4.2.22 \
     #   django-flags
     #   django-ical
     #   django-js-asset
+    #   django-linear-migrations
     #   django-markdownify
     #   django-money
     #   django-oauth-toolkit
@@ -409,6 +410,7 @@ django==4.2.22 \
     #   django-q2
     #   django-recurrence
     #   django-redis
+    #   django-remake-migrations
     #   django-sesame
     #   django-sql-utils
     #   django-sslserver
@@ -458,6 +460,10 @@ django-js-asset==2.2.0 \
     --hash=sha256:0c57a82cae2317e83951d956110ce847f58ff0cdc24e314dbc18b35033917e94 \
     --hash=sha256:7ef3e858e13d06f10799b56eea62b1e76706f42cf4e709be4e13356bc0ae30d8
     # via django-mptt
+django-linear-migrations==2.17.0 \
+    --hash=sha256:29ce3710e1334494d5bcc8b707bde0253e1eacc5a8bf163d7234c88fe3493242 \
+    --hash=sha256:5960fd156071127e25e51f41c00a2fb4388ab64da5f581defe7933b7414b33ff
+    # via -r src/backend/requirements.in
 django-maintenance-mode==0.22.0 \
     --hash=sha256:502f04f845d6996e8add321186b3b9236c3702de7cb0ab14952890af6523b9e5 \
     --hash=sha256:a9cf2ba79c9945bd67f98755a6cfd281869d39b3745bbb5d1f571d058657aa85
@@ -500,6 +506,10 @@ django-recurrence==1.11.1 \
 django-redis==5.4.0 \
     --hash=sha256:6a02abaa34b0fea8bf9b707d2c363ab6adc7409950b2db93602e6cb292818c42 \
     --hash=sha256:ebc88df7da810732e2af9987f7f426c96204bf89319df4c6da6ca9a2942edd5b
+    # via -r src/backend/requirements.in
+django-remake-migrations==2.7.0 \
+    --hash=sha256:2f6f9079b2e298c99dd00a3820407de390c1e5b5df3fce037df91e324fa7f3f7 \
+    --hash=sha256:644154692ff841877cac960eab33d2ba80e00bb232e49c21f0900a94d1d9c698
     # via -r src/backend/requirements.in
 django-sesame==3.2.3 \
     --hash=sha256:09977a1c55bdbcce0a024c712c4d683e1a69543a217626ffa1d5f7ef7ebffc58 \
