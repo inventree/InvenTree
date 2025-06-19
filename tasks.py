@@ -1549,6 +1549,11 @@ def clear_generated(c):
     run(c, 'find src -name "messages.mo" -exec rm -f {} +')
 
 
+@task(pre=[wait])
+def monitor(c):
+    """Monitor the worker performance."""
+    manage(c, 'qmonitor', pty=True)
+
 # Collection sorting
 development = Collection(
     delete_data,
@@ -1597,6 +1602,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    monitor,
 )
 
 ns.add_collection(development, 'dev')
