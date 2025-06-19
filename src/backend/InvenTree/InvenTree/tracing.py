@@ -4,10 +4,13 @@ import base64
 import logging
 from typing import Optional
 
+from django.conf import settings
+
 from opentelemetry import metrics, trace
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor
 from opentelemetry.sdk import _logs as logs
 from opentelemetry.sdk import resources
 from opentelemetry.sdk._logs import export as logs_export
@@ -152,3 +155,7 @@ def setup_instruments():
     DjangoInstrumentor().instrument()
     RedisInstrumentor().instrument()
     RequestsInstrumentor().instrument()
+
+    # DBs
+    if settings.db_engine == 'sqlite':
+        SQLite3Instrumentor.instrument()

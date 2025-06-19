@@ -984,9 +984,11 @@ opentelemetry-api==1.34.0 \
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
     #   opentelemetry-instrumentation
+    #   opentelemetry-instrumentation-dbapi
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-redis
     #   opentelemetry-instrumentation-requests
+    #   opentelemetry-instrumentation-sqlite3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
@@ -1012,10 +1014,16 @@ opentelemetry-instrumentation==0.55b0 \
     --hash=sha256:9669f19a561f7eacd9974823e48949bc12506d34cb2dd277e9d7b70987c7cc66 \
     --hash=sha256:c0c64c16d2abae80a0f43906d3c68de10a700a4fc11d22b1c31f32d628e95e31
     # via
+    #   opentelemetry-instrumentation-dbapi
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-redis
     #   opentelemetry-instrumentation-requests
+    #   opentelemetry-instrumentation-sqlite3
     #   opentelemetry-instrumentation-wsgi
+opentelemetry-instrumentation-dbapi==0.55b0 \
+    --hash=sha256:dca1344a5d7303d0c225631262458835f80a2ed00d6e0a4053d9c47bbca41cb5 \
+    --hash=sha256:ebfe8b5506cd77ec37a94e59491537c5d4b38aeb4ad942c9a68aac73bc3d3d31
+    # via opentelemetry-instrumentation-sqlite3
 opentelemetry-instrumentation-django==0.55b0 \
     --hash=sha256:5421e0e6a8d2847e5296714affce239150e3ac27defdbd0d22f9842c4f3b1ca8 \
     --hash=sha256:9c50ab2f9e359d0f96a1516cc25b3e515045c858a3994cf04e21ef602905158b
@@ -1027,6 +1035,10 @@ opentelemetry-instrumentation-redis==0.55b0 \
 opentelemetry-instrumentation-requests==0.55b0 \
     --hash=sha256:018c6e5550f10a116f101b619a3e330d309ae3438e6c7ad1541c77e56d6f3b49 \
     --hash=sha256:9299303c5b23ea0c825f6bda346f585171471e19e6c1313c19a3facddf1e2a42
+    # via -r src/backend/requirements.in
+opentelemetry-instrumentation-sqlite3==0.55b0 \
+    --hash=sha256:9c1c9bd3409f2f6494f314c72c89785f45f94117562009d9fcae05f9862a4d9a \
+    --hash=sha256:bfb5a8a6b5d545a5187a1d427417e92e7be47d9d28b315998d01dbc73b89402d
     # via -r src/backend/requirements.in
 opentelemetry-instrumentation-wsgi==0.55b0 \
     --hash=sha256:63d1851bf98dd2a119f41b8f9c5fd469e63e6e6e042be04196609f05df01b32e \
@@ -1051,6 +1063,7 @@ opentelemetry-semantic-conventions==0.55b0 \
     --hash=sha256:933d2e20c2dbc0f9b2f4f52138282875b4b14c66c491f5273bcdef1781368e9c
     # via
     #   opentelemetry-instrumentation
+    #   opentelemetry-instrumentation-dbapi
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-redis
     #   opentelemetry-instrumentation-requests
@@ -1778,6 +1791,7 @@ wrapt==1.17.2 \
     --hash=sha256:ff04ef6eec3eee8a5efef2401495967a916feaa353643defcc03fc74fe213b58
     # via
     #   opentelemetry-instrumentation
+    #   opentelemetry-instrumentation-dbapi
     #   opentelemetry-instrumentation-redis
 xlrd==2.0.1 \
     --hash=sha256:6a33ee89877bd9abc1158129f6e94be74e2679636b8a205b43b85206c3f0bbdd \
