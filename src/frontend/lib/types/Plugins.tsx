@@ -1,3 +1,4 @@
+import type { ModelDict } from '@lib/enums/ModelInformation';
 import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
@@ -56,6 +57,7 @@ export type InvenTreePluginContext = {
   user: UserStateProps;
   userSettings: SettingsStateProps;
   globalSettings: SettingsStateProps;
+  modelInformation: ModelDict;
   host: string;
   locale: string;
   navigate: NavigateFunction;
