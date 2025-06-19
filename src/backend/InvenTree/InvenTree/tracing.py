@@ -160,4 +160,4 @@ def setup_instruments():
 
     # DBs
     if settings.DB_ENGINE == 'sqlite':
-        SQLite3Instrumentor.instrument()
+        SQLite3Instrumentor().instrument()
