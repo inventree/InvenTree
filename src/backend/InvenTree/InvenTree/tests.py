@@ -1201,8 +1201,9 @@ class TestSettings(InvenTreeTestCase):
 
         valid = ['inventree/config.yaml', 'inventree/data/config.yaml']
 
+        trgt_path = str(config.get_config_file()).lower()
         self.assertTrue(
-            any(opt in str(config.get_config_file()).lower() for opt in valid)
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
         )
 
         # with env set
@@ -1220,8 +1221,9 @@ class TestSettings(InvenTreeTestCase):
 
         valid = ['inventree/plugins.txt', 'inventree/data/plugins.txt']
 
+        trgt_path = str(config.get_plugin_file()).lower()
         self.assertTrue(
-            any(opt in str(config.get_plugin_file()).lower() for opt in valid)
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
         )
 
         # with env set
