@@ -2,32 +2,19 @@
 title: Pricing
 ---
 
-## Pricing
+## Part Pricing
 
-Pricing is an inherently complex topic, often subject to the particular requirements of the user. InvenTree attempts to provide a comprehensive pricing architecture which is useful without being proscriptive.
-
-!!! warning "Raw Data Only"
-    InvenTree stores raw pricing data, as provided by the user. Any calculations or decisions based on this data must take into consideration the context in which the data are entered.
-
-### Terminology
-
-Throughout this documentation (and within InvenTree) the concepts of *cost* and *price* are separated as follows:
-
-| Term | Description |
-| --- | --- |
-| Price | The theoretical amount of money required to pay for something. |
-| Cost | The actual amount of money paid. |
-
-### Pricing Sources
+!!! info "Pricing Support"
+    Refer to the [Pricing Support](../concepts/pricing.md) documentation for more information on pricing support in InvenTree.
 
 Pricing information can be determined from multiple sources:
 
 | Pricing Source | Description | Linked to |
 | --- | --- | ---|
-| Internal Price | How much a part costs to make | [Part](../part/part.md) |
-| Supplier Price | The price to theoretically purchase a part from a given supplier (with price-breaks) | [Supplier](../order/company.md#suppliers) |
-| Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../order/purchase_order.md) |
-| BOM Price | Total price for an assembly (total price of all component items) | [Part](../part/part.md) |
+| Internal Price | How much a part costs to make | [Part](../part/index.md) |
+| Supplier Price | The price to theoretically purchase a part from a given supplier (with price-breaks) | [Supplier](../purchasing/supplier.md) |
+| Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../purchasing/purchase_order.md) |
+| BOM Price | Total price for an assembly (total price of all component items) | [Part](../part/index.md) |
 
 #### Override Pricing
 
@@ -39,28 +26,8 @@ Additionally, the following information is stored for each part, in relation to 
 
 | Pricing Source | Description | Linked to |
 | --- | --- | --- |
-| Sale Price | How much a salable item is sold for (with price-breaks) | [Part](../part/part.md) |
-| Sale Cost | How much an item was sold for | [Sales Order](../order/sales_order.md) |
-
-### Currency Support
-
-InvenTree supports pricing data in multiple currencies, allowing integration with suppliers and customers using different currency systems.
-
-Supported currencies can be configured in the [InvenTree settings](../settings/currency.md).
-
-!!! info "Currency Support"
-    InvenTree provides multi-currency pricing support via the [django-money](https://django-money.readthedocs.io/en/latest/) library.
-
-#### Default Currency
-
-Many of the pricing operations are performed in reference to a *Default Currency* (which can be selected for the particular InvenTree installation).
-
-#### Conversion Rates
-
-To facilitate conversion between different currencies, exchange rate data is provided via the [exchangerate.host](https://exchangerate.host/#/) API. Currency exchange rates are updated once per day.
-
-!!! tip "Custom Exchange Rates"
-    Custom exchange rates or databases can be used if desired.
+| Sale Price | How much a salable item is sold for (with price-breaks) | [Part](../part/index.md) |
+| Sale Cost | How much an item was sold for | [Sales Order](../sales/sales_order.md) |
 
 ## Pricing Tab
 
@@ -75,13 +42,11 @@ The pricing tab is divided into different sections, based on the available prici
 
 At the top of the pricing tab, an *Overview* section shows a synopsis of the available pricing data:
 
-{% with id="pricing_overview", url="part/pricing_overview.png", description="Pricing Overview" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_overview.png", "Pricing Overview") }}
 
 This overview tab provides information on the *range* of pricing data available within each category. If pricing data is not available for a given category, it is marked as *No data*.
 
-Each price range is calculated in the [Default Currency](#default-currency), independent of the currency in which the original pricing information is stored. This is necessary for operations such as data sorting, price comparison, etc. Note that while the *overview* information is calculated in a single currency, the original pricing information is still available in the original currency.
+Each price range is calculated in the [Default Currency](../concepts/pricing.md#default-currency), independent of the currency in which the original pricing information is stored. This is necessary for operations such as data sorting, price comparison, etc. Note that while the *overview* information is calculated in a single currency, the original pricing information is still available in the original currency.
 
 Price range data is [cached in the database](#price-data-caching) when underlying pricing information changes.
 
@@ -98,9 +63,7 @@ A particular Part may have a set of *Internal Price Breaks* which denote quantit
 
 If desired, price breaks can be specified based on particular quantities.
 
-{% with id="pricing_internal", url="part/pricing_internal.png", description="Internal Pricing" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_internal.png", "Internal Pricing") }}
 
 #### Pricing Override
 
@@ -108,27 +71,21 @@ If the **Internal Price Override** setting is enabled, then internal pricing dat
 
 ### Purchase History
 
-If the Part is designated as *purchaseable*, then historical purchase cost information is displayed (and used to calculate overall pricing). Purchase history data is collected from *completed* [purchase orders](../order/purchase_order.md).
+If the Part is designated as *purchaseable*, then historical purchase cost information is displayed (and used to calculate overall pricing). Purchase history data is collected from *completed* [purchase orders](../purchasing/purchase_order.md).
 
-{% with id="pricing_purchase_history", url="part/pricing_purchase_history.png", description="Purchase History" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_purchase_history.png", "Purchase History") }}
 
 ### Supplier Pricing
 
 If supplier pricing information is available, this can be also used to determine price range data.
 
-{% with id="pricing_supplier", url="part/pricing_supplier.png", description="Supplier Pricing" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_supplier.png", "Supplier Pricing") }}
 
 ### BOM Pricing
 
-If a Part is designated as an *assembly*, then the [Bill of Materials](../build/bom.md) (BOM) can be used to determine the price of the assembly. The price of each component in the BOM is used to calculate the overall price of the assembly.
+If a Part is designated as an *assembly*, then the [Bill of Materials](../manufacturing/bom.md) (BOM) can be used to determine the price of the assembly. The price of each component in the BOM is used to calculate the overall price of the assembly.
 
-{% with id="pricing_bom", url="part/pricing_bom.png", description="BOM Pricing" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_bom.png", "BOM Pricing") }}
 
 #### BOM Pricing Chart
 
@@ -141,25 +98,19 @@ The BOM *Pricing Chart* displays two separate "pie charts", with minimum and max
 
 For *template* parts, the price of any *variants* of the template is taken into account:
 
-{% with id="pricing_variants", url="part/pricing_variants.png", description="Variant Pricing" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_variants.png", "Variant Pricing") }}
 
 ### Sale Pricing
 
 If the Part is designated as *Salable* then sale price breaks are made available. These can be configured as desired by the user, to define the desired sale price at various quantities.
 
-{% with id="pricing_sale_price_breaks", url="part/pricing_sale_price_breaks.png", description="Sale Pricing" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_sale_price_breaks.png", "Sale Pricing") }}
 
 ### Sale History
 
-If the Part is designated as *Salable* then historical sale cost information is available. Sale history data is collected from *completed* [sales orders](../order/sales_order.md).
+If the Part is designated as *Salable* then historical sale cost information is available. Sale history data is collected from *completed* [sales orders](../sales/sales_order.md).
 
-{% with id="pricing_sale_history", url="part/pricing_sale_history.png", description="Sale History" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/pricing_sale_history.png", "Sale History") }}
 
 ### Price Data Caching
 
@@ -167,7 +118,7 @@ Pricing calculations (and conversions) can be expensive to perform. This can mak
 
 For this reason, all information displayed in the [pricing overview](#pricing-overview) section is pre-calculated and *cached* in the database. This ensures that when it needs to be retrieved (e.g. viewing pricing for an entire BOM) it can be accessed immediately.
 
-Pricing data is cached in the [default currency](#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
+Pricing data is cached in the [default currency](../concepts/pricing.md/#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
 
 #### Data Updates
 

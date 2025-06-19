@@ -15,7 +15,7 @@ class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     NAME = 'MouserPlugin'
     TITLE = _('Supplier Integration - Mouser')
     DESCRIPTION = _('Provides support for scanning Mouser barcodes')
-    VERSION = '1.0.0'
+    VERSION = '1.0.1'
     AUTHOR = _('InvenTree contributors')
 
     DEFAULT_SUPPLIER_NAME = 'Mouser'
@@ -24,6 +24,7 @@ class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             'name': _('Supplier'),
             'description': _("The Supplier which acts as 'Mouser'"),
             'model': 'company.company',
+            'model_filters': {'is_supplier': True},
         }
     }
 

@@ -7,6 +7,7 @@ __pycache__/
 .Python
 env/
 inventree-env/
+.venv/
 ./build/
 .cache/
 develop-eggs/
@@ -18,7 +19,6 @@ share/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -57,6 +57,7 @@ data.json
 
 # Key file
 secret_key.txt
+oidc.pem
 
 # IDE / development files
 .idea/
@@ -81,6 +82,7 @@ js_tmp/
 
 # Development files
 dev/
+dev-db/
 data/
 env/
 
@@ -111,8 +113,3 @@ api.yaml
 # web frontend (static files)
 src/backend/InvenTree/web/static
 InvenTree/web/static
-
-# Generated docs files
-docs/schema.yml
-docs/docs/api/*.yml
-docs/docs/api/schema/*.yml

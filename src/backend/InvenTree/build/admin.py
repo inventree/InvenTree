@@ -15,7 +15,16 @@ class BuildAdmin(admin.ModelAdmin):
 
     search_fields = ['reference', 'title', 'part__name', 'part__description']
 
-    autocomplete_fields = ['parent', 'part', 'sales_order', 'take_from', 'destination']
+    autocomplete_fields = [
+        'completed_by',
+        'destination',
+        'parent',
+        'part',
+        'project_code',
+        'responsible',
+        'sales_order',
+        'take_from',
+    ]
 
 
 @admin.register(BuildItem)
@@ -34,3 +43,5 @@ class BuildLineAdmin(admin.ModelAdmin):
     list_display = ('build', 'bom_item', 'quantity')
 
     search_fields = ['build__title', 'build__reference', 'bom_item__sub_part__name']
+
+    autocomplete_fields = ['bom_item', 'build']

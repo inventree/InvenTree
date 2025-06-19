@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
@@ -23,10 +24,9 @@ import { AccountContent } from './AccountSettings/UserPanel';
  * User settings page
  */
 export default function UserSettings() {
-  const [user, isLoggedIn] = useUserState((state) => [
-    state.user,
-    state.isLoggedIn
-  ]);
+  const [user, isLoggedIn] = useUserState(
+    useShallow((state) => [state.user, state.isLoggedIn])
+  );
 
   const userSettingsPanels: PanelType[] = useMemo(() => {
     return [
@@ -49,13 +49,14 @@ export default function UserSettings() {
         content: (
           <UserSettingList
             keys={[
+              'ICONS_IN_NAVBAR',
               'STICKY_HEADER',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'PART_SHOW_QUANTITY_IN_FORMS',
               'DISPLAY_SCHEDULE_TAB',
               'DISPLAY_STOCKTAKE_TAB',
-              'TABLE_STRING_MAX_LENGTH'
+              'ENABLE_LAST_BREADCRUMB'
             ]}
           />
         )
@@ -69,6 +70,7 @@ export default function UserSettings() {
             keys={[
               'SEARCH_WHOLE',
               'SEARCH_REGEX',
+              'SEARCH_NOTES',
               'SEARCH_PREVIEW_RESULTS',
               'SEARCH_PREVIEW_SHOW_PARTS',
               'SEARCH_HIDE_INACTIVE_PARTS',
@@ -84,6 +86,7 @@ export default function UserSettings() {
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS',
               'SEARCH_PREVIEW_SHOW_SALES_ORDERS',
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS',
+              'SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS',
               'SEARCH_PREVIEW_SHOW_RETURN_ORDERS',
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS'
             ]}

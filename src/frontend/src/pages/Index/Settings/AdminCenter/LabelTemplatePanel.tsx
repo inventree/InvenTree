@@ -1,8 +1,8 @@
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { ModelType } from '../../../../enums/ModelType';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
-export default function LabelTemplatePanel() {
+function LabelTemplateTable() {
   return (
     <TemplateTable
       templateProps={{
@@ -16,4 +16,8 @@ export default function LabelTemplatePanel() {
       }}
     />
   );
+}
+
+export default function LabelTemplatePanel() {
+  return <LabelTemplateTable />;
 }

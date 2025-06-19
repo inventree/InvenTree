@@ -1,50 +1,16 @@
 import { test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
-import { doQuickLogin } from './login.js';
-
-test('Company', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/company/1/details`);
-  await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();
-  await page.getByRole('cell', { name: 'https://www.digikey.com/' }).waitFor();
-  await page.getByRole('tab', { name: 'Supplied Parts' }).click();
-  await page
-    .getByRole('cell', { name: 'RR05P100KDTR-ND', exact: true })
-    .waitFor();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('cell', { name: 'Molex connectors' }).first().waitFor();
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
-  await page
-    .getByRole('cell', { name: 'Blue plastic enclosure' })
-    .first()
-    .waitFor();
-  await page.getByRole('tab', { name: 'Contacts' }).click();
-  await page.getByRole('cell', { name: 'jimmy.mcleod@digikey.com' }).waitFor();
-  await page.getByRole('tab', { name: 'Addresses' }).click();
-  await page.getByRole('cell', { name: 'Carla Tunnel' }).waitFor();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
-  await page.getByRole('tab', { name: 'Notes' }).click();
-
-  // Let's edit the company details
-  await page.getByLabel('action-menu-company-actions').click();
-  await page.getByLabel('action-menu-company-actions-edit').click();
-
-  await page.getByLabel('text-field-name').fill('');
-  await page.getByLabel('text-field-website').fill('invalid-website');
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  await page.getByText('This field may not be blank.').waitFor();
-  await page.getByText('Enter a valid URL.').waitFor();
-  await page.getByRole('button', { name: 'Cancel' }).click();
-});
+import { globalSearch } from './helpers.js';
+import { doCachedLogin } from './login.js';
 
 /**
  * Test for integration of django admin button
  */
-test('Admin Button', async ({ page }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
-  await page.goto(`${baseUrl}/company/1/details`);
+test('Admin Button', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree',
+    url: 'company/1/details'
+  });
 
   // Click on the admin button
   await page.getByLabel(/action-button-open-in-admin/).click();
@@ -52,4 +18,43 @@ test('Admin Button', async ({ page }) => {
   await page.waitForURL('**/test-admin/company/company/1/change/**');
   await page.getByRole('heading', { name: 'Change Company' }).waitFor();
   await page.getByRole('link', { name: 'View on site' }).waitFor();
+});
+
+// Tests for the global search functionality
+test('Search', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff'
+  });
+
+  await globalSearch(page, 'another customer');
+
+  // Check for expected results
+  await page.locator('a').filter({ hasText: 'Customer B' }).first().waitFor();
+  await page.locator('a').filter({ hasText: 'Customer C' }).first().waitFor();
+  await page.locator('a').filter({ hasText: 'Customer D' }).first().waitFor();
+  await page.locator('a').filter({ hasText: 'Customer E' }).first().waitFor();
+
+  // Click through to the "Customer" results
+  await page.getByRole('button', { name: 'view-all-results-customer' }).click();
+
+  await page.waitForURL('**/sales/index/customers**');
+  await page.getByText('Custom table filters are active').waitFor();
+
+  await globalSearch(page, '0402 res');
+
+  await page
+    .locator('span')
+    .filter({ hasText: 'Parts - 16 results' })
+    .first()
+    .waitFor();
+  await page
+    .locator('span')
+    .filter({ hasText: 'Supplier Parts - 138 results' })
+    .first()
+    .waitFor();
+
+  await page.getByLabel('view-all-results-manufacturerpart').click();
+  await page.waitForURL('**/purchasing/index/manufacturer-parts**');
+  await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).waitFor();
 });

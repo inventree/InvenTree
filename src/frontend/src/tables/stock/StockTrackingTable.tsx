@@ -1,8 +1,12 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Table, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { RenderBuildOrder } from '../../components/render/Build';
 import { RenderCompany } from '../../components/render/Company';
 import {
@@ -17,14 +21,10 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { useUserFilters } from '../../hooks/UseFilter';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
+import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 type StockTrackingEntry = {
@@ -36,8 +36,6 @@ type StockTrackingEntry = {
 export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
   const navigate = useNavigate();
   const table = useTable('stock_tracking');
-
-  const userFilters = useUserFilters();
 
   // Render "details" for a stock tracking record
   const renderDetails = useCallback(
@@ -186,14 +184,13 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
 
   const filters: TableFilter[] = useMemo(() => {
     return [
-      {
+      UserFilter({
         name: 'user',
         label: t`User`,
-        choices: userFilters.choices,
         description: t`Filter by user`
-      }
+      })
     ];
-  }, [userFilters]);
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [

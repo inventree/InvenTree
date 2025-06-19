@@ -2,7 +2,7 @@
 
 import io
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, cast
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -27,7 +27,7 @@ from InvenTree.format import format_money
 logger = structlog.get_logger('inventree')
 
 
-def get_base_url(request=None):
+def get_base_url(request=None) -> str:
     """Return the base URL for the InvenTree server.
 
     The base URL is determined in the following order of decreasing priority:
@@ -56,7 +56,7 @@ def get_base_url(request=None):
     # Check if a global InvenTree setting is provided
     try:
         if site_url := get_global_setting('INVENTREE_BASE_URL', create=False):
-            return site_url
+            return cast(str, site_url)
     except (ProgrammingError, OperationalError):
         pass
 
@@ -211,16 +211,16 @@ def render_currency(
         except Exception:
             pass
 
-    if min_decimal_places is None:
+    if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
-    if max_decimal_places is None:
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
         max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
-    if decimal_places is not None:
+    if decimal_places is not None and isinstance(decimal_places, (int, float)):
         # Decimal place count is provided, use it
         pass
     elif '.' in value:
@@ -265,6 +265,7 @@ def notify_responsible(
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
     exclude=None,
+    extra_users: Optional[list] = None,
 ):
     """Notify all responsible parties of a change in an instance.
 
@@ -276,15 +277,19 @@ def notify_responsible(
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
+        extra_users (list, optional): List of extra users to notify. Defaults to None.
     """
     import InvenTree.ready
 
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
 
-    notify_users(
-        [instance.responsible], instance, sender, content=content, exclude=exclude
-    )
+    users = [instance.responsible]
+
+    if extra_users:
+        users.extend(extra_users)
+
+    notify_users(users, instance, sender, content=content, exclude=exclude)
 
 
 def notify_users(

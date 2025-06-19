@@ -39,6 +39,48 @@ from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 
 
+class PartImageTestMixin:
+    """Mixin for testing part images."""
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        """Custom setup routine for this class."""
+        super().setUpTestData()
+
+        # Create a custom APIClient for file uploads
+        # Ref: https://stackoverflow.com/questions/40453947/how-to-generate-a-file-upload-test-request-with-django-rest-frameworks-apireq
+        cls.upload_client = APIClient()
+        cls.upload_client.force_authenticate(user=cls.user)
+
+    def create_test_image(self):
+        """Create a test image file."""
+        p = Part.objects.first()
+
+        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+
+        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img.save(fn)
+
+        with open(fn, 'rb') as img_file:
+            response = self.upload_client.patch(
+                reverse('api-part-detail', kwargs={'pk': p.pk}),
+                {'image': img_file},
+                expected_code=200,
+            )
+            print(response.data)
+            image_name = response.data['image']
+            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
+        return image_name
+
+
 class PartCategoryAPITest(InvenTreeAPITestCase):
     """Unit tests for the PartCategory API."""
 
@@ -136,7 +178,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             'parent',
             'part_count',
             'pathstring',
-            'url',
         ]
 
         response = self.get(url, expected_code=200)
@@ -498,7 +539,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         PartCategory.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(12):
+        with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-part-category-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), PartCategory.objects.count())
@@ -962,6 +1003,19 @@ class PartAPITest(PartAPITestBase):
 
                 self.assertIn(v.pk, id_values)
 
+    def test_filter_is_variant(self):
+        """Test the is_variant filter."""
+        url = reverse('api-part-list')
+
+        all_count = Part.objects.all().count()
+        no_var_count = Part.objects.filter(variant_of__isnull=True).count()
+
+        response = self.get(url, {'is_variant': False}, expected_code=200)
+        self.assertEqual(no_var_count, len(response.data))
+
+        response = self.get(url, {'is_variant': True}, expected_code=200)
+        self.assertEqual(all_count - no_var_count, len(response.data))
+
     def test_include_children(self):
         """Test the special 'include_child_categories' flag.
 
@@ -1126,7 +1180,6 @@ class PartAPITest(PartAPITestBase):
             'Virtual',
             'Trackable',
             'Active',
-            'Notes',
             'Creation Date',
             'On Order',
             'In Stock',
@@ -1135,9 +1188,9 @@ class PartAPITest(PartAPITestBase):
 
         excluded_cols = ['lft', 'rght', 'level', 'tree_id', 'metadata']
 
-        with self.download_file(url, {'export': 'csv'}) as file:
+        with self.export_data(url, export_format='csv') as data_file:
             data = self.process_csv(
-                file,
+                data_file,
                 excluded_cols=excluded_cols,
                 required_cols=required_cols,
                 required_rows=Part.objects.count(),
@@ -1392,31 +1445,46 @@ class PartCreationTests(PartAPITestBase):
 
     def test_duplication(self):
         """Test part duplication options."""
-        # Run a matrix of tests
-        for bom in [True, False]:
-            for img in [True, False]:
-                for params in [True, False]:
-                    response = self.post(
-                        reverse('api-part-list'),
-                        {
-                            'name': f'thing_{bom}{img}{params}',
-                            'description': 'Some long description text for this part',
-                            'category': 1,
-                            'duplicate': {
-                                'part': 100,
-                                'copy_bom': bom,
-                                'copy_image': img,
-                                'copy_parameters': params,
-                            },
-                        },
-                        expected_code=201,
-                    )
+        base_part = Part.objects.get(pk=100)
+        base_part.testable = True
+        base_part.save()
 
-                    part = Part.objects.get(pk=response.data['pk'])
+        # Create some test templates against this part
+        for key in ['A', 'B', 'C']:
+            PartTestTemplate.objects.create(
+                part=base_part,
+                test_name=f'Test {key}',
+                description=f'Test template {key} for duplication',
+            )
 
-                    # Check new part
-                    self.assertEqual(part.bom_items.count(), 4 if bom else 0)
-                    self.assertEqual(part.parameters.count(), 2 if params else 0)
+        for do_copy in [True, False]:
+            response = self.post(
+                reverse('api-part-list'),
+                {
+                    'name': f'thing_{do_copy}',
+                    'description': 'Some long description text for this part',
+                    'category': 1,
+                    'testable': do_copy,
+                    'assembly': do_copy,
+                    'duplicate': {
+                        'part': 100,
+                        'copy_bom': do_copy,
+                        'copy_notes': do_copy,
+                        'copy_image': do_copy,
+                        'copy_parameters': do_copy,
+                        'copy_tests': do_copy,
+                    },
+                },
+                expected_code=201,
+            )
+
+            part = Part.objects.get(pk=response.data['pk'])
+
+            # Check new part
+            self.assertEqual(part.bom_items.count(), 4 if do_copy else 0)
+            self.assertEqual(part.notes, base_part.notes if do_copy else None)
+            self.assertEqual(part.parameters.count(), 2 if do_copy else 0)
+            self.assertEqual(part.test_templates.count(), 3 if do_copy else 0)
 
     def test_category_parameters(self):
         """Test that category parameters are correctly applied."""
@@ -1463,7 +1531,7 @@ class PartCreationTests(PartAPITestBase):
         self.assertEqual(prt.parameters.count(), 3)
 
 
-class PartDetailTests(PartAPITestBase):
+class PartDetailTests(PartImageTestMixin, PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""
 
     @classmethod
@@ -1656,22 +1724,7 @@ class PartDetailTests(PartAPITestBase):
     def test_existing_image(self):
         """Test that we can allocate an existing uploaded image to a new Part."""
         # First, upload an image for an existing part
-        p = Part.objects.first()
-
-        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
-
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
-        img.save(fn)
-
-        with open(fn, 'rb') as img_file:
-            response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}),
-                {'image': img_file},
-                expected_code=200,
-            )
-
-            image_name = response.data['image']
-            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
+        image_name = self.create_test_image()
 
         # Attempt to create, but with an invalid image name
         response = self.post(
@@ -1789,6 +1842,30 @@ class PartDetailTests(PartAPITestBase):
 
         self.assertIn('category_path', response.data)
         self.assertEqual(len(response.data['category_path']), 2)
+
+    def test_part_requirements(self):
+        """Unit test for the "PartRequirements" API endpoint."""
+        url = reverse('api-part-requirements', kwargs={'pk': Part.objects.first().pk})
+
+        # Get the requirements for part 1
+        response = self.get(url, expected_code=200)
+
+        # Check that the response contains the expected fields
+        expected_fields = [
+            'total_stock',
+            'unallocated_stock',
+            'can_build',
+            'ordering',
+            'building',
+            'scheduled_to_build',
+            'required_for_build_orders',
+            'allocated_to_build_orders',
+            'required_for_sales_orders',
+            'allocated_to_sales_orders',
+        ]
+
+        for field in expected_fields:
+            self.assertIn(field, response.data)
 
 
 class PartListTests(PartAPITestBase):
@@ -2588,6 +2665,46 @@ class BomItemTest(InvenTreeAPITestCase):
         response = self.get('/api/bom/1/', {}, expected_code=200)
 
         self.assertEqual(response.data['available_variant_stock'], 1000)
+
+    def test_bom_export(self):
+        """Test for exporting BOM data."""
+        url = reverse('api-bom-list')
+
+        required_cols = [
+            'Assembly',
+            'Component',
+            'Reference',
+            'Quantity',
+            'Component.Name',
+            'Component.Description',
+            'Available Stock',
+        ]
+
+        excluded_cols = ['BOM Level', 'Supplier 1']
+
+        # First, download *all* BOM data, with the default exporter
+        with self.export_data(url, expected_code=200) as data_file:
+            self.process_csv(
+                data_file,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=BomItem.objects.all().count(),
+            )
+
+        # Check that the correct exporter plugin has been used
+        required_cols.extend(['BOM Level'])
+
+        # Next, download BOM data for a specific sub-assembly, and use the BOM exporter
+        with self.export_data(
+            url, {'part': 100}, export_plugin='bom-exporter'
+        ) as data_file:
+            data = self.process_csv(
+                data_file, required_cols=required_cols, required_rows=4
+            )
+
+            for row in data:
+                self.assertEqual(str(row['Assembly']), '100')
+                self.assertEqual(str(row['BOM Level']), '1')
 
 
 class PartAttachmentTest(InvenTreeAPITestCase):

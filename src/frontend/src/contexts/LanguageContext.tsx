@@ -1,9 +1,10 @@
 import { i18n } from '@lingui/core';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
+import { type JSX, useEffect, useRef, useState } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
 import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
@@ -61,8 +62,8 @@ export const getSupportedLanguages = (): Record<string, string> => {
 export function LanguageContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
-  const [language] = useLocalState((state) => [state.language]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [language] = useLocalState(useShallow((state) => [state.language]));
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   useEffect(() => {
     activateLocale(defaultLocale);

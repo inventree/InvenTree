@@ -11,17 +11,21 @@ from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
+import rest_framework.serializers
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 
+import build.models
 import common.models
 import common.settings
 import company.models
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
@@ -57,7 +61,7 @@ class GeneralExtraLineList(DataExportViewMixin):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -69,9 +73,9 @@ class GeneralExtraLineList(DataExportViewMixin):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = ['quantity', 'note', 'reference']
+    ordering_fields = ['quantity', 'notes', 'reference']
 
-    search_fields = ['quantity', 'note', 'reference', 'description']
+    search_fields = ['quantity', 'notes', 'reference', 'description']
 
     filterset_fields = ['order']
 
@@ -213,6 +217,44 @@ class OrderFilter(rest_filters.FilterSet):
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
     )
 
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include orders *after* a specified date.
+
+        This is used in combination with filter_max_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__gte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__gte=value, start_date__isnull=True)
+        q3 = Q(start_date__gte=value)
+        q4 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include orders *before* a specified date.
+
+        This is used in combination with filter_min_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__lte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__lte=value, start_date__isnull=True)
+        q3 = Q(start_date__lte=value)
+        q4 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
 
 class LineItemFilter(rest_filters.FilterSet):
     """Base class for custom API filters for order line item list(s)."""
@@ -251,6 +293,7 @@ class PurchaseOrderFilter(OrderFilter):
         method='filter_part',
     )
 
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part: Part):
         """Filter by provided Part instance."""
         orders = part.purchase_orders()
@@ -263,6 +306,9 @@ class PurchaseOrderFilter(OrderFilter):
         method='filter_supplier_part',
     )
 
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Supplier Part'))
+    )
     def filter_supplier_part(
         self, queryset, name, supplier_part: company.models.SupplierPart
     ):
@@ -278,6 +324,22 @@ class PurchaseOrderFilter(OrderFilter):
     completed_after = InvenTreeDateFilter(
         label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
     )
+
+    external_build = rest_filters.ModelChoiceFilter(
+        queryset=build.models.Build.objects.filter(external=True),
+        method='filter_external_build',
+        label=_('External Build Order'),
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('External Build Order'))
+    )
+    def filter_external_build(self, queryset, name, build):
+        """Filter to only include orders which fill fulfil the provided Build Order.
+
+        To achieve this, we return any order which has a line item which is allocated to the build order.
+        """
+        return queryset.filter(lines__build_order=build).distinct()
 
 
 class PurchaseOrderMixin:
@@ -298,7 +360,7 @@ class PurchaseOrderMixin:
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -323,23 +385,6 @@ class PurchaseOrderList(
     """
 
     filterset_class = PurchaseOrderFilter
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering."""
-        # Perform basic filtering
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.PurchaseOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
@@ -499,6 +544,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         label=_('Internal Part'),
     )
 
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Internal Part'))
+    )
     def filter_base_part(self, queryset, name, base_part):
         """Filter by the 'base_part' attribute.
 
@@ -573,7 +621,7 @@ class PurchaseOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def perform_update(self, serializer):
         """Override the perform_update method to auto-update pricing if required."""
@@ -714,6 +762,7 @@ class SalesOrderFilter(OrderFilter):
         queryset=Part.objects.all(), field_name='part', method='filter_part'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter SalesOrder by selected 'part'.
 
@@ -765,7 +814,7 @@ class SalesOrderMixin:
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -790,21 +839,6 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-
-    def filter_queryset(self, queryset):
-        """Perform custom filtering operations on the SalesOrder queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.SalesOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -936,7 +970,7 @@ class SalesOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1102,6 +1136,7 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part):
         """Filter by the 'part' attribute.
 
@@ -1172,7 +1207,7 @@ class SalesOrderAllocationMixin:
         return queryset
 
 
-class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
+class SalesOrderAllocationList(SalesOrderAllocationMixin, BulkUpdateMixin, ListAPI):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
@@ -1215,7 +1250,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
@@ -1270,6 +1305,13 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     ordering_fields = ['reference', 'delivery_date', 'shipment_date', 'allocated_items']
 
+    search_fields = [
+        'order__reference',
+        'reference',
+        'tracking_number',
+        'invoice_number',
+    ]
+
 
 class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
     """API detail endpooint for SalesOrderShipment model."""
@@ -1322,6 +1364,7 @@ class ReturnOrderFilter(OrderFilter):
         queryset=Part.objects.all(), field_name='part', method='filter_part'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter by selected 'part'.
 
@@ -1372,7 +1415,7 @@ class ReturnOrderMixin:
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1523,7 +1566,7 @@ class ReturnOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1753,8 +1796,7 @@ order_api_urls = [
                     path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrder},
+                        MetadataView.as_view(model=models.PurchaseOrder),
                         name='api-po-metadata',
                     ),
                     path(
@@ -1786,8 +1828,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrderLineItem},
+                        MetadataView.as_view(model=models.PurchaseOrderLineItem),
                         name='api-po-line-metadata',
                     ),
                     path(
@@ -1809,8 +1850,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrderExtraLine},
+                        MetadataView.as_view(model=models.PurchaseOrderExtraLine),
                         name='api-po-extra-line-metadata',
                     ),
                     path(
@@ -1842,8 +1882,7 @@ order_api_urls = [
                             ),
                             path(
                                 'metadata/',
-                                MetadataView.as_view(),
-                                {'model': models.SalesOrderShipment},
+                                MetadataView.as_view(model=models.SalesOrderShipment),
                                 name='api-so-shipment-metadata',
                             ),
                             path(
@@ -1884,8 +1923,7 @@ order_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrder},
+                        MetadataView.as_view(model=models.SalesOrder),
                         name='api-so-metadata',
                     ),
                     # SalesOrder detail endpoint
@@ -1912,8 +1950,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrderLineItem},
+                        MetadataView.as_view(model=models.SalesOrderLineItem),
                         name='api-so-line-metadata',
                     ),
                     path(
@@ -1935,8 +1972,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrderExtraLine},
+                        MetadataView.as_view(model=models.SalesOrderExtraLine),
                         name='api-so-extra-line-metadata',
                     ),
                     path(
@@ -1992,8 +2028,7 @@ order_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrder},
+                        MetadataView.as_view(model=models.ReturnOrder),
                         name='api-return-order-metadata',
                     ),
                     path(
@@ -2021,8 +2056,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrderLineItem},
+                        MetadataView.as_view(model=models.ReturnOrderLineItem),
                         name='api-return-order-line-metadata',
                     ),
                     path(
@@ -2053,8 +2087,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrderExtraLine},
+                        MetadataView.as_view(model=models.ReturnOrderExtraLine),
                         name='api-return-order-extra-line-metadata',
                     ),
                     path(

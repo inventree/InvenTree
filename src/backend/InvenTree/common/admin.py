@@ -33,6 +33,15 @@ class AttachmentAdmin(admin.ModelAdmin):
     search_fields = ('content_type', 'comment')
 
 
+@admin.register(common.models.DataOutput)
+class DataOutputAdmin(admin.ModelAdmin):
+    """Admin interface for DataOutput objects."""
+
+    list_display = ('user', 'created', 'output_type', 'output')
+
+    list_filter = ('user', 'output_type')
+
+
 @admin.register(common.models.BarcodeScanResult)
 class BarcodeScanResultAdmin(admin.ModelAdmin):
     """Admin interface for BarcodeScanResult objects."""

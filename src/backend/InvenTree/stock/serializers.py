@@ -10,6 +10,7 @@ from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -28,9 +29,15 @@ import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
-from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
+from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
+from InvenTree.serializers import (
+    InvenTreeCurrencySerializer,
+    InvenTreeDecimalField,
+    InvenTreeModelSerializer,
+)
+from users.serializers import UserSerializer
 
 from .models import (
     StockItem,
@@ -136,20 +143,24 @@ class GenerateSerialNumberSerializer(serializers.Serializer):
     Any of the provided write-only fields can be used for additional context.
 
     Note that in the case where multiple serial numbers are required,
-    the "serial" field will return a string with multiple serial numbers separated by a comma.
+    the "serial_number" field will return a string with multiple serial numbers
+    separated by a comma.
     """
 
     class Meta:
         """Metaclass options."""
 
-        fields = ['serial', 'part', 'quantity']
+        fields = ['serial_number', 'part', 'quantity']
 
-        read_only_fields = ['serial']
+        read_only_fields = ['serial_number']
 
         write_only_fields = ['part', 'quantity']
 
-    serial = serializers.CharField(
-        read_only=True, help_text=_('Generated serial number'), label=_('Serial Number')
+    serial_number = serializers.CharField(
+        read_only=True,
+        allow_null=True,
+        help_text=_('Generated serial number'),
+        label=_('Serial Number'),
     )
 
     part = serializers.PrimaryKeyRelatedField(
@@ -217,13 +228,16 @@ class StockItemTestResultSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if user_detail is not True:
             self.fields.pop('user_detail', None)
 
         if template_detail is not True:
             self.fields.pop('template_detail', None)
 
-    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
+    user_detail = UserSerializer(source='user', read_only=True, allow_null=True)
 
     template = serializers.PrimaryKeyRelatedField(
         queryset=part_models.PartTestTemplate.objects.all(),
@@ -235,7 +249,7 @@ class StockItemTestResultSerializer(
     )
 
     template_detail = part_serializers.PartTestTemplateSerializer(
-        source='template', read_only=True
+        source='template', read_only=True, allow_null=True
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
@@ -441,6 +455,9 @@ class StockItemSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
@@ -472,7 +489,10 @@ class StockItemSerializer(
     )
 
     location_path = serializers.ListField(
-        child=serializers.DictField(), source='location.get_path', read_only=True
+        child=serializers.DictField(),
+        source='location.get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
@@ -593,13 +613,17 @@ class StockItemSerializer(
     )
 
     SKU = serializers.CharField(
-        source='supplier_part.SKU', read_only=True, label=_('Supplier Part Number')
+        source='supplier_part.SKU',
+        read_only=True,
+        label=_('Supplier Part Number'),
+        allow_null=True,
     )
 
     MPN = serializers.CharField(
         source='supplier_part.manufacturer_part.MPN',
         read_only=True,
         label=_('Manufacturer Part Number'),
+        allow_null=True,
     )
 
     # Optional detail fields, which can be appended via query parameters
@@ -612,38 +636,43 @@ class StockItemSerializer(
         part_detail=False,
         many=False,
         read_only=True,
+        allow_null=True,
     )
 
     part_detail = part_serializers.PartBriefSerializer(
-        label=_('Part'), source='part', many=False, read_only=True
+        label=_('Part'), source='part', many=False, read_only=True, allow_null=True
     )
 
     location_detail = LocationBriefSerializer(
-        label=_('Location'), source='location', many=False, read_only=True
+        label=_('Location'),
+        source='location',
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     tests = StockItemTestResultSerializer(
-        source='test_results', many=True, read_only=True
+        source='test_results', many=True, read_only=True, allow_null=True
     )
 
     quantity = InvenTreeDecimalField()
 
     # Annotated fields
     allocated = serializers.FloatField(
-        required=False, read_only=True, label=_('Allocated Quantity')
+        read_only=True, allow_null=True, label=_('Allocated Quantity')
     )
     expired = serializers.BooleanField(
-        required=False, read_only=True, label=_('Expired')
+        read_only=True, allow_null=True, label=_('Expired')
     )
     installed_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Installed Items')
+        read_only=True, allow_null=True, label=_('Installed Items')
     )
     child_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Child Items')
+        read_only=True, allow_null=True, label=_('Child Items')
     )
-    stale = serializers.BooleanField(required=False, read_only=True, label=_('Stale'))
+    stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
     tracking_items = serializers.IntegerField(
-        read_only=True, required=False, label=_('Tracking Items')
+        read_only=True, allow_null=True, label=_('Tracking Items')
     )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -657,11 +686,11 @@ class StockItemSerializer(
     )
 
     purchase_order_reference = serializers.CharField(
-        source='purchase_order.reference', read_only=True
+        source='purchase_order.reference', read_only=True, allow_null=True
     )
 
     sales_order_reference = serializers.CharField(
-        source='sales_order.reference', read_only=True
+        source='sales_order.reference', read_only=True, allow_null=True
     )
 
     tags = TagListSerializerField(required=False)
@@ -764,8 +793,8 @@ class SerializeStockItemSerializer(serializers.Serializer):
     def save(self):
         """Serialize stock item."""
         item = self.context['item']
-        request = self.context['request']
-        user = request.user
+        request = self.context.get('request')
+        user = request.user if request else None
 
         data = self.validated_data
 
@@ -964,6 +993,38 @@ class ConvertStockItemSerializer(serializers.Serializer):
         stock_item.convert_to_variant(part, request.user)
 
 
+@extend_schema_field(
+    serializers.IntegerField(
+        help_text='Status key, chosen from the list of StockStatus keys'
+    )
+)
+class StockStatusCustomSerializer(serializers.ChoiceField):
+    """Serializer to allow annotating the schema to use int where custom values may be entered."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the status selector."""
+        if 'choices' not in kwargs:
+            kwargs['choices'] = stock.status_codes.StockStatus.items(custom=True)
+
+        if 'label' not in kwargs:
+            kwargs['label'] = _('Status')
+
+        if 'help_text' not in kwargs:
+            kwargs['help_text'] = _('Stock item status code')
+
+        if InvenTree.ready.isGeneratingSchema():
+            kwargs['help_text'] = (
+                kwargs['help_text']
+                + '\n\n'
+                + '\n'.join(
+                    f'* `{value}` - {label}' for value, label in kwargs['choices']
+                )
+                + "\n\nAdditional custom status keys may be retrieved from the 'stock_status_retrieve' call."
+            )
+
+        super().__init__(*args, **kwargs)
+
+
 class ReturnStockItemSerializer(serializers.Serializer):
     """DRF serializer for returning a stock item from a customer."""
 
@@ -981,14 +1042,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
         help_text=_('Destination location for returned item'),
     )
 
-    status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(custom=True),
-        default=None,
-        label=_('Status'),
-        help_text=_('Stock item status code'),
-        required=False,
-        allow_blank=True,
-    )
+    status = StockStatusCustomSerializer(default=None, required=False, allow_blank=True)
 
     notes = serializers.CharField(
         label=_('Notes'),
@@ -1038,10 +1092,8 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         return items
 
-    status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(custom=True),
-        default=stock.status_codes.StockStatus.OK.value,
-        label=_('Status'),
+    status = StockStatusCustomSerializer(
+        default=stock.status_codes.StockStatus.OK.value
     )
 
     note = serializers.CharField(
@@ -1113,7 +1165,7 @@ class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
         read_only_fields = ['location_count']
 
-    location_count = serializers.IntegerField(read_only=True)
+    location_count = serializers.IntegerField(read_only=True, allow_null=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1153,7 +1205,6 @@ class LocationSerializer(
         fields = [
             'pk',
             'barcode_hash',
-            'url',
             'name',
             'level',
             'description',
@@ -1180,7 +1231,7 @@ class LocationSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not path_detail:
+        if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
     @staticmethod
@@ -1206,8 +1257,6 @@ class LocationSerializer(
         help_text=_('Parent stock location'),
     )
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
 
     sublocations = serializers.IntegerField(read_only=True, label=_('Sublocations'))
@@ -1217,7 +1266,10 @@ class LocationSerializer(
     tags = TagListSerializerField(required=False)
 
     path = serializers.ListField(
-        child=serializers.DictField(), source='get_path', read_only=True
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+        allow_null=True,
     )
 
     # explicitly set this field, so it gets included for AutoSchema
@@ -1225,7 +1277,7 @@ class LocationSerializer(
 
     # Detail for location type
     location_type_detail = StockLocationTypeSerializer(
-        source='location_type', read_only=True, many=False
+        source='location_type', read_only=True, allow_null=True, many=False
     )
 
 
@@ -1261,6 +1313,9 @@ class StockTrackingSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if item_detail is not True:
             self.fields.pop('item_detail', None)
 
@@ -1269,10 +1324,12 @@ class StockTrackingSerializer(
 
     label = serializers.CharField(read_only=True)
 
-    item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
+    item_detail = StockItemSerializerBrief(
+        source='item', many=False, read_only=True, allow_null=True
+    )
 
-    user_detail = InvenTree.serializers.UserSerializer(
-        source='user', many=False, read_only=True
+    user_detail = UserSerializer(
+        source='user', many=False, read_only=True, allow_null=True
     )
 
     deltas = serializers.JSONField(read_only=True)
@@ -1595,11 +1652,9 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         help_text=_('Batch code for this stock item'),
     )
 
-    status = serializers.ChoiceField(
+    status = StockStatusCustomSerializer(
         choices=stock_item_adjust_status_options(),
         default=None,
-        label=_('Status'),
-        help_text=_('Stock item status code'),
         required=False,
         allow_blank=True,
     )
@@ -1761,3 +1816,23 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs
                 )
+
+
+class StockItemSerialNumbersSerializer(InvenTreeModelSerializer):
+    """Serializer for extra serial number information about a stock item."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItem
+        fields = ['next', 'previous']
+
+    next = StockItemSerializer(
+        read_only=True, source='get_next_stock_item', label=_('Next Serial Number')
+    )
+
+    previous = StockItemSerializer(
+        read_only=True,
+        source='get_previous_stock_item',
+        label=_('Previous Serial Number'),
+    )

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { extractErrorMessage } from './api';

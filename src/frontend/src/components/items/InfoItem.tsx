@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Code, Flex, Group, Text } from '@mantine/core';
 import { Link, type To } from 'react-router-dom';
 

@@ -1,13 +1,16 @@
 /** Unit tests for form validation, rendering, etc */
 import test from 'playwright/test';
+import { navigate } from './helpers';
+import { doCachedLogin } from './login';
 
-import { baseUrl } from './defaults';
-import { doQuickLogin } from './login';
+test('Forms - Stock Item Validation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'stock/location/index/stock-items'
+  });
 
-test('Forms - Stock Item Validation', async ({ page }) => {
-  await doQuickLogin(page, 'steven', 'wizardstaff');
-  await page.goto(`${baseUrl}/stock/location/index/stock-items`);
-  await page.waitForURL('**/platform/stock/location/**');
+  await page.waitForURL('**/web/stock/location/**');
 
   // Create new stock item form
   await page.getByLabel('action-button-add-stock-item').click();
@@ -75,9 +78,12 @@ test('Forms - Stock Item Validation', async ({ page }) => {
   await page.getByRole('cell', { name: 'Electronics Lab' }).waitFor();
 });
 
-test('Forms - Supplier Validation', async ({ page, request }) => {
-  await doQuickLogin(page, 'steven', 'wizardstaff');
-  await page.goto(`${baseUrl}/purchasing/index/suppliers`);
+test('Forms - Supplier Validation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'purchasing/index/suppliers'
+  });
   await page.waitForURL('**/purchasing/index/**');
 
   await page.getByLabel('action-button-add-company').click();
@@ -113,15 +119,13 @@ test('Forms - Supplier Validation', async ({ page, request }) => {
     .waitFor();
 
   // Now, try to create another new supplier with the same name
-  await page.goto(`${baseUrl}/purchasing/index/suppliers`);
+  await navigate(page, 'purchasing/index/suppliers');
   await page.waitForURL('**/purchasing/index/**');
   await page.getByLabel('action-button-add-company').click();
   await page.getByLabel('text-field-name').fill(supplierName);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Is prevented, due to uniqueness requirements
-  await page
-    .getByText('Company with this Company name and Email already exists')
-    .waitFor();
+  await page.getByText('Form Error').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 });

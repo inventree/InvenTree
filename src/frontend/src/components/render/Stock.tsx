@@ -1,9 +1,9 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
@@ -63,10 +63,17 @@ export function RenderStockItem(
     quantity_string = `${t`Quantity`}: ${instance.quantity}`;
   }
 
+  let batch_string = '';
+
+  if (!!instance.batch) {
+    batch_string = `${t`Batch`}: ${instance.batch}`;
+  }
+
   return (
     <RenderInlineModel
       {...props}
       primary={instance.part_detail?.full_name}
+      secondary={batch_string}
       suffix={<Text size='xs'>{quantity_string}</Text>}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
       url={

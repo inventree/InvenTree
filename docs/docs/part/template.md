@@ -6,7 +6,7 @@ title: Part Templates
 
 There are various purposes for using Part Templates, among them:
 
-* Template parts can hold information that can be re-used across "Variants", a template part could be useful for creating a base variant of an assembly which can be derived from, with BoM changes for instance.
+* Template parts can hold information that can be reused across "Variants", a template part could be useful for creating a base variant of an assembly which can be derived from, with BoM changes for instance.
 * Variants can be used as "manufacturing variants" where the variant dictates a particular configuration which a customer can order: a variant might determine the particular options that come with a part, like harnesses, enclosure, color, specs, etc.
 
 "Variants" parts will reference the "Template" part therefore explicitly creating and showing direct relationship.
@@ -23,13 +23,10 @@ The template / variant relationship is subtly different to the category / part r
 
 Any part can be set as "Template" part. To do so:
 
-1. navigate to a specific part detail page
-0. click on the "Details" tab
-0. locate the part options on the right-hand side
-0. toggle the `Template` option so it shows green / slider to the right:
-{% with id="enable_template_part", url="part/enable_template_part.png", description="Enable Template Part Option" %}
-{% include 'img.html' %}
-{% endwith %}
+1. Navigate to a specific part detail page
+2. Click on the "Details" tab
+3. Locate the part options on the right-hand side
+4. Toggle the `Template` option so it shows green / slider to the right:
 
 ### Create Variant
 

@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../App';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import { findExternalPluginFunction } from '../components/plugins/PluginSource';
@@ -9,8 +11,6 @@ import type {
   PluginUIFeatureAPIResponse,
   PluginUIFuncWithoutInvenTreeContextType
 } from '../components/plugins/PluginUIFeatureTypes';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
@@ -84,7 +84,8 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
 
             return func({
               featureContext,
-              inventreeContext
+              inventreeContext,
+              serverContext: feature.context
             });
           }) as PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>
         };

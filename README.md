@@ -9,6 +9,7 @@
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
+[![Performance Testing](https://dev.azure.com/InvenTree/InvenTree%20test%20statistics/_apis/build/status%2Fmatmair.InvenTree?branchName=testing)](https://dev.azure.com/InvenTree/InvenTree%20test%20statistics/_build/latest?definitionId=3&branchName=testing)
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/inventree/InvenTree/badge)](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
@@ -52,10 +53,10 @@ Want to see what we are working on? Check out the [roadmap tag](https://github.c
 
 InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
 
-* [InvenTree API](https://docs.inventree.org/en/latest/api/api/)
-* [Python module](https://docs.inventree.org/en/latest/api/python/python/)
-* [Plugin interface](https://docs.inventree.org/en/latest/extend/plugins)
-* [Third party tools](https://docs.inventree.org/en/latest/extend/integrate)
+* [InvenTree API](https://docs.inventree.org/en/latest/api/)
+* [Python module](https://docs.inventree.org/en/latest/api/python/)
+* [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
+* [Third party tools](https://docs.inventree.org/en/latest/plugins/integrate/)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -137,10 +138,17 @@ InvenTree is supported by a [companion mobile app](https://docs.inventree.org/ap
     <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
 </h4></div>
 
+<!-- Security -->
+## :lock: Code of Conduct & Security Policy
+
+The InvenTree project team is committed to providing a safe and welcoming environment for all users. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) for more information.
+
+InvenTree is following industry best practices for security. Our security policy is included [in this repo](SECURITY.md). We provide dedicated security pages on [our documentation site](https://docs.inventree.org/en/latest/security/).
+
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](CONTRIBUTING.md).
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://docs.inventree.org/en/latest/develop/contributing/).
 
 <!-- Translation -->
 ## :scroll: Translation
@@ -156,7 +164,7 @@ If you use InvenTree and find it to be useful, please consider [sponsoring the p
 ## :gem: Acknowledgements
 
 We want to acknowledge [PartKeepr](https://github.com/partkeepr/PartKeepr) as a valuable predecessor and inspiration.
-Find a full list of used third-party libraries in [our documentation](https://docs.inventree.org/en/latest/credits/).
+Find a full list of used third-party libraries in the license information dialog of your instance.
 
 ## :heart: Support
 

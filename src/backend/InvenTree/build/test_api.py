@@ -449,7 +449,6 @@ class BuildTest(BuildAPITest):
             'Build Status',
             'Completed items',
             'Batch Code',
-            'Notes',
             'Description',
             'Part',
             'Part Name',
@@ -459,9 +458,9 @@ class BuildTest(BuildAPITest):
 
         excluded_cols = ['lft', 'rght', 'tree_id', 'level', 'metadata']
 
-        with self.download_file(reverse('api-build-list'), {'export': 'csv'}) as file:
+        with self.export_data(reverse('api-build-list')) as data_file:
             data = self.process_csv(
-                file,
+                data_file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=Build.objects.count(),
@@ -516,35 +515,6 @@ class BuildTest(BuildAPITest):
         bo = Build.objects.get(pk=response.data['pk'])
 
         self.assertEqual(bo.children.count(), 0)
-
-        # Create a build order for Part A, and auto-create child builds
-        response = self.post(
-            url,
-            {
-                'reference': 'BO-9875',
-                'part': part_a.pk,
-                'quantity': 15,
-                'title': 'A build - with childs',
-                'create_child_builds': True,
-            },
-        )
-
-        # An addition 1 + 2 builds should have been created
-        self.assertEqual(n + 4, Build.objects.count())
-
-        bo = Build.objects.get(pk=response.data['pk'])
-
-        # One build has a direct child
-        self.assertEqual(bo.children.count(), 1)
-        child = bo.children.first()
-        self.assertEqual(child.part.pk, part_b.pk)
-        self.assertEqual(child.quantity, 75)
-
-        # And there should be a second-level child build too
-        self.assertEqual(child.children.count(), 1)
-        child = child.children.first()
-        self.assertEqual(child.part.pk, part_c.pk)
-        self.assertEqual(child.quantity, 7 * 5 * 15)
 
 
 class BuildAllocationTest(BuildAPITest):

@@ -1,16 +1,21 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import { IconTruckDelivery } from '@tabler/icons-react';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
+  useBulkEditApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
@@ -19,7 +24,6 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -244,16 +248,51 @@ export default function SalesOrderAllocationTable({
     [allowEdit, user]
   );
 
-  const tableActions = useMemo(() => {
-    if (!allowEdit) {
-      return [];
-    }
+  // A subset of the selected allocations, which can be assigned to a shipment
+  const nonShippedAllocationIds: number[] = useMemo(() => {
+    // Only allow allocations which have not been shipped
+    return (
+      table.selectedRecords?.filter((record) => {
+        return !record.shipment_detail?.shipment_date;
+      }) ?? []
+    ).map((record: any) => record.pk);
+  }, [table.selectedRecords]);
 
-    return [];
-  }, [allowEdit, user]);
+  const setShipment = useBulkEditApiFormModal({
+    url: ApiEndpoints.sales_order_allocation_list,
+    items: nonShippedAllocationIds,
+    title: t`Assign to Shipment`,
+    fields: {
+      shipment: {
+        filters: {
+          order: orderId,
+          shipped: false
+        }
+      }
+    },
+    onFormSuccess: table.refreshTable
+  });
+
+  const tableActions = useMemo(() => {
+    return [
+      <ActionButton
+        tooltip={t`Assign to shipment`}
+        icon={<IconTruckDelivery />}
+        onClick={() => {
+          setShipment.open();
+        }}
+        disabled={nonShippedAllocationIds.length == 0}
+        hidden={
+          !orderId || !allowEdit || !user.hasChangeRole(UserRoles.sales_order)
+        }
+        // TODO: Hide if order is already shipped
+      />
+    ];
+  }, [allowEdit, nonShippedAllocationIds, orderId, user]);
 
   return (
     <>
+      {setShipment.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
       <InvenTreeTable
@@ -277,9 +316,10 @@ export default function SalesOrderAllocationTable({
           enableColumnSwitching: !isSubTable,
           enableFilters: !isSubTable,
           enableDownload: !isSubTable,
+          enableSelection: !isSubTable,
           minHeight: isSubTable ? 100 : undefined,
           rowActions: rowActions,
-          tableActions: tableActions,
+          tableActions: isSubTable ? undefined : tableActions,
           tableFilters: tableFilters,
           modelField: modelField ?? 'order',
           modelType: modelTarget ?? ModelType.salesorder

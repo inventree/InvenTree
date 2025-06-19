@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Anchor,
   Badge,
@@ -13,13 +14,17 @@ import {
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { generateUrl } from '../../functions/urls';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
+
+import type { JSX } from 'react';
 
 type AboutLookupRef = {
   ref: string;
@@ -30,20 +35,33 @@ type AboutLookupRef = {
 
 export function AboutInvenTreeModal({
   context,
-  id
-}: ContextModalProps<{
-  modalBody: string;
-}>) {
-  const [user] = useUserState((state) => [state.user]);
-  const [server] = useServerApiState((state) => [state.server]);
+  id,
+  innerProps
+}: Readonly<
+  ContextModalProps<{
+    modalBody: string;
+  }>
+>) {
+  const [user] = useUserState(useShallow((state) => [state.user]));
 
-  if (user?.is_staff != true)
+  if (!user?.is_staff)
     return (
       <Text>
         <Trans>This information is only available for staff users</Trans>
       </Text>
     );
+  return <AboutContent context={context} id={id} innerProps={innerProps} />;
+}
 
+const AboutContent = ({
+  context,
+  id
+}: Readonly<
+  ContextModalProps<{
+    modalBody: string;
+  }>
+>) => {
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const { isLoading, data } = useQuery({
     queryKey: ['version'],
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
@@ -75,18 +93,68 @@ export function AboutInvenTreeModal({
   /* renderer */
   if (isLoading) return <Trans>Loading</Trans>;
 
+  const commit_set: boolean =
+    data.version.commit_hash && data.version.commit_date;
+
   const copyval = `InvenTree-Version: ${data.version.server}\nDjango Version: ${
     data.version.django
   }\n${
-    data.version.commit_hash &&
-    `Commit Hash: ${data.version.commit_hash}\nCommit Date: ${data.version.commit_date}\nCommit Branch: ${data.version.commit_branch}\n`
+    commit_set
+      ? `Commit Hash: ${data.version.commit_hash}\nCommit Date: ${data.version.commit_date}\nCommit Branch: ${data.version.commit_branch}\n`
+      : ''
   }Database: ${server.database}\nDebug-Mode: ${
     server.debug_mode ? 'True' : 'False'
   }\nDeployed using Docker: ${
     server.docker_mode ? 'True' : 'False'
-  }\nPlatform: ${server.platform}\nInstaller: ${server.installer}\n${
-    server.target && `Target: ${server.target}\n`
+  }\nPlatform: ${server.platform}\nInstaller: ${server.installer ? server.installer : ''}\n${
+    server.target ? `Target: ${server.target}\n` : ''
   }Active plugins: ${JSON.stringify(server.active_plugins)}`;
+
+  const tableData = [
+    {
+      ref: 'server',
+      title: <Trans>InvenTree Version</Trans>,
+      link: 'https://github.com/inventree/InvenTree/releases',
+      copy: true
+    },
+    {
+      ref: 'api',
+      title: <Trans>API Version</Trans>,
+      link: generateUrl('/api-doc/'),
+      copy: true
+    },
+    {
+      ref: 'python',
+      title: <Trans>Python Version</Trans>,
+      copy: true
+    },
+    {
+      ref: 'django',
+      title: <Trans>Django Version</Trans>,
+      link: 'https://www.djangoproject.com/',
+      copy: true
+    }
+  ];
+  if (commit_set) {
+    tableData.push(
+      {
+        ref: 'commit_hash',
+        title: <Trans>Commit Hash</Trans>,
+        copy: true
+      },
+      {
+        ref: 'commit_date',
+        title: <Trans>Commit Date</Trans>,
+        copy: true
+      },
+      {
+        ref: 'commit_branch',
+        title: <Trans>Commit Branch</Trans>,
+        copy: true
+      }
+    );
+  }
+
   return (
     <Stack>
       <Divider />
@@ -94,66 +162,10 @@ export function AboutInvenTreeModal({
         <StylishText size='lg'>
           <Trans>Version Information</Trans>
         </StylishText>
-        {data.dev ? (
-          <Badge color='blue'>
-            <Trans>Development Version</Trans>
-          </Badge>
-        ) : data.up_to_date ? (
-          <Badge color='green'>
-            <Trans>Up to Date</Trans>
-          </Badge>
-        ) : (
-          <Badge color='teal'>
-            <Trans>Update Available</Trans>
-          </Badge>
-        )}
+        {renderVersionBadge(data)}
       </Group>
       <Table striped>
-        <Table.Tbody>
-          {fillTable(
-            [
-              {
-                ref: 'server',
-                title: <Trans>InvenTree Version</Trans>,
-                link: 'https://github.com/inventree/InvenTree/releases',
-                copy: true
-              },
-              {
-                ref: 'commit_hash',
-                title: <Trans>Commit Hash</Trans>,
-                copy: true
-              },
-              {
-                ref: 'commit_date',
-                title: <Trans>Commit Date</Trans>,
-                copy: true
-              },
-              {
-                ref: 'commit_branch',
-                title: <Trans>Commit Branch</Trans>,
-                copy: true
-              },
-              {
-                ref: 'api',
-                title: <Trans>API Version</Trans>,
-                link: generateUrl('/api-doc/'),
-                copy: true
-              },
-              {
-                ref: 'python',
-                title: <Trans>Python Version</Trans>,
-                copy: true
-              },
-              {
-                ref: 'django',
-                title: <Trans>Django Version</Trans>,
-                link: 'https://www.djangoproject.com/',
-                copy: true
-              }
-            ],
-            data.version
-          )}
-        </Table.Tbody>
+        <Table.Tbody>{fillTable(tableData, data.version)}</Table.Tbody>
       </Table>
       <Divider />
       <StylishText size='lg'>
@@ -165,7 +177,6 @@ export function AboutInvenTreeModal({
             [
               { ref: 'doc', title: <Trans>Documentation</Trans> },
               { ref: 'code', title: <Trans>Source Code</Trans> },
-              { ref: 'credit', title: <Trans>Credits</Trans> },
               { ref: 'app', title: <Trans>Mobile App</Trans> },
               { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
             ],
@@ -188,4 +199,18 @@ export function AboutInvenTreeModal({
       </Group>
     </Stack>
   );
+};
+
+function renderVersionBadge(data: any) {
+  const badgeType = () => {
+    if (data.dev) {
+      return { color: 'blue', label: <Trans>Development Version</Trans> };
+    } else if (data.up_to_date) {
+      return { color: 'green', label: <Trans>Up to Date</Trans> };
+    } else {
+      return { color: 'teal', label: <Trans>Update Available</Trans> };
+    }
+  };
+  const { color, label } = badgeType();
+  return <Badge color={color}>{label}</Badge>;
 }

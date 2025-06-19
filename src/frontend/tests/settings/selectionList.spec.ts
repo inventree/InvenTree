@@ -1,9 +1,12 @@
 import { test } from '../baseFixtures';
-import { baseUrl } from '../defaults';
-import { doQuickLogin } from '../login';
+import { navigate } from '../helpers';
+import { doCachedLogin } from '../login';
 
-test('PUI - Admin - Parameter', async ({ page }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+test('PUI - Admin - Parameter', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
   await page.getByRole('tab', { name: 'Part Parameters' }).click();
@@ -75,7 +78,7 @@ test('PUI - Admin - Parameter', async ({ page }) => {
   await page.getByRole('cell', { name: 'my custom parameter' }).click();
 
   // Fill parameter
-  await page.goto(`${baseUrl}/part/104/parameters/`);
+  await navigate(page, 'part/104/parameters/');
   await page.getByLabel('Parameters').getByText('Parameters').waitFor();
   await page.waitForLoadState('networkidle');
   await page.getByLabel('action-button-add-parameter').waitFor();
@@ -86,7 +89,7 @@ test('PUI - Admin - Parameter', async ({ page }) => {
     .getByText('Template *Parameter')
     .locator('div')
     .filter({ hasText: /^Search\.\.\.$/ })
-    .nth(2)
+    .first()
     .click();
   await page
     .getByText('Template *Parameter')

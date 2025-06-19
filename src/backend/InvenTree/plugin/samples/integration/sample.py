@@ -72,14 +72,16 @@ class SampleIntegrationPlugin(
             'default': 'A',
         },
         'SELECT_COMPANY': {
-            'name': 'Company',
-            'description': 'Select a company object from the database',
+            'name': 'Supplier',
+            'description': 'Select a supplier object from the database',
             'model': 'company.company',
+            'model_filters': {'is_supplier': True},
         },
         'SELECT_PART': {
             'name': 'Part',
             'description': 'Select a part object from the database',
             'model': 'part.part',
+            'model_filters': {'active': True},
         },
         'PROTECTED_SETTING': {
             'name': 'Protected Setting',

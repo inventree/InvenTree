@@ -4,13 +4,13 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from common.setting.type import InvenTreeSettingsKeyType
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 
 
 def label_printer_options():
     """Build a list of available label printer options."""
     printers = []
-    label_printer_plugins = registry.with_mixin('labels')
+    label_printer_plugins = registry.with_mixin(PluginMixinEnum.LABELS)
     if label_printer_plugins:
         printers.extend([
             (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
@@ -127,6 +127,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': True,
     },
+    'SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS': {
+        'name': _('Search Sales Order Shipments'),
+        'description': _('Display sales order shipments in search preview window'),
+        'default': True,
+        'validator': bool,
+    },
     'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
         'name': _('Search Return Orders'),
         'description': _('Display return orders in search preview window'),
@@ -159,6 +165,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SEARCH_NOTES': {
+        'name': _('Search Notes'),
+        'description': _(
+            "Search queries return results for matches from the item's notes"
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PART_SHOW_QUANTITY_IN_FORMS': {
         'name': _('Show Quantity in Forms'),
         'description': _('Display available part quantity in some forms'),
@@ -174,6 +188,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STICKY_HEADER': {
         'name': _('Fixed Navbar'),
         'description': _('The navbar position is fixed to the top of the screen'),
+        'default': False,
+        'validator': bool,
+    },
+    'ICONS_IN_NAVBAR': {
+        'name': _('Navigation Icons'),
+        'description': _('Display icons in the navigation bar'),
         'default': False,
         'validator': bool,
     },
@@ -205,11 +225,11 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
-    'TABLE_STRING_MAX_LENGTH': {
-        'name': _('Table String Length'),
-        'description': _('Maximum length limit for strings displayed in table views'),
-        'validator': [int, MinValueValidator(0)],
-        'default': 100,
+    'ENABLE_LAST_BREADCRUMB': {
+        'name': _('Show Last Breadcrumb'),
+        'description': _('Show the current page in breadcrumbs'),
+        'default': False,
+        'validator': bool,
     },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),

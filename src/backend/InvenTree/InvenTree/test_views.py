@@ -46,4 +46,4 @@ class ViewTests(InvenTreeTestCase):
             f'/accounts/login/?next=/&login={self.username}&password={self.password}'
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, '/platform')
+        self.assertEqual(response.url, '/web')

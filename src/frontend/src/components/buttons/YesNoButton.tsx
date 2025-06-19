@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge, Skeleton } from '@mantine/core';
 
 import { isTrue } from '../../functions/conversion';
@@ -18,7 +18,7 @@ export function PassFailButton({
 
   return (
     <Badge
-      color={v ? 'lime.5' : 'red.6'}
+      color={v ? 'green' : 'red'}
       variant='filled'
       radius='lg'
       size='sm'

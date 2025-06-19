@@ -39,23 +39,39 @@ from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
-import common.currency
 import common.validators
-import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
-import InvenTree.tasks
-import InvenTree.validators
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
+from common.settings import global_setting_overrides
+from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 
 logger = structlog.get_logger('inventree')
+
+
+class RenderMeta(models.enums.ChoicesMeta):
+    """Metaclass for rendering choices."""
+
+    choice_fnc = None
+
+    @property
+    def choices(self):
+        """Return a list of choices for the enum class."""
+        fnc = getattr(self, 'choice_fnc', None)
+        if fnc:
+            return fnc()
+        return []
+
+
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+    """Class for creating enumerated string choices for schema rendering."""
 
 
 class MetaMixin(models.Model):
@@ -169,15 +185,6 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
-        cache_key = f'BUILD_DEFAULT_VALUES:{cls.__name__!s}'
-
-        try:
-            if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
-                # Already built default values
-                return
-        except Exception:
-            pass
-
         try:
             existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
             settings_keys = cls.SETTINGS.keys()
@@ -197,11 +204,6 @@ class BaseInvenTreeSetting(models.Model):
             logger.exception(
                 'Failed to build default values for %s (%s)', str(cls), str(type(exc))
             )
-
-        try:
-            cache.set(cache_key, True, timeout=3600)
-        except Exception:
-            pass
 
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
@@ -907,13 +909,26 @@ class BaseInvenTreeSetting(models.Model):
         """Check if this setting references a model instance in the database."""
         return self.model_name() is not None
 
-    def model_name(self):
+    def model_name(self) -> str:
         """Return the model name associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()
         )
 
         return setting.get('model', None)
+
+    def model_filters(self) -> dict:
+        """Return the model filters associated with this setting."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        filters = setting.get('model_filters', None)
+
+        if filters is not None and type(filters) is not dict:
+            filters = None
+
+        return filters
 
     def model_class(self):
         """Return the model class associated with this setting.
@@ -1143,10 +1158,41 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         If so, set the "SERVER_RESTART_REQUIRED" setting to True
         """
+        overrides = global_setting_overrides()
+
+        # If an override is specified for this setting, use that value
+        if self.key in overrides:
+            self.value = overrides[self.key]
+
         super().save()
 
         if self.requires_restart() and not InvenTree.ready.isImportingData():
             InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
+
+    @classmethod
+    def get_setting_default(cls, key, **kwargs):
+        """Return the default value a particular setting."""
+        overrides = global_setting_overrides()
+
+        if key in overrides:
+            # If an override is specified for this setting, use that value
+            return overrides[key]
+
+        return super().get_setting_default(key, **kwargs)
+
+    @classmethod
+    def get_setting(cls, key, backup_value=None, **kwargs):
+        """Get the value of a particular setting.
+
+        If it does not exist, return the backup value (default = None)
+        """
+        overrides = global_setting_overrides()
+
+        if key in overrides:
+            # If an override is specified for this setting, use that value
+            return overrides[key]
+
+        return super().get_setting(key, backup_value=backup_value, **kwargs)
 
     """
     Dict of all global settings values:
@@ -1766,15 +1812,15 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     reload_unit_registry()
 
 
-def rename_attachment(instance, filename):
+def rename_attachment(instance, filename: str):
     """Callback function to rename an uploaded attachment file.
 
-    Arguments:
-        - instance: The Attachment instance
-        - filename: The original filename of the uploaded file
+    Args:
+        instance (Attachment): The Attachment instance for which the file is being renamed.
+        filename (str): The original filename of the uploaded file.
 
     Returns:
-        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
+        str: The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'.
     """
     # Remove any illegal characters from the filename
     illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
@@ -1810,6 +1856,11 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         """Metaclass options."""
 
         verbose_name = _('Attachment')
+
+    class ModelChoices(RenderChoices):
+        """Model choices for attachments."""
+
+        choice_fnc = common.validators.attachment_model_options
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
@@ -1859,7 +1910,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     model_type = models.CharField(
         max_length=100,
         validators=[common.validators.validate_attachment_model_type],
-        help_text=_('Target model type for this image'),
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for image'),
     )
 
     model_id = models.PositiveIntegerField()
@@ -1877,6 +1929,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         null=True,
         verbose_name=_('Link'),
         help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     comment = models.CharField(
@@ -2312,3 +2365,52 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
         help_text=_('Was the barcode scan successful?'),
         default=False,
     )
+
+
+class DataOutput(models.Model):
+    """Model for storing generated data output from various processes.
+
+    This model is intended for storing data files which are generated by various processes,
+    and need to be retained for future use (e.g. download by the user).
+
+    Attributes:
+        created: Date and time that the data output was created
+        user: User who created the data output (if applicable)
+        total: Total number of items / records in the data output
+        progress: Current progress of the data output generation process
+        complete: Has the data output generation process completed?
+        output_type: The type of data output generated (e.g. 'label', 'report', etc)
+        template_name: Name of the template used to generate the data output (if applicable)
+        plugin: Key for the plugin which generated the data output (if applicable)
+        output: File field for storing the generated file
+        errors: JSON field for storing any errors generated during the data output generation process
+    """
+
+    class DataOutputTypes(StringEnum):
+        """Enum for data output types."""
+
+        LABEL = 'label'
+        REPORT = 'report'
+        EXPORT = 'export'
+
+    created = models.DateField(auto_now_add=True, editable=False)
+
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, blank=True, null=True, related_name='+'
+    )
+
+    total = models.PositiveIntegerField(default=1)
+
+    progress = models.PositiveIntegerField(default=0)
+
+    complete = models.BooleanField(default=False)
+
+    output_type = models.CharField(max_length=100, blank=True, null=True)
+
+    template_name = models.CharField(max_length=100, blank=True, null=True)
+
+    plugin = models.CharField(max_length=100, blank=True, null=True)
+
+    output = models.FileField(upload_to='data_output', blank=True, null=True)
+
+    errors = models.JSONField(blank=True, null=True)
