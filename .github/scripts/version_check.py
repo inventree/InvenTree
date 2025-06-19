@@ -128,7 +128,7 @@ if __name__ == '__main__':
             raise ValueError(f"Unknown target '{target}'")
         new_tag = f'{tag} dev'
 
-        with open(os.getenv('GITHUB_OUTPUT'), 'a') as env_file:
+        with open(os.getenv('GITHUB_OUTPUT'), 'a', encoding='utf-8') as env_file:
             env_file.write(f'old_version={old_version}\n')
             env_file.write(f'old_branch={old_branch}\n')
             env_file.write(f'tag={tag}\n')
