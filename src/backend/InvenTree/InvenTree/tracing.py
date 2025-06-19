@@ -5,9 +5,7 @@ import logging
 from typing import Optional
 
 from django.conf import settings
-from django.dispatch.dispatcher import receiver
 
-from django_q.signals import post_spawn
 from opentelemetry import metrics, trace
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
@@ -27,6 +25,9 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 
 import InvenTree.ready
 from InvenTree.version import inventreeVersion
+
+TRACE_PROC = None
+TRACE_PROV = None
 
 
 def setup_tracing(
@@ -152,12 +153,9 @@ def setup_tracing(
     logger = logging.getLogger('inventree')
     logger.addHandler(handler)
 
-    # Instrumentation for worker
-    @receiver(post_spawn)
-    def callback(sender, proc_name, **kwargs):
-        trace_provider.add_span_processor(trace_processor)
-        trace.set_tracer_provider(trace_provider)
-        trace.get_tracer(__name__)
+    global TRACE_PROC, TRACE_PROV
+    TRACE_PROC = trace_processor
+    TRACE_PROV = trace_provider
 
 
 def setup_instruments():

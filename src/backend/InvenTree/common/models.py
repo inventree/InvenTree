@@ -28,14 +28,16 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-from django.dispatch.dispatcher import receiver
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
+from opentelemetry import trace
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
@@ -52,6 +54,7 @@ from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.tracing import TRACE_PROC, TRACE_PROV
 
 logger = structlog.get_logger('inventree')
 
@@ -2414,3 +2417,16 @@ class DataOutput(models.Model):
     output = models.FileField(upload_to='data_output', blank=True, null=True)
 
     errors = models.JSONField(blank=True, null=True)
+
+
+# region tracing for django q
+if TRACE_PROC:
+
+    @receiver(post_spawn)
+    def spwan_callback(sender, proc_name, **kwargs):
+        """Callback to patch in tracing support."""
+        TRACE_PROV.add_span_processor(TRACE_PROC)
+        trace.set_tracer_provider(TRACE_PROV)
+        trace.get_tracer(__name__)
+
+# endregion
