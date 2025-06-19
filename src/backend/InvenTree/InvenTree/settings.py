@@ -641,25 +641,25 @@ It can be specified in config.yaml (or envvar) as either (for example):
 - django.db.backends.postgresql
 """
 
-db_engine = db_config['ENGINE'].lower()
+DB_ENGINE = db_config['ENGINE'].lower()
 
 # Correct common misspelling
-if db_engine == 'sqlite':
-    db_engine = 'sqlite3'  # pragma: no cover
+if DB_ENGINE == 'sqlite':
+    DB_ENGINE = 'sqlite3'  # pragma: no cover
 
-if db_engine in ['sqlite3', 'postgresql', 'mysql']:
+if DB_ENGINE in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
-    db_engine = f'django.db.backends.{db_engine}'
-    db_config['ENGINE'] = db_engine
+    DB_ENGINE = f'django.db.backends.{DB_ENGINE}'
+    db_config['ENGINE'] = DB_ENGINE
 
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
 
-if 'sqlite' in db_engine:
+if 'sqlite' in DB_ENGINE:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info('DB_ENGINE: %s', db_engine)
+logger.info('DB_ENGINE: %s', DB_ENGINE)
 logger.info('DB_NAME: %s', db_name)
 logger.info('DB_HOST: %s', db_host)
 
@@ -680,7 +680,7 @@ if db_options is None:
     db_options = {}
 
 # Specific options for postgres backend
-if 'postgres' in db_engine:  # pragma: no cover
+if 'postgres' in DB_ENGINE:  # pragma: no cover
     from django.db.backends.postgresql.psycopg_any import IsolationLevel
 
     # Connection timeout
@@ -753,7 +753,7 @@ if 'postgres' in db_engine:  # pragma: no cover
         )
 
 # Specific options for MySql / MariaDB backend
-elif 'mysql' in db_engine:  # pragma: no cover
+elif 'mysql' in DB_ENGINE:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -771,7 +771,7 @@ elif 'mysql' in db_engine:  # pragma: no cover
         )
 
 # Specific options for sqlite backend
-elif 'sqlite' in db_engine:
+elif 'sqlite' in DB_ENGINE:
     # TODO: Verify timeouts are not an issue because no network is involved for SQLite
 
     # SQLite's default isolation level is Serializable due to SQLite's
@@ -787,7 +787,7 @@ db_config['OPTIONS'] = db_options
 db_config['TEST'] = {'CHARSET': 'utf8'}
 
 # Set collation option for mysql test database
-if 'mysql' in db_engine:
+if 'mysql' in DB_ENGINE:
     db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {'default': db_config}

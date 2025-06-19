@@ -159,5 +159,5 @@ def setup_instruments():
     SystemMetricsInstrumentor().instrument()
 
     # DBs
-    if settings.db_engine == 'sqlite':
+    if settings.DB_ENGINE == 'sqlite':
         SQLite3Instrumentor.instrument()
