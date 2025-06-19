@@ -38,7 +38,7 @@ def setup_tracing(
     auth: Optional[dict] = None,
     is_http: bool = False,
     append_http: bool = True,
-):
+):  # pragma: no cover
     """Set up tracing for the application in the current context.
 
     Args:

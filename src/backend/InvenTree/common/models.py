@@ -2420,7 +2420,7 @@ class DataOutput(models.Model):
 
 
 # region tracing for django q
-if TRACE_PROC:
+if TRACE_PROC:  # pragma: no cover
 
     @receiver(post_spawn)
     def spwan_callback(sender, proc_name, **kwargs):
