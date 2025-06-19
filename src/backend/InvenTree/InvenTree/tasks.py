@@ -26,6 +26,7 @@ from maintenance_mode.core import (
     maintenance_mode_on,
     set_maintenance_mode,
 )
+from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
@@ -34,6 +35,7 @@ from plugin import registry
 from .version import isInvenTreeUpToDate
 
 logger = structlog.get_logger('inventree')
+tracer = trace.get_tracer(__name__)
 
 
 def schedule_task(taskname, **kwargs):
@@ -205,7 +207,8 @@ def offload_task(
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, group=group, **kwargs)
-            task.run()
+            with tracer.start_as_current_span(f'async worker: {taskname}'):
+                task.run()
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
             return False
@@ -257,7 +260,8 @@ def offload_task(
 
         # Workers are not running: run it as synchronous task
         try:
-            _func(*args, **kwargs)
+            with tracer.start_as_current_span(f'sync worker: {taskname}'):
+                _func(*args, **kwargs)
         except Exception as exc:
             log_error('InvenTree.offload_task')
             raise_warning(f"WARNING: '{taskname}' failed due to {exc!s}")
