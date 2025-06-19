@@ -91,6 +91,16 @@ class ExtendedAutoSchema(AutoSchema):
                 if parameter['name'] == 'limit':
                     parameter['required'] = True
 
+        # Add valid order selections to the ordering field description.
+        ordering_fields = getattr(self.view, 'ordering_fields', None)
+        if ordering_fields is not None:
+            parameters = operation.get('parameters', [])
+            for parameter in parameters:
+                if parameter['name'] == 'ordering':
+                    parameter['description'] = (
+                        f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
+                    )
+
         return operation
 
 
