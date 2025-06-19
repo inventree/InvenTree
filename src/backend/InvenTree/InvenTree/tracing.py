@@ -168,3 +168,19 @@ def setup_instruments():
     # DBs
     if settings.DB_ENGINE == 'sqlite':
         SQLite3Instrumentor().instrument()
+    elif settings.DB_ENGINE == 'postgresql':
+        try:
+            from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
+
+            PsycopgInstrumentor().instrument(
+                enable_commenter=False, commenter_options={}
+            )
+        except ModuleNotFoundError:
+            pass
+    elif settings.DB_ENGINE == 'mysql':
+        try:
+            from opentelemetry.instrumentation.pymysql import PyMySQLInstrumentor
+
+            PyMySQLInstrumentor().instrument()
+        except ModuleNotFoundError:
+            pass
