@@ -13,6 +13,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import django.conf.locale
@@ -33,7 +34,11 @@ from InvenTree.config import (
 )
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
+from InvenTree.version import (
+    checkMinPythonVersion,
+    inventreeApiVersion,
+    inventreeCommitHash,
+)
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
@@ -636,25 +641,25 @@ It can be specified in config.yaml (or envvar) as either (for example):
 - django.db.backends.postgresql
 """
 
-db_engine = db_config['ENGINE'].lower()
+DB_ENGINE = db_config['ENGINE'].lower()
 
 # Correct common misspelling
-if db_engine == 'sqlite':
-    db_engine = 'sqlite3'  # pragma: no cover
+if DB_ENGINE == 'sqlite':
+    DB_ENGINE = 'sqlite3'  # pragma: no cover
 
-if db_engine in ['sqlite3', 'postgresql', 'mysql']:
+if DB_ENGINE in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
-    db_engine = f'django.db.backends.{db_engine}'
-    db_config['ENGINE'] = db_engine
+    DB_ENGINE = f'django.db.backends.{DB_ENGINE}'
+    db_config['ENGINE'] = DB_ENGINE
 
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
 
-if 'sqlite' in db_engine:
+if 'sqlite' in DB_ENGINE:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info('DB_ENGINE: %s', db_engine)
+logger.info('DB_ENGINE: %s', DB_ENGINE)
 logger.info('DB_NAME: %s', db_name)
 logger.info('DB_HOST: %s', db_host)
 
@@ -675,7 +680,7 @@ if db_options is None:
     db_options = {}
 
 # Specific options for postgres backend
-if 'postgres' in db_engine:  # pragma: no cover
+if 'postgres' in DB_ENGINE:  # pragma: no cover
     from django.db.backends.postgresql.psycopg_any import IsolationLevel
 
     # Connection timeout
@@ -748,7 +753,7 @@ if 'postgres' in db_engine:  # pragma: no cover
         )
 
 # Specific options for MySql / MariaDB backend
-elif 'mysql' in db_engine:  # pragma: no cover
+elif 'mysql' in DB_ENGINE:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -766,7 +771,7 @@ elif 'mysql' in db_engine:  # pragma: no cover
         )
 
 # Specific options for sqlite backend
-elif 'sqlite' in db_engine:
+elif 'sqlite' in DB_ENGINE:
     # TODO: Verify timeouts are not an issue because no network is involved for SQLite
 
     # SQLite's default isolation level is Serializable due to SQLite's
@@ -782,7 +787,7 @@ db_config['OPTIONS'] = db_options
 db_config['TEST'] = {'CHARSET': 'utf8'}
 
 # Set collation option for mysql test database
-if 'mysql' in db_engine:
+if 'mysql' in DB_ENGINE:
     db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {'default': db_config}
@@ -801,6 +806,7 @@ inventree_tags = {
     'docker': DOCKER,
     'debug': DEBUG,
     'remote': REMOTE_LOGIN,
+    'commit': inventreeCommitHash(),
 }
 
 # sentry.io integration for error reporting
@@ -821,6 +827,7 @@ if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
 TRACING_ENABLED = get_boolean_setting(
     'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
 )
+TRACING_DETAILS: Optional[dict] = None
 
 if TRACING_ENABLED:  # pragma: no cover
     from InvenTree.tracing import setup_instruments, setup_tracing
@@ -834,34 +841,41 @@ if TRACING_ENABLED:  # pragma: no cover
     if _t_endpoint:
         logger.info('OpenTelemetry tracing enabled')
 
-        _t_resources = get_setting(
-            'INVENTREE_TRACING_RESOURCES',
-            'tracing.resources',
-            default_value=None,
-            typecast=dict,
+        TRACING_DETAILS = (
+            TRACING_DETAILS
+            if TRACING_DETAILS
+            else {
+                'endpoint': _t_endpoint,
+                'headers': _t_headers,
+                'resources_input': {
+                    **{'inventree.env.' + k: v for k, v in inventree_tags.items()},
+                    **get_setting(
+                        'INVENTREE_TRACING_RESOURCES',
+                        'tracing.resources',
+                        default_value=None,
+                        typecast=dict,
+                    ),
+                },
+                'console': get_boolean_setting(
+                    'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
+                ),
+                'auth': get_setting(
+                    'INVENTREE_TRACING_AUTH',
+                    'tracing.auth',
+                    default_value=None,
+                    typecast=dict,
+                ),
+                'is_http': get_setting(
+                    'INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True
+                ),
+                'append_http': get_boolean_setting(
+                    'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
+                ),
+            }
         )
-        cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
-        tracing_resources = {**cstm_tags, **_t_resources}
 
-        setup_tracing(
-            _t_endpoint,
-            _t_headers,
-            resources_input=tracing_resources,
-            console=get_boolean_setting(
-                'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
-            ),
-            auth=get_setting(
-                'INVENTREE_TRACING_AUTH',
-                'tracing.auth',
-                default_value=None,
-                typecast=dict,
-            ),
-            is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
-            append_http=get_boolean_setting(
-                'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
-            ),
-        )
         # Run tracing/logging instrumentation
+        setup_tracing(**TRACING_DETAILS)
         setup_instruments()
     else:
         logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')

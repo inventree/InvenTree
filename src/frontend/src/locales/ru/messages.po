@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-06-15 23:22\n"
+"PO-Revision-Date: 2025-06-18 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -4111,7 +4111,7 @@ msgstr "Заметка"
 #: src/pages/company/SupplierPartDetail.tsx:137
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:57
 msgid "SKU"
-msgstr "Артикул"
+msgstr "Артикул поставщика"
 
 #: src/forms/PurchaseOrderForms.tsx:753
 #: src/tables/part/PartPurchaseOrdersTable.tsx:126
@@ -4152,7 +4152,7 @@ msgstr "Следующий серийный номер"
 
 #: src/forms/StockForms.tsx:145
 msgid "Add given quantity as packs instead of individual items"
-msgstr ""
+msgstr "Ввести количество упаковок вместо количества отдельных элементов"
 
 #: src/forms/StockForms.tsx:158
 #~ msgid "Stock item updated"
@@ -4160,7 +4160,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:159
 msgid "Enter initial quantity for this stock item"
-msgstr "Введите начальное количество для этого товара на складе"
+msgstr "Введите начальное количество этой детали на складе"
 
 #: src/forms/StockForms.tsx:168
 msgid "Enter serial numbers for new stock (or leave blank)"
@@ -4168,7 +4168,7 @@ msgstr "Введите серийные номера для нового скл�
 
 #: src/forms/StockForms.tsx:183
 msgid "Stock Status"
-msgstr ""
+msgstr "Состояние складской позиции"
 
 #: src/forms/StockForms.tsx:239
 #: src/pages/stock/StockDetail.tsx:575
@@ -6579,15 +6579,15 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:286
 msgid "Required for Orders"
-msgstr ""
+msgstr "Для заказов требуется"
 
 #: src/pages/part/PartDetail.tsx:295
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Зарезервировано в заказах на сборку"
 
 #: src/pages/part/PartDetail.tsx:306
 msgid "Allocated to Sales Orders"
-msgstr ""
+msgstr "Зарезервировано в заказах на продажу"
 
 #: src/pages/part/PartDetail.tsx:310
 #~ msgid "Edit part"
@@ -6672,7 +6672,7 @@ msgstr "Создал"
 
 #: src/pages/part/PartDetail.tsx:414
 msgid "Default Supplier"
-msgstr ""
+msgstr "Поставщик по умолчанию"
 
 #: src/pages/part/PartDetail.tsx:425
 #: src/pages/part/pricing/BomPricingPanel.tsx:113
@@ -6726,25 +6726,25 @@ msgstr ""
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:387
 msgid "Required"
-msgstr ""
+msgstr "Требуется"
 
 #: src/pages/part/PartDetail.tsx:798
 msgid "Edit Part"
-msgstr ""
+msgstr "Редактировать деталь"
 
 #: src/pages/part/PartDetail.tsx:833
 #: src/tables/part/PartTable.tsx:340
 #: src/tables/part/PartTable.tsx:390
 msgid "Add Part"
-msgstr "Добавить деталь"
+msgstr "Создать деталь"
 
 #: src/pages/part/PartDetail.tsx:847
 msgid "Delete Part"
-msgstr ""
+msgstr "Удалить деталь"
 
 #: src/pages/part/PartDetail.tsx:856
 msgid "Deleting this part cannot be reversed"
-msgstr ""
+msgstr "Удаление этой детали нельзя отменить"
 
 #: src/pages/part/PartDetail.tsx:907
 #: src/pages/stock/LocationDetail.tsx:309
@@ -6976,17 +6976,17 @@ msgstr "Гистограмма"
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:142
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:170
 msgid "Add Price Break"
-msgstr ""
+msgstr "Создать цену со скидкой"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:71
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:154
 msgid "Edit Price Break"
-msgstr ""
+msgstr "Редактировать цену со скидкой"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:81
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:162
 msgid "Delete Price Break"
-msgstr ""
+msgstr "Удалить цену со скидкой"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:95
 msgid "Price Break"
@@ -6994,7 +6994,7 @@ msgstr ""
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:171
 msgid "Price"
-msgstr ""
+msgstr "Цена"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:72
 msgid "Refreshing pricing data"
@@ -7060,7 +7060,7 @@ msgstr "Редактировать данные о ценах"
 
 #: src/pages/part/pricing/PricingPanel.tsx:24
 msgid "No data available"
-msgstr ""
+msgstr "Нет данных"
 
 #: src/pages/part/pricing/PricingPanel.tsx:65
 msgid "No Data"
@@ -7068,7 +7068,7 @@ msgstr ""
 
 #: src/pages/part/pricing/PricingPanel.tsx:66
 msgid "No pricing data available"
-msgstr ""
+msgstr "Нет данных о ценах"
 
 #: src/pages/part/pricing/PricingPanel.tsx:77
 msgid "Loading pricing data"
@@ -7085,12 +7085,12 @@ msgstr "Закупочная цена"
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:44
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:87
 msgid "Sale Price"
-msgstr ""
+msgstr "Цена продажи"
 
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:69
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:83
 msgid "Supplier Price"
-msgstr ""
+msgstr "Цена у поставщика"
 
 #: src/pages/part/pricing/VariantPricingPanel.tsx:30
 #: src/pages/part/pricing/VariantPricingPanel.tsx:96
@@ -7226,7 +7226,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:158
 #: src/tables/sales/ReturnOrderTable.tsx:171
 msgid "Add Return Order"
-msgstr ""
+msgstr "Создать заказ на возврат"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:381
 msgid "Issue Return Order"
@@ -7260,7 +7260,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderTable.tsx:112
 #: src/tables/sales/SalesOrderTable.tsx:125
 msgid "Add Sales Order"
-msgstr ""
+msgstr "Создать заказ на продажу"
 
 #: src/pages/sales/SalesOrderDetail.tsx:373
 #: src/tables/sales/SalesOrderTable.tsx:159
@@ -8950,7 +8950,7 @@ msgstr ""
 #: src/tables/part/PartBuildAllocationsTable.tsx:67
 #: src/tables/part/PartSalesAllocationsTable.tsx:62
 msgid "Required Stock"
-msgstr ""
+msgstr "Требуемый запас"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:83
 msgid "View Build Order"
@@ -9025,7 +9025,7 @@ msgstr "Внутренние ед. измерения"
 
 #: src/tables/part/PartParameterTable.tsx:114
 msgid "New Part Parameter"
-msgstr ""
+msgstr "Создание параметра детали"
 
 #: src/tables/part/PartParameterTable.tsx:139
 #: src/tables/part/PartParameterTable.tsx:161
@@ -9034,7 +9034,7 @@ msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:179
 msgid "Add parameter"
-msgstr "Добавить параметр"
+msgstr "Создать параметр"
 
 #: src/tables/part/PartParameterTable.tsx:198
 msgid "Part parameters cannot be edited, as the part is locked"
@@ -9137,7 +9137,7 @@ msgstr "Фильтр по деталям, в которых задана еди�
 
 #: src/tables/part/PartTable.tsx:229
 msgid "Has IPN"
-msgstr "Есть артикул"
+msgstr "Есть внутренний артикул"
 
 #: src/tables/part/PartTable.tsx:230
 msgid "Filter by parts which have an internal part number"
