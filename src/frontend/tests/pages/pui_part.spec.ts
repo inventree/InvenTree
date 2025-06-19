@@ -162,6 +162,26 @@ test('Parts - Locking', async ({ browser }) => {
   await page.getByText('Part parameters cannot be').waitFor();
 });
 
+test('Parts - Details', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/113/details' });
+
+  // Check for expected values on this page
+  await page.getByText('Required for Orders').waitFor();
+  await page.getByText('Allocated to Sales Orders').waitFor();
+  await page.getByText('Can Build').waitFor();
+
+  await page.getByText('0 / 10').waitFor();
+  await page.getByText('4 / 49').waitFor();
+
+  // Badges
+  await page.getByText('Required: 10').waitFor();
+  await page.getByText('No Stock').waitFor();
+  await page.getByText('In Production: 4').waitFor();
+
+  await page.getByText('Creation Date').waitFor();
+  await page.getByText('2022-04-29').waitFor();
+});
+
 test('Parts - Allocations', async ({ browser }) => {
   // Let's look at the allocations for a single stock item
   const page = await doCachedLogin(browser, { url: 'stock/item/324/' });

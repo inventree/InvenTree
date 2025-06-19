@@ -8,6 +8,7 @@ import type {
   BulkEditApiFormModalProps
 } from '@lib/types/Forms';
 import { OptionsApiForm } from '../components/forms/ApiForm';
+import { useModalState } from '../states/ModalState';
 import { useModal } from './UseModal';
 
 /**
@@ -16,6 +17,12 @@ import { useModal } from './UseModal';
 export function useApiFormModal(props: ApiFormModalProps) {
   const id = useId();
   const modalClose = useRef(() => {});
+
+  const modalState = useModalState();
+
+  const modalId = useMemo(() => {
+    return props.modalId ?? id;
+  }, [props.modalId, id]);
 
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
@@ -44,15 +51,22 @@ export function useApiFormModal(props: ApiFormModalProps) {
   );
 
   const modal = useModal({
+    id: modalId,
     title: formProps.title,
-    onOpen: formProps.onOpen,
-    onClose: formProps.onClose,
+    onOpen: () => {
+      modalState.setModalOpen(modalId, true);
+      formProps.onOpen?.();
+    },
+    onClose: () => {
+      modalState.setModalOpen(modalId, false);
+      formProps.onClose?.();
+    },
     closeOnClickOutside: formProps.closeOnClickOutside,
     size: props.size ?? 'xl',
     children: (
       <Stack gap={'xs'}>
         <Divider />
-        <OptionsApiForm props={formProps} id={id} />
+        <OptionsApiForm props={formProps} id={modalId} />
       </Stack>
     )
   });

@@ -25,6 +25,7 @@ export function useModal(props: UseModalProps): UseModalReturn {
     toggle,
     modal: (
       <Modal
+        key={props.id}
         opened={opened}
         onClose={close}
         closeOnClickOutside={props.closeOnClickOutside}
