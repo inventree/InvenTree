@@ -155,7 +155,7 @@ export function TableField({
       </Table.Thead>
 
       <Table.Tbody>
-        {value.length > 0 ? (
+        {(value?.length ?? 0) > 0 ? (
           value.map((item: any, idx: number) => {
             return (
               <TableFieldRow

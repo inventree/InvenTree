@@ -256,11 +256,15 @@ export default function BuildOutputTable({
     [partId, buildId, testTemplates, trackedItems]
   );
 
-  const buildOutputFields = useBuildOrderOutputFields({ build: build });
+  const buildOutputFields = useBuildOrderOutputFields({
+    build: build,
+    modalId: 'add-build-output'
+  });
 
   const addBuildOutput = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_create, buildId),
     title: t`Add Build Output`,
+    modalId: 'add-build-output',
     fields: buildOutputFields,
     timeout: 10000,
     initialData: {
@@ -302,13 +306,15 @@ export default function BuildOutputTable({
   const editStockItemFields = useStockFields({
     create: false,
     partId: partId,
-    stockItem: selectedOutputs[0]
+    stockItem: selectedOutputs[0],
+    modalId: 'edit-build-output'
   });
 
   const editBuildOutput = useEditApiFormModal({
     url: ApiEndpoints.stock_item_list,
     pk: selectedOutputs[0]?.pk,
     title: t`Edit Build Output`,
+    modalId: 'edit-build-output',
     fields: editStockItemFields,
     table: table
   });

@@ -640,12 +640,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'SERIAL_NUMBER_AUTOFILL': {
-        'name': _('Autofill Serial Numbers'),
-        'description': _('Autofill serial numbers in forms'),
-        'default': False,
-        'validator': bool,
-    },
     'STOCK_DELETE_DEPLETED_DEFAULT': {
         'name': _('Delete Depleted Stock'),
         'description': _('Determines default behavior when a stock item is depleted'),

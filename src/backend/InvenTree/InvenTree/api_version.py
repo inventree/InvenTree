@@ -1,13 +1,27 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 348
+INVENTREE_API_VERSION = 352
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-
 INVENTREE_API_TEXT = """
-v348 -> 2025-04-22 : https://github.com/inventree/InvenTree/pull/9312
+v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
+    - Make PurchaseOrderLineItem link to BuildOrder reference nullable
+    - Add valid fields to ordering field descriptions
+
+v351 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9602
+    - Adds passwort reset API endpoint for admin users
+
+v350 -> 2025-06-17 : https://github.com/inventree/InvenTree/pull/9798
+    - Adds "can_build" field to the part requirements API endpoint
+    - Remove "allocated" and "required" fields from the part requirements API endpoint
+    - Add detailed serializer to the part requirements API endpoint
+
+v349 -> 2025-06-13 : https://github.com/inventree/InvenTree/pull/9574
+    - Remove the 'create_child_builds' flag from the BuildOrder creation API endpoint
+
+v348 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9312
     - Adds "external" flag for BuildOrder
     - Adds link between PurchaseOrderLineItem and BuildOrder
 
