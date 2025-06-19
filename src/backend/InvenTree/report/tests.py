@@ -510,6 +510,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         report_path = os.path.join(
             settings.MEDIA_ROOT.parent, response.data['output'].lstrip('/')
         )
+        self.assertTrue(response.data['output'])
         with open(report_path, encoding='utf-8') as f:
             html_report = f.read()
 
