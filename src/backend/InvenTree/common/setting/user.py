@@ -211,12 +211,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
     },
-    'DISPLAY_SCHEDULE_TAB': {
-        'name': _('Part Scheduling'),
-        'description': _('Display part scheduling information'),
-        'default': True,
-        'validator': bool,
-    },
     'DISPLAY_STOCKTAKE_TAB': {
         'name': _('Part Stocktake'),
         'description': _(
