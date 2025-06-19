@@ -1049,7 +1049,9 @@ opentelemetry-instrumentation-system-metrics==0.55b0 \
 opentelemetry-instrumentation-wsgi==0.55b0 \
     --hash=sha256:63d1851bf98dd2a119f41b8f9c5fd469e63e6e6e042be04196609f05df01b32e \
     --hash=sha256:b1903bcc609cc1e7ee7d55a4969eb9107cb2773a4b981e3ad73c6aeb03d8da1e
-    # via opentelemetry-instrumentation-django
+    # via
+    #   -r src/backend/requirements.in
+    #   opentelemetry-instrumentation-django
 opentelemetry-proto==1.34.0 \
     --hash=sha256:73e40509b692630a47192888424f7e0b8fb19d9ecf2f04e6f708170cd3346dfe \
     --hash=sha256:ffb1f1b27552fda5a1cd581e34243cc0b6f134fb14c1c2a33cc3b4b208c9bf97
