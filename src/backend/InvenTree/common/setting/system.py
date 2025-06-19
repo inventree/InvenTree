@@ -162,6 +162,12 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
+class SystemSetId:
+    """Shared system settings identifiers."""
+
+    GLOBAL_WARNING = '_GLOBAL_WARNING'
+
+
 SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'SERVER_RESTART_REQUIRED': {
         'name': _('Restart required'),
@@ -175,6 +181,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+    },
+    SystemSetId.GLOBAL_WARNING: {
+        'name': _('Active warning codes'),
+        'description': _('A dict of active warning codes'),
+        'default': {},
+        'validator': dict,
+        'hidden': True,
     },
     'INVENTREE_INSTANCE_ID': {
         'name': _('Instance ID'),

@@ -10,6 +10,8 @@ import string
 from pathlib import Path
 from typing import Optional
 
+from common.settings import GlobalWarningCode, set_global_warning
+
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
@@ -536,5 +538,6 @@ def check_config_dir(
             setting_name,
             config_dir,
         )
+        set_global_warning(GlobalWarningCode.UNCOMMON_CONFIG, {config_dir})
 
     return

@@ -2,6 +2,8 @@
 
 from os import environ
 
+from common.setting.system import SystemSetId
+
 
 def global_setting_overrides() -> dict:
     """Return a dictionary of global settings overrides.
@@ -39,6 +41,29 @@ def set_global_setting(key, value, change_user=None, create=True, **kwargs):
     kwargs['create'] = create
 
     return InvenTreeSetting.set_setting(key, value, **kwargs)
+
+
+class GlobalWarningCode:
+    """Warning codes that reflect to the status of the instance."""
+
+    UNCOMMON_CONFIG = 'INVE-W10'
+
+
+def set_global_warning(key: str, options):
+    """Set a global warning for a code."""
+    from common.models import InvenTreeSetting
+
+    if not key:
+        raise ValueError('Key must be provided for global warning setting.')
+
+    global_dict = get_global_setting(SystemSetId.GLOBAL_WARNING, {}, create=False)
+    if global_dict is None or not isinstance(global_dict, dict):
+        global_dict = {}
+    if key not in global_dict:
+        global_dict[key] = options or True
+        InvenTreeSetting.set_setting(
+            SystemSetId.GLOBAL_WARNING, global_dict, change_user=None, create=True
+        )
 
 
 def stock_expiry_enabled():
