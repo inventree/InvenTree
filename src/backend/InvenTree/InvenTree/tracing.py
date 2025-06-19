@@ -158,7 +158,7 @@ def setup_tracing(
     TRACE_PROV = trace_provider
 
 
-def setup_instruments():
+def setup_instruments():  # pragma: no cover
     """Run auto-insturmentation for OpenTelemetry tracing."""
     DjangoInstrumentor().instrument()
     RedisInstrumentor().instrument()

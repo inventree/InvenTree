@@ -876,7 +876,6 @@ if TRACING_ENABLED:  # pragma: no cover
 
         # Run tracing/logging instrumentation
         setup_tracing(**TRACING_DETAILS)
-        # Run tracing/logging instrumentation
         setup_instruments()
     else:
         logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
