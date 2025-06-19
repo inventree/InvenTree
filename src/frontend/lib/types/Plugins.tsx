@@ -44,6 +44,7 @@ export type InvenTreeFormsContext = {
  * @param host - The current host URL
  * @param locale - The current locale string (e.g. 'en' / 'de')
  * @param model - The model type associated with the rendered component (if applicable)
+ * @param modelInformation - A dictionary of available model information
  * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
  * @param instance - The model instance data (if available)
  * @param reloadContent - A function which can be called to reload the plugin content
