@@ -1,8 +1,8 @@
-import type { ModelDict } from '@lib/enums/ModelInformation';
 import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import type { NavigateFunction } from 'react-router-dom';
+import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
 import type { ApiFormModalProps, BulkEditApiFormModalProps } from './Forms';
 import type { UseModalReturn } from './Modals';
