@@ -349,6 +349,7 @@ def scheduled_task(
     return _task_wrapper
 
 
+@tracer.start_as_current_span('heartbeat')
 @scheduled_task(ScheduledTask.MINUTES, 5)
 def heartbeat():
     """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
@@ -377,6 +378,7 @@ def heartbeat():
             task.delete()
 
 
+@tracer.start_as_current_span('delete_successful_tasks')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_successful_tasks():
     """Delete successful task logs which are older than a specified period."""
@@ -399,6 +401,7 @@ def delete_successful_tasks():
         )
 
 
+@tracer.start_as_current_span('delete_failed_tasks')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_failed_tasks():
     """Delete failed task logs which are older than a specified period."""
@@ -419,6 +422,7 @@ def delete_failed_tasks():
         logger.info("Could not perform 'delete_failed_tasks' - App registry not ready")
 
 
+@tracer.start_as_current_span('delete_old_error_logs')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_error_logs():
     """Delete old error logs from the server."""
@@ -441,6 +445,7 @@ def delete_old_error_logs():
         )
 
 
+@tracer.start_as_current_span('delete_old_notifications')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
     """Delete old notification logs."""
@@ -468,6 +473,7 @@ def delete_old_notifications():
         )
 
 
+@tracer.start_as_current_span('check_for_updates')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
@@ -551,6 +557,7 @@ def check_for_updates():
         )
 
 
+@tracer.start_as_current_span('update_exchange_rates')
 @scheduled_task(ScheduledTask.DAILY)
 def update_exchange_rates(force: bool = False):
     """Update currency exchange rates.
@@ -601,6 +608,7 @@ def update_exchange_rates(force: bool = False):
         logger.exception('Error updating exchange rates: %s', str(type(e)))
 
 
+@tracer.start_as_current_span('run_backup')
 @scheduled_task(ScheduledTask.DAILY)
 def run_backup():
     """Run the backup command."""
@@ -632,6 +640,7 @@ def get_migration_plan():
     return plan
 
 
+@tracer.start_as_current_span('check_for_migrations')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
     """Checks if migrations are needed.
@@ -724,6 +733,7 @@ def email_user(user_id: int, subject: str, message: str) -> None:
         send_email(subject, message, [email])
 
 
+@tracer.start_as_current_span('run_oauth_maintenance')
 @scheduled_task(ScheduledTask.DAILY)
 def run_oauth_maintenance():
     """Run the OAuth maintenance task(s)."""
