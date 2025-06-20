@@ -1554,6 +1554,7 @@ def monitor(c):
     """Monitor the worker performance."""
     manage(c, 'qmonitor', pty=True)
 
+
 # Collection sorting
 development = Collection(
     delete_data,
