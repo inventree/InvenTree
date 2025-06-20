@@ -220,7 +220,7 @@ class PluginsRegistry:
     # region registry functions
     def with_mixin(
         self, mixin: str, active: bool = True, builtin: Optional[bool] = None
-    ) -> list:
+    ) -> list[InvenTreePlugin]:
         """Returns reference to all plugins that have a specified mixin enabled.
 
         Args:
@@ -838,6 +838,7 @@ class PluginsRegistry:
             'ENABLE_PLUGINS_NAVIGATION',
             'ENABLE_PLUGINS_SCHEDULE',
             'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_MAILS',
         ]
 
     def calculate_plugin_hash(self):

@@ -640,12 +640,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'SERIAL_NUMBER_AUTOFILL': {
-        'name': _('Autofill Serial Numbers'),
-        'description': _('Autofill serial numbers in forms'),
-        'default': False,
-        'validator': bool,
-    },
     'STOCK_DELETE_DEPLETED_DEFAULT': {
         'name': _('Delete Depleted Stock'),
         'description': _('Determines default behavior when a stock item is depleted'),
@@ -1025,6 +1019,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'ENABLE_PLUGINS_INTERFACE': {
         'name': _('Enable interface integration'),
         'description': _('Enable plugins to integrate into the user interface'),
+        'default': False,
+        'validator': bool,
+        'after_save': reload_plugin_registry,
+    },
+    'ENABLE_PLUGINS_MAILS': {
+        'name': _('Enable mail integration'),
+        'description': _('Enable plugins to process outgoing/incoming mails'),
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,

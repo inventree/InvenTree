@@ -10,7 +10,7 @@ The **Auto Issue Orders Plugin** provides a mechanism to automatically issue pen
 
 This plugin is an *optional* plugin, and must be enabled in the InvenTree settings.
 
-Additionally, the "Enable Schedule Integration" setting must be enabled in the InvenTree plugin settings. This is required to allow plugins to run scheduled tasks.
+Additionally, the {{ globalsetting("ENABLE_PLUGINS_SCHEDULE", short=True) }} setting must be enabled in the InvenTree plugin settings. This is required to allow plugins to run scheduled tasks.
 
 ### Plugin Settings
 

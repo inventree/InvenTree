@@ -218,13 +218,16 @@ function BasePanelGroup({
             {groupedPanels.map((group) => (
               <Box key={`group-${group.id}`} w={'100%'}>
                 <Text
-                  fs={'italic'}
-                  ml={'1rem'}
+                  hidden={!group.label || !expanded}
                   c={vars.colors.primaryColors[7]}
                   key={`group-label-${group.id}`}
+                  style={{
+                    paddingLeft: '10px'
+                  }}
                 >
                   {group.label}
                 </Text>
+                {group.label && <Divider c={vars.colors.primaryColors[7]} />}
                 {group.panels?.map(
                   (panel) =>
                     !panel.hidden && (

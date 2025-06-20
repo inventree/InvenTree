@@ -197,7 +197,6 @@ Configuration of stock item options
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("SERIAL_NUMBER_GLOBALLY_UNIQUE") }}
-{{ globalsetting("SERIAL_NUMBER_AUTOFILL") }}
 {{ globalsetting("STOCK_DELETE_DEPLETED_DEFAULT") }}
 {{ globalsetting("STOCK_BATCH_CODE_TEMPLATE") }}
 {{ globalsetting("STOCK_ENABLE_EXPIRY") }}
@@ -240,6 +239,7 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
 {{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}
+{{ globalsetting("ENABLE_PLUGINS_MAILS") }}
 
 ### Project Codes
 

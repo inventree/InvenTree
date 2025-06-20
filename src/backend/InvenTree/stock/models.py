@@ -1801,7 +1801,7 @@ class StockItem(
 
         # Rebuild the stock tree
         InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='part'
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='stock'
         )
 
     @transaction.atomic

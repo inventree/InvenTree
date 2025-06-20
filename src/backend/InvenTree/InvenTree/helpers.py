@@ -716,10 +716,11 @@ def extract_serial_numbers(
         raise ValidationError([_('No serial numbers found')])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
+        n = len(serials)
+        q = expected_quantity
+
         raise ValidationError([
-            _(
-                f'Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})'
-            )
+            _(f'Number of unique serial numbers ({n}) must match quantity ({q})')
         ])
 
     return serials

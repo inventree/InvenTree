@@ -1843,6 +1843,30 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         self.assertIn('category_path', response.data)
         self.assertEqual(len(response.data['category_path']), 2)
 
+    def test_part_requirements(self):
+        """Unit test for the "PartRequirements" API endpoint."""
+        url = reverse('api-part-requirements', kwargs={'pk': Part.objects.first().pk})
+
+        # Get the requirements for part 1
+        response = self.get(url, expected_code=200)
+
+        # Check that the response contains the expected fields
+        expected_fields = [
+            'total_stock',
+            'unallocated_stock',
+            'can_build',
+            'ordering',
+            'building',
+            'scheduled_to_build',
+            'required_for_build_orders',
+            'allocated_to_build_orders',
+            'required_for_sales_orders',
+            'allocated_to_sales_orders',
+        ]
+
+        for field in expected_fields:
+            self.assertIn(field, response.data)
+
 
 class PartListTests(PartAPITestBase):
     """Unit tests for the Part List API endpoint."""
@@ -3037,22 +3061,6 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
             'api-bom-item-metadata': BomItem,
         }.items():
             self.metatester(apikey, model)
-
-
-class PartSchedulingTest(PartAPITestBase):
-    """Unit tests for the 'part scheduling' API endpoint."""
-
-    def test_get_schedule(self):
-        """Test that the scheduling endpoint returns OK."""
-        part_ids = [1, 3, 100, 101]
-
-        for pk in part_ids:
-            url = reverse('api-part-scheduling', kwargs={'pk': pk})
-            data = self.get(url, expected_code=200).data
-
-            for entry in data:
-                for k in ['date', 'quantity', 'label']:
-                    self.assertIn(k, entry)
 
 
 class PartTestTemplateTest(PartAPITestBase):

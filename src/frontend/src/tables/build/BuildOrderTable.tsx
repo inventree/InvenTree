@@ -194,11 +194,15 @@ export function BuildOrderTable({
 
   const user = useUserState();
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'create-build-order'
+  });
 
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
+    modalId: 'create-build-order',
     fields: buildOrderFields,
     initialData: {
       part: partId,
