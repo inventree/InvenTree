@@ -1,3 +1,9 @@
 [[IgnoredVulns]]
-id = "GHSA-5vcc-86wm-547q"
+# botocore < 2.5.0 - see https://github.com/boto/botocore/issues/3499
+id = "GHSA-48p4-8xcf-vxj5"
+reason = "Effected codepath is not used in the project"
+
+[[IgnoredVulns]]
+# botocore < 2.5.0 - see https://github.com/boto/botocore/issues/3499
+id = "GHSA-pq67-6m6q-mj2v"
 reason = "Effected codepath is not used in the project"
