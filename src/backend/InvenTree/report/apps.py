@@ -225,6 +225,13 @@ class ReportConfig(AppConfig):
                 'model_type': 'stockitem',
             },
             {
+                'file': 'inventree_stock_report_merge.html',
+                'name': 'InvenTree Default Stock Report Merge',
+                'description': 'Sample stock item report merge',
+                'model_type': 'stockitem',
+                'merge': True,
+            },
+            {
                 'file': 'inventree_stock_location_report.html',
                 'name': 'InvenTree Stock Location Report',
                 'description': 'Sample stock location report',
