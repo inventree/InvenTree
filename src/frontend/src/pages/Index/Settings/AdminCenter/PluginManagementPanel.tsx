@@ -63,6 +63,7 @@ export default function PluginManagementPanel() {
                 'ENABLE_PLUGINS_URL',
                 'ENABLE_PLUGINS_NAVIGATION',
                 'ENABLE_PLUGINS_APP',
+                'ENABLE_PLUGINS_MAILS',
                 'PLUGIN_ON_STARTUP',
                 'PLUGIN_UPDATE_CHECK'
               ]}
