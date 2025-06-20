@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "0.1.0",
+    "version": "0.2.3",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -112,7 +112,7 @@
         "@lingui/babel-plugin-lingui-macro": "^5.3.0",
         "@lingui/cli": "^5.3.1",
         "@lingui/macro": "^5.3.0",
-        "@playwright/test": "^1.49.1",
+        "@playwright/test": "^1.52.0",
         "@types/node": "^22.13.14",
         "@types/qrcode": "^1.5.5",
         "@types/react": "^18.3.8",

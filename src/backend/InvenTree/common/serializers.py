@@ -834,3 +834,44 @@ class DataOutputSerializer(InvenTreeModelSerializer):
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)
+
+
+class EmailMessageSerializer(InvenTreeModelSerializer):
+    """Serializer for the EmailMessage model."""
+
+    class Meta:
+        """Meta options for EmailMessageSerializer."""
+
+        model = common_models.EmailMessage
+        fields = [
+            'pk',
+            'global_id',
+            'message_id_key',
+            'thread_id_key',
+            'thread',
+            'subject',
+            'body',
+            'to',
+            'sender',
+            'status',
+            'timestamp',
+            'headers',
+            'full_message',
+            'direction',
+            'priority',
+            'error_code',
+            'error_message',
+            'error_timestamp',
+            'delivery_options',
+        ]
+
+
+class TestEmailSerializer(serializers.Serializer):
+    """Serializer to send a test email."""
+
+    class Meta:
+        """Meta options for TestEmailSerializer."""
+
+        fields = ['email']
+
+    email = serializers.EmailField(required=True)

@@ -754,38 +754,13 @@ class PartRequirements(RetrieveAPI):
     - Sales Orders
     - Build Orders
     - Total requirements
+    - How many of this part can be assembled with available stock
 
     As this data is somewhat complex to calculate, is it not included in the default API
     """
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        """Construct a response detailing Part requirements."""
-        part = self.get_object()
-
-        data = {
-            'available_stock': part.available_stock,
-            'on_order': part.on_order,
-            'required_build_order_quantity': part.required_build_order_quantity(),
-            'allocated_build_order_quantity': part.build_order_allocation_count(),
-            'required_sales_order_quantity': part.required_sales_order_quantity(),
-            'allocated_sales_order_quantity': part.sales_order_allocation_count(
-                pending=True
-            ),
-        }
-
-        data['allocated'] = (
-            data['allocated_build_order_quantity']
-            + data['allocated_sales_order_quantity']
-        )
-        data['required'] = (
-            data['required_build_order_quantity']
-            + data['required_sales_order_quantity']
-        )
-
-        return Response(data)
+    serializer_class = part_serializers.PartRequirementsSerializer
 
 
 class PartPricingDetail(RetrieveUpdateAPI):
