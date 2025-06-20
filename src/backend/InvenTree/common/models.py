@@ -38,8 +38,10 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from anymail.signals import inbound, tracking
+from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
+from opentelemetry import trace
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
@@ -57,6 +59,7 @@ from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.tracing import TRACE_PROC, TRACE_PROV
 from InvenTree.version import inventree_identifier
 
 logger = structlog.get_logger('inventree')
@@ -2758,3 +2761,15 @@ def handle_event(sender, event, esp_name, **kwargs):
 
 
 # endregion Email
+
+# region tracing for django q
+if TRACE_PROC:  # pragma: no cover
+
+    @receiver(post_spawn)
+    def spwan_callback(sender, proc_name, **kwargs):
+        """Callback to patch in tracing support."""
+        TRACE_PROV.add_span_processor(TRACE_PROC)
+        trace.set_tracer_provider(TRACE_PROV)
+        trace.get_tracer(__name__)
+
+# endregion
