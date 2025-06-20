@@ -186,7 +186,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Active warning codes'),
         'description': _('A dict of active warning codes'),
         'default': {},
-        'validator': dict,
         'hidden': True,
     },
     'INVENTREE_INSTANCE_ID': {
