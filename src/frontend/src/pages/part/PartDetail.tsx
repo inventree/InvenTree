@@ -11,7 +11,6 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
-  IconCalendarStats,
   IconClipboardList,
   IconCurrencyDollar,
   IconInfoCircle,
@@ -102,7 +101,6 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
-import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
 import PartSupplierDetail from './PartSupplierDetail';
 
@@ -651,13 +649,6 @@ export default function PartDetail() {
           !user.hasViewRole(UserRoles.stocktake) ||
           !globalSettings.isSet('STOCKTAKE_ENABLE') ||
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
-      },
-      {
-        name: 'scheduling',
-        label: t`Scheduling`,
-        icon: <IconCalendarStats />,
-        content: part ? <PartSchedulingDetail part={part} /> : <Skeleton />,
-        hidden: !userSettings.isSet('DISPLAY_SCHEDULE_TAB')
       },
       {
         name: 'test_templates',

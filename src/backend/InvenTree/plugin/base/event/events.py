@@ -6,6 +6,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 
 import structlog
+from opentelemetry import trace
 
 import InvenTree.exceptions
 from common.settings import get_global_setting
@@ -13,9 +14,11 @@ from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
 
+tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
 
 
+@tracer.start_as_current_span('trigger_event')
 def trigger_event(event: str, *args, **kwargs) -> None:
     """Trigger an event with optional arguments.
 
@@ -54,6 +57,7 @@ def trigger_event(event: str, *args, **kwargs) -> None:
     offload_task(register_event, event, *args, group='plugin', **kwargs)
 
 
+@tracer.start_as_current_span('register_event')
 def register_event(event, *args, **kwargs):
     """Register the event with any interested plugins.
 
@@ -93,6 +97,7 @@ def register_event(event, *args, **kwargs):
                 )
 
 
+@tracer.start_as_current_span('process_event')
 def process_event(plugin_slug, event, *args, **kwargs):
     """Respond to a triggered event.
 

@@ -21,14 +21,12 @@ from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
-import common.settings
 import InvenTree.conversion
-import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
-import InvenTree.tasks
 import InvenTree.validators
+import report.mixins
 from common.currency import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
@@ -56,9 +54,21 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
+class CompanyReportContext(report.mixins.BaseReportContext):
+    """Report context for the Company model.
+
+    Attributes:
+        name: The name of the Company
+        primary_address: The primary address associated with the Company
+    """
+
+    name: str
+
+
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
@@ -101,6 +111,10 @@ class Company(
     def get_api_url():
         """Return the API URL associated with the Company model."""
         return reverse('api-company-list')
+
+    def report_context(self) -> CompanyReportContext:
+        """Generate a dict of context data to provide to the reporting framework."""
+        return {'name': self.name}
 
     name = models.CharField(
         max_length=100,
