@@ -32,7 +32,6 @@ test('Parts - Tabs', async ({ browser }) => {
   await loadTab(page, 'Pricing');
   await loadTab(page, 'Suppliers');
   await loadTab(page, 'Purchase Orders');
-  await loadTab(page, 'Scheduling');
   await loadTab(page, 'Stock History');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');

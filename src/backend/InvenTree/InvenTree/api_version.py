@@ -1,11 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 352
+INVENTREE_API_VERSION = 355
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v355 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9811
+    - Removes legacy "PartScheduling" API endpoints
+
+v354 -> 2025-06-09 : https://github.com/inventree/InvenTree/pull/9532
+    - Adds "merge" field to the ReportTemplate model
+
+v353 -> 2025-06-19 : https://github.com/inventree/InvenTree/pull/9608
+    - Adds email endpoints
+
 v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
     - Make PurchaseOrderLineItem link to BuildOrder reference nullable
     - Add valid fields to ordering field descriptions
@@ -35,7 +44,7 @@ v345 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9745
     - Adds barcode information to SalesOrderShipment API endpoint
 
 v344 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9714
-    - Updates alauth version and adds device trust as a factor
+    - Updates allauth version and adds device trust as a factor
 
 v343 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9717
     - Add ISO currency codes to the description text for currency options

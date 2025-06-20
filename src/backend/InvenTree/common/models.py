@@ -10,10 +10,11 @@ import json
 import os
 import uuid
 from datetime import timedelta, timezone
+from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -24,6 +25,8 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -34,6 +37,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from anymail.signals import inbound, tracking
 from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
@@ -46,6 +50,7 @@ import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
+import InvenTree.tasks
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import global_setting_overrides
@@ -55,6 +60,7 @@ from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.tracing import TRACE_PROC, TRACE_PROV
+from InvenTree.version import inventree_identifier
 
 logger = structlog.get_logger('inventree')
 
@@ -2418,6 +2424,343 @@ class DataOutput(models.Model):
 
     errors = models.JSONField(blank=True, null=True)
 
+
+# region Email
+class Priority(models.IntegerChoices):
+    """Enumeration for defining email priority levels."""
+
+    NONE = 0
+    VERY_HIGH = 1
+    HIGH = 2
+    NORMAL = 3
+    LOW = 4
+    VERY_LOW = 5
+
+
+HEADER_PRIORITY = 'X-Priority'
+HEADER_MSG_ID = 'Message-ID'
+
+
+class EmailMessage(models.Model):
+    """Model for storing email messages sent or received by the system.
+
+    Attributes:
+        global_id: Unique identifier for the email message
+        message_id_key: Identifier for the email message - might be supplied by external system
+        thread_id_key: Identifier of thread - might be supplied by external system
+        subject: Subject of the email message
+        body: Body of the email message
+        to: Recipient of the email message
+        sender: Sender of the email message
+        status: Status of the email message (e.g. 'sent', 'failed', etc)
+        timestamp: Date and time that the email message left the system or was received by the system
+        headers: Headers of the email message
+        full_message: Full email message content
+        direction: Direction of the email message (e.g. 'inbound', 'outbound')
+        error_code: Error code (if applicable)
+        error_message: Error message (if applicable)
+        error_timestamp: Date and time of the error (if applicable)
+        delivery_options: Delivery options for the email message
+    """
+
+    class Meta:
+        """Meta options for EmailMessage."""
+
+        verbose_name = _('Email Message')
+        verbose_name_plural = _('Email Messages')
+
+    class EmailStatus(models.TextChoices):
+        """Machine setting config type enum."""
+
+        ANNOUNCED = (
+            'A',
+            _('Announced'),
+        )  # Intend to send mail was announced (saved in system, pushed to queue)
+        SENT = 'S', _('Sent')  # Mail was sent to the email server
+        FAILED = 'F', _('Failed')  # There was en error sending the email
+        DELIVERED = (
+            'D',
+            _('Delivered'),
+        )  # Mail was delivered to the recipient - this means we got some kind of feedback from the email server or user
+        READ = (
+            'R',
+            _('Read'),
+        )  # Mail was read by the recipient - this means we got some kind of feedback from the user
+        CONFIRMED = (
+            'C',
+            _('Confirmed'),
+        )  # Mail delivery was confirmed by the recipient explicitly
+
+    class EmailDirection(models.TextChoices):
+        """Email direction enum."""
+
+        INBOUND = 'I', _('Inbound')
+        OUTBOUND = 'O', _('Outbound')
+
+    class DeliveryOptions(models.TextChoices):
+        """Email delivery options enum."""
+
+        NO_REPLY = 'no_reply', _('No Reply')
+        TRACK_DELIVERY = 'track_delivery', _('Track Delivery')
+        TRACK_READ = 'track_read', _('Track Read')
+        TRACK_CLICK = 'track_click', _('Track Click')
+
+    global_id = models.UUIDField(
+        verbose_name=_('Global ID'),
+        help_text=_('Unique identifier for this message'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+    )
+    message_id_key = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name=_('Message ID'),
+        help_text=_(
+            'Identifier for this message (might be supplied by external system)'
+        ),
+    )
+    thread_id_key = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name=_('Thread ID'),
+        help_text=_(
+            'Identifier for this message thread (might be supplied by external system)'
+        ),
+    )
+    thread = models.ForeignKey(
+        'EmailThread',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='messages',
+        verbose_name=_('Thread'),
+        help_text=_('Linked thread for this message'),
+    )
+    subject = models.CharField(max_length=250, blank=False, null=False)
+    body = models.TextField(blank=False, null=False)
+    to = models.EmailField(blank=False, null=False)
+    sender = models.EmailField(blank=False, null=False)
+    status = models.CharField(
+        max_length=50, blank=True, null=True, choices=EmailStatus.choices
+    )
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    headers = models.JSONField(blank=True, null=True)
+    # Additional info
+    full_message = models.TextField(blank=True, null=True)
+    direction = models.CharField(
+        max_length=50, blank=True, null=True, choices=EmailDirection.choices
+    )
+    priority = models.IntegerField(verbose_name=_('Prioriy'), choices=Priority.choices)
+    delivery_options = models.JSONField(
+        blank=True,
+        null=True,
+        # choices=DeliveryOptions.choices
+    )
+    # Optional tracking of delivery
+    error_code = models.CharField(max_length=50, blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    error_timestamp = models.DateTimeField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        """Ensure threads exist before saving the email message."""
+        ret = super().save(*args, **kwargs)
+
+        # Ensure thread is linked
+        if not self.thread:
+            thread, created = EmailThread.objects.get_or_create(
+                key=self.thread_id_key, started_internal=True
+            )
+            self.thread = thread
+            if created and not self.thread_id_key:
+                self.thread_id_key = thread.global_id
+            self.save()
+
+        return ret
+
+
+class EmailThread(InvenTree.models.InvenTreeMetadataModel):
+    """Model for storing email threads."""
+
+    class Meta:
+        """Meta options for EmailThread."""
+
+        verbose_name = _('Email Thread')
+        verbose_name_plural = _('Email Threads')
+        unique_together = [['key', 'global_id']]
+        ordering = ['-updated']
+
+    key = models.CharField(
+        max_length=250,
+        verbose_name=_('Key'),
+        null=True,
+        blank=True,
+        help_text=_('Unique key for this thread (used to identify the thread)'),
+    )
+    global_id = models.UUIDField(
+        verbose_name=_('Global ID'),
+        help_text=_('Unique identifier for this thread'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    started_internal = models.BooleanField(
+        default=False,
+        verbose_name=_('Started Internal'),
+        help_text=_('Was this thread started internally?'),
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the thread was created'),
+    )
+    updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated'),
+        help_text=_('Date and time that the thread was last updated'),
+    )
+
+
+def issue_mail(
+    subject: str,
+    body: str,
+    from_email: str,
+    recipients: Union[str, list],
+    fail_silently: bool = False,
+    html_message=None,
+    prio: Priority = Priority.NORMAL,
+    headers: Optional[dict] = None,
+):
+    """Send an email with the specified subject and body, to the specified recipients list.
+
+    Mostly used by tasks.
+    """
+    connection = get_connection(fail_silently=fail_silently)
+
+    message = EmailMultiAlternatives(
+        subject, body, from_email, recipients, connection=connection
+    )
+    if html_message:
+        message.attach_alternative(html_message, 'text/html')
+
+    # Add any extra headers
+    if headers is not None:
+        for key, value in headers.items():
+            message.extra_headers[key] = value
+
+    # Stabilize the message ID before creating the object
+    if HEADER_MSG_ID not in message.extra_headers:
+        message.extra_headers[HEADER_MSG_ID] = make_msgid(domain=DNS_NAME)
+
+    # TODO add `References` field for the thread ID
+
+    # Add headers for flags
+    message.extra_headers[HEADER_PRIORITY] = str(prio)
+
+    # And now send
+    return message.send()
+
+
+def log_email_messages(email_messages) -> list[EmailMessage]:
+    """Log email messages to the database.
+
+    Args:
+        email_messages (list): List of email messages to log.
+    """
+    instance_id = inventree_identifier(True)
+
+    msg_ids = []
+    for msg in email_messages:
+        try:
+            new_obj = EmailMessage.objects.create(
+                message_id_key=msg.extra_headers.get(HEADER_MSG_ID),
+                subject=msg.subject,
+                body=msg.body,
+                to=msg.to,
+                sender=msg.from_email,
+                status=EmailMessage.EmailStatus.ANNOUNCED,
+                direction=EmailMessage.EmailDirection.OUTBOUND,
+                priority=msg.extra_headers.get(HEADER_PRIORITY, '3'),
+                headers=msg.extra_headers,
+                full_message=msg,
+            )
+            msg_ids.append(new_obj)
+
+            # Add InvenTree specific headers to the message to help with identification if we see mails again
+            msg.extra_headers['X-InvenTree-MsgId-1'] = str(new_obj.global_id)
+            msg.extra_headers['X-InvenTree-ThreadId-1'] = str(new_obj.thread.global_id)
+            msg.extra_headers['X-InvenTree-Instance-1'] = str(instance_id)
+        except Exception as exc:  # pragma: no cover
+            logger.error(f' INVE-W10: Failed to log email message: {exc}')
+    return msg_ids
+
+
+@receiver(inbound)
+def handle_inbound(sender, event, esp_name, **kwargs):
+    """Handle inbound email messages from anymail."""
+    message = event.message
+
+    r_to = message.envelope_recipient or [a.addr_spec for a in message.to]
+    r_sender = message.envelope_sender or message.from_email.addr_spec
+
+    msg = EmailMessage.objects.create(
+        message_id_key=event.message[HEADER_MSG_ID],
+        subject=message.subject,
+        body=message.text,
+        to=r_to,
+        sender=r_sender,
+        status=EmailMessage.EmailStatus.READ,
+        direction=EmailMessage.EmailDirection.INBOUND,
+        priority=Priority.NONE,
+        timestamp=message.date,
+        headers=message._headers,
+        full_message=message.html,
+    )
+
+    # Schedule a task to process the email message
+    from plugin.base.mail.mail import process_mail_in
+
+    InvenTree.tasks.offload_task(process_mail_in, mail_id=msg.pk, group='mail')
+
+
+@receiver(tracking)
+def handle_event(sender, event, esp_name, **kwargs):
+    """Handle tracking events from anymail."""
+    try:
+        email = EmailMessage.objects.get(message_id_key=event.message_id)
+
+        if event.event_type == 'delivered':
+            email.status = EmailMessage.EmailStatus.DELIVERED
+        elif event.event_type == 'opened':
+            email.status = EmailMessage.EmailStatus.READ
+        elif event.event_type == 'clicked':
+            email.status = EmailMessage.EmailStatus.CONFIRMED
+        elif event.event_type == 'sent':
+            email.status = EmailMessage.EmailStatus.SENT
+        elif event.event_type == 'unknown':
+            email.error_message = event.esp_event
+        else:
+            if event.event_type in ('queued', 'deferred'):
+                # We ignore these
+                return True
+            else:
+                email.status = EmailMessage.EmailStatus.FAILED
+                email.error_code = event.event_type
+                email.error_message = event.esp_event
+                email.error_timestamp = event.timestamp
+        email.save()
+        return True
+    except EmailMessage.DoesNotExist:
+        return False
+    except Exception as exc:  # pragma: no cover
+        logger.error(f' INVE-W10: Failed to handle tracking event: {exc}')
+        return False
+
+
+# endregion Email
 
 # region tracing for django q
 if TRACE_PROC:  # pragma: no cover
