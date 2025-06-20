@@ -1851,6 +1851,12 @@ def clear_generated(c):
     run(c, 'find src -name "messages.mo" -exec rm -f {} +')
 
 
+@task(pre=[wait])
+def monitor(c):
+    """Monitor the worker performance."""
+    manage(c, 'qmonitor', pty=True)
+
+
 # endregion tasks
 
 # Collection sorting
@@ -1901,6 +1907,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    monitor,
     build_docs,
 )
 

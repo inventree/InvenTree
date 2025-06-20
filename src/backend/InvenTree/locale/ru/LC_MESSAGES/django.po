@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-14 02:16+0000\n"
-"PO-Revision-Date: 2025-06-15 23:22\n"
+"POT-Creation-Date: 2025-06-18 23:16+0000\n"
+"PO-Revision-Date: 2025-06-18 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -483,7 +483,7 @@ msgstr "Должно быть действительным номером"
 msgid "Currency"
 msgstr "Валюта"
 
-#: InvenTree/serializers.py:114 part/serializers.py:1372
+#: InvenTree/serializers.py:114 part/serializers.py:1439
 msgid "Select currency from available options"
 msgstr "Выберите валюту из доступных вариантов"
 
@@ -545,11 +545,11 @@ msgstr ""
 #: build/serializers.py:1395 company/models.py:1044 company/serializers.py:432
 #: order/api.py:292 order/api.py:296 order/api.py:897 order/api.py:1136
 #: order/api.py:1139 order/models.py:1770 order/models.py:1940
-#: order/models.py:1941 part/api.py:1482 part/api.py:1485 part/api.py:1551
-#: part/api.py:1861 part/models.py:457 part/models.py:3245 part/models.py:3389
+#: order/models.py:1941 part/api.py:1457 part/api.py:1460 part/api.py:1526
+#: part/api.py:1836 part/models.py:457 part/models.py:3245 part/models.py:3389
 #: part/models.py:3537 part/models.py:3558 part/models.py:3580
 #: part/models.py:3719 part/models.py:4080 part/models.py:4352
-#: part/models.py:4718 part/serializers.py:1292 part/serializers.py:1961
+#: part/models.py:4718 part/serializers.py:1359 part/serializers.py:2028
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -568,8 +568,8 @@ msgstr ""
 msgid "Part"
 msgstr "Деталь"
 
-#: build/api.py:104 build/api.py:107 part/api.py:1565 part/models.py:1080
-#: part/models.py:3608 part/models.py:4189 part/serializers.py:1302
+#: build/api.py:104 build/api.py:107 part/api.py:1540 part/models.py:1080
+#: part/models.py:3608 part/models.py:4189 part/serializers.py:1369
 #: stock/api.py:818
 msgid "Category"
 msgstr "Категория"
@@ -656,7 +656,7 @@ msgid "Optional"
 msgstr "Необязательно"
 
 #: build/api.py:459 common/setting/system.py:429 part/models.py:1211
-#: part/serializers.py:1700 part/serializers.py:1709 stock/api.py:588
+#: part/serializers.py:1767 part/serializers.py:1776 stock/api.py:588
 msgid "Assembly"
 msgstr "Производимая деталь"
 
@@ -921,7 +921,7 @@ msgstr "Продукция не совпадает с заказом на про
 
 #: build/models.py:1093 build/serializers.py:272 build/serializers.py:321
 #: build/serializers.py:941 order/models.py:705 order/serializers.py:604
-#: order/serializers.py:787 part/serializers.py:1694 stock/models.py:863
+#: order/serializers.py:787 part/serializers.py:1761 stock/models.py:863
 #: stock/models.py:1730 stock/serializers.py:727
 msgid "Quantity must be greater than zero"
 msgstr "Количество должно быть больше нуля"
@@ -1070,7 +1070,7 @@ msgstr "Введите серийные номера для продукции"
 
 #: build/serializers.py:358 build/serializers.py:483 build/serializers.py:553
 #: build/serializers.py:1235 build/serializers.py:1239 order/serializers.py:776
-#: order/serializers.py:923 order/serializers.py:2030 part/serializers.py:1312
+#: order/serializers.py:923 order/serializers.py:2030 part/serializers.py:1379
 #: stock/serializers.py:110 stock/serializers.py:647 stock/serializers.py:749
 #: stock/serializers.py:913 stock/serializers.py:1041 stock/serializers.py:1501
 #: stock/serializers.py:1789 users/models.py:555
@@ -1339,11 +1339,13 @@ msgid "Allocated Stock"
 msgstr "Зарезервированные Запасы"
 
 #: build/serializers.py:1415 company/serializers.py:424
-#: order/serializers.py:1278 part/serializers.py:967 part/serializers.py:1727
+#: order/serializers.py:1278 part/serializers.py:967 part/serializers.py:1255
+#: part/serializers.py:1794
 msgid "On Order"
 msgstr "В заказе"
 
-#: build/serializers.py:1417 order/serializers.py:1279 part/serializers.py:1731
+#: build/serializers.py:1417 order/serializers.py:1279 part/serializers.py:1259
+#: part/serializers.py:1798
 msgid "In Production"
 msgstr "В производстве"
 
@@ -1351,7 +1353,7 @@ msgstr "В производстве"
 msgid "External Stock"
 msgstr "Внешний склад"
 
-#: build/serializers.py:1420 part/serializers.py:1760
+#: build/serializers.py:1420 part/serializers.py:1249 part/serializers.py:1827
 msgid "Available Stock"
 msgstr "Доступный запас"
 
@@ -1498,7 +1500,7 @@ msgstr "Пользователь"
 
 #: common/models.py:1288
 msgid "Price break quantity"
-msgstr ""
+msgstr "Скидка распространяется на заданное количество"
 
 #: common/models.py:1295 company/serializers.py:567 order/models.py:1674
 #: order/models.py:2817
@@ -1844,7 +1846,7 @@ msgstr ""
 
 #: common/models.py:2182 part/models.py:1251
 msgid "Locked"
-msgstr ""
+msgstr "Заблокирована"
 
 #: common/models.py:2183
 msgid "Is this selection list locked?"
@@ -2444,8 +2446,8 @@ msgstr "По умолчанию детали являются шаблонами
 msgid "Parts can be assembled from other components by default"
 msgstr "По умолчанию детали могут быть собраны из других компонентов"
 
-#: common/setting/system.py:435 part/models.py:1217 part/serializers.py:1714
-#: part/serializers.py:1720
+#: common/setting/system.py:435 part/models.py:1217 part/serializers.py:1781
+#: part/serializers.py:1787
 msgid "Component"
 msgstr "Компонент"
 
@@ -3881,7 +3883,7 @@ msgstr "Выберите плагин экспорта"
 
 #: generic/states/fields.py:146
 msgid "Additional status information for this item"
-msgstr ""
+msgstr "Дополнительная информация о состоянии складской позиции"
 
 #: generic/states/fields.py:160
 msgid "Custom status key"
@@ -3995,7 +3997,7 @@ msgstr ""
 msgid "Errors"
 msgstr "Ошибки"
 
-#: importer/models.py:527 part/api.py:864
+#: importer/models.py:527 part/api.py:839
 msgid "Valid"
 msgstr "Корректный"
 
@@ -4854,7 +4856,7 @@ msgstr "Артикул"
 
 #: order/serializers.py:679 part/models.py:1089 part/serializers.py:411
 msgid "Internal Part Number"
-msgstr "Внутренний код детали"
+msgstr "Внутренний артикул детали"
 
 #: order/serializers.py:687
 msgid "Internal Part Name"
@@ -5135,39 +5137,39 @@ msgstr "Остатки произведенные заказом на произ
 msgid "Stock required for Build Order"
 msgstr "Остатки требуемые для заказов на производство"
 
-#: part/api.py:865
+#: part/api.py:840
 msgid "Validate entire Bill of Materials"
 msgstr ""
 
-#: part/api.py:871
+#: part/api.py:846
 msgid "This option must be selected"
 msgstr "Необходимо выбрать эту опцию"
 
-#: part/api.py:907
+#: part/api.py:882
 msgid "Is Variant"
 msgstr ""
 
-#: part/api.py:915
+#: part/api.py:890
 msgid "Is Revision"
 msgstr ""
 
-#: part/api.py:925
+#: part/api.py:900
 msgid "Has Revisions"
 msgstr ""
 
-#: part/api.py:1116
+#: part/api.py:1091
 msgid "BOM Valid"
 msgstr ""
 
-#: part/api.py:1809
+#: part/api.py:1784
 msgid "Assembly part is testable"
 msgstr ""
 
-#: part/api.py:1818
+#: part/api.py:1793
 msgid "Component part is testable"
 msgstr ""
 
-#: part/api.py:1869
+#: part/api.py:1844
 msgid "Uses"
 msgstr ""
 
@@ -5217,7 +5219,7 @@ msgstr "Иконка (необязательно)"
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
 msgstr ""
 
-#: part/models.py:458 part/serializers.py:129 part/serializers.py:342
+#: part/models.py:458 part/serializers.py:125 part/serializers.py:342
 #: users/ruleset.py:29
 msgid "Parts"
 msgstr "Детали"
@@ -5336,7 +5338,7 @@ msgstr "Категория"
 #: part/models.py:1088 part/serializers.py:937
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
-msgstr ""
+msgstr "Внутренний артикул"
 
 #: part/models.py:1096
 msgid "Part revision or version number"
@@ -5416,7 +5418,7 @@ msgstr "Эта деталь активна?"
 
 #: part/models.py:1252
 msgid "Locked parts cannot be edited"
-msgstr ""
+msgstr "Заблокированные детали нельзя редактировать"
 
 #: part/models.py:1258
 msgid "Is this a virtual part, such as a software product or license?"
@@ -5600,7 +5602,7 @@ msgstr ""
 
 #: part/models.py:3395
 msgid "Item Count"
-msgstr "Количество Элементов"
+msgstr "Количество элементов"
 
 #: part/models.py:3396
 msgid "Number of individual stock entries at time of stocktake"
@@ -5621,7 +5623,7 @@ msgstr ""
 
 #: part/models.py:3417
 msgid "Additional notes"
-msgstr "Дополнительные Записи"
+msgstr "Дополнительные заметки"
 
 #: part/models.py:3427
 msgid "User who performed this stocktake"
@@ -5853,7 +5855,7 @@ msgstr "Выбрать деталь для использования в BOM"
 
 #: part/models.py:4375
 msgid "BOM quantity for this BOM item"
-msgstr ""
+msgstr "Количество элементов в спецификации"
 
 #: part/models.py:4381
 msgid "This BOM item is optional"
@@ -5955,15 +5957,15 @@ msgstr ""
 msgid "Duplicate relationship already exists"
 msgstr ""
 
-#: part/serializers.py:124
+#: part/serializers.py:120
 msgid "Parent Category"
 msgstr ""
 
-#: part/serializers.py:125
+#: part/serializers.py:121
 msgid "Parent part category"
 msgstr ""
 
-#: part/serializers.py:133 part/serializers.py:167
+#: part/serializers.py:129 part/serializers.py:167
 msgid "Subcategories"
 msgstr "Подкатегории"
 
@@ -6045,11 +6047,11 @@ msgstr ""
 
 #: part/serializers.py:548
 msgid "Initial Stock Quantity"
-msgstr ""
+msgstr "Начальное количество на складе"
 
 #: part/serializers.py:550
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
-msgstr ""
+msgstr "Задайте начальное количество этой детали на складе. Если количество равно 0, складская позиция не будет добавлена."
 
 #: part/serializers.py:557
 msgid "Initial Stock Location"
@@ -6099,7 +6101,7 @@ msgstr "Производится"
 msgid "Quantity of this part currently being in production"
 msgstr ""
 
-#: part/serializers.py:958
+#: part/serializers.py:958 part/serializers.py:1263
 msgid "Scheduled to Build"
 msgstr ""
 
@@ -6120,7 +6122,8 @@ msgstr ""
 msgid "Suppliers"
 msgstr "Поставщики"
 
-#: part/serializers.py:991 templates/email/low_stock_notification.html:16
+#: part/serializers.py:991 part/serializers.py:1246
+#: templates/email/low_stock_notification.html:16
 #: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "Общий запас"
@@ -6147,7 +6150,7 @@ msgstr "Начальный запас"
 
 #: part/serializers.py:1048
 msgid "Create Part with initial stock quantity"
-msgstr ""
+msgstr "Создавать деталь с начальным количеством на складе"
 
 #: part/serializers.py:1054
 msgid "Supplier Information"
@@ -6177,140 +6180,156 @@ msgstr ""
 msgid "Image file does not exist"
 msgstr ""
 
-#: part/serializers.py:1294
+#: part/serializers.py:1252 part/serializers.py:1802
+msgid "Can Build"
+msgstr "Можно произвести"
+
+#: part/serializers.py:1269
+msgid "Required for Build Orders"
+msgstr ""
+
+#: part/serializers.py:1274
+msgid "Allocated to Build Orders"
+msgstr ""
+
+#: part/serializers.py:1281
+msgid "Required for Sales Orders"
+msgstr ""
+
+#: part/serializers.py:1285
+msgid "Allocated to Sales Orders"
+msgstr ""
+
+#: part/serializers.py:1361
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr ""
 
-#: part/serializers.py:1304
+#: part/serializers.py:1371
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr ""
 
-#: part/serializers.py:1314
+#: part/serializers.py:1381
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr ""
 
-#: part/serializers.py:1320
+#: part/serializers.py:1387
 msgid "Exclude External Stock"
 msgstr ""
 
-#: part/serializers.py:1321
+#: part/serializers.py:1388
 msgid "Exclude stock items in external locations"
 msgstr "Исключить складские позиции в внешних местах хранения"
 
-#: part/serializers.py:1326
+#: part/serializers.py:1393
 msgid "Generate Report"
 msgstr "Создать отчет"
 
-#: part/serializers.py:1327
+#: part/serializers.py:1394
 msgid "Generate report file containing calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:1332
+#: part/serializers.py:1399
 msgid "Update Parts"
 msgstr "Обновить детали"
 
-#: part/serializers.py:1333
+#: part/serializers.py:1400
 msgid "Update specified parts with calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:1341
+#: part/serializers.py:1408
 msgid "Stocktake functionality is not enabled"
 msgstr ""
 
-#: part/serializers.py:1346
+#: part/serializers.py:1413
 msgid "Background worker check failed"
 msgstr "Проверка фонового работника не удалась"
 
-#: part/serializers.py:1462
+#: part/serializers.py:1529
 msgid "Minimum Price"
 msgstr "Минимальная цена"
 
-#: part/serializers.py:1463
+#: part/serializers.py:1530
 msgid "Override calculated value for minimum price"
 msgstr "Переопределить рассчитанное значение минимальной цены"
 
-#: part/serializers.py:1470
+#: part/serializers.py:1537
 msgid "Minimum price currency"
-msgstr ""
+msgstr "Валюта минимальной цены"
 
-#: part/serializers.py:1477
+#: part/serializers.py:1544
 msgid "Maximum Price"
 msgstr "Максимальная цена"
 
-#: part/serializers.py:1478
+#: part/serializers.py:1545
 msgid "Override calculated value for maximum price"
 msgstr "Переопределить рассчитанное значение максимальной цены"
 
-#: part/serializers.py:1485
+#: part/serializers.py:1552
 msgid "Maximum price currency"
-msgstr ""
+msgstr "Валюта максимальной цены"
 
-#: part/serializers.py:1514
+#: part/serializers.py:1581
 msgid "Update"
 msgstr "Обновить"
 
-#: part/serializers.py:1515
+#: part/serializers.py:1582
 msgid "Update pricing for this part"
 msgstr ""
 
-#: part/serializers.py:1538
+#: part/serializers.py:1605
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr ""
 
-#: part/serializers.py:1545
+#: part/serializers.py:1612
 msgid "Minimum price must not be greater than maximum price"
 msgstr ""
 
-#: part/serializers.py:1548
+#: part/serializers.py:1615
 msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
-#: part/serializers.py:1701
+#: part/serializers.py:1768
 msgid "Select the parent assembly"
 msgstr ""
 
-#: part/serializers.py:1715
+#: part/serializers.py:1782
 msgid "Select the component part"
-msgstr ""
+msgstr "Выберите деталь, которая является компонентом"
 
-#: part/serializers.py:1735
-msgid "Can Build"
-msgstr "Можно произвести"
-
-#: part/serializers.py:1962
+#: part/serializers.py:2029
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:1970
+#: part/serializers.py:2037
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:1971
+#: part/serializers.py:2038
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:1976
+#: part/serializers.py:2043
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:1977
+#: part/serializers.py:2044
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:1982
+#: part/serializers.py:2049
 msgid "Skip Invalid Rows"
 msgstr "Пропустить некорректные строки"
 
-#: part/serializers.py:1983
+#: part/serializers.py:2050
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:1988
+#: part/serializers.py:2055
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:1989
+#: part/serializers.py:2056
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
@@ -7876,7 +7895,7 @@ msgstr "Выберите соответствующего поставщика �
 
 #: stock/models.py:972
 msgid "Where is this stock item located?"
-msgstr "Где находиться эта складская позиция?"
+msgstr "Где находится эта складская позиция?"
 
 #: stock/models.py:980 stock/serializers.py:1667
 msgid "Packaging this stock item is stored in"
@@ -8854,23 +8873,39 @@ msgstr "Активна эта учетная запись"
 msgid "Only a superuser can adjust this field"
 msgstr ""
 
-#: users/serializers.py:399
+#: users/serializers.py:373
+msgid "Password"
+msgstr ""
+
+#: users/serializers.py:374
+msgid "Password for the user"
+msgstr ""
+
+#: users/serializers.py:380
+msgid "Override warning"
+msgstr ""
+
+#: users/serializers.py:381
+msgid "Override the warning about password rules"
+msgstr ""
+
+#: users/serializers.py:423
 msgid "Only staff users can create new users"
 msgstr ""
 
-#: users/serializers.py:404
+#: users/serializers.py:428
 msgid "You do not have permission to create users"
 msgstr ""
 
-#: users/serializers.py:425
+#: users/serializers.py:449
 msgid "Your account has been created."
 msgstr "Ваша учётная запись была успешно создана."
 
-#: users/serializers.py:427
+#: users/serializers.py:451
 msgid "Please use the password reset function to login"
 msgstr "Пожалуйста, используйте функцию сброса пароля для входа"
 
-#: users/serializers.py:433
+#: users/serializers.py:457
 msgid "Welcome to InvenTree"
 msgstr "Добро пожаловать в InvenTree"
 

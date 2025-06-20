@@ -306,8 +306,7 @@ def inventreePlatform():
 
 def inventreeDatabase():
     """Return the InvenTree database backend e.g. 'postgresql'."""
-    db = settings.DATABASES['default']
-    return db.get('ENGINE', None).replace('django.db.backends.', '')
+    return settings.DB_ENGINE
 
 
 def inventree_identifier(override_announce: bool = False):
