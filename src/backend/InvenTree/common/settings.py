@@ -1,8 +1,11 @@
 """User-configurable settings for the common app."""
 
 from os import environ
+from typing import Optional
 
-from common.setting.system import SystemSetId
+from django.core.exceptions import AppRegistryNotReady
+
+import InvenTree.ready
 
 
 def global_setting_overrides() -> dict:
@@ -49,13 +52,33 @@ class GlobalWarningCode:
     UNCOMMON_CONFIG = 'INVE-W10'
 
 
-def set_global_warning(key: str, options):
-    """Set a global warning for a code."""
-    from common.models import InvenTreeSetting
+def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
+    """Set a global warning for a code.
 
+    Args:
+        key (str): The key for the warning.
+        options (dict or bool): Options for the warning, or True to set a default warning.
+
+    Raises:
+        ValueError: If the key is not provided.
+
+    Returns:
+        bool: True if the warning was checked / set successfully, False if no check was performed.
+    """
     if not key:
         raise ValueError('Key must be provided for global warning setting.')
 
+    # Ensure DB is ready
+    if not InvenTree.ready.canAppAccessDatabase():
+        return False
+    try:
+        from common.models import InvenTreeSetting
+        from common.setting.system import SystemSetId
+    except AppRegistryNotReady:
+        # App registry not ready, cannot set global warning
+        return False
+
+    # Get and write (if necessary) the current global settings warning
     global_dict = get_global_setting(SystemSetId.GLOBAL_WARNING, {}, create=False)
     if global_dict is None or not isinstance(global_dict, dict):
         global_dict = {}
@@ -64,6 +87,7 @@ def set_global_warning(key: str, options):
         InvenTreeSetting.set_setting(
             SystemSetId.GLOBAL_WARNING, global_dict, change_user=None, create=True
         )
+    return True
 
 
 def stock_expiry_enabled():
