@@ -164,6 +164,7 @@ export default function BarcodeCameraInput({
         <Expand>
           <Select
             leftSection={<IconCamera />}
+            leftSectionPointerEvents={'inherit'}
             value={cameraValue}
             onChange={setCameraValue}
             data={cameras.map((device) => {
