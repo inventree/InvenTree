@@ -508,7 +508,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         # Open and read the output HTML as a string
         html_report = ''
         report_path = os.path.join(
-            settings.MEDIA_ROOT.parent, response.data['output'].lstrip('/')
+            settings.MEDIA_ROOT, response.data['output'].replace('/media/', '', 1)
         )
         self.assertTrue(response.data['output'])
         with open(report_path, encoding='utf-8') as f:
