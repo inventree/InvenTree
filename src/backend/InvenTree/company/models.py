@@ -58,11 +58,22 @@ class CompanyReportContext(report.mixins.BaseReportContext):
     """Report context for the Company model.
 
     Attributes:
+        company: The Company object associated with this context
         name: The name of the Company
-        primary_address: The primary address associated with the Company
+        description: A description of the Company
+        website: The website URL for the Company
+        phone: The contact phone number for the Company
+        email: The contact email address for the Company
+        address: The primary address associated with the Company
     """
 
+    company: 'Company'
     name: str
+    description: str
+    website: str
+    phone: str
+    email: str
+    address: str
 
 
 class Company(
@@ -114,7 +125,15 @@ class Company(
 
     def report_context(self) -> CompanyReportContext:
         """Generate a dict of context data to provide to the reporting framework."""
-        return {'name': self.name}
+        return {
+            'company': self,
+            'name': self.name,
+            'description': self.description,
+            'website': self.website,
+            'phone': self.phone,
+            'email': self.email,
+            'address': str(self.address) if self.address else '',
+        }
 
     name = models.CharField(
         max_length=100,
