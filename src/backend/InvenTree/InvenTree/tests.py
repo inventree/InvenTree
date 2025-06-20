@@ -1216,7 +1216,9 @@ class TestSettings(InvenTreeTestCase):
         assert not legacy_path.exists(), (
             'Legacy config file does exist, stopping as a percaution!'
         )
-        config.get_root_dir().joinpath(test_path).rename(legacy_path)
+        test_file = config.get_root_dir().joinpath(test_path)
+        self.assertTrue(test_file.exists(), f'Test file {test_file} does not exist!')
+        test_file.rename(legacy_path)
         self.assertIn(
             'src/backend/inventree/config.yaml', str(config.get_config_file()).lower()
         )
@@ -1261,7 +1263,7 @@ class TestSettings(InvenTreeTestCase):
         assert not legacy_path.exists(), (
             'Legacy secret key file does exist, stopping as a percaution!'
         )
-        config.get_root_dir().joinpath(test_path).rename(legacy_path)
+        config.get_base_dir().joinpath(test_path).rename(legacy_path)
         self.assertIn(
             'src/backend/inventree/secret_key.txt',
             str(config.get_secret_key(return_path=True)).lower(),
