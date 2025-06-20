@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 354
+INVENTREE_API_VERSION = 355
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v355 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9811
+    - Removes legacy "PartScheduling" API endpoints
+
 v354 -> 2025-06-09 : https://github.com/inventree/InvenTree/pull/9532
     - Adds "merge" field to the ReportTemplate model
 
