@@ -441,7 +441,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
                 return {}
 
         try:
-            website = meta.get['Project-URL'].split(', ')[1]
+            website = meta['Project-URL'].split(', ')[1]
         except Exception:
             website = meta.get('Project-URL')
 
