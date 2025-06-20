@@ -235,5 +235,8 @@ export enum ApiEndpoints {
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  notes_image_upload = 'notes-image-upload/'
+  notes_image_upload = 'notes-image-upload/',
+  email_list = 'admin/email/',
+  email_test = 'admin/email/test/',
+  config_list = 'admin/config/'
 }
