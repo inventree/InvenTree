@@ -8,7 +8,7 @@ import random
 import shutil
 import string
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -307,7 +307,7 @@ def get_backup_dir(create=True, error=True):
     return bd
 
 
-def get_plugin_file():
+def get_plugin_file() -> Path:
     """Returns the path of the InvenTree plugins specification file.
 
     Note: It will be created if it does not already exist!
@@ -344,7 +344,7 @@ def get_plugin_dir():
     return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
 
-def get_secret_key():
+def get_secret_key(return_path: bool = False) -> Union[str, Path]:
     """Return the secret key value which will be used by django.
 
     Following options are tested, in descending order of preference:
@@ -353,11 +353,14 @@ def get_secret_key():
     B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
     C) Look for default key file "secret_key.txt"
     D) Create "secret_key.txt" if it does not exist
+
+    Args:
+        return_path (bool): If True, return the path to the secret key file instead of the key data.
     """
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
         logger.info('SECRET_KEY loaded by INVENTREE_SECRET_KEY')  # pragma: no cover
-        return secret_key
+        return str(secret_key)
 
     # Look for secret key file
     if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
@@ -378,11 +381,11 @@ def get_secret_key():
         key = ''.join([random.choice(options) for _idx in range(100)])
         secret_key_file.write_text(key)
 
+    if return_path:
+        return secret_key_file
+
     logger.debug("Loading SECRET_KEY from '%s'", secret_key_file)
-
-    key_data = secret_key_file.read_text().strip()
-
-    return key_data
+    return secret_key_file.read_text().strip()
 
 
 def get_oidc_private_key():

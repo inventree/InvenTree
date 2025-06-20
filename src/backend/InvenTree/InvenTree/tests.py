@@ -1207,13 +1207,21 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with in_env_context({
-            'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
-        }):
-            self.assertIn(
-                'inventree/_testfolder/my_special_conf.yaml',
-                str(config.get_config_file()).lower(),
-            )
+        test_path = '_testfolder/my_special_conf.yaml'
+        with in_env_context({'INVENTREE_CONFIG_FILE': test_path}):
+            self.assertIn(test_path, str(config.get_config_file()).lower())
+
+        # LEGACY - old path
+        legacy_path = config.get_base_dir().joinpath('config.yaml')
+        assert not legacy_path.exists(), (
+            'Legacy config file does exist, stopping as a percaution!'
+        )
+        config.get_root_dir().joinpath(test_path).rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/config.yaml', str(config.get_config_file()).lower()
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
 
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
@@ -1233,6 +1241,37 @@ class TestSettings(InvenTreeTestCase):
             self.assertIn(
                 '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
             )
+
+    def test_helpers_secret_key(self):
+        """Test get_secret_key."""
+        # Normal file behavior - not configured
+        valid = ['config/secret_key.txt', 'inventree/data/secret_key.txt']
+        trgt_path = str(config.get_secret_key(return_path=True)).lower()
+        self.assertTrue(
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
+        )
+
+        # with env set
+        test_path = '_testfolder/my_secret_test.txt'
+        with in_env_context({'INVENTREE_SECRET_KEY_FILE': test_path}):
+            self.assertIn(test_path, str(config.get_secret_key(return_path=True)))
+
+        # LEGACY - old path
+        legacy_path = config.get_base_dir().joinpath('secret_key.txt')
+        assert not legacy_path.exists(), (
+            'Legacy secret key file does exist, stopping as a percaution!'
+        )
+        config.get_root_dir().joinpath(test_path).rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/secret_key.txt',
+            str(config.get_secret_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+
+        # Test with content set per environment
+        with in_env_context({'INVENTREE_SECRET_KEY': '123abc123'}):
+            self.assertEqual(config.get_secret_key(), '123abc123')
 
     def test_helpers_setting(self):
         """Test get_setting."""
