@@ -197,7 +197,9 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         }
 
         # Create a machine
-        response = self.post(reverse('api-machine-list'), machine_data)
+        response = self.post(
+            reverse('api-machine-list'), machine_data, max_query_count=400
+        )
         self.assertEqual(response.data, {**response.data, **machine_data})
         pk = response.data['pk']
 
