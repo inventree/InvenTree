@@ -61,6 +61,7 @@ const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
  * @param tableActions : any[] - List of custom action groups
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
+ * @param hideActionsColumn : boolean - Hide the actions column (default false)
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
@@ -89,6 +90,7 @@ export type InvenTreeTableProps<T = any> = {
   rowExpansion?: DataTableRowExpansionProps<T>;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
+  hideActionsColumn?: boolean;
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
@@ -318,7 +320,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
 
     // If row actions are available, add a column for them
-    if (tableProps.rowActions) {
+    if (tableProps.rowActions && !tableProps.hideActionsColumn) {
       cols.push({
         accessor: ACTIONS_COLUMN_ACCESSOR,
         title: '   ',
@@ -639,7 +641,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       columnIndex: number;
     }) => {
       // Ignore any click on the 'actions' column
-      if (column.accessor == '--actions--') {
+      if (column.accessor == ACTIONS_COLUMN_ACCESSOR) {
         return;
       }
 
@@ -647,6 +649,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
         props.onCellClick({ event, record, index, column, columnIndex });
       } else if (props.onRowClick) {
         props.onRowClick(record, index, event);
+      } else if (!!tableProps.rowExpansion) {
+        // No action here, handled by row expansion
       } else if (tableProps.modelType) {
         const accessor = tableProps.modelField ?? 'pk';
         const pk = resolveItem(record, accessor);
@@ -808,7 +812,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
               striped
               highlightOnHover
               loaderType={userTheme.loader}
-              pinLastColumn={tableProps.rowActions != undefined}
+              pinLastColumn={
+                !tableProps.hideActionsColumn &&
+                tableProps.rowActions != undefined
+              }
               idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}
               sortStatus={sortStatus}
