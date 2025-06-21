@@ -36,6 +36,7 @@ class PluginMixinEnum(StringEnum):
     ICON_PACK = 'icon_pack'
     LABELS = 'labels'
     LOCATE = 'locate'
+    MAIL = 'mail'
     NAVIGATION = 'navigation'
     NOTIFICATION = 'notification'
     REPORT = 'report'
@@ -457,15 +458,15 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         try:
             website = meta['Project-URL'].split(', ')[1]
-        except (ValueError, IndexError, AttributeError):
-            website = meta['Project-URL']
+        except Exception:
+            website = meta.get('Project-URL')
 
         return {
-            'author': meta['Author-email'],
-            'description': meta['Summary'],
-            'version': meta['Version'],
+            'author': meta.get('Author-email'),
+            'description': meta.get('Summary'),
+            'version': meta.get('Version'),
             'website': website,
-            'license': meta['License'],
+            'license': meta.get('License'),
         }
 
     def define_package(self):

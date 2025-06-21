@@ -649,7 +649,7 @@ class PurchaseOrderLineItemSerializer(
     )
 
     build_order_detail = build.serializers.BuildSerializer(
-        source='build_order', read_only=True, many=False
+        source='build_order', read_only=True, allow_null=True, many=False
     )
 
     merge_items = serializers.BooleanField(

@@ -88,6 +88,12 @@ def get_ruleset_models() -> dict:
             'flags_flagstate',
             'machine_machineconfig',
             'machine_machinesetting',
+            # common / comms
+            'common_emailmessage',
+            'common_emailthread',
+            'django_mailbox_mailbox',
+            'django_mailbox_messageattachment',
+            'django_mailbox_message',
         ],
         RuleSetEnum.PART_CATEGORY: [
             'part_partcategory',

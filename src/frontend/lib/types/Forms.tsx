@@ -72,6 +72,7 @@ export type ApiFormFieldType = {
     | 'email'
     | 'url'
     | 'string'
+    | 'password'
     | 'icon'
     | 'boolean'
     | 'date'

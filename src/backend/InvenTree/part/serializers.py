@@ -98,10 +98,6 @@ class CategorySerializer(
         if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
-    def get_starred(self, category) -> bool:
-        """Return True if the category is directly "starred" by the current user."""
-        return category in self.context.get('starred_categories', [])
-
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
@@ -136,6 +132,10 @@ class CategorySerializer(
     level = serializers.IntegerField(read_only=True)
 
     starred = serializers.SerializerMethodField()
+
+    def get_starred(self, category) -> bool:
+        """Return True if the category is directly "starred" by the current user."""
+        return category in self.context.get('starred_categories', [])
 
     path = serializers.ListField(
         child=serializers.DictField(),
@@ -251,39 +251,6 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
         help_text=_('Purchase currency of this stock item')
     )
-
-
-class PartSchedulingSerializer(serializers.Serializer):
-    """Serializer class for a PartScheduling entry."""
-
-    class Meta:
-        """Metaclass options for this serializer."""
-
-        fields = [
-            'date',
-            'quantity',
-            'speculative_quantity',
-            'title',
-            'label',
-            'model',
-            'model_id',
-        ]
-
-    date = serializers.DateField(label=_('Date'), required=True, allow_null=True)
-
-    quantity = serializers.FloatField(label=_('Quantity'), required=True)
-
-    speculative_quantity = serializers.FloatField(
-        label=_('Speculative Quantity'), required=False
-    )
-
-    title = serializers.CharField(label=_('Title'), required=True)
-
-    label = serializers.CharField(label=_('Label'), required=True)
-
-    model = serializers.CharField(label=_('Model'), required=True)
-
-    model_id = serializers.IntegerField(label=_('Model ID'), required=True)
 
 
 class PartThumbSerializer(serializers.Serializer):
@@ -1221,6 +1188,73 @@ class PartSerializer(
             part.image.save(filename, ContentFile(buffer.getvalue()))
 
         return self.instance
+
+
+class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for Part requirements."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Part
+        fields = [
+            'total_stock',
+            'unallocated_stock',
+            'can_build',
+            'ordering',
+            'building',
+            'scheduled_to_build',
+            'required_for_build_orders',
+            'allocated_to_build_orders',
+            'required_for_sales_orders',
+            'allocated_to_sales_orders',
+        ]
+
+    total_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
+
+    unallocated_stock = serializers.FloatField(
+        source='available_stock', read_only=True, label=_('Available Stock')
+    )
+
+    can_build = serializers.FloatField(read_only=True, label=_('Can Build'))
+
+    ordering = serializers.FloatField(
+        source='on_order', read_only=True, label=_('On Order')
+    )
+
+    building = serializers.FloatField(
+        read_only=True, label=_('In Production'), source='quantity_in_production'
+    )
+
+    scheduled_to_build = serializers.FloatField(
+        read_only=True, label=_('Scheduled to Build'), source='quantity_being_built'
+    )
+
+    required_for_build_orders = serializers.FloatField(
+        source='required_build_order_quantity',
+        read_only=True,
+        label=_('Required for Build Orders'),
+    )
+
+    allocated_to_build_orders = serializers.FloatField(
+        read_only=True,
+        label=_('Allocated to Build Orders'),
+        source='build_order_allocation_count',
+    )
+
+    required_for_sales_orders = serializers.FloatField(
+        source='required_sales_order_quantity',
+        read_only=True,
+        label=_('Required for Sales Orders'),
+    )
+
+    allocated_to_sales_orders = serializers.SerializerMethodField(
+        read_only=True, label=_('Allocated to Sales Orders')
+    )
+
+    def get_allocated_to_sales_orders(self, part) -> float:
+        """Return the allocated sales order quantity."""
+        return part.sales_order_allocation_count(pending=True)
 
 
 class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
