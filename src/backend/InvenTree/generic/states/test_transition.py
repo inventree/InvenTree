@@ -26,7 +26,7 @@ def _clean_storage(refs):
 
 
 class TransitionTests(InvenTreeTestCase):
-    """Tests for basic NotificationMethod."""
+    """Tests for basic TransitionMethod."""
 
     def test_class(self):
         """Ensure that the class itself works."""
