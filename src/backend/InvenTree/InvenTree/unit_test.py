@@ -675,7 +675,7 @@ class AdminTestCase(InvenTreeAPITestCase):
 
         # 'Test listing
         response = self.get(
-            reverse(f'admin:{app_app}_{app_mdl}_changelist', max_query_count=300)
+            reverse(f'admin:{app_app}_{app_mdl}_changelist'), max_query_count=300
         )
         self.assertEqual(response.status_code, 200)
 
