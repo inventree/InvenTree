@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-06-18 23:18\n"
+"PO-Revision-Date: 2025-06-20 21:45\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -4211,7 +4211,7 @@ msgstr "Переместить"
 #: src/tables/purchasing/SupplierPartTable.tsx:208
 #: src/tables/stock/StockItemTable.tsx:342
 msgid "In Stock"
-msgstr "В наличии"
+msgstr "На складе"
 
 #: src/forms/StockForms.tsx:824
 #: src/pages/Index/Scan.tsx:182
@@ -5541,7 +5541,7 @@ msgstr "Параметры деталей"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:180
 msgid "Category Parameters"
-msgstr ""
+msgstr "Параметры категорий"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:206
 msgid "Location Types"
@@ -6523,7 +6523,7 @@ msgstr "Резервирование в заказах на продажу"
 
 #: src/pages/part/PartDetail.tsx:185
 msgid "Variant of"
-msgstr "Вариант"
+msgstr "Разновидность детали"
 
 #: src/pages/part/PartDetail.tsx:192
 msgid "Revision of"
@@ -6560,7 +6560,7 @@ msgstr "Ключевые слова"
 #: src/tables/part/PartTable.tsx:297
 #: src/tables/sales/SalesOrderLineItemTable.tsx:128
 msgid "Available Stock"
-msgstr ""
+msgstr "Доступно"
 
 #: src/pages/part/PartDetail.tsx:265
 msgid "Variant Stock"
@@ -6575,7 +6575,7 @@ msgstr "Минимальный запас"
 #: src/tables/build/BuildLineTable.tsx:255
 #: src/tables/sales/SalesOrderLineItemTable.tsx:166
 msgid "On order"
-msgstr ""
+msgstr "В заказе"
 
 #: src/pages/part/PartDetail.tsx:286
 msgid "Required for Orders"
@@ -6691,7 +6691,7 @@ msgstr "Последний серийный номер"
 
 #: src/pages/part/PartDetail.tsx:516
 msgid "Variants"
-msgstr ""
+msgstr "Разновидности"
 
 #: src/pages/part/PartDetail.tsx:523
 #: src/pages/stock/StockDetail.tsx:450
@@ -7064,7 +7064,7 @@ msgstr "Нет данных"
 
 #: src/pages/part/pricing/PricingPanel.tsx:65
 msgid "No Data"
-msgstr ""
+msgstr "Нет данных"
 
 #: src/pages/part/pricing/PricingPanel.tsx:66
 msgid "No pricing data available"
@@ -7631,7 +7631,7 @@ msgstr "Часть не активна"
 #: src/tables/part/PartParameterTable.tsx:193
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
-msgstr ""
+msgstr "Деталь заблокирована"
 
 #: src/tables/ColumnRenderers.tsx:47
 msgid "You are subscribed to notifications for this part"
@@ -7957,7 +7957,7 @@ msgstr "Обновить данные"
 
 #: src/tables/bom/BomTable.tsx:97
 msgid "This BOM item is defined for a different parent"
-msgstr ""
+msgstr "Эта позиция в спецификации унаследована от родительской детали"
 
 #: src/tables/bom/BomTable.tsx:112
 msgid "Part Information"
@@ -8021,16 +8021,16 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:321
 #: src/tables/build/BuildLineTable.tsx:202
 msgid "Show assembled items"
-msgstr ""
+msgstr "Показать сборные детали"
 
 #: src/tables/bom/BomTable.tsx:326
 #: src/tables/build/BuildLineTable.tsx:187
 msgid "Show items with available stock"
-msgstr ""
+msgstr "Показать элементы, которые есть в наличии на складе"
 
 #: src/tables/bom/BomTable.tsx:331
 msgid "Show items on order"
-msgstr ""
+msgstr "Показать элементы, которые находятся в заказе"
 
 #: src/tables/bom/BomTable.tsx:331
 #~ msgid "Edit Bom Item"
@@ -8042,29 +8042,29 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:335
 msgid "Validated"
-msgstr ""
+msgstr "Утверждено"
 
 #: src/tables/bom/BomTable.tsx:336
 msgid "Show validated items"
-msgstr ""
+msgstr "Показать утверждённые элементы"
 
 #: src/tables/bom/BomTable.tsx:340
 #: src/tables/bom/UsedInTable.tsx:75
 msgid "Inherited"
-msgstr ""
+msgstr "Унаследовано"
 
 #: src/tables/bom/BomTable.tsx:341
 #: src/tables/bom/UsedInTable.tsx:76
 msgid "Show inherited items"
-msgstr ""
+msgstr "Показать элементы, которые унаследованы"
 
 #: src/tables/bom/BomTable.tsx:345
 msgid "Allow Variants"
-msgstr ""
+msgstr "Есть варианты"
 
 #: src/tables/bom/BomTable.tsx:346
 msgid "Show items which allow variant substitution"
-msgstr ""
+msgstr "Показать элементы, в которых есть варианты замены"
 
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
@@ -8078,12 +8078,12 @@ msgstr ""
 #: src/tables/bom/UsedInTable.tsx:80
 #: src/tables/build/BuildLineTable.tsx:196
 msgid "Optional"
-msgstr ""
+msgstr "Необязательно"
 
 #: src/tables/bom/BomTable.tsx:351
 #: src/tables/bom/UsedInTable.tsx:81
 msgid "Show optional items"
-msgstr ""
+msgstr "Показать необязательные элементы"
 
 #: src/tables/bom/BomTable.tsx:351
 #~ msgid "Are you sure you want to remove this BOM item?"
@@ -8096,20 +8096,20 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:355
 #: src/tables/build/BuildLineTable.tsx:191
 msgid "Consumable"
-msgstr ""
+msgstr "Расходник"
 
 #: src/tables/bom/BomTable.tsx:356
 msgid "Show consumable items"
-msgstr ""
+msgstr "Показать элементы, которые являются расходниками"
 
 #: src/tables/bom/BomTable.tsx:360
 #: src/tables/part/PartTable.tsx:291
 msgid "Has Pricing"
-msgstr ""
+msgstr "Есть цена"
 
 #: src/tables/bom/BomTable.tsx:361
 msgid "Show items with pricing"
-msgstr ""
+msgstr "Показать элементы, у которых есть цена"
 
 #: src/tables/bom/BomTable.tsx:383
 #: src/tables/bom/BomTable.tsx:519
@@ -8119,65 +8119,65 @@ msgstr "Импортировать данные спецификации"
 #: src/tables/bom/BomTable.tsx:393
 #: src/tables/bom/BomTable.tsx:533
 msgid "Add BOM Item"
-msgstr "Добавить элемент спецификации"
+msgstr "Создать позицию в спецификацию"
 
 #: src/tables/bom/BomTable.tsx:398
 msgid "BOM item created"
-msgstr ""
+msgstr "Позиция в спецификации создана"
 
 #: src/tables/bom/BomTable.tsx:405
 msgid "Edit BOM Item"
-msgstr ""
+msgstr "Редактировать позицию спецификации"
 
 #: src/tables/bom/BomTable.tsx:407
 msgid "BOM item updated"
-msgstr ""
+msgstr "Позиция в спецификации обновлена"
 
 #: src/tables/bom/BomTable.tsx:414
 msgid "Delete BOM Item"
-msgstr ""
+msgstr "Удалить позицию в спецификации"
 
 #: src/tables/bom/BomTable.tsx:415
 msgid "BOM item deleted"
-msgstr ""
+msgstr "Позиция в спецификации удалена"
 
 #: src/tables/bom/BomTable.tsx:428
 #: src/tables/bom/BomTable.tsx:431
 #: src/tables/bom/BomTable.tsx:526
 msgid "Validate BOM"
-msgstr ""
+msgstr "Утвердить спецификацию"
 
 #: src/tables/bom/BomTable.tsx:432
 msgid "Do you want to validate the bill of materials for this assembly?"
-msgstr ""
+msgstr "Вы хотите утвердить спецификацию для данной сборочной детали?"
 
 #: src/tables/bom/BomTable.tsx:435
 msgid "BOM validated"
-msgstr ""
+msgstr "Спецификация утверждена"
 
 #: src/tables/bom/BomTable.tsx:447
 msgid "BOM item validated"
-msgstr ""
+msgstr "Позиция в спецификации утверждена"
 
 #: src/tables/bom/BomTable.tsx:456
 msgid "Failed to validate BOM item"
-msgstr ""
+msgstr "При утверждении позиции в спецификации произошла ошибка"
 
 #: src/tables/bom/BomTable.tsx:468
 msgid "View BOM"
-msgstr ""
+msgstr "Показать спецификацию"
 
 #: src/tables/bom/BomTable.tsx:479
 msgid "Validate BOM Line"
-msgstr ""
+msgstr "Утвердить позицию в спецификации"
 
 #: src/tables/bom/BomTable.tsx:496
 msgid "Edit Substitutes"
-msgstr ""
+msgstr "Редактировать варианты замены"
 
 #: src/tables/bom/BomTable.tsx:554
 msgid "Bill of materials cannot be edited, as the part is locked"
-msgstr ""
+msgstr "Невозможно отредактировать спецификацию, поскольку деталь заблокирована"
 
 #: src/tables/bom/UsedInTable.tsx:33
 #: src/tables/build/BuildLineTable.tsx:201
