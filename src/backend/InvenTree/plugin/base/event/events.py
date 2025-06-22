@@ -12,6 +12,7 @@ import InvenTree.exceptions
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
+from plugin import PluginMixinEnum
 from plugin.registry import registry
 
 tracer = trace.get_tracer(__name__)
@@ -73,7 +74,7 @@ def register_event(event, *args, **kwargs):
 
         with transaction.atomic():
             for slug, plugin in registry.plugins.items():
-                if not plugin.mixin_enabled('events'):
+                if not plugin.mixin_enabled(PluginMixinEnum.EVENTS):
                     continue
 
                 # Only allow event registering for 'active' plugins
