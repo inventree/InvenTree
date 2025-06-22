@@ -1208,8 +1208,10 @@ class TestSettings(InvenTreeTestCase):
 
         # with env set
         test_file = config.get_testfolder_dir() / 'my_special_conf.yaml'
-        with in_env_context({'INVENTREE_CONFIG_FILE': test_file}):
-            self.assertIn(test_file, str(config.get_config_file()).lower())
+        with in_env_context({'INVENTREE_CONFIG_FILE': str(test_file)}):
+            self.assertEqual(
+                str(test_file).lower(), str(config.get_config_file()).lower()
+            )
 
         # LEGACY - old path
         legacy_path = config.get_base_dir().joinpath('config.yaml')
@@ -1236,9 +1238,9 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        test_path = config.get_testfolder_dir() / 'my_special_plugins.txt'
-        with in_env_context({'INVENTREE_PLUGIN_FILE': test_path}):
-            self.assertIn(test_path, str(config.get_plugin_file()))
+        test_file = config.get_testfolder_dir() / 'my_special_plugins.txt'
+        with in_env_context({'INVENTREE_PLUGIN_FILE': str(test_file)}):
+            self.assertIn(str(test_file), str(config.get_plugin_file()))
 
     def test_helpers_secret_key(self):
         """Test get_secret_key."""
@@ -1250,16 +1252,16 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        test_path = config.get_testfolder_dir() / 'my_secret_test.txt'
-        with in_env_context({'INVENTREE_SECRET_KEY_FILE': test_path}):
-            self.assertIn(test_path, str(config.get_secret_key(return_path=True)))
+        test_file = config.get_testfolder_dir() / 'my_secret_test.txt'
+        with in_env_context({'INVENTREE_SECRET_KEY_FILE': str(test_file)}):
+            self.assertIn(str(test_file), str(config.get_secret_key(return_path=True)))
 
         # LEGACY - old path
         legacy_path = config.get_base_dir().joinpath('secret_key.txt')
         assert not legacy_path.exists(), (
             'Legacy secret key file does exist, stopping as a percaution!'
         )
-        config.get_base_dir().joinpath(test_path).rename(legacy_path)
+        test_file.rename(legacy_path)
         self.assertIn(
             'src/backend/inventree/secret_key.txt',
             str(config.get_secret_key(return_path=True)).lower(),
