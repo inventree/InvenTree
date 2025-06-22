@@ -354,7 +354,6 @@ class PluginsRegistry:
 
         finally:
             # Ensure the lock is released always
-            print('finally...........')
             self.loading_lock.release()
 
     def plugin_dirs(self):
