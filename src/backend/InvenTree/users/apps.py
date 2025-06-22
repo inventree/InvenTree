@@ -35,11 +35,15 @@ class UsersConfig(AppConfig):
                 rebuild_all_permissions()
             except (OperationalError, ProgrammingError):
                 pass
+            except Exception as e:
+                logger.exception('Failed to rebuild permissions: %s', e)
 
             try:
                 self.update_owners()
             except (OperationalError, ProgrammingError):
                 pass
+            except Exception as e:
+                logger.exception('Failed to update owners: %s', e)
 
     def update_owners(self):
         """Create an 'owner' object for each user and group instance."""
