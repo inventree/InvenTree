@@ -1214,6 +1214,9 @@ class TestSettings(InvenTreeTestCase):
             )
 
         # LEGACY - old path
+        if settings.DOCKER:
+            # In Docker, the legacy path is not used
+            return
         legacy_path = config.get_base_dir().joinpath('config.yaml')
         assert not legacy_path.exists(), (
             'Legacy config file does exist, stopping as a percaution!'
@@ -1257,6 +1260,9 @@ class TestSettings(InvenTreeTestCase):
             self.assertIn(str(test_file), str(config.get_secret_key(return_path=True)))
 
         # LEGACY - old path
+        if settings.DOCKER:
+            # In Docker, the legacy path is not used
+            return
         legacy_path = config.get_base_dir().joinpath('secret_key.txt')
         assert not legacy_path.exists(), (
             'Legacy secret key file does exist, stopping as a percaution!'
