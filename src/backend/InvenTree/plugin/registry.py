@@ -324,7 +324,11 @@ class PluginsRegistry:
             logger.debug('Skipping reload - plugin registry is currently loading')
             return
 
-        if self.loading_lock.acquire(blocking=False):
+        if not self.loading_lock.acquire(blocking=False):
+            logger.exception('Could not acquire lock for reload_plugins')
+            return
+
+        try:
             logger.info(
                 'Plugin Registry: Reloading plugins - Force: %s, Full: %s, Collect: %s',
                 force_reload,
@@ -343,9 +347,15 @@ class PluginsRegistry:
             self._load_plugins(full_reload=full_reload, _internal=_internal)
 
             self.update_plugin_hash()
-
-            self.loading_lock.release()
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
+
+        except Exception as e:
+            logger.exception('Expected error during plugin reload: %s', e)
+
+        finally:
+            # Ensure the lock is released always
+            print('finally...........')
+            self.loading_lock.release()
 
     def plugin_dirs(self):
         """Construct a list of directories from where plugins can be loaded."""
@@ -459,7 +469,7 @@ class PluginsRegistry:
                         plugin._get_package_metadata()
                         collected_plugins.append(plugin)
                     except Exception as error:  # pragma: no cover
-                        handle_error(error, do_raise=False, log_name='discovery')
+                        handle_error(error, do_raise=True, log_name='discovery')
 
         # Log collected plugins
         logger.info('Collected %s plugins', len(collected_plugins))
