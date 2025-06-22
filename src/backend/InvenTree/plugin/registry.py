@@ -328,6 +328,9 @@ class PluginsRegistry:
             logger.exception('Could not acquire lock for reload_plugins')
             return
 
+        # Reset the loading error state
+        self.errors = {}
+
         try:
             logger.info(
                 'Plugin Registry: Reloading plugins - Force: %s, Full: %s, Collect: %s',
