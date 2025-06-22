@@ -169,6 +169,8 @@ export function CompanyTable({
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,
+          enableSelection: true,
+          enableReports: true,
           rowActions: rowActions
         }}
       />

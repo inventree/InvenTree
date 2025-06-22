@@ -47,7 +47,7 @@ class SettingsMixin:
         registry.mixins_settings = {}
 
         for slug, plugin in plugins:
-            if plugin.mixin_enabled('settings'):
+            if plugin.mixin_enabled(PluginMixinEnum.SETTINGS):
                 plugin_setting = plugin.settings
                 registry.mixins_settings[slug] = plugin_setting
 
