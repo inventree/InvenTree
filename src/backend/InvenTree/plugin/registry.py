@@ -88,7 +88,7 @@ class PluginsRegistry:
         self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
         self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
 
-        self.errors = {}  # Holds discovering errors
+        self.errors = {}  # Holds errors discovered during loading
 
         self.loading_lock = Lock()  # Lock to prevent multiple loading at the same time
 
@@ -307,6 +307,7 @@ class PluginsRegistry:
         full_reload: bool = False,
         force_reload: bool = False,
         collect: bool = False,
+        clear_errors: bool = False,
         _internal: Optional[list] = None,
     ):
         """Reload the plugin registry.
@@ -317,6 +318,7 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             collect (bool, optional): Collect plugins before reloading. Defaults to False.
+            clear_errors (bool, optional): Clear any previous loading errors. Defaults to False.
             _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
         # Do not reload when currently loading
@@ -329,7 +331,8 @@ class PluginsRegistry:
             return
 
         # Reset the loading error state
-        self.errors = {}
+        if clear_errors:
+            self.errors = {}
 
         try:
             logger.info(
