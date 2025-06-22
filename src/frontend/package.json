@@ -134,5 +134,8 @@
         "vite-plugin-dts": "^4.5.3",
         "vite-plugin-istanbul": "^6.0.2"
     },
-    "resolutions": { "@types/react": "^18", "@types/react-dom": "^18" }
+    "resolutions": {
+        "@types/react": "^18",
+        "@types/react-dom": "^18"
+    }
 }
