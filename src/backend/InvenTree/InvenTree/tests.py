@@ -1207,21 +1207,15 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        test_path = config.get_testfolder_dir() / 'my_special_conf.yaml'
-        with in_env_context({'INVENTREE_CONFIG_FILE': test_path}):
-            self.assertIn(test_path, str(config.get_config_file()).lower())
+        test_file = config.get_testfolder_dir() / 'my_special_conf.yaml'
+        with in_env_context({'INVENTREE_CONFIG_FILE': test_file}):
+            self.assertIn(test_file, str(config.get_config_file()).lower())
 
         # LEGACY - old path
         legacy_path = config.get_base_dir().joinpath('config.yaml')
         assert not legacy_path.exists(), (
             'Legacy config file does exist, stopping as a percaution!'
         )
-        possibilities = [
-            config.get_root_dir().joinpath(test_path),
-            config.get_root_dir().joinpath('InvenTree', test_path),
-        ]
-        test_file = next((p for p in possibilities if p.exists()), None)
-        assert test_file
         self.assertTrue(test_file.exists(), f'Test file {test_file} does not exist!')
         test_file.rename(legacy_path)
         self.assertIn(
