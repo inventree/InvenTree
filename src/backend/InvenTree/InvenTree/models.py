@@ -948,7 +948,7 @@ class InvenTreeBarcodeMixin(models.Model):
         This is used to generate a efficient QR code for the model type.
         It is expected to match this pattern: [0-9A-Z $%*+-.\/:]{2}
 
-        Note: Due to the shape constrains (45**2=2025 different allowed codes)
+        Note: Due to the shape constraints (45**2=2025 different allowed codes)
         this needs to be explicitly implemented in the model class to avoid collisions.
         """
         raise NotImplementedError(
