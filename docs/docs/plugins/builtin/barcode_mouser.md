@@ -6,7 +6,7 @@ title: Mouser Barcode Plugin
 
 The **Mouser Barcode Plugin** provides barcode support for [Mouser](https://www.mouser.com/) products. When receiving items from Mouser, the barcode on the product can be scanned to automatically identify the product in InvenTree.
 
-This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support.
+This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support - see [Barcode Plugins](./barcode_index.md).
 
 ### Activation
 

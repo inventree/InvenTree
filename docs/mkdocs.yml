@@ -251,6 +251,7 @@ nav:
       - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
       - Part Notifications: plugins/builtin/part_notifications.md
       - Barcode Plugins:
+        - Barcode Plugins: plugins/builtin/barcode_index.md
         - DigiKey Barcode Plugin: plugins/builtin/barcode_digikey.md
         - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
         - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
