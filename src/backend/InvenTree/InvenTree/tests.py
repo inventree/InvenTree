@@ -1207,7 +1207,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        test_path = '_testfolder/my_special_conf.yaml'
+        test_path = config.get_testfolder_dir() / 'my_special_conf.yaml'
         with in_env_context({'INVENTREE_CONFIG_FILE': test_path}):
             self.assertIn(test_path, str(config.get_config_file()).lower())
 
@@ -1242,12 +1242,9 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with in_env_context({
-            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
-        }):
-            self.assertIn(
-                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
-            )
+        test_path = config.get_testfolder_dir() / 'my_special_plugins.txt'
+        with in_env_context({'INVENTREE_PLUGIN_FILE': test_path}):
+            self.assertIn(test_path, str(config.get_plugin_file()))
 
     def test_helpers_secret_key(self):
         """Test get_secret_key."""
@@ -1259,7 +1256,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        test_path = '_testfolder/my_secret_test.txt'
+        test_path = config.get_testfolder_dir() / 'my_secret_test.txt'
         with in_env_context({'INVENTREE_SECRET_KEY_FILE': test_path}):
             self.assertIn(test_path, str(config.get_secret_key(return_path=True)))
 

@@ -79,6 +79,11 @@ def get_config_dir() -> Path:
     return get_root_dir().joinpath('config').resolve()
 
 
+def get_testfolder_dir() -> Path:
+    """Returns the InvenTree test folder directory."""
+    return get_base_dir().joinpath('_testfolder').resolve()
+
+
 def ensure_dir(path: Path, storage=None) -> None:
     """Ensure that a directory exists.
 
