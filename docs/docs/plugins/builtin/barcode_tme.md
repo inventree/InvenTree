@@ -6,7 +6,7 @@ title: TME Barcode Plugin
 
 The **TME Barcode Plugin** provides barcode support for [TME](http://tme.eu/) products. When receiving items from TME, the barcode on the product can be scanned to automatically identify the product in InvenTree.
 
-This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support.
+This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support - see [Barcode Plugins](./barcode_index.md).
 
 ### Activation
 

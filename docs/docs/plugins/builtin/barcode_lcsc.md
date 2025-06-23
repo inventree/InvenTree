@@ -6,7 +6,7 @@ title: LCSC Barcode Plugin
 
 The **LCSC Barcode Plugin** provides barcode support for [LCSC](https://lcsc.com/) products. When receiving items from LCSC, the barcode on the product can be scanned to automatically identify the product in InvenTree.
 
-This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support.
+This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support - see [Barcode Plugins](./barcode_index.md).
 
 ### Activation
 
