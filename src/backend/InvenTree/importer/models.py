@@ -265,7 +265,7 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.IMPORTING.value
         self.save()
 
-        offload_task(importer.tasks.import_data, self.pk)
+        offload_task(importer.tasks.import_data, self.pk, group='importer')
 
     def import_data(self) -> None:
         """Perform the data import process for this session."""

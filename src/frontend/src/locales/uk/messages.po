@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-06-07 05:57\n"
+"PO-Revision-Date: 2025-06-18 00:21\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -265,7 +265,7 @@ msgstr "Видалити цей рядок"
 
 #: src/components/buttons/SSOButton.tsx:38
 msgid "You will be redirected to the provider for further actions."
-msgstr ""
+msgstr "Вас буде перенаправлено до постачальника для подальших дій."
 
 #: src/components/buttons/SSOButton.tsx:44
 #~ msgid "This provider is not full set up."
@@ -433,31 +433,31 @@ msgstr "Низький залишок"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:40
 msgid "Show the number of parts which are low on stock"
-msgstr ""
+msgstr "Показати кількість виробів із низькими залишками"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:45
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Потрібно для замовлень збірки"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:47
 msgid "Show parts which are required for active build orders"
-msgstr ""
+msgstr "Показати частини, які необхідні для активних замовлень збірки"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:52
 msgid "Expired Stock Items"
-msgstr ""
+msgstr "Прострочені складські позиції"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:54
 msgid "Show the number of stock items which have expired"
-msgstr ""
+msgstr "Показати кількість складських позицій з простроченим терміном"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:60
 msgid "Stale Stock Items"
-msgstr ""
+msgstr "Застарілі складські позиції"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:62
 msgid "Show the number of stock items which are stale"
-msgstr ""
+msgstr "Показати кількість складських позицій з простроченим терміном"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:68
 msgid "Active Build Orders"
@@ -465,23 +465,23 @@ msgstr "Активні запити на збірку"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:70
 msgid "Show the number of build orders which are currently active"
-msgstr ""
+msgstr "Показати кількість Замовлень на збірку, які активні на цей час"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:75
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Прострочені Замовлення на збірку"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:77
 msgid "Show the number of build orders which are overdue"
-msgstr ""
+msgstr "Показати кількість Замовлень на збірку, які прострочені"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:82
 msgid "Assigned Build Orders"
-msgstr ""
+msgstr "Призначені Замовлення на збірку"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:84
 msgid "Show the number of build orders which are assigned to you"
-msgstr ""
+msgstr "Показати кількість Замовлень на збірку, які призначені для Вас"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:89
 msgid "Active Sales Orders"
@@ -573,7 +573,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:167
 msgid "The latest news from InvenTree"
-msgstr ""
+msgstr "Останні новини від InvenTree"
 
 #: src/components/dashboard/widgets/ColorToggleWidget.tsx:18
 #: src/components/nav/MainMenu.tsx:77
@@ -620,14 +620,14 @@ msgstr ""
 #: src/pages/core/UserDetail.tsx:203
 #: src/tables/settings/UserTable.tsx:360
 msgid "Superuser"
-msgstr ""
+msgstr "Суперкористувач"
 
 #: src/components/details/Details.tsx:117
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
 #: src/tables/settings/UserTable.tsx:355
 msgid "Staff"
-msgstr ""
+msgstr "Персонал"
 
 #: src/components/details/Details.tsx:117
 #~ msgid "Email:"
@@ -635,7 +635,7 @@ msgstr ""
 
 #: src/components/details/Details.tsx:118
 msgid "Email: "
-msgstr ""
+msgstr "Електронна пошта: "
 
 #: src/components/details/Details.tsx:387
 msgid "No name defined"
@@ -680,16 +680,16 @@ msgstr "Натисніть, щоб вибрати файл(и)"
 
 #: src/components/details/DetailsImage.tsx:172
 msgid "Image uploaded"
-msgstr ""
+msgstr "Зображення завантажено"
 
 #: src/components/details/DetailsImage.tsx:173
 msgid "Image has been uploaded successfully"
-msgstr ""
+msgstr "Зображення успішно завантажено"
 
 #: src/components/details/DetailsImage.tsx:180
 #: src/tables/general/AttachmentTable.tsx:197
 msgid "Upload Error"
-msgstr ""
+msgstr "Помилка при завантаженні"
 
 #: src/components/details/DetailsImage.tsx:250
 msgid "Clear"
@@ -712,7 +712,7 @@ msgstr "Вибрати зображення"
 
 #: src/components/details/DetailsImage.tsx:324
 msgid "Download remote image"
-msgstr ""
+msgstr "Завантажити віддалене зображення"
 
 #: src/components/details/DetailsImage.tsx:339
 msgid "Upload new image"
@@ -728,7 +728,7 @@ msgstr "Видалити зображення"
 
 #: src/components/details/DetailsImage.tsx:393
 msgid "Download Image"
-msgstr ""
+msgstr "Завантажити зображення"
 
 #: src/components/details/DetailsImage.tsx:398
 msgid "Image downloaded successfully"
@@ -788,7 +788,7 @@ msgstr "Не вдалося зберегти примітки"
 
 #: src/components/editors/NotesEditor.tsx:135
 msgid "Error Saving Notes"
-msgstr ""
+msgstr "Помилка під час збереження нотаток"
 
 #: src/components/editors/NotesEditor.tsx:151
 #~ msgid "Disable Editing"
@@ -1430,35 +1430,35 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:224
 msgid "Field Description"
-msgstr ""
+msgstr "Опис поля"
 
 #: src/components/importer/ImporterColumnSelector.tsx:225
 msgid "Imported Column"
-msgstr ""
+msgstr "Імпортований стовпець"
 
 #: src/components/importer/ImporterColumnSelector.tsx:226
 msgid "Default Value"
-msgstr ""
+msgstr "Значення за замовчуванням"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Upload File"
-msgstr ""
+msgstr "Вивантажити файли"
 
 #: src/components/importer/ImporterDrawer.tsx:47
 msgid "Map Columns"
-msgstr ""
+msgstr "Стовпці мапи"
 
 #: src/components/importer/ImporterDrawer.tsx:48
 msgid "Import Data"
-msgstr ""
+msgstr "Імпорт даних"
 
 #: src/components/importer/ImporterDrawer.tsx:49
 msgid "Process Data"
-msgstr ""
+msgstr "Обробити дані"
 
 #: src/components/importer/ImporterDrawer.tsx:50
 msgid "Complete Import"
-msgstr ""
+msgstr "Завершити імпорт"
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
@@ -1466,22 +1466,22 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:107
 msgid "Import Complete"
-msgstr ""
+msgstr "Імпорт завершено"
 
 #: src/components/importer/ImporterDrawer.tsx:110
 msgid "Data has been imported successfully"
-msgstr ""
+msgstr "Дані успішно імпортовано"
 
 #: src/components/importer/ImporterDrawer.tsx:112
 #: src/components/importer/ImporterDrawer.tsx:121
 #: src/components/modals/AboutInvenTreeModal.tsx:182
 #: src/components/modals/ServerInfoModal.tsx:131
 msgid "Close"
-msgstr ""
+msgstr "Закрити"
 
 #: src/components/importer/ImporterDrawer.tsx:118
 msgid "Unknown Status"
-msgstr ""
+msgstr "Невідомий статус"
 
 #: src/components/importer/ImporterDrawer.tsx:119
 msgid "Import session has unknown status"
@@ -1545,16 +1545,16 @@ msgstr "Редагувати"
 
 #: src/components/items/ActionDropdown.tsx:244
 msgid "Edit item"
-msgstr ""
+msgstr "Редагувати елемент"
 
 #: src/components/items/ActionDropdown.tsx:256
 msgid "Delete item"
-msgstr ""
+msgstr "Видалити елемент"
 
 #: src/components/items/ActionDropdown.tsx:264
 #: src/components/items/ActionDropdown.tsx:265
 msgid "Hold"
-msgstr ""
+msgstr "Утримання"
 
 #: src/components/items/ActionDropdown.tsx:287
 #: src/pages/Index/Scan.tsx:64
@@ -1564,7 +1564,7 @@ msgstr "Дублювати"
 
 #: src/components/items/ActionDropdown.tsx:288
 msgid "Duplicate item"
-msgstr ""
+msgstr "Дублювати запис"
 
 #: src/components/items/BarcodeInput.tsx:24
 #~ msgid "Scan barcode data here using barcode scanner"
@@ -1572,12 +1572,12 @@ msgstr ""
 
 #: src/components/items/ColorToggle.tsx:17
 msgid "Toggle color scheme"
-msgstr ""
+msgstr "Перемикнути кольорову схему"
 
 #: src/components/items/DocTooltip.tsx:92
 #: src/components/items/GettingStartedCarousel.tsx:20
 msgid "Read More"
-msgstr ""
+msgstr "Читати ще"
 
 #: src/components/items/ErrorItem.tsx:8
 #: src/tables/InvenTreeTable.tsx:504
@@ -1598,16 +1598,16 @@ msgstr "Нічого"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "Логотип InvenTree"
 
 #: src/components/items/LanguageToggle.tsx:20
 msgid "Select language"
-msgstr ""
+msgstr "Обрати мову"
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:46
 msgid "This information is only available for staff users"
-msgstr ""
+msgstr "Ця інформація доступна тільки співробітникам"
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -1619,7 +1619,7 @@ msgstr ""
 
 #: src/components/items/RoleTable.tsx:81
 msgid "Updating"
-msgstr ""
+msgstr "Оновлення"
 
 #: src/components/items/RoleTable.tsx:82
 msgid "Updating group roles"
@@ -1681,7 +1681,7 @@ msgstr ""
 #: src/tables/stock/StockItemTable.tsx:172
 #: src/tables/stock/StockItemTable.tsx:327
 msgid "Available"
-msgstr ""
+msgstr "Доступно"
 
 #: src/components/items/TransferList.tsx:162
 msgid "Selected"
@@ -1899,7 +1899,7 @@ msgstr ""
 
 #: src/components/nav/Alerts.tsx:67
 msgid "Server Restart"
-msgstr ""
+msgstr "Перезавантаження сервера"
 
 #: src/components/nav/Alerts.tsx:69
 msgid "The server requires a restart to apply changes."
@@ -2031,7 +2031,7 @@ msgstr "В наявності"
 #: src/pages/build/BuildDetail.tsx:559
 #: src/pages/build/BuildIndex.tsx:90
 msgid "Manufacturing"
-msgstr ""
+msgstr "Виробництво"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:54
@@ -2102,7 +2102,7 @@ msgstr ""
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Notifications.tsx:74
 msgid "Mark all as read"
-msgstr ""
+msgstr "Позначити всі як прочитані"
 
 #: src/components/nav/NotificationDrawer.tsx:191
 msgid "View all notifications"
@@ -2144,12 +2144,12 @@ msgstr "Постачальники"
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:98
 msgid "Manufacturers"
-msgstr ""
+msgstr "Виробники"
 
 #: src/components/nav/SearchDrawer.tsx:307
 #: src/pages/sales/SalesIndex.tsx:124
 msgid "Customers"
-msgstr ""
+msgstr "Замовники"
 
 #: src/components/nav/SearchDrawer.tsx:462
 #~ msgid "No results"
@@ -2157,11 +2157,11 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:480
 msgid "Enter search text"
-msgstr ""
+msgstr "Введіть текст для пошуку"
 
 #: src/components/nav/SearchDrawer.tsx:491
 msgid "Refresh search results"
-msgstr ""
+msgstr "Оновити результати пошуку"
 
 #: src/components/nav/SearchDrawer.tsx:502
 #: src/components/nav/SearchDrawer.tsx:509
@@ -2195,13 +2195,13 @@ msgstr ""
 
 #: src/components/panels/AttachmentPanel.tsx:18
 msgid "Attachments"
-msgstr ""
+msgstr "Вкладення"
 
 #: src/components/panels/NotesPanel.tsx:23
 #: src/tables/build/BuildOrderTestTable.tsx:150
 #: src/tables/stock/StockTrackingTable.tsx:210
 msgid "Notes"
-msgstr ""
+msgstr "Нотатки"
 
 #: src/components/plugins/LocateItemButton.tsx:68
 #: src/components/plugins/LocateItemButton.tsx:88
@@ -2210,7 +2210,7 @@ msgstr ""
 
 #: src/components/plugins/LocateItemButton.tsx:70
 msgid "Item location requested"
-msgstr ""
+msgstr "Запитано розташування елемента"
 
 #: src/components/plugins/PluginDrawer.tsx:47
 msgid "Plugin Inactive"
@@ -2255,7 +2255,7 @@ msgstr "Опис"
 
 #: src/components/plugins/PluginDrawer.tsx:78
 msgid "Author"
-msgstr ""
+msgstr "Автор"
 
 #: src/components/plugins/PluginDrawer.tsx:83
 #: src/pages/part/PartSchedulingDetail.tsx:279
@@ -2265,7 +2265,7 @@ msgstr ""
 #: src/tables/build/BuildOrderTestTable.tsx:158
 #: src/tables/settings/StocktakeReportTable.tsx:41
 msgid "Date"
-msgstr ""
+msgstr "Дата"
 
 #: src/components/plugins/PluginDrawer.tsx:93
 #: src/forms/selectionListFields.tsx:107
@@ -2289,11 +2289,11 @@ msgstr ""
 #: src/tables/settings/UserTable.tsx:350
 #: src/tables/stock/StockItemTable.tsx:306
 msgid "Active"
-msgstr ""
+msgstr "Активний"
 
 #: src/components/plugins/PluginDrawer.tsx:105
 msgid "Package Name"
-msgstr ""
+msgstr "Назва пакету"
 
 #: src/components/plugins/PluginDrawer.tsx:111
 msgid "Installation Path"
@@ -2348,11 +2348,11 @@ msgstr "Конфігурація плагіну"
 
 #: src/components/plugins/PluginUIFeature.tsx:101
 msgid "Error occurred while rendering the template editor."
-msgstr ""
+msgstr "Сталася помилка під час візуалізації шаблону редактора."
 
 #: src/components/plugins/PluginUIFeature.tsx:118
 msgid "Error Loading Plugin Editor"
-msgstr ""
+msgstr "Помилка завантаження редактора плагінів"
 
 #: src/components/plugins/PluginUIFeature.tsx:154
 msgid "Error occurred while rendering the template preview."
@@ -2450,12 +2450,12 @@ msgstr "Частини від постачальника"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:55
 #: src/tables/stock/StockItemTable.tsx:241
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Виробник частини"
 
 #: src/components/render/ModelType.tsx:62
 #: src/pages/purchasing/PurchasingIndex.tsx:109
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Деталі виробника"
 
 #: src/components/render/ModelType.tsx:70
 #: src/pages/part/CategoryDetail.tsx:345
@@ -2478,7 +2478,7 @@ msgstr "Категорії"
 #: src/tables/stock/StockTrackingTable.tsx:46
 #: src/tables/stock/StockTrackingTable.tsx:53
 msgid "Stock Item"
-msgstr ""
+msgstr "Елемент складу"
 
 #: src/components/render/ModelType.tsx:80
 #: src/enums/Roles.tsx:46
@@ -2489,19 +2489,19 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:183
 #: src/pages/stock/LocationDetail.tsx:380
 msgid "Stock Items"
-msgstr ""
+msgstr "У наявності"
 
 #: src/components/render/ModelType.tsx:88
 #: src/enums/Roles.tsx:48
 msgid "Stock Location"
-msgstr ""
+msgstr "Розташування складу"
 
 #: src/components/render/ModelType.tsx:89
 #: src/pages/stock/LocationDetail.tsx:177
 #: src/pages/stock/LocationDetail.tsx:372
 #: src/pages/stock/StockDetail.tsx:901
 msgid "Stock Locations"
-msgstr ""
+msgstr "Розташування складу"
 
 #: src/components/render/ModelType.tsx:97
 msgid "Stock Location Type"
@@ -2522,11 +2522,11 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:109
 msgid "Build"
-msgstr ""
+msgstr "Зібрати"
 
 #: src/components/render/ModelType.tsx:110
 msgid "Builds"
-msgstr ""
+msgstr "Збірки"
 
 #: src/components/render/ModelType.tsx:118
 msgid "Build Line"
@@ -2538,21 +2538,21 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:126
 msgid "Build Item"
-msgstr ""
+msgstr "Зібрати предмет"
 
 #: src/components/render/ModelType.tsx:127
 msgid "Build Items"
-msgstr ""
+msgstr "Зібрати предмет"
 
 #: src/components/render/ModelType.tsx:132
 #: src/pages/company/CompanyDetail.tsx:326
 #: src/tables/company/ContactTable.tsx:63
 msgid "Company"
-msgstr ""
+msgstr "Компанія"
 
 #: src/components/render/ModelType.tsx:133
 msgid "Companies"
-msgstr ""
+msgstr "Компанії"
 
 #: src/components/render/ModelType.tsx:140
 #: src/pages/build/BuildDetail.tsx:195
@@ -2563,12 +2563,12 @@ msgstr ""
 #: src/tables/Filter.tsx:265
 #: src/tables/TableHoverCard.tsx:81
 msgid "Project Code"
-msgstr ""
+msgstr "Код проєкту"
 
 #: src/components/render/ModelType.tsx:141
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:150
 msgid "Project Codes"
-msgstr ""
+msgstr "Коди проєкту"
 
 #: src/components/render/ModelType.tsx:147
 #: src/components/wizards/OrderPartsWizard.tsx:183
@@ -2579,7 +2579,7 @@ msgstr ""
 #: src/tables/stock/StockItemTable.tsx:229
 #: src/tables/stock/StockTrackingTable.tsx:118
 msgid "Purchase Order"
-msgstr ""
+msgstr "Замовлення на купівлю"
 
 #: src/components/render/ModelType.tsx:148
 #: src/enums/Roles.tsx:40
@@ -2610,7 +2610,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderAllocationTable.tsx:103
 #: src/tables/stock/StockTrackingTable.tsx:129
 msgid "Sales Order"
-msgstr ""
+msgstr "Замовлення на купівлю"
 
 #: src/components/render/ModelType.tsx:163
 #: src/enums/Roles.tsx:44
@@ -2766,7 +2766,7 @@ msgstr ""
 #: src/tables/machine/MachineListTable.tsx:353
 #: src/tables/machine/MachineTypeTable.tsx:283
 msgid "Errors"
-msgstr ""
+msgstr "Помилки"
 
 #: src/components/render/ModelType.tsx:307
 #~ msgid "Purchase Order Line Items"
@@ -2788,7 +2788,7 @@ msgstr ""
 #: src/pages/core/UserDetail.tsx:211
 #: src/pages/part/PartDetail.tsx:785
 msgid "Inactive"
-msgstr ""
+msgstr "Неактивний"
 
 #: src/components/render/Part.tsx:28
 #: src/tables/bom/BomTable.tsx:206
@@ -2847,7 +2847,7 @@ msgstr "Кількість"
 #: src/forms/StockForms.tsx:994
 #: src/tables/build/BuildLineTable.tsx:88
 msgid "Batch"
-msgstr ""
+msgstr "Пакетно"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -2860,7 +2860,7 @@ msgstr "Змінити налаштування"
 
 #: src/components/settings/SettingList.tsx:85
 msgid "Setting {key} updated successfully"
-msgstr ""
+msgstr "Налаштування {key} успішно оновлено"
 
 #: src/components/settings/SettingList.tsx:114
 msgid "Setting updated"
@@ -2877,7 +2877,7 @@ msgstr ""
 
 #: src/components/settings/SettingList.tsx:169
 msgid "No settings specified"
-msgstr ""
+msgstr "Параметри не вказані"
 
 #: src/components/tables/FilterGroup.tsx:29
 #~ msgid "Add table filter"
@@ -3257,11 +3257,11 @@ msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:61
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Нове Замовлення на купівлю"
 
 #: src/components/wizards/OrderPartsWizard.tsx:63
 msgid "Purchase order created"
-msgstr ""
+msgstr "Замовлення на купівлю створено"
 
 #: src/components/wizards/OrderPartsWizard.tsx:75
 msgid "New Supplier Part"
@@ -3311,15 +3311,15 @@ msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:306
 msgid "Parts Added"
-msgstr ""
+msgstr "Деталі додано"
 
 #: src/components/wizards/OrderPartsWizard.tsx:307
 msgid "All selected parts added to a purchase order"
-msgstr ""
+msgstr "Усі вибрані частини додані до Замовлення на купівлю"
 
 #: src/components/wizards/OrderPartsWizard.tsx:383
 msgid "You must select at least one part to order"
-msgstr ""
+msgstr "Ви повинні вибрати принаймні один елемент для замовлення"
 
 #: src/components/wizards/OrderPartsWizard.tsx:394
 msgid "Supplier part is required"
@@ -3382,15 +3382,15 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Estonian"
-msgstr ""
+msgstr "Естонська"
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Фарсі / Перська"
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Finnish"
-msgstr ""
+msgstr "Фінська"
 
 #: src/contexts/LanguageContext.tsx:32
 msgid "French"
@@ -3504,7 +3504,7 @@ msgstr "Китайська (Традиційна)"
 
 #: src/defaults/actions.tsx:26
 msgid "Go to the InvenTree dashboard"
-msgstr ""
+msgstr "Перейти до панелі керування InvenTree"
 
 #: src/defaults/actions.tsx:33
 msgid "Visit the documentation to learn more about InvenTree"
@@ -3640,7 +3640,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:100
 msgid "Developer Manual"
-msgstr ""
+msgstr "Керівництво розробника"
 
 #: src/defaults/links.tsx:103
 msgid "InvenTree developer manual"
@@ -3652,7 +3652,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:110
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Поширені запитання"
 
 #: src/defaults/links.tsx:114
 msgid "GitHub Repository"
@@ -3761,7 +3761,7 @@ msgstr ""
 
 #: src/enums/Roles.tsx:32
 msgid "Admin"
-msgstr ""
+msgstr "Адмін"
 
 #: src/enums/Roles.tsx:34
 #: src/pages/Index/Settings/SystemSettings.tsx:243
@@ -3769,7 +3769,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:541
 #: src/pages/sales/SalesOrderDetail.tsx:393
 msgid "Build Orders"
-msgstr ""
+msgstr "Замовлення на збірку"
 
 #: src/enums/Roles.tsx:50
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:187
@@ -3898,7 +3898,7 @@ msgstr ""
 #: src/forms/SalesOrderForms.tsx:256
 #: src/pages/build/BuildDetail.tsx:205
 msgid "Source Location"
-msgstr ""
+msgstr "Розташування джерела"
 
 #: src/forms/BuildForms.tsx:580
 #: src/forms/SalesOrderForms.tsx:257
@@ -3931,7 +3931,7 @@ msgstr "Елементи складу виділені"
 #: src/tables/part/PartCategoryTable.tsx:93
 #: src/tables/part/PartTable.tsx:303
 msgid "Subscribed"
-msgstr ""
+msgstr "Ви підписані"
 
 #: src/forms/PartForms.tsx:71
 msgid "Subscribe to notifications for this part"
@@ -3959,11 +3959,11 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:350
 msgid "Assign Batch Code and Serial Numbers"
-msgstr ""
+msgstr "Призначити Номер серії збірки та Серійний номер"
 
 #: src/forms/PurchaseOrderForms.tsx:352
 msgid "Assign Batch Code"
-msgstr ""
+msgstr "Призначити Номер серії збірки"
 
 #: src/forms/PurchaseOrderForms.tsx:372
 msgid "Choose Location"
@@ -4063,11 +4063,11 @@ msgstr ""
 #: src/tables/sales/SalesOrderAllocationTable.tsx:148
 #: src/tables/stock/StockItemTable.tsx:377
 msgid "Batch Code"
-msgstr ""
+msgstr "Номер серії збірки"
 
 #: src/forms/PurchaseOrderForms.tsx:619
 msgid "Enter batch code for received items"
-msgstr ""
+msgstr "Введіть Номер серії збірки для отриманих елементів"
 
 #: src/forms/PurchaseOrderForms.tsx:632
 #: src/forms/StockForms.tsx:166
@@ -4105,13 +4105,13 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:119
 #: src/tables/ColumnRenderers.tsx:147
 msgid "Note"
-msgstr ""
+msgstr "Нотатки"
 
 #: src/forms/PurchaseOrderForms.tsx:752
 #: src/pages/company/SupplierPartDetail.tsx:137
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:57
 msgid "SKU"
-msgstr ""
+msgstr "Артикул, SKU"
 
 #: src/forms/PurchaseOrderForms.tsx:753
 #: src/tables/part/PartPurchaseOrdersTable.tsx:126
@@ -4119,7 +4119,7 @@ msgstr ""
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:252
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:160
 msgid "Received"
-msgstr ""
+msgstr "Отримано"
 
 #: src/forms/PurchaseOrderForms.tsx:770
 msgid "Receive Line Items"
@@ -4139,7 +4139,7 @@ msgstr "Елемент, отриманий на складі"
 
 #: src/forms/StockForms.tsx:76
 msgid "Next batch code"
-msgstr ""
+msgstr "Наступний Номер серії збірки"
 
 #: src/forms/StockForms.tsx:84
 #: src/hooks/UsePlaceholder.tsx:57
@@ -4168,14 +4168,14 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:183
 msgid "Stock Status"
-msgstr ""
+msgstr "Стан залишків"
 
 #: src/forms/StockForms.tsx:239
 #: src/pages/stock/StockDetail.tsx:575
 #: src/tables/stock/StockItemTable.tsx:533
 #: src/tables/stock/StockItemTable.tsx:666
 msgid "Add Stock Item"
-msgstr ""
+msgstr "Додати елемент складу"
 
 #: src/forms/StockForms.tsx:283
 msgid "Select the part to install"
@@ -4191,7 +4191,7 @@ msgstr "Завантаження..."
 
 #: src/forms/StockForms.tsx:585
 msgid "Move to default location"
-msgstr ""
+msgstr "Перемістити в типове розташування"
 
 #: src/forms/StockForms.tsx:705
 msgid "Move"
@@ -4211,7 +4211,7 @@ msgstr "Перемістити"
 #: src/tables/purchasing/SupplierPartTable.tsx:208
 #: src/tables/stock/StockItemTable.tsx:342
 msgid "In Stock"
-msgstr ""
+msgstr "В наявності"
 
 #: src/forms/StockForms.tsx:824
 #: src/pages/Index/Scan.tsx:182
@@ -4223,28 +4223,28 @@ msgstr "Кількість"
 #: src/pages/stock/StockDetail.tsx:720
 #: src/tables/stock/StockItemTable.tsx:584
 msgid "Add Stock"
-msgstr ""
+msgstr "Додати запаси"
 
 #: src/forms/StockForms.tsx:1103
 msgid "Stock added"
-msgstr ""
+msgstr "Додано елемент складу"
 
 #: src/forms/StockForms.tsx:1112
 #: src/pages/stock/StockDetail.tsx:729
 #: src/tables/stock/StockItemTable.tsx:593
 msgid "Remove Stock"
-msgstr ""
+msgstr "Видалити елемент складу"
 
 #: src/forms/StockForms.tsx:1113
 msgid "Stock removed"
-msgstr ""
+msgstr "Видалено елемент складу"
 
 #: src/forms/StockForms.tsx:1122
 #: src/pages/part/PartDetail.tsx:925
 #: src/pages/stock/StockDetail.tsx:742
 #: src/tables/stock/StockItemTable.tsx:602
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Переміщення запасів"
 
 #: src/forms/StockForms.tsx:1123
 msgid "Stock transferred"
@@ -4257,7 +4257,7 @@ msgstr ""
 #: src/tables/stock/StockItemTable.tsx:573
 #: src/tables/stock/StockItemTable.tsx:577
 msgid "Count Stock"
-msgstr ""
+msgstr "Кількість запасів"
 
 #: src/forms/StockForms.tsx:1133
 msgid "Stock counted"
@@ -4317,7 +4317,7 @@ msgstr ""
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:38
 #: src/tables/stock/StockItemTestResultTable.tsx:193
 msgid "Value"
-msgstr ""
+msgstr "Значення"
 
 #: src/forms/selectionListFields.tsx:105
 msgid "Label"
@@ -4331,25 +4331,25 @@ msgstr ""
 #: src/functions/api.tsx:36
 #: src/tables/InvenTreeTable.tsx:494
 msgid "Unauthorized"
-msgstr ""
+msgstr "Не авторизований"
 
 #: src/functions/api.tsx:39
 #: src/tables/InvenTreeTable.tsx:497
 msgid "Forbidden"
-msgstr ""
+msgstr "Заборонено"
 
 #: src/functions/api.tsx:42
 #: src/tables/InvenTreeTable.tsx:500
 msgid "Not found"
-msgstr ""
+msgstr "Не знайдено"
 
 #: src/functions/api.tsx:45
 msgid "Method not allowed"
-msgstr ""
+msgstr "Метод не дозволено"
 
 #: src/functions/api.tsx:48
 msgid "Internal server error"
-msgstr ""
+msgstr "Внутрішня помилка сервера"
 
 #: src/functions/auth.tsx:34
 #~ msgid "Error fetching token from server."
@@ -4374,7 +4374,7 @@ msgstr ""
 #: src/functions/auth.tsx:117
 #: src/functions/auth.tsx:276
 msgid "Already logged in"
-msgstr ""
+msgstr "Вхід вже здійснено"
 
 #: src/functions/auth.tsx:118
 #: src/functions/auth.tsx:277
@@ -4700,7 +4700,7 @@ msgstr ""
 
 #: src/pages/Auth/VerifyEmail.tsx:20
 msgid "You need to provide a valid key."
-msgstr ""
+msgstr "Ви повинні вказати дійсний ключ."
 
 #: src/pages/Auth/VerifyEmail.tsx:28
 msgid "Verify Email"
@@ -5839,7 +5839,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:199
 #: src/tables/stock/StockItemTable.tsx:65
 msgid "Revision"
-msgstr ""
+msgstr "Ревізія"
 
 #: src/pages/build/BuildDetail.tsx:121
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:157
@@ -5890,7 +5890,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:220
 #: src/tables/Filter.tsx:298
 msgid "Responsible"
-msgstr ""
+msgstr "Відповідальний"
 
 #: src/pages/build/BuildDetail.tsx:190
 #: src/pages/part/PartDetail.tsx:274
@@ -5908,7 +5908,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:206
 msgid "Any location"
-msgstr ""
+msgstr "Будь-яке розташування"
 
 #: src/pages/build/BuildDetail.tsx:213
 msgid "Destination Location"
@@ -5949,7 +5949,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:124
 msgid "Target Date"
-msgstr ""
+msgstr "Кінцева дата"
 
 #: src/pages/build/BuildDetail.tsx:253
 #: src/tables/sales/SalesOrderLineItemTable.tsx:311
@@ -5979,11 +5979,11 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:379
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:212
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Виділений запас"
 
 #: src/pages/build/BuildDetail.tsx:337
 msgid "Consumed Stock"
-msgstr ""
+msgstr "Використані запаси"
 
 #: src/pages/build/BuildDetail.tsx:347
 #: src/pages/part/PartDetail.tsx:727
@@ -5992,7 +5992,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:352
 msgid "Child Build Orders"
-msgstr ""
+msgstr "Дочірні Замовлення на збірку"
 
 #: src/pages/build/BuildDetail.tsx:362
 #: src/tables/build/BuildOutputTable.tsx:539
@@ -6233,7 +6233,7 @@ msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:189
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Вироблені деталі"
 
 #: src/pages/company/CompanyDetail.tsx:189
 #~ msgid "Delete company"
@@ -6259,7 +6259,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:77
 #: src/pages/company/SupplierPartDetail.tsx:88
 msgid "Internal Part"
-msgstr ""
+msgstr "Внутрішній компонент"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:111
 #: src/pages/company/SupplierPartDetail.tsx:160
@@ -6270,7 +6270,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:128
 #: src/pages/company/SupplierPartDetail.tsx:112
 msgid "External Link"
-msgstr ""
+msgstr "Зовнішнє посилання"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:147
 #: src/pages/company/SupplierPartDetail.tsx:232
@@ -6289,7 +6289,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:165
 #: src/pages/part/PartDetail.tsx:487
 msgid "Parameters"
-msgstr ""
+msgstr "Параметри"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:205
 #: src/tables/purchasing/ManufacturerPartTable.tsx:86
@@ -6346,7 +6346,7 @@ msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:237
 msgid "Availability"
-msgstr ""
+msgstr "Наявність"
 
 #: src/pages/company/SupplierPartDetail.tsx:246
 msgid "Supplier Part Details"
@@ -6477,12 +6477,12 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:192
 #: src/pages/stock/LocationDetail.tsx:229
 msgid "Delete items"
-msgstr ""
+msgstr "Видалити елемент"
 
 #: src/pages/part/CategoryDetail.tsx:200
 #: src/pages/part/CategoryDetail.tsx:250
 msgid "Delete Part Category"
-msgstr ""
+msgstr "Видалити категорію елементу"
 
 #: src/pages/part/CategoryDetail.tsx:203
 msgid "Parts Action"
@@ -6538,7 +6538,7 @@ msgstr "Категорія"
 
 #: src/pages/part/PartDetail.tsx:212
 msgid "Default Location"
-msgstr ""
+msgstr "Місцеперебування за замовчуванням"
 
 #: src/pages/part/PartDetail.tsx:219
 msgid "Category Default Location"
@@ -6547,7 +6547,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:226
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:44
 msgid "Units"
-msgstr ""
+msgstr "Одиниці виміру"
 
 #: src/pages/part/PartDetail.tsx:233
 #: src/tables/settings/PendingTasksTable.tsx:46
@@ -6560,7 +6560,7 @@ msgstr ""
 #: src/tables/part/PartTable.tsx:297
 #: src/tables/sales/SalesOrderLineItemTable.tsx:128
 msgid "Available Stock"
-msgstr ""
+msgstr "Доступний залишок"
 
 #: src/pages/part/PartDetail.tsx:265
 msgid "Variant Stock"
@@ -6568,7 +6568,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:273
 msgid "Minimum Stock"
-msgstr ""
+msgstr "Мінімальний запас"
 
 #: src/pages/part/PartDetail.tsx:279
 #: src/tables/bom/BomTable.tsx:239
@@ -6579,11 +6579,11 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:286
 msgid "Required for Orders"
-msgstr ""
+msgstr "Потрібно для Замовлень збірки"
 
 #: src/pages/part/PartDetail.tsx:295
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Виділений запас для Замовлень на збірку"
 
 #: src/pages/part/PartDetail.tsx:306
 msgid "Allocated to Sales Orders"
@@ -6642,7 +6642,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:364
 #: src/tables/bom/BomTable.tsx:315
 msgid "Trackable Part"
-msgstr ""
+msgstr "Відстежуваний елемент"
 
 #: src/pages/part/PartDetail.tsx:369
 msgid "Purchaseable Part"
@@ -6704,11 +6704,11 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:548
 msgid "Used In"
-msgstr ""
+msgstr "Використано у"
 
 #: src/pages/part/PartDetail.tsx:555
 msgid "Part Pricing"
-msgstr ""
+msgstr "Ціна елементу"
 
 #: src/pages/part/PartDetail.tsx:613
 msgid "Scheduling"
@@ -6726,7 +6726,7 @@ msgstr ""
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:387
 msgid "Required"
-msgstr ""
+msgstr "Необхідний"
 
 #: src/pages/part/PartDetail.tsx:798
 msgid "Edit Part"
@@ -6740,17 +6740,17 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:847
 msgid "Delete Part"
-msgstr ""
+msgstr "Видалити деталь"
 
 #: src/pages/part/PartDetail.tsx:856
 msgid "Deleting this part cannot be reversed"
-msgstr ""
+msgstr "Видалення цього елементу не може бути скасовано"
 
 #: src/pages/part/PartDetail.tsx:907
 #: src/pages/stock/LocationDetail.tsx:309
 #: src/tables/stock/StockItemTable.tsx:568
 msgid "Stock Actions"
-msgstr ""
+msgstr "Дії над запасами"
 
 #: src/pages/part/PartDetail.tsx:915
 msgid "Count part stock"
@@ -6764,7 +6764,7 @@ msgstr ""
 #: src/pages/part/PartSchedulingDetail.tsx:71
 #: src/pages/stock/StockDetail.tsx:765
 msgid "Order"
-msgstr ""
+msgstr "Замовлення"
 
 #: src/pages/part/PartDetail.tsx:934
 #: src/pages/stock/StockDetail.tsx:766
@@ -6827,7 +6827,7 @@ msgstr ""
 #: src/pages/part/PartSchedulingDetail.tsx:301
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:170
 msgid "Maximum"
-msgstr ""
+msgstr "Максимум"
 
 #: src/pages/part/PartSchedulingDetail.tsx:51
 #: src/pages/part/PartSchedulingDetail.tsx:291
@@ -6838,7 +6838,7 @@ msgstr ""
 #: src/pages/part/PartSchedulingDetail.tsx:296
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:158
 msgid "Minimum"
-msgstr ""
+msgstr "Мінімум"
 
 #: src/pages/part/PartSchedulingDetail.tsx:95
 msgid "Quantity is speculative"
@@ -6846,27 +6846,27 @@ msgstr ""
 
 #: src/pages/part/PartSchedulingDetail.tsx:104
 msgid "No date available for provided quantity"
-msgstr ""
+msgstr "Відсутня дата для вказаної кількості"
 
 #: src/pages/part/PartSchedulingDetail.tsx:108
 msgid "Date is in the past"
-msgstr ""
+msgstr "Дата знаходиться в минулому"
 
 #: src/pages/part/PartSchedulingDetail.tsx:115
 msgid "Scheduled Quantity"
-msgstr ""
+msgstr "Запланована кількість"
 
 #: src/pages/part/PartSchedulingDetail.tsx:242
 msgid "No information available"
-msgstr ""
+msgstr "Інформація відсутня"
 
 #: src/pages/part/PartSchedulingDetail.tsx:243
 msgid "There is no scheduling information available for the selected part"
-msgstr ""
+msgstr "Немає інформації про планування для обраної деталі"
 
 #: src/pages/part/PartSchedulingDetail.tsx:278
 msgid "Expected Quantity"
-msgstr ""
+msgstr "Очікувана кількість"
 
 #: src/pages/part/PartStocktakeDetail.tsx:85
 msgid "Edit Stocktake Entry"
@@ -6901,12 +6901,12 @@ msgstr ""
 #: src/pages/part/PartStocktakeDetail.tsx:269
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:327
 msgid "Minimum Value"
-msgstr ""
+msgstr "Мінімальне значення"
 
 #: src/pages/part/PartStocktakeDetail.tsx:275
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:328
 msgid "Maximum Value"
-msgstr ""
+msgstr "Максимальне значення"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:87
 #: src/pages/part/pricing/BomPricingPanel.tsx:177
@@ -7171,7 +7171,7 @@ msgstr ""
 #: src/tables/build/BuildOrderTable.tsx:112
 #: src/tables/part/PartPurchaseOrdersTable.tsx:105
 msgid "Completion Date"
-msgstr ""
+msgstr "Дата завершення"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:316
 #: src/pages/sales/ReturnOrderDetail.tsx:280
@@ -7389,12 +7389,12 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:143
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "External"
-msgstr ""
+msgstr "Зовнішній"
 
 #: src/pages/stock/LocationDetail.tsx:149
 #: src/tables/stock/StockLocationTable.tsx:57
 msgid "Location Type"
-msgstr ""
+msgstr "Тип локації"
 
 #: src/pages/stock/LocationDetail.tsx:160
 msgid "Top level stock location"
@@ -7421,7 +7421,7 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:237
 #: src/pages/stock/LocationDetail.tsx:340
 msgid "Delete Stock Location"
-msgstr ""
+msgstr "Видалити місце складу"
 
 #: src/pages/stock/LocationDetail.tsx:240
 msgid "Items Action"
@@ -7429,7 +7429,7 @@ msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:241
 msgid "Action for stock items in this location"
-msgstr ""
+msgstr "Дія для товарів в цьому розташуванні"
 
 #: src/pages/stock/LocationDetail.tsx:246
 msgid "Child Locations Action"
@@ -7437,7 +7437,7 @@ msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:247
 msgid "Action for child locations in this location"
-msgstr ""
+msgstr "Дія для розміщення дочірніх місць у цієї локації"
 
 #: src/pages/stock/LocationDetail.tsx:331
 #: src/tables/stock/StockLocationTable.tsx:140
@@ -7490,7 +7490,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:259
 msgid "Consumed By"
-msgstr ""
+msgstr "Використано"
 
 #: src/pages/stock/StockDetail.tsx:433
 #~ msgid "Duplicate stock item"
@@ -7639,7 +7639,7 @@ msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:72
 msgid "No location set"
-msgstr ""
+msgstr "Не встановлена локація"
 
 #: src/tables/ColumnSelect.tsx:16
 #: src/tables/ColumnSelect.tsx:23
@@ -8016,7 +8016,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:316
 msgid "Show trackable items"
-msgstr ""
+msgstr "Показати відстежувані позиції"
 
 #: src/tables/bom/BomTable.tsx:321
 #: src/tables/build/BuildLineTable.tsx:202
@@ -8195,11 +8195,11 @@ msgstr ""
 #: src/tables/part/PartTable.tsx:217
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
-msgstr ""
+msgstr "Відстежуваний"
 
 #: src/tables/bom/UsedInTable.tsx:91
 msgid "Show trackable assemblies"
-msgstr ""
+msgstr "Показати відстежувані збірки"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:56
 msgid "Allocated to Output"
@@ -8218,7 +8218,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderTable.tsx:100
 #: src/tables/stock/StockItemTable.tsx:352
 msgid "Include Variants"
-msgstr ""
+msgstr "Включити варіанти"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:66
 #: src/tables/build/BuildOrderTable.tsx:167
@@ -8227,7 +8227,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderAllocationTable.tsx:92
 #: src/tables/sales/SalesOrderTable.tsx:101
 msgid "Include orders for part variants"
-msgstr ""
+msgstr "Включити замовлення для варіантів елементів"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:89
 #: src/tables/part/PartBuildAllocationsTable.tsx:62
@@ -8235,7 +8235,7 @@ msgstr ""
 #: src/tables/part/PartSalesAllocationsTable.tsx:58
 #: src/tables/sales/SalesOrderAllocationTable.tsx:116
 msgid "Order Status"
-msgstr ""
+msgstr "Статус замовлення"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:117
 #: src/tables/sales/SalesOrderAllocationTable.tsx:162
@@ -8413,7 +8413,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:79
 #: src/tables/sales/SalesOrderTable.tsx:80
 msgid "Show orders with a target date"
-msgstr ""
+msgstr "Показувати замовлення з цільовою датою"
 
 #: src/tables/build/BuildOrderTable.tsx:149
 #: src/tables/purchasing/PurchaseOrderTable.tsx:87
@@ -8427,7 +8427,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:85
 #: src/tables/sales/SalesOrderTable.tsx:86
 msgid "Show orders with a start date"
-msgstr ""
+msgstr "Показувати замовлення з датою початку"
 
 #: src/tables/build/BuildOrderTable.tsx:179
 #~ msgid "Filter by user who issued this order"
@@ -8941,11 +8941,11 @@ msgstr ""
 
 #: src/tables/part/ParametricPartTable.tsx:230
 msgid "Show locked parts"
-msgstr ""
+msgstr "Показати заблоковані деталі"
 
 #: src/tables/part/ParametricPartTable.tsx:235
 msgid "Show assembly parts"
-msgstr ""
+msgstr "Показати компоненти Збірки"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:67
 #: src/tables/part/PartSalesAllocationsTable.tsx:62
@@ -9129,7 +9129,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:218
 msgid "Filter by trackable attribute"
-msgstr ""
+msgstr "Фільтр по атрибуту, який відстежується"
 
 #: src/tables/part/PartTable.tsx:224
 msgid "Filter by parts which have units"
@@ -9187,7 +9187,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:269
 msgid "Is Template"
-msgstr ""
+msgstr "Це шаблон"
 
 #: src/tables/part/PartTable.tsx:270
 msgid "Filter by parts which are templates"
@@ -9353,7 +9353,7 @@ msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:31
 msgid "Show trackable variants"
-msgstr ""
+msgstr "Показати відстежувані варіанти"
 
 #: src/tables/part/RelatedPartTable.tsx:100
 #: src/tables/part/RelatedPartTable.tsx:133
@@ -9792,7 +9792,7 @@ msgstr ""
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:279
 msgid "Assign to shipment"
-msgstr ""
+msgstr "Призначити для відвантаження"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:263
 msgid "Allocate Serial Numbers"
@@ -10364,19 +10364,19 @@ msgstr ""
 #: src/tables/stock/LocationTypesTable.tsx:39
 #: src/tables/stock/LocationTypesTable.tsx:109
 msgid "Add Location Type"
-msgstr ""
+msgstr "Додати тип локації"
 
 #: src/tables/stock/LocationTypesTable.tsx:47
 msgid "Edit Location Type"
-msgstr ""
+msgstr "Редагувати тип локації"
 
 #: src/tables/stock/LocationTypesTable.tsx:55
 msgid "Delete Location Type"
-msgstr ""
+msgstr "Видалити тип локації"
 
 #: src/tables/stock/LocationTypesTable.tsx:63
 msgid "Icon"
-msgstr ""
+msgstr "Іконка"
 
 #: src/tables/stock/StockItemTable.tsx:96
 msgid "This stock item is in production"
@@ -10396,7 +10396,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:124
 msgid "This stock item has been consumed by a build order"
-msgstr ""
+msgstr "Цей Складський елемент було використано у Виробничому замовленні"
 
 #: src/tables/stock/StockItemTable.tsx:131
 msgid "This stock item is unavailable"
@@ -10453,7 +10453,7 @@ msgstr ""
 #: src/tables/stock/StockItemTable.tsx:332
 #: src/tables/stock/StockLocationTable.tsx:38
 msgid "Include Sublocations"
-msgstr ""
+msgstr "Включати дочірні локації"
 
 #: src/tables/stock/StockItemTable.tsx:333
 msgid "Include stock in sublocations"
@@ -10481,11 +10481,11 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:357
 msgid "Consumed"
-msgstr ""
+msgstr "Використано"
 
 #: src/tables/stock/StockItemTable.tsx:358
 msgid "Show items which have been consumed by a build order"
-msgstr ""
+msgstr "Показати позиції, використані у Виробничих замовленнях"
 
 #: src/tables/stock/StockItemTable.tsx:363
 msgid "Show stock items which are installed in other items"
@@ -10509,7 +10509,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:378
 msgid "Filter items by batch code"
-msgstr ""
+msgstr "Фільтрувати елементи по Номеру серії збірки"
 
 #: src/tables/stock/StockItemTable.tsx:384
 msgid "Filter items by serial number"
@@ -10533,11 +10533,11 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:401
 msgid "Has Batch Code"
-msgstr ""
+msgstr "Має Номер серії збірки"
 
 #: src/tables/stock/StockItemTable.tsx:402
 msgid "Show items which have a batch code"
-msgstr ""
+msgstr "Показати елементи які мають Номер серії збірки"
 
 #: src/tables/stock/StockItemTable.tsx:407
 msgid "Show tracked items"
@@ -10609,7 +10609,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:466
 msgid "External Location"
-msgstr ""
+msgstr "Зовнішнє розташування"
 
 #: src/tables/stock/StockItemTable.tsx:467
 msgid "Show items in an external location"

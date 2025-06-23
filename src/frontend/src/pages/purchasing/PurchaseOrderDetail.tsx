@@ -333,6 +333,7 @@ export default function PurchaseOrderDetail() {
               <Accordion.Panel>
                 <PurchaseOrderLineItemTable
                   order={order}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   orderId={Number(id)}
                   supplierId={Number(order.supplier)}
@@ -347,6 +348,7 @@ export default function PurchaseOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.purchase_order_extra_line_list}
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.purchase_order}
                 />

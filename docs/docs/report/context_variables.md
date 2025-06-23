@@ -23,6 +23,28 @@ In addition to the [global context](#global-context), all *report* templates hav
 
 {{ report_context("base", "report") }}
 
+When using the `merge` context variable, the selected items are available in the `instances` list. {{ templatefile("report/inventree_stock_report_merge.html") }} shows a complete example. To access individual item attributes, you can either loop through the `instances` or access them by index like `instance.0.name`.
+
+Below is an example template that generates a single report for some selected parts. Each part occupies a row in the table
+
+```html
+{% raw %}
+<h2>Merged Report for Selected Parts</h2>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  {% for part in instances %}
+    <tr>
+      <td>{{ part.name }}</td>
+      <td>{{ part.description }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endraw %}
+```
+
 Note that custom plugins may also add additional context variables to the report context.
 
 ::: report.models.ReportTemplate.get_context
@@ -47,6 +69,7 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 
 | Model Type | Description |
 | --- | --- |
+| company | A Company instance |
 | [build](#build-order) | A [Build Order](../manufacturing/build.md) instance |
 | [buildline](#build-line) | A [Build Order Line Item](../manufacturing/build.md) instance |
 | [salesorder](#sales-order) | A [Sales Order](../sales/sales_order.md) instance |
@@ -55,6 +78,16 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 | [stockitem](#stock-item) | A [StockItem](../stock/index.md#stock-item) instance |
 | [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-location) instance |
 | [part](#part) | A [Part](../part/index.md) instance |
+
+### Company
+
+When printing a report or label against a Company instance, the following context variables are available:
+
+{{ report_context("models", "company") }}
+
+::: company.models.Company.report_context
+    options:
+        show_source: True
 
 ### Build Order
 

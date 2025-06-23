@@ -4,10 +4,14 @@ import base64
 import logging
 from typing import Optional
 
+from django.conf import settings
+
 from opentelemetry import metrics, trace
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor
+from opentelemetry.instrumentation.system_metrics import SystemMetricsInstrumentor
 from opentelemetry.sdk import _logs as logs
 from opentelemetry.sdk import resources
 from opentelemetry.sdk._logs import export as logs_export
@@ -22,6 +26,9 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 import InvenTree.ready
 from InvenTree.version import inventreeVersion
 
+TRACE_PROC = None
+TRACE_PROV = None
+
 
 def setup_tracing(
     endpoint: str,
@@ -31,7 +38,7 @@ def setup_tracing(
     auth: Optional[dict] = None,
     is_http: bool = False,
     append_http: bool = True,
-):
+):  # pragma: no cover
     """Set up tracing for the application in the current context.
 
     Args:
@@ -68,9 +75,14 @@ def setup_tracing(
     headers = {k: v for k, v in headers.items() if v is not None}
 
     # Initialize the OTLP Resource
+    service_name = 'Unkown'
+    if InvenTree.ready.isInServerThread():
+        service_name = 'BACKEND'
+    elif InvenTree.ready.isInWorkerThread():
+        service_name = 'WORKER'
     resource = resources.Resource(
         attributes={
-            resources.SERVICE_NAME: 'BACKEND',
+            resources.SERVICE_NAME: service_name,
             resources.SERVICE_NAMESPACE: 'INVENTREE',
             resources.SERVICE_VERSION: inventreeVersion(),
             **resources_input,
@@ -141,9 +153,34 @@ def setup_tracing(
     logger = logging.getLogger('inventree')
     logger.addHandler(handler)
 
+    global TRACE_PROC, TRACE_PROV
+    TRACE_PROC = trace_processor
+    TRACE_PROV = trace_provider
 
-def setup_instruments():
+
+def setup_instruments():  # pragma: no cover
     """Run auto-insturmentation for OpenTelemetry tracing."""
     DjangoInstrumentor().instrument()
     RedisInstrumentor().instrument()
     RequestsInstrumentor().instrument()
+    SystemMetricsInstrumentor().instrument()
+
+    # DBs
+    if settings.DB_ENGINE == 'sqlite':
+        SQLite3Instrumentor().instrument()
+    elif settings.DB_ENGINE == 'postgresql':
+        try:
+            from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
+
+            PsycopgInstrumentor().instrument(
+                enable_commenter=False, commenter_options={}
+            )
+        except ModuleNotFoundError:
+            pass
+    elif settings.DB_ENGINE == 'mysql':
+        try:
+            from opentelemetry.instrumentation.pymysql import PyMySQLInstrumentor
+
+            PyMySQLInstrumentor().instrument()
+        except ModuleNotFoundError:
+            pass

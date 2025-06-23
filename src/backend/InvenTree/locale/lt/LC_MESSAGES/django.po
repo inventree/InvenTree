@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-12 08:28+0000\n"
-"PO-Revision-Date: 2025-06-12 08:31\n"
+"POT-Creation-Date: 2025-06-18 23:16+0000\n"
+"PO-Revision-Date: 2025-06-18 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
@@ -108,8 +108,8 @@ msgstr "Įveskite datą"
 msgid "Invalid decimal value"
 msgstr "Neteisinga dešimtainė reikšmė"
 
-#: InvenTree/fields.py:210 InvenTree/models.py:896 build/serializers.py:527
-#: build/serializers.py:598 company/models.py:834 order/models.py:1621
+#: InvenTree/fields.py:210 InvenTree/models.py:896 build/serializers.py:495
+#: build/serializers.py:566 company/models.py:834 order/models.py:1621
 #: part/models.py:3416
 #: report/templates/report/inventree_build_order_report.html:172
 #: stock/models.py:2708 stock/models.py:2832 stock/serializers.py:756
@@ -155,15 +155,16 @@ msgstr "Grupės {group} kiekis viršija leistiną kiekį ({expected_quantity})"
 msgid "No serial numbers found"
 msgstr "Serijos numerių nerasta"
 
-#: InvenTree/helpers.py:721
-msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "Unikalių serijos numerių skaičius ({len(serials)}) turi atitikti kiekį ({expected_quantity})"
+#: InvenTree/helpers.py:723
+#, python-brace-format
+msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
+msgstr ""
 
-#: InvenTree/helpers.py:840
+#: InvenTree/helpers.py:841
 msgid "Remove HTML tags from this value"
 msgstr "Pašalinkite HTML žymes iš šios reikšmės"
 
-#: InvenTree/helpers.py:919
+#: InvenTree/helpers.py:920
 msgid "Data contains prohibited markdown content"
 msgstr "Duomenyse yra draudžiamo „markdown“ turinio"
 
@@ -482,7 +483,7 @@ msgstr "Turi būti teisingas skaičius"
 msgid "Currency"
 msgstr "Valiuta"
 
-#: InvenTree/serializers.py:114 part/serializers.py:1372
+#: InvenTree/serializers.py:114 part/serializers.py:1439
 msgid "Select currency from available options"
 msgstr "Pasirinkite valiutą iš galimų variantų"
 
@@ -540,15 +541,15 @@ msgid "Include Variants"
 msgstr "Įtraukti variantus"
 
 #: build/api.py:84 build/api.py:470 build/api.py:782 build/models.py:268
-#: build/serializers.py:1255 build/serializers.py:1377
-#: build/serializers.py:1428 company/models.py:1044 company/serializers.py:432
+#: build/serializers.py:1222 build/serializers.py:1344
+#: build/serializers.py:1395 company/models.py:1044 company/serializers.py:432
 #: order/api.py:292 order/api.py:296 order/api.py:897 order/api.py:1136
 #: order/api.py:1139 order/models.py:1770 order/models.py:1940
-#: order/models.py:1941 part/api.py:1482 part/api.py:1485 part/api.py:1551
-#: part/api.py:1861 part/models.py:457 part/models.py:3245 part/models.py:3389
+#: order/models.py:1941 part/api.py:1457 part/api.py:1460 part/api.py:1526
+#: part/api.py:1836 part/models.py:457 part/models.py:3245 part/models.py:3389
 #: part/models.py:3537 part/models.py:3558 part/models.py:3580
 #: part/models.py:3719 part/models.py:4080 part/models.py:4352
-#: part/models.py:4718 part/serializers.py:1292 part/serializers.py:1961
+#: part/models.py:4718 part/serializers.py:1359 part/serializers.py:2028
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -567,8 +568,8 @@ msgstr "Įtraukti variantus"
 msgid "Part"
 msgstr "Detalė"
 
-#: build/api.py:104 build/api.py:107 part/api.py:1565 part/models.py:1080
-#: part/models.py:3608 part/models.py:4189 part/serializers.py:1302
+#: build/api.py:104 build/api.py:107 part/api.py:1540 part/models.py:1080
+#: part/models.py:3608 part/models.py:4189 part/serializers.py:1369
 #: stock/api.py:818
 msgid "Category"
 msgstr "Kategorija"
@@ -646,16 +647,16 @@ msgstr "Neįtraukti medžio struktūros"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Prieš ištrinant gamybą, ji turi būti atšaukta"
 
-#: build/api.py:453 build/serializers.py:1393 part/models.py:4386
+#: build/api.py:453 build/serializers.py:1360 part/models.py:4386
 msgid "Consumable"
 msgstr "Sunaudojama"
 
-#: build/api.py:456 build/serializers.py:1396 part/models.py:4380
+#: build/api.py:456 build/serializers.py:1363 part/models.py:4380
 msgid "Optional"
 msgstr "Pasirinktinai"
 
 #: build/api.py:459 common/setting/system.py:429 part/models.py:1211
-#: part/serializers.py:1700 part/serializers.py:1709 stock/api.py:588
+#: part/serializers.py:1767 part/serializers.py:1776 stock/api.py:588
 msgid "Assembly"
 msgstr "Surinkimas"
 
@@ -663,7 +664,7 @@ msgstr "Surinkimas"
 msgid "Tracked"
 msgstr "Sekama"
 
-#: build/api.py:465 build/serializers.py:1399 part/models.py:1229
+#: build/api.py:465 build/serializers.py:1366 part/models.py:1229
 msgid "Testable"
 msgstr "Testuojama"
 
@@ -729,7 +730,7 @@ msgstr "Tikslinė data turi būti po pradžios datos"
 msgid "Build Order Reference"
 msgstr "Gamybos užsakymo nuoroda"
 
-#: build/models.py:244 build/serializers.py:1390 order/models.py:602
+#: build/models.py:244 build/serializers.py:1357 order/models.py:602
 #: order/models.py:1182 order/models.py:1614 order/models.py:2486
 #: part/models.py:4401
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -759,7 +760,7 @@ msgstr "Pardavimo užsakymo nuoroda"
 msgid "SalesOrder to which this build is allocated"
 msgstr "Pardavimo užsakymas, kuriam ši gamyba priskirta"
 
-#: build/models.py:287 build/serializers.py:1105
+#: build/models.py:287 build/serializers.py:1073
 msgid "Source Location"
 msgstr "Šaltinio vieta"
 
@@ -807,12 +808,12 @@ msgstr "Gamybos būsena"
 msgid "Build status code"
 msgstr "Gamybos būsenos kodas"
 
-#: build/models.py:341 build/serializers.py:377 order/serializers.py:792
+#: build/models.py:341 build/serializers.py:345 order/serializers.py:792
 #: stock/models.py:1023 stock/serializers.py:84 stock/serializers.py:1651
 msgid "Batch Code"
 msgstr "Partijos kodas"
 
-#: build/models.py:345 build/serializers.py:378
+#: build/models.py:345 build/serializers.py:346
 msgid "Batch code for this build output"
 msgstr "Šios gamybos partijos kodas"
 
@@ -902,7 +903,7 @@ msgstr "Gamybos užsakymas {build} užbaigtas"
 msgid "A build order has been completed"
 msgstr "Gamybos užsakymas užbaigtas"
 
-#: build/models.py:895 build/serializers.py:425
+#: build/models.py:895 build/serializers.py:393
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "Sekamoms detalėms būtina nurodyti serijos numerius"
 
@@ -918,18 +919,18 @@ msgstr "Gamybos rezultatas jau užbaigtas"
 msgid "Build output does not match Build Order"
 msgstr "Gamybos rezultatas neatitinka gamybos užsakymo"
 
-#: build/models.py:1093 build/serializers.py:304 build/serializers.py:353
-#: build/serializers.py:973 order/models.py:705 order/serializers.py:604
-#: order/serializers.py:787 part/serializers.py:1694 stock/models.py:863
+#: build/models.py:1093 build/serializers.py:272 build/serializers.py:321
+#: build/serializers.py:941 order/models.py:705 order/serializers.py:604
+#: order/serializers.py:787 part/serializers.py:1761 stock/models.py:863
 #: stock/models.py:1730 stock/serializers.py:727
 msgid "Quantity must be greater than zero"
 msgstr "Kiekis turi būti didesnis nei nulis"
 
-#: build/models.py:1097 build/serializers.py:308
+#: build/models.py:1097 build/serializers.py:276
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Kiekis negali viršyti rezultato kiekio"
 
-#: build/models.py:1162 build/serializers.py:616
+#: build/models.py:1162 build/serializers.py:584
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Gamybos rezultatas {serial} nepraėjo visų privalomų testų"
@@ -942,8 +943,8 @@ msgstr "Gamybos užsakymo eilutės įrašas"
 msgid "Build object"
 msgstr "Gamybos objektas"
 
-#: build/models.py:1584 build/models.py:1843 build/serializers.py:292
-#: build/serializers.py:338 build/serializers.py:1411 common/models.py:1287
+#: build/models.py:1584 build/models.py:1843 build/serializers.py:260
+#: build/serializers.py:306 build/serializers.py:1378 common/models.py:1287
 #: order/models.py:1597 order/models.py:2371 order/serializers.py:1678
 #: order/serializers.py:2139 part/models.py:3403 part/models.py:4374
 #: part/serializers.py:274
@@ -990,7 +991,7 @@ msgstr "Atsargoms su serijos numeriais kiekis turi būti 1"
 msgid "Selected stock item does not match BOM line"
 msgstr "Pasirinktas atsargų elementas neatitinka BOM eilutės"
 
-#: build/models.py:1833 build/serializers.py:956 build/serializers.py:1264
+#: build/models.py:1833 build/serializers.py:924 build/serializers.py:1231
 #: order/serializers.py:1515 order/serializers.py:1536
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
 #: stock/models.py:452 stock/serializers.py:101 stock/serializers.py:825
@@ -1014,359 +1015,353 @@ msgstr "Įdiegti į"
 msgid "Destination stock item"
 msgstr "Paskirties atsargų elementas"
 
-#: build/serializers.py:117
+#: build/serializers.py:115
 msgid "Build Level"
 msgstr "Gamybos lygis"
 
-#: build/serializers.py:126 part/stocktake.py:219
+#: build/serializers.py:124 part/stocktake.py:219
 msgid "Part Name"
 msgstr "Detalės pavadinimas"
 
-#: build/serializers.py:144
+#: build/serializers.py:142
 msgid "Project Code Label"
 msgstr "Projekto kodo etiketė"
 
-#: build/serializers.py:156
-msgid "Create Child Builds"
-msgstr "Sukurti antrines gamybas"
-
-#: build/serializers.py:157
-msgid "Automatically generate child build orders"
-msgstr "Automatiškai generuoti antrinius gamybos užsakymus"
-
-#: build/serializers.py:240 build/serializers.py:982
+#: build/serializers.py:208 build/serializers.py:950
 msgid "Build Output"
 msgstr "Gamybos rezultatas"
 
-#: build/serializers.py:252
+#: build/serializers.py:220
 msgid "Build output does not match the parent build"
 msgstr "Gamybos rezultatas neatitinka pirminės gamybos"
 
-#: build/serializers.py:256
+#: build/serializers.py:224
 msgid "Output part does not match BuildOrder part"
 msgstr "Rezultato detalė neatitinka gamybos užsakymo detalės"
 
-#: build/serializers.py:260
+#: build/serializers.py:228
 msgid "This build output has already been completed"
 msgstr "Šis gamybos rezultatas jau užbaigtas"
 
-#: build/serializers.py:274
+#: build/serializers.py:242
 msgid "This build output is not fully allocated"
 msgstr "Šis gamybos rezultatas nėra visiškai paskirstytas"
 
-#: build/serializers.py:293 build/serializers.py:339
+#: build/serializers.py:261 build/serializers.py:307
 msgid "Enter quantity for build output"
 msgstr "Įveskite kiekį gamybos rezultatui"
 
-#: build/serializers.py:361
+#: build/serializers.py:329
 msgid "Integer quantity required for trackable parts"
 msgstr "Sekamoms detalėms reikalingas sveikasis kiekis"
 
-#: build/serializers.py:367
+#: build/serializers.py:335
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Reikalingas sveikasis kiekis, nes komplektavimo žiniaraštyje yra sekamų detalių"
 
-#: build/serializers.py:384 order/serializers.py:808 order/serializers.py:1682
+#: build/serializers.py:352 order/serializers.py:808 order/serializers.py:1682
 #: stock/serializers.py:738
 msgid "Serial Numbers"
 msgstr "Serijos numeriai"
 
-#: build/serializers.py:385
+#: build/serializers.py:353
 msgid "Enter serial numbers for build outputs"
 msgstr "Įveskite serijos numerius gamybos rezultatams"
 
-#: build/serializers.py:390 build/serializers.py:515 build/serializers.py:585
-#: build/serializers.py:1268 build/serializers.py:1272 order/serializers.py:776
-#: order/serializers.py:923 order/serializers.py:2030 part/serializers.py:1312
+#: build/serializers.py:358 build/serializers.py:483 build/serializers.py:553
+#: build/serializers.py:1235 build/serializers.py:1239 order/serializers.py:776
+#: order/serializers.py:923 order/serializers.py:2030 part/serializers.py:1379
 #: stock/serializers.py:110 stock/serializers.py:647 stock/serializers.py:749
 #: stock/serializers.py:913 stock/serializers.py:1041 stock/serializers.py:1501
 #: stock/serializers.py:1789 users/models.py:555
 msgid "Location"
 msgstr "Vieta"
 
-#: build/serializers.py:391
+#: build/serializers.py:359
 msgid "Stock location for build output"
 msgstr "Atsargų vieta gamybos rezultatams"
 
-#: build/serializers.py:406
+#: build/serializers.py:374
 msgid "Auto Allocate Serial Numbers"
 msgstr "Automatiškai priskirti serijos numerius"
 
-#: build/serializers.py:408
+#: build/serializers.py:376
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automatiškai priskirti reikalingas prekes su atitinkančiais serijos numeriais"
 
-#: build/serializers.py:441 order/serializers.py:901 stock/api.py:1077
+#: build/serializers.py:409 order/serializers.py:901 stock/api.py:1077
 #: stock/models.py:1753
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Šie serijos numeriai jau egzistuoja arba yra neteisingi"
 
-#: build/serializers.py:483 build/serializers.py:539 build/serializers.py:623
+#: build/serializers.py:451 build/serializers.py:507 build/serializers.py:591
 msgid "A list of build outputs must be provided"
 msgstr "Turi būti pateiktas gamybos rezultatų sąrašas"
 
-#: build/serializers.py:516
+#: build/serializers.py:484
 msgid "Stock location for scrapped outputs"
 msgstr "Atsargų vieta brokuotiems rezultatams"
 
-#: build/serializers.py:522
+#: build/serializers.py:490
 msgid "Discard Allocations"
 msgstr "Atmesti priskyrimus"
 
-#: build/serializers.py:523
+#: build/serializers.py:491
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "Atmesti visus atsargų priskyrimus brokuotiems rezultatams"
 
-#: build/serializers.py:528
+#: build/serializers.py:496
 msgid "Reason for scrapping build output(s)"
 msgstr "Priežastis, dėl kurios gamybos rezultatas(-ai) buvo nurašytas(-i)"
 
-#: build/serializers.py:586
+#: build/serializers.py:554
 msgid "Location for completed build outputs"
 msgstr "Vieta, kur laikomi užbaigti gamybos rezultatai"
 
-#: build/serializers.py:594
+#: build/serializers.py:562
 msgid "Accept Incomplete Allocation"
 msgstr "Priimti nepilną priskyrimą"
 
-#: build/serializers.py:595
+#: build/serializers.py:563
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Užbaigti rezultatus, net jei atsargos dar nėra pilnai priskirtos"
 
-#: build/serializers.py:710
+#: build/serializers.py:678
 msgid "Consume Allocated Stock"
 msgstr "Sunaudoti priskirtas atsargas"
 
-#: build/serializers.py:711
+#: build/serializers.py:679
 msgid "Consume any stock which has already been allocated to this build"
 msgstr "Sunaudoti bet kokias šiai gamybai jau priskirtas atsargas"
 
-#: build/serializers.py:717
+#: build/serializers.py:685
 msgid "Remove Incomplete Outputs"
 msgstr "Pašalinti nebaigtus rezultatus"
 
-#: build/serializers.py:718
+#: build/serializers.py:686
 msgid "Delete any build outputs which have not been completed"
 msgstr "Ištrinti visus nebaigtus gamybos rezultatus"
 
-#: build/serializers.py:745
+#: build/serializers.py:713
 msgid "Not permitted"
 msgstr "Neleidžiama"
 
-#: build/serializers.py:746
+#: build/serializers.py:714
 msgid "Accept as consumed by this build order"
 msgstr "Priimti kaip sunaudotą šio gamybos užsakymo metu"
 
-#: build/serializers.py:747
+#: build/serializers.py:715
 msgid "Deallocate before completing this build order"
 msgstr "Panaikinkite priskyrimus prieš užbaigiant šį gamybos užsakymą"
 
-#: build/serializers.py:774
+#: build/serializers.py:742
 msgid "Overallocated Stock"
 msgstr "Per daug paskirstytos atsargos"
 
-#: build/serializers.py:777
+#: build/serializers.py:745
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr "Kaip norite elgtis su papildomai šiam gamybos užsakymui priskirtomis atsargomis"
 
-#: build/serializers.py:788
+#: build/serializers.py:756
 msgid "Some stock items have been overallocated"
 msgstr "Kai kurios atsargos paskirstytos per daug"
 
-#: build/serializers.py:793
+#: build/serializers.py:761
 msgid "Accept Unallocated"
 msgstr "Priimti nepriskirtą"
 
-#: build/serializers.py:795
+#: build/serializers.py:763
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Priimti, kad atsargos nebuvo visiškai priskirtos šiam gamybos užsakymui"
 
-#: build/serializers.py:806
+#: build/serializers.py:774
 msgid "Required stock has not been fully allocated"
 msgstr "Reikalingos atsargos nėra visiškai priskirtos"
 
-#: build/serializers.py:811 order/serializers.py:445 order/serializers.py:1583
+#: build/serializers.py:779 order/serializers.py:445 order/serializers.py:1583
 msgid "Accept Incomplete"
 msgstr "Priimti nepilną"
 
-#: build/serializers.py:813
+#: build/serializers.py:781
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Priimti, kad ne visi reikalingi gamybos rezultatai buvo užbaigti"
 
-#: build/serializers.py:824
+#: build/serializers.py:792
 msgid "Required build quantity has not been completed"
 msgstr "Reikalingas gamybos kiekis nebuvo užbaigtas"
 
-#: build/serializers.py:836
+#: build/serializers.py:804
 msgid "Build order has open child build orders"
 msgstr "Gamybos užsakymas turi nebaigtų antrinių gamybų"
 
-#: build/serializers.py:839
+#: build/serializers.py:807
 msgid "Build order must be in production state"
 msgstr "Gamybos užsakymas turi būti gamybos būsenoje"
 
-#: build/serializers.py:842
+#: build/serializers.py:810
 msgid "Build order has incomplete outputs"
 msgstr "Gamybos užsakymas turi nebaigtų rezultatų"
 
-#: build/serializers.py:881
+#: build/serializers.py:849
 msgid "Build Line"
 msgstr "Gamybos eilutė"
 
-#: build/serializers.py:889
+#: build/serializers.py:857
 msgid "Build output"
 msgstr "Gamybos rezultatas"
 
-#: build/serializers.py:897
+#: build/serializers.py:865
 msgid "Build output must point to the same build"
 msgstr "Gamybos rezultatas turi būti susietas su ta pačia gamyba"
 
-#: build/serializers.py:928
+#: build/serializers.py:896
 msgid "Build Line Item"
 msgstr "Gamybos eilutės įrašas"
 
-#: build/serializers.py:946
+#: build/serializers.py:914
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part turi būti ta pati detalė kaip ir gamybos užsakyme"
 
-#: build/serializers.py:962 stock/serializers.py:1370
+#: build/serializers.py:930 stock/serializers.py:1370
 msgid "Item must be in stock"
 msgstr "Prekė turi būti atsargose"
 
-#: build/serializers.py:1005 order/serializers.py:1569
+#: build/serializers.py:973 order/serializers.py:1569
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Viršytas prieinamas kiekis ({q})"
 
-#: build/serializers.py:1011
+#: build/serializers.py:979
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "Sekamų detalių priskyrymui turi būti nurodytas gamybos rezultatas"
 
-#: build/serializers.py:1019
+#: build/serializers.py:987
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Negalima nurodyti gamybos rezultato nesekamoms detalėms"
 
-#: build/serializers.py:1043 order/serializers.py:1842
+#: build/serializers.py:1011 order/serializers.py:1842
 msgid "Allocation items must be provided"
 msgstr "Turi būti pateikti paskirstymo elementai"
 
-#: build/serializers.py:1107
+#: build/serializers.py:1075
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Atsargų vieta, iš kurios bus imamos detalės (palikite tuščią, jei tinka bet kuri vieta)"
 
-#: build/serializers.py:1116
+#: build/serializers.py:1084
 msgid "Exclude Location"
 msgstr "Neįtraukti vietos"
 
-#: build/serializers.py:1117
+#: build/serializers.py:1085
 msgid "Exclude stock items from this selected location"
 msgstr "Neįtraukti atsargų iš šios pasirinktos vietos"
 
-#: build/serializers.py:1122
+#: build/serializers.py:1090
 msgid "Interchangeable Stock"
 msgstr "Keičiamos atsargos"
 
-#: build/serializers.py:1123
+#: build/serializers.py:1091
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "Atsargos iš skirtingų vietų gali būti naudojamos pakaitomis"
 
-#: build/serializers.py:1128
+#: build/serializers.py:1096
 msgid "Substitute Stock"
 msgstr "Pakaitinės atsargos"
 
-#: build/serializers.py:1129
+#: build/serializers.py:1097
 msgid "Allow allocation of substitute parts"
 msgstr "Leisti priskirti pakaitines detales"
 
-#: build/serializers.py:1134
+#: build/serializers.py:1102
 msgid "Optional Items"
 msgstr "Pasirenkami elementai"
 
-#: build/serializers.py:1135
+#: build/serializers.py:1103
 msgid "Allocate optional BOM items to build order"
 msgstr "Priskirti papildomus BOM elementus gamybos užsakymui"
 
-#: build/serializers.py:1157
+#: build/serializers.py:1124
 msgid "Failed to start auto-allocation task"
 msgstr "Nepavyko paleisti automatinio paskirstymo užduoties"
 
-#: build/serializers.py:1231
+#: build/serializers.py:1198
 msgid "BOM Reference"
 msgstr "BOM nuoroda"
 
-#: build/serializers.py:1237
+#: build/serializers.py:1204
 msgid "BOM Part ID"
 msgstr "BOM detalės ID"
 
-#: build/serializers.py:1244
+#: build/serializers.py:1211
 msgid "BOM Part Name"
 msgstr "BOM detalės pavadinimas"
 
-#: build/serializers.py:1279 build/serializers.py:1435
+#: build/serializers.py:1246 build/serializers.py:1402
 msgid "Build"
 msgstr "Gamyba"
 
-#: build/serializers.py:1287 company/models.py:662 order/api.py:305
+#: build/serializers.py:1254 company/models.py:662 order/api.py:305
 #: order/api.py:310 order/api.py:525 order/serializers.py:596
 #: stock/models.py:959 stock/serializers.py:631
 msgid "Supplier Part"
 msgstr "Tiekėjo detalė"
 
-#: build/serializers.py:1295 stock/serializers.py:662
+#: build/serializers.py:1262 stock/serializers.py:662
 msgid "Allocated Quantity"
 msgstr "Priskirtas kiekis"
 
-#: build/serializers.py:1372
+#: build/serializers.py:1339
 msgid "Build Reference"
 msgstr "Gamybos nuoroda"
 
-#: build/serializers.py:1382
+#: build/serializers.py:1349
 msgid "Part Category Name"
 msgstr "Detalės kategorijos pavadinimas"
 
-#: build/serializers.py:1402 common/setting/system.py:453 part/models.py:1223
+#: build/serializers.py:1369 common/setting/system.py:453 part/models.py:1223
 msgid "Trackable"
 msgstr "Sekama"
 
-#: build/serializers.py:1405
+#: build/serializers.py:1372
 msgid "Inherited"
 msgstr "Paveldėta"
 
-#: build/serializers.py:1408 part/models.py:4434
+#: build/serializers.py:1375 part/models.py:4434
 msgid "Allow Variants"
 msgstr "Leisti variantus"
 
-#: build/serializers.py:1413 build/serializers.py:1417 part/models.py:4232
+#: build/serializers.py:1380 build/serializers.py:1384 part/models.py:4232
 #: part/models.py:4710 stock/api.py:831
 msgid "BOM Item"
 msgstr "BOM elementas"
 
-#: build/serializers.py:1446
+#: build/serializers.py:1413
 msgid "Allocated Stock"
 msgstr "Priskirtos atsargos"
 
-#: build/serializers.py:1448 company/serializers.py:424
-#: order/serializers.py:1278 part/serializers.py:967 part/serializers.py:1727
+#: build/serializers.py:1415 company/serializers.py:424
+#: order/serializers.py:1278 part/serializers.py:967 part/serializers.py:1255
+#: part/serializers.py:1794
 msgid "On Order"
 msgstr "Užsakyta"
 
-#: build/serializers.py:1450 order/serializers.py:1279 part/serializers.py:1731
+#: build/serializers.py:1417 order/serializers.py:1279 part/serializers.py:1259
+#: part/serializers.py:1798
 msgid "In Production"
 msgstr "Gamyboje"
 
-#: build/serializers.py:1452 part/serializers.py:995
+#: build/serializers.py:1419 part/serializers.py:995
 msgid "External Stock"
 msgstr "Išorinės atsargos"
 
-#: build/serializers.py:1453 part/serializers.py:1760
+#: build/serializers.py:1420 part/serializers.py:1249 part/serializers.py:1827
 msgid "Available Stock"
 msgstr "Prieinamos atsargos"
 
-#: build/serializers.py:1455
+#: build/serializers.py:1422
 msgid "Available Substitute Stock"
 msgstr "Prieinamos pakaitinės atsargos"
 
-#: build/serializers.py:1458
+#: build/serializers.py:1425
 msgid "Available Variant Stock"
 msgstr "Prieinamos variantų atsargos"
 
@@ -1396,15 +1391,15 @@ msgstr "Atšaukta"
 msgid "Complete"
 msgstr "Užbaigta"
 
-#: build/tasks.py:193
+#: build/tasks.py:190
 msgid "Stock required for build order"
 msgstr "Atsargos, reikalingos gamybos užsakymui"
 
-#: build/tasks.py:267
+#: build/tasks.py:211
 msgid "Overdue Build Order"
 msgstr "Vėluojantis gamybos užsakymas"
 
-#: build/tasks.py:272
+#: build/tasks.py:216
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "Gamybos užsakymas {bo} dabar vėluoja"
@@ -2209,7 +2204,7 @@ msgstr "Kaip dažnai atnaujinti valiutų kursus (nulis – išjungti)"
 #: common/setting/system.py:294 common/setting/system.py:302
 #: common/setting/system.py:309 common/setting/system.py:318
 #: common/setting/system.py:561 common/setting/system.py:581
-#: common/setting/system.py:678 common/setting/system.py:1068
+#: common/setting/system.py:672 common/setting/system.py:1062
 msgid "days"
 msgstr "dienos"
 
@@ -2451,8 +2446,8 @@ msgstr "Detalės pagal nutylėjimą yra šablonai"
 msgid "Parts can be assembled from other components by default"
 msgstr "Detalės pagal nutylėjimą gali būti surenkamos iš kitų komponentų"
 
-#: common/setting/system.py:435 part/models.py:1217 part/serializers.py:1714
-#: part/serializers.py:1720
+#: common/setting/system.py:435 part/models.py:1217 part/serializers.py:1781
+#: part/serializers.py:1787
 msgid "Component"
 msgstr "Komponentas"
 
@@ -2682,508 +2677,500 @@ msgid "Serial numbers for stock items must be globally unique"
 msgstr "Atsargų serijos numeriai turi būti globaliai unikalūs"
 
 #: common/setting/system.py:644
-msgid "Autofill Serial Numbers"
-msgstr "Automatiškai užpildyti serijos numerius"
-
-#: common/setting/system.py:645
-msgid "Autofill serial numbers in forms"
-msgstr "Automatiškai užpildyti serijos numerius formose"
-
-#: common/setting/system.py:650
 msgid "Delete Depleted Stock"
 msgstr "Ištrinti išnaudotas atsargas"
 
-#: common/setting/system.py:651
+#: common/setting/system.py:645
 msgid "Determines default behavior when a stock item is depleted"
 msgstr "Nustato numatytą elgseną, kai atsargos yra išnaudotos"
 
-#: common/setting/system.py:656
+#: common/setting/system.py:650
 msgid "Batch Code Template"
 msgstr "Partijos kodo šablonas"
 
-#: common/setting/system.py:657
+#: common/setting/system.py:651
 msgid "Template for generating default batch codes for stock items"
 msgstr "Šablonas numatytiesiems atsargų partijos kodams generuoti"
 
-#: common/setting/system.py:661
+#: common/setting/system.py:655
 msgid "Stock Expiry"
 msgstr "Atsargų galiojimas"
 
-#: common/setting/system.py:662
+#: common/setting/system.py:656
 msgid "Enable stock expiry functionality"
 msgstr "Įjungti atsargų galiojimo funkcionalumą"
 
-#: common/setting/system.py:667
+#: common/setting/system.py:661
 msgid "Sell Expired Stock"
 msgstr "Parduoti pasibaigusias galioti atsargas"
 
-#: common/setting/system.py:668
+#: common/setting/system.py:662
 msgid "Allow sale of expired stock"
 msgstr "Leisti parduoti pasibaigusias galioti atsargas"
 
-#: common/setting/system.py:673
+#: common/setting/system.py:667
 msgid "Stock Stale Time"
 msgstr "Atsargų senėjimo laikas"
 
-#: common/setting/system.py:675
+#: common/setting/system.py:669
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Dienų skaičius, po kurio atsargos laikomos pasenusiomis iki jų galiojimo pabaigos"
 
-#: common/setting/system.py:682
+#: common/setting/system.py:676
 msgid "Build Expired Stock"
 msgstr "Naudoti pasibaigusias galioti atsargas gamyboje"
 
-#: common/setting/system.py:683
+#: common/setting/system.py:677
 msgid "Allow building with expired stock"
 msgstr "Leisti naudoti pasibaigusias galioti atsargas gamyboje"
 
-#: common/setting/system.py:688
+#: common/setting/system.py:682
 msgid "Stock Ownership Control"
 msgstr "Atsargų nuosavybės kontrolė"
 
-#: common/setting/system.py:689
+#: common/setting/system.py:683
 msgid "Enable ownership control over stock locations and items"
 msgstr "Įjungti atsargų vietų ir vienetų nuosavybės kontrolę"
 
-#: common/setting/system.py:694
+#: common/setting/system.py:688
 msgid "Stock Location Default Icon"
 msgstr "Atsargų vietos numatytoji piktograma"
 
-#: common/setting/system.py:695
+#: common/setting/system.py:689
 msgid "Stock location default icon (empty means no icon)"
 msgstr "Atsargų vietos numatytoji piktograma (tuščia reiškia nenaudojama)"
 
-#: common/setting/system.py:700
+#: common/setting/system.py:694
 msgid "Show Installed Stock Items"
 msgstr "Rodyti sumontuotas atsargas"
 
-#: common/setting/system.py:701
+#: common/setting/system.py:695
 msgid "Display installed stock items in stock tables"
 msgstr "Rodyti sumontuotas atsargas atsargų lentelėse"
 
-#: common/setting/system.py:706
+#: common/setting/system.py:700
 msgid "Check BOM when installing items"
 msgstr "Tikrinti BOM montuojant atsargas"
 
-#: common/setting/system.py:708
+#: common/setting/system.py:702
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr "Sumontuotos atsargos turi būti pirminio gaminio BOM"
 
-#: common/setting/system.py:714
+#: common/setting/system.py:708
 msgid "Allow Out of Stock Transfer"
 msgstr "Leisti perkelti neturimas atsargas"
 
-#: common/setting/system.py:716
+#: common/setting/system.py:710
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr "Leisti perkelti atsargas tarp vietų net jei jų nėra atsargose"
 
-#: common/setting/system.py:722
+#: common/setting/system.py:716
 msgid "Build Order Reference Pattern"
 msgstr "Gamybos užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:723
+#: common/setting/system.py:717
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Privalomas šablonas gamybos užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:728 common/setting/system.py:788
-#: common/setting/system.py:808 common/setting/system.py:844
+#: common/setting/system.py:722 common/setting/system.py:782
+#: common/setting/system.py:802 common/setting/system.py:838
 msgid "Require Responsible Owner"
 msgstr "Reikalauti atsakingo savininko"
 
-#: common/setting/system.py:729 common/setting/system.py:789
-#: common/setting/system.py:809 common/setting/system.py:845
+#: common/setting/system.py:723 common/setting/system.py:783
+#: common/setting/system.py:803 common/setting/system.py:839
 msgid "A responsible owner must be assigned to each order"
 msgstr "Kiekvienam užsakymui turi būti priskirtas atsakingas savininkas"
 
-#: common/setting/system.py:734
+#: common/setting/system.py:728
 msgid "Require Active Part"
 msgstr "Reikalauti aktyvios detalės"
 
-#: common/setting/system.py:735
+#: common/setting/system.py:729
 msgid "Prevent build order creation for inactive parts"
 msgstr "Neleidžia kurti gamybos užsakymų neaktyvioms detalėms"
 
-#: common/setting/system.py:740
+#: common/setting/system.py:734
 msgid "Require Locked Part"
 msgstr "Reikalauti užrakintos detalės"
 
-#: common/setting/system.py:741
+#: common/setting/system.py:735
 msgid "Prevent build order creation for unlocked parts"
 msgstr "Neleidžia kurti gamybos užsakymų neužrakintoms detalėms"
 
-#: common/setting/system.py:746
+#: common/setting/system.py:740
 msgid "Require Valid BOM"
 msgstr "Reikalauti galiojančio komplektavimo sąrašo (BOM)"
 
-#: common/setting/system.py:747
+#: common/setting/system.py:741
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr "Neleidžia kurti gamybos užsakymų, kol BOM nėra patvirtintas"
 
-#: common/setting/system.py:752
+#: common/setting/system.py:746
 msgid "Require Closed Child Orders"
 msgstr "Reikalauti uždarytų antrinių užsakymų"
 
-#: common/setting/system.py:754
+#: common/setting/system.py:748
 msgid "Prevent build order completion until all child orders are closed"
 msgstr "Neleidžia užbaigti gamybos užsakymo, kol visi antriniai užsakymai neuždaryti"
 
-#: common/setting/system.py:760
+#: common/setting/system.py:754
 msgid "External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:761
+#: common/setting/system.py:755
 msgid "Enable external build order functionality"
 msgstr ""
 
-#: common/setting/system.py:766
+#: common/setting/system.py:760
 msgid "Block Until Tests Pass"
 msgstr "Blokuoti, kol testai bus išlaikyti"
 
-#: common/setting/system.py:768
+#: common/setting/system.py:762
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr "Neleidžia užbaigti gaminių, kol visi privalomi testai nėra išlaikyti"
 
-#: common/setting/system.py:774
+#: common/setting/system.py:768
 msgid "Enable Return Orders"
 msgstr "Įjungti grąžinimo užsakymus"
 
-#: common/setting/system.py:775
+#: common/setting/system.py:769
 msgid "Enable return order functionality in the user interface"
 msgstr "Įjungia grąžinimo užsakymų funkciją vartotojo sąsajoje"
 
-#: common/setting/system.py:780
+#: common/setting/system.py:774
 msgid "Return Order Reference Pattern"
 msgstr "Grąžinimo užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:782
+#: common/setting/system.py:776
 msgid "Required pattern for generating Return Order reference field"
 msgstr "Būtinas šablonas grąžinimo užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:794
+#: common/setting/system.py:788
 msgid "Edit Completed Return Orders"
 msgstr "Redaguoti užbaigtus grąžinimo užsakymus"
 
-#: common/setting/system.py:796
+#: common/setting/system.py:790
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Leisti redaguoti grąžinimo užsakymus po jų užbaigimo"
 
-#: common/setting/system.py:802
+#: common/setting/system.py:796
 msgid "Sales Order Reference Pattern"
 msgstr "Pardavimo užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:803
+#: common/setting/system.py:797
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Būtinas šablonas pardavimo užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:814
+#: common/setting/system.py:808
 msgid "Sales Order Default Shipment"
 msgstr "Numatytasis siuntinys pardavimo užsakymui"
 
-#: common/setting/system.py:815
+#: common/setting/system.py:809
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Leisti automatiškai sukurti siuntinį kartu su pardavimo užsakymu"
 
-#: common/setting/system.py:820
+#: common/setting/system.py:814
 msgid "Edit Completed Sales Orders"
 msgstr "Redaguoti užbaigtus pardavimo užsakymus"
 
-#: common/setting/system.py:822
+#: common/setting/system.py:816
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Leisti redaguoti pardavimo užsakymus po jų išsiuntimo arba užbaigimo"
 
-#: common/setting/system.py:828
+#: common/setting/system.py:822
 msgid "Mark Shipped Orders as Complete"
 msgstr "Pažymėti išsiųstus užsakymus kaip užbaigtus"
 
-#: common/setting/system.py:830
+#: common/setting/system.py:824
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr "Pardavimo užsakymai, pažymėti kaip išsiųsti, bus automatiškai užbaigti, praleidžiant būseną „išsiųsta“"
 
-#: common/setting/system.py:836
+#: common/setting/system.py:830
 msgid "Purchase Order Reference Pattern"
 msgstr "Pirkimo užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:838
+#: common/setting/system.py:832
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Būtinas šablonas pirkimo užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:850
+#: common/setting/system.py:844
 msgid "Edit Completed Purchase Orders"
 msgstr "Redaguoti užbaigtus pirkimo užsakymus"
 
-#: common/setting/system.py:852
+#: common/setting/system.py:846
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Leisti redaguoti pirkimo užsakymus po jų išsiuntimo arba užbaigimo"
 
-#: common/setting/system.py:858
+#: common/setting/system.py:852
 msgid "Convert Currency"
 msgstr "Konvertuoti valiutą"
 
-#: common/setting/system.py:859
+#: common/setting/system.py:853
 msgid "Convert item value to base currency when receiving stock"
 msgstr "Konvertuoti prekių vertę į pagrindinę valiutą priimant prekes"
 
-#: common/setting/system.py:864
+#: common/setting/system.py:858
 msgid "Auto Complete Purchase Orders"
 msgstr "Automatiškai užbaigti pirkimo užsakymus"
 
-#: common/setting/system.py:866
+#: common/setting/system.py:860
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "Automatiškai pažymėti pirkimo užsakymus kaip užbaigtus, kai visos eilutės yra gautos"
 
-#: common/setting/system.py:873
+#: common/setting/system.py:867
 msgid "Enable password forgot"
 msgstr "Įjungti pamiršto slaptažodžio funkciją"
 
-#: common/setting/system.py:874
+#: common/setting/system.py:868
 msgid "Enable password forgot function on the login pages"
 msgstr "Leisti naudoti pamiršto slaptažodžio funkciją prisijungimo puslapyje"
 
-#: common/setting/system.py:879
+#: common/setting/system.py:873
 msgid "Enable registration"
 msgstr "Įjungti registraciją"
 
-#: common/setting/system.py:880
+#: common/setting/system.py:874
 msgid "Enable self-registration for users on the login pages"
 msgstr "Leisti vartotojams savarankiškai registruotis prisijungimo puslapyje"
 
-#: common/setting/system.py:885
+#: common/setting/system.py:879
 msgid "Enable SSO"
 msgstr "Įjungti vieningą prisijungimą (SSO)"
 
-#: common/setting/system.py:886
+#: common/setting/system.py:880
 msgid "Enable SSO on the login pages"
 msgstr "Įjungti vieningą prisijungimą (SSO) prisijungimo puslapyje"
 
-#: common/setting/system.py:891
+#: common/setting/system.py:885
 msgid "Enable SSO registration"
 msgstr "Įjungti registraciją per SSO"
 
-#: common/setting/system.py:893
+#: common/setting/system.py:887
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Leisti vartotojams registruotis per SSO prisijungimo puslapyje"
 
-#: common/setting/system.py:899
+#: common/setting/system.py:893
 msgid "Enable SSO group sync"
 msgstr "Įjungti SSO grupių sinchronizavimą"
 
-#: common/setting/system.py:901
+#: common/setting/system.py:895
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr "Įjungti InvenTree grupių sinchronizavimą su tapatybės tiekėjo (IdP) grupėmis"
 
-#: common/setting/system.py:907
+#: common/setting/system.py:901
 msgid "SSO group key"
 msgstr "SSO grupės raktas"
 
-#: common/setting/system.py:908
+#: common/setting/system.py:902
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr "Grupių atributo pavadinimas, kurį pateikia tapatybės tiekėjas (IdP)"
 
-#: common/setting/system.py:913
+#: common/setting/system.py:907
 msgid "SSO group map"
 msgstr "SSO grupių susiejimas"
 
-#: common/setting/system.py:915
+#: common/setting/system.py:909
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr "SSO grupių susiejimas su vietinėmis InvenTree grupėmis. Jei vietinė grupė neegzistuoja, ji bus sukurta."
 
-#: common/setting/system.py:921
+#: common/setting/system.py:915
 msgid "Remove groups outside of SSO"
 msgstr "Pašalinti grupes, nepriklausančias SSO"
 
-#: common/setting/system.py:923
+#: common/setting/system.py:917
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr "Ar pašalinti vartotojui priskirtas grupes, jei jos nėra pateikiamos per IdP. Išjungus gali kilti saugumo problemų"
 
-#: common/setting/system.py:929
+#: common/setting/system.py:923
 msgid "Email required"
 msgstr "El. paštas privalomas"
 
-#: common/setting/system.py:930
+#: common/setting/system.py:924
 msgid "Require user to supply mail on signup"
 msgstr "Reikalauti vartotojo el. pašto registracijos metu"
 
-#: common/setting/system.py:935
+#: common/setting/system.py:929
 msgid "Auto-fill SSO users"
 msgstr "Automatiškai užpildyti SSO naudotojų duomenis"
 
-#: common/setting/system.py:936
+#: common/setting/system.py:930
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Automatiškai užpildyti vartotojo informaciją pagal SSO paskyros duomenis"
 
-#: common/setting/system.py:941
+#: common/setting/system.py:935
 msgid "Mail twice"
 msgstr "Įvesti el. paštą du kartus"
 
-#: common/setting/system.py:942
+#: common/setting/system.py:936
 msgid "On signup ask users twice for their mail"
 msgstr "Registracijos metu prašyti vartotojų du kartus įvesti el. paštą"
 
-#: common/setting/system.py:947
+#: common/setting/system.py:941
 msgid "Password twice"
 msgstr "Įvesti slaptažodį du kartus"
 
-#: common/setting/system.py:948
+#: common/setting/system.py:942
 msgid "On signup ask users twice for their password"
 msgstr "Registracijos metu prašyti vartotojų du kartus įvesti slaptažodį"
 
-#: common/setting/system.py:953
+#: common/setting/system.py:947
 msgid "Allowed domains"
 msgstr "Leidžiami domenai"
 
-#: common/setting/system.py:955
+#: common/setting/system.py:949
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Riboti registraciją tik tam tikriems domenams (atskiriama kableliais, prasideda @)"
 
-#: common/setting/system.py:961
+#: common/setting/system.py:955
 msgid "Group on signup"
 msgstr "Grupė registruojantis"
 
-#: common/setting/system.py:963
+#: common/setting/system.py:957
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr "Grupė, į kurią priskiriami nauji vartotojai registracijos metu. Jei įjungta SSO grupių sinchronizacija, ši grupė nustatoma tik tuo atveju, jei grupė negaunama iš IdP."
 
-#: common/setting/system.py:969
+#: common/setting/system.py:963
 msgid "Enforce MFA"
 msgstr "Reikalauti kelių veiksnių autentifikacijos (MFA)"
 
-#: common/setting/system.py:970
+#: common/setting/system.py:964
 msgid "Users must use multifactor security."
 msgstr "Vartotojai privalo naudoti kelių veiksnių apsaugą."
 
-#: common/setting/system.py:975
+#: common/setting/system.py:969
 msgid "Check plugins on startup"
 msgstr "Tikrinti įskiepius paleidimo metu"
 
-#: common/setting/system.py:977
+#: common/setting/system.py:971
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Tikrina, ar visi įskiepiai įdiegti paleidžiant – naudoti konteinerių aplinkose"
 
-#: common/setting/system.py:984
+#: common/setting/system.py:978
 msgid "Check for plugin updates"
 msgstr "Tikrinti įskiepių atnaujinimus"
 
-#: common/setting/system.py:985
+#: common/setting/system.py:979
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr "Įjungti periodinius įdiegtų įskiepių atnaujinimų tikrinimus"
 
-#: common/setting/system.py:991
+#: common/setting/system.py:985
 msgid "Enable URL integration"
 msgstr "Įjungti URL integravimą"
 
-#: common/setting/system.py:992
+#: common/setting/system.py:986
 msgid "Enable plugins to add URL routes"
 msgstr "Leisti įskiepiams pridėti URL maršrutus"
 
-#: common/setting/system.py:998
+#: common/setting/system.py:992
 msgid "Enable navigation integration"
 msgstr "Įjungti navigacijos integraciją"
 
-#: common/setting/system.py:999
+#: common/setting/system.py:993
 msgid "Enable plugins to integrate into navigation"
 msgstr "Leisti įskiepiams integruotis į navigaciją"
 
-#: common/setting/system.py:1005
+#: common/setting/system.py:999
 msgid "Enable app integration"
 msgstr "Įjungti programų integraciją"
 
-#: common/setting/system.py:1006
+#: common/setting/system.py:1000
 msgid "Enable plugins to add apps"
 msgstr "Leisti įskiepiams pridėti programas"
 
-#: common/setting/system.py:1012
+#: common/setting/system.py:1006
 msgid "Enable schedule integration"
 msgstr "Įjungti planavimo integraciją"
 
-#: common/setting/system.py:1013
+#: common/setting/system.py:1007
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Leisti įskiepiams vykdyti suplanuotas užduotis"
 
-#: common/setting/system.py:1019
+#: common/setting/system.py:1013
 msgid "Enable event integration"
 msgstr "Įjungti įvykių integraciją"
 
-#: common/setting/system.py:1020
+#: common/setting/system.py:1014
 msgid "Enable plugins to respond to internal events"
 msgstr "Leisti įskiepiams reaguoti į vidinius įvykius"
 
-#: common/setting/system.py:1026
+#: common/setting/system.py:1020
 msgid "Enable interface integration"
 msgstr "Įjungti sąsajos integraciją"
 
-#: common/setting/system.py:1027
+#: common/setting/system.py:1021
 msgid "Enable plugins to integrate into the user interface"
 msgstr "Leisti įskiepiams integruotis į vartotojo sąsają"
 
-#: common/setting/system.py:1033
+#: common/setting/system.py:1027
 msgid "Enable project codes"
 msgstr "Įjungti projektų kodus"
 
-#: common/setting/system.py:1034
+#: common/setting/system.py:1028
 msgid "Enable project codes for tracking projects"
 msgstr "Įjungti projektų kodų naudojimą projektų sekimui"
 
-#: common/setting/system.py:1039
+#: common/setting/system.py:1033
 msgid "Stocktake Functionality"
 msgstr "Inventorizacijos funkcija"
 
-#: common/setting/system.py:1041
+#: common/setting/system.py:1035
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr "Įjungti inventorizacijos funkciją sandėlio kiekiams ir vertei registruoti"
 
-#: common/setting/system.py:1047
+#: common/setting/system.py:1041
 msgid "Exclude External Locations"
 msgstr "Neįtraukti išorinių vietų"
 
-#: common/setting/system.py:1049
+#: common/setting/system.py:1043
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "Neįtraukti sandėlio prekių iš išorinių vietų į inventorizacijos skaičiavimus"
 
-#: common/setting/system.py:1055
+#: common/setting/system.py:1049
 msgid "Automatic Stocktake Period"
 msgstr "Automatinės inventorizacijos periodas"
 
-#: common/setting/system.py:1057
+#: common/setting/system.py:1051
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr "Dienų skaičius tarp automatinių inventorizacijos įrašų (nustatykite 0, kad išjungtumėte)"
 
-#: common/setting/system.py:1063
+#: common/setting/system.py:1057
 msgid "Report Deletion Interval"
 msgstr "Ataskaitų ištrynimo intervalas"
 
-#: common/setting/system.py:1065
+#: common/setting/system.py:1059
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Inventorizacijos ataskaitos bus ištrintos po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:1072
+#: common/setting/system.py:1066
 msgid "Display Users full names"
 msgstr "Rodyti pilnus vartotojų vardus"
 
-#: common/setting/system.py:1073
+#: common/setting/system.py:1067
 msgid "Display Users full names instead of usernames"
 msgstr "Rodyti pilnus vardus vietoj vartotojo vardų"
 
-#: common/setting/system.py:1078
+#: common/setting/system.py:1072
 msgid "Display User Profiles"
 msgstr "Rodyti vartotojų profilius"
 
-#: common/setting/system.py:1079
+#: common/setting/system.py:1073
 msgid "Display Users Profiles on their profile page"
 msgstr "Rodyti vartotojų profilius jų paskyros puslapyje"
 
-#: common/setting/system.py:1084
+#: common/setting/system.py:1078
 msgid "Enable Test Station Data"
 msgstr "Įjungti bandymų stoties duomenis"
 
-#: common/setting/system.py:1085
+#: common/setting/system.py:1079
 msgid "Enable test station data collection for test results"
 msgstr "Įjungti bandymų stoties duomenų rinkimą testų rezultatams"
 
-#: common/setting/system.py:1090
+#: common/setting/system.py:1084
 msgid "Create Template on Upload"
 msgstr "Kurti šabloną įkeliant"
 
-#: common/setting/system.py:1092
+#: common/setting/system.py:1086
 msgid "Create a new test template when uploading test data which does not match an existing template"
 msgstr "Sukurti naują bandymų šabloną, jei įkeliami duomenys neatitinka esamo šablono"
 
@@ -4010,7 +3997,7 @@ msgstr "Pradiniai eilutės duomenys"
 msgid "Errors"
 msgstr "Klaidos"
 
-#: importer/models.py:527 part/api.py:864
+#: importer/models.py:527 part/api.py:839
 msgid "Valid"
 msgstr "Galiojantis"
 
@@ -5150,39 +5137,39 @@ msgstr "Atsargos, pagamintos pagal gamybos užsakymą"
 msgid "Stock required for Build Order"
 msgstr "Atsargos, reikalingos gamybos užsakymui"
 
-#: part/api.py:865
+#: part/api.py:840
 msgid "Validate entire Bill of Materials"
 msgstr "Patvirtinti visą komplektavimo žiniaraštį"
 
-#: part/api.py:871
+#: part/api.py:846
 msgid "This option must be selected"
 msgstr "Ši parinktis turi būti pasirinkta"
 
-#: part/api.py:907
+#: part/api.py:882
 msgid "Is Variant"
 msgstr "Yra variantas"
 
-#: part/api.py:915
+#: part/api.py:890
 msgid "Is Revision"
 msgstr "Yra versija"
 
-#: part/api.py:925
+#: part/api.py:900
 msgid "Has Revisions"
 msgstr "Turi versijų"
 
-#: part/api.py:1116
+#: part/api.py:1091
 msgid "BOM Valid"
 msgstr "BOM galiojantis"
 
-#: part/api.py:1809
+#: part/api.py:1784
 msgid "Assembly part is testable"
 msgstr "Surinkimo detalė gali būti testuojama"
 
-#: part/api.py:1818
+#: part/api.py:1793
 msgid "Component part is testable"
 msgstr "Komponento detalė gali būti testuojama"
 
-#: part/api.py:1869
+#: part/api.py:1844
 msgid "Uses"
 msgstr "Naudoja"
 
@@ -5232,7 +5219,7 @@ msgstr "Piktograma (neprivaloma)"
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
 msgstr "Negalite paversti šios detalių kategorijos struktūrine, nes kai kurios detalės jau jai priskirtos!"
 
-#: part/models.py:458 part/serializers.py:129 part/serializers.py:342
+#: part/models.py:458 part/serializers.py:125 part/serializers.py:342
 #: users/ruleset.py:29
 msgid "Parts"
 msgstr "Detalės"
@@ -5970,15 +5957,15 @@ msgstr "Detalių ryšio negalima sukurti tarp detalės ir jos pačios"
 msgid "Duplicate relationship already exists"
 msgstr "Toks ryšys jau egzistuoja"
 
-#: part/serializers.py:124
+#: part/serializers.py:120
 msgid "Parent Category"
 msgstr "Pagrindinė kategorija"
 
-#: part/serializers.py:125
+#: part/serializers.py:121
 msgid "Parent part category"
 msgstr "Pagrindinė detalių kategorija"
 
-#: part/serializers.py:133 part/serializers.py:167
+#: part/serializers.py:129 part/serializers.py:167
 msgid "Subcategories"
 msgstr "Subkategorijos"
 
@@ -6114,7 +6101,7 @@ msgstr "Surinkimas"
 msgid "Quantity of this part currently being in production"
 msgstr ""
 
-#: part/serializers.py:958
+#: part/serializers.py:958 part/serializers.py:1263
 msgid "Scheduled to Build"
 msgstr ""
 
@@ -6135,7 +6122,8 @@ msgstr "Versijos"
 msgid "Suppliers"
 msgstr "Tiekėjai"
 
-#: part/serializers.py:991 templates/email/low_stock_notification.html:16
+#: part/serializers.py:991 part/serializers.py:1246
+#: templates/email/low_stock_notification.html:16
 #: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "Bendros atsargos"
@@ -6192,140 +6180,156 @@ msgstr "Esamos detalės paveikslėlio failo pavadinimas"
 msgid "Image file does not exist"
 msgstr "Paveikslėlio failas neegzistuoja"
 
-#: part/serializers.py:1294
+#: part/serializers.py:1252 part/serializers.py:1802
+msgid "Can Build"
+msgstr "Galima surinkti"
+
+#: part/serializers.py:1269
+msgid "Required for Build Orders"
+msgstr ""
+
+#: part/serializers.py:1274
+msgid "Allocated to Build Orders"
+msgstr ""
+
+#: part/serializers.py:1281
+msgid "Required for Sales Orders"
+msgstr ""
+
+#: part/serializers.py:1285
+msgid "Allocated to Sales Orders"
+msgstr ""
+
+#: part/serializers.py:1361
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr "Apriboti inventorizacijos ataskaitą konkrečia detale ir jos variantais"
 
-#: part/serializers.py:1304
+#: part/serializers.py:1371
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr "Apriboti inventorizacijos ataskaitą konkrečia detalių kategorija ir jos subkategorijomis"
 
-#: part/serializers.py:1314
+#: part/serializers.py:1381
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr "Apriboti inventorizacijos ataskaitą konkrečia atsargų vieta ir jos subvietomis"
 
-#: part/serializers.py:1320
+#: part/serializers.py:1387
 msgid "Exclude External Stock"
 msgstr "Neįtraukti išorinių atsargų"
 
-#: part/serializers.py:1321
+#: part/serializers.py:1388
 msgid "Exclude stock items in external locations"
 msgstr "Neįtraukti atsargų iš išorinių vietų"
 
-#: part/serializers.py:1326
+#: part/serializers.py:1393
 msgid "Generate Report"
 msgstr "Generuoti ataskaitą"
 
-#: part/serializers.py:1327
+#: part/serializers.py:1394
 msgid "Generate report file containing calculated stocktake data"
 msgstr "Generuoti ataskaitos failą su apskaičiuotais inventorizacijos duomenimis"
 
-#: part/serializers.py:1332
+#: part/serializers.py:1399
 msgid "Update Parts"
 msgstr "Atnaujinti detales"
 
-#: part/serializers.py:1333
+#: part/serializers.py:1400
 msgid "Update specified parts with calculated stocktake data"
 msgstr "Atnaujinti nurodytas detales pagal apskaičiuotus inventorizacijos duomenis"
 
-#: part/serializers.py:1341
+#: part/serializers.py:1408
 msgid "Stocktake functionality is not enabled"
 msgstr "Inventorizacijos funkcionalumas neįjungtas"
 
-#: part/serializers.py:1346
+#: part/serializers.py:1413
 msgid "Background worker check failed"
 msgstr "Fono proceso patikra nepavyko"
 
-#: part/serializers.py:1462
+#: part/serializers.py:1529
 msgid "Minimum Price"
 msgstr "Mažiausia kaina"
 
-#: part/serializers.py:1463
+#: part/serializers.py:1530
 msgid "Override calculated value for minimum price"
 msgstr "Pakeisti apskaičiuotą mažiausią kainą"
 
-#: part/serializers.py:1470
+#: part/serializers.py:1537
 msgid "Minimum price currency"
 msgstr "Mažiausios kainos valiuta"
 
-#: part/serializers.py:1477
+#: part/serializers.py:1544
 msgid "Maximum Price"
 msgstr "Didžiausia kaina"
 
-#: part/serializers.py:1478
+#: part/serializers.py:1545
 msgid "Override calculated value for maximum price"
 msgstr "Pakeisti apskaičiuotą didžiausią kainą"
 
-#: part/serializers.py:1485
+#: part/serializers.py:1552
 msgid "Maximum price currency"
 msgstr "Didžiausios kainos valiuta"
 
-#: part/serializers.py:1514
+#: part/serializers.py:1581
 msgid "Update"
 msgstr "Atnaujinti"
 
-#: part/serializers.py:1515
+#: part/serializers.py:1582
 msgid "Update pricing for this part"
 msgstr "Atnaujinti šios detalės kainodarą"
 
-#: part/serializers.py:1538
+#: part/serializers.py:1605
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr "Nepavyko konvertuoti iš nurodytų valiutų į {default_currency}"
 
-#: part/serializers.py:1545
+#: part/serializers.py:1612
 msgid "Minimum price must not be greater than maximum price"
 msgstr "Mažiausia kaina negali būti didesnė už didžiausią kainą"
 
-#: part/serializers.py:1548
+#: part/serializers.py:1615
 msgid "Maximum price must not be less than minimum price"
 msgstr "Didžiausia kaina negali būti mažesnė už mažiausią kainą"
 
-#: part/serializers.py:1701
+#: part/serializers.py:1768
 msgid "Select the parent assembly"
 msgstr "Pasirinkite pirminį surinkimą"
 
-#: part/serializers.py:1715
+#: part/serializers.py:1782
 msgid "Select the component part"
 msgstr "Pasirinkite komponentinę detalę"
 
-#: part/serializers.py:1735
-msgid "Can Build"
-msgstr "Galima surinkti"
-
-#: part/serializers.py:1962
+#: part/serializers.py:2029
 msgid "Select part to copy BOM from"
 msgstr "Pasirinkite detalę, iš kurios kopijuoti BOM"
 
-#: part/serializers.py:1970
+#: part/serializers.py:2037
 msgid "Remove Existing Data"
 msgstr "Pašalinti esamus duomenis"
 
-#: part/serializers.py:1971
+#: part/serializers.py:2038
 msgid "Remove existing BOM items before copying"
 msgstr "Pašalinti esamus BOM elementus prieš kopijuojant"
 
-#: part/serializers.py:1976
+#: part/serializers.py:2043
 msgid "Include Inherited"
 msgstr "Įtraukti paveldėtus"
 
-#: part/serializers.py:1977
+#: part/serializers.py:2044
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Įtraukti BOM elementus, paveldėtus iš šabloninių detalių"
 
-#: part/serializers.py:1982
+#: part/serializers.py:2049
 msgid "Skip Invalid Rows"
 msgstr "Praleisti netinkamas eilutes"
 
-#: part/serializers.py:1983
+#: part/serializers.py:2050
 msgid "Enable this option to skip invalid rows"
 msgstr "Įjunkite šią parinktį, jei norite praleisti netinkamas eilutes"
 
-#: part/serializers.py:1988
+#: part/serializers.py:2055
 msgid "Copy Substitute Parts"
 msgstr "Kopijuoti pakaitines detales"
 
-#: part/serializers.py:1989
+#: part/serializers.py:2056
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Kopijuoti pakaitines detales, kai kopijuojami BOM elementai"
 
@@ -6636,6 +6640,7 @@ msgid "Provides native support for barcodes"
 msgstr "Suteikia vietinį brūkšninių kodų palaikymą"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:30
+#: plugin/builtin/events/auto_create_builds.py:30
 #: plugin/builtin/events/auto_issue_orders.py:19
 #: plugin/builtin/exporter/bom_exporter.py:61
 #: plugin/builtin/exporter/inventree_exporter.py:17
@@ -6674,6 +6679,14 @@ msgstr "Trumpo brūkšninio kodo priešdėlis"
 #: plugin/builtin/barcodes/inventree_barcode.py:45
 msgid "Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances"
 msgstr "Pritaikykite trumpųjų brūkšninių kodų priešdėlį - naudinga, kai naudojami keli InvenTree egzemplioriai"
+
+#: plugin/builtin/events/auto_create_builds.py:28
+msgid "Auto Create Builds"
+msgstr ""
+
+#: plugin/builtin/events/auto_create_builds.py:31
+msgid "Automatically create build orders for assemblies"
+msgstr ""
 
 #: plugin/builtin/events/auto_issue_orders.py:17
 msgid "Auto Issue Orders"
@@ -8860,23 +8873,39 @@ msgstr "Ar ši vartotojo paskyra yra aktyvi"
 msgid "Only a superuser can adjust this field"
 msgstr "Tik supervartotojas gali keisti šį lauką"
 
-#: users/serializers.py:399
+#: users/serializers.py:373
+msgid "Password"
+msgstr ""
+
+#: users/serializers.py:374
+msgid "Password for the user"
+msgstr ""
+
+#: users/serializers.py:380
+msgid "Override warning"
+msgstr ""
+
+#: users/serializers.py:381
+msgid "Override the warning about password rules"
+msgstr ""
+
+#: users/serializers.py:423
 msgid "Only staff users can create new users"
 msgstr "Tik personalo vartotojai gali kurti naujus vartotojus"
 
-#: users/serializers.py:404
+#: users/serializers.py:428
 msgid "You do not have permission to create users"
 msgstr "Neturite leidimo kurti vartotojų"
 
-#: users/serializers.py:425
+#: users/serializers.py:449
 msgid "Your account has been created."
 msgstr "Jūsų paskyra sukurta."
 
-#: users/serializers.py:427
+#: users/serializers.py:451
 msgid "Please use the password reset function to login"
 msgstr "Prisijungimui naudokite slaptažodžio atstatymo funkciją"
 
-#: users/serializers.py:433
+#: users/serializers.py:457
 msgid "Welcome to InvenTree"
 msgstr "Sveiki atvykę į InvenTree"
 

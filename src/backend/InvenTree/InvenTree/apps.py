@@ -177,7 +177,7 @@ class InvenTreeConfig(AppConfig):
         try:
             if django_q.models.OrmQ.objects.count() == 0:
                 InvenTree.tasks.offload_task(
-                    InvenTree.tasks.heartbeat, force_async=True
+                    InvenTree.tasks.heartbeat, force_async=True, group='heartbeat'
                 )
         except Exception:
             pass
