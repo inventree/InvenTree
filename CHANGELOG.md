@@ -1,9 +1,9 @@
 # Changelog
 
-All notable changes to this project will be documented in this file (starting with 0.15.0).
+All notable changes to this project will be documented in this file (starting with 1.0.0).
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). InvenTree is currently considered to be in a pre-1.0 state, bumps to the minor version number signify new features. The [roadmap to 1.0](https://github.com/inventree/InvenTree/milestone/17) is public.
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
