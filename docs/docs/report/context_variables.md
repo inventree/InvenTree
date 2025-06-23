@@ -69,6 +69,7 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 
 | Model Type | Description |
 | --- | --- |
+| company | A Company instance |
 | [build](#build-order) | A [Build Order](../manufacturing/build.md) instance |
 | [buildline](#build-line) | A [Build Order Line Item](../manufacturing/build.md) instance |
 | [salesorder](#sales-order) | A [Sales Order](../sales/sales_order.md) instance |
@@ -77,6 +78,16 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 | [stockitem](#stock-item) | A [StockItem](../stock/index.md#stock-item) instance |
 | [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-location) instance |
 | [part](#part) | A [Part](../part/index.md) instance |
+
+### Company
+
+When printing a report or label against a Company instance, the following context variables are available:
+
+{{ report_context("models", "company") }}
+
+::: company.models.Company.report_context
+    options:
+        show_source: True
 
 ### Build Order
 

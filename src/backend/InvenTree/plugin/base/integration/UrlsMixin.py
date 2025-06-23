@@ -49,7 +49,7 @@ class UrlsMixin:
             urls_changed = False
             # check whether an activated plugin extends UrlsMixin
             for _key, plugin in plugins:
-                if plugin.mixin_enabled('urls'):
+                if plugin.mixin_enabled(PluginMixinEnum.URLS):
                     urls_changed = True
             # if apps were changed or force loading base apps -> reload
             if urls_changed or force_reload or full_reload:

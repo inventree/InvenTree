@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 355
+INVENTREE_API_VERSION = 356
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v356 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9817
+    - Enable generation of reports against the Company model type
+
 v355 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9811
     - Removes legacy "PartScheduling" API endpoints
 
