@@ -4,6 +4,7 @@ from django.conf import settings
 from django.urls import include, re_path
 
 from common.validators import get_global_setting
+from plugin import PluginMixinEnum
 
 PLUGIN_BASE = 'plugin'  # Constant for links
 
@@ -16,7 +17,7 @@ def get_plugin_urls():
 
     if get_global_setting('ENABLE_PLUGINS_URL', False) or settings.PLUGIN_TESTING_SETUP:
         for plugin in registry.plugins.values():
-            if plugin.mixin_enabled('urls'):
+            if plugin.mixin_enabled(PluginMixinEnum.URLS):
                 urls.append(plugin.urlpatterns)
 
     return re_path(f'^{PLUGIN_BASE}/', include((urls, 'plugin')))
