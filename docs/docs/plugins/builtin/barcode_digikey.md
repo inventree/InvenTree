@@ -6,7 +6,7 @@ title: DigiKey Barcode Plugin
 
 The **DigiKey Barcode Plugin** provides barcode support for [DigiKey](https://www.digikey.com/) products. When receiving items from DigiKey, the barcode on the product can be scanned to automatically identify the product in InvenTree.
 
-This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support.
+This plugin implements the [BarcodeMixin](../mixins/barcode.md) mixin to provide custom barcode support - see [Barcode Plugins](./barcode_index.md).
 
 ### Activation
 
