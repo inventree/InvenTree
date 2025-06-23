@@ -34,7 +34,7 @@ const MAX_RETRIES: number = 3;
 // In production mode, we want a stronger webserver to handle multiple requests
 const WEB_SERVER_CMD: string = IS_CI
   ? 'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi'
-  : 'invoke dev.server -a 127.0.0.1:8000';
+  : 'cd ../.. && source .venv/bin/activate && invoke dev.server -a 127.0.0.1:8000';
 
 export default defineConfig({
   testDir: './tests',

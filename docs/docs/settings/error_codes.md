@@ -111,6 +111,12 @@ Steps very between deployment methods.
 The command that was used to run invoke is not the one that is recommended. This might be caused by a wrong PATH variable or by thinking you are using a different deployment method.
 The warning text will show the recommended command for intended use.
 
+#### INVE-W10
+**Config not in recommended directory - Backend**
+
+A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusinon.
+
+The warning text will show the recommended directory for your deployment method.
 
 #### INVE-W10
 **Exception during mail delivery - Backend**
