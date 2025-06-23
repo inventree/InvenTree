@@ -393,7 +393,7 @@ def get_secret_key(return_path: bool = False) -> Union[str, Path]:
     return secret_key_file.read_text().strip()
 
 
-def get_oidc_private_key():
+def get_oidc_private_key(return_path: bool = False) -> Union[str, Path]:
     """Return the private key for OIDC authentication.
 
     Following options are tested, in descending order of preference:
@@ -423,7 +423,7 @@ def get_oidc_private_key():
 
     check_config_dir('INVENTREE_OIDC_PRIVATE_KEY_FILE', key_loc)
     if key_loc.exists():
-        return key_loc.read_text()
+        return key_loc.read_text() if not return_path else key_loc
     else:
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
@@ -443,7 +443,7 @@ def get_oidc_private_key():
                     encryption_algorithm=serialization.NoEncryption(),
                 )
             )
-        return key_loc.read_text()
+        return key_loc.read_text() if not return_path else key_loc
 
 
 def get_custom_file(

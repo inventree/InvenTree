@@ -4,6 +4,7 @@ import os
 import time
 from datetime import datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 from unittest import mock
 from zoneinfo import ZoneInfo
 
@@ -1214,7 +1215,7 @@ class TestSettings(InvenTreeTestCase):
             )
 
         # LEGACY - old path
-        if settings.DOCKER:
+        if settings.DOCKER:  # pragma: no cover
             # In Docker, the legacy path is not used
             return
         legacy_path = config.get_base_dir().joinpath('config.yaml')
@@ -1260,7 +1261,7 @@ class TestSettings(InvenTreeTestCase):
             self.assertIn(str(test_file), str(config.get_secret_key(return_path=True)))
 
         # LEGACY - old path
-        if settings.DOCKER:
+        if settings.DOCKER:  # pragma: no cover
             # In Docker, the legacy path is not used
             return
         legacy_path = config.get_base_dir().joinpath('secret_key.txt')
@@ -1278,6 +1279,48 @@ class TestSettings(InvenTreeTestCase):
         # Test with content set per environment
         with in_env_context({'INVENTREE_SECRET_KEY': '123abc123'}):
             self.assertEqual(config.get_secret_key(), '123abc123')
+
+    def test_helpers_get_oidc_private_key(self):
+        """Test get_oidc_private_key."""
+        # Normal file behavior - not configured
+        valid = ['config/oidc.pem', 'inventree/data/oidc.pem']
+        trgt_path = config.get_oidc_private_key(return_path=True)
+        self.assertTrue(
+            any(opt in str(trgt_path) for opt in valid),
+            f'Path {trgt_path} not in {valid}',
+        )
+
+        # with env set
+        test_file = config.get_testfolder_dir() / 'my_oidc_private_key.pem'
+        with in_env_context({'INVENTREE_OIDC_PRIVATE_KEY_FILE': str(test_file)}):
+            self.assertIn(
+                str(test_file), str(config.get_oidc_private_key(return_path=True))
+            )
+
+        # Override with environment variable
+        with in_env_context({'INVENTREE_OIDC_PRIVATE_KEY': '123abc123'}):
+            self.assertEqual(config.get_oidc_private_key(), '123abc123')
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('oidc.pem')
+        assert not legacy_path.exists(), (
+            'Legacy OIDC private key file does exist, stopping as a precaution!'
+        )
+        test_file.rename(legacy_path)
+        assert isinstance(trgt_path, Path)
+        new_path = trgt_path.rename(
+            trgt_path.parent / '_oidc.pem'
+        )  # move out current config
+        self.assertIn(
+            'src/backend/inventree/oidc.pem',
+            str(config.get_oidc_private_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+        new_path.rename(trgt_path)  # restore original path for current config
 
     def test_helpers_setting(self):
         """Test get_setting."""
