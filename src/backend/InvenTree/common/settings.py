@@ -6,7 +6,11 @@ from typing import Optional
 
 from django.core.exceptions import AppRegistryNotReady
 
+import structlog
+
 import InvenTree.ready
+
+logger = structlog.get_logger('inventree')
 
 
 def global_setting_overrides() -> dict:
@@ -90,11 +94,16 @@ def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
         global_dict = {}
     if key not in global_dict or global_dict[key] != options:
         global_dict[key] = options if options is not None else True
+        try:
+            global_dict_val = json.dumps(global_dict)
+        except TypeError:
+            # If the options cannot be serialized, we will set an empty the warning
+            global_dict_val = 'true'
+            logger.warning(
+                f'Failed to serialize global warning options for key "{key}". Setting to True.'
+            )
         InvenTreeSetting.set_setting(
-            SystemSetId.GLOBAL_WARNING,
-            json.dumps(global_dict),
-            change_user=None,
-            create=True,
+            SystemSetId.GLOBAL_WARNING, global_dict_val, change_user=None, create=True
         )
     return True
 

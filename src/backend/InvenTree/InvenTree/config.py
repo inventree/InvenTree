@@ -547,7 +547,9 @@ def check_config_dir(
         try:
             from common.settings import GlobalWarningCode, set_global_warning
 
-            set_global_warning(GlobalWarningCode.UNCOMMON_CONFIG, {config_dir})
+            set_global_warning(
+                GlobalWarningCode.UNCOMMON_CONFIG, {'path': str(config_dir)}
+            )
         except ModuleNotFoundError:  # pragma: no cover
             pass
 

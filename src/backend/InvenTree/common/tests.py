@@ -544,6 +544,9 @@ class SettingsTest(InvenTreeTestCase):
         with self.assertRaises(ValueError):
             set_global_warning(None)
 
+        # Wrong structure
+        self.assertTrue(set_global_warning(GlobalWarningCode.TEST_KEY, {'test': json}))
+
 
 class GlobalSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the global settings API."""
