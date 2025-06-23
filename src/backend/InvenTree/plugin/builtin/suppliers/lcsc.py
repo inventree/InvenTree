@@ -15,6 +15,7 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the LCSC API into InvenTree."""
 
     NAME = 'LCSCBarcodePlugin'
+    SLUG = 'lcscplugin'
     TITLE = _('Supplier Integration - LCSC')
     DESCRIPTION = _('Provides support for scanning LCSC barcodes')
     VERSION = '1.0.1'

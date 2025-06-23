@@ -15,6 +15,7 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the TME API into InvenTree."""
 
     NAME = 'TMEBarcodePlugin'
+    SLUG = 'tmeplugin'
     TITLE = _('Supplier Integration - TME')
     DESCRIPTION = _('Provides support for scanning TME barcodes')
     VERSION = '1.0.1'

@@ -13,6 +13,7 @@ class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the Mouser API into InvenTree."""
 
     NAME = 'MouserBarcodePlugin'
+    SLUG = 'mouserplugin'
     TITLE = _('Supplier Integration - Mouser')
     DESCRIPTION = _('Provides support for scanning Mouser barcodes')
     VERSION = '1.0.1'

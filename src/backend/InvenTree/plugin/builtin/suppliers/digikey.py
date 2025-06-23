@@ -13,6 +13,7 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the DigiKey API into InvenTree."""
 
     NAME = 'DigiKeyBarcodePlugin'
+    SLUG = 'digikeyplugin'
     TITLE = _('Supplier Integration - DigiKey')
     DESCRIPTION = _('Provides support for scanning DigiKey barcodes')
     VERSION = '1.0.1'
