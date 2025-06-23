@@ -1,5 +1,6 @@
 """User-configurable settings for the common app."""
 
+import json
 from os import environ
 from typing import Optional
 
@@ -50,6 +51,7 @@ class GlobalWarningCode:
     """Warning codes that reflect to the status of the instance."""
 
     UNCOMMON_CONFIG = 'INVE-W10'
+    TEST_KEY = '_TEST'
 
 
 def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
@@ -69,7 +71,7 @@ def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
         raise ValueError('Key must be provided for global warning setting.')
 
     # Ensure DB is ready
-    if not InvenTree.ready.canAppAccessDatabase():
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
         return False
     try:
         from common.models import InvenTreeSetting
@@ -79,13 +81,20 @@ def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
         return False
 
     # Get and write (if necessary) the current global settings warning
-    global_dict = get_global_setting(SystemSetId.GLOBAL_WARNING, {}, create=False)
+    global_dict = get_global_setting(SystemSetId.GLOBAL_WARNING, '{}', create=False)
+    try:
+        global_dict = json.loads(global_dict)
+    except json.JSONDecodeError:
+        global_dict = {}
     if global_dict is None or not isinstance(global_dict, dict):
         global_dict = {}
-    if key not in global_dict:
-        global_dict[key] = options or True
+    if key not in global_dict or global_dict[key] != options:
+        global_dict[key] = options if options is not None else True
         InvenTreeSetting.set_setting(
-            SystemSetId.GLOBAL_WARNING, global_dict, change_user=None, create=True
+            SystemSetId.GLOBAL_WARNING,
+            json.dumps(global_dict),
+            change_user=None,
+            create=True,
         )
     return True
 
