@@ -18,7 +18,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def setUp(self):
         """Ensure the digikey plugin is enabled."""
         super().setUp()
-        registry.set_plugin_state('digikeybarcodeplugin', True)
+        registry.set_plugin_state('digikeyplugin', True)
 
     @classmethod
     def setUpTestData(cls):
@@ -59,7 +59,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         # Assign supplier information to the plugins
         # Add supplier information to each custom plugin
-        digikey_plugin = registry.get_plugin('digikeybarcodeplugin')
+        digikey_plugin = registry.get_plugin('digikeyplugin')
         digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
 
         mouser_plugin = registry.get_plugin('mouserplugin')
@@ -223,7 +223,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             self.purchase_order2.add_line_item(supplier_part, 5, destination=self.loc_2)
 
         # Add supplier information to each custom plugin
-        digikey_plugin = registry.get_plugin('digikeybarcodeplugin')
+        digikey_plugin = registry.get_plugin('digikeyplugin')
         digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
 
         mouser_plugin = registry.get_plugin('mouserplugin')
