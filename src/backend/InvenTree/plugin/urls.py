@@ -21,6 +21,11 @@ def get_plugin_urls():
         for plugin in registry.with_mixin(PluginMixinEnum.URLS):
             try:
                 if plugin_urls := plugin.urlpatterns:
+                    # Check if the plugin has a custom URL pattern
+                    for url in plugin_urls:
+                        # Attempt to resolve against the URL pattern as a validation check
+                        url.resolve('')
+
                     urls.append(
                         re_path(
                             f'^{plugin.slug}/',
@@ -30,6 +35,7 @@ def get_plugin_urls():
                     )
             except Exception:
                 log_error('get_plugin_urls', plugin=plugin.slug)
+                continue
 
     # Redirect anything else to the root index
     urls.append(
