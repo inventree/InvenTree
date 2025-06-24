@@ -72,10 +72,7 @@ class UrlsMixin:
     @property
     def urlpatterns(self):
         """URL patterns for this plugin."""
-        if self.has_urls:
-            return self.urls or None
-        else:
-            return None
+        return self.urls or None
 
     @property
     def has_urls(self):
