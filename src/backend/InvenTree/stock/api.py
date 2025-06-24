@@ -1097,6 +1097,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
+        # Exclude 'serial' from submitted data
+        # We use 'serial_numbers' for item creation
+        serializer.validated_data.pop('serial', None)
+
         # Extract location information
         location = serializer.validated_data.get('location', None)
 
