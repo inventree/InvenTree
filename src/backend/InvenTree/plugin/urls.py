@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.urls import include, re_path
+from django.urls.exceptions import Resolver404
 from django.views.generic.base import RedirectView
 
 from common.validators import get_global_setting
@@ -24,7 +25,10 @@ def get_plugin_urls():
                     # Check if the plugin has a custom URL pattern
                     for url in plugin_urls:
                         # Attempt to resolve against the URL pattern as a validation check
-                        url.resolve('')
+                        try:
+                            url.resolve('')
+                        except Resolver404:
+                            pass
 
                     urls.append(
                         re_path(
