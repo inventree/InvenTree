@@ -278,7 +278,7 @@ export default function PluginListTable() {
   });
 
   const installPluginModal = useCreateApiFormModal({
-    title: t`Install plugin`,
+    title: t`Install Plugin`,
     url: ApiEndpoints.plugin_install,
     timeout: 30000,
     fields: {
