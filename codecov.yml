@@ -62,6 +62,7 @@ component_management:
       statuses:
       - type: project
         target: 92% # 95%
+        patch: 95%
     - component_id: web
       name: Frontend
       paths:
@@ -69,6 +70,7 @@ component_management:
       statuses:
       - type: project
         target: 65% # 90%
+        patch: 80%
 comment:
   require_bundle_changes: True
   bundle_change_threshold: "1Kb"
