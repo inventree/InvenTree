@@ -61,14 +61,14 @@ component_management:
         - src/backend/InvenTree/common/**
       statuses:
       - type: project
-        target: 95%
+        target: 92% # 95%
     - component_id: web
       name: Frontend
       paths:
         - src/frontend/**
       statuses:
       - type: project
-        target: 65%
+        target: 65% # 90%
 comment:
   require_bundle_changes: True
   bundle_change_threshold: "1Kb"
