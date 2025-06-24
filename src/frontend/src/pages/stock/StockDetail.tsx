@@ -661,13 +661,25 @@ export default function StockDetail() {
     modalId: 'duplicate-stock-item'
   });
 
+  const duplicateStockData = useMemo(() => {
+    const duplicate = {
+      ...stockitem,
+      serial_numbers: stockitem.serial
+    };
+
+    // Omit the "serial" field for item creation
+    delete duplicate.serial;
+
+    return duplicate;
+  }, [stockitem]);
+
   const duplicateStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     title: t`Add Stock Item`,
     modalId: 'duplicate-stock-item',
     fields: duplicateStockItemFields,
     initialData: {
-      ...stockitem
+      ...duplicateStockData
     },
     follow: true,
     modelType: ModelType.stockitem
