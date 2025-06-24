@@ -20,7 +20,7 @@ import order.models
 from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
-from InvenTree.settings import BASE_DIR
+from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.status_codes import PurchaseOrderStatusGroups
 from part.models import (
@@ -64,7 +64,7 @@ class PartImageTestMixin:
         """Create a test image file."""
         p = Part.objects.first()
 
-        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+        fn = get_testfolder_dir() / 'part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
@@ -1694,7 +1694,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
             print(p.image.file)
 
         # Try to upload a non-image file
-        test_path = BASE_DIR / '_testfolder' / 'dummy_image'
+        test_path = get_testfolder_dir() / 'dummy_image'
         with open(f'{test_path}.txt', 'w', encoding='utf-8') as dummy_image:
             dummy_image.write('hello world')
 
@@ -1757,7 +1757,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         # First, upload an image for an existing part
         p = Part.objects.first()
 
-        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+        fn = get_testfolder_dir() / 'part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
