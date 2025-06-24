@@ -508,6 +508,44 @@ class SettingsTest(InvenTreeTestCase):
             value = InvenTreeUserSetting.get_setting(key, user=user)
             self.assertEqual(value, user.pk)
 
+    def test_set_global_warning(self):
+        """Test set_global_warning function."""
+        from common.setting.system import SystemSetId
+        from common.settings import GlobalWarningCode, set_global_warning
+
+        # Set a warning
+        self.assertTrue(
+            set_global_warning(GlobalWarningCode.TEST_KEY, {'test': 'value'})
+        )
+
+        # Check that the warning has been set
+        self.assertIn(
+            GlobalWarningCode.TEST_KEY,
+            InvenTreeSetting.get_setting(SystemSetId.GLOBAL_WARNING),
+        )
+
+        # Check that the warning can be retrieved
+        warning = InvenTreeSetting.get_setting_object(SystemSetId.GLOBAL_WARNING)
+        warning_dict = json.loads(warning.value)
+        self.assertEqual(warning_dict[GlobalWarningCode.TEST_KEY], {'test': 'value'})
+
+        # Clear the warning
+        self.assertTrue(set_global_warning(GlobalWarningCode.TEST_KEY, False))
+
+        # Check that the warning has been cleared
+        self.assertFalse(
+            json.loads(InvenTreeSetting.get_setting(SystemSetId.GLOBAL_WARNING)).get(
+                GlobalWarningCode.TEST_KEY
+            )
+        )
+
+        # No key - warning
+        with self.assertRaises(ValueError):
+            set_global_warning(None)
+
+        # Wrong structure
+        self.assertTrue(set_global_warning(GlobalWarningCode.TEST_KEY, {'test': json}))
+
 
 class GlobalSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the global settings API."""
