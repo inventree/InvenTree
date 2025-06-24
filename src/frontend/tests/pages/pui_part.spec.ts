@@ -32,7 +32,6 @@ test('Parts - Tabs', async ({ browser }) => {
   await loadTab(page, 'Pricing');
   await loadTab(page, 'Suppliers');
   await loadTab(page, 'Purchase Orders');
-  await loadTab(page, 'Scheduling');
   await loadTab(page, 'Stock History');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
@@ -160,6 +159,26 @@ test('Parts - Locking', async ({ browser }) => {
   // Check the "parameters" tab also
   await loadTab(page, 'Parameters');
   await page.getByText('Part parameters cannot be').waitFor();
+});
+
+test('Parts - Details', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/113/details' });
+
+  // Check for expected values on this page
+  await page.getByText('Required for Orders').waitFor();
+  await page.getByText('Allocated to Sales Orders').waitFor();
+  await page.getByText('Can Build').waitFor();
+
+  await page.getByText('0 / 10').waitFor();
+  await page.getByText('4 / 49').waitFor();
+
+  // Badges
+  await page.getByText('Required: 10').waitFor();
+  await page.getByText('No Stock').waitFor();
+  await page.getByText('In Production: 4').waitFor();
+
+  await page.getByText('Creation Date').waitFor();
+  await page.getByText('2022-04-29').waitFor();
 });
 
 test('Parts - Allocations', async ({ browser }) => {
@@ -506,4 +525,20 @@ test('Parts - Bulk Edit', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
+});
+
+test('Parts - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/74/details'
+  });
+
+  // Open "duplicate part" dialog
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-duplicate').click();
+
+  // Check for expected fields
+  await page.getByText('Copy Image', { exact: true }).waitFor();
+  await page.getByText('Copy Notes', { exact: true }).waitFor();
+  await page.getByText('Copy Parameters', { exact: true }).waitFor();
+  await page.getByText('Copy Tests', { exact: true }).waitFor();
 });

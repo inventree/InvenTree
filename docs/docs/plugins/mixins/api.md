@@ -1,5 +1,5 @@
 ---
-title: Schedule Mixin
+title: Api Mixin
 ---
 
 ## APICallMixin

@@ -34,6 +34,7 @@ import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 
+const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
@@ -175,10 +176,24 @@ export function InvenTreeTable<T extends Record<string, any>>({
     );
   }, [props.tableFilters, fieldNames]);
 
+  // Build table properties based on provided props (and default props)
+  const tableProps: InvenTreeTableProps<T> = useMemo(() => {
+    return {
+      ...defaultInvenTreeTableProps,
+      ...props
+    };
+  }, [props]);
+
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     enabled: !!url && !tableData,
-    queryKey: ['options', url, cacheKey, props.enableColumnCaching],
+    queryKey: [
+      'options',
+      url,
+      cacheKey,
+      tableProps.params,
+      props.enableColumnCaching
+    ],
     retry: 3,
     refetchOnMount: true,
     gcTime: 5000,
@@ -254,14 +269,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableOptionQuery.refetch();
   }, [cacheKey, url, props.params, props.enableColumnCaching]);
 
-  // Build table properties based on provided props (and default props)
-  const tableProps: InvenTreeTableProps<T> = useMemo(() => {
-    return {
-      ...defaultInvenTreeTableProps,
-      ...props
-    };
-  }, [props]);
-
   const enableSelection: boolean = useMemo(() => {
     return tableProps.enableSelection || tableProps.enableBulkDelete || false;
   }, [tableProps]);
@@ -313,7 +320,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     // If row actions are available, add a column for them
     if (tableProps.rowActions) {
       cols.push({
-        accessor: '--actions--',
+        accessor: ACTIONS_COLUMN_ACCESSOR,
         title: '   ',
         hidden: false,
         resizable: false,
@@ -358,6 +365,23 @@ export function InvenTreeTable<T extends Record<string, any>>({
     key: cacheKey,
     columns: dataColumns
   });
+
+  // Ensure that the "actions" column is always at the end of the list
+  // This effect is necessary as sometimes the underlying mantine-datatable columns change
+  useEffect(() => {
+    const idx: number = tableColumns.columnsOrder.indexOf(
+      ACTIONS_COLUMN_ACCESSOR
+    );
+
+    if (idx >= 0 && idx < tableColumns.columnsOrder.length - 1) {
+      // Actions column is not at the end of the list - move it there
+      const newOrder = tableColumns.columnsOrder.filter(
+        (col) => col != ACTIONS_COLUMN_ACCESSOR
+      );
+      newOrder.push(ACTIONS_COLUMN_ACCESSOR);
+      tableColumns.setColumnsOrder(newOrder);
+    }
+  }, [tableColumns.columnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -432,13 +456,17 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ]
   );
 
+  const [sortingLoaded, setSortingLoaded] = useState<boolean>(false);
+
   useEffect(() => {
     const tableKey: string = tableState.tableKey.split('-')[0];
     const sorting: DataTableSortStatus = getTableSorting(tableKey);
 
-    if (sorting) {
+    if (sorting && !!sorting.columnAccessor && !!sorting.direction) {
       setSortStatus(sorting);
     }
+
+    setSortingLoaded(true);
   }, []);
 
   // Return the ordering parameter
@@ -474,6 +502,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
     const queryParams = getTableFilters(true);
 
     if (!url) {
+      // No URL supplied - do not load!
+      return [];
+    }
+
+    if (!sortingLoaded) {
+      // Sorting not yet loaded - do not load!
       return [];
     }
 
@@ -542,6 +576,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       url,
       tableState.page,
       props.params,
+      sortingLoaded,
       sortStatus.columnAccessor,
       sortStatus.direction,
       tableState.tableKey,
@@ -559,13 +594,22 @@ export function InvenTreeTable<T extends Record<string, any>>({
   }, [tableState.queryFilters]);
 
   useEffect(() => {
-    tableState.setIsLoading(
+    const loading: boolean =
       isFetching ||
-        isLoading ||
-        tableOptionQuery.isFetching ||
-        tableOptionQuery.isLoading
-    );
-  }, [isFetching, isLoading, tableOptionQuery]);
+      isLoading ||
+      tableOptionQuery.isFetching ||
+      tableOptionQuery.isLoading;
+
+    if (loading != tableState.isLoading) {
+      tableState.setIsLoading(loading);
+    }
+  }, [
+    isFetching,
+    isLoading,
+    tableOptionQuery.isFetching,
+    tableOptionQuery.isLoading,
+    tableState.isLoading
+  ]);
 
   // Update tableState.records when new data received
   useEffect(() => {

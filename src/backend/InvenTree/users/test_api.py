@@ -209,6 +209,32 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertEqual(len(data['permissions']), len(perms) + len(build_perms))
 
 
+class SuperuserAPITests(InvenTreeAPITestCase):
+    """Tests for user API endpoints that require superuser rights."""
+
+    fixtures = ['users']
+    superuser = True
+
+    def test_user_password_set(self):
+        """Test the set-password/ endpoint."""
+        user = User.objects.get(pk=2)
+        url = reverse('api-user-set-password', kwargs={'pk': user.pk})
+
+        # to simple password
+        resp = self.put(url, {'password': 1}, expected_code=400)
+        self.assertContains(resp, 'This password is too short', status_code=400)
+
+        # now with overwerite
+        resp = self.put(
+            url, {'password': 1, 'override_warning': True}, expected_code=200
+        )
+        self.assertEqual(resp.data, {})
+
+        # complex enough pwd
+        resp = self.put(url, {'password': 'inventree'}, expected_code=200)
+        self.assertEqual(resp.data, {})
+
+
 class UserTokenTests(InvenTreeAPITestCase):
     """Tests for user token functionality."""
 

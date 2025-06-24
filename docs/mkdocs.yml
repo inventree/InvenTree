@@ -91,6 +91,8 @@ nav:
         - Custom Barcodes: barcodes/custom.md
     - Development:
       - Contributing: develop/contributing.md
+      - Architecture: develop/architecture.md
+      - Roadmap: develop/roadmap.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
     - Mobile App:
@@ -150,7 +152,6 @@ nav:
     - Templates: part/template.md
     - Tests: part/test.md
     - Pricing: part/pricing.md
-    - Scheduling: part/scheduling.md
     - Stocktake: part/stocktake.md
     - Notifications: part/notification.md
   - Stock:
@@ -167,6 +168,7 @@ nav:
     - Build Orders: manufacturing/build.md
     - Build Outputs: manufacturing/output.md
     - Allocating Stock: manufacturing/allocate.md
+    - External Manufacturing: manufacturing/external.md
     - Example Build Order: manufacturing/example.md
   - Purchasing:
     - Purchasing: purchasing/index.md
@@ -209,6 +211,7 @@ nav:
     - Overview: plugins/index.md
     - Installation: plugins/install.md
     - Developing a Plugin: plugins/how_to.md
+    - Plugin Development Walkthrough: plugins/walkthrough.md
     - Model Metadata: plugins/metadata.md
     - Tags: plugins/tags.md
     - Unit Test: plugins/test.md
@@ -235,21 +238,24 @@ nav:
       - Label Printer: plugins/machines/label_printer.md
     - Builtin Plugins:
       - Builtin Plugins: plugins/builtin/index.md
+      - Auto Create Builds: plugins/builtin/auto_create_builds.md
       - Auto Issue: plugins/builtin/auto_issue.md
       - BOM Exporter: plugins/builtin/bom_exporter.md
       - Currency Exchange: plugins/builtin/currency_exchange.md
-      - DigiKey: plugins/builtin/digikey.md
       - InvenTree Barcode: plugins/builtin/inventree_barcode.md
       - InvenTree Exporter: plugins/builtin/inventree_exporter.md
       - Label Printer: plugins/builtin/inventree_label.md
       - Label Machine: plugins/builtin/inventree_label_machine.md
       - Label Sheet: plugins/builtin/inventree_label_sheet.md
-      - LCSC: plugins/builtin/lcsc.md
-      - Mouser: plugins/builtin/mouser.md
       - Notification: plugins/builtin/notifications.md
       - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
       - Part Notifications: plugins/builtin/part_notifications.md
-      - TME: plugins/builtin/tme.md
+      - Barcode Plugins:
+        - Barcode Plugins: plugins/builtin/barcode_index.md
+        - DigiKey Barcode Plugin: plugins/builtin/barcode_digikey.md
+        - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
+        - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
+        - TME Barcode Plugin: plugins/builtin/barcode_tme.md
     - Third-Party: plugins/integrate.md
 
 # Plugins
@@ -260,6 +266,9 @@ plugins:
       opening_tag: "{!"
       closing_tag: "!}"
   - search
+  - mermaid2:
+      # version: 11.6.0
+      javascript: javascripts/mermaid.min.js
   - git-revision-date-localized
   - mkdocs-simple-hooks:
       hooks:
@@ -285,6 +294,8 @@ plugins:
         'sref/contrib.md': 'develop/contributing.md'  #  https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md.
         'sref/docs.md': 'index.md' #   https://docs.inventree.org/en/latest/
         'sref/api.md': 'api/index.md' #  https://demo.inventree.org/api-doc/
+        'sref/architecture.md': 'develop/architecture.md'
+        'sref/roadmap.md': 'develop/roadmap.md'
         'sref/code.md': 'https://github.com/inventree/InvenTree/tree/master' #  https://github.com/inventree/InvenTree/tree/master
         'sref/oci-image.md': 'https://hub.docker.com/r/inventree/inventree/tags' #  https://hub.docker.com/r/inventree/inventree/tags
         'sref/releases.md': 'https://github.com/inventree/InvenTree/releases' # https://github.com/inventree/InvenTree/releases
@@ -311,7 +322,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          # format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:mermaid2.fence_mermaid_custom
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg

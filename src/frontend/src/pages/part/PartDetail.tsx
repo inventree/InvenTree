@@ -11,7 +11,6 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
-  IconCalendarStats,
   IconClipboardList,
   IconCurrencyDollar,
   IconInfoCircle,
@@ -102,7 +101,6 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
-import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
 import PartSupplierDetail from './PartSupplierDetail';
 
@@ -143,6 +141,14 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: id,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
@@ -151,8 +157,23 @@ export default function PartDetail() {
     const data = { ...part };
 
     data.required =
-      (data?.required_for_build_orders ?? 0) +
-      (data?.required_for_sales_orders ?? 0);
+      (partRequirements?.required_for_build_orders ??
+        part?.required_for_build_orders ??
+        0) +
+      (partRequirements?.required_for_sales_orders ??
+        part?.required_for_sales_orders ??
+        0);
+
+    data.allocated =
+      (partRequirements?.allocated_to_build_orders ??
+        part?.allocated_to_build_orders ??
+        0) +
+      (partRequirements?.allocated_to_sales_orders ??
+        part?.allocated_to_sales_orders ??
+        0);
+
+    // Extract requirements data
+    data.can_build = partRequirements?.can_build ?? 0;
 
     // Provide latest serial number info
     if (!!serials.latest) {
@@ -249,50 +270,52 @@ export default function PartDetail() {
     // Top right - stock availability information
     const tr: DetailsField[] = [
       {
-        type: 'string',
+        type: 'number',
         name: 'total_in_stock',
-        unit: true,
+        unit: part.units,
         label: t`In Stock`
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'unallocated_stock',
-        unit: true,
+        unit: part.units,
         label: t`Available Stock`,
         hidden: part.total_in_stock == part.unallocated_stock
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'variant_stock',
-        unit: true,
+        unit: part.units,
         label: t`Variant Stock`,
         hidden: !part.variant_stock,
         icon: 'stock'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'minimum_stock',
-        unit: true,
+        unit: part.units,
         label: t`Minimum Stock`,
         hidden: part.minimum_stock <= 0
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'ordering',
         label: t`On order`,
-        unit: true,
+        unit: part.units,
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'required',
         label: t`Required for Orders`,
+        unit: part.units,
         hidden: part.required <= 0,
-        icon: 'tick_off'
+        icon: 'stocktake'
       },
       {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
+        icon: 'tick_off',
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
@@ -303,6 +326,7 @@ export default function PartDetail() {
       },
       {
         type: 'progressbar',
+        icon: 'tick_off',
         name: 'allocated_to_sales_orders',
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
@@ -313,18 +337,19 @@ export default function PartDetail() {
             part.allocated_to_sales_orders <= 0)
       },
       {
-        type: 'string',
-        name: 'can_build',
-        unit: true,
-        label: t`Can Build`,
-        hidden: true // TODO: Expose "can_build" to the API
+        type: 'progressbar',
+        name: 'building',
+        label: t`In Production`,
+        progress: part.building,
+        total: part.scheduled_to_build,
+        hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
       },
       {
-        type: 'string',
-        name: 'building',
-        unit: true,
-        label: t`In Production`,
-        hidden: !part.assembly || !part.building
+        type: 'number',
+        name: 'can_build',
+        unit: part.units,
+        label: t`Can Build`,
+        hidden: !part.assembly || partRequirementsQuery.isFetching
       }
     ];
 
@@ -485,7 +510,9 @@ export default function PartDetail() {
     id,
     serials,
     instanceQuery.isFetching,
-    instanceQuery.data
+    instanceQuery.data,
+    partRequirementsQuery.isFetching,
+    partRequirements
   ]);
 
   // Part data panels (recalculate when part data changes)
@@ -622,13 +649,6 @@ export default function PartDetail() {
           !user.hasViewRole(UserRoles.stocktake) ||
           !globalSettings.isSet('STOCKTAKE_ENABLE') ||
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
-      },
-      {
-        name: 'scheduling',
-        label: t`Scheduling`,
-        icon: <IconCalendarStats />,
-        content: part ? <PartSchedulingDetail part={part} /> : <Skeleton />,
-        hidden: !userSettings.isSet('DISPLAY_SCHEDULE_TAB')
       },
       {
         name: 'test_templates',
@@ -830,13 +850,18 @@ export default function PartDetail() {
             value: true
           },
           copy_bom: {
-            value: globalSettings.isSet('PART_COPY_BOM')
+            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !part.assembly
           },
           copy_notes: {
             value: true
           },
           copy_parameters: {
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: part.testable,
+            hidden: !part.testable
           }
         }
       }
@@ -997,11 +1022,13 @@ export default function PartDetail() {
 
   return (
     <>
-      {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
-      {findBySerialNumber.modal}
+      {duplicatePart.modal}
+      {countStockItems.modal}
       {orderPartsWizard.wizard}
+      {findBySerialNumber.modal}
+      {transferStockItems.modal}
       <InstanceDetail
         status={requestStatus}
         loading={instanceQuery.isFetching}
@@ -1088,8 +1115,6 @@ export default function PartDetail() {
             model={ModelType.part}
             id={part.pk}
           />
-          {transferStockItems.modal}
-          {countStockItems.modal}
         </Stack>
       </InstanceDetail>
     </>
