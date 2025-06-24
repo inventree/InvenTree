@@ -74,6 +74,7 @@ component_management:
 comment:
   require_bundle_changes: True
   bundle_change_threshold: "1Kb"
+  layout: "header, diff, flags, components"
 
 bundle_analysis:
   warning_threshold: "5%"
