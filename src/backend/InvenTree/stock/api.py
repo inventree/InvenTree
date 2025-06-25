@@ -120,6 +120,23 @@ class StockItemSerialize(StockItemContextMixin, CreateAPI):
 
     serializer_class = StockSerializers.SerializeStockItemSerializer
 
+    def create(self, request, *args, **kwargs):
+        """Serialize the provided StockItem."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Perform the actual serialization step
+        items = serializer.save()
+
+        response = StockSerializers.StockItemSerializer(
+            items, many=True, context=self.get_serializer_context()
+        )
+
+        return Response(
+            {'items': response.data, 'quantity': len(items)},
+            status=status.HTTP_201_CREATED,
+        )
+
 
 class StockItemInstall(StockItemContextMixin, CreateAPI):
     """API endpoint for installing a particular stock item into this stock item.
@@ -1010,6 +1027,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         # Check if a set of serial numbers was provided
         serial_numbers = data.pop('serial_numbers', '')
 
+        # Exclude 'serial' from submitted data
+        # We use 'serial_numbers' for item creation
+        data.pop('serial', None)
+
         # Check if the supplier_part has a package size defined, which is not 1
         if supplier_part_id := data.get('supplier_part', None):
             try:
@@ -1097,10 +1118,6 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        # Exclude 'serial' from submitted data
-        # We use 'serial_numbers' for item creation
-        serializer.validated_data.pop('serial', None)
-
         # Extract location information
         location = serializer.validated_data.get('location', None)
 
@@ -1127,7 +1144,15 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
                 StockItemTracking.objects.bulk_create(tracking)
 
-                response_data = {'quantity': quantity, 'serial_numbers': serials}
+                serialized_items = StockSerializers.StockItemSerializer(
+                    items, many=True
+                )
+
+                response_data = {
+                    'quantity': quantity,
+                    'serial_numbers': serials,
+                    'items': serialized_items.data,
+                }
 
             else:
                 # Create a single StockItem object
