@@ -1332,8 +1332,8 @@ class StockItem(
         self.sales_order = None
         self.location = location
 
-        if status := kwargs.get('status'):
-            self.status = status
+        if status := kwargs.pop('status', None):
+            self.set_status(status)
             tracking_info['status'] = status
 
         self.save()
