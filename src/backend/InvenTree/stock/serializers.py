@@ -1116,7 +1116,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         note = data.get('note', '')
 
-        items_to_update = []
         transaction_notes = []
 
         deltas = {'status': status}
@@ -1128,12 +1127,11 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         for item in items:
             # Ignore items which are already in the desired status
-            if item.status == status:
+            if item.get_custom_status() == status:
                 continue
 
-            item.updated = now
-            item.status = status
-            items_to_update.append(item)
+            item.set_status(status)
+            item.save(add_note=False)
 
             # Create a new transaction note for each item
             transaction_notes.append(
@@ -1147,10 +1145,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
                 )
             )
 
-        # Update status
-        StockItem.objects.bulk_update(items_to_update, ['status', 'updated'])
-
-        # Create entries
+        # Create tracking entries
         StockItemTracking.objects.bulk_create(transaction_notes)
 
 
