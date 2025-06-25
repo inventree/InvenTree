@@ -15,7 +15,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { LinkColumn, NoteColumn } from '../ColumnRenderers';
+import { DescriptionColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -46,9 +46,7 @@ export default function ExtraLineItemTable({
         accessor: 'reference',
         switchable: false
       },
-      {
-        accessor: 'description'
-      },
+      DescriptionColumn({}),
       {
         accessor: 'quantity',
         switchable: false
