@@ -31,6 +31,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   CurrencyColumn,
+  DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
@@ -143,10 +144,9 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         ordering: 'IPN'
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       ReferenceColumn({}),
       {
         accessor: 'build_order',
