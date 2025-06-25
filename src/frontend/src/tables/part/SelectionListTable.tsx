@@ -14,7 +14,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -32,10 +32,9 @@ export default function SelectionListTable() {
         accessor: 'name',
         sortable: true
       },
-      {
-        accessor: 'description',
+      DescriptionColumn({
         sortable: true
-      },
+      }),
       BooleanColumn({
         accessor: 'active'
       }),

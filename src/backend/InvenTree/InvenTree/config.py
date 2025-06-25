@@ -74,8 +74,40 @@ def get_root_dir() -> Path:
     return get_base_dir().parent.parent.parent
 
 
+def inventreeInstaller() -> Optional[str]:
+    """Returns the installer for the running codebase - if set or detectable."""
+    # First look in the environment variables, e.g. if running in docker
+
+    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
+
+    if installer:
+        return str(installer)
+    elif os.environ.get('INVENTREE_DEVCONTAINER', 'False') == 'True':
+        return 'DEV'
+
+    try:
+        from django.conf import settings
+
+        from InvenTree.version import main_commit
+
+        if settings.DOCKER:
+            return 'DOC'
+        elif main_commit is not None:
+            return 'GIT'
+    except Exception:
+        pass
+    return None
+
+
 def get_config_dir() -> Path:
-    """Returns the InvenTree configuration directory."""
+    """Returns the InvenTree configuration directory depending on the install type."""
+    if inst := inventreeInstaller():
+        if inst == 'DOC':
+            return Path('/home/inventree/data/').resolve()
+        elif inst == 'DEV':
+            return Path('/home/inventree/dev/').resolve()
+        elif inst == 'PKG':
+            return Path('/etc/inventree/').resolve()
     return get_root_dir().joinpath('config').resolve()
 
 
@@ -544,6 +576,7 @@ def check_config_dir(
             setting_name,
             config_dir,
         )
+
         try:
             from common.settings import GlobalWarningCode, set_global_warning
 

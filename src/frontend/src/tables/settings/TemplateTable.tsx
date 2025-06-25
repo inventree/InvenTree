@@ -43,7 +43,7 @@ import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -204,11 +204,11 @@ export function TemplateTable({
         sortable: true,
         switchable: false
       },
-      {
+      DescriptionColumn({
         accessor: 'description',
         sortable: false,
         switchable: true
-      },
+      }),
       {
         accessor: 'template',
         sortable: false,

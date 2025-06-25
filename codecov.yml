@@ -52,25 +52,27 @@ component_management:
         - src/backend/InvenTree/users/**
         - src/backend/InvenTree/web/**
       statuses:
-      - type: project
-        target: 90%
+        - type: project
+          target: 90%
     - component_id: backend-general
       name: Backend General
       paths:
         - src/backend/InvenTree/generic/**
         - src/backend/InvenTree/common/**
       statuses:
-      - type: project
-        target: 92% # 95%
-        patch: 95%
+        - type: project
+          target: 92% # 95%
+        - type: patch
+          target: 95%
     - component_id: web
       name: Frontend
       paths:
         - src/frontend/**
       statuses:
-      - type: project
-        target: 65% # 90%
-        patch: 80%
+        - type: project
+          target: 68% # 90%
+        - type: patch
+          target: 80%
 comment:
   require_bundle_changes: True
   bundle_change_threshold: "1Kb"

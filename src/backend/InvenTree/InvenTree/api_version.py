@@ -10,6 +10,11 @@ v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)
     - Remove NotificationSetting model (and associated endpoints)
 
+v358 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9857
+    - Provide list of generated stock items against "StockItemSerialize" API endpoint
+    - Provide list of generated stock items against "StockList" API endpoint
+    - Provide list of generated stock items against "BuildOutputCreate" API endpoint
+
 v357 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9856
     - Adds "units" field to PluginSetting API endpoints
 

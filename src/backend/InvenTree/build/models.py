@@ -865,10 +865,10 @@ class Build(
         allocations.delete()
 
     @transaction.atomic
-    def create_build_output(self, quantity, **kwargs):
+    def create_build_output(self, quantity, **kwargs) -> list[stock.models.StockItem]:
         """Create a new build output against this BuildOrder.
 
-        Args:
+        Arguments:
             quantity: The quantity of the item to produce
 
         Kwargs:
@@ -876,6 +876,9 @@ class Build(
             serials: Serial numbers
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
+
+        Returns:
+            A list of the created output (StockItem) objects.
         """
         trackable_parts = self.part.get_trackable_parts()
 
@@ -899,6 +902,8 @@ class Build(
             raise ValidationError({
                 'serials': _('Serial numbers must be provided for trackable parts')
             })
+
+        outputs = []
 
         # We are generating multiple serialized outputs
         if serials:
@@ -994,9 +999,13 @@ class Build(
                 },
             )
 
+            outputs = [output]
+
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION.value
             self.save()
+
+        return outputs
 
     @transaction.atomic
     def delete_output(self, output):
