@@ -521,7 +521,17 @@ class StockItemSerializer(
         """Custom update method to pass the user information through to the instance."""
         instance._user = self.context['user']
 
-        return super().update(instance, validated_data)
+        status_custom_key = validated_data.pop('status_custom_key', None)
+        status = validated_data.pop('status', None)
+
+        instance = super().update(instance, validated_data=validated_data)
+
+        if status_code := status_custom_key or status:
+            if not instance.compare_status(status_code):
+                instance.set_status(status_code)
+                instance.save()
+
+        return instance
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1123,7 +1133,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         note = data.get('note', '')
 
-        items_to_update = []
         transaction_notes = []
 
         deltas = {'status': status}
@@ -1135,12 +1144,11 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         for item in items:
             # Ignore items which are already in the desired status
-            if item.status == status:
+            if item.compare_status(status):
                 continue
 
-            item.updated = now
-            item.status = status
-            items_to_update.append(item)
+            item.set_status(status)
+            item.save(add_note=False)
 
             # Create a new transaction note for each item
             transaction_notes.append(
@@ -1154,10 +1162,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
                 )
             )
 
-        # Update status
-        StockItem.objects.bulk_update(items_to_update, ['status', 'updated'])
-
-        # Create entries
+        # Create tracking entries
         StockItemTracking.objects.bulk_create(transaction_notes)
 
 
