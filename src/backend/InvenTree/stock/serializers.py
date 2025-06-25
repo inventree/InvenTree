@@ -790,8 +790,12 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
-        """Serialize stock item."""
+    def save(self) -> list[StockItem]:
+        """Serialize the provided StockItem.
+
+        Returns:
+            A list of StockItem objects that were created as a result of the serialization.
+        """
         item = self.context['item']
         request = self.context.get('request')
         user = request.user if request else None
@@ -805,12 +809,15 @@ class SerializeStockItemSerializer(serializers.Serializer):
             part=item.part,
         )
 
-        item.serializeStock(
-            data['quantity'],
-            serials,
-            user,
-            notes=data.get('notes', ''),
-            location=data['destination'],
+        return (
+            item.serializeStock(
+                data['quantity'],
+                serials,
+                user,
+                notes=data.get('notes', ''),
+                location=data['destination'],
+            )
+            or []
         )
 
 

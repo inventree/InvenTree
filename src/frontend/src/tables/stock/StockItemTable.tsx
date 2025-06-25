@@ -563,8 +563,7 @@ export function StockItemTable({
     const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
     const can_add_stock = user.hasAddRole(UserRoles.stock);
     const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-    const can_add_order = user.hasAddRole(UserRoles.purchase_order);
-    const can_change_order = user.hasChangeRole(UserRoles.purchase_order);
+
     return [
       <ActionDropdown
         key='stock-actions'
