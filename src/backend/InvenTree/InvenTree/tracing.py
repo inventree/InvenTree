@@ -163,10 +163,12 @@ def setup_instruments(db_engine: str):  # pragma: no cover
     RequestsInstrumentor().instrument()
     SystemMetricsInstrumentor().instrument()
 
+    db_engine = str(db_engine).lower().strip()
+
     # DBs
-    if db_engine == 'sqlite':
+    if 'sqlite' in db_engine:
         SQLite3Instrumentor().instrument()
-    elif db_engine == 'postgresql':
+    elif 'postgresql' in db_engine:
         try:
             from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
 
@@ -175,7 +177,7 @@ def setup_instruments(db_engine: str):  # pragma: no cover
             )
         except ModuleNotFoundError:
             pass
-    elif db_engine == 'mysql':
+    elif 'mysql' in db_engine:
         try:
             from opentelemetry.instrumentation.pymysql import PyMySQLInstrumentor
 
