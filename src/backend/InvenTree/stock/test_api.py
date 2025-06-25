@@ -1690,11 +1690,6 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.ATTENTION.value)
-
-            print('item:', item)
-            for entry in item.tracking_info.all():
-                print('  entry:', entry, entry.deltas)
-
             self.assertEqual(item.tracking_info.count(), 2)
 
             tracking = item.tracking_info.last()
