@@ -1,7 +1,5 @@
 """Background task definitions for the 'part' app."""
 
-import random
-import time
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
@@ -13,7 +11,6 @@ from opentelemetry import trace
 import common.currency
 import common.notifications
 import company.models
-import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models as part_models
@@ -160,9 +157,6 @@ def scheduled_stocktake_reports():
     - Delete 'old' stocktake report files after the specified period
     - Generate new reports at the specified period
     """
-    # Sleep a random number of seconds to prevent worker conflict
-    time.sleep(random.randint(1, 5))
-
     # First let's delete any old stocktake reports
     delete_n_days = int(
         get_global_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False)
