@@ -129,7 +129,12 @@ class StockItemSerialize(StockItemContextMixin, CreateAPI):
         items = serializer.save()
 
         response = StockSerializers.StockItemSerializer(
-            items, many=True, context=self.get_serializer_context()
+            items,
+            many=True,
+            context=self.get_serializer_context(),
+            part_detail=False,
+            location_detail=False,
+            supplier_part_detail=False,
         )
 
         return Response(
@@ -1144,14 +1149,19 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
                 StockItemTracking.objects.bulk_create(tracking)
 
-                serialized_items = StockSerializers.StockItemSerializer(
-                    items, many=True
+                response = StockSerializers.StockItemSerializer(
+                    items,
+                    many=True,
+                    context=self.get_serializer_context(),
+                    part_detail=False,
+                    location_detail=False,
+                    supplier_part_detail=False,
                 )
 
                 response_data = {
                     'quantity': quantity,
                     'serial_numbers': serials,
-                    'items': serialized_items.data,
+                    'items': response.data,
                 }
 
             else:
