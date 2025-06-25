@@ -32,7 +32,12 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  LocationColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -323,11 +328,9 @@ export default function BuildLineTable({
         sortable: false,
         title: t`IPN`
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false,
-        title: t`Description`
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'bom_item_detail.reference',
         ordering: 'reference',

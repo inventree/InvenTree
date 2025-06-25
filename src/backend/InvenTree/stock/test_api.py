@@ -1142,7 +1142,7 @@ class CustomStockItemStatusTest(StockAPITestCase):
         self.assertEqual(response.data['status'], self.status2.logical_key)
         self.assertEqual(response.data['status_custom_key'], self.status2.key)
 
-        # Try if status_custom_key is rewrite with status bying set
+        # Try with custom status code
         response = self.patch(
             reverse('api-stock-detail', kwargs={'pk': pk}),
             {'status': self.status.logical_key},
@@ -1399,22 +1399,20 @@ class StockItemTest(StockAPITestCase):
         )
 
         data = response.data
-
-        self.assertEqual(data['quantity'], 10)
-        sn = data['serial_numbers']
+        self.assertEqual(len(data), 10)
+        serials = [item['serial'] for item in data]
 
         # Check that each serial number was created
         for i in range(1, 11):
-            self.assertIn(str(i), sn)
+            self.assertIn(str(i), serials)
 
             # Check the unique stock item has been created
-
-            item = StockItem.objects.get(part=trackable_part, serial=str(i))
+        for item in data:
+            item = StockItem.objects.get(pk=item['pk'])
 
             # Item location should have been set automatically
             self.assertIsNotNone(item.location)
-
-            self.assertEqual(str(i), item.serial)
+            self.assertIn(item.serial, serials)
 
         # There now should be 10 unique stock entries for this part
         self.assertEqual(trackable_part.stock_entries().count(), 10)

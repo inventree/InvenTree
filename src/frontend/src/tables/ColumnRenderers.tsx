@@ -96,6 +96,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     title: t`Description`,
     sortable: false,
     switchable: true,
+    width: 300,
     ...props
   };
 }

@@ -25,7 +25,7 @@ import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useTable } from '../../hooks/UseTable';
 import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
@@ -70,10 +70,7 @@ function MachineTypeDrawer({
         accessor: 'name',
         title: t`Name`
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin driver`
@@ -340,10 +337,7 @@ export function MachineTypeListTable({
         accessor: 'name',
         title: t`Name`
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin type`
