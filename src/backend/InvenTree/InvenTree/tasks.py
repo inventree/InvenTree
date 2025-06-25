@@ -2,9 +2,7 @@
 
 import json
 import os
-import random
 import re
-import time
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -94,17 +92,11 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     Note that this function creates some *hidden* global settings (designated with the _ prefix),
     which are used to keep a running track of when the particular task was was last run.
     """
-    from InvenTree.ready import isInTestMode
-
     if n_days <= 0:
         logger.info(
             "Specified interval for task '%s' < 1 - task will not run", task_name
         )
         return False
-
-    # Sleep a random number of seconds to prevent worker conflict
-    if not isInTestMode():
-        time.sleep(random.randint(1, 5))
 
     attempt_key = f'_{task_name}_ATTEMPT'
     success_key = f'_{task_name}_SUCCESS'
