@@ -1048,6 +1048,9 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         # Do this regardless of results above
         data.pop('use_pack_size', None)
 
+        # Extract 'status' flag from data
+        status = data.get('status_custom_key', data.get('status', None))
+
         # Assign serial numbers for a trackable part
         if serial_numbers:
             if not part.trackable:
@@ -1115,6 +1118,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
                 tracking = []
 
                 for item in items:
+                    if status:
+                        item.set_status(status)
+                        item.save()
+
                     if entry := item.add_tracking_entry(
                         StockHistoryCode.CREATED,
                         user,
@@ -1133,6 +1140,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
                 item = serializer.save()
+
+                if status:
+                    item.set_status(status)
+
                 item.save(user=user)
 
                 response_data = serializer.data

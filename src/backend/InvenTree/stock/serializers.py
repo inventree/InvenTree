@@ -521,7 +521,16 @@ class StockItemSerializer(
         """Custom update method to pass the user information through to the instance."""
         instance._user = self.context['user']
 
-        return super().update(instance, validated_data)
+        status_custom_key = validated_data.pop('status_custom_key', None)
+        status = validated_data.pop('status', None)
+
+        instance = super().update(instance, validated_data=validated_data)
+
+        if status_code := status_custom_key or status:
+            instance.set_status(status_code)
+            instance.save()
+
+        return instance
 
     @staticmethod
     def annotate_queryset(queryset):
