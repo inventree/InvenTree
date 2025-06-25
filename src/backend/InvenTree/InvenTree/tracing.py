@@ -4,8 +4,6 @@ import base64
 import logging
 from typing import Optional
 
-from django.conf import settings
-
 from opentelemetry import metrics, trace
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
@@ -75,7 +73,7 @@ def setup_tracing(
     headers = {k: v for k, v in headers.items() if v is not None}
 
     # Initialize the OTLP Resource
-    service_name = 'Unkown'
+    service_name = 'Unknown'
     if InvenTree.ready.isInServerThread():
         service_name = 'BACKEND'
     elif InvenTree.ready.isInWorkerThread():
@@ -107,7 +105,7 @@ def setup_tracing(
             OTLPSpanExporter,
         )
 
-    # Spans / Tracs
+    # Spans / Traces
     span_exporter = OTLPSpanExporter(
         headers=headers,
         endpoint=endpoint if not (is_http and append_http) else f'{endpoint}/v1/traces',
@@ -121,7 +119,7 @@ def setup_tracing(
         trace_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
 
     # Metrics
-    metric_perodic_reader = PeriodicExportingMetricReader(
+    metric_periodic_reader = PeriodicExportingMetricReader(
         OTLPMetricExporter(
             headers=headers,
             endpoint=endpoint
@@ -129,7 +127,7 @@ def setup_tracing(
             else f'{endpoint}/v1/metrics',
         )
     )
-    metric_readers = [metric_perodic_reader]
+    metric_readers = [metric_periodic_reader]
 
     # For debugging purposes, export the metrics to the console
     if console:
@@ -158,17 +156,17 @@ def setup_tracing(
     TRACE_PROV = trace_provider
 
 
-def setup_instruments():  # pragma: no cover
-    """Run auto-insturmentation for OpenTelemetry tracing."""
+def setup_instruments(db_engine: str):  # pragma: no cover
+    """Run auto-instrumentation for OpenTelemetry tracing."""
     DjangoInstrumentor().instrument()
     RedisInstrumentor().instrument()
     RequestsInstrumentor().instrument()
     SystemMetricsInstrumentor().instrument()
 
     # DBs
-    if settings.DB_ENGINE == 'sqlite':
+    if db_engine == 'sqlite':
         SQLite3Instrumentor().instrument()
-    elif settings.DB_ENGINE == 'postgresql':
+    elif db_engine == 'postgresql':
         try:
             from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
 
@@ -177,7 +175,7 @@ def setup_instruments():  # pragma: no cover
             )
         except ModuleNotFoundError:
             pass
-    elif settings.DB_ENGINE == 'mysql':
+    elif db_engine == 'mysql':
         try:
             from opentelemetry.instrumentation.pymysql import PyMySQLInstrumentor
 
