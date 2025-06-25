@@ -1333,8 +1333,9 @@ class StockItem(
         self.location = location
 
         if status := kwargs.pop('status', None):
-            self.set_status(status)
-            tracking_info['status'] = status
+            if not self.compare_status(status):
+                self.set_status(status)
+                tracking_info['status'] = status
 
         self.save()
 
@@ -2228,7 +2229,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2313,7 +2314,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2376,7 +2377,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2430,7 +2431,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             deltas['status'] = status
 

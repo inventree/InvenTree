@@ -527,8 +527,9 @@ class StockItemSerializer(
         instance = super().update(instance, validated_data=validated_data)
 
         if status_code := status_custom_key or status:
-            instance.set_status(status_code)
-            instance.save()
+            if not instance.compare_status(status_code):
+                instance.set_status(status_code)
+                instance.save()
 
         return instance
 
@@ -1136,7 +1137,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         for item in items:
             # Ignore items which are already in the desired status
-            if item.get_custom_status() == status:
+            if item.compare_status(status):
                 continue
 
             item.set_status(status)

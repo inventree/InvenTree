@@ -1120,7 +1120,7 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
                 tracking = []
 
                 for item in items:
-                    if status_value:
+                    if status_value and not item.compare_status(status_value):
                         item.set_status(status_value)
                         item.save()
 
@@ -1143,7 +1143,7 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
                 # Note: This automatically creates a tracking entry
                 item = serializer.save()
 
-                if status_value:
+                if status_value and not item.compare_status(status_value):
                     item.set_status(status_value)
 
                 item.save(user=user)
