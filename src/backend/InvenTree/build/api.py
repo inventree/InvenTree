@@ -9,12 +9,14 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 import build.serializers
 import common.models
 import part.models as part_models
+import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
@@ -647,6 +649,28 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
 
+    def create(self, request, *args, **kwargs):
+        """Override the create method to handle the creation of build outputs."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Create the build output(s)
+        outputs = serializer.save()
+
+        response = stock.serializers.StockItemSerializer(
+            outputs,
+            many=True,
+            part_detail=False,
+            location_detail=False,
+            supplier_part_detail=False,
+        )
+
+        # Return the created outputs
+        return Response(
+            {'items': response.data, 'quantity': len(outputs)},
+            status=status.HTTP_201_CREATED,
+        )
+
 
 class BuildOutputScrap(BuildOrderContextMixin, CreateAPI):
     """API endpoint for scrapping build output(s)."""
@@ -705,7 +729,7 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     - Only looks at 'untracked' parts
     - If stock exists in a single location, easy!
     - If user decides that stock items are "fungible", allocate against multiple stock items
-    - If the user wants to, allocate substite parts if the primary parts are not available.
+    - If the user wants to, allocate substitute parts if the primary parts are not available.
     """
 
     queryset = Build.objects.none()
