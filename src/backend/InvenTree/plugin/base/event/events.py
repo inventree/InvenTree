@@ -162,8 +162,6 @@ def allow_table_event(table_name):
         'common_webhookendpoint',
         'common_webhookmessage',
         'part_partpricing',
-        'part_partstocktake',
-        'part_partstocktakereport',
     ]
 
     return table_name not in ignore_tables

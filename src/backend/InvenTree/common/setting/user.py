@@ -211,14 +211,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
     },
-    'DISPLAY_STOCKTAKE_TAB': {
-        'name': _('Part Stocktake'),
-        'description': _(
-            'Display part stocktake information (if stocktake functionality is enabled)'
-        ),
-        'default': True,
-        'validator': bool,
-    },
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),
         'description': _('Show the current page in breadcrumbs'),

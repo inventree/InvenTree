@@ -14,12 +14,10 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-import InvenTree.permissions
 import part.filters
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
-    ORDER_FILTER,
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
@@ -52,8 +50,6 @@ from .models import (
     PartParameterTemplate,
     PartRelated,
     PartSellPriceBreak,
-    PartStocktake,
-    PartStocktakeReport,
     PartTestTemplate,
 )
 
@@ -842,16 +838,6 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset.filter(q_a | q_b).distinct()
 
-    stocktake = rest_filters.BooleanFilter(
-        label='Has stocktake', method='filter_has_stocktake'
-    )
-
-    def filter_has_stocktake(self, queryset, name, value):
-        """Filter the queryset based on whether stocktake data is available."""
-        if str2bool(value):
-            return queryset.exclude(last_stocktake=None)
-        return queryset.filter(last_stocktake=None)
-
     stock_to_build = rest_filters.BooleanFilter(
         label='Required for Build Order', method='filter_stock_to_build'
     )
@@ -1184,7 +1170,6 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
         'unallocated_stock',
         'category',
         'default_location',
-        'last_stocktake',
         'units',
         'pricing_min',
         'pricing_max',
@@ -1472,89 +1457,6 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
 
 class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
-
-
-class PartStocktakeFilter(rest_filters.FilterSet):
-    """Custom filter for the PartStocktakeList endpoint."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = PartStocktake
-        fields = ['part', 'user']
-
-
-class PartStocktakeList(ListCreateAPI):
-    """API endpoint for listing part stocktake information."""
-
-    queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
-    filterset_class = PartStocktakeFilter
-
-    def get_serializer_context(self):
-        """Extend serializer context data."""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-
-        return context
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['part', 'item_count', 'quantity', 'date', 'user', 'pk']
-
-    # Reverse date ordering by default
-    ordering = '-pk'
-
-
-class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
-    """Detail API endpoint for a single PartStocktake instance.
-
-    Note: Only staff (admin) users can access this endpoint.
-    """
-
-    queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
-
-
-class PartStocktakeReportList(ListAPI):
-    """API endpoint for listing part stocktake report information."""
-
-    queryset = PartStocktakeReport.objects.all()
-    serializer_class = part_serializers.PartStocktakeReportSerializer
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['date', 'pk']
-
-    # Newest first, by default
-    ordering = '-pk'
-
-
-class PartStocktakeReportDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a single PartStocktakeReport object."""
-
-    queryset = PartStocktakeReport.objects.all()
-    serializer_class = part_serializers.PartStocktakeReportSerializer
-
-
-class PartStocktakeReportGenerate(CreateAPI):
-    """API endpoint for manually generating a new PartStocktakeReport."""
-
-    serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
-
-    permission_classes = [
-        InvenTree.permissions.IsAuthenticatedOrReadScope,
-        InvenTree.permissions.RolePermission,
-    ]
-
-    role_required = 'stocktake'
-
-    def get_serializer_context(self):
-        """Extend serializer context data."""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-
-        return context
 
 
 class BomFilter(rest_filters.FilterSet):
@@ -1953,38 +1855,6 @@ part_api_urls = [
                 ]),
             ),
             path('', PartParameterList.as_view(), name='api-part-parameter-list'),
-        ]),
-    ),
-    # Part stocktake data
-    path(
-        'stocktake/',
-        include([
-            path(
-                r'report/',
-                include([
-                    path(
-                        'generate/',
-                        PartStocktakeReportGenerate.as_view(),
-                        name='api-part-stocktake-report-generate',
-                    ),
-                    path(
-                        '<int:pk>/',
-                        PartStocktakeReportDetail.as_view(),
-                        name='api-part-stocktake-report-detail',
-                    ),
-                    path(
-                        '',
-                        PartStocktakeReportList.as_view(),
-                        name='api-part-stocktake-report-list',
-                    ),
-                ]),
-            ),
-            path(
-                '<int:pk>/',
-                PartStocktakeDetail.as_view(),
-                name='api-part-stocktake-detail',
-            ),
-            path('', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
         ]),
     ),
     path(

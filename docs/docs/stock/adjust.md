@@ -30,7 +30,7 @@ Remove parts from a stock item record - for example taking parts from stock for 
 
 ### Count Stock
 
-Count stock items (stocktake) to record the number of items in stock at a given point of time. The quantity for each part is pre-filled with the current quantity based on stock item history.
+Count stock items to record the number of items in stock at a given point of time. The quantity for each part is pre-filled with the current quantity based on stock item history.
 
 {{ image("stock/stock_count.png", "Stock Count") }}
 

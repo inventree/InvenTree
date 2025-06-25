@@ -430,7 +430,7 @@ class StockItem(
         link: Optional URL to link to external resource
         updated: Date that this stock item was last updated (auto)
         expiry_date: Expiry date of the StockItem (optional)
-        stocktake_date: Date of last stocktake for this item
+        stocktake_date: Date of last stocktake for this StockItem
         stocktake_user: User that performed the most recent stocktake
         review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
@@ -2291,7 +2291,7 @@ class StockItem(
 
     @transaction.atomic
     def stocktake(self, count, user, **kwargs):
-        """Perform item stocktake.
+        """Perform item stocktake (count the current quantity).
 
         Arguments:
             count: The new quantity of the item

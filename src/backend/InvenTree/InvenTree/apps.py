@@ -94,6 +94,7 @@ class InvenTreeConfig(AppConfig):
             'label.tasks.cleanup_old_label_outputs',
             'report.tasks.cleanup_old_report_outputs',
             'data_exporter.tasks.cleanup_old_export_outputs',
+            'part.tasks.scheduled_stocktake_reports',
         ]
 
         try:

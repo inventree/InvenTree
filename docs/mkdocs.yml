@@ -152,7 +152,6 @@ nav:
     - Templates: part/template.md
     - Tests: part/test.md
     - Pricing: part/pricing.md
-    - Stocktake: part/stocktake.md
     - Notifications: part/notification.md
   - Stock:
     - Stock Items: stock/index.md

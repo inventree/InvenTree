@@ -562,9 +562,7 @@ export function StockItemTable({
   const tableActions = useMemo(() => {
     const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
     const can_add_stock = user.hasAddRole(UserRoles.stock);
-    const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-    const can_add_order = user.hasAddRole(UserRoles.purchase_order);
-    const can_change_order = user.hasChangeRole(UserRoles.purchase_order);
+
     return [
       <ActionDropdown
         key='stock-actions'
@@ -578,7 +576,7 @@ export function StockItemTable({
               <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
             tooltip: t`Count Stock`,
-            disabled: !can_add_stocktake,
+            disabled: !can_add_stock,
             onClick: () => {
               countStock.open();
             }

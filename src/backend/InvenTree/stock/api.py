@@ -151,7 +151,7 @@ class StockItemReturn(StockItemContextMixin, CreateAPI):
 
 
 class StockAdjustView(CreateAPI):
-    """A generic class for handling stocktake actions.
+    """A generic class for handling stock adjustment actions.
 
     Subclasses exist for:
 
@@ -178,7 +178,7 @@ class StockChangeStatus(StockAdjustView):
 
 
 class StockCount(StockAdjustView):
-    """Endpoint for counting stock (performing a stocktake)."""
+    """Endpoint for counting stock."""
 
     serializer_class = StockSerializers.StockCountSerializer
 

@@ -22,7 +22,7 @@ It can be access via the *Admin Center* link in the top right user menu, the *Ad
 
 #### Permissions
 
-Some panes can only be accessed by users with specific permissions. For example, the *Stocktake* pane can only be accessed by users with the `stocktake` permission.
+Some panels can only be accessed by users with specific permissions.
 
 ### System Settings
 

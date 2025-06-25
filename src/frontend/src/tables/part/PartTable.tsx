@@ -306,12 +306,6 @@ function partTableFilters(): TableFilter[] {
       label: t`Subscribed`,
       description: t`Filter by parts to which the user is subscribed`,
       type: 'boolean'
-    },
-    {
-      name: 'stocktake',
-      label: t`Has Stocktake`,
-      description: t`Filter by parts which have stocktake information`,
-      type: 'boolean'
     }
   ];
 }
