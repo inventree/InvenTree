@@ -604,7 +604,7 @@ class StockItemSerializer(
         queryset = queryset.annotate(installed_items=SubqueryCount('installed_parts'))
 
         # Annotate with the total number of "child items" (split stock items)
-        queryset = queryset.annotate(child_items=stock.filters.annotate_child_items())
+        queryset = queryset.annotate(child_items=SubqueryCount('children'))
 
         return queryset
 
