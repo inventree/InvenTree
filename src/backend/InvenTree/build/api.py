@@ -8,7 +8,7 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -649,6 +649,7 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
 
+    @extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
     def create(self, request, *args, **kwargs):
         """Override the create method to handle the creation of build outputs."""
         serializer = self.get_serializer(data=request.data)
@@ -657,19 +658,10 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
         # Create the build output(s)
         outputs = serializer.save()
 
-        response = stock.serializers.StockItemSerializer(
-            outputs,
-            many=True,
-            part_detail=False,
-            location_detail=False,
-            supplier_part_detail=False,
-        )
+        response = stock.serializers.StockItemSerializer(outputs, many=True)
 
         # Return the created outputs
-        return Response(
-            {'items': response.data, 'quantity': len(outputs)},
-            status=status.HTTP_201_CREATED,
-        )
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class BuildOutputScrap(BuildOrderContextMixin, CreateAPI):

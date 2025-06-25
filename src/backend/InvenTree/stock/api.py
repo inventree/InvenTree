@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -120,6 +120,7 @@ class StockItemSerialize(StockItemContextMixin, CreateAPI):
 
     serializer_class = StockSerializers.SerializeStockItemSerializer
 
+    @extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
     def create(self, request, *args, **kwargs):
         """Serialize the provided StockItem."""
         serializer = self.get_serializer(data=request.data)
@@ -129,18 +130,10 @@ class StockItemSerialize(StockItemContextMixin, CreateAPI):
         items = serializer.save()
 
         response = StockSerializers.StockItemSerializer(
-            items,
-            many=True,
-            context=self.get_serializer_context(),
-            part_detail=False,
-            location_detail=False,
-            supplier_part_detail=False,
+            items, many=True, context=self.get_serializer_context()
         )
 
-        return Response(
-            {'items': response.data, 'quantity': len(items)},
-            status=status.HTTP_201_CREATED,
-        )
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class StockItemInstall(StockItemContextMixin, CreateAPI):
@@ -1150,19 +1143,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
                 StockItemTracking.objects.bulk_create(tracking)
 
                 response = StockSerializers.StockItemSerializer(
-                    items,
-                    many=True,
-                    context=self.get_serializer_context(),
-                    part_detail=False,
-                    location_detail=False,
-                    supplier_part_detail=False,
+                    items, many=True, context=self.get_serializer_context()
                 )
 
-                response_data = {
-                    'quantity': quantity,
-                    'serial_numbers': serials,
-                    'items': response.data,
-                }
+                response_data = response.data
 
             else:
                 # Create a single StockItem object

@@ -687,16 +687,16 @@ export default function StockDetail() {
     modelType: ModelType.stockitem,
     onFormSuccess: (data) => {
       // Handle case where multiple stock items are created
-      if (!!data.items && data.items.length > 0) {
-        if (data.quantity > 1) {
-          const n: number = data.items.length;
+      if (Array.isArray(data) && data.length > 0) {
+        if (data.length == 1) {
+          navigate(getDetailUrl(ModelType.stockitem, data[0]?.pk));
+        } else {
+          const n: number = data.length;
           notifications.show({
             title: t`Items Created`,
             message: t`Created ${n} stock items`,
             color: 'green'
           });
-        } else if (data.quantity == 1) {
-          navigate(getDetailUrl(ModelType.stockitem, data.items[0]?.pk));
         }
       }
     }
