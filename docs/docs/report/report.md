@@ -44,3 +44,5 @@ For example, rendering the name of a part (which is available in the particular 
 </p></i>
 {% endraw %}
 ```
+#### Rendering a single report vs. multiple report from selection
+Users can select multiple items such as `part`, `stockItem`,...etc to render from a report template. By default, the `merge` attribute of report template is disabled, which means an independent report will be generated for each item in the list of selected items. If `merge` is enabled, all selected items will be available in the `instances` context variable of the report template. Users are free to access them by indexing or in a loop. For more details, visit [context variable](./context_variables.md)

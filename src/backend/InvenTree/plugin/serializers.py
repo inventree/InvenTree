@@ -213,6 +213,7 @@ class PluginReloadSerializer(serializers.Serializer):
             full_reload=self.validated_data.get('full_reload', False),
             force_reload=self.validated_data.get('force_reload', False),
             collect=self.validated_data.get('collect_plugins', False),
+            clear_errors=True,
         )
 
 

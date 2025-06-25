@@ -37,28 +37,6 @@ def annotate_location_items(filter: Q = None):
     )
 
 
-def annotate_child_items():
-    """Construct a queryset annotation which returns the number of children below a certain StockItem node in a StockItem tree."""
-    child_stock_query = stock.models.StockItem.objects.filter(
-        tree_id=OuterRef('tree_id'),
-        lft__gt=OuterRef('lft'),
-        rght__lt=OuterRef('rght'),
-        level__gte=OuterRef('level'),
-    )
-
-    return Coalesce(
-        Subquery(
-            child_stock_query.annotate(
-                count=Func(F('pk'), function='COUNT', output_field=IntegerField())
-            )
-            .values('count')
-            .order_by()
-        ),
-        0,
-        output_field=IntegerField(),
-    )
-
-
 def annotate_sub_locations():
     """Construct a queryset annotation which returns the number of sub-locations below a certain StockLocation node in a StockLocation tree."""
     subquery = stock.models.StockLocation.objects.filter(

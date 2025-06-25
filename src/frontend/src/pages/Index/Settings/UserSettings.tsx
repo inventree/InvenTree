@@ -54,7 +54,6 @@ export default function UserSettings() {
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'PART_SHOW_QUANTITY_IN_FORMS',
-              'DISPLAY_SCHEDULE_TAB',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB'
             ]}

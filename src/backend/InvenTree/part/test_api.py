@@ -20,7 +20,7 @@ import order.models
 from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
-from InvenTree.settings import BASE_DIR
+from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.status_codes import PurchaseOrderStatusGroups
 from part.models import (
@@ -64,7 +64,7 @@ class PartImageTestMixin:
         """Create a test image file."""
         p = Part.objects.first()
 
-        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+        fn = get_testfolder_dir() / 'part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
@@ -1694,7 +1694,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
             print(p.image.file)
 
         # Try to upload a non-image file
-        test_path = BASE_DIR / '_testfolder' / 'dummy_image'
+        test_path = get_testfolder_dir() / 'dummy_image'
         with open(f'{test_path}.txt', 'w', encoding='utf-8') as dummy_image:
             dummy_image.write('hello world')
 
@@ -1757,7 +1757,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         # First, upload an image for an existing part
         p = Part.objects.first()
 
-        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+        fn = get_testfolder_dir() / 'part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
@@ -1842,6 +1842,30 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         self.assertIn('category_path', response.data)
         self.assertEqual(len(response.data['category_path']), 2)
+
+    def test_part_requirements(self):
+        """Unit test for the "PartRequirements" API endpoint."""
+        url = reverse('api-part-requirements', kwargs={'pk': Part.objects.first().pk})
+
+        # Get the requirements for part 1
+        response = self.get(url, expected_code=200)
+
+        # Check that the response contains the expected fields
+        expected_fields = [
+            'total_stock',
+            'unallocated_stock',
+            'can_build',
+            'ordering',
+            'building',
+            'scheduled_to_build',
+            'required_for_build_orders',
+            'allocated_to_build_orders',
+            'required_for_sales_orders',
+            'allocated_to_sales_orders',
+        ]
+
+        for field in expected_fields:
+            self.assertIn(field, response.data)
 
 
 class PartListTests(PartAPITestBase):
@@ -3037,22 +3061,6 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
             'api-bom-item-metadata': BomItem,
         }.items():
             self.metatester(apikey, model)
-
-
-class PartSchedulingTest(PartAPITestBase):
-    """Unit tests for the 'part scheduling' API endpoint."""
-
-    def test_get_schedule(self):
-        """Test that the scheduling endpoint returns OK."""
-        part_ids = [1, 3, 100, 101]
-
-        for pk in part_ids:
-            url = reverse('api-part-scheduling', kwargs={'pk': pk})
-            data = self.get(url, expected_code=200).data
-
-            for entry in data:
-                for k in ['date', 'quantity', 'label']:
-                    self.assertIn(k, entry)
 
 
 class PartTestTemplateTest(PartAPITestBase):

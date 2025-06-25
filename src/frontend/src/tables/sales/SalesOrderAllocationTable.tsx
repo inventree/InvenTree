@@ -19,6 +19,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
+  DescriptionColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -105,11 +106,10 @@ export default function SalesOrderAllocationTable({
         sortable: true,
         hidden: showOrderInfo != true
       }),
-      {
+      DescriptionColumn({
         accessor: 'order_detail.description',
-        title: t`Description`,
         hidden: showOrderInfo != true
-      },
+      }),
       StatusColumn({
         accessor: 'order_detail.status',
         model: ModelType.salesorder,
@@ -124,12 +124,10 @@ export default function SalesOrderAllocationTable({
         switchable: false,
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
-      {
+      DescriptionColumn({
         accessor: 'part_detail.description',
-        title: t`Description`,
-        hidden: showPartInfo != true,
-        sortable: false
-      },
+        hidden: showPartInfo != true
+      }),
       {
         accessor: 'part_detail.IPN',
         title: t`IPN`,

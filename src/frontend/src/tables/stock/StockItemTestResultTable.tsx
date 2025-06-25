@@ -185,9 +185,7 @@ export default function StockItemTestResultTable({
           }
         }
       },
-      DescriptionColumn({
-        accessor: 'description'
-      }),
+      DescriptionColumn({}),
       {
         accessor: 'value',
         title: t`Value`

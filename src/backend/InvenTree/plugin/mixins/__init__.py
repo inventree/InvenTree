@@ -17,6 +17,7 @@ from plugin.base.integration.UrlsMixin import UrlsMixin
 from plugin.base.integration.ValidationMixin import ValidationMixin
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.base.locate.mixins import LocateMixin
+from plugin.base.mail.mixins import MailMixin
 from plugin.base.ui.mixins import UserInterfaceMixin
 
 __all__ = [
@@ -31,6 +32,7 @@ __all__ = [
     'IconPackMixin',
     'LabelPrintingMixin',
     'LocateMixin',
+    'MailMixin',
     'NavigationMixin',
     'ReportMixin',
     'ScheduleMixin',

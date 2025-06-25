@@ -37,7 +37,9 @@ from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
+from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
+    CreateAPI,
     ListAPI,
     ListCreateAPI,
     RetrieveAPI,
@@ -856,6 +858,62 @@ class DataOutputDetail(DataOutputEndpointMixin, RetrieveAPI):
     """Detail view for a DataOutput object."""
 
 
+class EmailMessageMixin:
+    """Mixin class for Email endpoints."""
+
+    queryset = common.models.EmailMessage.objects.all()
+    serializer_class = common.serializers.EmailMessageSerializer
+    permission_classes = [IsSuperuserOrSuperScope]
+
+
+class EmailMessageList(EmailMessageMixin, ListAPI):
+    """List view for email objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = [
+        'created',
+        'subject',
+        'to',
+        'sender',
+        'status',
+        'timestamp',
+        'direction',
+    ]
+    search_fields = [
+        'subject',
+        'to',
+        'sender',
+        'global_id',
+        'message_id_key',
+        'thread_id_key',
+    ]
+
+
+class EmailMessageDetail(EmailMessageMixin, RetrieveAPI):
+    """Detail view for an email object."""
+
+
+class TestEmail(CreateAPI):
+    """Send a test email."""
+
+    serializer_class = common.serializers.TestEmailSerializer
+    permission_classes = [IsSuperuserOrSuperScope]
+
+    def perform_create(self, serializer):
+        """Send a test email."""
+        data = serializer.validated_data
+
+        delivered, reason = send_email(
+            subject='Test email from InvenTree',
+            body='This is a test email from InvenTree.',
+            recipients=[data['email']],
+        )
+        if not delivered:
+            raise serializers.ValidationError(
+                detail=f'Failed to send test email: "{reason}"'
+            )  # pragma: no cover
+
+
 selection_urls = [
     path(
         '<int:pk>/',
@@ -1115,4 +1173,13 @@ admin_api_urls = [
     # Admin
     path('config/', ConfigList.as_view(), name='api-config-list'),
     path('config/<str:key>/', ConfigDetail.as_view(), name='api-config-detail'),
+    # Email
+    path(
+        'email/',
+        include([
+            path('test/', TestEmail.as_view(), name='api-email-test'),
+            path('<str:pk>/', EmailMessageDetail.as_view(), name='api-email-detail'),
+            path('', EmailMessageList.as_view(), name='api-email-list'),
+        ]),
+    ),
 ]

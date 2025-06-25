@@ -368,7 +368,7 @@ class PartManager(TreeManager):
 
 
 class PartReportContext(report.mixins.BaseReportContext):
-    """Context for the part model.
+    """Report context for the Part model.
 
     Attributes:
         bom_items: Query set of all BomItem objects associated with the Part
