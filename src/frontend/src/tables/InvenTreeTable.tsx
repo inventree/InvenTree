@@ -309,8 +309,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
           hidden = tableState.hiddenColumns.includes(col.accessor);
         }
 
-        console.log(col.accessor, '->', col.width ?? 'undefined');
-
         return {
           ...col,
           hidden: hidden,
