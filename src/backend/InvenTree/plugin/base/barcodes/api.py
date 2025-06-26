@@ -100,7 +100,7 @@ class BarcodeView(CreateAPIView):
                 BarcodeScanResult.objects.filter(pk__in=old_scan_ids).delete()
         except Exception:
             # Gracefully log error to database
-            log_error(f'{self.__class__.__name__}.log_scan')
+            log_error(f'{self.__class__.__name__}.log_scan', scope='barcode')
 
     def queryset(self):
         """This API view does not have a queryset."""
