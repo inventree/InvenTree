@@ -15,9 +15,7 @@ The categories of each part is displayed on the top navigation bar as show in th
 
 Details provides information about the particular part. Parts details can be displayed in the header panel clicking on "Show Part Details" toggle button.
 
-{% with id="part_overview", url="part/part_overview.png", description="Part details" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_overview.png", "Part Overview") }}
 
 A Part is defined in the system by the following parameters:
 
@@ -57,9 +55,7 @@ If a part is a *Template Part* then the *Variants* tab will be visible.
 
 The *Stock* tab shows all the stock items for the selected *Part*. The user can quickly determine how many parts are in stock, where they are located, and the status of each *Stock Item*.
 
-{% with id="part_stock", url="part/part_stock.png", description="Part Stock" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stock.png", "Part Stock") }}
 
 #### Functions
 
@@ -99,9 +95,7 @@ The *Suppliers* tab displays all the *Part Suppliers* and *Part Manufacturers* f
 
 This tab is only visible if the *Part* is designated as *Purchaseable*.
 
-{% with id="part_manufacturers_suppliers", url="part/part_manufacturers_suppliers.png", description="Part Suppliers and Manufacturers" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_manufacturers_suppliers.png", "Part Suppliers and Manufacturers") }}
 
 ### Purchase Orders
 
@@ -112,10 +106,6 @@ This tab is only displayed if the part is marked as *Purchaseable*.
 ### Sales Orders
 
 The *Sales Orders* tab shows a list of the sales orders for this part. It provides a view for important sales order information like customer, status, creation and shipment dates.
-
-### Scheduling
-
-The *Scheduling* tab provides an overview of the *predicted* future availability of a particular part. Refer to the [scheduling documentation](./scheduling.md) for further information.
 
 ### Stocktake
 
@@ -131,9 +121,7 @@ Related Part denotes a relationship between two parts, when users want to show t
 
 Related parts can be added and are shown under a table of the same name in the "Part" view:
 
-{% with id="related_parts", url="part/part_related.png", description="Related Parts Example View" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_related.png", "Related Parts Example View") }}
 
 This feature can be enabled or disabled in the global part settings.
 

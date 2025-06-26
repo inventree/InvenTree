@@ -19,6 +19,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -290,6 +291,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const companyActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.company} id={company.pk} />,
+      <PrintingActions
+        modelType={ModelType.company}
+        items={[company.pk]}
+        enableReports
+      />,
       <OptionsActionDropdown
         tooltip={t`Company Actions`}
         actions={[

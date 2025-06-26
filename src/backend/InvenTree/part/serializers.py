@@ -18,7 +18,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from sql_util.utils import SubqueryCount, SubquerySum
+from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
@@ -33,7 +33,6 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
-from build.status_codes import BuildStatusGroups
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -99,10 +98,6 @@ class CategorySerializer(
         if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
-    def get_starred(self, category) -> bool:
-        """Return True if the category is directly "starred" by the current user."""
-        return category in self.context.get('starred_categories', [])
-
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
@@ -137,6 +132,10 @@ class CategorySerializer(
     level = serializers.IntegerField(read_only=True)
 
     starred = serializers.SerializerMethodField()
+
+    def get_starred(self, category) -> bool:
+        """Return True if the category is directly "starred" by the current user."""
+        return category in self.context.get('starred_categories', [])
 
     path = serializers.ListField(
         child=serializers.DictField(),
@@ -252,39 +251,6 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
         help_text=_('Purchase currency of this stock item')
     )
-
-
-class PartSchedulingSerializer(serializers.Serializer):
-    """Serializer class for a PartScheduling entry."""
-
-    class Meta:
-        """Metaclass options for this serializer."""
-
-        fields = [
-            'date',
-            'quantity',
-            'speculative_quantity',
-            'title',
-            'label',
-            'model',
-            'model_id',
-        ]
-
-    date = serializers.DateField(label=_('Date'), required=True, allow_null=True)
-
-    quantity = serializers.FloatField(label=_('Quantity'), required=True)
-
-    speculative_quantity = serializers.FloatField(
-        label=_('Speculative Quantity'), required=False
-    )
-
-    title = serializers.CharField(label=_('Title'), required=True)
-
-    label = serializers.CharField(label=_('Label'), required=True)
-
-    model = serializers.CharField(label=_('Model'), required=True)
-
-    model_id = serializers.IntegerField(label=_('Model ID'), required=True)
 
 
 class PartThumbSerializer(serializers.Serializer):
@@ -482,7 +448,14 @@ class DuplicatePartSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['part', 'copy_image', 'copy_bom', 'copy_parameters', 'copy_notes']
+        fields = [
+            'part',
+            'copy_image',
+            'copy_bom',
+            'copy_parameters',
+            'copy_notes',
+            'copy_tests',
+        ]
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
@@ -517,6 +490,13 @@ class DuplicatePartSerializer(serializers.Serializer):
         help_text=_('Copy notes from original part'),
         required=False,
         default=True,
+    )
+
+    copy_tests = serializers.BooleanField(
+        label=_('Copy Tests'),
+        help_text=_('Copy test templates from original part'),
+        required=False,
+        default=False,
     )
 
 
@@ -710,6 +690,7 @@ class PartSerializer(
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'building',
+            'scheduled_to_build',
             'category_default_location',
             'in_stock',
             'ordering',
@@ -817,16 +798,13 @@ class PartSerializer(
             )
         )
 
-        # Filter to limit builds to "active"
-        build_filter = Q(status__in=BuildStatusGroups.ACTIVE_CODES)
-
         # Annotate with the total 'building' quantity
         queryset = queryset.annotate(
-            building=Coalesce(
-                SubquerySum('builds__quantity', filter=build_filter),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
+            building=part_filters.annotate_in_production_quantity()
+        )
+
+        queryset = queryset.annotate(
+            scheduled_to_build=part_filters.annotate_scheduled_to_build_quantity()
         )
 
         # Annotate with the number of 'suppliers'
@@ -933,42 +911,65 @@ class PartSerializer(
     # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True, allow_null=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True, allow_null=True)
+
     building = serializers.FloatField(
-        read_only=True, allow_null=True, label=_('Building')
+        read_only=True,
+        allow_null=True,
+        label=_('Building'),
+        help_text=_('Quantity of this part currently being in production'),
     )
+
+    scheduled_to_build = serializers.FloatField(
+        read_only=True,
+        allow_null=True,
+        label=_('Scheduled to Build'),
+        help_text=_('Outstanding quantity of this part scheduled to be built'),
+    )
+
     in_stock = serializers.FloatField(
         read_only=True, allow_null=True, label=_('In Stock')
     )
+
     ordering = serializers.FloatField(
         read_only=True, allow_null=True, label=_('On Order')
     )
+
     required_for_build_orders = serializers.IntegerField(
         read_only=True, allow_null=True
     )
+
     required_for_sales_orders = serializers.IntegerField(
         read_only=True, allow_null=True
     )
+
     stock_item_count = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Stock Items')
     )
+
     revision_count = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Revisions')
     )
+
     suppliers = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Suppliers')
     )
+
     total_in_stock = serializers.FloatField(
         read_only=True, allow_null=True, label=_('Total Stock')
     )
+
     external_stock = serializers.FloatField(
         read_only=True, allow_null=True, label=_('External Stock')
     )
+
     unallocated_stock = serializers.FloatField(
         read_only=True, allow_null=True, label=_('Unallocated Stock')
     )
+
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
     )
+
     variant_stock = serializers.FloatField(
         read_only=True, allow_null=True, label=_('Variant Stock')
     )
@@ -1073,19 +1074,22 @@ class PartSerializer(
         if duplicate:
             original = duplicate['part']
 
-            if duplicate['copy_bom']:
+            if duplicate.get('copy_bom', False):
                 instance.copy_bom_from(original)
 
-            if duplicate['copy_notes']:
+            if duplicate.get('copy_notes', False):
                 instance.notes = original.notes
                 instance.save()
 
-            if duplicate['copy_image']:
+            if duplicate.get('copy_image', False):
                 instance.image = original.image
                 instance.save()
 
-            if duplicate['copy_parameters']:
+            if duplicate.get('copy_parameters', False):
                 instance.copy_parameters_from(original)
+
+            if duplicate.get('copy_tests', False):
+                instance.copy_tests_from(original)
 
         # Duplicate parameter data from part category (and parents)
         if copy_category_parameters and instance.category is not None:
@@ -1184,6 +1188,73 @@ class PartSerializer(
             part.image.save(filename, ContentFile(buffer.getvalue()))
 
         return self.instance
+
+
+class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for Part requirements."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Part
+        fields = [
+            'total_stock',
+            'unallocated_stock',
+            'can_build',
+            'ordering',
+            'building',
+            'scheduled_to_build',
+            'required_for_build_orders',
+            'allocated_to_build_orders',
+            'required_for_sales_orders',
+            'allocated_to_sales_orders',
+        ]
+
+    total_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
+
+    unallocated_stock = serializers.FloatField(
+        source='available_stock', read_only=True, label=_('Available Stock')
+    )
+
+    can_build = serializers.FloatField(read_only=True, label=_('Can Build'))
+
+    ordering = serializers.FloatField(
+        source='on_order', read_only=True, label=_('On Order')
+    )
+
+    building = serializers.FloatField(
+        read_only=True, label=_('In Production'), source='quantity_in_production'
+    )
+
+    scheduled_to_build = serializers.FloatField(
+        read_only=True, label=_('Scheduled to Build'), source='quantity_being_built'
+    )
+
+    required_for_build_orders = serializers.FloatField(
+        source='required_build_order_quantity',
+        read_only=True,
+        label=_('Required for Build Orders'),
+    )
+
+    allocated_to_build_orders = serializers.FloatField(
+        read_only=True,
+        label=_('Allocated to Build Orders'),
+        source='build_order_allocation_count',
+    )
+
+    required_for_sales_orders = serializers.FloatField(
+        source='required_sales_order_quantity',
+        read_only=True,
+        label=_('Required for Sales Orders'),
+    )
+
+    allocated_to_sales_orders = serializers.SerializerMethodField(
+        read_only=True, label=_('Allocated to Sales Orders')
+    )
+
+    def get_allocated_to_sales_orders(self, part) -> float:
+        """Return the allocated sales order quantity."""
+        return part.sales_order_allocation_count(pending=True)
 
 
 class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):

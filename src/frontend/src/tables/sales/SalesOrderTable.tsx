@@ -166,10 +166,18 @@ export function SalesOrderTable({
         )
       },
       StatusColumn({ model: ModelType.salesorder }),
-      ProjectCodeColumn({}),
-      CreationDateColumn({}),
-      CreatedByColumn({}),
-      StartDateColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      CreatedByColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
       ResponsibleColumn({}),

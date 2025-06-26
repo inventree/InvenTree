@@ -21,6 +21,7 @@ import { useUserState } from './UserState';
 export const useGlobalSettingsState = create<SettingsStateProps>(
   (set, get) => ({
     settings: [],
+    loaded: false,
     lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
@@ -28,6 +29,9 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
       const { isLoggedIn } = useUserState.getState();
 
       if (!isLoggedIn()) {
+        set({
+          loaded: false
+        });
         return success;
       }
 
@@ -36,12 +40,17 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
         .then((response) => {
           set({
             settings: response.data,
+            loaded: true,
             lookup: generate_lookup(response.data)
           });
         })
         .catch((_error) => {
           console.error('ERR: Error fetching global settings');
           success = false;
+
+          set({
+            loaded: false
+          });
         });
 
       return success;
@@ -62,12 +71,16 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
 export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   settings: [],
   lookup: {},
+  loaded: false,
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
     let success = true;
     const { isLoggedIn } = useUserState.getState();
 
     if (!isLoggedIn()) {
+      set({
+        loaded: false
+      });
       return success;
     }
 
@@ -76,12 +89,16 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
       .then((response) => {
         set({
           settings: response.data,
-          lookup: generate_lookup(response.data)
+          lookup: generate_lookup(response.data),
+          loaded: true
         });
       })
       .catch((_error) => {
         console.error('ERR: Error fetching user settings');
         success = false;
+        set({
+          loaded: false
+        });
       });
 
     return success;
@@ -110,6 +127,7 @@ export const createPluginSettingsState = ({
   return createStore<SettingsStateProps>()((set, get) => ({
     settings: [],
     lookup: {},
+    loaded: false,
     endpoint: ApiEndpoints.plugin_setting_list,
     pathParams,
     fetchSettings: async () => {
@@ -121,12 +139,16 @@ export const createPluginSettingsState = ({
           const settings = response.data;
           set({
             settings,
-            lookup: generate_lookup(settings)
+            lookup: generate_lookup(settings),
+            loaded: true
           });
         })
         .catch((_error) => {
           console.error(`Error fetching plugin settings for plugin ${plugin}`);
           success = false;
+          set({
+            loaded: false
+          });
         });
 
       return success;
@@ -158,6 +180,7 @@ export const createMachineSettingsState = ({
   return createStore<SettingsStateProps>()((set, get) => ({
     settings: [],
     lookup: {},
+    loaded: false,
     endpoint: ApiEndpoints.machine_setting_detail,
     pathParams,
     fetchSettings: async () => {
@@ -171,7 +194,8 @@ export const createMachineSettingsState = ({
           );
           set({
             settings,
-            lookup: generate_lookup(settings)
+            lookup: generate_lookup(settings),
+            loaded: true
           });
         })
         .catch((error) => {
@@ -180,6 +204,9 @@ export const createMachineSettingsState = ({
             error
           );
           success = false;
+          set({
+            loaded: false
+          });
         });
 
       return success;

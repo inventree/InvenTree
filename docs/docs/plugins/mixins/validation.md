@@ -25,7 +25,8 @@ A custom plugin may implement the `validate_model_deletion` method to perform cu
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -40,7 +41,8 @@ Any plugin which inherits the `ValidationMixin` can implement the `validate_mode
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -113,7 +115,8 @@ If the custom method determines that the part name is *objectionable*, it should
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -126,7 +129,8 @@ Validation of the Part IPN (Internal Part Number) field is exposed to custom plu
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -139,7 +143,8 @@ Validation of the Part IPN (Internal Part Number) field is exposed to custom plu
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -156,7 +161,8 @@ The `validate_batch_code` method allows plugins to raise an error if a batch cod
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -169,7 +175,8 @@ The `generate_batch_code` method can be implemented to generate a new batch code
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -188,7 +195,8 @@ Custom serial number validation can be implemented using the `validate_serial_nu
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -227,7 +235,8 @@ A custom plugin can implement the `convert_serial_to_int` method to determine ho
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 
@@ -245,7 +254,8 @@ For custom serial number schemes, it is important to provide a method to generat
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
+      extra:
+        show_source: True
       summary: False
       members: []
 

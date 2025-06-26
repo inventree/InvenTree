@@ -11,6 +11,7 @@ export enum ApiEndpoints {
 
   // User API endpoints
   user_list = 'user/',
+  user_set_password = 'user/:id/set-password/',
   user_me = 'user/me/',
   user_profile = 'user/profile/',
   user_roles = 'user/roles/',
@@ -30,6 +31,7 @@ export enum ApiEndpoints {
   auth_recovery = 'auth/v1/account/authenticators/recovery-codes',
   auth_mfa_reauthenticate = 'auth/v1/auth/2fa/reauthenticate',
   auth_totp = 'auth/v1/account/authenticators/totp',
+  auth_trust = 'auth/v1/auth/2fa/trust',
   auth_reauthenticate = 'auth/v1/auth/reauthenticate',
   auth_email = 'auth/v1/account/email',
   auth_email_verify = 'auth/v1/auth/email/verify',
@@ -110,6 +112,7 @@ export enum ApiEndpoints {
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
+  part_requirements = 'part/:id/requirements/',
   part_serial_numbers = 'part/:id/serial-numbers/',
   part_scheduling = 'part/:id/scheduling/',
   part_pricing_internal = 'part/internal-price/',
@@ -232,5 +235,8 @@ export enum ApiEndpoints {
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  notes_image_upload = 'notes-image-upload/'
+  notes_image_upload = 'notes-image-upload/',
+  email_list = 'admin/email/',
+  email_test = 'admin/email/test/',
+  config_list = 'admin/config/'
 }

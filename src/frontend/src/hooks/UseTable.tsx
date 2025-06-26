@@ -65,18 +65,37 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   // Total record count
   const [recordCount, setRecordCount] = useState<number>(0);
 
+  const [pageSizeLoaded, setPageSizeLoaded] = useState<boolean>(false);
+
   // Pagination data
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useLocalStorage<number>({
     key: 'inventree-table-page-size',
-    defaultValue: 25
+    defaultValue: 25,
+    sync: false,
+    deserialize: (value: string | undefined) => {
+      setPageSizeLoaded(true);
+      return value === undefined ? 25 : JSON.parse(value);
+    }
   });
 
+  const [hiddenColumnsLoaded, setHiddenColumnsLoaded] =
+    useState<boolean>(false);
+
   // A list of hidden columns, saved to local storage
-  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
+  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[] | null>({
     key: `inventree-hidden-table-columns-${tableName}`,
-    defaultValue: []
+    defaultValue: null,
+    sync: false,
+    deserialize: (value) => {
+      setHiddenColumnsLoaded(true);
+      return value === undefined ? null : JSON.parse(value);
+    }
   });
+
+  const storedDataLoaded = useMemo(() => {
+    return pageSizeLoaded && hiddenColumnsLoaded;
+  }, [pageSizeLoaded, hiddenColumnsLoaded]);
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -137,6 +156,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     setPage,
     pageSize,
     setPageSize,
+    storedDataLoaded,
     records,
     setRecords,
     updateRecord,

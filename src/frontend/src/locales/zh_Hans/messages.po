@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-06-02 01:32\n"
+"PO-Revision-Date: 2025-06-25 10:34\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -64,23 +64,23 @@ msgstr "扫描"
 
 #: src/components/barcodes/BarcodeInput.tsx:53
 msgid "Camera Input"
-msgstr ""
+msgstr "摄像头输入"
 
 #: src/components/barcodes/BarcodeInput.tsx:63
 msgid "Scanner Input"
-msgstr ""
+msgstr "扫描仪输入"
 
 #: src/components/barcodes/BarcodeInput.tsx:105
 msgid "Barcode Data"
-msgstr ""
+msgstr "条形码数据"
 
 #: src/components/barcodes/BarcodeInput.tsx:109
 msgid "No barcode data"
-msgstr ""
+msgstr "无条形码数据"
 
 #: src/components/barcodes/BarcodeInput.tsx:110
 msgid "Scan or enter barcode data"
-msgstr ""
+msgstr "扫描或输入条形码数据"
 
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/editors/NotesEditor.tsx:74
@@ -108,7 +108,7 @@ msgstr "错误"
 
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:39
 msgid "Enter barcode data"
-msgstr ""
+msgstr "输入条形码数据"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:32
 #: src/components/buttons/ScanButton.tsx:15
@@ -120,12 +120,12 @@ msgstr "扫描条形码"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:83
 msgid "No matching item found"
-msgstr ""
+msgstr "未找到匹配的项目"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:90
 #: src/pages/Index/Scan.tsx:129
 msgid "Failed to scan barcode"
-msgstr ""
+msgstr "扫描条形码失败"
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Low (7%)"
@@ -161,7 +161,7 @@ msgstr "选择错误纠正级别"
 
 #: src/components/barcodes/QRCode.tsx:170
 msgid "Failed to link barcode"
-msgstr ""
+msgstr "链接条形码失败"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetail.tsx:240
@@ -200,11 +200,11 @@ msgstr "复制"
 
 #: src/components/buttons/PrintingActions.tsx:51
 msgid "Printing Labels"
-msgstr ""
+msgstr "打印标签"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Reports"
-msgstr ""
+msgstr "打印报表"
 
 #: src/components/buttons/PrintingActions.tsx:77
 #~ msgid "Printing"
@@ -265,7 +265,7 @@ msgstr "移除此行"
 
 #: src/components/buttons/SSOButton.tsx:38
 msgid "You will be redirected to the provider for further actions."
-msgstr ""
+msgstr "您将被重定向到提供商进行进一步操作。"
 
 #: src/components/buttons/SSOButton.tsx:44
 #~ msgid "This provider is not full set up."
@@ -297,11 +297,11 @@ msgstr "打开聚焦"
 
 #: src/components/buttons/StarredToggleButton.tsx:59
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "取消订阅通知"
 
 #: src/components/buttons/StarredToggleButton.tsx:60
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "订阅通知"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -324,32 +324,32 @@ msgstr "否"
 #: src/components/calendar/Calendar.tsx:93
 #: src/components/calendar/Calendar.tsx:156
 msgid "Calendar Filters"
-msgstr ""
+msgstr "日历筛选器"
 
 #: src/components/calendar/Calendar.tsx:108
 msgid "Previous month"
-msgstr ""
+msgstr "上个月"
 
 #: src/components/calendar/Calendar.tsx:117
 msgid "Select month"
-msgstr ""
+msgstr "选择月份"
 
 #: src/components/calendar/Calendar.tsx:138
 msgid "Next month"
-msgstr ""
+msgstr "下个月"
 
 #: src/components/calendar/Calendar.tsx:169
 #: src/tables/InvenTreeTableHeader.tsx:248
 msgid "Download data"
-msgstr ""
+msgstr "下载数据"
 
 #: src/components/calendar/OrderCalendar.tsx:133
 msgid "Order Updated"
-msgstr ""
+msgstr "订单已更新"
 
 #: src/components/calendar/OrderCalendar.tsx:143
 msgid "Error updating order"
-msgstr ""
+msgstr "更新订单时出错"
 
 #: src/components/calendar/OrderCalendar.tsx:179
 #: src/tables/Filter.tsx:140
@@ -441,7 +441,7 @@ msgstr "生产订单所需的"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:47
 msgid "Show parts which are required for active build orders"
-msgstr ""
+msgstr "显示当前生产订单所需的零件"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:52
 msgid "Expired Stock Items"
@@ -461,11 +461,11 @@ msgstr "显示过期库存项"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:68
 msgid "Active Build Orders"
-msgstr ""
+msgstr "激活的生产订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:70
 msgid "Show the number of build orders which are currently active"
-msgstr ""
+msgstr "显示当前激活的生产订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:75
 msgid "Overdue Build Orders"
@@ -473,23 +473,23 @@ msgstr "逾期的生产订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:77
 msgid "Show the number of build orders which are overdue"
-msgstr ""
+msgstr "显示逾期的生产订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:82
 msgid "Assigned Build Orders"
-msgstr ""
+msgstr "已分配的生产订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:84
 msgid "Show the number of build orders which are assigned to you"
-msgstr ""
+msgstr "显示分配给您的生产订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:89
 msgid "Active Sales Orders"
-msgstr ""
+msgstr "活动的销售订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:91
 msgid "Show the number of sales orders which are currently active"
-msgstr ""
+msgstr "显示当前活动的销售订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:96
 msgid "Overdue Sales Orders"
@@ -497,23 +497,23 @@ msgstr "逾期的销售订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:98
 msgid "Show the number of sales orders which are overdue"
-msgstr ""
+msgstr "显示逾期的销售订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:103
 msgid "Assigned Sales Orders"
-msgstr ""
+msgstr "已分配的销售订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:105
 msgid "Show the number of sales orders which are assigned to you"
-msgstr ""
+msgstr "显示分配给您的销售订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:110
 msgid "Active Purchase Orders"
-msgstr ""
+msgstr "活跃的采购订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:112
 msgid "Show the number of purchase orders which are currently active"
-msgstr ""
+msgstr "显示当前活跃的采购订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:117
 msgid "Overdue Purchase Orders"
@@ -521,39 +521,39 @@ msgstr "逾期的采购订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:119
 msgid "Show the number of purchase orders which are overdue"
-msgstr ""
+msgstr "显示逾期的采购订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:124
 msgid "Assigned Purchase Orders"
-msgstr ""
+msgstr "已分配的采购订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:126
 msgid "Show the number of purchase orders which are assigned to you"
-msgstr ""
+msgstr "显示分配给您的采购订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:131
 msgid "Active Return Orders"
-msgstr ""
+msgstr "活跃的退货订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:133
 msgid "Show the number of return orders which are currently active"
-msgstr ""
+msgstr "显示当前活跃的退货订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:138
 msgid "Overdue Return Orders"
-msgstr ""
+msgstr "逾期退货订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:140
 msgid "Show the number of return orders which are overdue"
-msgstr ""
+msgstr "显示逾期的退货订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:145
 msgid "Assigned Return Orders"
-msgstr ""
+msgstr "已分配的退货订单"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:147
 msgid "Show the number of return orders which are assigned to you"
-msgstr ""
+msgstr "显示分配给您的退货订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:158
 #: src/components/dashboard/widgets/GetStartedWidget.tsx:15
@@ -569,11 +569,11 @@ msgstr "开始使用 InvenTree"
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:166
 #: src/components/dashboard/widgets/NewsWidget.tsx:123
 msgid "News Updates"
-msgstr ""
+msgstr "最新消息"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:167
 msgid "The latest news from InvenTree"
-msgstr ""
+msgstr "来自 InvenTree 的最新消息"
 
 #: src/components/dashboard/widgets/ColorToggleWidget.tsx:18
 #: src/components/nav/MainMenu.tsx:77
@@ -582,15 +582,15 @@ msgstr "更改色彩模式"
 
 #: src/components/dashboard/widgets/ColorToggleWidget.tsx:23
 msgid "Change the color mode of the user interface"
-msgstr ""
+msgstr "更改用户界面的颜色模式"
 
 #: src/components/dashboard/widgets/LanguageSelectWidget.tsx:18
 msgid "Change Language"
-msgstr ""
+msgstr "切换语言"
 
 #: src/components/dashboard/widgets/LanguageSelectWidget.tsx:23
 msgid "Change the language of the user interface"
-msgstr ""
+msgstr "更改用户界面的语言"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:60
 #: src/components/nav/NotificationDrawer.tsx:89
@@ -600,11 +600,11 @@ msgstr "标记为已读"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:115
 msgid "Requires Superuser"
-msgstr ""
+msgstr "需要超级用户"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:116
 msgid "This widget requires superuser permissions"
-msgstr ""
+msgstr "此部件需要超级用户权限"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:133
 msgid "No News"
@@ -612,7 +612,7 @@ msgstr "沒有消息"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:134
 msgid "There are no unread news items"
-msgstr ""
+msgstr "没有未读新闻项目"
 
 #: src/components/details/Details.tsx:116
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
@@ -635,7 +635,7 @@ msgstr "工作人员"
 
 #: src/components/details/Details.tsx:118
 msgid "Email: "
-msgstr ""
+msgstr "邮箱: "
 
 #: src/components/details/Details.tsx:387
 msgid "No name defined"
@@ -680,11 +680,11 @@ msgstr "点击选择文件"
 
 #: src/components/details/DetailsImage.tsx:172
 msgid "Image uploaded"
-msgstr ""
+msgstr "图片已上传"
 
 #: src/components/details/DetailsImage.tsx:173
 msgid "Image has been uploaded successfully"
-msgstr ""
+msgstr "图片已经上传成功"
 
 #: src/components/details/DetailsImage.tsx:180
 #: src/tables/general/AttachmentTable.tsx:197
@@ -1096,7 +1096,7 @@ msgstr "发送电子邮件"
 
 #: src/components/forms/AuthenticationForm.tsx:221
 msgid "Passwords do not match"
-msgstr ""
+msgstr "密码不匹配"
 
 #: src/components/forms/AuthenticationForm.tsx:238
 msgid "Registration successful"
@@ -1112,7 +1112,7 @@ msgstr "输入错误"
 
 #: src/components/forms/AuthenticationForm.tsx:263
 msgid "Check your input and try again. "
-msgstr ""
+msgstr "请检查您的输入并重试 "
 
 #: src/components/forms/AuthenticationForm.tsx:287
 msgid "This will be used for a confirmation"
@@ -1185,12 +1185,12 @@ msgstr "保存"
 
 #: src/components/forms/InstanceOptions.tsx:59
 msgid "Select Server"
-msgstr ""
+msgstr "选择服务器"
 
 #: src/components/forms/InstanceOptions.tsx:69
 #: src/components/forms/InstanceOptions.tsx:93
 msgid "Edit host options"
-msgstr ""
+msgstr "编辑主机选项"
 
 #: src/components/forms/InstanceOptions.tsx:71
 #~ msgid "Edit possible host options"
@@ -1198,7 +1198,7 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:77
 msgid "Save host selection"
-msgstr ""
+msgstr "保存主机选择"
 
 #: src/components/forms/InstanceOptions.tsx:98
 #~ msgid "Version: {0}"
@@ -1264,7 +1264,7 @@ msgstr "已停止"
 
 #: src/components/forms/InstanceOptions.tsx:151
 msgid "Running"
-msgstr ""
+msgstr "运行中"
 
 #: src/components/forms/fields/IconField.tsx:82
 msgid "No icon selected"
@@ -1320,7 +1320,7 @@ msgstr "无可用条目"
 
 #: src/components/forms/fields/TableField.tsx:198
 msgid "Add new row"
-msgstr ""
+msgstr "添加新行"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -1520,7 +1520,7 @@ msgstr "条形码操作"
 
 #: src/components/items/ActionDropdown.tsx:174
 msgid "View Barcode"
-msgstr ""
+msgstr "查看条码"
 
 #: src/components/items/ActionDropdown.tsx:176
 msgid "View barcode"
@@ -1572,7 +1572,7 @@ msgstr "重复项目"
 
 #: src/components/items/ColorToggle.tsx:17
 msgid "Toggle color scheme"
-msgstr ""
+msgstr "切换颜色方案"
 
 #: src/components/items/DocTooltip.tsx:92
 #: src/components/items/GettingStartedCarousel.tsx:20
@@ -1602,7 +1602,7 @@ msgstr "InvenTree Logo"
 
 #: src/components/items/LanguageToggle.tsx:20
 msgid "Select language"
-msgstr ""
+msgstr "选择语言"
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:46
@@ -1619,11 +1619,11 @@ msgstr "此信息仅供员工使用"
 
 #: src/components/items/RoleTable.tsx:81
 msgid "Updating"
-msgstr ""
+msgstr "更新中"
 
 #: src/components/items/RoleTable.tsx:82
 msgid "Updating group roles"
-msgstr ""
+msgstr "正在更新组角色"
 
 #: src/components/items/RoleTable.tsx:118
 #: src/pages/part/pricing/BomPricingPanel.tsx:193
@@ -1634,11 +1634,11 @@ msgstr "已更新"
 
 #: src/components/items/RoleTable.tsx:119
 msgid "Group roles updated"
-msgstr ""
+msgstr "组角色已更新"
 
 #: src/components/items/RoleTable.tsx:135
 msgid "Role"
-msgstr ""
+msgstr "角色"
 
 #: src/components/items/RoleTable.tsx:140
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:412
@@ -1647,7 +1647,7 @@ msgstr ""
 
 #: src/components/items/RoleTable.tsx:145
 msgid "Change"
-msgstr ""
+msgstr "更改"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:788
@@ -1658,19 +1658,19 @@ msgstr "添加"
 
 #: src/components/items/RoleTable.tsx:203
 msgid "Reset group roles"
-msgstr ""
+msgstr "重置组角色"
 
 #: src/components/items/RoleTable.tsx:212
 msgid "Reset"
-msgstr ""
+msgstr "重置"
 
 #: src/components/items/RoleTable.tsx:215
 msgid "Save group roles"
-msgstr ""
+msgstr "保存组角色"
 
 #: src/components/items/TransferList.tsx:65
 msgid "No items"
-msgstr ""
+msgstr "没有项目"
 
 #: src/components/items/TransferList.tsx:161
 #: src/pages/part/PartDetail.tsx:755
@@ -1685,7 +1685,7 @@ msgstr "可用的"
 
 #: src/components/items/TransferList.tsx:162
 msgid "Selected"
-msgstr ""
+msgstr "已选"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:101
 msgid "InvenTree Version"
@@ -1731,7 +1731,7 @@ msgstr "文档"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:164
 msgid "Source Code"
-msgstr ""
+msgstr "源代码"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:165
 msgid "Mobile App"
@@ -1870,7 +1870,7 @@ msgstr "后台工作者"
 
 #: src/components/modals/ServerInfoModal.tsx:107
 msgid "The Background worker process is not running."
-msgstr ""
+msgstr "后台工作进程未运行。"
 
 #: src/components/modals/ServerInfoModal.tsx:114
 msgid "Email Settings"
@@ -1879,7 +1879,7 @@ msgstr "电子邮件设置"
 #: src/components/modals/ServerInfoModal.tsx:118
 #: src/components/nav/Alerts.tsx:60
 msgid "Email settings not configured."
-msgstr ""
+msgstr "电子邮件设置未配置。"
 
 #: src/components/modals/ServerInfoModal.tsx:118
 #~ msgid "Email settings not configured"
@@ -1887,39 +1887,39 @@ msgstr ""
 
 #: src/components/nav/Alerts.tsx:42
 msgid "The server is running in debug mode."
-msgstr ""
+msgstr "服务器正以调试模式运行。"
 
 #: src/components/nav/Alerts.tsx:51
 msgid "The background worker process is not running."
-msgstr ""
+msgstr "后台工作进程未运行。"
 
 #: src/components/nav/Alerts.tsx:58
 msgid "Email settings"
-msgstr ""
+msgstr "电子邮件设置"
 
 #: src/components/nav/Alerts.tsx:67
 msgid "Server Restart"
-msgstr ""
+msgstr "服务器重启"
 
 #: src/components/nav/Alerts.tsx:69
 msgid "The server requires a restart to apply changes."
-msgstr ""
+msgstr "服务器需要重新启动才能应用更改。"
 
 #: src/components/nav/Alerts.tsx:79
 msgid "Database Migrations"
-msgstr ""
+msgstr "数据库迁移"
 
 #: src/components/nav/Alerts.tsx:81
 msgid "There are pending database migrations."
-msgstr ""
+msgstr "存在待处理的数据库迁移。"
 
 #: src/components/nav/Alerts.tsx:97
 msgid "Alerts"
-msgstr ""
+msgstr "警报"
 
 #: src/components/nav/Alerts.tsx:140
 msgid "Learn more about {code}"
-msgstr ""
+msgstr "了解更多关于{code}的信息"
 
 #: src/components/nav/Header.tsx:150
 #: src/components/nav/NavigationDrawer.tsx:141
@@ -2031,7 +2031,7 @@ msgstr "库存"
 #: src/pages/build/BuildDetail.tsx:559
 #: src/pages/build/BuildIndex.tsx:90
 msgid "Manufacturing"
-msgstr ""
+msgstr "生产"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:54
@@ -2114,15 +2114,15 @@ msgstr "您没有未读通知"
 
 #: src/components/nav/SearchDrawer.tsx:105
 msgid "No Overview Available"
-msgstr ""
+msgstr "暂无概述"
 
 #: src/components/nav/SearchDrawer.tsx:106
 msgid "No overview available for this model type"
-msgstr ""
+msgstr "此模型类型暂无概述"
 
 #: src/components/nav/SearchDrawer.tsx:124
 msgid "View all results"
-msgstr ""
+msgstr "查看所有结果"
 
 #: src/components/nav/SearchDrawer.tsx:139
 msgid "results"
@@ -2130,7 +2130,7 @@ msgstr "结果"
 
 #: src/components/nav/SearchDrawer.tsx:143
 msgid "Remove search group"
-msgstr ""
+msgstr "移除搜索组"
 
 #: src/components/nav/SearchDrawer.tsx:287
 #: src/pages/company/ManufacturerPartDetail.tsx:177
@@ -2178,7 +2178,7 @@ msgstr "正则表达式搜索"
 
 #: src/components/nav/SearchDrawer.tsx:530
 msgid "Notes search"
-msgstr ""
+msgstr "备注搜索"
 
 #: src/components/nav/SearchDrawer.tsx:578
 msgid "An error occurred during search query"
@@ -2206,7 +2206,7 @@ msgstr "备注"
 #: src/components/plugins/LocateItemButton.tsx:68
 #: src/components/plugins/LocateItemButton.tsx:88
 msgid "Locate Item"
-msgstr ""
+msgstr "定位项目"
 
 #: src/components/plugins/LocateItemButton.tsx:70
 msgid "Item location requested"
@@ -2364,15 +2364,15 @@ msgstr "加载插件预览出错"
 
 #: src/components/plugins/RemoteComponent.tsx:76
 msgid "Invalid source or function name"
-msgstr ""
+msgstr "无效的源或函数名称"
 
 #: src/components/plugins/RemoteComponent.tsx:94
 msgid "Error Loading Content"
-msgstr ""
+msgstr "加载内容出错"
 
 #: src/components/plugins/RemoteComponent.tsx:98
 msgid "Error occurred while loading plugin content"
-msgstr ""
+msgstr "加载插件内容时出错"
 
 #: src/components/render/Instance.tsx:238
 #~ msgid "Unknown model: {model}"
@@ -2380,7 +2380,7 @@ msgstr ""
 
 #: src/components/render/Instance.tsx:239
 msgid "Unknown model: {model_name}"
-msgstr ""
+msgstr "未知模型: {model_name}"
 
 #: src/components/render/ModelType.tsx:29
 #: src/components/wizards/OrderPartsWizard.tsx:132
@@ -2755,12 +2755,12 @@ msgstr "内容类型"
 
 #: src/components/render/ModelType.tsx:267
 msgid "Selection List"
-msgstr ""
+msgstr "选择列表"
 
 #: src/components/render/ModelType.tsx:268
 #: src/pages/Index/Settings/AdminCenter/PartParameterPanel.tsx:21
 msgid "Selection Lists"
-msgstr ""
+msgstr "选择列表"
 
 #: src/components/render/ModelType.tsx:274
 #: src/tables/machine/MachineListTable.tsx:353
@@ -2860,7 +2860,7 @@ msgstr "编辑设置"
 
 #: src/components/settings/SettingList.tsx:85
 msgid "Setting {key} updated successfully"
-msgstr ""
+msgstr "设置{key}更新成功"
 
 #: src/components/settings/SettingList.tsx:114
 msgid "Setting updated"
@@ -3257,15 +3257,15 @@ msgstr "未指定设置"
 
 #: src/components/wizards/OrderPartsWizard.tsx:61
 msgid "New Purchase Order"
-msgstr ""
+msgstr "新建采购订单"
 
 #: src/components/wizards/OrderPartsWizard.tsx:63
 msgid "Purchase order created"
-msgstr ""
+msgstr "采购订单已创建"
 
 #: src/components/wizards/OrderPartsWizard.tsx:75
 msgid "New Supplier Part"
-msgstr ""
+msgstr "新增供应商零件"
 
 #: src/components/wizards/OrderPartsWizard.tsx:77
 #: src/tables/purchasing/SupplierPartTable.tsx:175
@@ -3274,75 +3274,75 @@ msgstr "供应商零件已更新"
 
 #: src/components/wizards/OrderPartsWizard.tsx:103
 msgid "Add to Purchase Order"
-msgstr ""
+msgstr "添加到采购订单中"
 
 #: src/components/wizards/OrderPartsWizard.tsx:115
 msgid "Part added to purchase order"
-msgstr ""
+msgstr "零件已添加到采购订单中"
 
 #: src/components/wizards/OrderPartsWizard.tsx:156
 msgid "Select supplier part"
-msgstr ""
+msgstr "选择供应商零件"
 
 #: src/components/wizards/OrderPartsWizard.tsx:171
 msgid "New supplier part"
-msgstr ""
+msgstr "新增供应商零件"
 
 #: src/components/wizards/OrderPartsWizard.tsx:195
 msgid "Select purchase order"
-msgstr ""
+msgstr "选择采购订单"
 
 #: src/components/wizards/OrderPartsWizard.tsx:209
 msgid "New purchase order"
-msgstr ""
+msgstr "新建采购订单"
 
 #: src/components/wizards/OrderPartsWizard.tsx:257
 msgid "Add to selected purchase order"
-msgstr ""
+msgstr "添加到已选的采购订单中"
 
 #: src/components/wizards/OrderPartsWizard.tsx:269
 #: src/components/wizards/OrderPartsWizard.tsx:382
 msgid "No parts selected"
-msgstr ""
+msgstr "没有选定零件"
 
 #: src/components/wizards/OrderPartsWizard.tsx:270
 msgid "No purchaseable parts selected"
-msgstr ""
+msgstr "未选择可购买的零件"
 
 #: src/components/wizards/OrderPartsWizard.tsx:306
 msgid "Parts Added"
-msgstr ""
+msgstr "零件已添加"
 
 #: src/components/wizards/OrderPartsWizard.tsx:307
 msgid "All selected parts added to a purchase order"
-msgstr ""
+msgstr "所有选中的零件添加到采购订单中"
 
 #: src/components/wizards/OrderPartsWizard.tsx:383
 msgid "You must select at least one part to order"
-msgstr ""
+msgstr "您必须至少选择一个零件才能下单"
 
 #: src/components/wizards/OrderPartsWizard.tsx:394
 msgid "Supplier part is required"
-msgstr ""
+msgstr "供应商零件为必填项"
 
 #: src/components/wizards/OrderPartsWizard.tsx:398
 msgid "Quantity is required"
-msgstr ""
+msgstr "数量为必填项"
 
 #: src/components/wizards/OrderPartsWizard.tsx:411
 msgid "Invalid part selection"
-msgstr ""
+msgstr "无效的零件选择"
 
 #: src/components/wizards/OrderPartsWizard.tsx:413
 msgid "Please correct the errors in the selected parts"
-msgstr ""
+msgstr "请修正所选零件中的错误"
 
 #: src/components/wizards/OrderPartsWizard.tsx:424
 #: src/tables/build/BuildLineTable.tsx:648
 #: src/tables/part/PartTable.tsx:377
 #: src/tables/sales/SalesOrderLineItemTable.tsx:334
 msgid "Order Parts"
-msgstr ""
+msgstr "订购零件"
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Arabic"
@@ -3466,7 +3466,7 @@ msgstr "斯洛语尼亚语"
 
 #: src/contexts/LanguageContext.tsx:50
 msgid "Serbian"
-msgstr ""
+msgstr "塞尔维亚语"
 
 #: src/contexts/LanguageContext.tsx:51
 msgid "Swedish"
@@ -3532,7 +3532,7 @@ msgstr "服务器信息"
 #: src/defaults/actions.tsx:49
 #: src/defaults/links.tsx:169
 msgid "About this InvenTree instance"
-msgstr ""
+msgstr "关于 InvenTree 实例"
 
 #: src/defaults/actions.tsx:55
 #: src/defaults/links.tsx:153
@@ -4538,7 +4538,7 @@ msgstr ""
 
 #: src/hooks/UseForm.tsx:137
 msgid "Update multiple items"
-msgstr ""
+msgstr "更新多个项目"
 
 #: src/hooks/UseForm.tsx:167
 msgid "Item Deleted"
@@ -4555,39 +4555,39 @@ msgstr "最新序列号"
 #: src/pages/Auth/ChangePassword.tsx:32
 #: src/pages/Auth/Reset.tsx:14
 msgid "Reset Password"
-msgstr ""
+msgstr "重置密码"
 
 #: src/pages/Auth/ChangePassword.tsx:46
 msgid "Current Password"
-msgstr ""
+msgstr "当前密码"
 
 #: src/pages/Auth/ChangePassword.tsx:47
 msgid "Enter your current password"
-msgstr ""
+msgstr "输入您当前的密码"
 
 #: src/pages/Auth/ChangePassword.tsx:53
 msgid "New Password"
-msgstr ""
+msgstr "新密码"
 
 #: src/pages/Auth/ChangePassword.tsx:54
 msgid "Enter your new password"
-msgstr ""
+msgstr "输入您的新密码"
 
 #: src/pages/Auth/ChangePassword.tsx:60
 msgid "Confirm New Password"
-msgstr ""
+msgstr "确认新密码"
 
 #: src/pages/Auth/ChangePassword.tsx:61
 msgid "Confirm your new password"
-msgstr ""
+msgstr "确认您的新密码"
 
 #: src/pages/Auth/ChangePassword.tsx:80
 msgid "Confirm"
-msgstr ""
+msgstr "确认"
 
 #: src/pages/Auth/Layout.tsx:67
 msgid "Log off"
-msgstr ""
+msgstr "注销登录"
 
 #: src/pages/Auth/LoggedIn.tsx:19
 msgid "Checking if you are already logged in"
@@ -4611,7 +4611,7 @@ msgstr "登录"
 
 #: src/pages/Auth/Login.tsx:105
 msgid "Logging you in"
-msgstr ""
+msgstr "正在登录"
 
 #: src/pages/Auth/Login.tsx:112
 msgid "Don't have an account?"
@@ -4628,29 +4628,29 @@ msgstr "没有帐户？"
 #: src/pages/Auth/MFA.tsx:17
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:82
 msgid "Multi-Factor Authentication"
-msgstr ""
+msgstr "多因素认证"
 
 #: src/pages/Auth/MFA.tsx:20
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:688
 msgid "TOTP Code"
-msgstr ""
+msgstr "TOTP 代码"
 
 #: src/pages/Auth/MFA.tsx:22
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:690
 msgid "Enter your TOTP or recovery code"
-msgstr ""
+msgstr "输入您的 TOTP 或恢复码"
 
 #: src/pages/Auth/MFA.tsx:32
 msgid "Log in"
-msgstr ""
+msgstr "登录"
 
 #: src/pages/Auth/MFASetup.tsx:23
 msgid "MFA Setup Required"
-msgstr ""
+msgstr "需设置多因素认证"
 
 #: src/pages/Auth/MFASetup.tsx:34
 msgid "Add TOTP"
-msgstr ""
+msgstr "添加 TOTP"
 
 #: src/pages/Auth/Register.tsx:23
 msgid "Go back to login"
@@ -4664,11 +4664,11 @@ msgstr "返回登录界面"
 #: src/pages/Auth/ResetPassword.tsx:22
 #: src/pages/Auth/VerifyEmail.tsx:19
 msgid "Key invalid"
-msgstr ""
+msgstr "密钥无效"
 
 #: src/pages/Auth/ResetPassword.tsx:23
 msgid "You need to provide a valid key to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "您需要提供一个有效的值来设置一个新的密码。请检查收件箱以获取重置链接。"
 
 #: src/pages/Auth/ResetPassword.tsx:30
 #~ msgid "Token invalid"
@@ -4684,11 +4684,11 @@ msgstr "设置新密码"
 
 #: src/pages/Auth/ResetPassword.tsx:35
 msgid "The desired new password"
-msgstr ""
+msgstr "想设置的新密码"
 
 #: src/pages/Auth/ResetPassword.tsx:44
 msgid "Send Password"
-msgstr ""
+msgstr "发送密码"
 
 #: src/pages/Auth/Set-Password.tsx:49
 #~ msgid "No token provided"
@@ -4700,15 +4700,15 @@ msgstr ""
 
 #: src/pages/Auth/VerifyEmail.tsx:20
 msgid "You need to provide a valid key."
-msgstr ""
+msgstr "您需要提供一个有效的密钥。"
 
 #: src/pages/Auth/VerifyEmail.tsx:28
 msgid "Verify Email"
-msgstr ""
+msgstr "验证电子邮件"
 
 #: src/pages/Auth/VerifyEmail.tsx:30
 msgid "Verify"
-msgstr ""
+msgstr "验证"
 
 #. placeholder {0}: error.statusText
 #: src/pages/ErrorPage.tsx:16
@@ -4877,20 +4877,20 @@ msgstr "发生意外错误。"
 
 #: src/pages/Index/Scan.tsx:65
 msgid "Item already scanned"
-msgstr ""
+msgstr "项目已扫描"
 
 #: src/pages/Index/Scan.tsx:82
 #: src/tables/InvenTreeTable.tsx:217
 msgid "API Error"
-msgstr ""
+msgstr "API 错误"
 
 #: src/pages/Index/Scan.tsx:83
 msgid "Failed to fetch instance data"
-msgstr ""
+msgstr "获取实例数据失败"
 
 #: src/pages/Index/Scan.tsx:130
 msgid "Scan Error"
-msgstr ""
+msgstr "扫描错误"
 
 #: src/pages/Index/Scan.tsx:162
 msgid "Selected elements are not known"
@@ -4906,16 +4906,16 @@ msgstr "选择多个对象类型"
 
 #: src/pages/Index/Scan.tsx:177
 msgid "Actions ... "
-msgstr ""
+msgstr "操作 ... "
 
 #: src/pages/Index/Scan.tsx:194
 #: src/pages/Index/Scan.tsx:198
 msgid "Barcode Scanning"
-msgstr ""
+msgstr "条形码扫描"
 
 #: src/pages/Index/Scan.tsx:207
 msgid "Barcode Input"
-msgstr ""
+msgstr "条形码输入"
 
 #: src/pages/Index/Scan.tsx:214
 msgid "Action"
@@ -4923,7 +4923,7 @@ msgstr "操作"
 
 #: src/pages/Index/Scan.tsx:217
 msgid "No Items Selected"
-msgstr ""
+msgstr "未选中项目"
 
 #: src/pages/Index/Scan.tsx:217
 #~ msgid "Manual input"
@@ -4931,7 +4931,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:218
 msgid "Scan and select items to perform actions"
-msgstr ""
+msgstr "扫描并选择项目以执行操作"
 
 #: src/pages/Index/Scan.tsx:218
 #~ msgid "Image Barcode"
@@ -4944,7 +4944,7 @@ msgstr "已选择 {0} 项"
 
 #: src/pages/Index/Scan.tsx:235
 msgid "Scanned Items"
-msgstr ""
+msgstr "已扫描项目"
 
 #: src/pages/Index/Scan.tsx:276
 #~ msgid "Actions for {0}"
@@ -5050,7 +5050,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:33
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:113
 msgid "Edit Account Information"
-msgstr ""
+msgstr "编辑帐户信息"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:34
 #~ msgid "User details updated"
@@ -5058,7 +5058,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:37
 msgid "Account details updated"
-msgstr ""
+msgstr "帐户详情已更新"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 #~ msgid "User Actions"
@@ -5075,7 +5075,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:136
 msgid "Edit Profile Information"
-msgstr ""
+msgstr "编辑个人资料"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #~ msgid "Last name"
@@ -5091,7 +5091,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:59
 msgid "Profile details updated"
-msgstr ""
+msgstr "个人资料更新成功"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
@@ -5128,54 +5128,54 @@ msgstr "显示名称"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:86
 #: src/pages/core/UserDetail.tsx:127
 msgid "Position"
-msgstr ""
+msgstr "位置"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:444
 msgid "Type"
-msgstr ""
+msgstr "类型"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:91
 #: src/pages/core/UserDetail.tsx:143
 msgid "Organisation"
-msgstr ""
+msgstr "组织"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:92
 msgid "Primary Group"
-msgstr ""
+msgstr "主组"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:104
 msgid "Account Details"
-msgstr ""
+msgstr "账户详情"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:107
 msgid "Account Actions"
-msgstr ""
+msgstr "帐户操作"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:111
 msgid "Edit Account"
-msgstr ""
+msgstr "编辑账户"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
 msgid "Change Password"
-msgstr ""
+msgstr "更改密码"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:119
 msgid "Change User Password"
-msgstr ""
+msgstr "变更用户密码"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:131
 msgid "Profile Details"
-msgstr ""
+msgstr "个人资料"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:134
 msgid "Edit Profile"
-msgstr ""
+msgstr "编辑个人资料"
 
 #. placeholder {0}: item.label
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:153
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:24
 msgid "Secret"
@@ -6418,7 +6418,7 @@ msgstr ""
 
 #: src/pages/core/UserDetail.tsx:178
 msgid "User Profile"
-msgstr ""
+msgstr "用户资料"
 
 #: src/pages/core/UserDetail.tsx:188
 #: src/tables/settings/UserTable.tsx:153
@@ -6427,7 +6427,7 @@ msgstr "用户详情"
 
 #: src/pages/core/UserDetail.tsx:206
 msgid "Basic user"
-msgstr ""
+msgstr "基本用户"
 
 #: src/pages/part/CategoryDetail.tsx:99
 #: src/pages/stock/LocationDetail.tsx:97
@@ -6472,7 +6472,7 @@ msgstr "编辑零件类别"
 
 #: src/pages/part/CategoryDetail.tsx:188
 msgid "Move items to parent category"
-msgstr ""
+msgstr "移动项目到父类别"
 
 #: src/pages/part/CategoryDetail.tsx:192
 #: src/pages/stock/LocationDetail.tsx:229
@@ -6683,7 +6683,7 @@ msgstr "价格范围"
 
 #: src/pages/part/PartDetail.tsx:435
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "最新序列号"
 
 #: src/pages/part/PartDetail.tsx:510
 #~ msgid "Stocktake By"
@@ -6858,11 +6858,11 @@ msgstr "计划数量"
 
 #: src/pages/part/PartSchedulingDetail.tsx:242
 msgid "No information available"
-msgstr ""
+msgstr "无可用信息"
 
 #: src/pages/part/PartSchedulingDetail.tsx:243
 msgid "There is no scheduling information available for the selected part"
-msgstr ""
+msgstr "所选零件没有可用的计划信息"
 
 #: src/pages/part/PartSchedulingDetail.tsx:278
 msgid "Expected Quantity"
@@ -7150,19 +7150,19 @@ msgstr "总成本"
 #: src/pages/sales/ReturnOrderDetail.tsx:184
 #: src/pages/sales/SalesOrderDetail.tsx:196
 msgid "Contact Email"
-msgstr ""
+msgstr "联系邮箱"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:228
 #: src/pages/sales/ReturnOrderDetail.tsx:192
 #: src/pages/sales/SalesOrderDetail.tsx:204
 msgid "Contact Phone"
-msgstr ""
+msgstr "联系电话"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:261
 #: src/pages/sales/ReturnOrderDetail.tsx:226
 #: src/pages/sales/SalesOrderDetail.tsx:237
 msgid "Issue Date"
-msgstr ""
+msgstr "签发日期"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:286
 #: src/pages/sales/ReturnOrderDetail.tsx:250
@@ -7171,7 +7171,7 @@ msgstr ""
 #: src/tables/build/BuildOrderTable.tsx:112
 #: src/tables/part/PartPurchaseOrdersTable.tsx:105
 msgid "Completion Date"
-msgstr ""
+msgstr "完成日期"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:316
 #: src/pages/sales/ReturnOrderDetail.tsx:280
@@ -7281,15 +7281,15 @@ msgstr "挂起销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:439
 msgid "Ship Sales Order"
-msgstr ""
+msgstr "销售订单发货"
 
 #: src/pages/sales/SalesOrderDetail.tsx:441
 msgid "Ship this order?"
-msgstr ""
+msgstr "确认发货此订单？"
 
 #: src/pages/sales/SalesOrderDetail.tsx:442
 msgid "Order shipped"
-msgstr ""
+msgstr "订单已发货"
 
 #: src/pages/sales/SalesOrderDetail.tsx:450
 msgid "Complete Sales Order"
@@ -7376,7 +7376,7 @@ msgstr "发送货物"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:330
 msgid "Shipment Actions"
-msgstr ""
+msgstr "货运操作"
 
 #: src/pages/stock/LocationDetail.tsx:113
 msgid "Parent Location"
@@ -7416,7 +7416,7 @@ msgstr "编辑库存地点"
 
 #: src/pages/stock/LocationDetail.tsx:225
 msgid "Move items to parent location"
-msgstr ""
+msgstr "移动项目到父位置"
 
 #: src/pages/stock/LocationDetail.tsx:237
 #: src/pages/stock/LocationDetail.tsx:340
@@ -7454,7 +7454,7 @@ msgstr "基础零件"
 
 #: src/pages/stock/StockDetail.tsx:156
 msgid "Completed Tests"
-msgstr ""
+msgstr "已完成测试"
 
 #: src/pages/stock/StockDetail.tsx:161
 #~ msgid "Unlink custom barcode from stock item"
@@ -7589,11 +7589,11 @@ msgstr "从客户退货"
 
 #: src/pages/stock/StockDetail.tsx:791
 msgid "Assign to Customer"
-msgstr ""
+msgstr "分配给客户"
 
 #: src/pages/stock/StockDetail.tsx:792
 msgid "Assign to a customer"
-msgstr ""
+msgstr "分配给客户"
 
 #: src/pages/stock/StockDetail.tsx:804
 msgid "Stock Item Actions"

@@ -22,6 +22,11 @@ def is_true(x):
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
 
 
+def is_devcontainer_environment():
+    """Check if the InvenTree environment is running in a development container."""
+    return is_true(os.environ.get('INVENTREE_DEVCONTAINER', 'False'))
+
+
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
     return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
@@ -217,7 +222,7 @@ def envcheck_invoke_cmd():
     intendded = ['/bin/invoke', '/bin/inv']
 
     correct_cmd: Optional[str] = None
-    if is_rtd_environment() or is_docker_environment():
+    if is_rtd_environment() or is_docker_environment() or is_devcontainer_environment():
         pass
     elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
         correct_cmd = 'inventree run invoke'
@@ -269,6 +274,7 @@ def content_excludes(
     allow_tokens: bool = True,
     allow_plugins: bool = True,
     allow_sso: bool = True,
+    allow_session: bool = True,
 ):
     """Returns a list of content types to exclude from import / export.
 
@@ -277,6 +283,7 @@ def content_excludes(
         allow_tokens (bool): Allow tokens to be exported / imported
         allow_plugins (bool): Allow plugin information to be exported / imported
         allow_sso (bool): Allow SSO tokens to be exported / imported
+        allow_session (bool): Allow user session data to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -314,6 +321,11 @@ def content_excludes(
     if not allow_sso:
         excludes.append('socialaccount.socialapp')
         excludes.append('socialaccount.socialtoken')
+
+    # Optionally exclude user session information
+    if not allow_session:
+        excludes.append('sessions.session')
+        excludes.append('usersessions.usersession')
 
     return ' '.join([f'--exclude {e}' for e in excludes])
 
@@ -536,6 +548,14 @@ def setup_dev(c, tests=False):
 
 
 # Setup / maintenance tasks
+
+
+@task
+def shell(c):
+    """Launch a Django shell."""
+    manage(c, 'shell', pty=True)
+
+
 @task
 def superuser(c):
     """Create a superuser/admin account for the database."""
@@ -816,6 +836,7 @@ def update(
         'include_tokens': 'Include API tokens in the output file (default = False)',
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
+        'include_session': 'Include user session data in the output file (default = False)',
         'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
     }
 )
@@ -827,6 +848,7 @@ def export_records(
     include_tokens=False,
     exclude_plugins=False,
     include_sso=False,
+    include_session=False,
     retain_temp=False,
 ):
     """Export all database records to a file.
@@ -860,6 +882,7 @@ def export_records(
     excludes = content_excludes(
         allow_tokens=include_tokens,
         allow_plugins=not exclude_plugins,
+        allow_session=include_session,
         allow_sso=include_sso,
     )
 
@@ -926,7 +949,7 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True)
+        delete_data(c, force=True, migrate=True)
 
     info(f"Importing database records from '{target}'")
 
@@ -995,13 +1018,21 @@ def import_records(
     info('Data import completed')
 
 
-@task
-def delete_data(c, force=False):
+@task(
+    help={
+        'force': 'Force deletion of all data without confirmation',
+        'migrate': 'Run migrations before deleting data (default = False)',
+    }
+)
+def delete_data(c, force: bool = False, migrate: bool = False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
     """
     info('Deleting all data from InvenTree database...')
+
+    if migrate:
+        manage(c, 'migrate --run-syncdb')
 
     if force:
         manage(c, 'flush --noinput')
@@ -1434,6 +1465,17 @@ def version(c):
     NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
     NA = wrap_color('N/A', '93')
 
+    platform = NOT_SPECIFIED
+
+    if is_pkg_installer():
+        platform = 'Package Installer'
+    elif is_docker_environment():
+        platform = 'Docker'
+    elif is_devcontainer_environment():
+        platform = 'Devcontainer'
+    elif is_rtd_environment():
+        platform = 'ReadTheDocs'
+
     print(
         f"""
 InvenTree - inventree.org
@@ -1461,9 +1503,8 @@ Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
 Environment:
-Docker      {is_docker_environment()}
-RTD         {is_rtd_environment()}
-PKG         {is_pkg_installer()}
+Platform    {platform}
+Debug       {is_debug_environment()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
@@ -1818,6 +1859,12 @@ def clear_generated(c):
     run(c, 'find src -name "messages.mo" -exec rm -f {} +')
 
 
+@task(pre=[wait])
+def monitor(c):
+    """Monitor the worker performance."""
+    manage(c, 'qmonitor', pty=True)
+
+
 # endregion tasks
 
 # Collection sorting
@@ -1831,6 +1878,7 @@ development = Collection(
     server,
     setup_dev,
     setup_test,
+    shell,
     test,
     test_translations,
     translate,
@@ -1867,6 +1915,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    monitor,
     build_docs,
 )
 

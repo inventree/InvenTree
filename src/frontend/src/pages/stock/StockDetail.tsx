@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -255,21 +256,24 @@ export default function StockDetail() {
         )
       },
       {
-        type: 'text',
+        type: 'number',
         name: 'quantity',
         label: t`Quantity`,
+        unit: part?.units,
         hidden: !!stockitem.serial && stockitem.quantity == 1
       },
       {
-        type: 'text',
+        type: 'number',
         name: 'available_stock',
         label: t`Available`,
+        unit: part?.units,
         icon: 'stock'
       },
       {
-        type: 'text',
+        type: 'number',
         name: 'allocated',
         label: t`Allocated to Orders`,
+        unit: part?.units,
         icon: 'tick_off',
         hidden: !stockitem.allocated
       },
@@ -640,28 +644,62 @@ export default function StockDetail() {
   const editStockItemFields = useStockFields({
     create: false,
     stockItem: stockitem,
-    partId: stockitem.part
+    partId: stockitem.part,
+    modalId: 'edit-stock-item'
   });
 
   const editStockItem = useEditApiFormModal({
     url: ApiEndpoints.stock_item_list,
     pk: stockitem.pk,
     title: t`Edit Stock Item`,
+    modalId: 'edit-stock-item',
     fields: editStockItemFields,
     onFormSuccess: refreshInstance
   });
 
-  const duplicateStockItemFields = useStockFields({ create: true });
+  const duplicateStockItemFields = useStockFields({
+    create: true,
+    modalId: 'duplicate-stock-item'
+  });
+
+  const duplicateStockData = useMemo(() => {
+    const duplicate = {
+      ...stockitem,
+      serial_numbers: stockitem.serial
+    };
+
+    // Omit the "serial" field for item creation
+    delete duplicate.serial;
+
+    return duplicate;
+  }, [stockitem]);
 
   const duplicateStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     title: t`Add Stock Item`,
+    modalId: 'duplicate-stock-item',
     fields: duplicateStockItemFields,
     initialData: {
-      ...stockitem
+      ...duplicateStockData
     },
     follow: true,
-    modelType: ModelType.stockitem
+    successMessage: null,
+    modelType: ModelType.stockitem,
+    onFormSuccess: (data) => {
+      // Handle case where multiple stock items are created
+      if (Array.isArray(data) && data.length > 0) {
+        if (data.length == 1) {
+          navigate(getDetailUrl(ModelType.stockitem, data[0]?.pk));
+        } else {
+          const n: number = data.length;
+          notifications.show({
+            title: t`Items Created`,
+            message: t`Created ${n} stock items`,
+            color: 'green'
+          });
+        }
+      }
+    }
   });
 
   const preDeleteContent = useMemo(() => {
@@ -700,13 +738,15 @@ export default function StockDetail() {
 
   const serializeStockFields = useStockItemSerializeFields({
     partId: stockitem.part,
-    trackable: stockitem.part_detail?.trackable
+    trackable: stockitem.part_detail?.trackable,
+    modalId: 'stock-item-serialize'
   });
 
   const serializeStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_serialize,
     pk: stockitem.pk,
     title: t`Serialize Stock Item`,
+    modalId: 'stock-item-serialize',
     fields: serializeStockFields,
     initialData: {
       quantity: stockitem.quantity,

@@ -102,7 +102,7 @@ class PluginValidationMixin(DiffMixin):
                 import InvenTree.exceptions
 
                 InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.validate_model_instance'
+                    'validate_model_instance', plugin=plugin.slug
                 )
                 raise ValidationError(_('Error running plugin validation'))
 
@@ -139,7 +139,7 @@ class PluginValidationMixin(DiffMixin):
                 # Plugin might raise a ValidationError to prevent deletion
                 raise e
             except Exception:
-                log_error('plugin.validate_model_deletion')
+                log_error('validate_model_deletion', plugin=plugin.slug)
                 continue
 
         super().delete()
@@ -948,7 +948,7 @@ class InvenTreeBarcodeMixin(models.Model):
         This is used to generate a efficient QR code for the model type.
         It is expected to match this pattern: [0-9A-Z $%*+-.\/:]{2}
 
-        Note: Due to the shape constrains (45**2=2025 different allowed codes)
+        Note: Due to the shape constraints (45**2=2025 different allowed codes)
         this needs to be explicitly implemented in the model class to avoid collisions.
         """
         raise NotImplementedError(

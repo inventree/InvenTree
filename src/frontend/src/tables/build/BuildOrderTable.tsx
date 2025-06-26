@@ -12,8 +12,10 @@ import { RenderUser } from '../../components/render/User';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import {
+  BooleanColumn,
   CreationDateColumn,
   DateColumn,
   PartColumn,
@@ -59,6 +61,7 @@ export function BuildOrderTable({
   parentBuildId?: number;
   salesOrderId?: number;
 }>) {
+  const globalSettings = useGlobalSettingsState();
   const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
 
   const tableColumns = useMemo(() => {
@@ -79,7 +82,8 @@ export function BuildOrderTable({
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'title',
@@ -98,19 +102,34 @@ export function BuildOrderTable({
         )
       },
       StatusColumn({ model: ModelType.build }),
-      ProjectCodeColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'level',
         sortable: true,
         switchable: true,
-        hidden: !parentBuildId
+        hidden: !parentBuildId,
+        defaultVisible: false
       },
       {
         accessor: 'priority',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
-      CreationDateColumn({}),
-      StartDateColumn({}),
+      BooleanColumn({
+        accessor: 'external',
+        title: t`External`,
+        sortable: true,
+        switchable: true,
+        hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',
@@ -126,7 +145,7 @@ export function BuildOrderTable({
       },
       ResponsibleColumn({})
     ];
-  }, [parentBuildId]);
+  }, [parentBuildId, globalSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
@@ -160,6 +179,12 @@ export function BuildOrderTable({
       HasProjectCodeFilter(),
       IssuedByFilter(),
       ResponsibleFilter(),
+      {
+        name: 'external',
+        label: t`External`,
+        description: t`Show external build orders`,
+        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      },
       PartCategoryFilter()
     ];
 
@@ -174,15 +199,19 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [partId]);
+  }, [partId, globalSettings]);
 
   const user = useUserState();
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'create-build-order'
+  });
 
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
+    modalId: 'create-build-order',
     fields: buildOrderFields,
     initialData: {
       part: partId,

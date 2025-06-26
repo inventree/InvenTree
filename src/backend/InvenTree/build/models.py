@@ -96,6 +96,7 @@ class Build(
         sales_order: References to a SalesOrder object for which this Build is required (e.g. the output of this build will be used to fulfil a sales order)
         take_from: Location to take stock from to make this build (if blank, can take from anywhere)
         status: Build status code
+        external: Set to indicate that this build order is fulfilled externally
         batch: Batch code transferred to build parts (optional)
         creation_date: Date the build was created (auto)
         target_date: Date the build will be overdue
@@ -191,6 +192,13 @@ class Build(
         """Validate the BuildOrder model."""
         super().clean()
 
+        if self.external and not self.part.purchaseable:
+            raise ValidationError({
+                'external': _(
+                    'Build orders can only be externally fulfilled for purchaseable parts'
+                )
+            })
+
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
                 raise ValidationError({
@@ -284,6 +292,12 @@ class Build(
         help_text=_(
             'Select location to take stock from for this build (leave blank to take from any stock location)'
         ),
+    )
+
+    external = models.BooleanField(
+        default=False,
+        verbose_name=_('External Build'),
+        help_text=_('This build order is fulfilled externally'),
     )
 
     destination = models.ForeignKey(
@@ -846,10 +860,10 @@ class Build(
         allocations.delete()
 
     @transaction.atomic
-    def create_build_output(self, quantity, **kwargs):
+    def create_build_output(self, quantity, **kwargs) -> list[stock.models.StockItem]:
         """Create a new build output against this BuildOrder.
 
-        Args:
+        Arguments:
             quantity: The quantity of the item to produce
 
         Kwargs:
@@ -857,6 +871,9 @@ class Build(
             serials: Serial numbers
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
+
+        Returns:
+            A list of the created output (StockItem) objects.
         """
         trackable_parts = self.part.get_trackable_parts()
 
@@ -880,6 +897,8 @@ class Build(
             raise ValidationError({
                 'serials': _('Serial numbers must be provided for trackable parts')
             })
+
+        outputs = []
 
         # We are generating multiple serialized outputs
         if serials:
@@ -975,9 +994,13 @@ class Build(
                 },
             )
 
+            outputs = [output]
+
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION.value
             self.save()
+
+        return outputs
 
     @transaction.atomic
     def delete_output(self, output):

@@ -67,7 +67,10 @@ class ScheduleMixin:
 
         if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_SCHEDULE'):
             for _key, plugin in plugins:
-                if plugin.mixin_enabled('schedule') and plugin.is_active():
+                if (
+                    plugin.mixin_enabled(PluginMixinEnum.SCHEDULE)
+                    and plugin.is_active()
+                ):
                     # Only active tasks for plugins which are enabled
                     plugin.register_tasks()
                     task_keys += plugin.get_task_names()
@@ -181,6 +184,7 @@ class ScheduleMixin:
                     obj['args'] = f"'{slug}', '{func_name}'"
 
                 tasks = Schedule.objects.filter(name=task_name)
+
                 if len(tasks) > 1:
                     logger.info(
                         "Found multiple tasks; Adding a new scheduled task '%s'",
@@ -191,10 +195,11 @@ class ScheduleMixin:
                 elif len(tasks) == 1:
                     # Scheduled task already exists - update it!
                     logger.info("Updating scheduled task '%s'", task_name)
-                    instance = Schedule.objects.get(name=task_name)
-                    for item in obj:
-                        setattr(instance, item, obj[item])
-                    instance.save()
+
+                    if instance := tasks.first():
+                        for item in obj:
+                            setattr(instance, item, obj[item])
+                        instance.save()
                 else:
                     logger.info("Adding scheduled task '%s'", task_name)
                     # Create a new scheduled task

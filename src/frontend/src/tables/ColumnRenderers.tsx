@@ -73,7 +73,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
         );
       }
 
-      return <Text size='sm'>{location.name}</Text>;
+      return <Text size='sm'>{location.pathstring}</Text>;
     },
     ...props
   };
@@ -96,6 +96,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     title: t`Description`,
     sortable: false,
     switchable: true,
+    width: 300,
     ...props
   };
 }
@@ -104,6 +105,7 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'link',
     sortable: false,
+    defaultVisible: false,
     render: (record: any) => {
       const url = resolveItem(record, props.accessor ?? 'link');
 

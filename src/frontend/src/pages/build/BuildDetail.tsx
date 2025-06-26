@@ -8,6 +8,7 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
+  IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -25,6 +26,7 @@ import {
   type DetailsField,
   DetailsTable
 } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -49,12 +51,14 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
@@ -64,6 +68,7 @@ export default function BuildDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
@@ -81,10 +86,23 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: build?.part,
+      hasPrimaryKey: true,
+      defaultValue: {}
+    });
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
     }
+
+    const data = {
+      ...build,
+      can_build: partRequirements?.can_build ?? 0
+    };
 
     const tl: DetailsField[] = [
       {
@@ -125,6 +143,24 @@ export default function BuildDetail() {
           !build.status_custom_key || build.status_custom_key == build.status
       },
       {
+        type: 'boolean',
+        name: 'external',
+        label: t`External`,
+        icon: 'manufacturers',
+        hidden: !build.external
+      },
+      {
+        type: 'text',
+        name: 'purchase_order',
+        label: t`Purchase Order`,
+        icon: 'purchase_orders',
+        copy: true,
+        hidden: !build.external,
+        value_formatter: () => {
+          return 'TODO: external PO';
+        }
+      },
+      {
         type: 'text',
         name: 'reference',
         label: t`Reference`,
@@ -150,9 +186,16 @@ export default function BuildDetail() {
 
     const tr: DetailsField[] = [
       {
-        type: 'text',
+        type: 'number',
         name: 'quantity',
         label: t`Build Quantity`
+      },
+      {
+        type: 'number',
+        name: 'can_build',
+        unit: build.part_detail?.units,
+        label: t`Can Build`,
+        hidden: partRequirementsQuery.isFetching
       },
       {
         type: 'progressbar',
@@ -267,15 +310,20 @@ export default function BuildDetail() {
             pk={build.part}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={build} />
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={build} />
-        <DetailsTable fields={bl} item={build} />
-        <DetailsTable fields={br} item={build} />
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [build, instanceQuery]);
+  }, [
+    build,
+    instanceQuery,
+    partRequirements,
+    partRequirementsQuery.isFetching
+  ]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -287,37 +335,9 @@ export default function BuildDetail() {
       },
       {
         name: 'line-items',
-        label: t`Line Items`,
+        label: t`Required Stock`,
         icon: <IconListNumbers />,
         content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
-      },
-      {
-        name: 'incomplete-outputs',
-        label: t`Incomplete Outputs`,
-        icon: <IconClipboardList />,
-        content: build.pk ? (
-          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
-        ) : (
-          <Skeleton />
-        ),
-        hidden:
-          build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED
-      },
-      {
-        name: 'complete-outputs',
-        label: t`Completed Outputs`,
-        icon: <IconClipboardCheck />,
-        content: (
-          <StockItemTable
-            allowAdd={false}
-            tableName='build-outputs'
-            params={{
-              build: id,
-              is_building: false
-            }}
-          />
-        )
       },
       {
         name: 'allocated-stock',
@@ -346,6 +366,48 @@ export default function BuildDetail() {
             }}
           />
         )
+      },
+      {
+        name: 'incomplete-outputs',
+        label: t`Incomplete Outputs`,
+        icon: <IconClipboardList />,
+        content: build.pk ? (
+          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED
+      },
+      {
+        name: 'complete-outputs',
+        label: t`Completed Outputs`,
+        icon: <IconClipboardCheck />,
+        content: (
+          <StockItemTable
+            allowAdd={false}
+            tableName='completed-build-outputs'
+            params={{
+              build: id,
+              is_building: false
+            }}
+          />
+        )
+      },
+      {
+        name: 'external-purchase-orders',
+        label: t`External Orders`,
+        icon: <IconShoppingCart />,
+        content: build.pk ? (
+          <PurchaseOrderTable externalBuildId={build.pk} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          !user.hasViewRole(UserRoles.purchase_order) ||
+          !build.external ||
+          !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
       {
         name: 'child-orders',
@@ -377,15 +439,19 @@ export default function BuildDetail() {
         model_id: build.pk
       })
     ];
-  }, [build, id, user, buildStatus]);
+  }, [build, id, user, buildStatus, globalSettings]);
 
-  const buildOrderFields = useBuildOrderFields({ create: false });
+  const editBuildOrderFields = useBuildOrderFields({
+    create: false,
+    modalId: 'edit-build-order'
+  });
 
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
     title: t`Edit Build Order`,
-    fields: buildOrderFields,
+    modalId: 'edit-build-order',
+    fields: editBuildOrderFields,
     onFormSuccess: refreshInstance
   });
 
@@ -398,10 +464,16 @@ export default function BuildDetail() {
     return data;
   }, [build]);
 
+  const duplicateBuildOrderFields = useBuildOrderFields({
+    create: false,
+    modalId: 'duplicate-build-order'
+  });
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
-    fields: buildOrderFields,
+    modalId: 'duplicate-build-order',
+    fields: duplicateBuildOrderFields,
     initialData: duplicateBuildOrderInitialData,
     follow: true,
     modelType: ModelType.build
@@ -531,6 +603,12 @@ export default function BuildDetail() {
             status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
+          />,
+          <DetailsBadge
+            label={t`External`}
+            color='blue'
+            key='external'
+            visible={build.external}
           />
         ];
   }, [build, instanceQuery]);

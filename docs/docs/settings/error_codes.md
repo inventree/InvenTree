@@ -54,15 +54,18 @@ During startup of the backend InvenTree tries to detect branch, commit hash and 
 This information is not needed for operation but very helpful for debugging and support. These issues might be caused by running a deployment version that delivers without git information, not having git installed or not having dulwich installed.
 You can ignore this warning if you are not interested in the git information.
 
+
 #### INVE-W2
 **Dulwich module not found - Backend**
 
 See [INVE-W1](#inve-w1)
 
+
 #### INVE-W3
 **Could not detect git information - Backend**
 
 See [INVE-W1](#inve-w1)
+
 
 #### INVE-W4
 **Server is running in debug mode - Backend**
@@ -71,12 +74,14 @@ InvenTree is running in debug mode. This is **not** recommended for production u
 
 It is recommended to run InvenTree in production mode for better security and performance. See [Debug Mode Information](../start/index.md#debug-mode).
 
+
 #### INVE-W5
 **Background worker process not running - Backend**
 
 The background worker seems to not be running. This is detected by a heartbeat that runs all 5 minutes - this error triggers after not being run in the last 10 minutes.
 Check if the process for background workers is running and reaching the database. Steps vary between deployment methods.
 See [Background Worker Information](../start/processes.md#background-worker).
+
 
 #### INVE-W6
 **Server restart required - Backend**
@@ -99,12 +104,26 @@ There are database migrations waiting to be applied. This might lead to integrit
 Some deployment methods support [auto applying of updates](../start/config.md#auto-update). See also [Perform Database Migrations](../start/install.md#perform-database-migrations).
 Steps very between deployment methods.
 
+
 #### INVE-W9
 **Wrong Invoke Environment - Backend**
 
 The command that was used to run invoke is not the one that is recommended. This might be caused by a wrong PATH variable or by thinking you are using a different deployment method.
 The warning text will show the recommended command for intended use.
 
+#### INVE-W10
+**Config not in recommended directory - Backend**
+
+A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusinon.
+
+The warning text will show the recommended directory for your deployment method.
+
+#### INVE-W10
+**Exception during mail delivery - Backend**
+
+Collective exception for errors that occur during mail delivery. This might be caused by a misconfiguration of the email provider or a network issue.
+These issues are raised directly from the mail backend so it is unlikely that the error is caused by django or InvenTree itself.
+Check the logs for more information.
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.

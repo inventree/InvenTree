@@ -53,10 +53,12 @@ import { InvenTreeTable } from '../InvenTreeTable';
  */
 export function PurchaseOrderTable({
   supplierId,
-  supplierPartId
+  supplierPartId,
+  externalBuildId
 }: Readonly<{
   supplierId?: number;
   supplierPartId?: number;
+  externalBuildId?: number;
 }>) {
   const table = useTable('purchase-order');
   const user = useUserState();
@@ -121,10 +123,18 @@ export function PurchaseOrderTable({
       },
       LineItemsProgressColumn(),
       StatusColumn({ model: ModelType.purchaseorder }),
-      ProjectCodeColumn({}),
-      CreationDateColumn({}),
-      CreatedByColumn({}),
-      StartDateColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      CreatedByColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
@@ -178,7 +188,8 @@ export function PurchaseOrderTable({
           params: {
             supplier_detail: true,
             supplier: supplierId,
-            supplier_part: supplierPartId
+            supplier_part: supplierPartId,
+            external_build: externalBuildId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

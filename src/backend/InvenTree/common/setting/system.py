@@ -162,6 +162,12 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
+class SystemSetId:
+    """Shared system settings identifiers."""
+
+    GLOBAL_WARNING = '_GLOBAL_WARNING'
+
+
 SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'SERVER_RESTART_REQUIRED': {
         'name': _('Restart required'),
@@ -175,6 +181,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+    },
+    SystemSetId.GLOBAL_WARNING: {
+        'name': _('Active warning codes'),
+        'description': _('A dict of active warning codes'),
+        'validator': json.loads,
+        'default': '{}',
+        'hidden': True,
     },
     'INVENTREE_INSTANCE_ID': {
         'name': _('Instance ID'),
@@ -461,12 +474,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'PART_SHOW_IMPORT': {
-        'name': _('Show Import in Views'),
-        'description': _('Display the import wizard in some part views'),
-        'default': False,
-        'validator': bool,
-    },
     'PART_SHOW_RELATED': {
         'name': _('Show related parts'),
         'description': _('Display related parts for a part'),
@@ -654,12 +661,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'SERIAL_NUMBER_AUTOFILL': {
-        'name': _('Autofill Serial Numbers'),
-        'description': _('Autofill serial numbers in forms'),
-        'default': False,
-        'validator': bool,
-    },
     'STOCK_DELETE_DEPLETED_DEFAULT': {
         'name': _('Delete Depleted Stock'),
         'description': _('Determines default behavior when a stock item is depleted'),
@@ -767,6 +768,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _(
             'Prevent build order completion until all child orders are closed'
         ),
+        'default': False,
+        'validator': bool,
+    },
+    'BUILDORDER_EXTERNAL_BUILDS': {
+        'name': _('External Build Orders'),
+        'description': _('Enable external build order functionality'),
         'default': False,
         'validator': bool,
     },
@@ -1033,6 +1040,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'ENABLE_PLUGINS_INTERFACE': {
         'name': _('Enable interface integration'),
         'description': _('Enable plugins to integrate into the user interface'),
+        'default': False,
+        'validator': bool,
+        'after_save': reload_plugin_registry,
+    },
+    'ENABLE_PLUGINS_MAILS': {
+        'name': _('Enable mail integration'),
+        'description': _('Enable plugins to process outgoing/incoming mails'),
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,

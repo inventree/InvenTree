@@ -211,12 +211,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
     },
-    'DISPLAY_SCHEDULE_TAB': {
-        'name': _('Part Scheduling'),
-        'description': _('Display part scheduling information'),
-        'default': True,
-        'validator': bool,
-    },
     'DISPLAY_STOCKTAKE_TAB': {
         'name': _('Part Stocktake'),
         'description': _(
@@ -224,12 +218,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': True,
         'validator': bool,
-    },
-    'TABLE_STRING_MAX_LENGTH': {
-        'name': _('Table String Length'),
-        'description': _('Maximum length limit for strings displayed in table views'),
-        'validator': [int, MinValueValidator(0)],
-        'default': 100,
     },
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),

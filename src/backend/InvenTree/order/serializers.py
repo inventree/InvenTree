@@ -21,6 +21,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import build.serializers
 import order.models
 import part.filters as part_filters
 import part.models as part_models
@@ -496,6 +497,8 @@ class PurchaseOrderLineItemSerializer(
             'notes',
             'order',
             'order_detail',
+            'build_order',
+            'build_order_detail',
             'overdue',
             'part_detail',
             'supplier_part_detail',
@@ -643,6 +646,10 @@ class PurchaseOrderLineItemSerializer(
 
     order_detail = PurchaseOrderSerializer(
         source='order', read_only=True, allow_null=True, many=False
+    )
+
+    build_order_detail = build.serializers.BuildSerializer(
+        source='build_order', read_only=True, allow_null=True, many=False
     )
 
     merge_items = serializers.BooleanField(
@@ -1304,6 +1311,7 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
             'reference',
             'tracking_number',
             'invoice_number',
+            'barcode_hash',
             'link',
             'notes',
         ]

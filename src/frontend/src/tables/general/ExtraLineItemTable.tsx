@@ -15,7 +15,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { LinkColumn, NoteColumn } from '../ColumnRenderers';
+import { DescriptionColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -27,11 +27,13 @@ import {
 export default function ExtraLineItemTable({
   endpoint,
   orderId,
+  orderDetailRefresh,
   currency,
   role
 }: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
+  orderDetailRefresh: () => void;
   currency: string;
   role: UserRoles;
 }>) {
@@ -44,9 +46,7 @@ export default function ExtraLineItemTable({
         accessor: 'reference',
         switchable: false
       },
-      {
-        accessor: 'description'
-      },
+      DescriptionColumn({}),
       {
         accessor: 'quantity',
         switchable: false
@@ -89,6 +89,7 @@ export default function ExtraLineItemTable({
       ...initialData,
       price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -97,6 +98,7 @@ export default function ExtraLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: extraLineItemFields(),
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -104,6 +106,7 @@ export default function ExtraLineItemTable({
     url: endpoint,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 

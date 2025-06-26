@@ -317,6 +317,7 @@ export default function SalesOrderShipmentDetail() {
         key='barcode'
         model={ModelType.salesordershipment}
         pk={shipment.pk}
+        hash={shipment?.barcode_hash}
       />,
       <PrintingActions
         key='print'
