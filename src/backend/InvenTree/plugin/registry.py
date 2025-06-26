@@ -350,9 +350,12 @@ class PluginsRegistry:
             )
 
             # If we are in a container environment, reload the entire plugins file
-            if collect and plugin_on_startup and not settings.PLUGINS_INSTALL_DISABLED:
+            if collect:
                 logger.info('Collecting plugins')
-                self.install_plugin_file()
+
+                if plugin_on_startup and not settings.PLUGINS_INSTALL_DISABLED:
+                    self.install_plugin_file()
+
                 self.plugin_modules = self.collect_plugins()
 
             self.plugins_loaded = False
