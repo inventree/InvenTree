@@ -186,7 +186,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: !!url && !tableData,
+    enabled: !!url && !tableData && tableState.storedDataLoaded,
     queryKey: [
       'options',
       url,
@@ -609,7 +609,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.filterSet.activeFilters,
       tableState.searchTerm
     ],
-    enabled: !!url && !tableData,
+    enabled: !!url && !tableData && tableState.storedDataLoaded,
     queryFn: fetchTableData,
     refetchOnMount: true
   });
