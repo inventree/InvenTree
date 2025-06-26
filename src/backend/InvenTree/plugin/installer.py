@@ -113,9 +113,13 @@ def plugins_file_hash():
     if not pf or not pf.exists():
         return None
 
-    with pf.open('rb') as f:
-        # Note: Once we support 3.11 as a minimum, we can use hashlib.file_digest
-        return hashlib.sha256(f.read()).hexdigest()
+    try:
+        with pf.open('rb') as f:
+            # Note: Once we support 3.11 as a minimum, we can use hashlib.file_digest
+            return hashlib.sha256(f.read()).hexdigest()
+    except Exception:
+        log_error('plugin.plugins_file_hash')
+        return None
 
 
 def install_plugins_file():
@@ -178,6 +182,7 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
             lines = f.readlines()
     except Exception as exc:
         logger.exception('Failed to read plugins file: %s', str(exc))
+        log_error('plugin.update_plugins_file')
         return
 
     # Reconstruct output file
@@ -214,6 +219,7 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
                     f.write('\n')
     except Exception as exc:
         logger.exception('Failed to add plugin to plugins file: %s', str(exc))
+        log_error('plugin.update_plugins_file')
 
 
 def install_plugin(url=None, packagename=None, user=None, version=None):
