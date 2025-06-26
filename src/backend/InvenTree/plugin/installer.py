@@ -100,6 +100,8 @@ def get_install_info(packagename: str) -> dict:
         output = error.output.decode('utf-8')
         info['error'] = output
         logger.exception('Plugin lookup failed: %s', str(output))
+    except Exception:
+        log_error('get_install_info')
 
     return info
 
@@ -282,6 +284,8 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     except subprocess.CalledProcessError as error:
         handle_pip_error(error, 'plugin_install')
+    except Exception:
+        log_error('plugin.install_plugin')
 
     if version := ret.get('version'):
         # Save plugin to plugins file
@@ -349,6 +353,8 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
             pip_command('uninstall', '-y', package_name)
         except subprocess.CalledProcessError as error:
             handle_pip_error(error, 'plugin_uninstall')
+        except Exception:
+            log_error('plugin.uninstall_plugin')
     else:
         # No matching install target found
         raise ValidationError(_('Plugin installation not found'))
