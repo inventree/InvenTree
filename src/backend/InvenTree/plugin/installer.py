@@ -47,7 +47,7 @@ def handle_pip_error(error, path: str) -> list:
     - Format the output from a pip command into a list of error messages.
     - Raise an appropriate error
     """
-    log_error(path)
+    log_error(f'pip:{path}')
 
     output = error.output.decode('utf-8')
 
