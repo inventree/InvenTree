@@ -1589,9 +1589,12 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Called when the serializer is saved."""
         super().save()
 
-        # Update part pricing
-        pricing = self.instance
-        pricing.update_pricing()
+        data = self.validated_data
+
+        if data.get('update', False):
+            # Update part pricing
+            pricing = self.instance
+            pricing.update_pricing()
 
 
 class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
