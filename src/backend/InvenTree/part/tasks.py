@@ -83,20 +83,20 @@ def notify_stale_stock(user, stale_items):
     for stock_item in stale_items:
         # Calculate days until expiry to print it clearly in table in email later
         days_until_expiry = None
-        expiry_status = 'No expiry date'
+        expiry_status = _('No expiry date')
 
         if stock_item.expiry_date:
             days_diff = (stock_item.expiry_date - today).days
 
             if days_diff < 0:
                 days_until_expiry = days_diff  # Keep negative value for template logic
-                expiry_status = f'Expired {abs(days_diff)} days ago'
+                expiry_status = _(f'Expired {abs(days_diff)} days ago')
             elif days_diff == 0:
                 days_until_expiry = 0
-                expiry_status = 'Expires today'
+                expiry_status = _('Expires today')
             else:
                 days_until_expiry = days_diff
-                expiry_status = f'{days_until_expiry} days'
+                expiry_status = _(f'{days_until_expiry} days')
 
         item_data = {
             'stock_item': stock_item,
@@ -163,9 +163,6 @@ def check_stale_stock():
     to notifications for the respective parts. Each user receives one consolidated email
     containing all their stale stock items.
     """
-    # Sleep a random number of seconds to prevent worker conflict
-    time.sleep(random.randint(1, 5))
-
     # Check if stock expiry functionality is enabled
     if not get_global_setting('STOCK_ENABLE_EXPIRY', False, cache=False):
         logger.info('Stock expiry functionality is not enabled - exiting')
@@ -195,7 +192,7 @@ def check_stale_stock():
     logger.info('Found %s stale stock items', stale_stock_items.count())
 
     # Group stale stock items by user subscriptions
-    user_stale_items = {}  # Dictionary: user -> list of stale stock items
+    user_stale_items: dict[stock_models.StockItem, list[stock_models.StockItem]] = {}
 
     for stock_item in stale_stock_items:
         # Get all subscribers for this part
