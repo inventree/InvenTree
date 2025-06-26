@@ -336,7 +336,7 @@ class PluginsRegistry:
 
         try:
             plugin_on_startup = get_global_setting(
-                'PLUGIN_ON_STATUP', create=False, cache=False
+                'PLUGIN_ON_STARTUP', create=False, cache=False
             )
         except Exception:
             plugin_on_startup = False
