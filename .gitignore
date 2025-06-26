@@ -46,18 +46,16 @@ inventree_media
 inventree_static
 static_i18n
 
-# Local config file
+# Local config files
 config.yaml
 plugins.txt
+secret_key.txt
+oidc.pem
 
 # Default data file
 data.json
 *.json.tmp
 *.tmp.json
-
-# Key file
-secret_key.txt
-oidc.pem
 
 # IDE / development files
 .idea/

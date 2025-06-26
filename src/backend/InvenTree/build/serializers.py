@@ -421,7 +421,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         request = self.context.get('request')
         build = self.get_build()
 
-        build.create_build_output(
+        return build.create_build_output(
             data['quantity'],
             serials=self.serials,
             batch=data.get('batch_code', ''),

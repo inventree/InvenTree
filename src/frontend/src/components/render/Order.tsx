@@ -24,7 +24,7 @@ export function RenderPurchaseOrder(
         status: instance.status_custom_key,
         type: ModelType.purchaseorder
       })}
-      image={supplier.thumnbnail || supplier.image}
+      image={supplier.thumbnail || supplier.image}
       url={
         props.link
           ? getDetailUrl(ModelType.purchaseorder, instance.pk)
@@ -52,7 +52,7 @@ export function RenderReturnOrder(
         status: instance.status_custom_key,
         type: ModelType.returnorder
       })}
-      image={customer.thumnbnail || customer.image}
+      image={customer.thumbnail || customer.image}
       url={
         props.link
           ? getDetailUrl(ModelType.returnorder, instance.pk)
@@ -97,7 +97,7 @@ export function RenderSalesOrder(
         status: instance.status_custom_key,
         type: ModelType.salesorder
       })}
-      image={customer.thumnbnail || customer.image}
+      image={customer.thumbnail || customer.image}
       url={
         props.link ? getDetailUrl(ModelType.salesorder, instance.pk) : undefined
       }

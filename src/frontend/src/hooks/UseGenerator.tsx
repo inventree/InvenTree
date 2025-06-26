@@ -93,7 +93,7 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
 
       if (!isEnabled()) {
         setResult(null);
-        return;
+        return null;
       }
 
       return api

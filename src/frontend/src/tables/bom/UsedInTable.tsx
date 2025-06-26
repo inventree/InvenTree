@@ -9,7 +9,11 @@ import type { TableFilter } from '@lib/types/Filters';
 import { formatDecimal } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
 import type { TableColumn } from '../Column';
-import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  PartColumn,
+  ReferenceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -41,13 +45,12 @@ export function UsedInTable({
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false,
-        title: t`Description`
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'sub_part',
         sortable: true,
