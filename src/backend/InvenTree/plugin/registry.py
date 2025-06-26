@@ -335,6 +335,13 @@ class PluginsRegistry:
             self.errors = {}
 
         try:
+            plugin_on_startup = get_global_setting(
+                'PLUGIN_ON_STATUP', create=False, cache=False
+            )
+        except Exception:
+            plugin_on_startup = False
+
+        try:
             logger.info(
                 'Plugin Registry: Reloading plugins - Force: %s, Full: %s, Collect: %s',
                 force_reload,
@@ -343,11 +350,7 @@ class PluginsRegistry:
             )
 
             # If we are in a container environment, reload the entire plugins file
-            if (
-                collect
-                and not settings.PLUGINS_INSTALL_DISABLED
-                and get_global_setting('PLUGIN_ON_STARTUP', create=False, cache=False)
-            ):
+            if collect and plugin_on_startup and not settings.PLUGINS_INSTALL_DISABLED:
                 logger.info('Collecting plugins')
                 self.install_plugin_file()
                 self.plugin_modules = self.collect_plugins()
