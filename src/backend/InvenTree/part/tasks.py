@@ -11,7 +11,6 @@ from opentelemetry import trace
 import common.currency
 import common.notifications
 import company.models
-import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models as part_models

@@ -368,15 +368,19 @@ export default function ParametricPartTable({
     const partColumns: TableColumn[] = [
       {
         accessor: 'name',
+        title: t`Part`,
         sortable: true,
         switchable: false,
         noWrap: true,
         render: (record: any) => PartColumn({ part: record })
       },
-      DescriptionColumn({}),
+      DescriptionColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'IPN',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'total_in_stock',

@@ -1,11 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 356
+INVENTREE_API_VERSION = 358
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v358 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9857
+    - Provide list of generated stock items against "StockItemSerialize" API endpoint
+    - Provide list of generated stock items against "StockList" API endpoint
+    - Provide list of generated stock items against "BuildOutputCreate" API endpoint
+
+v357 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9856
+    - Adds "units" field to PluginSetting API endpoints
+
 v356 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9817
     - Enable generation of reports against the Company model type
 

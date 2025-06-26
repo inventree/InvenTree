@@ -949,7 +949,7 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True)
+        delete_data(c, force=True, migrate=True)
 
     info(f"Importing database records from '{target}'")
 
@@ -1018,13 +1018,21 @@ def import_records(
     info('Data import completed')
 
 
-@task
-def delete_data(c, force=False):
+@task(
+    help={
+        'force': 'Force deletion of all data without confirmation',
+        'migrate': 'Run migrations before deleting data (default = False)',
+    }
+)
+def delete_data(c, force: bool = False, migrate: bool = False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
     """
     info('Deleting all data from InvenTree database...')
+
+    if migrate:
+        manage(c, 'migrate --run-syncdb')
 
     if force:
         manage(c, 'flush --noinput')

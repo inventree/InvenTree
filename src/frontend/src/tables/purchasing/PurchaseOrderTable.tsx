@@ -123,10 +123,18 @@ export function PurchaseOrderTable({
       },
       LineItemsProgressColumn(),
       StatusColumn({ model: ModelType.purchaseorder }),
-      ProjectCodeColumn({}),
-      CreationDateColumn({}),
-      CreatedByColumn({}),
-      StartDateColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      CreatedByColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'

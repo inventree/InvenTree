@@ -8,6 +8,7 @@ from django.conf import settings as djangosettings
 import structlog
 
 import common.models
+import InvenTree.config
 import InvenTree.helpers
 import plugin.models
 from common.settings import get_global_setting
@@ -119,7 +120,7 @@ def inventree_commit_hash(*args, **kwargs):
 @register.simple_tag()
 def inventree_installer(*args, **kwargs):
     """Return InvenTree package installer string."""
-    return version.inventreeInstaller()
+    return InvenTree.config.inventreeInstaller()
 
 
 @register.simple_tag()

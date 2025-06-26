@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -682,7 +683,23 @@ export default function StockDetail() {
       ...duplicateStockData
     },
     follow: true,
-    modelType: ModelType.stockitem
+    successMessage: null,
+    modelType: ModelType.stockitem,
+    onFormSuccess: (data) => {
+      // Handle case where multiple stock items are created
+      if (Array.isArray(data) && data.length > 0) {
+        if (data.length == 1) {
+          navigate(getDetailUrl(ModelType.stockitem, data[0]?.pk));
+        } else {
+          const n: number = data.length;
+          notifications.show({
+            title: t`Items Created`,
+            message: t`Created ${n} stock items`,
+            color: 'green'
+          });
+        }
+      }
+    }
   });
 
   const preDeleteContent = useMemo(() => {
