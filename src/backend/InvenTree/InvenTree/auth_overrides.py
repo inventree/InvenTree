@@ -15,7 +15,6 @@ from allauth.headless.adapter import DefaultHeadlessAdapter
 from allauth.headless.tokens.sessions import SessionTokenStrategy
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
-import InvenTree.helpers_model
 import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
@@ -129,7 +128,6 @@ class RegistrationMixin:
         mailoptions = mail_restriction.split(',')
         for option in mailoptions:
             if not option.startswith('@'):
-                log_error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
                 raise forms.ValidationError(
                     _('The provided primary email address is not valid.')
                 )
@@ -172,7 +170,7 @@ class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
             except Exception:
                 # An exception occurred while attempting to send email
                 # Log it (for admin users) and return silently
-                log_error('account email')
+                log_error('send_mail', scope='auth')
                 result = False
 
             return result
@@ -208,7 +206,7 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
         path = request.path or 'sso'
 
         # Log the error to the database
-        log_error(path, error_name=error, error_data=exception)
+        log_error(path, error_name=error, error_data=exception, scope='auth')
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
 
     def get_connect_redirect_url(self, request, socialaccount):
