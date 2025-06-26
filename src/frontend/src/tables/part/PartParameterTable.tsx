@@ -48,7 +48,8 @@ export function PartParameterTable({
       {
         accessor: 'part_detail.IPN',
         sortable: false,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
       },
       {
         accessor: 'template_detail.name',
