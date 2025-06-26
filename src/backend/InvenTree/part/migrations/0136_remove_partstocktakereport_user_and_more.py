@@ -4,9 +4,10 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    """"""
 
     dependencies = [
-        ("part", "0135_alter_part_link"),
+        ("part", "0136_remove_partstocktakereport_user_and_more"),
     ]
 
     operations = [
@@ -17,11 +18,5 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name="part",
             name="last_stocktake",
-        ),
-        migrations.DeleteModel(
-            name="PartStocktake",
-        ),
-        migrations.DeleteModel(
-            name="PartStocktakeReport",
         ),
     ]
