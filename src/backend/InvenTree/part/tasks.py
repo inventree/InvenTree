@@ -1,18 +1,16 @@
 """Background task definitions for the 'part' app."""
 
-import random
-import time
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from opentelemetry import trace
 
 import common.currency
 import common.notifications
 import company.models
-import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models as part_models
@@ -25,9 +23,11 @@ from InvenTree.tasks import (
     scheduled_task,
 )
 
+tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
 
 
+@tracer.start_as_current_span('notify_low_stock')
 def notify_low_stock(part: part_models.Part):
     """Notify interested users that a part is 'low stock'.
 
@@ -52,6 +52,7 @@ def notify_low_stock(part: part_models.Part):
     )
 
 
+@tracer.start_as_current_span('notify_low_stock_if_required')
 def notify_low_stock_if_required(part_id: int):
     """Check if the stock quantity has fallen below the minimum threshold of part.
 
@@ -73,6 +74,7 @@ def notify_low_stock_if_required(part_id: int):
             InvenTree.tasks.offload_task(notify_low_stock, p, group='notification')
 
 
+@tracer.start_as_current_span('update_part_pricing')
 def update_part_pricing(pricing: part_models.PartPricing, counter: int = 0):
     """Update cached pricing data for the specified PartPricing instance.
 
@@ -89,6 +91,7 @@ def update_part_pricing(pricing: part_models.PartPricing, counter: int = 0):
     )
 
 
+@tracer.start_as_current_span('check_missing_pricing')
 @scheduled_task(ScheduledTask.DAILY)
 def check_missing_pricing(limit=250):
     """Check for parts with missing or outdated pricing information.
@@ -144,6 +147,7 @@ def check_missing_pricing(limit=250):
             pricing.schedule_for_update()
 
 
+@tracer.start_as_current_span('scheduled_stocktake_reports')
 @scheduled_task(ScheduledTask.DAILY)
 def scheduled_stocktake_reports():
     """Scheduled tasks for creating automated stocktake reports.
@@ -153,9 +157,6 @@ def scheduled_stocktake_reports():
     - Delete 'old' stocktake report files after the specified period
     - Generate new reports at the specified period
     """
-    # Sleep a random number of seconds to prevent worker conflict
-    time.sleep(random.randint(1, 5))
-
     # First let's delete any old stocktake reports
     delete_n_days = int(
         get_global_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False)
@@ -189,6 +190,7 @@ def scheduled_stocktake_reports():
     record_task_success('STOCKTAKE_RECENT_REPORT')
 
 
+@tracer.start_as_current_span('rebuild_parameters')
 def rebuild_parameters(template_id):
     """Rebuild all parameters for a given template.
 
@@ -218,6 +220,7 @@ def rebuild_parameters(template_id):
         logger.info("Rebuilt %s parameters for template '%s'", n, template.name)
 
 
+@tracer.start_as_current_span('rebuild_supplier_parts')
 def rebuild_supplier_parts(part_id):
     """Rebuild all SupplierPart objects for a given part.
 

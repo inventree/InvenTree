@@ -1,8 +1,15 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { api } from '../../App';
+import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -24,9 +31,6 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   type StockOperationProps,
   stockLocationFields,
@@ -34,8 +38,6 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -272,6 +274,62 @@ export default function Stock() {
   const transferStockItems = useTransferStockItem(stockItemActionProps);
   const countStockItems = useCountStockItem(stockItemActionProps);
 
+  const scanInStockItem = useBarcodeScanDialog({
+    title: t`Scan Stock Item`,
+    modelType: ModelType.stockitem,
+    callback: async (barcode, response) => {
+      const item = response.stockitem.instance;
+
+      // Scan the stock item into the current location
+      return api
+        .post(apiUrl(ApiEndpoints.stock_transfer), {
+          location: location.pk,
+          items: [
+            {
+              pk: item.pk,
+              quantity: item.quantity
+            }
+          ]
+        })
+        .then(() => {
+          return {
+            success: t`Scanned stock item into location`
+          };
+        })
+        .catch((error) => {
+          console.error('Error scanning stock item:', error);
+          return {
+            error: t`Error scanning stock item`
+          };
+        });
+    }
+  });
+
+  const scanInStockLocation = useBarcodeScanDialog({
+    title: t`Scan Stock Location`,
+    modelType: ModelType.stocklocation,
+    callback: async (barcode, response) => {
+      const pk = response.stocklocation.pk;
+
+      // Set the parent location
+      return api
+        .patch(apiUrl(ApiEndpoints.stock_location_list, pk), {
+          parent: location.pk
+        })
+        .then(() => {
+          return {
+            success: t`Scanned stock location into location`
+          };
+        })
+        .catch((error) => {
+          console.error('Error scanning stock location:', error);
+          return {
+            error: t`Error scanning stock location`
+          };
+        });
+    }
+  });
+
   const locationActions = useMemo(
     () => [
       <AdminButton model={ModelType.stocklocation} id={location.pk} />,
@@ -286,14 +344,14 @@ export default function Stock() {
             {
               name: 'Scan in stock items',
               icon: <InvenTreeIcon icon='stock' />,
-              tooltip: 'Scan items',
-              onClick: notYetImplemented
+              tooltip: 'Scan item into this location',
+              onClick: scanInStockItem.open
             },
             {
               name: 'Scan in container',
               icon: <InvenTreeIcon icon='unallocated_stock' />,
-              tooltip: 'Scan container',
-              onClick: notYetImplemented
+              tooltip: 'Scan container into this location',
+              onClick: scanInStockLocation.open
             }
           ]}
         />
@@ -362,6 +420,8 @@ export default function Stock() {
     <>
       {editLocation.modal}
       {deleteLocation.modal}
+      {scanInStockItem.dialog}
+      {scanInStockLocation.dialog}
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
@@ -377,8 +437,8 @@ export default function Stock() {
             selectedId={location?.pk}
           />
           <PageDetail
-            title={t`Stock Items`}
-            subtitle={location?.name}
+            title={location?.name ?? t`Stock Location`}
+            subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
             editAction={editLocation.open}
@@ -401,7 +461,8 @@ export default function Stock() {
             pageKey='stocklocation'
             panels={locationPanels}
             model={ModelType.stocklocation}
-            id={location.pk ?? null}
+            reloadInstance={refreshInstance}
+            id={location?.pk}
             instance={location}
           />
           {transferStockItems.modal}

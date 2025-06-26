@@ -105,12 +105,14 @@
   fields:
     name: 'Bob'
     description: 'Can we build it? Yes we can!'
+    notes: 'Some notes associated with this part'
     assembly: true
     salable: true
     purchaseable: false
     creation_date: '2025-08-08'
     category: 7
     active: True
+    testable: True
     IPN: BOB
     revision: A2
     tree_id: 0

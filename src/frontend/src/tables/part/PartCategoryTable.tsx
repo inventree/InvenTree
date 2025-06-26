@@ -3,13 +3,15 @@ import { Group, Tooltip } from '@mantine/core';
 import { IconBell } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -18,11 +20,9 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 
@@ -65,6 +65,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
       {
         accessor: 'structural',
         sortable: true,
+        defaultVisible: false,
         render: (record: any) => {
           return <YesNoButton value={record.structural} />;
         }

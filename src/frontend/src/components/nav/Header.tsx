@@ -1,31 +1,32 @@
 import {
   ActionIcon,
-  Alert,
   Container,
   Group,
   Indicator,
-  Menu,
   Tabs,
   Text,
-  Tooltip
+  Tooltip,
+  UnstyledButton
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import {
-  IconBell,
-  IconExclamationCircle,
-  IconSearch
-} from '@tabler/icons-react';
+import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
+import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { getBaseUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
+import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { navigateToLink } from '../../functions/navigation';
+import { generateUrl } from '../../functions/urls';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
@@ -34,26 +35,18 @@ import {
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
+import { Alerts } from './Alerts';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
 import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
-interface AlertInfo {
-  key: string;
-  title: string;
-  message: string;
-}
-
 export function Header() {
-  const user = useUserState();
-
-  const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
-    state.setNavigationOpen,
-    state.navigationOpen
-  ]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [setNavigationOpen, navigationOpen] = useLocalState(
+    useShallow((state) => [state.setNavigationOpen, state.navigationOpen])
+  );
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [
@@ -66,7 +59,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
-  const { isLoggedIn } = useUserState();
+  const { isLoggedIn, isStaff } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
 
@@ -74,53 +67,12 @@ export function Header() {
     return server.customize?.navbar_message;
   }, [server.customize]);
 
-  const [dismissed, setDismissed] = useState<string[]>([]);
-
-  const alerts: AlertInfo[] = useMemo(() => {
-    const _alerts: AlertInfo[] = [];
-
-    if (server?.debug_mode) {
-      _alerts.push({
-        key: 'debug',
-        title: t`Debug Mode`,
-        message: t`The server is running in debug mode.`
-      });
-    }
-
-    if (server?.worker_running == false) {
-      _alerts.push({
-        key: 'worker',
-        title: t`Background Worker`,
-        message: t`The background worker process is not running.`
-      });
-    }
-
-    if (globalSettings.isSet('SERVER_RESTART_REQUIRED')) {
-      _alerts.push({
-        key: 'restart',
-        title: t`Server Restart`,
-        message: t`The server requires a restart to apply changes.`
-      });
-    }
-
-    const n_migrations =
-      Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
-
-    if (n_migrations > 0) {
-      _alerts.push({
-        key: 'migrations',
-        title: t`Database Migrations`,
-        message: t`There are pending database migrations.`
-      });
-    }
-
-    return _alerts.filter((alert) => !dismissed.includes(alert.key));
-  }, [server, dismissed, globalSettings]);
+  const visibility = useDocumentVisibility();
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
     queryKey: ['notification-count'],
-    enabled: isLoggedIn(),
+    enabled: isLoggedIn() && visibility === 'visible',
     queryFn: async () => {
       if (!isLoggedIn()) {
         return null;
@@ -144,7 +96,8 @@ export function Header() {
         return null;
       }
     },
-    refetchInterval: 30000,
+    // Refetch every minute, *if* the tab is visible
+    refetchInterval: 60 * 1000,
     refetchOnMount: true
   });
 
@@ -213,35 +166,7 @@ export function Header() {
                 </ActionIcon>
               </Tooltip>
             </Indicator>
-            {user.isStaff() && alerts.length > 0 && (
-              <Menu withinPortal={true} position='bottom-end'>
-                <Menu.Target>
-                  <Tooltip position='bottom-end' label={t`Alerts`}>
-                    <ActionIcon
-                      variant='transparent'
-                      aria-label='open-alerts'
-                      color='red'
-                    >
-                      <IconExclamationCircle />
-                    </ActionIcon>
-                  </Tooltip>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  {alerts.map((alert) => (
-                    <Menu.Item key={`alert-item-${alert.key}`}>
-                      <Alert
-                        withCloseButton
-                        color='red'
-                        title={alert.title}
-                        onClose={() => setDismissed([...dismissed, alert.key])}
-                      >
-                        {alert.message}
-                      </Alert>
-                    </Menu.Item>
-                  ))}
-                </Menu.Dropdown>
-              </Menu>
-            )}
+            <Alerts />
             <MainMenu />
           </Group>
         </Group>
@@ -263,10 +188,18 @@ function NavTabs() {
     [userSettings]
   );
 
+  const extraNavs = usePluginUIFeature<NavigationUIFeature>({
+    featureType: 'navigation',
+    context: {}
+  });
+
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    navTabs.forEach((tab) => {
+    const mainNavTabs = getNavTabs(user);
+
+    // static content
+    mainNavTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
         return;
       }
@@ -285,13 +218,32 @@ function NavTabs() {
             navigateToLink(`/${tab.name}`, navigate, event)
           }
         >
-          {tab.title}
+          <UnstyledButton
+            component={'a'}
+            href={generateUrl(`/${getBaseUrl()}/${tab.name}`)}
+          >
+            {tab.title}
+          </UnstyledButton>
+        </Tabs.Tab>
+      );
+    });
+    // dynamic content
+    extraNavs.forEach((nav) => {
+      _tabs.push(
+        <Tabs.Tab
+          value={nav.options.title}
+          key={nav.options.key}
+          onClick={(event: any) =>
+            navigateToLink(nav.options.options.url, navigate, event)
+          }
+        >
+          {nav.options.title}
         </Tabs.Tab>
       );
     });
 
     return _tabs;
-  }, [navTabs, user, withIcons]);
+  }, [extraNavs, navTabs, user, withIcons]);
 
   return (
     <Tabs

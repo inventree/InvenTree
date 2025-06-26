@@ -3,6 +3,8 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
@@ -211,6 +213,7 @@ class PluginReloadSerializer(serializers.Serializer):
             full_reload=self.validated_data.get('full_reload', False),
             force_reload=self.validated_data.get('force_reload', False),
             collect=self.validated_data.get('collect_plugins', False),
+            clear_errors=True,
         )
 
 
@@ -307,6 +310,7 @@ class PluginRegistryStatusSerializer(serializers.Serializer):
     registry_errors = serializers.ListField(child=PluginRegistryErrorSerializer())
 
 
+@extend_schema_field(OpenApiTypes.STR)
 class PluginRelationSerializer(serializers.PrimaryKeyRelatedField):
     """Serializer for a plugin field. Uses the 'slug' of the plugin as the lookup."""
 

@@ -10,7 +10,7 @@ from django.urls import reverse
 from pdfminer.high_level import extract_text
 from PIL import Image
 
-from InvenTree.settings import BASE_DIR
+from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from plugin import InvenTreePlugin, PluginMixinEnum, registry
@@ -76,12 +76,13 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         # Should be available via the API now
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 3)
 
         labels = [item['key'] for item in response.data]
 
+        self.assertIn('inventreelabel', labels)
+        self.assertIn('inventreelabelmachine', labels)
         self.assertIn('samplelabelprinter', labels)
-        self.assertIn('inventreelabelsheet', labels)
 
     def test_printing_process(self):
         """Test that a label can be printed."""
@@ -89,7 +90,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         apps.get_app_config('report').create_default_labels()
         apps.get_app_config('report').create_default_reports()
 
-        test_path = BASE_DIR / '_testfolder' / 'label'
+        test_path = get_testfolder_dir() / 'label'
 
         parts = Part.objects.all()[:2]
 

@@ -4,6 +4,7 @@ import os
 import time
 from datetime import datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 from unittest import mock
 from zoneinfo import ZoneInfo
 
@@ -435,16 +436,26 @@ class ValidatorTest(TestCase):
             link='www.google.com',
         )
 
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 1}', description='Missing link', category=cat, link=''
+        )
+
         # With strict URL validation
         InvenTreeSetting.set_setting('INVENTREE_STRICT_URLS', True, None)
 
         with self.assertRaises(ValidationError):
             Part.objects.create(
-                name=f'Part {n + 1}',
+                name=f'Part {n + 2}',
                 description='Link without schema',
                 category=cat,
                 link='www.google.com',
             )
+
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 3}', description='Missing link', category=cat, link=''
+        )
 
 
 class FormatTest(TestCase):
@@ -574,12 +585,9 @@ class FormatTest(TestCase):
 class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
 
-    @override_settings(SITE_URL=None)
     def test_absolute_url(self):
         """Test helper function for generating an absolute URL."""
-        base = 'https://demo.inventree.org:12345'
-
-        InvenTreeSetting.set_setting('INVENTREE_BASE_URL', base, change_user=None)
+        base = InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
 
         tests = {
             '': base,
@@ -1192,38 +1200,127 @@ class TestSettings(InvenTreeTestCase):
         """Test get_config_file."""
         # normal run - not configured
 
-        valid = ['inventree/config.yaml', 'inventree/data/config.yaml']
+        valid = ['config/config.yaml', 'inventree/data/config.yaml']
 
+        trgt_path = str(config.get_config_file()).lower()
         self.assertTrue(
-            any(opt in str(config.get_config_file()).lower() for opt in valid)
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
         )
 
         # with env set
-        with in_env_context({
-            'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
-        }):
-            self.assertIn(
-                'inventree/_testfolder/my_special_conf.yaml',
-                str(config.get_config_file()).lower(),
+        test_file = config.get_testfolder_dir() / 'my_special_conf.yaml'
+        with in_env_context({'INVENTREE_CONFIG_FILE': str(test_file)}):
+            self.assertEqual(
+                str(test_file).lower(), str(config.get_config_file()).lower()
             )
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('config.yaml')
+        assert not legacy_path.exists(), (
+            'Legacy config file does exist, stopping as a percaution!'
+        )
+        self.assertTrue(test_file.exists(), f'Test file {test_file} does not exist!')
+        test_file.rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/config.yaml', str(config.get_config_file()).lower()
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
 
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
         # normal run - not configured
 
-        valid = ['inventree/plugins.txt', 'inventree/data/plugins.txt']
+        valid = ['config/plugins.txt', 'inventree/data/plugins.txt']
 
+        trgt_path = str(config.get_plugin_file()).lower()
         self.assertTrue(
-            any(opt in str(config.get_plugin_file()).lower() for opt in valid)
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
         )
 
         # with env set
-        with in_env_context({
-            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
-        }):
+        test_file = config.get_testfolder_dir() / 'my_special_plugins.txt'
+        with in_env_context({'INVENTREE_PLUGIN_FILE': str(test_file)}):
+            self.assertIn(str(test_file), str(config.get_plugin_file()))
+
+    def test_helpers_secret_key(self):
+        """Test get_secret_key."""
+        # Normal file behavior - not configured
+        valid = ['config/secret_key.txt', 'inventree/data/secret_key.txt']
+        trgt_path = str(config.get_secret_key(return_path=True)).lower()
+        self.assertTrue(
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
+        )
+
+        # with env set
+        test_file = config.get_testfolder_dir() / 'my_secret_test.txt'
+        with in_env_context({'INVENTREE_SECRET_KEY_FILE': str(test_file)}):
+            self.assertIn(str(test_file), str(config.get_secret_key(return_path=True)))
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('secret_key.txt')
+        assert not legacy_path.exists(), (
+            'Legacy secret key file does exist, stopping as a percaution!'
+        )
+        test_file.rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/secret_key.txt',
+            str(config.get_secret_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+
+        # Test with content set per environment
+        with in_env_context({'INVENTREE_SECRET_KEY': '123abc123'}):
+            self.assertEqual(config.get_secret_key(), '123abc123')
+
+    def test_helpers_get_oidc_private_key(self):
+        """Test get_oidc_private_key."""
+        # Normal file behavior - not configured
+        valid = ['config/oidc.pem', 'inventree/data/oidc.pem']
+        trgt_path = config.get_oidc_private_key(return_path=True)
+        self.assertTrue(
+            any(opt in str(trgt_path) for opt in valid),
+            f'Path {trgt_path} not in {valid}',
+        )
+
+        # with env set
+        test_file = config.get_testfolder_dir() / 'my_oidc_private_key.pem'
+        with in_env_context({'INVENTREE_OIDC_PRIVATE_KEY_FILE': str(test_file)}):
             self.assertIn(
-                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
+                str(test_file), str(config.get_oidc_private_key(return_path=True))
             )
+
+        # Override with environment variable
+        with in_env_context({'INVENTREE_OIDC_PRIVATE_KEY': '123abc123'}):
+            self.assertEqual(config.get_oidc_private_key(), '123abc123')
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('oidc.pem')
+        assert not legacy_path.exists(), (
+            'Legacy OIDC private key file does exist, stopping as a precaution!'
+        )
+        test_file.rename(legacy_path)
+        assert isinstance(trgt_path, Path)
+        new_path = trgt_path.rename(
+            trgt_path.parent / '_oidc.pem'
+        )  # move out current config
+        self.assertIn(
+            'src/backend/inventree/oidc.pem',
+            str(config.get_oidc_private_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+        new_path.rename(trgt_path)  # restore original path for current config
 
     def test_helpers_setting(self):
         """Test get_setting."""
@@ -1694,3 +1791,22 @@ class SchemaPostprocessingTest(TestCase):
         self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
         # required key removed when empty
         self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
+
+
+class URLCompatibilityTest(InvenTreeTestCase):
+    """Unit test for legacy URL compatibility."""
+
+    URL_MAPPINGS = [
+        ('/index/', '/web'),
+        ('/part/1/', '/web/part/1/'),
+        ('/company/customers/', '/web/sales/index/customers'),
+        ('/build/3/', '/web/manufacturing/build-order/3'),
+        ('/stock/item/1/', '/web/stock/item/1/'),
+    ]
+
+    def test_legacy_urls(self):
+        """Test legacy URLs."""
+        for old_url, new_url in self.URL_MAPPINGS:
+            response = self.client.get(old_url)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['Location'], new_url)

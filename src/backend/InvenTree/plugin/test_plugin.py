@@ -280,7 +280,7 @@ class RegistryTests(TestCase):
             # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True, collect=True)
 
-        self.assertEqual(len(registry.errors), 2)
+        self.assertEqual(len(registry.errors), 3)
 
         # There should be at least one discovery error in the module `broken_file`
         self.assertGreater(len(registry.errors.get('discovery')), 0)
@@ -290,9 +290,10 @@ class RegistryTests(TestCase):
         )
 
         # There should be at least one load error with an intentional KeyError
-        self.assertGreater(len(registry.errors.get('init')), 0)
+        self.assertGreater(len(registry.errors.get('Test:init_plugin')), 0)
         self.assertEqual(
-            registry.errors.get('init')[0]['broken_sample'], "'This is a dummy error'"
+            registry.errors.get('Test:init_plugin')[0]['broken_sample'],
+            "'This is a dummy error'",
         )
 
     @override_settings(PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
@@ -343,6 +344,7 @@ class RegistryTests(TestCase):
             Arguments:
                 version: The version string to use for the plugin file
                 enabled: Whether the plugin should be enabled or not
+                reload: Whether to reload the plugin registry after creating the file
 
             Returns:
                 str: The plugin registry hash

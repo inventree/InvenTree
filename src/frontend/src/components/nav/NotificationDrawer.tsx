@@ -18,17 +18,17 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { getBaseUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
-import { getBaseUrl } from '../../main';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
-import { ModelInformationDict } from '../render/ModelType';
 
 /**
  * Render a single notification entry in the drawer

@@ -3,8 +3,11 @@
 import io
 import os
 import sys
+from datetime import date, datetime
+from typing import Optional, TypedDict, cast
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -24,7 +27,7 @@ import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
-from common.models import DataOutput
+from common.models import DataOutput, RenderChoices
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
@@ -123,8 +126,65 @@ class TemplateUploadMixin:
         return super().validate_unique(exclude)
 
 
+class BaseContextExtension(TypedDict):
+    """Base context extension.
+
+    Attributes:
+        base_url: The base URL for the InvenTree instance
+        date: Current date, represented as a Python datetime.date object
+        datetime: Current datetime, represented as a Python datetime object
+        template: The report template instance which is being rendered against
+        template_description: Description of the report template
+        template_name: Name of the report template
+        template_revision: Revision of the report template
+        user: User who made the request to render the template
+    """
+
+    base_url: str
+    date: date
+    datetime: datetime
+    template: 'ReportTemplateBase'
+    template_description: str
+    template_name: str
+    template_revision: int
+    user: Optional[AbstractUser]
+
+
+class LabelContextExtension(TypedDict):
+    """Label report context extension.
+
+    Attributes:
+        width: The width of the label (in mm)
+        height: The height of the label (in mm)
+        page_style: The CSS @page style for the label template. This is used to be inserted at the top of the style block for a given label
+    """
+
+    width: float
+    height: float
+    page_style: Optional[str]
+
+
+class ReportContextExtension(TypedDict):
+    """Report context extension.
+
+    Attributes:
+        page_size: The page size of the report
+        landscape: Boolean value, True if the report is in landscape mode
+        merge: Boolean value, True if the a single report is generated against multiple items
+    """
+
+    page_size: str
+    landscape: bool
+    merge: bool
+
+
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     """Base class for reports, labels."""
+
+    class ModelChoices(RenderChoices):
+        """Model choices for report templates."""
+
+        choice_fnc = report.helpers.report_model_options
 
     class Meta:
         """Metaclass options."""
@@ -173,31 +233,34 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return template_string.render(Context(context))
 
-    def render_as_string(self, instance, request=None, **kwargs) -> str:
+    def render_as_string(self, instance, request=None, context=None, **kwargs) -> str:
         """Render the report to a HTML string.
 
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
+            context: Django template language contexts (optional)
 
         Returns:
             str: HTML string
         """
-        context = self.get_context(instance, request, **kwargs)
+        if context is None:
+            context = self.get_context(instance, request, **kwargs)
 
         return render_to_string(self.template_name, context, request)
 
-    def render(self, instance, request=None, **kwargs) -> bytes:
+    def render(self, instance, request=None, context=None, **kwargs) -> bytes:
         """Render the template to a PDF file.
 
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
+            context: Django template langaguage contexts (optional)
 
         Returns:
             bytes: PDF data
         """
-        html = self.render_as_string(instance, request, **kwargs)
+        html = self.render_as_string(instance, request, context, **kwargs)
         pdf = HTML(string=html).write_pdf()
 
         return pdf
@@ -216,6 +279,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     model_type = models.CharField(
         max_length=100,
         validators=[report.validators.validate_report_model_type],
+        verbose_name=_('Model Type'),
         help_text=_('Target model type for template'),
     )
 
@@ -245,7 +309,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
-    def base_context(self, request=None):
+    def base_context(self, request=None) -> BaseContextExtension:
         """Return base context data (available to all templates)."""
         return {
             'base_url': get_base_url(request=request),
@@ -313,11 +377,17 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         help_text=_('Render report in landscape orientation'),
     )
 
-    def get_report_size(self):
+    merge = models.BooleanField(
+        default=False,
+        verbose_name=_('Merge'),
+        help_text=_('Render a single report against selected items'),
+    )
+
+    def get_report_size(self) -> str:
         """Return the printable page size for this report."""
         try:
-            page_size_default = get_global_setting(
-                'REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False
+            page_size_default = cast(
+                str, get_global_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False)
             )
         except Exception:
             page_size_default = 'A4'
@@ -329,24 +399,57 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return page_size
 
-    def get_context(self, instance, request=None, **kwargs):
-        """Supply context data to the report template for rendering."""
-        context = {
-            **super().get_context(instance, request),
+    def get_report_context(self):
+        """Return report template context."""
+        report_context: ReportContextExtension = {
             'page_size': self.get_report_size(),
             'landscape': self.landscape,
+            'merge': self.merge,
         }
 
+        return report_context
+
+    def get_context(self, instance, request=None, **kwargs):
+        """Supply context data to the report template for rendering."""
+        base_context = super().get_context(instance, request)
+        report_context: ReportContextExtension = self.get_report_context()
+
+        context = {**base_context, **report_context}
+
         # Pass the context through to the plugin registry for any additional information
+        context = self.get_plugin_context(instance, request, context)
+        return context
+
+    def get_plugin_context(self, instance, request, context):
+        """Get the context for the plugin."""
         for plugin in registry.with_mixin(PluginMixinEnum.REPORT):
             try:
                 plugin.add_report_context(self, instance, request, context)
             except Exception:
-                InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.add_report_context'
-                )
+                InvenTree.exceptions.log_error('add_report_context', plugin=plugin.slug)
 
         return context
+
+    def handle_attachment(self, instance, report, report_name, request, debug_mode):
+        """Attach the generated report to the model instance (if required)."""
+        if self.attach_to_model and not debug_mode:
+            instance.create_attachment(
+                attachment=ContentFile(report, report_name),
+                comment=_(f'Report generated from template {self.name}'),
+                upload_user=request.user
+                if request and request.user.is_authenticated
+                else None,
+            )
+
+    def notify_plugins(self, instance, report, request):
+        """Provide generated report to any interested plugins."""
+        report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
+
+        for plugin in report_plugins:
+            try:
+                plugin.report_callback(self, instance, report, request)
+            except Exception:
+                InvenTree.exceptions.log_error('report_callback', plugin=plugin.slug)
 
     def print(self, items: list, request=None, output=None, **kwargs) -> DataOutput:
         """Print reports for a list of items against this template.
@@ -379,8 +482,6 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         # Start with a default report name
         report_name = None
 
-        report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
-
         # If a DataOutput object is not provided, create a new one
         if not output:
             output = DataOutput.objects.create(
@@ -400,46 +501,71 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             output.save()
 
         try:
-            for instance in items:
-                context = self.get_context(instance, request)
+            if self.merge:
+                base_context = super().base_context(request)
+                report_context = self.get_report_context()
+                item_contexts = []
+                for instance in items:
+                    instance_context = instance.report_context()
+                    instance_context = self.get_plugin_context(
+                        instance, request, instance_context
+                    )
+                    item_contexts.append(instance_context)
+
+                contexts = {
+                    **base_context,
+                    **report_context,
+                    'instances': item_contexts,
+                }
 
                 if report_name is None:
-                    report_name = self.generate_filename(context)
+                    report_name = self.generate_filename(contexts)
 
-                # Render the report output
                 try:
                     if debug_mode:
-                        report = self.render_as_string(instance, request)
+                        report = self.render_as_string(instance, request, contexts)
                     else:
-                        report = self.render(instance, request)
+                        report = self.render(instance, request, contexts)
                 except TemplateDoesNotExist as e:
                     t_name = str(e) or self.template
                     raise ValidationError(f'Template file {t_name} does not exist')
 
                 outputs.append(report)
-
-                # Attach the generated report to the model instance (if required)
-                if self.attach_to_model and not debug_mode:
-                    instance.create_attachment(
-                        attachment=ContentFile(report, report_name),
-                        comment=_(f'Report generated from template {self.name}'),
-                        upload_user=request.user
-                        if request and request.user.is_authenticated
-                        else None,
-                    )
-
-                # Provide generated report to any interested plugins
-                for plugin in report_plugins:
-                    try:
-                        plugin.report_callback(self, instance, report, request)
-                    except Exception:
-                        InvenTree.exceptions.log_error(
-                            f'plugins.{plugin.slug}.report_callback'
-                        )
+                self.handle_attachment(
+                    instance, report, report_name, request, debug_mode
+                )
+                self.notify_plugins(instance, report, request)
 
                 # Update the progress of the report generation
                 output.progress += 1
                 output.save()
+            else:
+                for instance in items:
+                    context = self.get_context(instance, request)
+
+                    if report_name is None:
+                        report_name = self.generate_filename(context)
+
+                    # Render the report output
+                    try:
+                        if debug_mode:
+                            report = self.render_as_string(instance, request, None)
+                        else:
+                            report = self.render(instance, request, None)
+                    except TemplateDoesNotExist as e:
+                        t_name = str(e) or self.template
+                        raise ValidationError(f'Template file {t_name} does not exist')
+
+                    outputs.append(report)
+
+                    self.handle_attachment(
+                        instance, report, report_name, request, debug_mode
+                    )
+                    self.notify_plugins(instance, report, request)
+
+                    # Update the progress of the report generation
+                    output.progress += 1
+                    output.save()
 
         except Exception as exc:
             # Something went wrong during the report generation process
@@ -536,11 +662,14 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
-        context = {
-            **super().get_context(instance, request, **kwargs),
+        base_context = super().get_context(instance, request, **kwargs)
+        label_context: LabelContextExtension = {
             'width': self.width,
             'height': self.height,
+            'page_style': None,
         }
+
+        context = {**base_context, **label_context}
 
         if kwargs.pop('insert_page_style', True):
             context['page_style'] = self.generate_page_style()
@@ -553,9 +682,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             try:
                 plugin.add_label_context(self, instance, request, context)
             except Exception:
-                InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.add_label_context'
-                )
+                InvenTree.exceptions.log_error('add_label_context', plugin=plugin.slug)
 
         return context
 
@@ -584,10 +711,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             ValidationError: If there is an error during label printing
         """
         logger.info(
-            "Printing %s labels against template '%s' using plugin '%s'",
-            len(items),
-            plugin.slug,
-            self.name,
+            f"Printing {len(items)} labels against template '{self.name}' using plugin '{plugin.slug}'"
         )
 
         if not output:
@@ -620,7 +744,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             raise e
         except Exception as e:
             output.delete()
-            InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
+            InvenTree.exceptions.log_error('print_labels', plugin=plugin.slug)
             raise ValidationError([_('Error printing labels'), str(e)])
 
         output.refresh_from_db()

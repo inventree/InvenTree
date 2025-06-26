@@ -87,7 +87,7 @@ class InvenTreeTaskTests(TestCase):
         ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
 
-    def test_task_hearbeat(self):
+    def test_task_heartbeat(self):
         """Test the task heartbeat."""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)
 
@@ -190,26 +190,41 @@ class InvenTreeTaskTests(TestCase):
         from common.models import NotificationEntry, NotificationMessage
 
         # Create a staff user (to ensure notifications are sent)
-        User.objects.create_user(username='staff', password='staffpass', is_staff=True)
+        user = User.objects.create_user(
+            username='staff', password='staffpass', is_staff=False
+        )
 
         n_tasks = Task.objects.count()
         n_entries = NotificationEntry.objects.count()
         n_messages = NotificationMessage.objects.count()
 
+        test_data = {
+            'name': 'failed_task',
+            'func': 'InvenTree.tasks.failed_task',
+            'group': 'test',
+            'success': False,
+            'started': timezone.now(),
+            'stopped': timezone.now(),
+            'attempt_count': 10,
+        }
+
         # Create a 'failed' task in the database
         # Note: The 'attempt count' is set to 10 to ensure that the task is properly marked as 'failed'
-        Task.objects.create(
-            id=n_tasks + 1,
-            name='failed_task',
-            func='InvenTree.tasks.failed_task',
-            group='test',
-            success=False,
-            started=timezone.now(),
-            stopped=timezone.now(),
-            attempt_count=10,
-        )
+        Task.objects.create(id=n_tasks + 1, **test_data)
 
-        # A new notification entry should be created
+        # A new notification entry should NOT be created (yet) - due to lack of permission for the user
+        self.assertEqual(NotificationEntry.objects.count(), n_entries + 0)
+        self.assertEqual(NotificationMessage.objects.count(), n_messages + 0)
+
+        # Give them all the required staff level permissions
+        user.is_staff = True
+        user.save()
+
+        # Create a 'failed' task in the database
+        # Note: The 'attempt count' is set to 10 to ensure that the task is properly marked as 'failed'
+        Task.objects.create(id=n_tasks + 2, **test_data)
+
+        # A new notification entry should be created (as the user now has permission to see it)
         self.assertEqual(NotificationEntry.objects.count(), n_entries + 1)
         self.assertEqual(NotificationMessage.objects.count(), n_messages + 1)
 

@@ -13,6 +13,8 @@ ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
+ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
+ENV INVENTREE_OIDC_PRIVATE_KEY_FILE="${INVENTREE_DATA_DIR}/oidc.pem"
 
 # Required for running playwright within devcontainer
 ENV DISPLAY=:0
@@ -34,7 +36,7 @@ RUN apt install -y \
    yarn nodejs npm
 
 # Update to the latest stable node version
-RUN npm install -g n --ignore-scripts && n lts
+RUN npm install -g n@10.1.0 --ignore-scripts && n lts
 
 RUN yarn config set network-timeout 600000 -g
 

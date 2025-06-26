@@ -756,7 +756,7 @@ class PurchaseOrderLineItemTest(OrderTest):
         url = reverse('api-po-line-list')
 
         # Try to delete a set of line items via their IDs
-        self.delete(url, {'items': [1, 2]}, expected_code=204)
+        self.delete(url, {'items': [1, 2]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deletign them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)

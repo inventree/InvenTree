@@ -1,12 +1,14 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { IconTruckDelivery } from '@tabler/icons-react';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
   useBulkEditApiFormModal,
@@ -14,16 +16,15 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
+  DescriptionColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -105,11 +106,10 @@ export default function SalesOrderAllocationTable({
         sortable: true,
         hidden: showOrderInfo != true
       }),
-      {
+      DescriptionColumn({
         accessor: 'order_detail.description',
-        title: t`Description`,
         hidden: showOrderInfo != true
-      },
+      }),
       StatusColumn({
         accessor: 'order_detail.status',
         model: ModelType.salesorder,
@@ -124,12 +124,10 @@ export default function SalesOrderAllocationTable({
         switchable: false,
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
-      {
+      DescriptionColumn({
         accessor: 'part_detail.description',
-        title: t`Description`,
-        hidden: showPartInfo != true,
-        sortable: false
-      },
+        hidden: showPartInfo != true
+      }),
       {
         accessor: 'part_detail.IPN',
         title: t`IPN`,

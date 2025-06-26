@@ -65,7 +65,12 @@ class ReportTemplateSerializer(ReportSerializerBase):
         """Metaclass options."""
 
         model = report.models.ReportTemplate
-        fields = [*ReportSerializerBase.base_fields(), 'page_size', 'landscape']
+        fields = [
+            *ReportSerializerBase.base_fields(),
+            'page_size',
+            'landscape',
+            'merge',
+        ]
 
     page_size = serializers.ChoiceField(
         required=False,

@@ -5,6 +5,7 @@ import {
   Badge,
   Group,
   HoverCard,
+  type MantineColor,
   Paper,
   Skeleton,
   Stack,
@@ -16,14 +17,15 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
-import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
-import { navigateToLink } from '../../functions/navigation';
-import { getDetailUrl } from '../../functions/urls';
-import { apiUrl } from '../../states/ApiState';
+import { formatDate, formatDecimal } from '../../defaults/formatters';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
@@ -34,13 +36,14 @@ import { StatusRenderer } from '../render/StatusRenderer';
 
 export type DetailsField = {
   hidden?: boolean;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   name: string;
   label?: string;
   badge?: BadgeType;
   copy?: boolean;
   value_formatter?: () => ValueFormatterReturn;
 } & (
+  | NumberDetailField
   | StringDetailField
   | BooleanField
   | LinkDetailField
@@ -53,6 +56,11 @@ type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
   type: 'string' | 'text' | 'date';
+  unit?: boolean;
+};
+
+type NumberDetailField = {
+  type: 'number';
   unit?: boolean;
 };
 
@@ -260,6 +268,27 @@ function DateValue(props: Readonly<FieldProps>) {
   return <Text size='sm'>{formatDate(props.field_value?.toString())}</Text>;
 }
 
+// Return a formatted "number" value, with optional unit
+function NumberValue(props: Readonly<FieldProps>) {
+  const value = props?.field_value;
+
+  // Convert to double
+  const numberValue = Number.parseFloat(value.toString());
+
+  if (value === null || value === undefined) {
+    return <Text size='sm'>'---'</Text>;
+  }
+
+  return (
+    <Group wrap='nowrap' gap='xs' justify='left'>
+      <Text size='sm'>{formatDecimal(numberValue)}</Text>
+      {!!props.field_data?.unit && (
+        <Text size='xs'>[{props.field_data?.unit}]</Text>
+      )}
+    </Group>
+  );
+}
+
 /**
  * Renders the value of a 'string' or 'text' field.
  * If owner is defined, only renders a badge
@@ -380,9 +409,12 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     value = data?.name;
   }
 
+  let color: MantineColor | undefined = undefined;
+
   if (value === undefined) {
     value = data?.name ?? props.field_data?.backup_value ?? t`No name defined`;
     make_link = false;
+    color = 'red';
   }
 
   return (
@@ -392,7 +424,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
           <Text>{value}</Text>
         </Anchor>
       ) : (
-        <Text>{value}</Text>
+        <Text c={color}>{value}</Text>
       )}
     </>
   );
@@ -405,6 +437,7 @@ function ProgressBarValue(props: Readonly<FieldProps>) {
 
   return (
     <ProgressBar
+      size='lg'
       value={props.field_data.progress}
       maximum={props.field_data.total}
       progressLabel
@@ -441,6 +474,8 @@ export function DetailsTableField({
         return StatusValue;
       case 'date':
         return DateValue;
+      case 'number':
+        return NumberValue;
       case 'text':
       case 'string':
       default:
@@ -460,7 +495,7 @@ export function DetailsTableField({
       <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
         <Group gap='xs' wrap='nowrap'>
           <InvenTreeIcon
-            icon={field.icon ?? (field.name as InvenTreeIconType)}
+            icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
           />
           <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
         </Group>

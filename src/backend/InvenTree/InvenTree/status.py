@@ -67,7 +67,7 @@ def check_system_health(**kwargs):
     if not InvenTree.helpers_email.is_email_configured():  # pragma: no cover
         result = False
         if not settings.DEBUG:
-            logger.warning('Email backend not configured')
+            logger.warning('INVE-W7: Email backend not configured')
 
     if not result:  # pragma: no cover
         if not settings.DEBUG:

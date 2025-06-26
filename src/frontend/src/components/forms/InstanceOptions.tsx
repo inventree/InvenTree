@@ -20,10 +20,11 @@ import {
   IconServerSpark
 } from '@tabler/icons-react';
 
+import type { HostList } from '@lib/types/Server';
+import { useShallow } from 'zustand/react/shallow';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import type { HostList } from '../../states/states';
 import { ActionButton } from '../buttons/ActionButton';
 import { HostOptionsForm } from './HostOptionsForm';
 
@@ -37,11 +38,9 @@ export function InstanceOptions({
   setHostEdit: () => void;
 }>) {
   const [hostListEdit, setHostListEdit] = useToggle([false, true] as const);
-  const [setHost, setHostList, hostList] = useLocalState((state) => [
-    state.setHost,
-    state.setHostList,
-    state.hostList
-  ]);
+  const [setHost, setHostList, hostList] = useLocalState(
+    useShallow((state) => [state.setHost, state.setHostList, state.hostList])
+  );
   const hostListData = Object.keys(hostList).map((key) => ({
     value: key,
     label: hostList[key]?.name
@@ -111,7 +110,7 @@ function ServerInfo({
   hostList: HostList;
   hostKey: string;
 }>) {
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   const items: any[] = [
     {

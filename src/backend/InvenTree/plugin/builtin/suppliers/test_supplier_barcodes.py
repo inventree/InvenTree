@@ -70,7 +70,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         result = self.post(
             self.SCAN_URL, data={'barcode': DIGIKEY_BARCODE}, expected_code=200
         )
-        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(result.data['plugin'], 'DigiKeyBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -84,7 +84,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': DIGIKEY_BARCODE_2}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(result.data['plugin'], 'DigiKeyBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -125,7 +125,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': LCSC_BARCODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'LCSCPlugin')
+        self.assertEqual(result.data['plugin'], 'LCSCBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -139,7 +139,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': TME_QRCODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -152,7 +152,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': TME_DATAMATRIX_CODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -271,7 +271,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(response.data['plugin'], 'DigiKeyBarcodePlugin')
         self.assertIn('action_required', response.data)
         item = response.data['lineitem']
         self.assertEqual(item['quantity'], 10.0)

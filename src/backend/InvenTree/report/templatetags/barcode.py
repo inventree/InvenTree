@@ -100,6 +100,7 @@ def barcode(data: str, barcode_class='code128', **kwargs) -> str:
 
     Arguments:
         data: Data to encode
+        barcode_class (str): The type of barcode to generate (default = 'code128')
 
     Keyword Arguments:
         format (str): Image format (default = 'PNG')

@@ -1,20 +1,21 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -69,10 +70,7 @@ export default function LocationTypesTable() {
         title: t`Name`,
         sortable: true
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       {
         accessor: 'location_count',
         sortable: true

@@ -2,14 +2,18 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { formatDecimal } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import type { TableColumn } from '../Column';
-import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
+import {
+  DescriptionColumn,
+  PartColumn,
+  ReferenceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -39,10 +43,14 @@ export function UsedInTable({
         title: t`IPN`
       },
       {
-        accessor: 'part_detail.description',
-        sortable: false,
-        title: t`Description`
+        accessor: 'part_detail.revision',
+        title: t`Revision`,
+        sortable: true,
+        defaultVisible: false
       },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'sub_part',
         sortable: true,

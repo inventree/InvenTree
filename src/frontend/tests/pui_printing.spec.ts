@@ -28,13 +28,17 @@ test('Label Printing', async ({ browser }) => {
 
   // Select plugin
   await page.getByLabel('related-field-plugin').click();
-  await page.getByText('InvenTreeLabelSheet').click();
+  await page.getByText('InvenTreeLabelMachine').last().click();
 
   // Select label template
   await page.getByLabel('related-field-template').click();
   await page.getByText('InvenTree Stock Item Label (').click();
 
   await page.waitForTimeout(100);
+
+  await page.getByLabel('related-field-plugin').click();
+
+  await page.getByText('InvenTreeLabel', { exact: true }).click();
 
   // Submit the print form (second time should result in success)
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
@@ -138,7 +142,7 @@ test('Report Editing', async ({ browser, request }) => {
     .click();
   const msg = (await consoleLogPromise).args();
   expect(await msg[0].jsonValue()).toBe('updatePreview');
-  expect((await msg[1].jsonValue())[0]).toBe(newTextareaValue);
+  expect(await msg[1].jsonValue()).toBe(newTextareaValue);
 
   // deactivate the sample plugin again after the test
   await setPluginState({

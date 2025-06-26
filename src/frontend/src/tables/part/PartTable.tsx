@@ -1,28 +1,30 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
-
 import { IconShoppingCart } from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useBulkEditApiFormModal,
-  useCreateApiFormModal
+  useCreateApiFormModal,
+  useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import { type RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -35,6 +37,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Part`,
       sortable: true,
       noWrap: true,
+      switchable: false,
       render: (record: any) => PartColumn({ part: record })
     },
     {
@@ -58,7 +61,8 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'default_location',
       sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring
+      render: (record: any) => record.default_location_detail?.pathstring,
+      defaultVisible: false
     },
     {
       accessor: 'total_in_stock',
@@ -164,6 +168,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
@@ -344,6 +349,16 @@ export function PartListTable({
     modelType: ModelType.part
   });
 
+  const [selectedPart, setSelectedPart] = useState<number>(-1);
+
+  const editPart = useEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: selectedPart,
+    title: t`Edit Part`,
+    fields: usePartFields({ create: false }),
+    onFormSuccess: table.refreshTable
+  });
+
   const setCategory = useBulkEditApiFormModal({
     url: ApiEndpoints.part_list,
     items: table.selectedIds,
@@ -355,6 +370,23 @@ export function PartListTable({
   });
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      const can_edit = user.hasChangePermission(ModelType.part);
+
+      return [
+        RowEditAction({
+          hidden: !can_edit,
+          onClick: () => {
+            setSelectedPart(record.pk);
+            editPart.open();
+          }
+        })
+      ];
+    },
+    [user, editPart]
+  );
 
   const tableActions = useMemo(() => {
     return [
@@ -396,6 +428,7 @@ export function PartListTable({
   return (
     <>
       {newPart.modal}
+      {editPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
@@ -408,6 +441,7 @@ export function PartListTable({
           modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,
+          rowActions: rowActions,
           enableSelection: true,
           enableReports: true,
           enableLabels: true,

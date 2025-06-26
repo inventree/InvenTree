@@ -2,12 +2,14 @@ import { t } from '@lingui/core/macro';
 import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -16,11 +18,9 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 
@@ -85,10 +85,12 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         sortable: true
       },
       BooleanColumn({
-        accessor: 'structural'
+        accessor: 'structural',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'external'
+        accessor: 'external',
+        defaultVisible: false
       }),
       {
         accessor: 'location_type',

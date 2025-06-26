@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -32,7 +33,6 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
-import report.models
 import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
@@ -114,6 +114,24 @@ class StockLocationManager(TreeManager):
         return super().get_queryset()
 
 
+class StockLocationReportContext(report.mixins.BaseReportContext):
+    """Report context for the StockLocation model.
+
+    Attributes:
+        location: The StockLocation object itself
+        qr_data: Formatted QR code data for the StockLocation
+        parent: The parent StockLocation object
+        stock_location: The StockLocation object itself (shadow of 'location')
+        stock_items: Query set of all StockItem objects which are located in the StockLocation
+    """
+
+    location: StockLocation
+    qr_data: str
+    parent: Optional[StockLocation]
+    stock_location: StockLocation
+    stock_items: report.mixins.QuerySet[StockItem]
+
+
 class StockLocation(
     InvenTree.models.InvenTreeBarcodeMixin,
     report.mixins.InvenTreeReportMixin,
@@ -159,7 +177,7 @@ class StockLocation(
         """Return the associated barcode model type code for this model."""
         return 'SL'
 
-    def report_context(self):
+    def report_context(self) -> StockLocationReportContext:
         """Return report context data for this StockLocation."""
         return {
             'location': self,
@@ -338,6 +356,56 @@ def default_delete_on_deplete():
         return True
 
 
+class StockItemReportContext(report.mixins.BaseReportContext):
+    """Report context for the StockItem model.
+
+    Attributes:
+        barcode_data: Generated barcode data for the StockItem
+        barcode_hash: Hash of the barcode data
+        batch: The batch code for the StockItem
+        child_items: Query set of all StockItem objects which are children of this StockItem
+        ipn: The IPN (internal part number) of the associated Part
+        installed_items: Query set of all StockItem objects which are installed in this StockItem
+        item: The StockItem object itself
+        name: The name of the associated Part
+        part: The Part object which is associated with the StockItem
+        qr_data: Generated QR code data for the StockItem
+        qr_url: Generated URL for embedding in a QR code
+        parameters: Dict object containing the parameters associated with the base Part
+        quantity: The quantity of the StockItem
+        result_list: FLattened list of TestResult data associated with the stock item
+        results: Dict object of TestResult data associated with the StockItem
+        serial: The serial number of the StockItem
+        stock_item: The StockItem object itself (shadow of 'item')
+        tests: Dict object of TestResult data associated with the StockItem (shadow of 'results')
+        test_keys: List of test keys associated with the StockItem
+        test_template_list: List of test templates associated with the StockItem
+        test_templates: Dict object of test templates associated with the StockItem
+    """
+
+    barcode_data: str
+    barcode_hash: str
+    batch: str
+    child_items: report.mixins.QuerySet[StockItem]
+    ipn: Optional[str]
+    installed_items: set[StockItem]
+    item: StockItem
+    name: str
+    part: PartModels.Part
+    qr_data: str
+    qr_url: str
+    parameters: dict[str, str]
+    quantity: Decimal
+    result_list: list[StockItemTestResult]
+    results: dict[str, StockItemTestResult]
+    serial: Optional[str]
+    stock_item: StockItem
+    tests: dict[str, StockItemTestResult]
+    test_keys: list[str]
+    test_template_list: report.mixins.QuerySet[PartModels.PartTestTemplate]
+    test_templates: dict[str, PartModels.PartTestTemplate]
+
+
 class StockItem(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -415,7 +483,7 @@ class StockItem(
 
         return list(keys)
 
-    def report_context(self):
+    def report_context(self) -> StockItemReportContext:
         """Generate custom report context data for this StockItem."""
         return {
             'barcode_data': self.barcode_data,
@@ -540,7 +608,7 @@ class StockItem(
                 serial_int = plugin.convert_serial_to_int(serial)
             except Exception:
                 InvenTree.exceptions.log_error(
-                    f'plugin.{plugin.slug}.convert_serial_to_int'
+                    'convert_serial_to_int', plugin=plugin.slug
                 )
                 serial_int = None
 
@@ -623,6 +691,16 @@ class StockItem(
                 return item
 
         return None
+
+    @property
+    def get_next_stock_item(self):
+        """Return the 'next' stock item (based on serial number)."""
+        return self.get_next_serialized_item()
+
+    @property
+    def get_previous_stock_item(self):
+        """Return the 'previous' stock item (based on serial number)."""
+        return self.get_next_serialized_item(reverse=True)
 
     def save(self, *args, **kwargs):
         """Save this StockItem to the database.
@@ -730,7 +808,7 @@ class StockItem(
                 raise ValidationError({'batch': exc.message})
             except Exception:
                 InvenTree.exceptions.log_error(
-                    f'plugin.{plugin.slug}.validate_batch_code'
+                    'validate_batch_code', plugin=plugin.slug
                 )
 
     def clean(self):
@@ -1254,9 +1332,10 @@ class StockItem(
         self.sales_order = None
         self.location = location
 
-        if status := kwargs.get('status'):
-            self.status = status
-            tracking_info['status'] = status
+        if status := kwargs.pop('status', None):
+            if not self.compare_status(status):
+                self.set_status(status)
+                tracking_info['status'] = status
 
         self.save()
 
@@ -1578,6 +1657,7 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
+            commit (boolm optional): If True, save the entry to the database. Defaults to True.
 
         Returns:
             StockItemTracking: The created tracking entry
@@ -1620,23 +1700,33 @@ class StockItem(
         return entry
 
     @transaction.atomic
-    def serializeStock(self, quantity, serials, user, notes='', location=None):
+    def serializeStock(
+        self,
+        quantity: int,
+        serials: list[str],
+        user: User,
+        notes: str = '',
+        location: Optional[StockLocation] = None,
+    ):
         """Split this stock item into unique serial numbers.
 
         - Quantity can be less than or equal to the quantity of the stock item
         - Number of serial numbers must match the quantity
         - Provided serial numbers must not already be in use
 
-        Args:
+        Arguments:
             quantity: Number of items to serialize (integer)
             serials: List of serial numbers
             user: User object associated with action
             notes: Optional notes for tracking
             location: If specified, serialized items will be placed in the given location
+
+        Returns:
+            List of newly created StockItem objects, each with a unique serial number.
         """
         # Cannot serialize stock that is already serialized!
         if self.serialized:
-            return
+            return None
 
         if not self.part.trackable:
             raise ValidationError({'part': _('Part is not set as trackable')})
@@ -1722,8 +1812,10 @@ class StockItem(
 
         # Rebuild the stock tree
         InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='part'
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='stock'
         )
+
+        return items
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -2149,7 +2241,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2234,7 +2326,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2297,7 +2389,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2351,7 +2443,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             deltas['status'] = status
 

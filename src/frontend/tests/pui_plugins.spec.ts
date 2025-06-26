@@ -4,7 +4,8 @@ import {
   clearTableFilters,
   clickOnRowMenu,
   loadTab,
-  navigate
+  navigate,
+  setTableChoiceFilter
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
@@ -40,7 +41,10 @@ test('Plugins - Settings', async ({ browser, request }) => {
 
   // Edit numerical value
   await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
-  const originalValue = await page.getByLabel('number-field-value').innerText();
+  const originalValue = await page
+    .getByLabel('number-field-value')
+    .inputValue();
+
   await page
     .getByLabel('number-field-value')
     .fill(originalValue == '999' ? '1000' : '999');
@@ -68,16 +72,22 @@ test('Plugins - Functionality', async ({ browser }) => {
     url: 'settings/admin/plugin/'
   });
 
+  // Filter plugins first
   await clearTableFilters(page);
-  await page.getByPlaceholder('Search').fill('sample');
-  await page.waitForLoadState('networkidle');
+  await setTableChoiceFilter(page, 'Sample', 'Yes');
+  await setTableChoiceFilter(page, 'Builtin', 'No');
 
   // Activate the plugin
   const cell = await page.getByText('Sample API Caller', { exact: true });
   await clickOnRowMenu(cell);
-  await page.getByRole('menuitem', { name: 'Activate' }).click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('The plugin was activated').waitFor();
+
+  // Activate the plugin (unless already activated)
+  if ((await page.getByRole('menuitem', { name: 'Deactivate' }).count()) == 0) {
+    await page.getByRole('menuitem', { name: 'Activate' }).click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('The plugin was activated').waitFor();
+    await page.waitForTimeout(250);
+  }
 
   // Deactivate the plugin again
   await clickOnRowMenu(cell);

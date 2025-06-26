@@ -1,6 +1,5 @@
 """Base Class for InvenTree plugins."""
 
-import enum
 import inspect
 import warnings
 from datetime import datetime
@@ -16,17 +15,14 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import InvenTree.helpers
+from generic.enums import StringEnum
 from plugin.helpers import get_git_log
 
 logger = structlog.get_logger('inventree')
 
 
-class PluginMixinEnum(str, enum.Enum):
+class PluginMixinEnum(StringEnum):
     """Enumeration of the available plugin mixin types."""
-
-    def __str__(self):
-        """Return the string representation of the mixin."""
-        return self.value
 
     BASE = 'base'
 
@@ -40,6 +36,7 @@ class PluginMixinEnum(str, enum.Enum):
     ICON_PACK = 'icon_pack'
     LABELS = 'labels'
     LOCATE = 'locate'
+    MAIL = 'mail'
     NAVIGATION = 'navigation'
     REPORT = 'report'
     SCHEDULE = 'schedule'
@@ -445,15 +442,15 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         try:
             website = meta['Project-URL'].split(', ')[1]
-        except (ValueError, IndexError, AttributeError):
-            website = meta['Project-URL']
+        except Exception:
+            website = meta.get('Project-URL')
 
         return {
-            'author': meta['Author-email'],
-            'description': meta['Summary'],
-            'version': meta['Version'],
+            'author': meta.get('Author-email'),
+            'description': meta.get('Summary'),
+            'version': meta.get('Version'),
             'website': website,
-            'license': meta['License'],
+            'license': meta.get('License'),
         }
 
     def define_package(self):

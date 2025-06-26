@@ -86,7 +86,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # pin@v5.5.0
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # pin@v5.6.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -109,7 +109,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # pin@v5.5.0
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # pin@v5.6.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -193,7 +193,6 @@ jobs:
           diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
         run: invoke dev.schema
-        continue-on-error: true
       - name: Extract version for publishing
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
@@ -203,22 +202,22 @@ jobs:
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Extract settings / tags
-        run: invoke int.export-definitions --basedir src/backend/InvenTree
+        run: invoke int.export-definitions --basedir docs
       - name: Upload settings
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_settings.json
-          path: src/backend/InvenTree/inventree_settings.json
+          path: docs/generated/inventree_settings.json
       - name: Upload tags
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_tags.yml
-          path: src/backend/InvenTree/inventree_tags.yml
+          path: docs/generated/inventree_tags.yml
       - name: Upload filters
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
           name: inventree_filters.yml
-          path: src/backend/InvenTree/inventree_filters.yml
+          path: docs/generated/inventree_filters.yml
 
   schema-push:
     name: Push new schema
@@ -238,7 +237,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # pin@v4.2.1
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # pin@v4.3.0
         with:
           path: artifact
           merge-multiple: true
@@ -255,7 +254,7 @@ jobs:
           echo "after move"
           ls -la artifact
           rm -rf artifact
-      - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # pin@v5.1.0
+      - uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # pin@v6.0.1
         name: Commit schema changes
         with:
           commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
@@ -343,8 +342,14 @@ jobs:
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
         run: invoke dev.test --coverage --translations
+      - name: Upload raw coverage to artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
+        with:
+          name: coverage
+          path: .coverage
+          retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -487,7 +492,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -584,6 +589,7 @@ jobs:
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
+      VITE_COVERAGE_BUILD: true
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
@@ -605,12 +611,6 @@ jobs:
         run: |
           invoke int.frontend-compile
           cd src/frontend && npx playwright install --with-deps
-      - name: Set Production Mode
-        if: github.event_name == 'pull_request'
-        run: echo "VITE_PRODUCTION_BUILD=true" >> $GITHUB_ENV
-      - name: Set Coverage Mode
-        if: github.event_name != 'pull_request'
-        run: echo "VITE_COVERAGE_BUILD=true" >> $GITHUB_ENV
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
@@ -621,17 +621,14 @@ jobs:
           path: src/frontend/playwright-report/
           retention-days: 14
       - name: Report coverage
-        if: github.event_name != 'pull_request'
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # pin@v5.4.0
-        if: github.event_name != 'pull_request'
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: web
       - name: Upload bundler info
-        if: github.event_name != 'pull_request'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
@@ -687,7 +684,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # pin@v3
+        uses: github/codeql-action/upload-sarif@ce28f5bb42b7a9f2c824e633a3f6ee835bab6858 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

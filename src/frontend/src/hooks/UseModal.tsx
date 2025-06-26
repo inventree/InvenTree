@@ -1,26 +1,9 @@
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import type React from 'react';
 import { useCallback } from 'react';
 
+import type { UseModalProps, UseModalReturn } from '@lib/types/Modals';
 import { StylishText } from '../components/items/StylishText';
-import type { UiSizeType } from '../defaults/formatters';
-
-export interface UseModalProps {
-  title: string;
-  children: React.ReactElement;
-  size?: UiSizeType;
-  onOpen?: () => void;
-  onClose?: () => void;
-  closeOnClickOutside?: boolean;
-}
-
-export interface UseModalReturn {
-  open: () => void;
-  close: () => void;
-  toggle: () => void;
-  modal: React.ReactElement;
-}
 
 export function useModal(props: UseModalProps): UseModalReturn {
   const onOpen = useCallback(() => {
@@ -42,6 +25,7 @@ export function useModal(props: UseModalProps): UseModalReturn {
     toggle,
     modal: (
       <Modal
+        key={props.id}
         opened={opened}
         onClose={close}
         closeOnClickOutside={props.closeOnClickOutside}

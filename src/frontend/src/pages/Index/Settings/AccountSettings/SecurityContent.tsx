@@ -1,3 +1,6 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { type AuthConfig, type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -28,25 +31,19 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { apiUrl, useServerApiState } from '../../../../states/ApiState';
-import {
-  type AuthConfig,
-  FlowEnum,
-  type Provider
-} from '../../../../states/states';
+import { useServerApiState } from '../../../../states/ApiState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
 export function SecurityContent() {
-  const [auth_config, sso_enabled] = useServerApiState((state) => [
-    state.auth_config,
-    state.sso_enabled
-  ]);
+  const [auth_config, sso_enabled] = useServerApiState(
+    useShallow((state) => [state.auth_config, state.sso_enabled])
+  );
 
   return (
     <Stack>
@@ -136,13 +133,15 @@ function EmailSection() {
   return (
     <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
       {emailAvailable ? (
-        <Alert
-          icon={<IconAlertCircle size='1rem' />}
-          title={t`Not Configured`}
-          color='yellow'
-        >
-          <Trans>Currently no email addresses are registered.</Trans>
-        </Alert>
+        <Stack gap='xs'>
+          <Alert
+            icon={<IconAlertCircle size='1rem' />}
+            title={t`Not Configured`}
+            color='yellow'
+          >
+            <Trans>Currently no email addresses are registered.</Trans>
+          </Alert>
+        </Stack>
       ) : (
         <Radio.Group
           value={selectedEmail}
@@ -241,7 +240,7 @@ function EmailSection() {
   );
 }
 
-function ProviderButton({ provider }: Readonly<{ provider: Provider }>) {
+function ProviderButton({ provider }: Readonly<{ provider: AuthProvider }>) {
   return (
     <Button
       key={provider.id}
@@ -292,13 +291,15 @@ function ProviderSection({
     <Grid>
       <Grid.Col span={6}>
         {data.length == 0 ? (
-          <Alert
-            icon={<IconAlertCircle size='1rem' />}
-            title={t`Not Configured`}
-            color='yellow'
-          >
-            <Trans>There are no providers connected to this account.</Trans>
-          </Alert>
+          <Stack gap='xs'>
+            <Alert
+              icon={<IconAlertCircle size='1rem' />}
+              title={t`Not Configured`}
+              color='yellow'
+            >
+              <Trans>There are no providers connected to this account.</Trans>
+            </Alert>
+          </Stack>
         ) : (
           <Stack>
             <Radio.Group
@@ -429,13 +430,15 @@ function MfaSection() {
       <ReauthModal />
       <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
         {data.length == 0 ? (
-          <Alert
-            title={t`Not Configured`}
-            icon={<IconAlertCircle size='1rem' />}
-            color='yellow'
-          >
-            <Trans>No multi-factor tokens configured for this account</Trans>
-          </Alert>
+          <Stack gap='xs'>
+            <Alert
+              title={t`Not Configured`}
+              icon={<IconAlertCircle size='1rem' />}
+              color='yellow'
+            >
+              <Trans>No multi-factor tokens configured for this account</Trans>
+            </Alert>
+          </Stack>
         ) : (
           <Table stickyHeader striped highlightOnHover withTableBorder>
             <Table.Thead>
@@ -513,7 +516,9 @@ function MfaAddSection({
   refetch: () => void;
   showRecoveryCodes: (codes: Recoverycodes) => void;
 }>) {
-  const [auth_config] = useServerApiState((state) => [state.auth_config]);
+  const [auth_config] = useServerApiState(
+    useShallow((state) => [state.auth_config])
+  );
   const [totpQrOpen, { open: openTotpQr, close: closeTotpQr }] =
     useDisclosure(false);
   const [totpQr, setTotpQr] = useState<{ totp_url: string; secret: string }>();
@@ -659,7 +664,7 @@ async function runActionWithFallback(
   getReauthText: (props: any) => any
 ) {
   const { setAuthContext } = useServerApiState.getState();
-  const rslt = await action().catch((err) => {
+  const result = await action().catch((err) => {
     setAuthContext(err.response.data?.data);
     // check if we need to re-authenticate
     if (err.status == 401) {
@@ -682,7 +687,7 @@ async function runActionWithFallback(
       return ResultType.error;
     }
   });
-  if (rslt == ResultType.mfareauth) {
+  if (result == ResultType.mfareauth) {
     authApi(apiUrl(ApiEndpoints.auth_mfa_reauthenticate), undefined, 'post', {
       code: await getReauthText({
         label: t`TOTP Code`,
@@ -697,7 +702,7 @@ async function runActionWithFallback(
       .catch((err) => {
         setAuthContext(err.response.data?.data);
       });
-  } else if (rslt == ResultType.reauth) {
+  } else if (result == ResultType.reauth) {
     authApi(apiUrl(ApiEndpoints.auth_reauthenticate), undefined, 'post', {
       password: await getReauthText({
         label: t`Password`,

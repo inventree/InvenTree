@@ -2,8 +2,8 @@ import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
@@ -43,7 +43,7 @@ export function RenderPart(
       primary={instance.full_name ?? instance.name}
       secondary={instance.description}
       suffix={badge}
-      image={instance.thumnbnail || instance.image}
+      image={instance.thumbnail || instance.image}
       url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
     />
   );

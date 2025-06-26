@@ -40,7 +40,11 @@ from InvenTree.serializers import (
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
-from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
+from stock.serializers import (
+    LocationBriefSerializer,
+    StockItemSerializerBrief,
+    StockStatusCustomSerializer,
+)
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -69,6 +73,7 @@ class BuildSerializer(
             'completed',
             'completion_date',
             'destination',
+            'external',
             'parent',
             'part',
             'part_name',
@@ -94,8 +99,6 @@ class BuildSerializer(
             'responsible_detail',
             'priority',
             'level',
-            # Additional fields used only for build order creation
-            'create_child_builds',
         ]
 
         read_only_fields = [
@@ -144,14 +147,6 @@ class BuildSerializer(
         source='project_code', many=False, read_only=True, allow_null=True
     )
 
-    create_child_builds = serializers.BooleanField(
-        default=False,
-        required=False,
-        write_only=True,
-        label=_('Create Child Builds'),
-        help_text=_('Automatically generate child build orders'),
-    )
-
     @staticmethod
     def annotate_queryset(queryset):
         """Add custom annotations to the BuildSerializer queryset, performing database queries as efficiently as possible.
@@ -176,22 +171,15 @@ class BuildSerializer(
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
         part_detail = kwargs.pop('part_detail', True)
-        create = kwargs.pop('create', False)
+        kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
-        if not create:
-            self.fields.pop('create_child_builds', None)
-
         if not part_detail:
             self.fields.pop('part_detail', None)
-
-    def skip_create_fields(self):
-        """Return a list of fields to skip during model creation."""
-        return ['create_child_builds']
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field."""
@@ -199,21 +187,6 @@ class BuildSerializer(
         Build.validate_reference_field(reference)
 
         return reference
-
-    @transaction.atomic
-    def create(self, validated_data):
-        """Save the Build object."""
-        build_order = super().create(validated_data)
-
-        create_child_builds = self.validated_data.pop('create_child_builds', False)
-
-        if create_child_builds:
-            # Pass child build creation off to the background thread
-            InvenTree.tasks.offload_task(
-                build.tasks.create_child_builds, build_order.pk, group='build'
-            )
-
-        return build_order
 
 
 class BuildOutputSerializer(serializers.Serializer):
@@ -448,7 +421,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         request = self.context.get('request')
         build = self.get_build()
 
-        build.create_build_output(
+        return build.create_build_output(
             data['quantity'],
             serials=self.serials,
             batch=data.get('batch_code', ''),
@@ -581,11 +554,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
-    status_custom_key = serializers.ChoiceField(
-        choices=StockStatus.items(custom=True),
-        default=StockStatus.OK.value,
-        label=_('Status'),
-    )
+    status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     accept_incomplete_allocation = serializers.BooleanField(
         default=False,
@@ -1136,7 +1105,6 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
     def save(self):
         """Perform the auto-allocation step."""
-        import build.tasks
         import InvenTree.tasks
 
         data = self.validated_data
@@ -1431,7 +1399,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
     build_detail = BuildSerializer(
-        label=_('Build'), source='build', part_detail=False, many=False, read_only=True
+        label=_('Build'),
+        source='build',
+        part_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     # Annotated (calculated) fields

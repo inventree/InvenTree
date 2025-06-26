@@ -4,23 +4,23 @@ import { Badge, Group, Stack, Table } from '@mantine/core';
 import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useNavigate } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
 import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
   const navigate = useNavigate();
 
-  const [user, fetchUserState] = useUserState((state) => [
-    state.user,
-    state.fetchUserState
-  ]);
+  const [user, fetchUserState] = useUserState(
+    useShallow((state) => [state.user, state.fetchUserState])
+  );
 
   const userFields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -65,6 +65,10 @@ export function AccountDetailPanel() {
       { label: t`First Name`, value: user?.first_name },
       { label: t`Last Name`, value: user?.last_name },
       {
+        label: t`Active`,
+        value: <YesNoUndefinedButton value={user?.profile?.active} />
+      },
+      {
         label: t`Staff Access`,
         value: <YesNoUndefinedButton value={user?.is_staff} />
       },
@@ -82,10 +86,6 @@ export function AccountDetailPanel() {
       { label: t`Position`, value: user?.profile?.position },
       { label: t`Status`, value: user?.profile?.status },
       { label: t`Location`, value: user?.profile?.location },
-      {
-        label: t`Active`,
-        value: <YesNoUndefinedButton value={user?.profile?.active} />
-      },
       { label: t`Contact`, value: user?.profile?.contact },
       { label: t`Type`, value: <Badge>{user?.profile?.type}</Badge> },
       { label: t`Organisation`, value: user?.profile?.organisation },

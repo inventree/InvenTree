@@ -283,6 +283,8 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
   await page.getByText('PRJ-PHO').click();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
+  await page.getByLabel('number-field-quantity').fill('100');
+
   // Add the part to the purchase order
   await page.getByLabel('action-button-add-to-selected').click();
   await page.getByLabel('number-field-quantity').fill('100');
@@ -362,7 +364,6 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await clearTableFilters(page);
 
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
-  await page.getByRole('cell', { name: 'bucket' }).first().waitFor();
 });
 
 test('Purchase Orders - Duplicate', async ({ browser }) => {

@@ -1,8 +1,8 @@
 import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
@@ -36,7 +36,7 @@ export function RenderCompany(
   return (
     <RenderInlineModel
       {...props}
-      image={instance.thumnbnail || instance.image}
+      image={instance.thumbnail || instance.image}
       primary={instance.name}
       secondary={instance.description}
       url={
@@ -103,7 +103,7 @@ export function RenderManufacturerPart(
       suffix={
         part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
       }
-      image={manufacturer?.thumnbnail ?? manufacturer.image}
+      image={manufacturer?.thumbnail ?? manufacturer.image}
       url={
         props.link
           ? getDetailUrl(ModelType.manufacturerpart, instance.pk)

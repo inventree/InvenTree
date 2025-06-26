@@ -67,12 +67,12 @@ sudo apt-get install supervisor
 
 !!! warning "Configuration Override"
     If you already have supervisor installed on your system, you will not want to override your existing configuration file.
-    In this case, edit the existing configuration file at `/etc/supervisord.conf` to integrate the InvenTree processes
+    In this case, edit the existing configuration file at `/etc/supervisor/supervisord.conf` to integrate the InvenTree processes
 
 Copy the supervisor configuration file:
 
 ```
-sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisord.conf
+sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisor/supervisord.conf
 ```
 
 ### Start Supervisor Daemon

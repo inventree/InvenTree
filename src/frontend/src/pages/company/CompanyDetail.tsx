@@ -14,7 +14,12 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -34,16 +39,12 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -290,6 +291,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const companyActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.company} id={company.pk} />,
+      <PrintingActions
+        modelType={ModelType.company}
+        items={[company.pk]}
+        enableReports
+      />,
       <OptionsActionDropdown
         tooltip={t`Company Actions`}
         actions={[
@@ -342,6 +348,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             pageKey='company'
             panels={companyPanels}
             instance={company}
+            reloadInstance={refreshInstance}
             model={ModelType.company}
             id={company.pk}
           />

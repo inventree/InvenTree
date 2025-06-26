@@ -32,7 +32,6 @@ test('Parts - Tabs', async ({ browser }) => {
   await loadTab(page, 'Pricing');
   await loadTab(page, 'Suppliers');
   await loadTab(page, 'Purchase Orders');
-  await loadTab(page, 'Scheduling');
   await loadTab(page, 'Stock History');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
@@ -80,6 +79,65 @@ test('Parts - Supplier Parts', async ({ browser }) => {
   await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
 });
 
+test('Parts - BOM', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/87/bom' });
+
+  await loadTab(page, 'Bill of Materials');
+  await page.waitForLoadState('networkidle');
+
+  const cell = await page.getByRole('cell', {
+    name: 'Small plastic enclosure, black',
+    exact: true
+  });
+  await cell.click({ button: 'right' });
+
+  // Check for expected context menu actions
+  await page.getByRole('button', { name: 'Edit', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Delete', exact: true }).waitFor();
+  await page
+    .getByRole('button', { name: 'View details', exact: true })
+    .waitFor();
+
+  await page
+    .getByRole('button', { name: 'Edit Substitutes', exact: true })
+    .click();
+  await page.getByText('Edit BOM Substitutes').waitFor();
+  await page.getByText('1551ACLR').first().waitFor();
+  await page.getByText('1551AGY').first().waitFor();
+
+  await page.getByLabel('related-field-part').fill('enclosure');
+  await page.getByText('1591BTBU').click();
+
+  await page.getByRole('button', { name: 'Add Substitute' }).waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+});
+
+test('Part - Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/details' });
+
+  await page.getByText('A square table - with blue paint').first().waitFor();
+
+  // Open part edit dialog
+  await page.keyboard.press('Control+E');
+
+  const keywords = await page.getByLabel('text-field-keywords').inputValue();
+  await page
+    .getByLabel('text-field-keywords')
+    .fill(keywords ? '' : 'table furniture');
+
+  // Test URL validation
+  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Enter a valid URL.').waitFor();
+
+  // Fill with an empty URL
+  await page.getByLabel('text-field-link').fill('');
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Updated').waitFor();
+});
+
 test('Parts - Locking', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/bom' });
   await loadTab(page, 'Bill of Materials');
@@ -101,6 +159,26 @@ test('Parts - Locking', async ({ browser }) => {
   // Check the "parameters" tab also
   await loadTab(page, 'Parameters');
   await page.getByText('Part parameters cannot be').waitFor();
+});
+
+test('Parts - Details', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/113/details' });
+
+  // Check for expected values on this page
+  await page.getByText('Required for Orders').waitFor();
+  await page.getByText('Allocated to Sales Orders').waitFor();
+  await page.getByText('Can Build').waitFor();
+
+  await page.getByText('0 / 10').waitFor();
+  await page.getByText('4 / 49').waitFor();
+
+  // Badges
+  await page.getByText('Required: 10').waitFor();
+  await page.getByText('No Stock').waitFor();
+  await page.getByText('In Production: 4').waitFor();
+
+  await page.getByText('Creation Date').waitFor();
+  await page.getByText('2022-04-29').waitFor();
 });
 
 test('Parts - Allocations', async ({ browser }) => {
@@ -140,7 +218,9 @@ test('Parts - Allocations', async ({ browser }) => {
   // Expand allocations against BO0001
   await build_order_cell.click();
   await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
-  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Factory/Office Block/Room 101', exact: true })
+    .waitFor();
   await build_order_cell.click();
 
   // Check row options for BO0001
@@ -348,6 +428,41 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+test('Parts - Parameter Filtering', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/' });
+
+  await loadTab(page, 'Part Parameters');
+  await clearTableFilters(page);
+
+  // All parts should be available (no filters applied)
+  await page.getByText('/ 425').waitFor();
+
+  const clickOnParamFilter = async (name: string) => {
+    const button = await page
+      .getByRole('button', { name: `${name} Not sorted` })
+      .getByRole('button')
+      .first();
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+  };
+
+  const clearParamFilter = async (name: string) => {
+    await clickOnParamFilter(name);
+    await page.getByLabel(`clear-filter-${name}`).click();
+  };
+
+  // Let's filter by color
+  await clickOnParamFilter('Color');
+  await page.getByRole('option', { name: 'Red' }).click();
+
+  // Only 10 parts available
+  await page.getByText('/ 10').waitFor();
+
+  // Reset the filter
+  await clearParamFilter('Color');
+  await page.getByText('/ 425').waitFor();
+});
+
 test('Parts - Notes', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/notes' });
 
@@ -410,4 +525,20 @@ test('Parts - Bulk Edit', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
+});
+
+test('Parts - Duplicate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/74/details'
+  });
+
+  // Open "duplicate part" dialog
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-duplicate').click();
+
+  // Check for expected fields
+  await page.getByText('Copy Image', { exact: true }).waitFor();
+  await page.getByText('Copy Notes', { exact: true }).waitFor();
+  await page.getByText('Copy Parameters', { exact: true }).waitFor();
+  await page.getByText('Copy Tests', { exact: true }).waitFor();
 });

@@ -18,6 +18,7 @@ import importer.registry
 import importer.tasks
 import importer.validators
 import InvenTree.helpers
+from common.models import RenderChoices
 from importer.status_codes import DataImportStatusCode
 
 logger = structlog.get_logger('inventree')
@@ -37,6 +38,11 @@ class DataImportSession(models.Model):
         field_overrides: JSONField for field override values - used to force a value for a field
         field_filters: JSONField for field filter values - optional field API filters
     """
+
+    class ModelChoices(RenderChoices):
+        """Model choices for data import sessions."""
+
+        choice_fnc = importer.registry.supported_models
 
     @staticmethod
     def get_api_url():
@@ -77,6 +83,8 @@ class DataImportSession(models.Model):
         blank=False,
         max_length=100,
         validators=[importer.validators.validate_importer_model_type],
+        verbose_name=_('Model Type'),
+        help_text=_('Target model type for this import session'),
     )
 
     status = models.PositiveIntegerField(
@@ -257,7 +265,7 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.IMPORTING.value
         self.save()
 
-        offload_task(importer.tasks.import_data, self.pk)
+        offload_task(importer.tasks.import_data, self.pk, group='importer')
 
     def import_data(self) -> None:
         """Perform the data import process for this session."""

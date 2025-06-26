@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Stack, Table } from '@mantine/core';
+import { Alert, List, Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -11,24 +11,24 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useBatchCodeGenerator } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
@@ -36,9 +36,11 @@ import { PartColumn } from '../tables/ColumnRenderers';
  * Field set for BuildOrder forms
  */
 export function useBuildOrderFields({
-  create
+  create,
+  modalId
 }: {
   create: boolean;
+  modalId: string;
 }): ApiFormFieldSet {
   const [destination, setDestination] = useState<number | null | undefined>(
     null
@@ -46,9 +48,10 @@ export function useBuildOrderFields({
 
   const [batchCode, setBatchCode] = useState<string>('');
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (!batchCode) {
-      setBatchCode(value);
+  const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
+    onGenerate: (value: any) => {
+      setBatchCode((batch: any) => batch || value);
     }
   });
 
@@ -98,6 +101,9 @@ export function useBuildOrderFields({
         icon: <IconTruckDelivery />
       },
       batch: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`,
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
@@ -128,7 +134,8 @@ export function useBuildOrderFields({
         filters: {
           is_active: true
         }
-      }
+      },
+      external: {}
     };
 
     if (create) {
@@ -139,14 +146,20 @@ export function useBuildOrderFields({
       delete fields.project_code;
     }
 
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', true)) {
+      delete fields.external;
+    }
+
     return fields;
-  }, [create, destination, batchCode, globalSettings]);
+  }, [create, destination, batchCode, batchGenerator.result, globalSettings]);
 }
 
 export function useBuildOrderOutputFields({
-  build
+  build,
+  modalId
 }: {
   build: any;
+  modalId: string;
 }): ApiFormFieldSet {
   const trackable: boolean = useMemo(() => {
     return build.part_detail?.trackable ?? false;
@@ -167,10 +180,19 @@ export function useBuildOrderOutputFields({
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
 
-  const serialPlaceholder = useSerialNumberPlaceholder({
-    partId: build.part_detail?.pk,
-    key: 'build-output',
-    enabled: build.part_detail?.trackable
+  const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: build.part || build.part_detail?.pk
+    }
+  });
+
+  const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: build.part || build.part_detail?.pk,
+      quantity: build.quantity
+    }
   });
 
   return useMemo(() => {
@@ -183,9 +205,15 @@ export function useBuildOrderOutputFields({
       },
       serial_numbers: {
         hidden: !trackable,
-        placeholder: serialPlaceholder
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
-      batch_code: {},
+      batch_code: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`
+      },
       location: {
         value: location,
         onValueChange: (value: any) => {
@@ -196,7 +224,7 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       }
     };
-  }, [quantity, serialPlaceholder, trackable]);
+  }, [quantity, batchGenerator.result, serialGenerator.result, trackable]);
 }
 
 function BuildOutputFormRow({
@@ -373,6 +401,16 @@ export function useScrapBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
     method: 'POST',
     title: t`Scrap Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Scrap Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>
+            {t`Selected build outputs will be completed, but marked as scrapped`}
+          </List.Item>
+          <List.Item>{t`Allocated stock items will be consumed`}</List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been scrapped`,
@@ -419,6 +457,16 @@ export function useCancelBuildOutputsForm({
     url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
     method: 'POST',
     title: t`Cancel Build Outputs`,
+    preFormContent: (
+      <Alert title={t`Cancel Build Outputs`} color='yellow'>
+        <List>
+          <List.Item>{t`Selected build outputs will be removed`}</List.Item>
+          <List.Item>
+            {t`Allocated stock items will be returned to stock`}
+          </List.Item>
+        </List>
+      </Alert>
+    ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been cancelled`,

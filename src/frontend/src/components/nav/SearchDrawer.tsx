@@ -32,19 +32,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
-import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict, getModelInfo } from '../render/ModelType';
+import { getModelInfo } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -95,7 +96,7 @@ function QueryResultGroup({
         const url = `${overviewUrl}?search=${searchText}`;
 
         // Close drawer if opening in the same tab
-        if (!(event?.ctrlKey || event?.shiftKey)) {
+        if (!eventModified(event)) {
           onClose();
         }
 
@@ -189,11 +190,22 @@ export function SearchDrawer({
   const [value, setValue] = useState<string>('');
   const [searchText] = useDebouncedValue(value, 500);
 
-  const [searchRegex, setSearchRegex] = useState<boolean>(false);
-  const [searchWhole, setSearchWhole] = useState<boolean>(false);
-
   const user = useUserState();
   const userSettings = useUserSettingsState();
+
+  const [searchRegex, setSearchRegex] = useState<boolean>(false);
+  const [searchWhole, setSearchWhole] = useState<boolean>(false);
+  const [searchNotes, setSearchNotes] = useState<boolean>(false);
+
+  useEffect(() => {
+    setSearchRegex(userSettings.isSet('SEARCH_REGEX', false));
+    setSearchWhole(userSettings.isSet('SEARCH_WHOLE', false));
+    setSearchNotes(userSettings.isSet('SEARCH_NOTES', false));
+  }, [
+    userSettings.isSet('SEARCH_REGEX', false),
+    userSettings.isSet('SEARCH_WHOLE', false),
+    userSettings.isSet('SEARCH_NOTES', false)
+  ]);
 
   // Build out search queries based on user permissions and preferences
   const searchQueryList: SearchQuery[] = useMemo(() => {
@@ -373,7 +385,8 @@ export function SearchDrawer({
       limit: userSettings.getSetting('SEARCH_PREVIEW_RESULTS', '10'),
       search: searchText,
       search_regex: searchRegex,
-      search_whole: searchWhole
+      search_whole: searchWhole,
+      search_notes: searchNotes
     };
 
     // Add in custom query parameters
@@ -393,7 +406,7 @@ export function SearchDrawer({
 
   // Search query manager
   const searchQuery = useQuery({
-    queryKey: ['search', searchText, searchRegex, searchWhole],
+    queryKey: ['search', searchText, searchRegex, searchWhole, searchNotes],
     queryFn: performSearch
   });
 
@@ -443,7 +456,7 @@ export function SearchDrawer({
       return;
     }
 
-    if (event?.ctrlKey || event?.shiftKey) {
+    if (eventModified(event)) {
       // Keep the drawer open in this condition
     } else {
       closeDrawer();
@@ -497,6 +510,15 @@ export function SearchDrawer({
               <Menu.Label>{t`Search Options`}</Menu.Label>
               <Menu.Item>
                 <Checkbox
+                  label={t`Whole word search`}
+                  checked={searchWhole}
+                  onChange={(event) =>
+                    setSearchWhole(event.currentTarget.checked)
+                  }
+                />
+              </Menu.Item>
+              <Menu.Item>
+                <Checkbox
                   label={t`Regex search`}
                   checked={searchRegex}
                   onChange={(event) =>
@@ -506,10 +528,10 @@ export function SearchDrawer({
               </Menu.Item>
               <Menu.Item>
                 <Checkbox
-                  label={t`Whole word search`}
-                  checked={searchWhole}
+                  label={t`Notes search`}
+                  checked={searchNotes}
                   onChange={(event) =>
-                    setSearchWhole(event.currentTarget.checked)
+                    setSearchNotes(event.currentTarget.checked)
                   }
                 />
               </Menu.Item>

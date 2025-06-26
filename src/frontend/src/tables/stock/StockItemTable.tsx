@@ -2,13 +2,15 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   type StockOperationProps,
   useAddStockItem,
@@ -24,7 +26,6 @@ import {
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
@@ -35,7 +36,7 @@ import {
   PartColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, type TableFilter } from '../Filter';
+import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -63,7 +64,8 @@ function stockItemTableColumns({
     {
       accessor: 'part_detail.revision',
       title: t`Revision`,
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
     DescriptionColumn({
       accessor: 'part_detail.description'
@@ -227,6 +229,7 @@ function stockItemTableColumns({
     {
       accessor: 'purchase_order',
       title: t`Purchase Order`,
+      defaultVisible: false,
       render: (record: any) => {
         return record.purchase_order_reference;
       }
@@ -234,12 +237,14 @@ function stockItemTableColumns({
     {
       accessor: 'SKU',
       title: t`Supplier Part`,
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
     {
       accessor: 'MPN',
       title: t`Manufacturer Part`,
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
     {
       accessor: 'purchase_price',
@@ -247,6 +252,7 @@ function stockItemTableColumns({
       sortable: true,
       switchable: true,
       hidden: !showPricing,
+      defaultVisible: false,
       render: (record: any) =>
         formatCurrency(record.purchase_price, {
           currency: record.purchase_price_currency
@@ -272,13 +278,15 @@ function stockItemTableColumns({
     },
     {
       accessor: 'packaging',
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
 
     DateColumn({
       title: t`Expiry Date`,
       accessor: 'expiry_date',
-      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY')
+      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
+      defaultVisible: false
     }),
     DateColumn({
       title: t`Last Updated`,
@@ -525,12 +533,14 @@ export function StockItemTable({
 
   const newStockItemFields = useStockFields({
     create: true,
-    partId: params.part
+    partId: params.part,
+    modalId: 'add-stock-item'
   });
 
   const newStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     title: t`Add Stock Item`,
+    modalId: 'add-stock-item',
     fields: newStockItemFields,
     initialData: {
       part: params.part,
@@ -560,8 +570,7 @@ export function StockItemTable({
     const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
     const can_add_stock = user.hasAddRole(UserRoles.stock);
     const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-    const can_add_order = user.hasAddRole(UserRoles.purchase_order);
-    const can_change_order = user.hasChangeRole(UserRoles.purchase_order);
+
     return [
       <ActionDropdown
         key='stock-actions'

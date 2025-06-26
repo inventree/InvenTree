@@ -18,6 +18,8 @@ import {
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableState } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -25,9 +27,7 @@ import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import type { TableState } from '../hooks/UseTable';
 import { TableColumnSelect } from './ColumnSelect';
-import type { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 import type { InvenTreeTableProps } from './InvenTreeTable';
 import { TableSearchInput } from './Search';
@@ -81,6 +81,8 @@ export default function InvenTreeTableHeader({
         }
       }
     }
+
+    return filters;
   }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
 
   const exportModal = useDataExport({
@@ -206,7 +208,7 @@ export default function InvenTreeTableHeader({
           )}
           {tableProps.enableRefresh && (
             <ActionIcon variant='transparent' aria-label='table-refresh'>
-              <Tooltip label={t`Refresh data`}>
+              <Tooltip label={t`Refresh data`} position='top-end'>
                 <IconRefresh
                   onClick={() => {
                     tableState.refreshTable();
@@ -233,7 +235,7 @@ export default function InvenTreeTableHeader({
                 variant='transparent'
                 aria-label='table-select-filters'
               >
-                <Tooltip label={t`Table Filters`}>
+                <Tooltip label={t`Table Filters`} position='top-end'>
                   <IconFilter
                     onClick={() => setFiltersVisible(!filtersVisible)}
                   />
@@ -243,7 +245,7 @@ export default function InvenTreeTableHeader({
           )}
           {tableUrl && tableProps.enableDownload && (
             <ActionIcon variant='transparent' aria-label='table-export-data'>
-              <Tooltip label={t`Download data`} position='bottom'>
+              <Tooltip label={t`Download data`} position='top-end'>
                 <IconDownload onClick={exportModal.open} />
               </Tooltip>
             </ActionIcon>

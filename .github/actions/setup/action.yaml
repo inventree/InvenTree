@@ -69,7 +69,9 @@ runs:
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: uv pip install ${{ inputs.pip-dependency }}
+        run: uv pip install ${PIP_DEPS}
+        env:
+          PIP_DEPS: ${{ inputs.pip-dependency }}
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
@@ -83,8 +85,10 @@ runs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install ${{ inputs.apt-dependency }}
-          sudo apt-get install ${{ inputs.apt-dependency }}
+          sudo apt-get install ${APT_DEPS}
+          sudo apt-get install ${APT_DEPS}
+        env:
+          APT_DEPS: ${{ inputs.apt-dependency }}
 
       # Invoke commands
       - name: Install dev requirements
