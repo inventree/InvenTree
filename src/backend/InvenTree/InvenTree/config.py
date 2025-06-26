@@ -82,8 +82,12 @@ def inventreeInstaller() -> Optional[str]:
 
     if installer:
         return str(installer)
-    elif os.environ.get('INVENTREE_DEVCONTAINER', 'False') == 'True':
+
+    if is_true(os.environ.get('INVENTREE_DEVCONTAINER', 'False')):
         return 'DEV'
+
+    if is_true(os.environ.get('INVENTREE_DOCKER', 'False')):
+        return 'DOC'
 
     try:
         from django.conf import settings
@@ -108,6 +112,7 @@ def get_config_dir() -> Path:
             return Path('/home/inventree/dev/').resolve()
         elif inst == 'PKG':
             return Path('/etc/inventree/').resolve()
+
     return get_root_dir().joinpath('config').resolve()
 
 
