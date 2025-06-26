@@ -12,10 +12,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RemoveField(
-            model_name="partstocktakereport",
-            name="user",
-        ),
-        migrations.RemoveField(
             model_name="part",
             name="last_stocktake",
         ),
