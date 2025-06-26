@@ -2,13 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useStore } from 'zustand';
 
 import type { ModelType } from '@lib/enums/ModelType';
@@ -36,10 +30,6 @@ export function SettingList({
   keys?: string[];
   onChange?: () => void;
 }>) {
-  useEffect(() => {
-    settingsState.fetchSettings();
-  }, []);
-
   const api = useApi();
 
   const allKeys = useMemo(
