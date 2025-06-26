@@ -364,7 +364,6 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await clearTableFilters(page);
 
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
-  await page.getByRole('cell', { name: 'bucket' }).first().waitFor();
 });
 
 test('Purchase Orders - Duplicate', async ({ browser }) => {

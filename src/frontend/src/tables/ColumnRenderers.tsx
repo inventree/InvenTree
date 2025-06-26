@@ -105,6 +105,7 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'link',
     sortable: false,
+    defaultVisible: false,
     render: (record: any) => {
       const url = resolveItem(record, props.accessor ?? 'link');
 

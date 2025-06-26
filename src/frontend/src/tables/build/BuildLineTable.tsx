@@ -340,33 +340,39 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
         ordering: 'optional',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.allow_variants',
         ordering: 'allow_variants',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.inherited',
         ordering: 'inherited',
         title: t`Gets Inherited`,
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
         ordering: 'trackable',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       {
         accessor: 'bom_item_detail.quantity',
         sortable: true,
         title: t`Unit Quantity`,
+        defaultVisible: false,
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
@@ -383,6 +389,7 @@ export default function BuildLineTable({
         accessor: 'quantity',
         title: t`Required Quantity`,
         sortable: true,
+        defaultVisible: false,
         switchable: false,
         render: (record: any) => {
           // If a build output is specified, use the provided quantity

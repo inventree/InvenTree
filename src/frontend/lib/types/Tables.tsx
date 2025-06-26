@@ -52,7 +52,7 @@ export type TableState = {
   hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
-  hiddenColumns: string[];
+  hiddenColumns: string[] | null;
   setHiddenColumns: (columns: string[]) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
@@ -62,6 +62,7 @@ export type TableState = {
   setPage: (page: number) => void;
   pageSize: number;
   setPageSize: (pageSize: number) => void;
+  storedDataLoaded: boolean;
   records: any[];
   setRecords: (records: any[]) => void;
   updateRecord: (record: any) => void;
