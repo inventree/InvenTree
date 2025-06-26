@@ -45,7 +45,8 @@ export function UsedInTable({
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       DescriptionColumn({
         accessor: 'part_detail.description'

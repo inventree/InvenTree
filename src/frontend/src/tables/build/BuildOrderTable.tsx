@@ -82,7 +82,8 @@ export function BuildOrderTable({
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'title',
@@ -101,16 +102,20 @@ export function BuildOrderTable({
         )
       },
       StatusColumn({ model: ModelType.build }),
-      ProjectCodeColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'level',
         sortable: true,
         switchable: true,
-        hidden: !parentBuildId
+        hidden: !parentBuildId,
+        defaultVisible: false
       },
       {
         accessor: 'priority',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       BooleanColumn({
         accessor: 'external',
@@ -119,8 +124,12 @@ export function BuildOrderTable({
         switchable: true,
         hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       }),
-      CreationDateColumn({}),
-      StartDateColumn({}),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',

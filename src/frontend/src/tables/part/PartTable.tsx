@@ -61,7 +61,8 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'default_location',
       sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring
+      render: (record: any) => record.default_location_detail?.pathstring,
+      defaultVisible: false
     },
     {
       accessor: 'total_in_stock',
@@ -167,6 +168,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
