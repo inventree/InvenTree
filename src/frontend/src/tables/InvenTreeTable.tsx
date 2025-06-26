@@ -279,7 +279,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return;
     }
 
-    if (tableState.hiddenColumns == null) {
+    // A "null" value indicates that the initial "hidden" columns have not been set
+    if (tableState.storedDataLoaded && tableState.hiddenColumns == null) {
       const columnNames: string[] = columns
         .filter((col) => {
           // Find any switchable columns which are hidden by default
@@ -289,7 +290,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
       tableState.setHiddenColumns(columnNames);
     }
-  }, [columns, tableProps.enableColumnSwitching, tableState.hiddenColumns]);
+  }, [
+    columns,
+    tableProps.enableColumnSwitching,
+    tableState.hiddenColumns,
+    tableState.storedDataLoaded
+  ]);
 
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
