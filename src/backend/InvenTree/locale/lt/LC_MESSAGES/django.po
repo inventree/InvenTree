@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-18 23:16+0000\n"
-"PO-Revision-Date: 2025-06-18 23:18\n"
+"POT-Creation-Date: 2025-06-25 23:54+0000\n"
+"PO-Revision-Date: 2025-06-25 23:56\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
@@ -21,39 +21,39 @@ msgstr ""
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "Prieš atliekant bet kokius veiksmus, privalote įjungti dviejų veiksnių autentifikavimą."
 
-#: InvenTree/api.py:355
+#: InvenTree/api.py:356
 msgid "API endpoint not found"
 msgstr "API galinis taškas nerastas"
 
-#: InvenTree/api.py:432
+#: InvenTree/api.py:433
 msgid "List of items or filters must be provided for bulk operation"
 msgstr "Masiniam veiksmui turi būti pateiktas elementų arba filtrų sąrašas"
 
-#: InvenTree/api.py:439
+#: InvenTree/api.py:440
 msgid "Items must be provided as a list"
 msgstr "Elementai turi būti pateikti kaip sąrašas"
 
-#: InvenTree/api.py:447
+#: InvenTree/api.py:448
 msgid "Invalid items list provided"
 msgstr "Pateiktas neteisingas elementų sąrašas"
 
-#: InvenTree/api.py:453
+#: InvenTree/api.py:454
 msgid "Filters must be provided as a dict"
 msgstr "\"Filtrai turi būti pateikti kaip žodynas"
 
-#: InvenTree/api.py:460
+#: InvenTree/api.py:461
 msgid "Invalid filters provided"
 msgstr "Pateikti neteisingi filtrai"
 
-#: InvenTree/api.py:465
+#: InvenTree/api.py:466
 msgid "All filter must only be used with true"
 msgstr "Filtras „all“ gali būti naudojamas tik su reikšme „true“"
 
-#: InvenTree/api.py:470
+#: InvenTree/api.py:471
 msgid "No items match the provided criteria"
 msgstr "Nė vienas elementas neatitinka pateiktų kriterijų"
 
-#: InvenTree/api.py:713
+#: InvenTree/api.py:714
 msgid "User does not have permission to view this model"
 msgstr "Vartotojas neturi teisių peržiūrėti šio modelio"
 
@@ -109,13 +109,13 @@ msgid "Invalid decimal value"
 msgstr "Neteisinga dešimtainė reikšmė"
 
 #: InvenTree/fields.py:210 InvenTree/models.py:896 build/serializers.py:495
-#: build/serializers.py:566 company/models.py:834 order/models.py:1621
+#: build/serializers.py:566 company/models.py:867 order/models.py:1621
 #: part/models.py:3416
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:2708 stock/models.py:2832 stock/serializers.py:756
-#: stock/serializers.py:918 stock/serializers.py:1048 stock/serializers.py:1100
-#: stock/serializers.py:1419 stock/serializers.py:1508
-#: stock/serializers.py:1684
+#: stock/models.py:2721 stock/models.py:2845 stock/serializers.py:766
+#: stock/serializers.py:935 stock/serializers.py:1065 stock/serializers.py:1117
+#: stock/serializers.py:1431 stock/serializers.py:1520
+#: stock/serializers.py:1696
 msgid "Notes"
 msgstr "Pastabos"
 
@@ -356,7 +356,7 @@ msgstr "Kinų (tradicinė)"
 msgid "Log in to the app"
 msgstr "Prisijungti prie programos"
 
-#: InvenTree/magic_login.py:41 company/models.py:136 users/serializers.py:247
+#: InvenTree/magic_login.py:41 company/models.py:169 users/serializers.py:247
 msgid "Email"
 msgstr "El. paštas"
 
@@ -408,19 +408,19 @@ msgstr "Po tuo pačiu pirminiu elementu negali būti pasikartojančių pavadinim
 msgid "Invalid choice"
 msgstr "Neteisingas pasirinkimas"
 
-#: InvenTree/models.py:743 common/models.py:1357 common/models.py:1784
-#: common/models.py:2043 common/models.py:2168 common/serializers.py:509
-#: company/models.py:593 generic/states/serializers.py:20 machine/models.py:24
+#: InvenTree/models.py:743 common/models.py:1366 common/models.py:1793
+#: common/models.py:2052 common/models.py:2177 common/serializers.py:510
+#: company/models.py:626 generic/states/serializers.py:20 machine/models.py:24
 #: part/models.py:1039 part/models.py:3890 plugin/models.py:53
-#: report/models.py:203 stock/models.py:83
+#: report/models.py:205 stock/models.py:83
 msgid "Name"
 msgstr "Pavadinimas"
 
-#: InvenTree/models.py:749 build/models.py:250 common/models.py:124
-#: common/models.py:2175 common/models.py:2288 company/models.py:521
-#: company/models.py:825 order/models.py:430 order/models.py:1657
-#: part/models.py:1062 part/models.py:3905 report/models.py:209
-#: report/models.py:710 report/models.py:736
+#: InvenTree/models.py:749 build/models.py:250 common/models.py:133
+#: common/models.py:2184 common/models.py:2297 company/models.py:554
+#: company/models.py:858 order/models.py:430 order/models.py:1657
+#: part/models.py:1062 part/models.py:3905 report/models.py:211
+#: report/models.py:774 report/models.py:800
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/models.py:89
 msgid "Description"
@@ -430,7 +430,7 @@ msgstr "Aprašymas"
 msgid "Description (optional)"
 msgstr "Aprašymas (neprivalomas)"
 
-#: InvenTree/models.py:765 common/models.py:2341
+#: InvenTree/models.py:765 common/models.py:2350
 msgid "Path"
 msgstr "Kelias"
 
@@ -479,11 +479,11 @@ msgstr "Serveris užfiksavo klaidą."
 msgid "Must be a valid number"
 msgstr "Turi būti teisingas skaičius"
 
-#: InvenTree/serializers.py:111 company/models.py:187 part/models.py:3234
+#: InvenTree/serializers.py:111 company/models.py:220 part/models.py:3234
 msgid "Currency"
 msgstr "Valiuta"
 
-#: InvenTree/serializers.py:114 part/serializers.py:1439
+#: InvenTree/serializers.py:114 part/serializers.py:1406
 msgid "Select currency from available options"
 msgstr "Pasirinkite valiutą iš galimų variantų"
 
@@ -527,29 +527,29 @@ msgstr "Pertekliaus reikšmė negali viršyti 100%"
 msgid "Invalid value for overage"
 msgstr "Netinkama pertekliaus reikšmė"
 
-#: build/api.py:38 order/api.py:105 order/api.py:264 order/serializers.py:129
+#: build/api.py:40 order/api.py:105 order/api.py:264 order/serializers.py:129
 msgid "Order Status"
 msgstr "Užsakymo būsena"
 
-#: build/api.py:64 build/models.py:262
+#: build/api.py:66 build/models.py:262
 msgid "Parent Build"
 msgstr "Pirminė gamyba"
 
-#: build/api.py:68 build/api.py:768 order/api.py:529 order/api.py:749
-#: order/api.py:1123 order/api.py:1351 stock/api.py:522
+#: build/api.py:70 build/api.py:784 order/api.py:529 order/api.py:749
+#: order/api.py:1123 order/api.py:1351 stock/api.py:537
 msgid "Include Variants"
 msgstr "Įtraukti variantus"
 
-#: build/api.py:84 build/api.py:470 build/api.py:782 build/models.py:268
+#: build/api.py:86 build/api.py:472 build/api.py:798 build/models.py:268
 #: build/serializers.py:1222 build/serializers.py:1344
-#: build/serializers.py:1395 company/models.py:1044 company/serializers.py:432
+#: build/serializers.py:1395 company/models.py:1077 company/serializers.py:432
 #: order/api.py:292 order/api.py:296 order/api.py:897 order/api.py:1136
 #: order/api.py:1139 order/models.py:1770 order/models.py:1940
-#: order/models.py:1941 part/api.py:1457 part/api.py:1460 part/api.py:1526
-#: part/api.py:1836 part/models.py:457 part/models.py:3245 part/models.py:3389
+#: order/models.py:1941 part/api.py:1252 part/api.py:1255 part/api.py:1321
+#: part/api.py:1631 part/models.py:457 part/models.py:3245 part/models.py:3389
 #: part/models.py:3537 part/models.py:3558 part/models.py:3580
 #: part/models.py:3719 part/models.py:4080 part/models.py:4352
-#: part/models.py:4718 part/serializers.py:1359 part/serializers.py:2028
+#: part/models.py:4718 part/serializers.py:1326 part/serializers.py:1995
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -558,8 +558,8 @@ msgstr "Įtraukti variantus"
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:535 stock/serializers.py:119 stock/serializers.py:171
-#: stock/serializers.py:481 stock/serializers.py:643 stock/serializers.py:948
+#: stock/api.py:550 stock/serializers.py:119 stock/serializers.py:171
+#: stock/serializers.py:481 stock/serializers.py:653 stock/serializers.py:965
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
@@ -568,122 +568,122 @@ msgstr "Įtraukti variantus"
 msgid "Part"
 msgstr "Detalė"
 
-#: build/api.py:104 build/api.py:107 part/api.py:1540 part/models.py:1080
-#: part/models.py:3608 part/models.py:4189 part/serializers.py:1369
-#: stock/api.py:818
+#: build/api.py:106 build/api.py:109 part/api.py:1335 part/models.py:1080
+#: part/models.py:3608 part/models.py:4189 part/serializers.py:1336
+#: stock/api.py:833
 msgid "Category"
 msgstr "Kategorija"
 
-#: build/api.py:115 build/api.py:119
+#: build/api.py:117 build/api.py:121
 msgid "Ancestor Build"
 msgstr "Ankstesnė gamyba"
 
-#: build/api.py:136 order/api.py:123
+#: build/api.py:138 order/api.py:123
 msgid "Assigned to me"
 msgstr "Priskirta man"
 
-#: build/api.py:151
+#: build/api.py:153
 #: report/templates/report/inventree_build_order_report.html:152
 msgid "Issued By"
 msgstr "Išdavė"
 
-#: build/api.py:166
+#: build/api.py:168
 msgid "Assigned To"
 msgstr "Priskirta"
 
-#: build/api.py:201
+#: build/api.py:203
 msgid "Created before"
 msgstr "Sukurta prieš"
 
-#: build/api.py:205
+#: build/api.py:207
 msgid "Created after"
 msgstr "Sukurta po"
 
-#: build/api.py:209
+#: build/api.py:211
 msgid "Has start date"
 msgstr "Turi pradžios datą"
 
-#: build/api.py:217
+#: build/api.py:219
 msgid "Start date before"
 msgstr "Pradžios data prieš"
 
-#: build/api.py:221
+#: build/api.py:223
 msgid "Start date after"
 msgstr "Pradžios data po"
 
-#: build/api.py:225
+#: build/api.py:227
 msgid "Has target date"
 msgstr "Turi tikslinę datą"
 
-#: build/api.py:233
+#: build/api.py:235
 msgid "Target date before"
 msgstr "Tikslinė data prieš"
 
-#: build/api.py:237
+#: build/api.py:239
 msgid "Target date after"
 msgstr "Tikslinė data po"
 
-#: build/api.py:241
+#: build/api.py:243
 msgid "Completed before"
 msgstr "Užbaigta prieš"
 
-#: build/api.py:245
+#: build/api.py:247
 msgid "Completed after"
 msgstr "Užbaigta po"
 
-#: build/api.py:248 order/api.py:220
+#: build/api.py:250 order/api.py:220
 msgid "Min Date"
 msgstr "Minimali data"
 
-#: build/api.py:271 order/api.py:239
+#: build/api.py:273 order/api.py:239
 msgid "Max Date"
 msgstr "Maksimali data"
 
-#: build/api.py:296 build/api.py:299 part/api.py:224
+#: build/api.py:298 build/api.py:301 part/api.py:218
 msgid "Exclude Tree"
 msgstr "Neįtraukti medžio struktūros"
 
-#: build/api.py:409
+#: build/api.py:411
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Prieš ištrinant gamybą, ji turi būti atšaukta"
 
-#: build/api.py:453 build/serializers.py:1360 part/models.py:4386
+#: build/api.py:455 build/serializers.py:1360 part/models.py:4386
 msgid "Consumable"
 msgstr "Sunaudojama"
 
-#: build/api.py:456 build/serializers.py:1363 part/models.py:4380
+#: build/api.py:458 build/serializers.py:1363 part/models.py:4380
 msgid "Optional"
 msgstr "Pasirinktinai"
 
-#: build/api.py:459 common/setting/system.py:429 part/models.py:1211
-#: part/serializers.py:1767 part/serializers.py:1776 stock/api.py:588
+#: build/api.py:461 common/setting/system.py:442 part/models.py:1211
+#: part/serializers.py:1734 part/serializers.py:1743 stock/api.py:603
 msgid "Assembly"
 msgstr "Surinkimas"
 
-#: build/api.py:462
+#: build/api.py:464
 msgid "Tracked"
 msgstr "Sekama"
 
-#: build/api.py:465 build/serializers.py:1366 part/models.py:1229
+#: build/api.py:467 build/serializers.py:1366 part/models.py:1229
 msgid "Testable"
 msgstr "Testuojama"
 
-#: build/api.py:475 order/api.py:942
+#: build/api.py:477 order/api.py:942
 msgid "Order Outstanding"
 msgstr "Liko neįvykdytų užsakymų"
 
-#: build/api.py:485 order/api.py:901
+#: build/api.py:487 order/api.py:901
 msgid "Allocated"
 msgstr "Priskirta"
 
-#: build/api.py:495 company/models.py:889 company/serializers.py:427
+#: build/api.py:497 company/models.py:922 company/serializers.py:427
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "Prieinama"
 
-#: build/api.py:805 build/models.py:117 order/models.py:1803
+#: build/api.py:821 build/models.py:117 order/models.py:1803
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:92 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
@@ -809,7 +809,7 @@ msgid "Build status code"
 msgstr "Gamybos būsenos kodas"
 
 #: build/models.py:341 build/serializers.py:345 order/serializers.py:792
-#: stock/models.py:1023 stock/serializers.py:84 stock/serializers.py:1651
+#: stock/models.py:1023 stock/serializers.py:84 stock/serializers.py:1663
 msgid "Batch Code"
 msgstr "Partijos kodas"
 
@@ -854,7 +854,7 @@ msgstr "Išdavė"
 msgid "User who issued this build order"
 msgstr "Vartotojas, kuris išdavė šį gamybos užsakymą"
 
-#: build/models.py:396 common/models.py:133 order/api.py:173
+#: build/models.py:396 common/models.py:142 order/api.py:173
 #: order/models.py:492 part/models.py:1303
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
@@ -868,7 +868,7 @@ msgstr "Vartotojas ar grupė, atsakinga už šį gamybos užsakymą"
 msgid "External Link"
 msgstr "Išorinė nuoroda"
 
-#: build/models.py:404 common/models.py:1931 part/models.py:1114
+#: build/models.py:404 common/models.py:1940 part/models.py:1114
 #: stock/models.py:1018
 msgid "Link to external URL"
 msgstr "Nuoroda į išorinį URL"
@@ -881,7 +881,7 @@ msgstr "Gamybos prioritetas"
 msgid "Priority of this build order"
 msgstr "Šio gamybos užsakymo prioritetas"
 
-#: build/models.py:420 common/models.py:103 common/models.py:117
+#: build/models.py:420 common/models.py:112 common/models.py:126
 #: order/api.py:159 order/models.py:439
 msgid "Project Code"
 msgstr "Projekto kodas"
@@ -903,51 +903,50 @@ msgstr "Gamybos užsakymas {build} užbaigtas"
 msgid "A build order has been completed"
 msgstr "Gamybos užsakymas užbaigtas"
 
-#: build/models.py:895 build/serializers.py:393
+#: build/models.py:898 build/serializers.py:393
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "Sekamoms detalėms būtina nurodyti serijos numerius"
 
-#: build/models.py:1005 build/models.py:1090
+#: build/models.py:1014 build/models.py:1099
 msgid "No build output specified"
 msgstr "Nepateiktas gamybos rezultatas"
 
-#: build/models.py:1008
+#: build/models.py:1017
 msgid "Build output is already completed"
 msgstr "Gamybos rezultatas jau užbaigtas"
 
-#: build/models.py:1011
+#: build/models.py:1020
 msgid "Build output does not match Build Order"
 msgstr "Gamybos rezultatas neatitinka gamybos užsakymo"
 
-#: build/models.py:1093 build/serializers.py:272 build/serializers.py:321
+#: build/models.py:1102 build/serializers.py:272 build/serializers.py:321
 #: build/serializers.py:941 order/models.py:705 order/serializers.py:604
-#: order/serializers.py:787 part/serializers.py:1761 stock/models.py:863
-#: stock/models.py:1730 stock/serializers.py:727
+#: order/serializers.py:787 part/serializers.py:1728 stock/models.py:863
+#: stock/models.py:1741 stock/serializers.py:737
 msgid "Quantity must be greater than zero"
 msgstr "Kiekis turi būti didesnis nei nulis"
 
-#: build/models.py:1097 build/serializers.py:276
+#: build/models.py:1106 build/serializers.py:276
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Kiekis negali viršyti rezultato kiekio"
 
-#: build/models.py:1162 build/serializers.py:584
+#: build/models.py:1171 build/serializers.py:584
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Gamybos rezultatas {serial} nepraėjo visų privalomų testų"
 
-#: build/models.py:1548
+#: build/models.py:1557
 msgid "Build Order Line Item"
 msgstr "Gamybos užsakymo eilutės įrašas"
 
-#: build/models.py:1572
+#: build/models.py:1581
 msgid "Build object"
 msgstr "Gamybos objektas"
 
-#: build/models.py:1584 build/models.py:1843 build/serializers.py:260
-#: build/serializers.py:306 build/serializers.py:1378 common/models.py:1287
+#: build/models.py:1593 build/models.py:1852 build/serializers.py:260
+#: build/serializers.py:306 build/serializers.py:1378 common/models.py:1296
 #: order/models.py:1597 order/models.py:2371 order/serializers.py:1678
 #: order/serializers.py:2139 part/models.py:3403 part/models.py:4374
-#: part/serializers.py:274
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:29
@@ -955,63 +954,65 @@ msgstr "Gamybos objektas"
 #: report/templates/report/inventree_sales_order_shipment_report.html:47
 #: report/templates/report/inventree_sales_order_shipment_report.html:49
 #: report/templates/report/inventree_stock_location_report.html:104
+#: report/templates/report/inventree_stock_report_merge.html:90
+#: report/templates/report/inventree_stock_report_merge.html:113
 #: report/templates/report/inventree_test_report.html:90
 #: report/templates/report/inventree_test_report.html:169
-#: stock/serializers.py:135 stock/serializers.py:179 stock/serializers.py:718
+#: stock/serializers.py:135 stock/serializers.py:179 stock/serializers.py:728
 #: templates/email/build_order_completed.html:18
 msgid "Quantity"
 msgstr "Kiekis"
 
-#: build/models.py:1585
+#: build/models.py:1594
 msgid "Required quantity for build order"
 msgstr "Reikalingas kiekis gamybos užsakymui"
 
-#: build/models.py:1669
+#: build/models.py:1678
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Gamybos elementas turi nurodyti rezultatą, nes pagrindinė detalė pažymėta kaip sekama"
 
-#: build/models.py:1680
+#: build/models.py:1689
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Priskirtas kiekis ({q}) negali viršyti galimo atsargų kiekio ({a})"
 
-#: build/models.py:1701 order/models.py:2320
+#: build/models.py:1710 order/models.py:2320
 msgid "Stock item is over-allocated"
 msgstr "Atsargų elementas per daug paskirstytas"
 
-#: build/models.py:1706 order/models.py:2323
+#: build/models.py:1715 order/models.py:2323
 msgid "Allocation quantity must be greater than zero"
 msgstr "Priskirtas kiekis turi būti didesnis nei nulis"
 
-#: build/models.py:1712
+#: build/models.py:1721
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Atsargoms su serijos numeriais kiekis turi būti 1"
 
-#: build/models.py:1772
+#: build/models.py:1781
 msgid "Selected stock item does not match BOM line"
 msgstr "Pasirinktas atsargų elementas neatitinka BOM eilutės"
 
-#: build/models.py:1833 build/serializers.py:924 build/serializers.py:1231
+#: build/models.py:1842 build/serializers.py:924 build/serializers.py:1231
 #: order/serializers.py:1515 order/serializers.py:1536
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
-#: stock/models.py:452 stock/serializers.py:101 stock/serializers.py:825
-#: stock/serializers.py:1357 stock/serializers.py:1469
+#: stock/models.py:452 stock/serializers.py:101 stock/serializers.py:842
+#: stock/serializers.py:1369 stock/serializers.py:1481
 msgid "Stock Item"
 msgstr "Atsargų elementas"
 
-#: build/models.py:1834
+#: build/models.py:1843
 msgid "Source stock item"
 msgstr "Šaltinio atsargų elementas"
 
-#: build/models.py:1844
+#: build/models.py:1853
 msgid "Stock quantity to allocate to build"
 msgstr "Atsargų kiekis, skirtas paskirstyti į gamybą"
 
-#: build/models.py:1853
+#: build/models.py:1862
 msgid "Install into"
 msgstr "Įdiegti į"
 
-#: build/models.py:1854
+#: build/models.py:1863
 msgid "Destination stock item"
 msgstr "Paskirties atsargų elementas"
 
@@ -1060,7 +1061,7 @@ msgid "Integer quantity required, as the bill of materials contains trackable pa
 msgstr "Reikalingas sveikasis kiekis, nes komplektavimo žiniaraštyje yra sekamų detalių"
 
 #: build/serializers.py:352 order/serializers.py:808 order/serializers.py:1682
-#: stock/serializers.py:738
+#: stock/serializers.py:748
 msgid "Serial Numbers"
 msgstr "Serijos numeriai"
 
@@ -1070,10 +1071,10 @@ msgstr "Įveskite serijos numerius gamybos rezultatams"
 
 #: build/serializers.py:358 build/serializers.py:483 build/serializers.py:553
 #: build/serializers.py:1235 build/serializers.py:1239 order/serializers.py:776
-#: order/serializers.py:923 order/serializers.py:2030 part/serializers.py:1379
-#: stock/serializers.py:110 stock/serializers.py:647 stock/serializers.py:749
-#: stock/serializers.py:913 stock/serializers.py:1041 stock/serializers.py:1501
-#: stock/serializers.py:1789 users/models.py:555
+#: order/serializers.py:923 order/serializers.py:2030 part/serializers.py:1346
+#: stock/serializers.py:110 stock/serializers.py:657 stock/serializers.py:759
+#: stock/serializers.py:930 stock/serializers.py:1058 stock/serializers.py:1513
+#: stock/serializers.py:1801 users/models.py:555
 msgid "Location"
 msgstr "Vieta"
 
@@ -1089,8 +1090,8 @@ msgstr "Automatiškai priskirti serijos numerius"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automatiškai priskirti reikalingas prekes su atitinkančiais serijos numeriais"
 
-#: build/serializers.py:409 order/serializers.py:901 stock/api.py:1077
-#: stock/models.py:1753
+#: build/serializers.py:409 order/serializers.py:901 stock/api.py:1101
+#: stock/models.py:1764
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Šie serijos numeriai jau egzistuoja arba yra neteisingi"
 
@@ -1222,7 +1223,7 @@ msgstr "Gamybos eilutės įrašas"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part turi būti ta pati detalė kaip ir gamybos užsakyme"
 
-#: build/serializers.py:930 stock/serializers.py:1370
+#: build/serializers.py:930 stock/serializers.py:1382
 msgid "Item must be in stock"
 msgstr "Prekė turi būti atsargose"
 
@@ -1299,13 +1300,13 @@ msgstr "BOM detalės pavadinimas"
 msgid "Build"
 msgstr "Gamyba"
 
-#: build/serializers.py:1254 company/models.py:662 order/api.py:305
+#: build/serializers.py:1254 company/models.py:695 order/api.py:305
 #: order/api.py:310 order/api.py:525 order/serializers.py:596
-#: stock/models.py:959 stock/serializers.py:631
+#: stock/models.py:959 stock/serializers.py:641
 msgid "Supplier Part"
 msgstr "Tiekėjo detalė"
 
-#: build/serializers.py:1262 stock/serializers.py:662
+#: build/serializers.py:1262 stock/serializers.py:672
 msgid "Allocated Quantity"
 msgstr "Priskirtas kiekis"
 
@@ -1317,7 +1318,7 @@ msgstr "Gamybos nuoroda"
 msgid "Part Category Name"
 msgstr "Detalės kategorijos pavadinimas"
 
-#: build/serializers.py:1369 common/setting/system.py:453 part/models.py:1223
+#: build/serializers.py:1369 common/setting/system.py:466 part/models.py:1223
 msgid "Trackable"
 msgstr "Sekama"
 
@@ -1330,7 +1331,7 @@ msgid "Allow Variants"
 msgstr "Leisti variantus"
 
 #: build/serializers.py:1380 build/serializers.py:1384 part/models.py:4232
-#: part/models.py:4710 stock/api.py:831
+#: part/models.py:4710 stock/api.py:846
 msgid "BOM Item"
 msgstr "BOM elementas"
 
@@ -1339,21 +1340,21 @@ msgid "Allocated Stock"
 msgstr "Priskirtos atsargos"
 
 #: build/serializers.py:1415 company/serializers.py:424
-#: order/serializers.py:1278 part/serializers.py:967 part/serializers.py:1255
-#: part/serializers.py:1794
+#: order/serializers.py:1278 part/serializers.py:934 part/serializers.py:1222
+#: part/serializers.py:1761
 msgid "On Order"
 msgstr "Užsakyta"
 
-#: build/serializers.py:1417 order/serializers.py:1279 part/serializers.py:1259
-#: part/serializers.py:1798
+#: build/serializers.py:1417 order/serializers.py:1279 part/serializers.py:1226
+#: part/serializers.py:1765
 msgid "In Production"
 msgstr "Gamyboje"
 
-#: build/serializers.py:1419 part/serializers.py:995
+#: build/serializers.py:1419 part/serializers.py:962
 msgid "External Stock"
 msgstr "Išorinės atsargos"
 
-#: build/serializers.py:1420 part/serializers.py:1249 part/serializers.py:1827
+#: build/serializers.py:1420 part/serializers.py:1216 part/serializers.py:1794
 msgid "Available Stock"
 msgstr "Prieinamos atsargos"
 
@@ -1391,32 +1392,32 @@ msgstr "Atšaukta"
 msgid "Complete"
 msgstr "Užbaigta"
 
-#: build/tasks.py:190
+#: build/tasks.py:196
 msgid "Stock required for build order"
 msgstr "Atsargos, reikalingos gamybos užsakymui"
 
-#: build/tasks.py:211
+#: build/tasks.py:218
 msgid "Overdue Build Order"
 msgstr "Vėluojantis gamybos užsakymas"
 
-#: build/tasks.py:216
+#: build/tasks.py:223
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "Gamybos užsakymas {bo} dabar vėluoja"
 
-#: common/api.py:710
+#: common/api.py:712
 msgid "Is Link"
 msgstr "Yra nuoroda"
 
-#: common/api.py:718
+#: common/api.py:720
 msgid "Is File"
 msgstr "Yra failas"
 
-#: common/api.py:761
+#: common/api.py:763
 msgid "User does not have permission to delete these attachments"
 msgstr "Vartotojas neturi teisės ištrinti šių priedų"
 
-#: common/api.py:778
+#: common/api.py:780
 msgid "User does not have permission to delete this attachment"
 msgstr "Vartotojas neturi teisės ištrinti šio priedo"
 
@@ -1436,61 +1437,61 @@ msgstr "Nepateikta jokių galiojančių valiutos kodų"
 msgid "No plugin"
 msgstr "Nėra papildinio"
 
-#: common/models.py:90
+#: common/models.py:99 common/models.py:2622
 msgid "Updated"
 msgstr "Atnaujinta"
 
-#: common/models.py:91
+#: common/models.py:100
 msgid "Timestamp of last update"
 msgstr "Paskutinio atnaujinimo laiko žymė"
 
-#: common/models.py:118
+#: common/models.py:127
 msgid "Unique project code"
 msgstr "Unikalus projekto kodas"
 
-#: common/models.py:125
+#: common/models.py:134
 msgid "Project description"
 msgstr "Projekto aprašymas"
 
-#: common/models.py:134
+#: common/models.py:143
 msgid "User or group responsible for this project"
 msgstr "Vartotojas arba grupė, atsakinga už šį projektą"
 
-#: common/models.py:722 common/models.py:1219 common/models.py:1257
+#: common/models.py:731 common/models.py:1228 common/models.py:1266
 msgid "Settings key"
 msgstr "Nustatymo raktas"
 
-#: common/models.py:726
+#: common/models.py:735
 msgid "Settings value"
 msgstr "Nustatymo reikšmė"
 
-#: common/models.py:781
+#: common/models.py:790
 msgid "Chosen value is not a valid option"
 msgstr "Pasirinkta reikšmė yra netinkama"
 
-#: common/models.py:797
+#: common/models.py:806
 msgid "Value must be a boolean value"
 msgstr "Reikšmė turi būti loginė (taip/ne)"
 
-#: common/models.py:805
+#: common/models.py:814
 msgid "Value must be an integer value"
 msgstr "Reikšmė turi būti sveikasis skaičius"
 
-#: common/models.py:813
+#: common/models.py:822
 msgid "Value must be a valid number"
 msgstr "Reikšmė turi būti tinkamas skaičius"
 
-#: common/models.py:838
+#: common/models.py:847
 msgid "Value does not pass validation checks"
 msgstr "Reikšmė neatitinka patikros taisyklių"
 
-#: common/models.py:860
+#: common/models.py:869
 msgid "Key string must be unique"
 msgstr "Raktas turi būti unikalus"
 
-#: common/models.py:1265 common/models.py:1266 common/models.py:1370
-#: common/models.py:1371 common/models.py:1616 common/models.py:1617
-#: common/models.py:1947 common/models.py:1948 common/models.py:2329
+#: common/models.py:1274 common/models.py:1275 common/models.py:1379
+#: common/models.py:1380 common/models.py:1625 common/models.py:1626
+#: common/models.py:1956 common/models.py:1957 common/models.py:2338
 #: importer/models.py:97 part/models.py:3426 part/models.py:3513
 #: part/models.py:3587 part/models.py:3615 plugin/models.py:322
 #: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
@@ -1498,484 +1499,600 @@ msgstr "Raktas turi būti unikalus"
 msgid "User"
 msgstr "Vartotojas"
 
-#: common/models.py:1288
+#: common/models.py:1297
 msgid "Price break quantity"
 msgstr "Kiekio ribinis taškas kainai"
 
-#: common/models.py:1295 company/serializers.py:567 order/models.py:1674
+#: common/models.py:1304 company/serializers.py:567 order/models.py:1674
 #: order/models.py:2817
 msgid "Price"
 msgstr "Kaina"
 
-#: common/models.py:1296
+#: common/models.py:1305
 msgid "Unit price at specified quantity"
 msgstr "Vieneto kaina nurodytam kiekiui"
 
-#: common/models.py:1347 common/models.py:1532
+#: common/models.py:1356 common/models.py:1541
 msgid "Endpoint"
 msgstr "Galutinis taškas"
 
-#: common/models.py:1348
+#: common/models.py:1357
 msgid "Endpoint at which this webhook is received"
 msgstr "Galutinis taškas, kuriuo priimamas šis webhook'as"
 
-#: common/models.py:1358
+#: common/models.py:1367
 msgid "Name for this webhook"
 msgstr "Šio webhook'o pavadinimas"
 
-#: common/models.py:1362 common/models.py:2188 common/models.py:2295
-#: company/models.py:164 company/models.py:799 machine/models.py:39
-#: part/models.py:1246 plugin/models.py:68 stock/api.py:591 users/models.py:201
+#: common/models.py:1371 common/models.py:2197 common/models.py:2304
+#: company/models.py:197 company/models.py:832 machine/models.py:39
+#: part/models.py:1246 plugin/models.py:68 stock/api.py:606 users/models.py:201
 #: users/models.py:560 users/serializers.py:333
 msgid "Active"
 msgstr "Aktyvus"
 
-#: common/models.py:1362
+#: common/models.py:1371
 msgid "Is this webhook active"
 msgstr "Ar šis webhook'as aktyvus"
 
-#: common/models.py:1378 users/models.py:178
+#: common/models.py:1387 users/models.py:178
 msgid "Token"
 msgstr "Raktas"
 
-#: common/models.py:1379
+#: common/models.py:1388
 msgid "Token for access"
 msgstr "Prieigos raktas"
 
-#: common/models.py:1387
+#: common/models.py:1396
 msgid "Secret"
 msgstr "Slaptas raktas"
 
-#: common/models.py:1388
+#: common/models.py:1397
 msgid "Shared secret for HMAC"
 msgstr "Bendras slaptas HMAC raktas"
 
-#: common/models.py:1496
+#: common/models.py:1505 common/models.py:2520
 msgid "Message ID"
 msgstr "Pranešimo ID"
 
-#: common/models.py:1497
+#: common/models.py:1506 common/models.py:2510
 msgid "Unique identifier for this message"
 msgstr "Unikalus pranešimo identifikatorius"
 
-#: common/models.py:1505
+#: common/models.py:1514
 msgid "Host"
 msgstr "Pagrindinis serveris"
 
-#: common/models.py:1506
+#: common/models.py:1515
 msgid "Host from which this message was received"
 msgstr "Serveris, iš kurio gautas pranešimas"
 
-#: common/models.py:1514
+#: common/models.py:1523
 msgid "Header"
 msgstr "Antraštė"
 
-#: common/models.py:1515
+#: common/models.py:1524
 msgid "Header of this message"
 msgstr "Šio pranešimo antraštė"
 
-#: common/models.py:1522
+#: common/models.py:1531
 msgid "Body"
 msgstr "Turinys"
 
-#: common/models.py:1523
+#: common/models.py:1532
 msgid "Body of this message"
 msgstr "Šio pranešimo turinys"
 
-#: common/models.py:1533
+#: common/models.py:1542
 msgid "Endpoint on which this message was received"
 msgstr "Galutinis taškas, kuriame gautas pranešimas"
 
-#: common/models.py:1538
+#: common/models.py:1547
 msgid "Worked on"
 msgstr "Apdorota"
 
-#: common/models.py:1539
+#: common/models.py:1548
 msgid "Was the work on this message finished?"
 msgstr "Ar darbas su šiuo pranešimu baigtas?"
 
-#: common/models.py:1665
+#: common/models.py:1674
 msgid "Id"
 msgstr "ID"
 
-#: common/models.py:1667 part/serializers.py:280
+#: common/models.py:1676
 msgid "Title"
 msgstr "Pavadinimas"
 
-#: common/models.py:1669 common/models.py:1930 company/models.py:149
-#: company/models.py:445 company/models.py:512 company/models.py:816
+#: common/models.py:1678 common/models.py:1939 company/models.py:182
+#: company/models.py:478 company/models.py:545 company/models.py:849
 #: order/models.py:445 order/models.py:1627 order/models.py:2139
 #: part/models.py:1113
 #: report/templates/report/inventree_build_order_report.html:164
 msgid "Link"
 msgstr "Nuoroda"
 
-#: common/models.py:1671
+#: common/models.py:1680
 msgid "Published"
 msgstr "Paskelbta"
 
-#: common/models.py:1673
+#: common/models.py:1682
 msgid "Author"
 msgstr "Autorius"
 
-#: common/models.py:1675
+#: common/models.py:1684
 msgid "Summary"
 msgstr "Santrauka"
 
-#: common/models.py:1678
+#: common/models.py:1687 common/models.py:2487
 msgid "Read"
 msgstr "Perskaityta"
 
-#: common/models.py:1678
+#: common/models.py:1687
 msgid "Was this news item read?"
 msgstr "Ar ši naujiena buvo perskaityta?"
 
-#: common/models.py:1695 company/models.py:160 part/models.py:1124
+#: common/models.py:1704 company/models.py:193 part/models.py:1124
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:35
 msgid "Image"
 msgstr "Paveikslėlis"
 
-#: common/models.py:1695
+#: common/models.py:1704
 msgid "Image file"
 msgstr "Paveikslėlio failas"
 
-#: common/models.py:1707
+#: common/models.py:1716
 msgid "Target model type for this image"
 msgstr "Modelio tipas, kuriam priskiriamas šis paveikslėlis"
 
-#: common/models.py:1711
+#: common/models.py:1720
 msgid "Target model ID for this image"
 msgstr "Modelio ID, kuriam priskiriamas šis paveikslėlis"
 
-#: common/models.py:1733
+#: common/models.py:1742
 msgid "Custom Unit"
 msgstr "Pasirinktinis vienetas"
 
-#: common/models.py:1751
+#: common/models.py:1760
 msgid "Unit symbol must be unique"
 msgstr "Vieneto simbolis turi būti unikalus"
 
-#: common/models.py:1766
+#: common/models.py:1775
 msgid "Unit name must be a valid identifier"
 msgstr "Vieneto pavadinimas turi būti tinkamas identifikatorius"
 
-#: common/models.py:1785
+#: common/models.py:1794
 msgid "Unit name"
 msgstr "Vieneto pavadinimas"
 
-#: common/models.py:1792
+#: common/models.py:1801
 msgid "Symbol"
 msgstr "Simbolis"
 
-#: common/models.py:1793
+#: common/models.py:1802
 msgid "Optional unit symbol"
 msgstr "Nebūtinas vieneto simbolis"
 
-#: common/models.py:1799
+#: common/models.py:1808
 msgid "Definition"
 msgstr "Apibrėžimas"
 
-#: common/models.py:1800
+#: common/models.py:1809
 msgid "Unit definition"
 msgstr "Vieneto apibrėžimas"
 
-#: common/models.py:1858 common/models.py:1921 stock/models.py:2827
+#: common/models.py:1867 common/models.py:1930 stock/models.py:2840
 #: stock/serializers.py:258
 msgid "Attachment"
 msgstr "Priedas"
 
-#: common/models.py:1875
+#: common/models.py:1884
 msgid "Missing file"
 msgstr "Trūksta failo"
 
-#: common/models.py:1876
+#: common/models.py:1885
 msgid "Missing external link"
 msgstr "Trūksta išorinės nuorodos"
 
-#: common/models.py:1913
+#: common/models.py:1922
 msgid "Model type"
 msgstr "Modelio tipas"
 
-#: common/models.py:1914
+#: common/models.py:1923
 msgid "Target model type for image"
 msgstr "Modelio tipas, kuriam skirtas paveikslėlis"
 
-#: common/models.py:1922
+#: common/models.py:1931
 msgid "Select file to attach"
 msgstr "Pasirinkite failą priedui"
 
-#: common/models.py:1938
+#: common/models.py:1947
 msgid "Comment"
 msgstr "Komentaras"
 
-#: common/models.py:1939
+#: common/models.py:1948
 msgid "Attachment comment"
 msgstr "Komentaras prie priedo"
 
-#: common/models.py:1955
+#: common/models.py:1964
 msgid "Upload date"
 msgstr "Įkėlimo data"
 
-#: common/models.py:1956
+#: common/models.py:1965
 msgid "Date the file was uploaded"
 msgstr "Failo įkėlimo data"
 
-#: common/models.py:1960
+#: common/models.py:1969
 msgid "File size"
 msgstr "Failo dydis"
 
-#: common/models.py:1960
+#: common/models.py:1969
 msgid "File size in bytes"
 msgstr "Failo dydis baitais"
 
-#: common/models.py:1998 common/serializers.py:658
+#: common/models.py:2007 common/serializers.py:659
 msgid "Invalid model type specified for attachment"
 msgstr "Netinkamas modelio tipas priedui"
 
-#: common/models.py:2019
+#: common/models.py:2028
 msgid "Custom State"
 msgstr "Pasirinktinė būsena"
 
-#: common/models.py:2020
+#: common/models.py:2029
 msgid "Custom States"
 msgstr "Pasirinktinės būsenos"
 
-#: common/models.py:2025
+#: common/models.py:2034
 msgid "Reference Status Set"
 msgstr "Nuorodos būsenų rinkinys"
 
-#: common/models.py:2026
+#: common/models.py:2035
 msgid "Status set that is extended with this custom state"
 msgstr "Būsenų rinkinys, papildomas šia pasirinktine būsena"
 
-#: common/models.py:2030 generic/states/serializers.py:18
+#: common/models.py:2039 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "Loginis raktas"
 
-#: common/models.py:2032
+#: common/models.py:2041
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Loginis būsenos raktas, atitinkantis šią pasirinkitinę būseną"
 
-#: common/models.py:2037 common/models.py:2276 company/models.py:600
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2819
+#: common/models.py:2046 common/models.py:2285 company/models.py:633
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:2832
 msgid "Value"
 msgstr "Reikšmė"
 
-#: common/models.py:2038
+#: common/models.py:2047
 msgid "Numerical value that will be saved in the models database"
 msgstr "Skaitinė reikšmė, saugoma modelio duomenų bazėje"
 
-#: common/models.py:2044
+#: common/models.py:2053
 msgid "Name of the state"
 msgstr "Būsenos pavadinimas"
 
-#: common/models.py:2053 common/models.py:2282 generic/states/serializers.py:22
-#: part/serializers.py:282
+#: common/models.py:2062 common/models.py:2291 generic/states/serializers.py:22
 msgid "Label"
 msgstr "Etiketė"
 
-#: common/models.py:2054
+#: common/models.py:2063
 msgid "Label that will be displayed in the frontend"
 msgstr "Etiketė, rodoma vartotojo sąsajoje"
 
-#: common/models.py:2061 generic/states/serializers.py:24
+#: common/models.py:2070 generic/states/serializers.py:24
 msgid "Color"
 msgstr "Spalva"
 
-#: common/models.py:2062
+#: common/models.py:2071
 msgid "Color that will be displayed in the frontend"
 msgstr "Spalva, rodoma vartotojo sąsajoje"
 
-#: common/models.py:2070 part/serializers.py:284
+#: common/models.py:2079
 msgid "Model"
 msgstr "Modelis"
 
-#: common/models.py:2071
+#: common/models.py:2080
 msgid "Model this state is associated with"
 msgstr "Modelis, su kuriuo susieta būsena"
 
-#: common/models.py:2086
+#: common/models.py:2095
 msgid "Model must be selected"
 msgstr "Turi būti pasirinktas modelis"
 
-#: common/models.py:2089
+#: common/models.py:2098
 msgid "Key must be selected"
 msgstr "Turi būti pasirinktas raktas"
 
-#: common/models.py:2092
+#: common/models.py:2101
 msgid "Logical key must be selected"
 msgstr "Turi būti pasirinktas loginis raktas"
 
-#: common/models.py:2096
+#: common/models.py:2105
 msgid "Key must be different from logical key"
 msgstr "Raktas turi skirtis nuo loginio rakto"
 
-#: common/models.py:2103
+#: common/models.py:2112
 msgid "Valid reference status class must be provided"
 msgstr "Turi būti pateikta tinkama nuorodos būsenos klasė"
 
-#: common/models.py:2109
+#: common/models.py:2118
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "Raktas turi skirtis nuo nuorodos būsenų loginių raktų"
 
-#: common/models.py:2116
+#: common/models.py:2125
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "Loginis raktas turi būti tarp nuorodos būsenų loginių raktų"
 
-#: common/models.py:2123
+#: common/models.py:2132
 msgid "Name must be different from the names of the reference status"
 msgstr "Pavadinimas turi skirtis nuo nuorodos būsenų pavadinimų"
 
-#: common/models.py:2163 common/models.py:2270 part/models.py:3929
+#: common/models.py:2172 common/models.py:2279 part/models.py:3929
 msgid "Selection List"
 msgstr "Pasirinkimų sąrašas"
 
-#: common/models.py:2164
+#: common/models.py:2173
 msgid "Selection Lists"
 msgstr "Pasirinkimų sąrašai"
 
-#: common/models.py:2169
+#: common/models.py:2178
 msgid "Name of the selection list"
 msgstr "Pasirinkimų sąrašo pavadinimas"
 
-#: common/models.py:2176
+#: common/models.py:2185
 msgid "Description of the selection list"
 msgstr "Pasirinkimų sąrašo aprašymas"
 
-#: common/models.py:2182 part/models.py:1251
+#: common/models.py:2191 part/models.py:1251
 msgid "Locked"
 msgstr "Užrakinta"
 
-#: common/models.py:2183
+#: common/models.py:2192
 msgid "Is this selection list locked?"
 msgstr "Ar šis sąrašas užrakintas?"
 
-#: common/models.py:2189
+#: common/models.py:2198
 msgid "Can this selection list be used?"
 msgstr "Ar šį pasirinkimų sąrašą galima naudoti?"
 
-#: common/models.py:2197
+#: common/models.py:2206
 msgid "Source Plugin"
 msgstr "Šaltinio papildinys"
 
-#: common/models.py:2198
+#: common/models.py:2207
 msgid "Plugin which provides the selection list"
 msgstr "Papildinys, pateikiantis šį pasirinkimų sąrašą"
 
-#: common/models.py:2203
+#: common/models.py:2212
 msgid "Source String"
 msgstr "Šaltinio eilutė"
 
-#: common/models.py:2204
+#: common/models.py:2213
 msgid "Optional string identifying the source used for this list"
 msgstr "Neprivaloma eilutė, identifikuojanti šaltinį, naudotą šiam sąrašui"
 
-#: common/models.py:2213
+#: common/models.py:2222
 msgid "Default Entry"
 msgstr "Numatytasis įrašas"
 
-#: common/models.py:2214
+#: common/models.py:2223
 msgid "Default entry for this selection list"
 msgstr "Numatytasis šio pasirinkimų sąrašo įrašas"
 
-#: common/models.py:2219
+#: common/models.py:2228 common/models.py:2617
 msgid "Created"
 msgstr "Sukurta"
 
-#: common/models.py:2220
+#: common/models.py:2229
 msgid "Date and time that the selection list was created"
 msgstr "Data ir laikas, kada buvo sukurtas pasirinkimų sąrašas"
 
-#: common/models.py:2225
+#: common/models.py:2234
 msgid "Last Updated"
 msgstr "Paskutinį kartą atnaujinta"
 
-#: common/models.py:2226
+#: common/models.py:2235
 msgid "Date and time that the selection list was last updated"
 msgstr "Data ir laikas, kada paskutinį kartą buvo atnaujintas sąrašas"
 
-#: common/models.py:2260
+#: common/models.py:2269
 msgid "Selection List Entry"
 msgstr "Pasirinkimų sąrašo įrašas"
 
-#: common/models.py:2261
+#: common/models.py:2270
 msgid "Selection List Entries"
 msgstr "Pasirinkimų sąrašo įrašai"
 
-#: common/models.py:2271
+#: common/models.py:2280
 msgid "Selection list to which this entry belongs"
 msgstr "Pasirinkimų sąrašas, kuriam priklauso šis įrašas"
 
-#: common/models.py:2277
+#: common/models.py:2286
 msgid "Value of the selection list entry"
 msgstr "Pasirinkimų sąrašo įrašo reikšmė"
 
-#: common/models.py:2283
+#: common/models.py:2292
 msgid "Label for the selection list entry"
 msgstr "Pasirinkimų įrašo etiketė"
 
-#: common/models.py:2289
+#: common/models.py:2298
 msgid "Description of the selection list entry"
 msgstr "Pasirinkimų įrašo aprašymas"
 
-#: common/models.py:2296
+#: common/models.py:2305
 msgid "Is this selection list entry active?"
 msgstr "Ar šis sąrašo įrašas aktyvus?"
 
-#: common/models.py:2314
+#: common/models.py:2323
 msgid "Barcode Scan"
 msgstr "Brūkšninio kodo nuskaitymas"
 
-#: common/models.py:2318 importer/models.py:523 part/models.py:4094
+#: common/models.py:2327 importer/models.py:523 part/models.py:4094
 msgid "Data"
 msgstr "Data"
 
-#: common/models.py:2319
+#: common/models.py:2328
 msgid "Barcode data"
 msgstr "Brūkšninio kodo duomenys"
 
-#: common/models.py:2330
+#: common/models.py:2339
 msgid "User who scanned the barcode"
 msgstr "Vartotojas, nuskaitęs brūkšninį kodą"
 
-#: common/models.py:2335 importer/models.py:66
+#: common/models.py:2344 importer/models.py:66
 msgid "Timestamp"
 msgstr "Laiko žymė"
 
-#: common/models.py:2336
+#: common/models.py:2345
 msgid "Date and time of the barcode scan"
 msgstr "Brūkšninio kodo nuskaitymo data ir laikas"
 
-#: common/models.py:2342
+#: common/models.py:2351
 msgid "URL endpoint which processed the barcode"
 msgstr "URL galutinis taškas, kuris apdorojo brūkšninį kodą"
 
-#: common/models.py:2349 order/models.py:1664 plugin/serializers.py:93
+#: common/models.py:2358 order/models.py:1664 plugin/serializers.py:93
 msgid "Context"
 msgstr "Kontekstas"
 
-#: common/models.py:2350
+#: common/models.py:2359
 msgid "Context data for the barcode scan"
 msgstr "Konteksto duomenys brūkšninio kodo nuskaitymui"
 
-#: common/models.py:2357
+#: common/models.py:2366
 msgid "Response"
 msgstr "Atsakas"
 
-#: common/models.py:2358
+#: common/models.py:2367
 msgid "Response data from the barcode scan"
 msgstr "Atsako duomenys iš brūkšninio kodo nuskaitymo"
 
-#: common/models.py:2364 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2813
+#: common/models.py:2373 report/templates/report/inventree_test_report.html:103
+#: stock/models.py:2826
 msgid "Result"
 msgstr "Rezultatas"
 
-#: common/models.py:2365
+#: common/models.py:2374
 msgid "Was the barcode scan successful?"
 msgstr "Ar brūkšninio kodo nuskaitymas buvo sėkmingas?"
+
+#: common/models.py:2469
+msgid "Email Message"
+msgstr ""
+
+#: common/models.py:2470
+msgid "Email Messages"
+msgstr ""
+
+#: common/models.py:2477
+msgid "Announced"
+msgstr ""
+
+#: common/models.py:2479
+msgid "Sent"
+msgstr ""
+
+#: common/models.py:2480
+msgid "Failed"
+msgstr ""
+
+#: common/models.py:2483
+msgid "Delivered"
+msgstr ""
+
+#: common/models.py:2491
+msgid "Confirmed"
+msgstr ""
+
+#: common/models.py:2497
+msgid "Inbound"
+msgstr ""
+
+#: common/models.py:2498
+msgid "Outbound"
+msgstr ""
+
+#: common/models.py:2503
+msgid "No Reply"
+msgstr ""
+
+#: common/models.py:2504
+msgid "Track Delivery"
+msgstr ""
+
+#: common/models.py:2505
+msgid "Track Read"
+msgstr ""
+
+#: common/models.py:2506
+msgid "Track Click"
+msgstr ""
+
+#: common/models.py:2509 common/models.py:2604
+msgid "Global ID"
+msgstr ""
+
+#: common/models.py:2522
+msgid "Identifier for this message (might be supplied by external system)"
+msgstr ""
+
+#: common/models.py:2529
+msgid "Thread ID"
+msgstr ""
+
+#: common/models.py:2531
+msgid "Identifier for this message thread (might be supplied by external system)"
+msgstr ""
+
+#: common/models.py:2540
+msgid "Thread"
+msgstr ""
+
+#: common/models.py:2541
+msgid "Linked thread for this message"
+msgstr ""
+
+#: common/models.py:2557
+msgid "Prioriy"
+msgstr ""
+
+#: common/models.py:2591
+msgid "Email Thread"
+msgstr ""
+
+#: common/models.py:2592
+msgid "Email Threads"
+msgstr ""
+
+#: common/models.py:2598 generic/states/serializers.py:16 plugin/models.py:45
+#: users/models.py:119
+msgid "Key"
+msgstr "Raktas"
+
+#: common/models.py:2601
+msgid "Unique key for this thread (used to identify the thread)"
+msgstr ""
+
+#: common/models.py:2605
+msgid "Unique identifier for this thread"
+msgstr ""
+
+#: common/models.py:2612
+msgid "Started Internal"
+msgstr ""
+
+#: common/models.py:2613
+msgid "Was this thread started internally?"
+msgstr ""
+
+#: common/models.py:2618
+msgid "Date and time that the thread was created"
+msgstr ""
+
+#: common/models.py:2623
+msgid "Date and time that the thread was last updated"
+msgstr ""
 
 #: common/notifications.py:332
 #, python-brace-format
@@ -2019,80 +2136,80 @@ msgstr "Nurodo, ar nustatymą pakeičia aplinkos kintamasis"
 msgid "Override"
 msgstr "Nepaisyti"
 
-#: common/serializers.py:472
+#: common/serializers.py:473
 msgid "Is Running"
 msgstr "Vykdoma"
 
-#: common/serializers.py:478
+#: common/serializers.py:479
 msgid "Pending Tasks"
 msgstr "Laukiančios užduotys"
 
-#: common/serializers.py:484
+#: common/serializers.py:485
 msgid "Scheduled Tasks"
 msgstr "Suplanuotos užduotys"
 
-#: common/serializers.py:490
+#: common/serializers.py:491
 msgid "Failed Tasks"
 msgstr "Nepavykusios užduotys"
 
-#: common/serializers.py:505
+#: common/serializers.py:506
 msgid "Task ID"
 msgstr "Užduoties ID"
 
-#: common/serializers.py:505
+#: common/serializers.py:506
 msgid "Unique task ID"
 msgstr "Unikalus užduoties ID"
 
-#: common/serializers.py:507
+#: common/serializers.py:508
 msgid "Lock"
 msgstr "Užraktas"
 
-#: common/serializers.py:507
+#: common/serializers.py:508
 msgid "Lock time"
 msgstr "Užrakto laikas"
 
-#: common/serializers.py:509
+#: common/serializers.py:510
 msgid "Task name"
 msgstr "Užduoties pavadinimas"
 
-#: common/serializers.py:511
+#: common/serializers.py:512
 msgid "Function"
 msgstr "Funkcija"
 
-#: common/serializers.py:511
+#: common/serializers.py:512
 msgid "Function name"
 msgstr "Funkcijos pavadinimas"
 
-#: common/serializers.py:513
+#: common/serializers.py:514
 msgid "Arguments"
 msgstr "Argumentai"
 
-#: common/serializers.py:513
+#: common/serializers.py:514
 msgid "Task arguments"
 msgstr "Užduoties argumentai"
 
-#: common/serializers.py:516
+#: common/serializers.py:517
 msgid "Keyword Arguments"
 msgstr "Rakto argumentai"
 
-#: common/serializers.py:516
+#: common/serializers.py:517
 msgid "Task keyword arguments"
 msgstr "Užduoties rakto argumentai"
 
-#: common/serializers.py:626
+#: common/serializers.py:627
 msgid "Filename"
 msgstr "Failo pavadinimas"
 
-#: common/serializers.py:633 importer/models.py:86 report/api.py:41
-#: report/models.py:277 report/serializers.py:53
+#: common/serializers.py:634 importer/models.py:86 report/api.py:40
+#: report/models.py:282 report/serializers.py:53
 msgid "Model Type"
 msgstr "Modelio tipas"
 
-#: common/serializers.py:661
+#: common/serializers.py:662
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "Vartotojas neturi leidimo kurti ar redaguoti šio modelio priedų"
 
-#: common/serializers.py:705 common/serializers.py:808
+#: common/serializers.py:706 common/serializers.py:809
 msgid "Selection list is locked"
 msgstr "Pasirinkimų sąrašas yra užrakintas"
 
@@ -2104,1073 +2221,1089 @@ msgstr "Nėra grupės"
 msgid "Site URL is locked by configuration"
 msgstr "Svetainės URL yra užrakintas konfigūracijoje"
 
-#: common/setting/system.py:167
+#: common/setting/system.py:173
 msgid "Restart required"
 msgstr "Reikalingas paleidimas iš naujo"
 
-#: common/setting/system.py:168
+#: common/setting/system.py:174
 msgid "A setting has been changed which requires a server restart"
 msgstr "Nustatymas buvo pakeistas ir reikia paleisti serverį iš naujo"
 
-#: common/setting/system.py:174
+#: common/setting/system.py:180
 msgid "Pending migrations"
 msgstr "Laukiančios migracijos"
 
-#: common/setting/system.py:175
+#: common/setting/system.py:181
 msgid "Number of pending database migrations"
 msgstr "Laukiančių duomenų bazės migracijų skaičius"
 
-#: common/setting/system.py:180
+#: common/setting/system.py:186
+msgid "Active warning codes"
+msgstr ""
+
+#: common/setting/system.py:187
+msgid "A dict of active warning codes"
+msgstr ""
+
+#: common/setting/system.py:193
 msgid "Instance ID"
 msgstr "Egzemplioriaus ID"
 
-#: common/setting/system.py:181
+#: common/setting/system.py:194
 msgid "Unique identifier for this InvenTree instance"
 msgstr "Unikalus identifikatorius šiam InvenTree egzemplioriui"
 
-#: common/setting/system.py:186
+#: common/setting/system.py:199
 msgid "Announce ID"
 msgstr "Pranešimo ID"
 
-#: common/setting/system.py:188
+#: common/setting/system.py:201
 msgid "Announce the instance ID of the server in the server status info (unauthenticated)"
 msgstr "Skelbti serverio egzemplioriaus ID serverio būsenos informacijoje (neprisijungus)"
 
-#: common/setting/system.py:194
+#: common/setting/system.py:207
 msgid "Server Instance Name"
 msgstr "Serverio egzemplioriaus pavadinimas"
 
-#: common/setting/system.py:196
+#: common/setting/system.py:209
 msgid "String descriptor for the server instance"
 msgstr "Serverio egzemplioriaus pavadinimas kaip eilutė"
 
-#: common/setting/system.py:200
+#: common/setting/system.py:213
 msgid "Use instance name"
 msgstr "Naudoti egzemplioriaus pavadinimą"
 
-#: common/setting/system.py:201
+#: common/setting/system.py:214
 msgid "Use the instance name in the title-bar"
 msgstr "Naudoti egzemplioriaus pavadinimą antraštės juostoje"
 
-#: common/setting/system.py:206
+#: common/setting/system.py:219
 msgid "Restrict showing `about`"
 msgstr "Apriboti  `apie` rodymą"
 
-#: common/setting/system.py:207
+#: common/setting/system.py:220
 msgid "Show the `about` modal only to superusers"
 msgstr "`Apie` langą rodyti tik super-vartotojams"
 
-#: common/setting/system.py:212 company/models.py:108 company/models.py:109
+#: common/setting/system.py:225 company/models.py:141 company/models.py:142
 msgid "Company name"
 msgstr "Įmonės pavadinimas"
 
-#: common/setting/system.py:213
+#: common/setting/system.py:226
 msgid "Internal company name"
 msgstr "Vidinis įmonės pavadinimas"
 
-#: common/setting/system.py:217
+#: common/setting/system.py:230
 msgid "Base URL"
 msgstr "Pagrindinis URL"
 
-#: common/setting/system.py:218
+#: common/setting/system.py:231
 msgid "Base URL for server instance"
 msgstr "Pagrindinis URL šiam serverio egzemplioriui"
 
-#: common/setting/system.py:224
+#: common/setting/system.py:237
 msgid "Default Currency"
 msgstr "Numatytoji valiuta"
 
-#: common/setting/system.py:225
+#: common/setting/system.py:238
 msgid "Select base currency for pricing calculations"
 msgstr "Pasirinkti pagrindinę valiutą kainų skaičiavimui"
 
-#: common/setting/system.py:231
+#: common/setting/system.py:244
 msgid "Supported Currencies"
 msgstr "Palaikomos valiutos"
 
-#: common/setting/system.py:232
+#: common/setting/system.py:245
 msgid "List of supported currency codes"
 msgstr "Palaikomų valiutų kodų sąrašas"
 
-#: common/setting/system.py:238
+#: common/setting/system.py:251
 msgid "Currency Update Interval"
 msgstr "Valiutų atnaujinimo intervalas"
 
-#: common/setting/system.py:239
+#: common/setting/system.py:252
 msgid "How often to update exchange rates (set to zero to disable)"
 msgstr "Kaip dažnai atnaujinti valiutų kursus (nulis – išjungti)"
 
-#: common/setting/system.py:241 common/setting/system.py:281
-#: common/setting/system.py:294 common/setting/system.py:302
-#: common/setting/system.py:309 common/setting/system.py:318
-#: common/setting/system.py:561 common/setting/system.py:581
-#: common/setting/system.py:672 common/setting/system.py:1062
+#: common/setting/system.py:254 common/setting/system.py:294
+#: common/setting/system.py:307 common/setting/system.py:315
+#: common/setting/system.py:322 common/setting/system.py:331
+#: common/setting/system.py:574 common/setting/system.py:594
+#: common/setting/system.py:685 common/setting/system.py:1082
 msgid "days"
 msgstr "dienos"
 
-#: common/setting/system.py:245
+#: common/setting/system.py:258
 msgid "Currency Update Plugin"
 msgstr "Valiutų atnaujinimo papildinys"
 
-#: common/setting/system.py:246
+#: common/setting/system.py:259
 msgid "Currency update plugin to use"
 msgstr "Naudotinas valiutų atnaujinimo papildinys"
 
-#: common/setting/system.py:251
+#: common/setting/system.py:264
 msgid "Download from URL"
 msgstr "Atsisiųsti iš URL"
 
-#: common/setting/system.py:252
+#: common/setting/system.py:265
 msgid "Allow download of remote images and files from external URL"
 msgstr "Leisti atsisiųsti išorinius paveikslėlius ir failus iš nuorodų"
 
-#: common/setting/system.py:257
+#: common/setting/system.py:270
 msgid "Download Size Limit"
 msgstr "Atsisiuntimo dydžio riba"
 
-#: common/setting/system.py:258
+#: common/setting/system.py:271
 msgid "Maximum allowable download size for remote image"
 msgstr "Didžiausias leistinas atsisiunčiamo paveikslėlio dydis"
 
-#: common/setting/system.py:264
+#: common/setting/system.py:277
 msgid "User-agent used to download from URL"
 msgstr "Naudojamas user-agent atsisiuntimui iš URL"
 
-#: common/setting/system.py:266
+#: common/setting/system.py:279
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
 msgstr "Leisti pakeisti user-agent, naudojamą atsisiunčiant paveikslėlius ir failus iš išorinio URL (palikite tuščią, jei naudoti numatytąjį)"
 
-#: common/setting/system.py:271
+#: common/setting/system.py:284
 msgid "Strict URL Validation"
 msgstr "Griežtas URL tikrinimas"
 
-#: common/setting/system.py:272
+#: common/setting/system.py:285
 msgid "Require schema specification when validating URLs"
 msgstr "Reikalauti schemos nurodymo tikrinant URL"
 
-#: common/setting/system.py:277
+#: common/setting/system.py:290
 msgid "Update Check Interval"
 msgstr "Atnaujinimų tikrinimo intervalas"
 
-#: common/setting/system.py:278
+#: common/setting/system.py:291
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "Kaip dažnai tikrinti atnaujinimus (nulis – išjungti)"
 
-#: common/setting/system.py:284
+#: common/setting/system.py:297
 msgid "Automatic Backup"
 msgstr "Automatinė atsarginė kopija"
 
-#: common/setting/system.py:285
+#: common/setting/system.py:298
 msgid "Enable automatic backup of database and media files"
 msgstr "Įjungti automatinį duomenų bazės ir failų atsarginį kopijavimą"
 
-#: common/setting/system.py:290
+#: common/setting/system.py:303
 msgid "Auto Backup Interval"
 msgstr "Automatinio atsarginės kopijos kūrimo intervalas"
 
-#: common/setting/system.py:291
+#: common/setting/system.py:304
 msgid "Specify number of days between automated backup events"
 msgstr "Nurodykite dienų skaičių tarp atsarginių kopijų kūrimo"
 
-#: common/setting/system.py:297
+#: common/setting/system.py:310
 msgid "Task Deletion Interval"
 msgstr "Užduočių ištrynimo intervalas"
 
-#: common/setting/system.py:299
+#: common/setting/system.py:312
 msgid "Background task results will be deleted after specified number of days"
 msgstr "Foninių užduočių rezultatai bus ištrinti po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:306
+#: common/setting/system.py:319
 msgid "Error Log Deletion Interval"
 msgstr "Klaidų žurnalo ištrynimo intervalas"
 
-#: common/setting/system.py:307
+#: common/setting/system.py:320
 msgid "Error logs will be deleted after specified number of days"
 msgstr "Klaidų žurnalai bus ištrinti po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:313
+#: common/setting/system.py:326
 msgid "Notification Deletion Interval"
 msgstr "Pranešimų ištrynimo intervalas"
 
-#: common/setting/system.py:315
+#: common/setting/system.py:328
 msgid "User notifications will be deleted after specified number of days"
 msgstr "Vartotojų pranešimai bus ištrinti po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:322
+#: common/setting/system.py:335
 msgid "Barcode Support"
 msgstr "Brūkšninių kodų palaikymas"
 
-#: common/setting/system.py:323
+#: common/setting/system.py:336
 msgid "Enable barcode scanner support in the web interface"
 msgstr "Įjungti brūkšninių kodų skaitytuvo palaikymą žiniatinklio sąsajoje"
 
-#: common/setting/system.py:328
+#: common/setting/system.py:341
 msgid "Store Barcode Results"
 msgstr "Išsaugoti brūkšninių kodų nuskaitymus"
 
-#: common/setting/system.py:329
+#: common/setting/system.py:342
 msgid "Store barcode scan results in the database"
 msgstr "Brūkšninių kodų nuskaitymo rezultatus išsaugoti duomenų bazėje"
 
-#: common/setting/system.py:334
+#: common/setting/system.py:347
 msgid "Barcode Scans Maximum Count"
 msgstr "Maksimalus nuskaitymų skaičius"
 
-#: common/setting/system.py:335
+#: common/setting/system.py:348
 msgid "Maximum number of barcode scan results to store"
 msgstr "Maksimalus saugomų brūkšninių kodų nuskaitymų skaičius"
 
-#: common/setting/system.py:340
+#: common/setting/system.py:353
 msgid "Barcode Input Delay"
 msgstr "Brūkšninio kodo įvesties delsimas"
 
-#: common/setting/system.py:341
+#: common/setting/system.py:354
 msgid "Barcode input processing delay time"
 msgstr "Brūkšninio kodo įvesties apdorojimo delsos laikas"
 
-#: common/setting/system.py:347
+#: common/setting/system.py:360
 msgid "Barcode Webcam Support"
 msgstr "Brūkšninių kodų palaikymas per kamerą"
 
-#: common/setting/system.py:348
+#: common/setting/system.py:361
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "Leisti brūkšninių kodų nuskaitymą per naršyklės kamerą"
 
-#: common/setting/system.py:353
+#: common/setting/system.py:366
 msgid "Barcode Show Data"
 msgstr "Rodyti brūkšninio kodo duomenis"
 
-#: common/setting/system.py:354
+#: common/setting/system.py:367
 msgid "Display barcode data in browser as text"
 msgstr "Rodyti brūkšninio kodo duomenis naršyklėje kaip tekstą"
 
-#: common/setting/system.py:359
+#: common/setting/system.py:372
 msgid "Barcode Generation Plugin"
 msgstr "Brūkšninio kodo generavimo papildinys"
 
-#: common/setting/system.py:360
+#: common/setting/system.py:373
 msgid "Plugin to use for internal barcode data generation"
 msgstr "Papildinys vidiniam brūkšninių kodų generavimui"
 
-#: common/setting/system.py:365
+#: common/setting/system.py:378
 msgid "Part Revisions"
 msgstr "Detalių versijos"
 
-#: common/setting/system.py:366
+#: common/setting/system.py:379
 msgid "Enable revision field for Part"
 msgstr "Įjungti versijos lauką detalėms"
 
-#: common/setting/system.py:371
+#: common/setting/system.py:384
 msgid "Assembly Revision Only"
 msgstr "Tik surinkimo versijoms"
 
-#: common/setting/system.py:372
+#: common/setting/system.py:385
 msgid "Only allow revisions for assembly parts"
 msgstr "Leisti versijas tik surenkamoms detalėms"
 
-#: common/setting/system.py:377
+#: common/setting/system.py:390
 msgid "Allow Deletion from Assembly"
 msgstr "Leisti pašalinti iš surinkimo"
 
-#: common/setting/system.py:378
+#: common/setting/system.py:391
 msgid "Allow deletion of parts which are used in an assembly"
 msgstr "Leisti ištrinti detales, kurios yra naudojamos surinkimuose"
 
-#: common/setting/system.py:383
+#: common/setting/system.py:396
 msgid "IPN Regex"
 msgstr "IPN reguliarioji išraiška"
 
-#: common/setting/system.py:384
+#: common/setting/system.py:397
 msgid "Regular expression pattern for matching Part IPN"
 msgstr "Reguliariosios išraiškos šablonas detalių IPN tikrinimui"
 
-#: common/setting/system.py:387
+#: common/setting/system.py:400
 msgid "Allow Duplicate IPN"
 msgstr "Leisti pasikartojančius IPN"
 
-#: common/setting/system.py:388
+#: common/setting/system.py:401
 msgid "Allow multiple parts to share the same IPN"
 msgstr "Leisti kelioms detalėms turėti tą patį IPN"
 
-#: common/setting/system.py:393
+#: common/setting/system.py:406
 msgid "Allow Editing IPN"
 msgstr "Leisti redaguoti IPN"
 
-#: common/setting/system.py:394
+#: common/setting/system.py:407
 msgid "Allow changing the IPN value while editing a part"
 msgstr "Leisti keisti IPN reikšmę redaguojant detalę"
 
-#: common/setting/system.py:399
+#: common/setting/system.py:412
 msgid "Copy Part BOM Data"
 msgstr "Kopijuoti detalės BOM duomenis"
 
-#: common/setting/system.py:400
+#: common/setting/system.py:413
 msgid "Copy BOM data by default when duplicating a part"
 msgstr "Kopijuoti BOM duomenis pagal nutylėjimą dubliuojant detalę"
 
-#: common/setting/system.py:405
+#: common/setting/system.py:418
 msgid "Copy Part Parameter Data"
 msgstr "Kopijuoti detalės parametrus"
 
-#: common/setting/system.py:406
+#: common/setting/system.py:419
 msgid "Copy parameter data by default when duplicating a part"
 msgstr "Kopijuoti parametrų duomenis pagal nutylėjimą dubliuojant detalę"
 
-#: common/setting/system.py:411
+#: common/setting/system.py:424
 msgid "Copy Part Test Data"
 msgstr "Kopijuoti detalės testavimo duomenis"
 
-#: common/setting/system.py:412
+#: common/setting/system.py:425
 msgid "Copy test data by default when duplicating a part"
 msgstr "Kopijuoti testavimo duomenis pagal nutylėjimą dubliuojant detalę"
 
-#: common/setting/system.py:417
+#: common/setting/system.py:430
 msgid "Copy Category Parameter Templates"
 msgstr "Kopijuoti kategorijų parametrų šablonus"
 
-#: common/setting/system.py:418
+#: common/setting/system.py:431
 msgid "Copy category parameter templates when creating a part"
 msgstr "Kopijuoti kategorijų parametrų šablonus kuriant detalę"
 
-#: common/setting/system.py:423 part/models.py:4088 report/models.py:357
-#: report/models.py:561 report/serializers.py:90 report/serializers.py:131
+#: common/setting/system.py:436 part/models.py:4088 report/models.py:362
+#: report/models.py:628 report/serializers.py:95 report/serializers.py:136
 #: stock/serializers.py:247
 msgid "Template"
 msgstr "Šablonas"
 
-#: common/setting/system.py:424
+#: common/setting/system.py:437
 msgid "Parts are templates by default"
 msgstr "Detalės pagal nutylėjimą yra šablonai"
 
-#: common/setting/system.py:430
+#: common/setting/system.py:443
 msgid "Parts can be assembled from other components by default"
 msgstr "Detalės pagal nutylėjimą gali būti surenkamos iš kitų komponentų"
 
-#: common/setting/system.py:435 part/models.py:1217 part/serializers.py:1781
-#: part/serializers.py:1787
+#: common/setting/system.py:448 part/models.py:1217 part/serializers.py:1748
+#: part/serializers.py:1754
 msgid "Component"
 msgstr "Komponentas"
 
-#: common/setting/system.py:436
+#: common/setting/system.py:449
 msgid "Parts can be used as sub-components by default"
 msgstr "Detalės pagal nutylėjimą gali būti naudojamos kaip sub-komponentai"
 
-#: common/setting/system.py:441 part/models.py:1235
+#: common/setting/system.py:454 part/models.py:1235
 msgid "Purchaseable"
 msgstr "Galima įsigyti"
 
-#: common/setting/system.py:442
+#: common/setting/system.py:455
 msgid "Parts are purchaseable by default"
 msgstr "Detalės pagal nutylėjimą gali būti įsigyjamos"
 
-#: common/setting/system.py:447 part/models.py:1241 stock/api.py:592
+#: common/setting/system.py:460 part/models.py:1241 stock/api.py:607
 msgid "Salable"
 msgstr "Parduodama"
 
-#: common/setting/system.py:448
+#: common/setting/system.py:461
 msgid "Parts are salable by default"
 msgstr "Detalės pagal nutylėjimą gali būti parduodamos"
 
-#: common/setting/system.py:454
+#: common/setting/system.py:467
 msgid "Parts are trackable by default"
 msgstr "Detalės pagal nutylėjimą gali būti sekamos"
 
-#: common/setting/system.py:459 part/models.py:1257
+#: common/setting/system.py:472 part/models.py:1257
 msgid "Virtual"
 msgstr "Virtuali"
 
-#: common/setting/system.py:460
+#: common/setting/system.py:473
 msgid "Parts are virtual by default"
 msgstr "Detalės pagal nutylėjimą yra virtualios"
 
-#: common/setting/system.py:465
+#: common/setting/system.py:478
 msgid "Show related parts"
 msgstr "Rodyti susijusias detales"
 
-#: common/setting/system.py:466
+#: common/setting/system.py:479
 msgid "Display related parts for a part"
 msgstr "Rodyti susijusias detales pasirinktai detalei"
 
-#: common/setting/system.py:471
+#: common/setting/system.py:484
 msgid "Initial Stock Data"
 msgstr "Pradiniai atsargų duomenys"
 
-#: common/setting/system.py:472
+#: common/setting/system.py:485
 msgid "Allow creation of initial stock when adding a new part"
 msgstr "Leisti sukurti pradinę atsargą pridedant naują detalę"
 
-#: common/setting/system.py:477
+#: common/setting/system.py:490
 msgid "Initial Supplier Data"
 msgstr "Pradiniai tiekėjo duomenys"
 
-#: common/setting/system.py:479
+#: common/setting/system.py:492
 msgid "Allow creation of initial supplier data when adding a new part"
 msgstr "Leisti sukurti pradinius tiekėjo duomenis pridedant naują detalę"
 
-#: common/setting/system.py:485
+#: common/setting/system.py:498
 msgid "Part Name Display Format"
 msgstr "Detalės pavadinimo rodymo formatas"
 
-#: common/setting/system.py:486
+#: common/setting/system.py:499
 msgid "Format to display the part name"
 msgstr "Detalės pavadinimo rodymo formatas"
 
-#: common/setting/system.py:492
+#: common/setting/system.py:505
 msgid "Part Category Default Icon"
 msgstr "Detalės kategorijos numatytoji piktograma"
 
-#: common/setting/system.py:493
+#: common/setting/system.py:506
 msgid "Part category default icon (empty means no icon)"
 msgstr "Detalės kategorijos numatytoji piktograma (tuščia reiškia, kad nenaudojama)"
 
-#: common/setting/system.py:498
+#: common/setting/system.py:511
 msgid "Enforce Parameter Units"
 msgstr "Reikalauti parametrų vienetų"
 
-#: common/setting/system.py:500
+#: common/setting/system.py:513
 msgid "If units are provided, parameter values must match the specified units"
 msgstr "Jei nurodyti vienetai, parametro reikšmės turi atitikti nurodytus vienetus"
 
-#: common/setting/system.py:506
+#: common/setting/system.py:519
 msgid "Minimum Pricing Decimal Places"
 msgstr "Mažiausias kainos dešimtainių skaičių kiekis"
 
-#: common/setting/system.py:508
+#: common/setting/system.py:521
 msgid "Minimum number of decimal places to display when rendering pricing data"
 msgstr "Minimalus dešimtainių skaitmenų skaičius rodomas kainodaros duomenyse"
 
-#: common/setting/system.py:519
+#: common/setting/system.py:532
 msgid "Maximum Pricing Decimal Places"
 msgstr "Didžiausias kainos dešimtainių skaičių kiekis"
 
-#: common/setting/system.py:521
+#: common/setting/system.py:534
 msgid "Maximum number of decimal places to display when rendering pricing data"
 msgstr "Didžiausias dešimtainių skaitmenų skaičius rodomas kainodaros duomenyse"
 
-#: common/setting/system.py:532
+#: common/setting/system.py:545
 msgid "Use Supplier Pricing"
 msgstr "Naudoti tiekėjo kainas"
 
-#: common/setting/system.py:534
+#: common/setting/system.py:547
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr "Įtraukti tiekėjų kainų lygius į bendrą kainodaros skaičiavimą"
 
-#: common/setting/system.py:540
+#: common/setting/system.py:553
 msgid "Purchase History Override"
 msgstr "Pirkimų istorija keičia kainas"
 
-#: common/setting/system.py:542
+#: common/setting/system.py:555
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr "Istorinės pirkimo kainos pakeičia tiekėjo kainų lygius"
 
-#: common/setting/system.py:548
+#: common/setting/system.py:561
 msgid "Use Stock Item Pricing"
 msgstr "Naudoti atsargų kainas"
 
-#: common/setting/system.py:550
+#: common/setting/system.py:563
 msgid "Use pricing from manually entered stock data for pricing calculations"
 msgstr "Naudoti kainas iš rankiniu būdu įvestų atsargų duomenų kainodaros skaičiavimui"
 
-#: common/setting/system.py:556
+#: common/setting/system.py:569
 msgid "Stock Item Pricing Age"
 msgstr "Atsargų kainų galiojimo trukmė"
 
-#: common/setting/system.py:558
+#: common/setting/system.py:571
 msgid "Exclude stock items older than this number of days from pricing calculations"
 msgstr "Pašalinti senesnes nei nurodytas dienų skaičius atsargas iš kainodaros skaičiavimų"
 
-#: common/setting/system.py:565
+#: common/setting/system.py:578
 msgid "Use Variant Pricing"
 msgstr "Naudoti variantų kainas"
 
-#: common/setting/system.py:566
+#: common/setting/system.py:579
 msgid "Include variant pricing in overall pricing calculations"
 msgstr "Įtraukti variantų kainas į bendrą kainodaros skaičiavimą"
 
-#: common/setting/system.py:571
+#: common/setting/system.py:584
 msgid "Active Variants Only"
 msgstr "Tik aktyvūs variantai"
 
-#: common/setting/system.py:573
+#: common/setting/system.py:586
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr "Naudoti tik aktyvius detalių variantus kainodarai"
 
-#: common/setting/system.py:579
+#: common/setting/system.py:592
 msgid "Pricing Rebuild Interval"
 msgstr "Kainodaros atnaujinimo intervalas"
 
-#: common/setting/system.py:580
+#: common/setting/system.py:593
 msgid "Number of days before part pricing is automatically updated"
 msgstr "Dienų skaičius iki automatinio detalių kainų atnaujinimo"
 
-#: common/setting/system.py:586
+#: common/setting/system.py:599
 msgid "Internal Prices"
 msgstr "Vidinės kainos"
 
-#: common/setting/system.py:587
+#: common/setting/system.py:600
 msgid "Enable internal prices for parts"
 msgstr "Įjungti vidines kainas detalėms"
 
-#: common/setting/system.py:592
+#: common/setting/system.py:605
 msgid "Internal Price Override"
 msgstr "Vidinės kainos viršenybė"
 
-#: common/setting/system.py:594
+#: common/setting/system.py:607
 msgid "If available, internal prices override price range calculations"
 msgstr "Jei yra, vidinės kainos pakeičia bendrus kainodaros skaičiavimus"
 
-#: common/setting/system.py:600
+#: common/setting/system.py:613
 msgid "Enable label printing"
 msgstr "Įjungti etikečių spausdinimą"
 
-#: common/setting/system.py:601
+#: common/setting/system.py:614
 msgid "Enable label printing from the web interface"
 msgstr "Įjungti etikečių spausdinimą iš žiniatinklio sąsajos"
 
-#: common/setting/system.py:606
+#: common/setting/system.py:619
 msgid "Label Image DPI"
 msgstr "Etiketės vaizdo DPI"
 
-#: common/setting/system.py:608
+#: common/setting/system.py:621
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr "DPI raiška generuojant vaizdus etikečių spausdinimo papildiniams"
 
-#: common/setting/system.py:614
+#: common/setting/system.py:627
 msgid "Enable Reports"
 msgstr "Įjungti ataskaitas"
 
-#: common/setting/system.py:615
+#: common/setting/system.py:628
 msgid "Enable generation of reports"
 msgstr "Įjungti ataskaitų generavimą"
 
-#: common/setting/system.py:620
+#: common/setting/system.py:633
 msgid "Debug Mode"
 msgstr "Derinimo režimas"
 
-#: common/setting/system.py:621
+#: common/setting/system.py:634
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Generuoti ataskaitas derinimo režimu (HTML išvestis)"
 
-#: common/setting/system.py:626
+#: common/setting/system.py:639
 msgid "Log Report Errors"
 msgstr "Registruoti ataskaitų klaidas"
 
-#: common/setting/system.py:627
+#: common/setting/system.py:640
 msgid "Log errors which occur when generating reports"
 msgstr "Registruoti klaidas, įvykusias generuojant ataskaitas"
 
-#: common/setting/system.py:632 plugin/builtin/labels/label_sheet.py:29
-#: report/models.py:365
+#: common/setting/system.py:645 plugin/builtin/labels/label_sheet.py:29
+#: report/models.py:370
 msgid "Page Size"
 msgstr "Puslapio dydis"
 
-#: common/setting/system.py:633
+#: common/setting/system.py:646
 msgid "Default page size for PDF reports"
 msgstr "Numatytasis PDF ataskaitų puslapio dydis"
 
-#: common/setting/system.py:638
+#: common/setting/system.py:651
 msgid "Globally Unique Serials"
 msgstr "Globaliai unikalūs serijiniai numeriai"
 
-#: common/setting/system.py:639
+#: common/setting/system.py:652
 msgid "Serial numbers for stock items must be globally unique"
 msgstr "Atsargų serijos numeriai turi būti globaliai unikalūs"
 
-#: common/setting/system.py:644
+#: common/setting/system.py:657
 msgid "Delete Depleted Stock"
 msgstr "Ištrinti išnaudotas atsargas"
 
-#: common/setting/system.py:645
+#: common/setting/system.py:658
 msgid "Determines default behavior when a stock item is depleted"
 msgstr "Nustato numatytą elgseną, kai atsargos yra išnaudotos"
 
-#: common/setting/system.py:650
+#: common/setting/system.py:663
 msgid "Batch Code Template"
 msgstr "Partijos kodo šablonas"
 
-#: common/setting/system.py:651
+#: common/setting/system.py:664
 msgid "Template for generating default batch codes for stock items"
 msgstr "Šablonas numatytiesiems atsargų partijos kodams generuoti"
 
-#: common/setting/system.py:655
+#: common/setting/system.py:668
 msgid "Stock Expiry"
 msgstr "Atsargų galiojimas"
 
-#: common/setting/system.py:656
+#: common/setting/system.py:669
 msgid "Enable stock expiry functionality"
 msgstr "Įjungti atsargų galiojimo funkcionalumą"
 
-#: common/setting/system.py:661
+#: common/setting/system.py:674
 msgid "Sell Expired Stock"
 msgstr "Parduoti pasibaigusias galioti atsargas"
 
-#: common/setting/system.py:662
+#: common/setting/system.py:675
 msgid "Allow sale of expired stock"
 msgstr "Leisti parduoti pasibaigusias galioti atsargas"
 
-#: common/setting/system.py:667
+#: common/setting/system.py:680
 msgid "Stock Stale Time"
 msgstr "Atsargų senėjimo laikas"
 
-#: common/setting/system.py:669
+#: common/setting/system.py:682
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Dienų skaičius, po kurio atsargos laikomos pasenusiomis iki jų galiojimo pabaigos"
 
-#: common/setting/system.py:676
+#: common/setting/system.py:689
 msgid "Build Expired Stock"
 msgstr "Naudoti pasibaigusias galioti atsargas gamyboje"
 
-#: common/setting/system.py:677
+#: common/setting/system.py:690
 msgid "Allow building with expired stock"
 msgstr "Leisti naudoti pasibaigusias galioti atsargas gamyboje"
 
-#: common/setting/system.py:682
+#: common/setting/system.py:695
 msgid "Stock Ownership Control"
 msgstr "Atsargų nuosavybės kontrolė"
 
-#: common/setting/system.py:683
+#: common/setting/system.py:696
 msgid "Enable ownership control over stock locations and items"
 msgstr "Įjungti atsargų vietų ir vienetų nuosavybės kontrolę"
 
-#: common/setting/system.py:688
+#: common/setting/system.py:701
 msgid "Stock Location Default Icon"
 msgstr "Atsargų vietos numatytoji piktograma"
 
-#: common/setting/system.py:689
+#: common/setting/system.py:702
 msgid "Stock location default icon (empty means no icon)"
 msgstr "Atsargų vietos numatytoji piktograma (tuščia reiškia nenaudojama)"
 
-#: common/setting/system.py:694
+#: common/setting/system.py:707
 msgid "Show Installed Stock Items"
 msgstr "Rodyti sumontuotas atsargas"
 
-#: common/setting/system.py:695
+#: common/setting/system.py:708
 msgid "Display installed stock items in stock tables"
 msgstr "Rodyti sumontuotas atsargas atsargų lentelėse"
 
-#: common/setting/system.py:700
+#: common/setting/system.py:713
 msgid "Check BOM when installing items"
 msgstr "Tikrinti BOM montuojant atsargas"
 
-#: common/setting/system.py:702
+#: common/setting/system.py:715
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr "Sumontuotos atsargos turi būti pirminio gaminio BOM"
 
-#: common/setting/system.py:708
+#: common/setting/system.py:721
 msgid "Allow Out of Stock Transfer"
 msgstr "Leisti perkelti neturimas atsargas"
 
-#: common/setting/system.py:710
+#: common/setting/system.py:723
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr "Leisti perkelti atsargas tarp vietų net jei jų nėra atsargose"
 
-#: common/setting/system.py:716
+#: common/setting/system.py:729
 msgid "Build Order Reference Pattern"
 msgstr "Gamybos užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:717
+#: common/setting/system.py:730
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Privalomas šablonas gamybos užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:722 common/setting/system.py:782
-#: common/setting/system.py:802 common/setting/system.py:838
+#: common/setting/system.py:735 common/setting/system.py:795
+#: common/setting/system.py:815 common/setting/system.py:851
 msgid "Require Responsible Owner"
 msgstr "Reikalauti atsakingo savininko"
 
-#: common/setting/system.py:723 common/setting/system.py:783
-#: common/setting/system.py:803 common/setting/system.py:839
+#: common/setting/system.py:736 common/setting/system.py:796
+#: common/setting/system.py:816 common/setting/system.py:852
 msgid "A responsible owner must be assigned to each order"
 msgstr "Kiekvienam užsakymui turi būti priskirtas atsakingas savininkas"
 
-#: common/setting/system.py:728
+#: common/setting/system.py:741
 msgid "Require Active Part"
 msgstr "Reikalauti aktyvios detalės"
 
-#: common/setting/system.py:729
+#: common/setting/system.py:742
 msgid "Prevent build order creation for inactive parts"
 msgstr "Neleidžia kurti gamybos užsakymų neaktyvioms detalėms"
 
-#: common/setting/system.py:734
+#: common/setting/system.py:747
 msgid "Require Locked Part"
 msgstr "Reikalauti užrakintos detalės"
 
-#: common/setting/system.py:735
+#: common/setting/system.py:748
 msgid "Prevent build order creation for unlocked parts"
 msgstr "Neleidžia kurti gamybos užsakymų neužrakintoms detalėms"
 
-#: common/setting/system.py:740
+#: common/setting/system.py:753
 msgid "Require Valid BOM"
 msgstr "Reikalauti galiojančio komplektavimo sąrašo (BOM)"
 
-#: common/setting/system.py:741
+#: common/setting/system.py:754
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr "Neleidžia kurti gamybos užsakymų, kol BOM nėra patvirtintas"
 
-#: common/setting/system.py:746
+#: common/setting/system.py:759
 msgid "Require Closed Child Orders"
 msgstr "Reikalauti uždarytų antrinių užsakymų"
 
-#: common/setting/system.py:748
+#: common/setting/system.py:761
 msgid "Prevent build order completion until all child orders are closed"
 msgstr "Neleidžia užbaigti gamybos užsakymo, kol visi antriniai užsakymai neuždaryti"
 
-#: common/setting/system.py:754
+#: common/setting/system.py:767
 msgid "External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:755
+#: common/setting/system.py:768
 msgid "Enable external build order functionality"
 msgstr ""
 
-#: common/setting/system.py:760
+#: common/setting/system.py:773
 msgid "Block Until Tests Pass"
 msgstr "Blokuoti, kol testai bus išlaikyti"
 
-#: common/setting/system.py:762
+#: common/setting/system.py:775
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr "Neleidžia užbaigti gaminių, kol visi privalomi testai nėra išlaikyti"
 
-#: common/setting/system.py:768
+#: common/setting/system.py:781
 msgid "Enable Return Orders"
 msgstr "Įjungti grąžinimo užsakymus"
 
-#: common/setting/system.py:769
+#: common/setting/system.py:782
 msgid "Enable return order functionality in the user interface"
 msgstr "Įjungia grąžinimo užsakymų funkciją vartotojo sąsajoje"
 
-#: common/setting/system.py:774
+#: common/setting/system.py:787
 msgid "Return Order Reference Pattern"
 msgstr "Grąžinimo užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:776
+#: common/setting/system.py:789
 msgid "Required pattern for generating Return Order reference field"
 msgstr "Būtinas šablonas grąžinimo užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:788
+#: common/setting/system.py:801
 msgid "Edit Completed Return Orders"
 msgstr "Redaguoti užbaigtus grąžinimo užsakymus"
 
-#: common/setting/system.py:790
+#: common/setting/system.py:803
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Leisti redaguoti grąžinimo užsakymus po jų užbaigimo"
 
-#: common/setting/system.py:796
+#: common/setting/system.py:809
 msgid "Sales Order Reference Pattern"
 msgstr "Pardavimo užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:797
+#: common/setting/system.py:810
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Būtinas šablonas pardavimo užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:808
+#: common/setting/system.py:821
 msgid "Sales Order Default Shipment"
 msgstr "Numatytasis siuntinys pardavimo užsakymui"
 
-#: common/setting/system.py:809
+#: common/setting/system.py:822
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Leisti automatiškai sukurti siuntinį kartu su pardavimo užsakymu"
 
-#: common/setting/system.py:814
+#: common/setting/system.py:827
 msgid "Edit Completed Sales Orders"
 msgstr "Redaguoti užbaigtus pardavimo užsakymus"
 
-#: common/setting/system.py:816
+#: common/setting/system.py:829
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Leisti redaguoti pardavimo užsakymus po jų išsiuntimo arba užbaigimo"
 
-#: common/setting/system.py:822
+#: common/setting/system.py:835
 msgid "Mark Shipped Orders as Complete"
 msgstr "Pažymėti išsiųstus užsakymus kaip užbaigtus"
 
-#: common/setting/system.py:824
+#: common/setting/system.py:837
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr "Pardavimo užsakymai, pažymėti kaip išsiųsti, bus automatiškai užbaigti, praleidžiant būseną „išsiųsta“"
 
-#: common/setting/system.py:830
+#: common/setting/system.py:843
 msgid "Purchase Order Reference Pattern"
 msgstr "Pirkimo užsakymo nuorodos šablonas"
 
-#: common/setting/system.py:832
+#: common/setting/system.py:845
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Būtinas šablonas pirkimo užsakymo nuorodos laukui generuoti"
 
-#: common/setting/system.py:844
+#: common/setting/system.py:857
 msgid "Edit Completed Purchase Orders"
 msgstr "Redaguoti užbaigtus pirkimo užsakymus"
 
-#: common/setting/system.py:846
+#: common/setting/system.py:859
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Leisti redaguoti pirkimo užsakymus po jų išsiuntimo arba užbaigimo"
 
-#: common/setting/system.py:852
+#: common/setting/system.py:865
 msgid "Convert Currency"
 msgstr "Konvertuoti valiutą"
 
-#: common/setting/system.py:853
+#: common/setting/system.py:866
 msgid "Convert item value to base currency when receiving stock"
 msgstr "Konvertuoti prekių vertę į pagrindinę valiutą priimant prekes"
 
-#: common/setting/system.py:858
+#: common/setting/system.py:871
 msgid "Auto Complete Purchase Orders"
 msgstr "Automatiškai užbaigti pirkimo užsakymus"
 
-#: common/setting/system.py:860
+#: common/setting/system.py:873
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "Automatiškai pažymėti pirkimo užsakymus kaip užbaigtus, kai visos eilutės yra gautos"
 
-#: common/setting/system.py:867
+#: common/setting/system.py:880
 msgid "Enable password forgot"
 msgstr "Įjungti pamiršto slaptažodžio funkciją"
 
-#: common/setting/system.py:868
+#: common/setting/system.py:881
 msgid "Enable password forgot function on the login pages"
 msgstr "Leisti naudoti pamiršto slaptažodžio funkciją prisijungimo puslapyje"
 
-#: common/setting/system.py:873
+#: common/setting/system.py:886
 msgid "Enable registration"
 msgstr "Įjungti registraciją"
 
-#: common/setting/system.py:874
+#: common/setting/system.py:887
 msgid "Enable self-registration for users on the login pages"
 msgstr "Leisti vartotojams savarankiškai registruotis prisijungimo puslapyje"
 
-#: common/setting/system.py:879
+#: common/setting/system.py:892
 msgid "Enable SSO"
 msgstr "Įjungti vieningą prisijungimą (SSO)"
 
-#: common/setting/system.py:880
+#: common/setting/system.py:893
 msgid "Enable SSO on the login pages"
 msgstr "Įjungti vieningą prisijungimą (SSO) prisijungimo puslapyje"
 
-#: common/setting/system.py:885
+#: common/setting/system.py:898
 msgid "Enable SSO registration"
 msgstr "Įjungti registraciją per SSO"
 
-#: common/setting/system.py:887
+#: common/setting/system.py:900
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Leisti vartotojams registruotis per SSO prisijungimo puslapyje"
 
-#: common/setting/system.py:893
+#: common/setting/system.py:906
 msgid "Enable SSO group sync"
 msgstr "Įjungti SSO grupių sinchronizavimą"
 
-#: common/setting/system.py:895
+#: common/setting/system.py:908
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr "Įjungti InvenTree grupių sinchronizavimą su tapatybės tiekėjo (IdP) grupėmis"
 
-#: common/setting/system.py:901
+#: common/setting/system.py:914
 msgid "SSO group key"
 msgstr "SSO grupės raktas"
 
-#: common/setting/system.py:902
+#: common/setting/system.py:915
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr "Grupių atributo pavadinimas, kurį pateikia tapatybės tiekėjas (IdP)"
 
-#: common/setting/system.py:907
+#: common/setting/system.py:920
 msgid "SSO group map"
 msgstr "SSO grupių susiejimas"
 
-#: common/setting/system.py:909
+#: common/setting/system.py:922
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr "SSO grupių susiejimas su vietinėmis InvenTree grupėmis. Jei vietinė grupė neegzistuoja, ji bus sukurta."
 
-#: common/setting/system.py:915
+#: common/setting/system.py:928
 msgid "Remove groups outside of SSO"
 msgstr "Pašalinti grupes, nepriklausančias SSO"
 
-#: common/setting/system.py:917
+#: common/setting/system.py:930
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr "Ar pašalinti vartotojui priskirtas grupes, jei jos nėra pateikiamos per IdP. Išjungus gali kilti saugumo problemų"
 
-#: common/setting/system.py:923
+#: common/setting/system.py:936
 msgid "Email required"
 msgstr "El. paštas privalomas"
 
-#: common/setting/system.py:924
+#: common/setting/system.py:937
 msgid "Require user to supply mail on signup"
 msgstr "Reikalauti vartotojo el. pašto registracijos metu"
 
-#: common/setting/system.py:929
+#: common/setting/system.py:942
 msgid "Auto-fill SSO users"
 msgstr "Automatiškai užpildyti SSO naudotojų duomenis"
 
-#: common/setting/system.py:930
+#: common/setting/system.py:943
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Automatiškai užpildyti vartotojo informaciją pagal SSO paskyros duomenis"
 
-#: common/setting/system.py:935
+#: common/setting/system.py:948
 msgid "Mail twice"
 msgstr "Įvesti el. paštą du kartus"
 
-#: common/setting/system.py:936
+#: common/setting/system.py:949
 msgid "On signup ask users twice for their mail"
 msgstr "Registracijos metu prašyti vartotojų du kartus įvesti el. paštą"
 
-#: common/setting/system.py:941
+#: common/setting/system.py:954
 msgid "Password twice"
 msgstr "Įvesti slaptažodį du kartus"
 
-#: common/setting/system.py:942
+#: common/setting/system.py:955
 msgid "On signup ask users twice for their password"
 msgstr "Registracijos metu prašyti vartotojų du kartus įvesti slaptažodį"
 
-#: common/setting/system.py:947
+#: common/setting/system.py:960
 msgid "Allowed domains"
 msgstr "Leidžiami domenai"
 
-#: common/setting/system.py:949
+#: common/setting/system.py:962
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Riboti registraciją tik tam tikriems domenams (atskiriama kableliais, prasideda @)"
 
-#: common/setting/system.py:955
+#: common/setting/system.py:968
 msgid "Group on signup"
 msgstr "Grupė registruojantis"
 
-#: common/setting/system.py:957
+#: common/setting/system.py:970
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr "Grupė, į kurią priskiriami nauji vartotojai registracijos metu. Jei įjungta SSO grupių sinchronizacija, ši grupė nustatoma tik tuo atveju, jei grupė negaunama iš IdP."
 
-#: common/setting/system.py:963
+#: common/setting/system.py:976
 msgid "Enforce MFA"
 msgstr "Reikalauti kelių veiksnių autentifikacijos (MFA)"
 
-#: common/setting/system.py:964
+#: common/setting/system.py:977
 msgid "Users must use multifactor security."
 msgstr "Vartotojai privalo naudoti kelių veiksnių apsaugą."
 
-#: common/setting/system.py:969
+#: common/setting/system.py:982
 msgid "Check plugins on startup"
 msgstr "Tikrinti įskiepius paleidimo metu"
 
-#: common/setting/system.py:971
+#: common/setting/system.py:984
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Tikrina, ar visi įskiepiai įdiegti paleidžiant – naudoti konteinerių aplinkose"
 
-#: common/setting/system.py:978
+#: common/setting/system.py:991
 msgid "Check for plugin updates"
 msgstr "Tikrinti įskiepių atnaujinimus"
 
-#: common/setting/system.py:979
+#: common/setting/system.py:992
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr "Įjungti periodinius įdiegtų įskiepių atnaujinimų tikrinimus"
 
-#: common/setting/system.py:985
+#: common/setting/system.py:998
 msgid "Enable URL integration"
 msgstr "Įjungti URL integravimą"
 
-#: common/setting/system.py:986
+#: common/setting/system.py:999
 msgid "Enable plugins to add URL routes"
 msgstr "Leisti įskiepiams pridėti URL maršrutus"
 
-#: common/setting/system.py:992
+#: common/setting/system.py:1005
 msgid "Enable navigation integration"
 msgstr "Įjungti navigacijos integraciją"
 
-#: common/setting/system.py:993
+#: common/setting/system.py:1006
 msgid "Enable plugins to integrate into navigation"
 msgstr "Leisti įskiepiams integruotis į navigaciją"
 
-#: common/setting/system.py:999
+#: common/setting/system.py:1012
 msgid "Enable app integration"
 msgstr "Įjungti programų integraciją"
 
-#: common/setting/system.py:1000
+#: common/setting/system.py:1013
 msgid "Enable plugins to add apps"
 msgstr "Leisti įskiepiams pridėti programas"
 
-#: common/setting/system.py:1006
+#: common/setting/system.py:1019
 msgid "Enable schedule integration"
 msgstr "Įjungti planavimo integraciją"
 
-#: common/setting/system.py:1007
+#: common/setting/system.py:1020
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Leisti įskiepiams vykdyti suplanuotas užduotis"
 
-#: common/setting/system.py:1013
+#: common/setting/system.py:1026
 msgid "Enable event integration"
 msgstr "Įjungti įvykių integraciją"
 
-#: common/setting/system.py:1014
+#: common/setting/system.py:1027
 msgid "Enable plugins to respond to internal events"
 msgstr "Leisti įskiepiams reaguoti į vidinius įvykius"
 
-#: common/setting/system.py:1020
+#: common/setting/system.py:1033
 msgid "Enable interface integration"
 msgstr "Įjungti sąsajos integraciją"
 
-#: common/setting/system.py:1021
+#: common/setting/system.py:1034
 msgid "Enable plugins to integrate into the user interface"
 msgstr "Leisti įskiepiams integruotis į vartotojo sąsają"
 
-#: common/setting/system.py:1027
+#: common/setting/system.py:1040
+msgid "Enable mail integration"
+msgstr ""
+
+#: common/setting/system.py:1041
+msgid "Enable plugins to process outgoing/incoming mails"
+msgstr ""
+
+#: common/setting/system.py:1047
 msgid "Enable project codes"
 msgstr "Įjungti projektų kodus"
 
-#: common/setting/system.py:1028
+#: common/setting/system.py:1048
 msgid "Enable project codes for tracking projects"
 msgstr "Įjungti projektų kodų naudojimą projektų sekimui"
 
-#: common/setting/system.py:1033
+#: common/setting/system.py:1053
 msgid "Stocktake Functionality"
 msgstr "Inventorizacijos funkcija"
 
-#: common/setting/system.py:1035
+#: common/setting/system.py:1055
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr "Įjungti inventorizacijos funkciją sandėlio kiekiams ir vertei registruoti"
 
-#: common/setting/system.py:1041
+#: common/setting/system.py:1061
 msgid "Exclude External Locations"
 msgstr "Neįtraukti išorinių vietų"
 
-#: common/setting/system.py:1043
+#: common/setting/system.py:1063
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "Neįtraukti sandėlio prekių iš išorinių vietų į inventorizacijos skaičiavimus"
 
-#: common/setting/system.py:1049
+#: common/setting/system.py:1069
 msgid "Automatic Stocktake Period"
 msgstr "Automatinės inventorizacijos periodas"
 
-#: common/setting/system.py:1051
+#: common/setting/system.py:1071
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr "Dienų skaičius tarp automatinių inventorizacijos įrašų (nustatykite 0, kad išjungtumėte)"
 
-#: common/setting/system.py:1057
+#: common/setting/system.py:1077
 msgid "Report Deletion Interval"
 msgstr "Ataskaitų ištrynimo intervalas"
 
-#: common/setting/system.py:1059
+#: common/setting/system.py:1079
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Inventorizacijos ataskaitos bus ištrintos po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:1066
+#: common/setting/system.py:1086
 msgid "Display Users full names"
 msgstr "Rodyti pilnus vartotojų vardus"
 
-#: common/setting/system.py:1067
+#: common/setting/system.py:1087
 msgid "Display Users full names instead of usernames"
 msgstr "Rodyti pilnus vardus vietoj vartotojo vardų"
 
-#: common/setting/system.py:1072
+#: common/setting/system.py:1092
 msgid "Display User Profiles"
 msgstr "Rodyti vartotojų profilius"
 
-#: common/setting/system.py:1073
+#: common/setting/system.py:1093
 msgid "Display Users Profiles on their profile page"
 msgstr "Rodyti vartotojų profilius jų paskyros puslapyje"
 
-#: common/setting/system.py:1078
+#: common/setting/system.py:1098
 msgid "Enable Test Station Data"
 msgstr "Įjungti bandymų stoties duomenis"
 
-#: common/setting/system.py:1079
+#: common/setting/system.py:1099
 msgid "Enable test station data collection for test results"
 msgstr "Įjungti bandymų stoties duomenų rinkimą testų rezultatams"
 
-#: common/setting/system.py:1084
+#: common/setting/system.py:1104
 msgid "Create Template on Upload"
 msgstr "Kurti šabloną įkeliant"
 
-#: common/setting/system.py:1086
+#: common/setting/system.py:1106
 msgid "Create a new test template when uploading test data which does not match an existing template"
 msgstr "Sukurti naują bandymų šabloną, jei įkeliami duomenys neatitinka esamo šablono"
 
@@ -3407,42 +3540,34 @@ msgid "Preferred format for displaying dates"
 msgstr "Pageidaujamas datos rodymo formatas"
 
 #: common/setting/user.py:215
-msgid "Part Scheduling"
-msgstr "Detalių planavimas"
-
-#: common/setting/user.py:216
-msgid "Display part scheduling information"
-msgstr "Rodyti detalių planavimo informaciją"
-
-#: common/setting/user.py:221
 msgid "Part Stocktake"
 msgstr "Detalių inventorizacija"
 
-#: common/setting/user.py:223
+#: common/setting/user.py:217
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "Rodyti detalių inventorizacijos informaciją (jei ši funkcija įjungta)"
 
-#: common/setting/user.py:229
+#: common/setting/user.py:223
 msgid "Show Last Breadcrumb"
 msgstr "Rodyti paskutinę naršymo grandį"
 
-#: common/setting/user.py:230
+#: common/setting/user.py:224
 msgid "Show the current page in breadcrumbs"
 msgstr "Rodyti aktyvų puslapį naršymo grandinėje"
 
-#: common/setting/user.py:235
+#: common/setting/user.py:229
 msgid "Receive error reports"
 msgstr "Gauti klaidų ataskaitas"
 
-#: common/setting/user.py:236
+#: common/setting/user.py:230
 msgid "Receive notifications for system errors"
 msgstr "Gauti pranešimus apie sistemos klaidas"
 
-#: common/setting/user.py:241
+#: common/setting/user.py:235
 msgid "Last used printing machines"
 msgstr "Paskutiniai naudoti spausdintuvai"
 
-#: common/setting/user.py:242
+#: common/setting/user.py:236
 msgid "Save the last used printing machines for a user"
 msgstr "Išsaugoti paskutinius naudotojo naudotus spausdintuvus"
 
@@ -3499,13 +3624,13 @@ msgstr "Vidinė detalė yra aktyvi"
 msgid "Supplier is Active"
 msgstr "Tiekėjas yra aktyvus"
 
-#: company/api.py:299 company/models.py:498 company/serializers.py:444
-#: part/serializers.py:590
+#: company/api.py:299 company/models.py:531 company/serializers.py:444
+#: part/serializers.py:557
 msgid "Manufacturer"
 msgstr "Gamintojas"
 
-#: company/api.py:306 company/models.py:97 company/models.py:370
-#: stock/api.py:849
+#: company/api.py:306 company/models.py:118 company/models.py:403
+#: stock/api.py:864
 msgid "Company"
 msgstr "Įmonė"
 
@@ -3513,331 +3638,331 @@ msgstr "Įmonė"
 msgid "Has Stock"
 msgstr "Turi atsargų"
 
-#: company/models.py:98
+#: company/models.py:119
 msgid "Companies"
 msgstr "Įmonės"
 
-#: company/models.py:114
+#: company/models.py:147
 msgid "Company description"
 msgstr "Įmonės aprašymas"
 
-#: company/models.py:115
+#: company/models.py:148
 msgid "Description of the company"
 msgstr "Įmonės aprašymas"
 
-#: company/models.py:121
+#: company/models.py:154
 msgid "Website"
 msgstr "Tinklalapis"
 
-#: company/models.py:122
+#: company/models.py:155
 msgid "Company website URL"
 msgstr "Įmonės tinklalapio URL"
 
-#: company/models.py:128
+#: company/models.py:161
 msgid "Phone number"
 msgstr "Telefono numeris"
 
-#: company/models.py:130
+#: company/models.py:163
 msgid "Contact phone number"
 msgstr "Kontaininis telefono numeris"
 
-#: company/models.py:137
+#: company/models.py:170
 msgid "Contact email address"
 msgstr "Kontaktinis el. pašto adresas"
 
-#: company/models.py:142 company/models.py:274 order/models.py:501
+#: company/models.py:175 company/models.py:307 order/models.py:501
 #: users/models.py:567
 msgid "Contact"
 msgstr "Kontaktinis asmuo"
 
-#: company/models.py:144
+#: company/models.py:177
 msgid "Point of contact"
 msgstr "Kontaktinis asmuo"
 
-#: company/models.py:150
+#: company/models.py:183
 msgid "Link to external company information"
 msgstr "Nuoroda į išorinę įmonės informaciją"
 
-#: company/models.py:164
+#: company/models.py:197
 msgid "Is this company active?"
 msgstr "Ar ši įmonė aktyvi?"
 
-#: company/models.py:169
+#: company/models.py:202
 msgid "Is customer"
 msgstr "Yra klientas"
 
-#: company/models.py:170
+#: company/models.py:203
 msgid "Do you sell items to this company?"
 msgstr "Ar parduodate prekes šiai įmonei?"
 
-#: company/models.py:175
+#: company/models.py:208
 msgid "Is supplier"
 msgstr "Yra tiekėjas"
 
-#: company/models.py:176
+#: company/models.py:209
 msgid "Do you purchase items from this company?"
 msgstr "Ar perkate prekes iš šios įmonės?"
 
-#: company/models.py:181
+#: company/models.py:214
 msgid "Is manufacturer"
 msgstr "Yra gamintojas"
 
-#: company/models.py:182
+#: company/models.py:215
 msgid "Does this company manufacture parts?"
 msgstr "Ar ši įmonė gamina detales?"
 
-#: company/models.py:190
+#: company/models.py:223
 msgid "Default currency used for this company"
 msgstr "Numatytoji valiuta, naudojama šiai įmonei"
 
-#: company/models.py:313 order/models.py:511
+#: company/models.py:346 order/models.py:511
 msgid "Address"
 msgstr "Adresas"
 
-#: company/models.py:314
+#: company/models.py:347
 msgid "Addresses"
 msgstr "Adresai"
 
-#: company/models.py:371
+#: company/models.py:404
 msgid "Select company"
 msgstr "Pasirinkite įmonę"
 
-#: company/models.py:376
+#: company/models.py:409
 msgid "Address title"
 msgstr "Adreso pavadinimas"
 
-#: company/models.py:377
+#: company/models.py:410
 msgid "Title describing the address entry"
 msgstr "Pavadinimas, apibūdinantis adreso įrašą"
 
-#: company/models.py:383
+#: company/models.py:416
 msgid "Primary address"
 msgstr "Pagrindinis adresas"
 
-#: company/models.py:384
+#: company/models.py:417
 msgid "Set as primary address"
 msgstr "Nustatyti kaip pagrindinį adresą"
 
-#: company/models.py:389
+#: company/models.py:422
 msgid "Line 1"
 msgstr "1-a eilutė"
 
-#: company/models.py:390
+#: company/models.py:423
 msgid "Address line 1"
 msgstr "Adreso 1-a eilutė"
 
-#: company/models.py:396
+#: company/models.py:429
 msgid "Line 2"
 msgstr "2-a eilutė"
 
-#: company/models.py:397
+#: company/models.py:430
 msgid "Address line 2"
 msgstr "Adreso 2-a eilutė"
 
-#: company/models.py:403 company/models.py:404
+#: company/models.py:436 company/models.py:437
 msgid "Postal code"
 msgstr "Pašto kodas"
 
-#: company/models.py:410
+#: company/models.py:443
 msgid "City/Region"
 msgstr "Miestas / regionas"
 
-#: company/models.py:411
+#: company/models.py:444
 msgid "Postal code city/region"
 msgstr "Pašto kodas, miestas / regionas"
 
-#: company/models.py:417
+#: company/models.py:450
 msgid "State/Province"
 msgstr "Valstija / provincija"
 
-#: company/models.py:418
+#: company/models.py:451
 msgid "State or province"
 msgstr "Valstija arba provincija"
 
-#: company/models.py:424
+#: company/models.py:457
 msgid "Country"
 msgstr "Šalis"
 
-#: company/models.py:425
+#: company/models.py:458
 msgid "Address country"
 msgstr "Adreso šalis"
 
-#: company/models.py:431
+#: company/models.py:464
 msgid "Courier shipping notes"
 msgstr "Kurjerio siuntos pastabos"
 
-#: company/models.py:432
+#: company/models.py:465
 msgid "Notes for shipping courier"
 msgstr "Pastabos siuntų kurjeriui"
 
-#: company/models.py:438
+#: company/models.py:471
 msgid "Internal shipping notes"
 msgstr "Vidinės siuntos pastabos"
 
-#: company/models.py:439
+#: company/models.py:472
 msgid "Shipping notes for internal use"
 msgstr "Siuntimo pastabos vidiniam naudojimui"
 
-#: company/models.py:446
+#: company/models.py:479
 msgid "Link to address information (external)"
 msgstr "Nuoroda į adreso informaciją (išorinė)"
 
-#: company/models.py:470 company/models.py:587 company/models.py:809
+#: company/models.py:503 company/models.py:620 company/models.py:842
 #: company/serializers.py:458
 msgid "Manufacturer Part"
 msgstr "Gamintojo detalė"
 
-#: company/models.py:487 company/models.py:777 stock/models.py:948
+#: company/models.py:520 company/models.py:810 stock/models.py:948
 #: stock/serializers.py:480
 msgid "Base Part"
 msgstr "Pagrindinė detalė"
 
-#: company/models.py:489 company/models.py:779
+#: company/models.py:522 company/models.py:812
 msgid "Select part"
 msgstr "Pasirinkite detalę"
 
-#: company/models.py:499
+#: company/models.py:532
 msgid "Select manufacturer"
 msgstr "Pasirinkite gamintoją"
 
-#: company/models.py:505 company/serializers.py:466 order/serializers.py:672
-#: part/serializers.py:600
+#: company/models.py:538 company/serializers.py:466 order/serializers.py:672
+#: part/serializers.py:567
 msgid "MPN"
 msgstr "MPN"
 
-#: company/models.py:506 stock/serializers.py:625
+#: company/models.py:539 stock/serializers.py:635
 msgid "Manufacturer Part Number"
 msgstr "Gamintojo detalės numeris (MPN)"
 
-#: company/models.py:513
+#: company/models.py:546
 msgid "URL for external manufacturer part link"
 msgstr "Išorinės nuorodos į gamintojo detalės URL"
 
-#: company/models.py:522
+#: company/models.py:555
 msgid "Manufacturer part description"
 msgstr "Gamintojo detalės aprašymas"
 
-#: company/models.py:575
+#: company/models.py:608
 msgid "Manufacturer Part Parameter"
 msgstr "Gamintojo detalės parametras"
 
-#: company/models.py:594
+#: company/models.py:627
 msgid "Parameter name"
 msgstr "Parametro pavadinimas"
 
-#: company/models.py:601
+#: company/models.py:634
 msgid "Parameter value"
 msgstr "Parametro reikšmė"
 
-#: company/models.py:608 part/models.py:1204 part/models.py:3897
+#: company/models.py:641 part/models.py:1204 part/models.py:3897
 msgid "Units"
 msgstr "Vienetai"
 
-#: company/models.py:609
+#: company/models.py:642
 msgid "Parameter units"
 msgstr "Parametro vienetai"
 
-#: company/models.py:717
+#: company/models.py:750
 msgid "Pack units must be compatible with the base part units"
 msgstr "Pakuotės vienetai turi atitikti pagrindinės detalės vienetus"
 
-#: company/models.py:724
+#: company/models.py:757
 msgid "Pack units must be greater than zero"
 msgstr "Pakuotės vienetų kiekis turi būti didesnis už nulį"
 
-#: company/models.py:738
+#: company/models.py:771
 msgid "Linked manufacturer part must reference the same base part"
 msgstr "Susieta gamintojo detalė turi nurodyti tą pačią pagrindinę detalę"
 
-#: company/models.py:787 company/serializers.py:436 company/serializers.py:454
-#: order/models.py:627 part/serializers.py:574
-#: plugin/builtin/suppliers/digikey.py:25 plugin/builtin/suppliers/lcsc.py:26
-#: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:26
-#: stock/api.py:516 templates/email/overdue_purchase_order.html:16
+#: company/models.py:820 company/serializers.py:436 company/serializers.py:454
+#: order/models.py:627 part/serializers.py:541
+#: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
+#: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
+#: stock/api.py:531 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "Tiekėjas"
 
-#: company/models.py:788
+#: company/models.py:821
 msgid "Select supplier"
 msgstr "Pasirinkite tiekėją"
 
-#: company/models.py:794 part/serializers.py:585
+#: company/models.py:827 part/serializers.py:552
 msgid "Supplier stock keeping unit"
 msgstr "Tiekėjo sandėlio numeris (SKU)"
 
-#: company/models.py:800
+#: company/models.py:833
 msgid "Is this supplier part active?"
 msgstr "Ar ši tiekėjo detalė aktyvi?"
 
-#: company/models.py:810
+#: company/models.py:843
 msgid "Select manufacturer part"
 msgstr "Pasirinkite gamintojo detalę"
 
-#: company/models.py:817
+#: company/models.py:850
 msgid "URL for external supplier part link"
 msgstr "Išorinės nuorodos į tiekėjo detalės URL"
 
-#: company/models.py:826
+#: company/models.py:859
 msgid "Supplier part description"
 msgstr "Tiekėjo detalės aprašymas"
 
-#: company/models.py:833 order/serializers.py:826 order/serializers.py:2035
+#: company/models.py:866 order/serializers.py:826 order/serializers.py:2035
 #: part/models.py:4409 part/models.py:4750
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:32
 #: report/templates/report/inventree_return_order_report.html:27
 #: report/templates/report/inventree_sales_order_report.html:32
 #: report/templates/report/inventree_stock_location_report.html:105
-#: stock/serializers.py:838
+#: stock/serializers.py:855
 msgid "Note"
 msgstr "Pastaba"
 
-#: company/models.py:842 part/models.py:2200
+#: company/models.py:875 part/models.py:2200
 msgid "base cost"
 msgstr "bazinė kaina"
 
-#: company/models.py:843 part/models.py:2201
+#: company/models.py:876 part/models.py:2201
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimalus mokestis (pvz., sandėliavimo mokestis)"
 
-#: company/models.py:850 order/serializers.py:818 stock/models.py:979
-#: stock/serializers.py:1666
+#: company/models.py:883 order/serializers.py:818 stock/models.py:979
+#: stock/serializers.py:1678
 msgid "Packaging"
 msgstr "Pakuotė"
 
-#: company/models.py:851
+#: company/models.py:884
 msgid "Part packaging"
 msgstr "Detalės pakuotė"
 
-#: company/models.py:856
+#: company/models.py:889
 msgid "Pack Quantity"
 msgstr "Pakuotės kiekis"
 
-#: company/models.py:858
+#: company/models.py:891
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Bendras kiekis vienoje pakuotėje. Palikite tuščią, jei prekė tiekiama po vieną."
 
-#: company/models.py:877 part/models.py:2207
+#: company/models.py:910 part/models.py:2207
 msgid "multiple"
 msgstr "daugiklis"
 
-#: company/models.py:878
+#: company/models.py:911
 msgid "Order multiple"
 msgstr "Užsakymo daugiklis"
 
-#: company/models.py:890
+#: company/models.py:923
 msgid "Quantity available from supplier"
 msgstr "Tiekėjo turimas kiekis"
 
-#: company/models.py:896
+#: company/models.py:929
 msgid "Availability Updated"
 msgstr "Prieinamumas atnaujintas"
 
-#: company/models.py:897
+#: company/models.py:930
 msgid "Date of last update of availability data"
 msgstr "Paskutinio prieinamumo duomenų atnaujinimo data"
 
-#: company/models.py:1025
+#: company/models.py:1058
 msgid "Supplier Price Break"
 msgstr "Tiekėjo kainos ribos"
 
@@ -3853,7 +3978,7 @@ msgstr "Numatytoji valiuta, naudojama šiam tiekėjui"
 msgid "Company Name"
 msgstr "Įmonės pavadinimas"
 
-#: company/serializers.py:420 part/serializers.py:963 stock/serializers.py:498
+#: company/serializers.py:420 part/serializers.py:930 stock/serializers.py:498
 msgid "In Stock"
 msgstr "Sandėlyje"
 
@@ -3888,10 +4013,6 @@ msgstr "Papildoma būsena šiam elementui"
 #: generic/states/fields.py:160
 msgid "Custom status key"
 msgstr "Pasirinktinės būsenos raktas"
-
-#: generic/states/serializers.py:16 plugin/models.py:45 users/models.py:119
-msgid "Key"
-msgstr "Raktas"
 
 #: generic/states/serializers.py:26
 msgid "Custom"
@@ -3997,7 +4118,7 @@ msgstr "Pradiniai eilutės duomenys"
 msgid "Errors"
 msgstr "Klaidos"
 
-#: importer/models.py:527 part/api.py:839
+#: importer/models.py:527 part/api.py:634
 msgid "Valid"
 msgstr "Galiojantis"
 
@@ -4382,7 +4503,7 @@ msgid "Order reference"
 msgstr "Užsakymo nuoroda"
 
 #: order/models.py:612 order/models.py:1207 order/models.py:2511
-#: stock/serializers.py:612 stock/serializers.py:1010 users/models.py:548
+#: stock/serializers.py:622 stock/serializers.py:1027 users/models.py:548
 msgid "Status"
 msgstr "Būsena"
 
@@ -4427,7 +4548,7 @@ msgid "Quantity must be a positive number"
 msgstr "Kiekis turi būti teigiamas skaičius"
 
 #: order/models.py:1194 order/models.py:2498 stock/models.py:1001
-#: stock/models.py:1002 stock/serializers.py:1405
+#: stock/models.py:1002 stock/serializers.py:1417
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
@@ -4545,7 +4666,7 @@ msgstr "Gauta"
 msgid "Number of items received"
 msgstr "Gautų prekių kiekis"
 
-#: order/models.py:1787 stock/models.py:1124 stock/serializers.py:679
+#: order/models.py:1787 stock/models.py:1124 stock/serializers.py:689
 msgid "Purchase Price"
 msgstr "Pirkimo kaina"
 
@@ -4850,11 +4971,11 @@ msgstr "Sujungti elementus"
 msgid "Merge items with the same part, destination and target date into one line item"
 msgstr "Sujungti elementus su ta pačia detale, paskirtimi ir tiksline data į vieną eilutės įrašą"
 
-#: order/serializers.py:665 part/serializers.py:584
+#: order/serializers.py:665 part/serializers.py:551
 msgid "SKU"
 msgstr "SKU"
 
-#: order/serializers.py:679 part/models.py:1089 part/serializers.py:411
+#: order/serializers.py:679 part/models.py:1089 part/serializers.py:378
 msgid "Internal Part Number"
 msgstr "Vidinis detalės numeris"
 
@@ -5046,130 +5167,114 @@ msgstr "Pinigų grąžinimas"
 msgid "Reject"
 msgstr "Atmesti"
 
-#: order/tasks.py:44
+#: order/tasks.py:47
 msgid "Overdue Purchase Order"
 msgstr "Vėluojantis pirkimo užsakymas"
 
-#: order/tasks.py:49
+#: order/tasks.py:52
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
 msgstr "Pirkimo užsakymas {po} dabar vėluoja"
 
-#: order/tasks.py:112
+#: order/tasks.py:117
 msgid "Overdue Sales Order"
 msgstr "Vėluojantis pardavimo užsakymas"
 
-#: order/tasks.py:117
+#: order/tasks.py:122
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
 msgstr "Pardavimo užsakymas {so} dabar vėluoja"
 
-#: order/tasks.py:177
+#: order/tasks.py:184
 msgid "Overdue Return Order"
 msgstr "Vėluojantis grąžinimo užsakymas"
 
-#: order/tasks.py:182
+#: order/tasks.py:189
 #, python-brace-format
 msgid "Return order {ro} is now overdue"
 msgstr "Grąžinimo užsakymas {ro} dabar vėluoja"
 
-#: part/api.py:115
+#: part/api.py:109
 msgid "Starred"
 msgstr "Pažymėta žvaigždute"
 
-#: part/api.py:117
+#: part/api.py:111
 msgid "Filter by starred categories"
 msgstr "Filtruoti pagal pažymėtas kategorijas"
 
-#: part/api.py:134 stock/api.py:255
+#: part/api.py:128 stock/api.py:270
 msgid "Depth"
 msgstr "Gylis"
 
-#: part/api.py:134
+#: part/api.py:128
 msgid "Filter by category depth"
 msgstr "Filtruoti pagal kategorijos gylį"
 
-#: part/api.py:152 stock/api.py:273
+#: part/api.py:146 stock/api.py:288
 msgid "Top Level"
 msgstr "Aukščiausio lygio"
 
-#: part/api.py:154
+#: part/api.py:148
 msgid "Filter by top-level categories"
 msgstr "Filtruoti pagal aukščiausio lygio kategorijas"
 
-#: part/api.py:167 stock/api.py:288
+#: part/api.py:161 stock/api.py:303
 msgid "Cascade"
 msgstr "Kaskada"
 
-#: part/api.py:169
+#: part/api.py:163
 msgid "Include sub-categories in filtered results"
 msgstr "Įtraukti sub-kategorijas į filtravimo rezultatus"
 
-#: part/api.py:189
+#: part/api.py:183
 msgid "Parent"
 msgstr "Pirminė kategorija"
 
-#: part/api.py:191
+#: part/api.py:185
 msgid "Filter by parent category"
 msgstr "Filtruoti pagal pirminę kategoriją"
 
-#: part/api.py:226
+#: part/api.py:220
 msgid "Exclude sub-categories under the specified category"
 msgstr "Neįtraukti sub-kategorijų po nurodyta kategorija"
 
-#: part/api.py:438
+#: part/api.py:432
 msgid "Has Results"
 msgstr "Turi rezultatų"
 
-#: part/api.py:611
-msgid "Incoming Purchase Order"
-msgstr "Gautas pirkimo užsakymas"
-
-#: part/api.py:625
-msgid "Outgoing Sales Order"
-msgstr "Išsiųstas pardavimo užsakymas"
-
-#: part/api.py:637
-msgid "Stock produced by Build Order"
-msgstr "Atsargos, pagamintos pagal gamybos užsakymą"
-
-#: part/api.py:719
-msgid "Stock required for Build Order"
-msgstr "Atsargos, reikalingos gamybos užsakymui"
-
-#: part/api.py:840
+#: part/api.py:635
 msgid "Validate entire Bill of Materials"
 msgstr "Patvirtinti visą komplektavimo žiniaraštį"
 
-#: part/api.py:846
+#: part/api.py:641
 msgid "This option must be selected"
 msgstr "Ši parinktis turi būti pasirinkta"
 
-#: part/api.py:882
+#: part/api.py:677
 msgid "Is Variant"
 msgstr "Yra variantas"
 
-#: part/api.py:890
+#: part/api.py:685
 msgid "Is Revision"
 msgstr "Yra versija"
 
-#: part/api.py:900
+#: part/api.py:695
 msgid "Has Revisions"
 msgstr "Turi versijų"
 
-#: part/api.py:1091
+#: part/api.py:886
 msgid "BOM Valid"
 msgstr "BOM galiojantis"
 
-#: part/api.py:1784
+#: part/api.py:1579
 msgid "Assembly part is testable"
 msgstr "Surinkimo detalė gali būti testuojama"
 
-#: part/api.py:1793
+#: part/api.py:1588
 msgid "Component part is testable"
 msgstr "Komponento detalė gali būti testuojama"
 
-#: part/api.py:1844
+#: part/api.py:1639
 msgid "Uses"
 msgstr "Naudoja"
 
@@ -5219,7 +5324,7 @@ msgstr "Piktograma (neprivaloma)"
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
 msgstr "Negalite paversti šios detalių kategorijos struktūrine, nes kai kurios detalės jau jai priskirtos!"
 
-#: part/models.py:458 part/serializers.py:125 part/serializers.py:342
+#: part/models.py:458 part/serializers.py:125 part/serializers.py:309
 #: users/ruleset.py:29
 msgid "Parts"
 msgstr "Detalės"
@@ -5335,7 +5440,7 @@ msgstr "Detalės raktažodžiai, skirti pagerinti matomumą paieškos rezultatuo
 msgid "Part category"
 msgstr "Detalės kategorija"
 
-#: part/models.py:1088 part/serializers.py:937
+#: part/models.py:1088 part/serializers.py:904
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
 msgstr "IPN"
@@ -5344,7 +5449,7 @@ msgstr "IPN"
 msgid "Part revision or version number"
 msgstr "Detalės versija arba numeris"
 
-#: part/models.py:1097 report/models.py:215
+#: part/models.py:1097 report/models.py:217
 msgid "Revision"
 msgstr "Versija"
 
@@ -5376,7 +5481,7 @@ msgstr "Numatytasis galiojimo laikas"
 msgid "Expiry time (in days) for stock items of this part"
 msgstr "Šios detalės atsargų galiojimo laikas (dienomis)"
 
-#: part/models.py:1195 part/serializers.py:1011
+#: part/models.py:1195 part/serializers.py:978
 msgid "Minimum Stock"
 msgstr "Minimalus atsargų kiekis"
 
@@ -5612,7 +5717,7 @@ msgstr "Atsargų įrašų skaičius inventorizacijos metu"
 msgid "Total available stock at time of stocktake"
 msgstr "Bendras prieinamas atsargų kiekis inventorizacijos metu"
 
-#: part/models.py:3408 part/models.py:3491 part/serializers.py:272
+#: part/models.py:3408 part/models.py:3491
 #: report/templates/report/inventree_test_report.html:106
 msgid "Date"
 msgstr "Data"
@@ -5713,7 +5818,7 @@ msgstr "Bandymo aprašymas"
 msgid "Enter description for this test"
 msgstr "Įveskite šio bandymo aprašymą"
 
-#: part/models.py:3745 report/models.py:271
+#: part/models.py:3745 report/models.py:276
 msgid "Enabled"
 msgstr "Įjungta"
 
@@ -5977,359 +6082,351 @@ msgstr "Rezultatai"
 msgid "Number of results recorded against this template"
 msgstr "Rezultatų skaičius, susietas su šiuo šablonu"
 
-#: part/serializers.py:234 part/serializers.py:252 stock/serializers.py:685
+#: part/serializers.py:234 part/serializers.py:252 stock/serializers.py:695
 msgid "Purchase currency of this stock item"
 msgstr "Šio atsargų elemento pirkimo valiuta"
 
-#: part/serializers.py:277
-msgid "Speculative Quantity"
-msgstr "Numatomas kiekis"
-
-#: part/serializers.py:286
-msgid "Model ID"
-msgstr "Modelio ID"
-
-#: part/serializers.py:312
+#: part/serializers.py:279
 msgid "File is not an image"
 msgstr "Failas nėra paveikslėlis"
 
-#: part/serializers.py:343
+#: part/serializers.py:310
 msgid "Number of parts using this template"
 msgstr "Detalių, naudojančių šį šabloną, skaičius"
 
-#: part/serializers.py:495
+#: part/serializers.py:462
 msgid "Original Part"
 msgstr "Pradinė detalė"
 
-#: part/serializers.py:496
+#: part/serializers.py:463
 msgid "Select original part to duplicate"
 msgstr "Pasirinkite pradinę detalę kopijavimui"
 
-#: part/serializers.py:501
+#: part/serializers.py:468
 msgid "Copy Image"
 msgstr "Kopijuoti paveikslėlį"
 
-#: part/serializers.py:502
+#: part/serializers.py:469
 msgid "Copy image from original part"
 msgstr "Kopijuoti paveikslėlį iš pradinės detalės"
 
-#: part/serializers.py:508
+#: part/serializers.py:475
 msgid "Copy BOM"
 msgstr "Kopijuoti BOM"
 
-#: part/serializers.py:509
+#: part/serializers.py:476
 msgid "Copy bill of materials from original part"
 msgstr "Kopijuoti komplektavimo žiniaraštį iš pradinės detalės"
 
-#: part/serializers.py:515
+#: part/serializers.py:482
 msgid "Copy Parameters"
 msgstr "Kopijuoti parametrus"
 
-#: part/serializers.py:516
+#: part/serializers.py:483
 msgid "Copy parameter data from original part"
 msgstr "Kopijuoti parametrų duomenis iš pradinės detalės"
 
-#: part/serializers.py:522
+#: part/serializers.py:489
 msgid "Copy Notes"
 msgstr "Kopijuoti pastabas"
 
-#: part/serializers.py:523
+#: part/serializers.py:490
 msgid "Copy notes from original part"
 msgstr "Kopijuoti pastabas iš pradinės detalės"
 
-#: part/serializers.py:529
+#: part/serializers.py:496
 msgid "Copy Tests"
 msgstr ""
 
-#: part/serializers.py:530
+#: part/serializers.py:497
 msgid "Copy test templates from original part"
 msgstr ""
 
-#: part/serializers.py:548
+#: part/serializers.py:515
 msgid "Initial Stock Quantity"
 msgstr "Pradinis atsargų kiekis"
 
-#: part/serializers.py:550
+#: part/serializers.py:517
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
 msgstr "Nurodykite pradinį atsargų kiekį šiai detalei. Jei kiekis nulis - atsargos nebus pridėtos."
 
-#: part/serializers.py:557
+#: part/serializers.py:524
 msgid "Initial Stock Location"
 msgstr "Pradinė atsargų vieta"
 
-#: part/serializers.py:558
+#: part/serializers.py:525
 msgid "Specify initial stock location for this Part"
 msgstr "Nurodykite pradinę atsargų vietą šiai detalei"
 
-#: part/serializers.py:575
+#: part/serializers.py:542
 msgid "Select supplier (or leave blank to skip)"
 msgstr "Pasirinkite tiekėją (arba palikite tuščią, jei nenorite nurodyti)"
 
-#: part/serializers.py:591
+#: part/serializers.py:558
 msgid "Select manufacturer (or leave blank to skip)"
 msgstr "Pasirinkite gamintoją (arba palikite tuščią, jei nenorite nurodyti)"
 
-#: part/serializers.py:601
+#: part/serializers.py:568
 msgid "Manufacturer part number"
 msgstr "Gamintojo detalės numeris"
 
-#: part/serializers.py:608
+#: part/serializers.py:575
 msgid "Selected company is not a valid supplier"
 msgstr "Pasirinkta įmonė nėra galiojantis tiekėjas"
 
-#: part/serializers.py:617
+#: part/serializers.py:584
 msgid "Selected company is not a valid manufacturer"
 msgstr "Pasirinkta įmonė nėra galiojantis gamintojas"
 
-#: part/serializers.py:628
+#: part/serializers.py:595
 msgid "Manufacturer part matching this MPN already exists"
 msgstr "Detalė su šiuo gamintojo numeriu (MPN) jau egzistuoja"
 
-#: part/serializers.py:635
+#: part/serializers.py:602
 msgid "Supplier part matching this SKU already exists"
 msgstr "Tiekėjo detalė su šiuo SKU jau egzistuoja"
 
-#: part/serializers.py:922 part/stocktake.py:222
+#: part/serializers.py:889 part/stocktake.py:222
 msgid "Category Name"
 msgstr "Kategorijos pavadinimas"
 
-#: part/serializers.py:951
+#: part/serializers.py:918
 msgid "Building"
 msgstr "Surinkimas"
 
-#: part/serializers.py:952
+#: part/serializers.py:919
 msgid "Quantity of this part currently being in production"
 msgstr ""
 
-#: part/serializers.py:958 part/serializers.py:1263
+#: part/serializers.py:925 part/serializers.py:1230
 msgid "Scheduled to Build"
 msgstr ""
 
-#: part/serializers.py:959
+#: part/serializers.py:926
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr ""
 
-#: part/serializers.py:979 part/stocktake.py:223 stock/serializers.py:1084
-#: stock/serializers.py:1260 users/ruleset.py:32
+#: part/serializers.py:946 part/stocktake.py:223 stock/serializers.py:1101
+#: stock/serializers.py:1272 users/ruleset.py:32
 msgid "Stock Items"
 msgstr "Atsargos"
 
-#: part/serializers.py:983
+#: part/serializers.py:950
 msgid "Revisions"
 msgstr "Versijos"
 
-#: part/serializers.py:987
+#: part/serializers.py:954
 msgid "Suppliers"
 msgstr "Tiekėjai"
 
-#: part/serializers.py:991 part/serializers.py:1246
+#: part/serializers.py:958 part/serializers.py:1213
 #: templates/email/low_stock_notification.html:16
 #: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "Bendros atsargos"
 
-#: part/serializers.py:999
+#: part/serializers.py:966
 msgid "Unallocated Stock"
 msgstr "Nepriskirtos atsargos"
 
-#: part/serializers.py:1007
+#: part/serializers.py:974
 msgid "Variant Stock"
 msgstr "Variantų atsargos"
 
-#: part/serializers.py:1040
+#: part/serializers.py:1007
 msgid "Duplicate Part"
 msgstr "Kopijuoti detalę"
 
-#: part/serializers.py:1041
+#: part/serializers.py:1008
 msgid "Copy initial data from another Part"
 msgstr "Kopijuoti pradinius duomenis iš kitos detalės"
 
-#: part/serializers.py:1047
+#: part/serializers.py:1014
 msgid "Initial Stock"
 msgstr "Pradinės atsargos"
 
-#: part/serializers.py:1048
+#: part/serializers.py:1015
 msgid "Create Part with initial stock quantity"
 msgstr "Sukurti detalę su pradiniu atsargų kiekiu"
 
-#: part/serializers.py:1054
+#: part/serializers.py:1021
 msgid "Supplier Information"
 msgstr "Tiekėjo informacija"
 
-#: part/serializers.py:1055
+#: part/serializers.py:1022
 msgid "Add initial supplier information for this part"
 msgstr "Pridėti pradinę tiekėjo informaciją šiai detalei"
 
-#: part/serializers.py:1063
+#: part/serializers.py:1030
 msgid "Copy Category Parameters"
 msgstr "Kopijuoti kategorijos parametrus"
 
-#: part/serializers.py:1064
+#: part/serializers.py:1031
 msgid "Copy parameter templates from selected part category"
 msgstr "Kopijuoti parametrų šablonus iš pasirinktos detalių kategorijos"
 
-#: part/serializers.py:1069
+#: part/serializers.py:1036
 msgid "Existing Image"
 msgstr "Esamas paveikslėlis"
 
-#: part/serializers.py:1070
+#: part/serializers.py:1037
 msgid "Filename of an existing part image"
 msgstr "Esamos detalės paveikslėlio failo pavadinimas"
 
-#: part/serializers.py:1087
+#: part/serializers.py:1054
 msgid "Image file does not exist"
 msgstr "Paveikslėlio failas neegzistuoja"
 
-#: part/serializers.py:1252 part/serializers.py:1802
+#: part/serializers.py:1219 part/serializers.py:1769
 msgid "Can Build"
 msgstr "Galima surinkti"
 
-#: part/serializers.py:1269
+#: part/serializers.py:1236
 msgid "Required for Build Orders"
 msgstr ""
 
-#: part/serializers.py:1274
+#: part/serializers.py:1241
 msgid "Allocated to Build Orders"
 msgstr ""
 
-#: part/serializers.py:1281
+#: part/serializers.py:1248
 msgid "Required for Sales Orders"
 msgstr ""
 
-#: part/serializers.py:1285
+#: part/serializers.py:1252
 msgid "Allocated to Sales Orders"
 msgstr ""
 
-#: part/serializers.py:1361
+#: part/serializers.py:1328
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr "Apriboti inventorizacijos ataskaitą konkrečia detale ir jos variantais"
 
-#: part/serializers.py:1371
+#: part/serializers.py:1338
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr "Apriboti inventorizacijos ataskaitą konkrečia detalių kategorija ir jos subkategorijomis"
 
-#: part/serializers.py:1381
+#: part/serializers.py:1348
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr "Apriboti inventorizacijos ataskaitą konkrečia atsargų vieta ir jos subvietomis"
 
-#: part/serializers.py:1387
+#: part/serializers.py:1354
 msgid "Exclude External Stock"
 msgstr "Neįtraukti išorinių atsargų"
 
-#: part/serializers.py:1388
+#: part/serializers.py:1355
 msgid "Exclude stock items in external locations"
 msgstr "Neįtraukti atsargų iš išorinių vietų"
 
-#: part/serializers.py:1393
+#: part/serializers.py:1360
 msgid "Generate Report"
 msgstr "Generuoti ataskaitą"
 
-#: part/serializers.py:1394
+#: part/serializers.py:1361
 msgid "Generate report file containing calculated stocktake data"
 msgstr "Generuoti ataskaitos failą su apskaičiuotais inventorizacijos duomenimis"
 
-#: part/serializers.py:1399
+#: part/serializers.py:1366
 msgid "Update Parts"
 msgstr "Atnaujinti detales"
 
-#: part/serializers.py:1400
+#: part/serializers.py:1367
 msgid "Update specified parts with calculated stocktake data"
 msgstr "Atnaujinti nurodytas detales pagal apskaičiuotus inventorizacijos duomenis"
 
-#: part/serializers.py:1408
+#: part/serializers.py:1375
 msgid "Stocktake functionality is not enabled"
 msgstr "Inventorizacijos funkcionalumas neįjungtas"
 
-#: part/serializers.py:1413
+#: part/serializers.py:1380
 msgid "Background worker check failed"
 msgstr "Fono proceso patikra nepavyko"
 
-#: part/serializers.py:1529
+#: part/serializers.py:1496
 msgid "Minimum Price"
 msgstr "Mažiausia kaina"
 
-#: part/serializers.py:1530
+#: part/serializers.py:1497
 msgid "Override calculated value for minimum price"
 msgstr "Pakeisti apskaičiuotą mažiausią kainą"
 
-#: part/serializers.py:1537
+#: part/serializers.py:1504
 msgid "Minimum price currency"
 msgstr "Mažiausios kainos valiuta"
 
-#: part/serializers.py:1544
+#: part/serializers.py:1511
 msgid "Maximum Price"
 msgstr "Didžiausia kaina"
 
-#: part/serializers.py:1545
+#: part/serializers.py:1512
 msgid "Override calculated value for maximum price"
 msgstr "Pakeisti apskaičiuotą didžiausią kainą"
 
-#: part/serializers.py:1552
+#: part/serializers.py:1519
 msgid "Maximum price currency"
 msgstr "Didžiausios kainos valiuta"
 
-#: part/serializers.py:1581
+#: part/serializers.py:1548
 msgid "Update"
 msgstr "Atnaujinti"
 
-#: part/serializers.py:1582
+#: part/serializers.py:1549
 msgid "Update pricing for this part"
 msgstr "Atnaujinti šios detalės kainodarą"
 
-#: part/serializers.py:1605
+#: part/serializers.py:1572
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr "Nepavyko konvertuoti iš nurodytų valiutų į {default_currency}"
 
-#: part/serializers.py:1612
+#: part/serializers.py:1579
 msgid "Minimum price must not be greater than maximum price"
 msgstr "Mažiausia kaina negali būti didesnė už didžiausią kainą"
 
-#: part/serializers.py:1615
+#: part/serializers.py:1582
 msgid "Maximum price must not be less than minimum price"
 msgstr "Didžiausia kaina negali būti mažesnė už mažiausią kainą"
 
-#: part/serializers.py:1768
+#: part/serializers.py:1735
 msgid "Select the parent assembly"
 msgstr "Pasirinkite pirminį surinkimą"
 
-#: part/serializers.py:1782
+#: part/serializers.py:1749
 msgid "Select the component part"
 msgstr "Pasirinkite komponentinę detalę"
 
-#: part/serializers.py:2029
+#: part/serializers.py:1996
 msgid "Select part to copy BOM from"
 msgstr "Pasirinkite detalę, iš kurios kopijuoti BOM"
 
-#: part/serializers.py:2037
+#: part/serializers.py:2004
 msgid "Remove Existing Data"
 msgstr "Pašalinti esamus duomenis"
 
-#: part/serializers.py:2038
+#: part/serializers.py:2005
 msgid "Remove existing BOM items before copying"
 msgstr "Pašalinti esamus BOM elementus prieš kopijuojant"
 
-#: part/serializers.py:2043
+#: part/serializers.py:2010
 msgid "Include Inherited"
 msgstr "Įtraukti paveldėtus"
 
-#: part/serializers.py:2044
+#: part/serializers.py:2011
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Įtraukti BOM elementus, paveldėtus iš šabloninių detalių"
 
-#: part/serializers.py:2049
+#: part/serializers.py:2016
 msgid "Skip Invalid Rows"
 msgstr "Praleisti netinkamas eilutes"
 
-#: part/serializers.py:2050
+#: part/serializers.py:2017
 msgid "Enable this option to skip invalid rows"
 msgstr "Įjunkite šią parinktį, jei norite praleisti netinkamas eilutes"
 
-#: part/serializers.py:2055
+#: part/serializers.py:2022
 msgid "Copy Substitute Parts"
 msgstr "Kopijuoti pakaitines detales"
 
-#: part/serializers.py:2056
+#: part/serializers.py:2023
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Kopijuoti pakaitines detales, kai kopijuojami BOM elementai"
 
@@ -6651,8 +6748,8 @@ msgstr "Suteikia vietinį brūkšninių kodų palaikymą"
 #: plugin/builtin/labels/inventree_label.py:26
 #: plugin/builtin/labels/inventree_machine.py:64
 #: plugin/builtin/labels/label_sheet.py:72
-#: plugin/builtin/suppliers/digikey.py:19 plugin/builtin/suppliers/lcsc.py:21
-#: plugin/builtin/suppliers/mouser.py:19 plugin/builtin/suppliers/tme.py:21
+#: plugin/builtin/suppliers/digikey.py:20 plugin/builtin/suppliers/lcsc.py:22
+#: plugin/builtin/suppliers/mouser.py:20 plugin/builtin/suppliers/tme.py:22
 msgid "InvenTree contributors"
 msgstr "InvenTree bendraautoriai"
 
@@ -6979,7 +7076,7 @@ msgstr "Rėmelis"
 msgid "Print a border around each label"
 msgstr "Spausdinti rėmelį aplink kiekvieną etiketę"
 
-#: plugin/builtin/labels/label_sheet.py:49 report/models.py:371
+#: plugin/builtin/labels/label_sheet.py:49 report/models.py:376
 msgid "Landscape"
 msgstr "Gulsčias"
 
@@ -7011,51 +7108,51 @@ msgstr "Etiketė per didelė šiam puslapio dydžiui"
 msgid "No labels were generated"
 msgstr "Etikečių nesugeneruota"
 
-#: plugin/builtin/suppliers/digikey.py:16
+#: plugin/builtin/suppliers/digikey.py:17
 msgid "Supplier Integration - DigiKey"
 msgstr "Tiekėjo integracija - DigiKey"
 
-#: plugin/builtin/suppliers/digikey.py:17
+#: plugin/builtin/suppliers/digikey.py:18
 msgid "Provides support for scanning DigiKey barcodes"
 msgstr "Suteikia palaikymą DigiKey brūkšninių kodų nuskaitymui"
 
-#: plugin/builtin/suppliers/digikey.py:26
+#: plugin/builtin/suppliers/digikey.py:27
 msgid "The Supplier which acts as 'DigiKey'"
 msgstr "Tiekėjas, veikiantis kaip 'DigiKey'"
 
-#: plugin/builtin/suppliers/lcsc.py:18
+#: plugin/builtin/suppliers/lcsc.py:19
 msgid "Supplier Integration - LCSC"
 msgstr "Tiekėjo integracija - LCSC"
 
-#: plugin/builtin/suppliers/lcsc.py:19
+#: plugin/builtin/suppliers/lcsc.py:20
 msgid "Provides support for scanning LCSC barcodes"
 msgstr "Suteikia palaikymą LCSC brūkšninių kodų nuskaitymui"
 
-#: plugin/builtin/suppliers/lcsc.py:27
+#: plugin/builtin/suppliers/lcsc.py:28
 msgid "The Supplier which acts as 'LCSC'"
 msgstr "Tiekėjas, veikiantis kaip 'LCSC'"
 
-#: plugin/builtin/suppliers/mouser.py:16
+#: plugin/builtin/suppliers/mouser.py:17
 msgid "Supplier Integration - Mouser"
 msgstr "Tiekėjo integracija - Mouser"
 
-#: plugin/builtin/suppliers/mouser.py:17
+#: plugin/builtin/suppliers/mouser.py:18
 msgid "Provides support for scanning Mouser barcodes"
 msgstr "Suteikia palaikymą Mouser brūkšninių kodų nuskaitymui"
 
-#: plugin/builtin/suppliers/mouser.py:25
+#: plugin/builtin/suppliers/mouser.py:26
 msgid "The Supplier which acts as 'Mouser'"
 msgstr "Tiekėjas, veikiantis kaip 'Mouser'"
 
-#: plugin/builtin/suppliers/tme.py:18
+#: plugin/builtin/suppliers/tme.py:19
 msgid "Supplier Integration - TME"
 msgstr "Tiekėjo integracija - TME"
 
-#: plugin/builtin/suppliers/tme.py:19
+#: plugin/builtin/suppliers/tme.py:20
 msgid "Provides support for scanning TME barcodes"
 msgstr "Suteikia palaikymą TME brūkšninių kodų nuskaitymui"
 
-#: plugin/builtin/suppliers/tme.py:27
+#: plugin/builtin/suppliers/tme.py:28
 msgid "The Supplier which acts as 'TME'"
 msgstr "Tiekėjas, veikiantis kaip 'TME'"
 
@@ -7160,21 +7257,21 @@ msgstr "Įskiepis"
 msgid "Method"
 msgstr "Metodas"
 
-#: plugin/plugin.py:308
+#: plugin/plugin.py:309
 msgid "No author found"
 msgstr "Autorius nerastas"
 
-#: plugin/registry.py:610
+#: plugin/registry.py:625
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Įskiepis '{p}' nesuderinamas su dabartine InvenTree versija {v}"
 
-#: plugin/registry.py:613
+#: plugin/registry.py:628
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Įskiepiui reikalinga bent versija {v}"
 
-#: plugin/registry.py:615
+#: plugin/registry.py:630
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Įskiepiui reikalinga ne aukštesnė nei versija {v}"
@@ -7203,11 +7300,11 @@ msgstr "Skaitmeninis"
 msgid "A numerical setting"
 msgstr "Skaitmeninė nuostata"
 
-#: plugin/samples/integration/sample.py:69
+#: plugin/samples/integration/sample.py:70
 msgid "Choice Setting"
 msgstr "Pasirinkimo nuostata"
 
-#: plugin/samples/integration/sample.py:70
+#: plugin/samples/integration/sample.py:71
 msgid "A setting with multiple choices"
 msgstr "Nuostata su keliais pasirinkimais"
 
@@ -7355,43 +7452,43 @@ msgstr "Surinkti įskiepius"
 msgid "Collect plugins and add them to the registry"
 msgstr "Surinkti įskiepius ir įtraukti juos į registrą"
 
-#: plugin/serializers.py:232
+#: plugin/serializers.py:233
 msgid "Activate Plugin"
 msgstr "Aktyvuoti įskiepį"
 
-#: plugin/serializers.py:233
+#: plugin/serializers.py:234
 msgid "Activate this plugin"
 msgstr "Aktyvuoti šį įskiepį"
 
-#: plugin/serializers.py:253
+#: plugin/serializers.py:254
 msgid "Delete configuration"
 msgstr "Ištrinti konfigūraciją"
 
-#: plugin/serializers.py:254
+#: plugin/serializers.py:255
 msgid "Delete the plugin configuration from the database"
 msgstr "Ištrinti įskiepio konfigūraciją iš duomenų bazės"
 
-#: report/api.py:44 report/serializers.py:98 report/serializers.py:148
+#: report/api.py:43 report/serializers.py:103 report/serializers.py:153
 msgid "Items"
 msgstr "Elementai"
 
-#: report/api.py:121
+#: report/api.py:120
 msgid "Plugin not found"
 msgstr "Įskiepis nerastas"
 
-#: report/api.py:123
+#: report/api.py:122
 msgid "Plugin is not active"
 msgstr "Įskiepis neaktyvus"
 
-#: report/api.py:125
+#: report/api.py:124
 msgid "Plugin does not support label printing"
 msgstr "Įskiepis nepalaiko etikečių spausdinimo"
 
-#: report/api.py:173
+#: report/api.py:172
 msgid "Invalid label dimensions"
 msgstr "Neleistini etiketės matmenys"
 
-#: report/api.py:188 report/api.py:267
+#: report/api.py:187 report/api.py:266
 msgid "No valid items provided to template"
 msgstr "Šablonui nepateikti galimi elementai"
 
@@ -7415,132 +7512,140 @@ msgstr "Letter"
 msgid "Template file with this name already exists"
 msgstr "Šablono failas tokiu pavadinimu jau egzistuoja"
 
-#: report/models.py:204
+#: report/models.py:206
 msgid "Template name"
 msgstr "Šablono pavadinimas"
 
-#: report/models.py:210
+#: report/models.py:212
 msgid "Template description"
 msgstr "Šablono aprašymas"
 
-#: report/models.py:216
+#: report/models.py:218
 msgid "Revision number (auto-increments)"
 msgstr "Versijos numeris (didinamas automatiškai)"
 
-#: report/models.py:222
+#: report/models.py:224
 msgid "Attach to Model on Print"
 msgstr "Pridėti prie modelio spausdinant"
 
-#: report/models.py:224
+#: report/models.py:226
 msgid "Save report output as an attachment against linked model instance when printing"
 msgstr "Išsaugoti ataskaitą kaip priedą susietam modelio egzemplioriui spausdinimo metu"
 
-#: report/models.py:265
+#: report/models.py:270
 msgid "Filename Pattern"
 msgstr "Failo vardo šablonas"
 
-#: report/models.py:266
+#: report/models.py:271
 msgid "Pattern for generating filenames"
 msgstr "Šablonas failų vardų generavimui"
 
-#: report/models.py:271
+#: report/models.py:276
 msgid "Template is enabled"
 msgstr "Šablonas įjungtas"
 
-#: report/models.py:278
+#: report/models.py:283
 msgid "Target model type for template"
 msgstr "Šablonui skirtas modelio tipas"
 
-#: report/models.py:298
+#: report/models.py:303
 msgid "Filters"
 msgstr "Filtrai"
 
-#: report/models.py:299
+#: report/models.py:304
 msgid "Template query filters (comma-separated list of key=value pairs)"
 msgstr "Šablono užklausos filtrai (kableliais atskirtas key=value porų sąrašas)"
 
-#: report/models.py:358 report/models.py:562
+#: report/models.py:363 report/models.py:629
 msgid "Template file"
 msgstr "Šablono failas"
 
-#: report/models.py:366
+#: report/models.py:371
 msgid "Page size for PDF reports"
 msgstr "Puslapio dydis PDF ataskaitoms"
 
-#: report/models.py:372
+#: report/models.py:377
 msgid "Render report in landscape orientation"
 msgstr "Rodyti ataskaitą gulsčiai"
 
-#: report/models.py:484
+#: report/models.py:382
+msgid "Merge"
+msgstr ""
+
+#: report/models.py:383
+msgid "Render a single report against selected items"
+msgstr ""
+
+#: report/models.py:438
 #, python-brace-format
 msgid "Report generated from template {self.name}"
 msgstr "Ataskaita sugeneruota iš šablono {self.name}"
 
-#: report/models.py:509
+#: report/models.py:576
 msgid "Error generating report"
 msgstr "Klaida generuojant ataskaitą"
 
-#: report/models.py:568
+#: report/models.py:635
 msgid "Width [mm]"
 msgstr "Plotis [mm]"
 
-#: report/models.py:569
+#: report/models.py:636
 msgid "Label width, specified in mm"
 msgstr "Etiketės plotis, nurodytas milimetrais"
 
-#: report/models.py:575
+#: report/models.py:642
 msgid "Height [mm]"
 msgstr "Aukštis [mm]"
 
-#: report/models.py:576
+#: report/models.py:643
 msgid "Label height, specified in mm"
 msgstr "Etiketės aukštis, nurodytas milimetrais"
 
-#: report/models.py:684
+#: report/models.py:748
 msgid "Error printing labels"
 msgstr "Klaida spausdinant etiketes"
 
-#: report/models.py:703
+#: report/models.py:767
 msgid "Snippet"
 msgstr "Fragmentas"
 
-#: report/models.py:704
+#: report/models.py:768
 msgid "Report snippet file"
 msgstr "Ataskaitos fragmento failas"
 
-#: report/models.py:711
+#: report/models.py:775
 msgid "Snippet file description"
 msgstr "Fragmento failo aprašymas"
 
-#: report/models.py:729
+#: report/models.py:793
 msgid "Asset"
 msgstr "Išteklius"
 
-#: report/models.py:730
+#: report/models.py:794
 msgid "Report asset file"
 msgstr "Ataskaitos ištekliaus failas"
 
-#: report/models.py:737
+#: report/models.py:801
 msgid "Asset file description"
 msgstr "Ištekliaus failo aprašymas"
 
-#: report/serializers.py:91
+#: report/serializers.py:96
 msgid "Select report template"
 msgstr "Pasirinkite ataskaitos šabloną"
 
-#: report/serializers.py:99 report/serializers.py:149
+#: report/serializers.py:104 report/serializers.py:154
 msgid "List of item primary keys to include in the report"
 msgstr "Elementų pirminių raktų sąrašas, įtrauktinas į ataskaitą"
 
-#: report/serializers.py:132
+#: report/serializers.py:137
 msgid "Select label template"
 msgstr "Pasirinkite etiketės šabloną"
 
-#: report/serializers.py:140
+#: report/serializers.py:145
 msgid "Printing Plugin"
 msgstr "Spausdinimo įskiepis"
 
-#: report/serializers.py:141
+#: report/serializers.py:146
 msgid "Select plugin to use for label printing"
 msgstr "Pasirinkite įskiepį etikečių spausdinimui"
 
@@ -7567,6 +7672,8 @@ msgstr "Reikalingos medžiagos"
 #: report/templates/report/inventree_purchase_order_report.html:40
 #: report/templates/report/inventree_sales_order_report.html:40
 #: report/templates/report/inventree_sales_order_shipment_report.html:37
+#: report/templates/report/inventree_stock_report_merge.html:84
+#: report/templates/report/inventree_stock_report_merge.html:106
 #: report/templates/report/inventree_test_report.html:84
 #: report/templates/report/inventree_test_report.html:162
 msgid "Part image"
@@ -7602,6 +7709,7 @@ msgstr "Iš viso"
 
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
+#: report/templates/report/inventree_stock_report_merge.html:88
 #: report/templates/report/inventree_test_report.html:88 stock/models.py:1006
 #: stock/serializers.py:163
 msgid "Serial Number"
@@ -7619,9 +7727,21 @@ msgstr "Partija"
 msgid "Stock location items"
 msgstr "Atsargų vietos elementai"
 
+#: report/templates/report/inventree_stock_report_merge.html:21
 #: report/templates/report/inventree_test_report.html:21
 msgid "Stock Item Test Report"
 msgstr "Atsargų elemento bandymo ataskaita"
+
+#: report/templates/report/inventree_stock_report_merge.html:97
+#: report/templates/report/inventree_test_report.html:153
+#: stock/serializers.py:678
+msgid "Installed Items"
+msgstr "Sumontuoti elementai"
+
+#: report/templates/report/inventree_stock_report_merge.html:111
+#: report/templates/report/inventree_test_report.html:167
+msgid "Serial"
+msgstr "Serija"
 
 #: report/templates/report/inventree_test_report.html:97
 msgid "Test Results"
@@ -7647,15 +7767,6 @@ msgstr "Nėra rezultato (privaloma)"
 msgid "No result"
 msgstr "Nėra rezultato"
 
-#: report/templates/report/inventree_test_report.html:153
-#: stock/serializers.py:668
-msgid "Installed Items"
-msgstr "Sumontuoti elementai"
-
-#: report/templates/report/inventree_test_report.html:167
-msgid "Serial"
-msgstr "Serija"
-
 #: report/templatetags/report.py:144
 msgid "Asset file does not exist"
 msgstr "Ištekliaus failas neegzistuoja"
@@ -7672,123 +7783,123 @@ msgstr "Žyma part_image reikalauja detalės (Part) egzemplioriaus"
 msgid "company_image tag requires a Company instance"
 msgstr "Žyma company_image reikalauja įmonės (Company) egzemplioriaus"
 
-#: stock/api.py:255
+#: stock/api.py:270
 msgid "Filter by location depth"
 msgstr "Filtruoti pagal vietos gylį"
 
-#: stock/api.py:275
+#: stock/api.py:290
 msgid "Filter by top-level locations"
 msgstr "Filtruoti pagal aukščiausio lygio vietas"
 
-#: stock/api.py:290
+#: stock/api.py:305
 msgid "Include sub-locations in filtered results"
 msgstr "Įtraukti sub-vietas į filtravimo rezultatus"
 
-#: stock/api.py:311 stock/serializers.py:1256
+#: stock/api.py:326 stock/serializers.py:1268
 msgid "Parent Location"
 msgstr "Pirminė vieta"
 
-#: stock/api.py:312
+#: stock/api.py:327
 msgid "Filter by parent location"
 msgstr "Filtruoti pagal pirminę vietą"
 
-#: stock/api.py:554
+#: stock/api.py:569
 msgid "Part name (case insensitive)"
 msgstr "Detalės pavadinimas (neskiria didžiųjų ir mažųjų raidžių)"
 
-#: stock/api.py:560
+#: stock/api.py:575
 msgid "Part name contains (case insensitive)"
 msgstr "Detalės pavadinimas turi (neskiria didžiųjų ir mažųjų raidžių)"
 
-#: stock/api.py:566
+#: stock/api.py:581
 msgid "Part name (regex)"
 msgstr "Detalės pavadinimas (reguliarioji išraiška)"
 
-#: stock/api.py:571
+#: stock/api.py:586
 msgid "Part IPN (case insensitive)"
 msgstr "Detalės IPN (neskiria didžiųjų ir mažųjų raidžių)"
 
-#: stock/api.py:577
+#: stock/api.py:592
 msgid "Part IPN contains (case insensitive)"
 msgstr "Detalės IPN turi (neskiria didžiųjų ir mažųjų raidžių)"
 
-#: stock/api.py:583
+#: stock/api.py:598
 msgid "Part IPN (regex)"
 msgstr "Detalės IPN (reguliarioji išraiška)"
 
-#: stock/api.py:595
+#: stock/api.py:610
 msgid "Minimum stock"
 msgstr "Mažiausias kiekis"
 
-#: stock/api.py:599
+#: stock/api.py:614
 msgid "Maximum stock"
 msgstr "Didžiausias kiekis"
 
-#: stock/api.py:602
+#: stock/api.py:617
 msgid "Status Code"
 msgstr "Būsenos kodas"
 
-#: stock/api.py:642
+#: stock/api.py:657
 msgid "External Location"
 msgstr "Išorinė vieta"
 
-#: stock/api.py:741
+#: stock/api.py:756
 msgid "Consumed by Build Order"
 msgstr "Sunaudota gamybos užsakyme"
 
-#: stock/api.py:751
+#: stock/api.py:766
 msgid "Installed in other stock item"
 msgstr "Sumontuota kitame atsargų elemente"
 
-#: stock/api.py:840
+#: stock/api.py:855
 msgid "Part Tree"
 msgstr "Detalių medis"
 
-#: stock/api.py:862
+#: stock/api.py:877
 msgid "Updated before"
 msgstr "Atnaujinta iki"
 
-#: stock/api.py:866
+#: stock/api.py:881
 msgid "Updated after"
 msgstr "Atnaujinta po"
 
-#: stock/api.py:870
+#: stock/api.py:885
 msgid "Stocktake Before"
 msgstr "Inventorizacija iki"
 
-#: stock/api.py:874
+#: stock/api.py:889
 msgid "Stocktake After"
 msgstr "Inventorizacija po"
 
-#: stock/api.py:879
+#: stock/api.py:894
 msgid "Expiry date before"
 msgstr "Galiojimo data iki"
 
-#: stock/api.py:883
+#: stock/api.py:898
 msgid "Expiry date after"
 msgstr "Galiojimo data po"
 
-#: stock/api.py:886 stock/serializers.py:673
+#: stock/api.py:901 stock/serializers.py:683
 msgid "Stale"
 msgstr "Pasenusi"
 
-#: stock/api.py:987
+#: stock/api.py:1002
 msgid "Quantity is required"
 msgstr "Reikalingas kiekis"
 
-#: stock/api.py:992
+#: stock/api.py:1007
 msgid "Valid part must be supplied"
 msgstr "Turi būti pateikta galiojanti detalė"
 
-#: stock/api.py:1019
+#: stock/api.py:1038
 msgid "The given supplier part does not exist"
 msgstr "Nurodyta tiekėjo detalė neegzistuoja"
 
-#: stock/api.py:1029
+#: stock/api.py:1048
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "Tiekėjo detalė turi nustatytą pakuotės dydį, bet nepažymėtas požymis use_pack_size"
 
-#: stock/api.py:1056
+#: stock/api.py:1080
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Serijos numeriai negali būti pateikti detalei, kurios negalima sekti"
 
@@ -7897,7 +8008,7 @@ msgstr "Pasirinkite atitinkančią tiekėjo detalę šiam atsargų elementui"
 msgid "Where is this stock item located?"
 msgstr "Kur yra šis atsargų elementas?"
 
-#: stock/models.py:980 stock/serializers.py:1667
+#: stock/models.py:980 stock/serializers.py:1679
 msgid "Packaging this stock item is stored in"
 msgstr "Pakuotė, kurioje laikomas šis atsargų elementas"
 
@@ -7913,7 +8024,7 @@ msgstr "Ar šis elementas yra sumontuotas kitame elemente?"
 msgid "Serial number for this item"
 msgstr "Šio elemento serijos numeris"
 
-#: stock/models.py:1027 stock/serializers.py:1652
+#: stock/models.py:1027 stock/serializers.py:1664
 msgid "Batch code for this stock item"
 msgstr "Šio atsargų elemento partijos kodas"
 
@@ -7969,136 +8080,136 @@ msgstr "Vieneto pirkimo kaina pirkimo metu"
 msgid "Converted to part"
 msgstr "Konvertuota į detalę"
 
-#: stock/models.py:1721
+#: stock/models.py:1732
 msgid "Part is not set as trackable"
 msgstr "Detalė nenustatyta kaip sekama"
 
-#: stock/models.py:1727
+#: stock/models.py:1738
 msgid "Quantity must be integer"
 msgstr "Kiekis turi būti sveikasis skaičius"
 
-#: stock/models.py:1735
+#: stock/models.py:1746
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "Kiekis negali viršyti galimų atsargų kiekio ({self.quantity})"
 
-#: stock/models.py:1741
+#: stock/models.py:1752
 msgid "Serial numbers must be provided as a list"
 msgstr "Serijos numeriai turi būti pateikti sąraše"
 
-#: stock/models.py:1746
+#: stock/models.py:1757
 msgid "Quantity does not match serial numbers"
 msgstr "Kiekis nesutampa su serijos numeriais"
 
-#: stock/models.py:1868 stock/models.py:2777
+#: stock/models.py:1881 stock/models.py:2790
 msgid "Test template does not exist"
 msgstr "Bandomasis šablonas neegzistuoja"
 
-#: stock/models.py:1886
+#: stock/models.py:1899
 msgid "Stock item has been assigned to a sales order"
 msgstr "Atsargų elementas buvo priskirtas pardavimo užsakymui"
 
-#: stock/models.py:1890
+#: stock/models.py:1903
 msgid "Stock item is installed in another item"
 msgstr "Atsargų elementas sumontuotas kitame elemente"
 
-#: stock/models.py:1893
+#: stock/models.py:1906
 msgid "Stock item contains other items"
 msgstr "Atsargų elementas turi kitų elementų"
 
-#: stock/models.py:1896
+#: stock/models.py:1909
 msgid "Stock item has been assigned to a customer"
 msgstr "Atsargų elementas buvo priskirtas klientui"
 
-#: stock/models.py:1899 stock/models.py:2073
+#: stock/models.py:1912 stock/models.py:2086
 msgid "Stock item is currently in production"
 msgstr "Atsargų elementas šiuo metu gaminamas"
 
-#: stock/models.py:1902
+#: stock/models.py:1915
 msgid "Serialized stock cannot be merged"
 msgstr "Su serijos numeriais pažymėtų atsargų sujungti negalima"
 
-#: stock/models.py:1909 stock/serializers.py:1545
+#: stock/models.py:1922 stock/serializers.py:1557
 msgid "Duplicate stock items"
 msgstr "Pasikartojantys atsargų elementai"
 
-#: stock/models.py:1913
+#: stock/models.py:1926
 msgid "Stock items must refer to the same part"
 msgstr "Atsargų elementai turi būti susiję su ta pačia detale"
 
-#: stock/models.py:1921
+#: stock/models.py:1934
 msgid "Stock items must refer to the same supplier part"
 msgstr "Atsargų elementai turi būti susiję su ta pačia tiekėjo detale"
 
-#: stock/models.py:1926
+#: stock/models.py:1939
 msgid "Stock status codes must match"
 msgstr "Atsargų būsenos kodai turi sutapti"
 
-#: stock/models.py:2196
+#: stock/models.py:2209
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Atsargų elemento negalima perkelti, nes jo nėra sandėlyje"
 
-#: stock/models.py:2678
+#: stock/models.py:2691
 msgid "Stock Item Tracking"
 msgstr "Atsargų elemento sekimas"
 
-#: stock/models.py:2709
+#: stock/models.py:2722
 msgid "Entry notes"
 msgstr "Įrašo pastabos"
 
-#: stock/models.py:2749
+#: stock/models.py:2762
 msgid "Stock Item Test Result"
 msgstr "Atsargų elemento bandymo rezultatas"
 
-#: stock/models.py:2780
+#: stock/models.py:2793
 msgid "Value must be provided for this test"
 msgstr "Šiam bandymui turi būti pateikta reikšmė"
 
-#: stock/models.py:2784
+#: stock/models.py:2797
 msgid "Attachment must be uploaded for this test"
 msgstr "Šiam bandymui turi būti įkeltas priedas"
 
-#: stock/models.py:2789
+#: stock/models.py:2802
 msgid "Invalid value for this test"
 msgstr "Netinkama reikšmė šiam bandymui"
 
-#: stock/models.py:2813
+#: stock/models.py:2826
 msgid "Test result"
 msgstr "Bandymo rezultatas"
 
-#: stock/models.py:2820
+#: stock/models.py:2833
 msgid "Test output value"
 msgstr "Bandymo išvesties reikšmė"
 
-#: stock/models.py:2828 stock/serializers.py:259
+#: stock/models.py:2841 stock/serializers.py:259
 msgid "Test result attachment"
 msgstr "Bandymo rezultato priedas"
 
-#: stock/models.py:2832
+#: stock/models.py:2845
 msgid "Test notes"
 msgstr "Bandymo pastabos"
 
-#: stock/models.py:2840
+#: stock/models.py:2853
 msgid "Test station"
 msgstr "Bandymų stotis"
 
-#: stock/models.py:2841
+#: stock/models.py:2854
 msgid "The identifier of the test station where the test was performed"
 msgstr "Bandymų stoties identifikatorius, kurioje atliktas bandymas"
 
-#: stock/models.py:2847
+#: stock/models.py:2860
 msgid "Started"
 msgstr "Pradėta"
 
-#: stock/models.py:2848
+#: stock/models.py:2861
 msgid "The timestamp of the test start"
 msgstr "Bandymo pradžios laiko žyma"
 
-#: stock/models.py:2854
+#: stock/models.py:2867
 msgid "Finished"
 msgstr "Pabaigta"
 
-#: stock/models.py:2855
+#: stock/models.py:2868
 msgid "The timestamp of the test finish"
 msgstr "Bandymo pabaigos laiko žyma"
 
@@ -8170,201 +8281,201 @@ msgstr "Pirminis atsargų elementas"
 msgid "Use pack size when adding: the quantity defined is the number of packs"
 msgstr "Naudoti pakuotės dydį pridedant: nurodytas kiekis yra pakuočių skaičius"
 
-#: stock/serializers.py:618
+#: stock/serializers.py:628
 msgid "Supplier Part Number"
 msgstr "Tiekėjo detalės numeris"
 
-#: stock/serializers.py:665 users/models.py:193
+#: stock/serializers.py:675 users/models.py:193
 msgid "Expired"
 msgstr "Nebegaliojantis"
 
-#: stock/serializers.py:671
+#: stock/serializers.py:681
 msgid "Child Items"
 msgstr "Antriniai elementai"
 
-#: stock/serializers.py:675
+#: stock/serializers.py:685
 msgid "Tracking Items"
 msgstr "Sekami elementai"
 
-#: stock/serializers.py:681
+#: stock/serializers.py:691
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "Šio atsargų elemento pirkimo kaina, vienetui arba pakuotei"
 
-#: stock/serializers.py:719
+#: stock/serializers.py:729
 msgid "Enter number of stock items to serialize"
 msgstr "Įveskite atsargų elementų, kuriuos reikia serializuoti, skaičių"
 
-#: stock/serializers.py:732
+#: stock/serializers.py:742
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "Kiekis negali viršyti galimų atsargų kiekio ({q})"
 
-#: stock/serializers.py:739
+#: stock/serializers.py:749
 msgid "Enter serial numbers for new items"
 msgstr "Įveskite serijos numerius naujiems elementams"
 
-#: stock/serializers.py:750 stock/serializers.py:1502 stock/serializers.py:1790
+#: stock/serializers.py:760 stock/serializers.py:1514 stock/serializers.py:1802
 msgid "Destination stock location"
 msgstr "Paskirties atsargų vieta"
 
-#: stock/serializers.py:757
+#: stock/serializers.py:767
 msgid "Optional note field"
 msgstr "Neprivalomas pastabų laukas"
 
-#: stock/serializers.py:767
+#: stock/serializers.py:777
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Šiai detalei negali būti priskirti serijos numeriai"
 
-#: stock/serializers.py:787
+#: stock/serializers.py:797
 msgid "Serial numbers already exist"
 msgstr "Serijos numeriai jau egzistuoja"
 
-#: stock/serializers.py:826
+#: stock/serializers.py:843
 msgid "Select stock item to install"
 msgstr "Pasirinkite atsargų elementą montavimui"
 
-#: stock/serializers.py:833
+#: stock/serializers.py:850
 msgid "Quantity to Install"
 msgstr "Montuojamas kiekis"
 
-#: stock/serializers.py:834
+#: stock/serializers.py:851
 msgid "Enter the quantity of items to install"
 msgstr "Įveskite montuojamų elementų kiekį"
 
-#: stock/serializers.py:839 stock/serializers.py:919 stock/serializers.py:1049
-#: stock/serializers.py:1101
+#: stock/serializers.py:856 stock/serializers.py:936 stock/serializers.py:1066
+#: stock/serializers.py:1118
 msgid "Add transaction note (optional)"
 msgstr "Pridėkite operacijos pastabą (neprivaloma)"
 
-#: stock/serializers.py:847
+#: stock/serializers.py:864
 msgid "Quantity to install must be at least 1"
 msgstr "Montuojamas kiekis turi būti bent 1"
 
-#: stock/serializers.py:855
+#: stock/serializers.py:872
 msgid "Stock item is unavailable"
 msgstr "Atsargų elementas nepasiekiamas"
 
-#: stock/serializers.py:866
+#: stock/serializers.py:883
 msgid "Selected part is not in the Bill of Materials"
 msgstr "Pasirinktos detalės nėra komplektavimo žiniaraštyje"
 
-#: stock/serializers.py:879
+#: stock/serializers.py:896
 msgid "Quantity to install must not exceed available quantity"
 msgstr "Montuojamas kiekis negali viršyti turimo kiekio"
 
-#: stock/serializers.py:914
+#: stock/serializers.py:931
 msgid "Destination location for uninstalled item"
 msgstr "Paskirties vieta išmontuotam elementui"
 
-#: stock/serializers.py:949
+#: stock/serializers.py:966
 msgid "Select part to convert stock item into"
 msgstr "Pasirinkite detalę, į kurią konvertuoti atsargų elementą"
 
-#: stock/serializers.py:962
+#: stock/serializers.py:979
 msgid "Selected part is not a valid option for conversion"
 msgstr "Pasirinkta detalė netinkama konvertavimui"
 
-#: stock/serializers.py:979
+#: stock/serializers.py:996
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "Negalima konvertuoti atsargų elemento, kuriam priskirta tiekėjo detalė"
 
-#: stock/serializers.py:1013
+#: stock/serializers.py:1030
 msgid "Stock item status code"
 msgstr "Atsargų elemento būsenos kodas"
 
-#: stock/serializers.py:1042
+#: stock/serializers.py:1059
 msgid "Destination location for returned item"
 msgstr "Paskirties vieta grąžintam elementui"
 
-#: stock/serializers.py:1085
+#: stock/serializers.py:1102
 msgid "Select stock items to change status"
 msgstr "Pasirinkite atsargų elementus būsenai pakeisti"
 
-#: stock/serializers.py:1091
+#: stock/serializers.py:1108
 msgid "No stock items selected"
 msgstr "Nepasirinkti jokie atsargų elementai"
 
-#: stock/serializers.py:1185 stock/serializers.py:1262
+#: stock/serializers.py:1197 stock/serializers.py:1274
 msgid "Sublocations"
 msgstr "Sub-vietos"
 
-#: stock/serializers.py:1257
+#: stock/serializers.py:1269
 msgid "Parent stock location"
 msgstr "Pirminė atsargų vieta"
 
-#: stock/serializers.py:1374
+#: stock/serializers.py:1386
 msgid "Part must be salable"
 msgstr "Detalė turi būti parduodama"
 
-#: stock/serializers.py:1378
+#: stock/serializers.py:1390
 msgid "Item is allocated to a sales order"
 msgstr "Elementas priskirtas pardavimo užsakymui"
 
-#: stock/serializers.py:1382
+#: stock/serializers.py:1394
 msgid "Item is allocated to a build order"
 msgstr "Elementas priskirtas gamybos užsakymui"
 
-#: stock/serializers.py:1406
+#: stock/serializers.py:1418
 msgid "Customer to assign stock items"
 msgstr "Klientas, kuriam priskiriami atsargų elementai"
 
-#: stock/serializers.py:1412
+#: stock/serializers.py:1424
 msgid "Selected company is not a customer"
 msgstr "Pasirinkta įmonė nėra klientas"
 
-#: stock/serializers.py:1420
+#: stock/serializers.py:1432
 msgid "Stock assignment notes"
 msgstr "Atsargų priskyrimo pastabos"
 
-#: stock/serializers.py:1430 stock/serializers.py:1695
+#: stock/serializers.py:1442 stock/serializers.py:1707
 msgid "A list of stock items must be provided"
 msgstr "Turi būti pateiktas atsargų elementų sąrašas"
 
-#: stock/serializers.py:1509
+#: stock/serializers.py:1521
 msgid "Stock merging notes"
 msgstr "Atsargų sujungimo pastabos"
 
-#: stock/serializers.py:1514
+#: stock/serializers.py:1526
 msgid "Allow mismatched suppliers"
 msgstr "Leisti skirtingus tiekėjus"
 
-#: stock/serializers.py:1515
+#: stock/serializers.py:1527
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "Leisti sujungti atsargų elementus su skirtingomis tiekėjų detalėmis"
 
-#: stock/serializers.py:1520
+#: stock/serializers.py:1532
 msgid "Allow mismatched status"
 msgstr "Leisti skirtingas būsenas"
 
-#: stock/serializers.py:1521
+#: stock/serializers.py:1533
 msgid "Allow stock items with different status codes to be merged"
 msgstr "Leisti sujungti atsargų elementus su skirtingais būsenos kodais"
 
-#: stock/serializers.py:1531
+#: stock/serializers.py:1543
 msgid "At least two stock items must be provided"
 msgstr "Turi būti pateikti bent du atsargų elementai"
 
-#: stock/serializers.py:1598
+#: stock/serializers.py:1610
 msgid "No Change"
 msgstr "Be pakeitimų"
 
-#: stock/serializers.py:1627
+#: stock/serializers.py:1639
 msgid "StockItem primary key value"
 msgstr "Atsargų elemento pirminio rakto reikšmė"
 
-#: stock/serializers.py:1639
+#: stock/serializers.py:1651
 msgid "Stock item is not in stock"
 msgstr "Atsargų elemento nėra sandėlyje"
 
-#: stock/serializers.py:1685
+#: stock/serializers.py:1697
 msgid "Stock transaction notes"
 msgstr "Atsargų operacijos pastabos"
 
-#: stock/serializers.py:1831
+#: stock/serializers.py:1843
 msgid "Next Serial Number"
 msgstr "Kitas serijos numeris"
 
-#: stock/serializers.py:1837
+#: stock/serializers.py:1849
 msgid "Previous Serial Number"
 msgstr "Ankstesnis serijos numeris"
 
