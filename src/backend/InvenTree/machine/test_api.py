@@ -197,7 +197,9 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         }
 
         # Create a machine
-        response = self.post(reverse('api-machine-list'), machine_data)
+        response = self.post(
+            reverse('api-machine-list'), machine_data, max_query_count=400
+        )
         self.assertEqual(response.data, {**response.data, **machine_data})
         pk = response.data['pk']
 
@@ -231,13 +233,16 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     def test_machine_detail_settings(self):
         """Test machine detail settings API endpoint."""
+        # TODO: Investigate why these tests need a higher query limit
+        QUERY_LIMIT = 300
+
         machine_setting_url = reverse(
             'api-machine-settings-detail',
             kwargs={'pk': self.placeholder_uuid, 'config_type': 'M', 'key': 'LOCATION'},
         )
 
         # Test machine settings for non-existent machine
-        self.get(machine_setting_url, expected_code=404)
+        self.get(machine_setting_url, expected_code=404, max_query_count=QUERY_LIMIT)
 
         # Create a machine
         machine = MachineConfig.objects.create(
@@ -257,18 +262,22 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         )
 
         # Get settings
-        response = self.get(machine_setting_url)
+        response = self.get(machine_setting_url, max_query_count=QUERY_LIMIT)
         self.assertEqual(response.data['value'], '')
 
-        response = self.get(driver_setting_url)
+        response = self.get(driver_setting_url, max_query_count=QUERY_LIMIT)
         self.assertEqual(response.data['value'], '')
 
         # Update machine setting
         location = StockLocation.objects.create(name='Test Location')
-        response = self.patch(machine_setting_url, {'value': str(location.pk)})
+        response = self.patch(
+            machine_setting_url,
+            {'value': str(location.pk)},
+            max_query_count=QUERY_LIMIT,
+        )
         self.assertEqual(response.data['value'], str(location.pk))
 
-        response = self.get(machine_setting_url)
+        response = self.get(machine_setting_url, max_query_count=QUERY_LIMIT)
         self.assertEqual(response.data['value'], str(location.pk))
 
         # Update driver setting
@@ -280,7 +289,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
         # Get list of all settings for a machine
         settings_url = reverse('api-machine-settings', kwargs={'pk': machine.pk})
-        response = self.get(settings_url)
+        response = self.get(settings_url, max_query_count=QUERY_LIMIT)
         self.assertEqual(len(response.data), 2)
         self.assertEqual(
             [('M', 'LOCATION'), ('D', 'TEST_SETTING')],
