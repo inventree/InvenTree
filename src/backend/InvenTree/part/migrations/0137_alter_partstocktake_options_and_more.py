@@ -10,6 +10,8 @@ class Migration(migrations.Migration):
 
     The intent here is to leave the actual database tables in place,
     as the "inventree-stock-history" plugin will continue to use them.
+
+    Each table is marked as unmanaged, to ensure Django does not delete them.
     """
 
     dependencies = [
