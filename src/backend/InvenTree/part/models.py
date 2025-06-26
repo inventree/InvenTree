@@ -2710,6 +2710,10 @@ class PartPricing(common.models.MetaMixin):
         if InvenTree.ready.isRunningMigrations():
             return
 
+        # If the pricing auto-update feature is disabled, skip pricing update
+        if not get_global_setting('PRICING_AUTO_UPDATE', backup_value=True):
+            return
+
         if (
             not self.part
             or not self.part.pk
