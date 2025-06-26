@@ -25,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   DateColumn,
+  DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
@@ -111,10 +112,9 @@ export default function ReturnOrderLineItemTable({
         accessor: 'part_detail.IPN',
         sortable: false
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'item_detail.serial',
         title: t`Quantity`,

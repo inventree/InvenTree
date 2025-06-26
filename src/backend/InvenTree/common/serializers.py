@@ -213,6 +213,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'model_filters',
                 'api_url',
                 'typ',
+                'units',
                 'required',
             ]
 

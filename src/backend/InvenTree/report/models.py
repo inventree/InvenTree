@@ -711,10 +711,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             ValidationError: If there is an error during label printing
         """
         logger.info(
-            "Printing %s labels against template '%s' using plugin '%s'",
-            len(items),
-            plugin.slug,
-            self.name,
+            f"Printing {len(items)} labels against template '{self.name}' using plugin '{plugin.slug}'"
         )
 
         if not output:

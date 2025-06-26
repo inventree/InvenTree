@@ -36,7 +36,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DateColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -89,12 +94,9 @@ export default function SalesOrderLineItemTable({
         title: t`IPN`,
         switchable: true
       },
-      {
-        accessor: 'part_detail.description',
-        title: t`Description`,
-        sortable: false,
-        switchable: true
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'reference',
         sortable: false,

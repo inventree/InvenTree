@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-06-18 23:18\n"
+"PO-Revision-Date: 2025-06-25 07:39\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -4211,7 +4211,7 @@ msgstr "Переместить"
 #: src/tables/purchasing/SupplierPartTable.tsx:208
 #: src/tables/stock/StockItemTable.tsx:342
 msgid "In Stock"
-msgstr "В наличии"
+msgstr "На складе"
 
 #: src/forms/StockForms.tsx:824
 #: src/pages/Index/Scan.tsx:182
@@ -4326,30 +4326,30 @@ msgstr ""
 #: src/functions/api.tsx:33
 #: src/tables/InvenTreeTable.tsx:491
 msgid "Bad request"
-msgstr ""
+msgstr "Некорректный запрос"
 
 #: src/functions/api.tsx:36
 #: src/tables/InvenTreeTable.tsx:494
 msgid "Unauthorized"
-msgstr ""
+msgstr "Не авторизован"
 
 #: src/functions/api.tsx:39
 #: src/tables/InvenTreeTable.tsx:497
 msgid "Forbidden"
-msgstr ""
+msgstr "Запрещено"
 
 #: src/functions/api.tsx:42
 #: src/tables/InvenTreeTable.tsx:500
 msgid "Not found"
-msgstr ""
+msgstr "Не найдено"
 
 #: src/functions/api.tsx:45
 msgid "Method not allowed"
-msgstr ""
+msgstr "Метод не поддерживается"
 
 #: src/functions/api.tsx:48
 msgid "Internal server error"
-msgstr ""
+msgstr "Внутренняя ошибка сервера"
 
 #: src/functions/auth.tsx:34
 #~ msgid "Error fetching token from server."
@@ -4399,7 +4399,7 @@ msgstr "Успешный выход из системы"
 
 #: src/functions/auth.tsx:189
 msgid "Language changed"
-msgstr ""
+msgstr "Язык изменён"
 
 #: src/functions/auth.tsx:190
 msgid "Your active language has been changed to the one set in your profile"
@@ -4407,7 +4407,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:210
 msgid "Theme changed"
-msgstr ""
+msgstr "Тема изменена"
 
 #: src/functions/auth.tsx:211
 msgid "Your active theme has been changed to the one set in your profile"
@@ -4497,7 +4497,7 @@ msgstr "Сервер вернул статус {returnCode}"
 
 #: src/functions/notifications.tsx:48
 msgid "Timeout"
-msgstr ""
+msgstr "Таймаут"
 
 #: src/functions/notifications.tsx:49
 msgid "The request timed out"
@@ -5523,7 +5523,7 @@ msgstr "Курсы валют"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:161
 msgid "Custom States"
-msgstr "Пользовательские статусы"
+msgstr "Пользовательские состояния"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:167
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:57
@@ -5541,7 +5541,7 @@ msgstr "Параметры деталей"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:180
 msgid "Category Parameters"
-msgstr ""
+msgstr "Параметры категории"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:206
 msgid "Location Types"
@@ -5579,7 +5579,7 @@ msgstr "Расширенные настройки"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:56
 msgid "Machine Types"
-msgstr ""
+msgstr "Типы оборудования"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:62
 #~ msgid "There are no machine registry errors."
@@ -5587,23 +5587,23 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:64
 msgid "Machine Errors"
-msgstr ""
+msgstr "Ошибки оборудования"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:77
 msgid "Registry Registry Errors"
-msgstr ""
+msgstr "Ошибки реестра"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:80
 msgid "There are machine registry errors"
-msgstr ""
+msgstr "Есть ошибки реестра оборудования"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:86
 msgid "Machine Registry Errors"
-msgstr ""
+msgstr "Ошибки реестра оборудования"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:89
 msgid "There are no machine registry errors"
-msgstr ""
+msgstr "Нет ошибок реестра оборудования"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 #: src/tables/settings/UserTable.tsx:184
@@ -5632,7 +5632,7 @@ msgstr "Ошибки плагинов"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:16
 msgid "Page Size"
-msgstr ""
+msgstr "Размер страницы"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:19
 msgid "Landscape"
@@ -5640,7 +5640,7 @@ msgstr "Альбомный"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
 msgid "Attach to Model"
-msgstr ""
+msgstr "Прикрепить к модели"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:55
 #~ msgid "Generated Reports"
@@ -5764,7 +5764,7 @@ msgstr "Метки"
 #: src/pages/Index/Settings/SystemSettings.tsx:169
 #: src/pages/Index/Settings/UserSettings.tsx:105
 msgid "Reporting"
-msgstr "Отчеты"
+msgstr "Отчёты"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
@@ -6503,7 +6503,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:241
 #: src/tables/part/PartCategoryTable.tsx:142
 msgid "Category Actions"
-msgstr ""
+msgstr "Действия с категорией"
 
 #: src/pages/part/CategoryDetail.tsx:262
 msgid "Category Details"
@@ -6523,7 +6523,7 @@ msgstr "Резервирование в заказах на продажу"
 
 #: src/pages/part/PartDetail.tsx:185
 msgid "Variant of"
-msgstr "Вариант"
+msgstr "Разновидность детали"
 
 #: src/pages/part/PartDetail.tsx:192
 msgid "Revision of"
@@ -6547,7 +6547,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:226
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:44
 msgid "Units"
-msgstr "Ед. изм"
+msgstr "Единица измерения"
 
 #: src/pages/part/PartDetail.tsx:233
 #: src/tables/settings/PendingTasksTable.tsx:46
@@ -6560,7 +6560,7 @@ msgstr "Ключевые слова"
 #: src/tables/part/PartTable.tsx:297
 #: src/tables/sales/SalesOrderLineItemTable.tsx:128
 msgid "Available Stock"
-msgstr ""
+msgstr "Доступно"
 
 #: src/pages/part/PartDetail.tsx:265
 msgid "Variant Stock"
@@ -6575,11 +6575,11 @@ msgstr "Минимальный запас"
 #: src/tables/build/BuildLineTable.tsx:255
 #: src/tables/sales/SalesOrderLineItemTable.tsx:166
 msgid "On order"
-msgstr ""
+msgstr "В заказе"
 
 #: src/pages/part/PartDetail.tsx:286
 msgid "Required for Orders"
-msgstr "Для заказов требуется"
+msgstr "Требуется для заказов"
 
 #: src/pages/part/PartDetail.tsx:295
 msgid "Allocated to Build Orders"
@@ -6691,7 +6691,7 @@ msgstr "Последний серийный номер"
 
 #: src/pages/part/PartDetail.tsx:516
 msgid "Variants"
-msgstr ""
+msgstr "Разновидности"
 
 #: src/pages/part/PartDetail.tsx:523
 #: src/pages/stock/StockDetail.tsx:450
@@ -7064,7 +7064,7 @@ msgstr "Нет данных"
 
 #: src/pages/part/pricing/PricingPanel.tsx:65
 msgid "No Data"
-msgstr ""
+msgstr "Нет данных"
 
 #: src/pages/part/pricing/PricingPanel.tsx:66
 msgid "No pricing data available"
@@ -7289,7 +7289,7 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:442
 msgid "Order shipped"
-msgstr ""
+msgstr "Заказ отгружен"
 
 #: src/pages/sales/SalesOrderDetail.tsx:450
 msgid "Complete Sales Order"
@@ -7297,7 +7297,7 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:489
 msgid "Ship Order"
-msgstr ""
+msgstr "Отгрузить заказ"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:121
 #: src/tables/sales/SalesOrderShipmentTable.tsx:94
@@ -7321,12 +7321,12 @@ msgstr "Номер счета"
 #: src/tables/sales/SalesOrderAllocationTable.tsx:181
 #: src/tables/sales/SalesOrderShipmentTable.tsx:113
 msgid "Shipment Date"
-msgstr ""
+msgstr "Дата отгрузки"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:161
 #: src/tables/sales/SalesOrderShipmentTable.tsx:117
 msgid "Delivery Date"
-msgstr ""
+msgstr "Дата доставки"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:206
 msgid "Shipment Details"
@@ -7357,7 +7357,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:281
 #: src/tables/part/PartPurchaseOrdersTable.tsx:121
 msgid "Pending"
-msgstr ""
+msgstr "В обработке"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:287
 #: src/tables/sales/SalesOrderShipmentTable.tsx:106
@@ -7482,7 +7482,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:249
 msgid "Parent Item"
-msgstr ""
+msgstr "Родительский элемент"
 
 #: src/pages/stock/StockDetail.tsx:253
 msgid "Parent stock item"
@@ -7611,7 +7611,7 @@ msgstr "Просрочен"
 
 #: src/pages/stock/StockDetail.tsx:885
 msgid "Unavailable"
-msgstr ""
+msgstr "Недоступно"
 
 #: src/states/IconState.tsx:47
 #: src/states/IconState.tsx:77
@@ -7631,11 +7631,11 @@ msgstr "Часть не активна"
 #: src/tables/part/PartParameterTable.tsx:193
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
-msgstr ""
+msgstr "Деталь заблокирована"
 
 #: src/tables/ColumnRenderers.tsx:47
 msgid "You are subscribed to notifications for this part"
-msgstr ""
+msgstr "Вы подписаны на получение уведомлений для этой детали"
 
 #: src/tables/ColumnRenderers.tsx:72
 msgid "No location set"
@@ -7812,11 +7812,11 @@ msgstr "Фильтр по пользователю, который создал 
 
 #: src/tables/Filter.tsx:335
 msgid "Filter by user who issued the order"
-msgstr ""
+msgstr "Фильтр по пользователю, создавшему заказ"
 
 #: src/tables/Filter.tsx:343
 msgid "Filter by part category"
-msgstr ""
+msgstr "Фильтр по категории"
 
 #: src/tables/FilterSelectDrawer.tsx:58
 msgid "Remove filter"
@@ -7865,11 +7865,11 @@ msgstr "Записи не найдены"
 
 #: src/tables/InvenTreeTable.tsx:218
 msgid "Failed to load table options"
-msgstr ""
+msgstr "Не удалось загрузить параметры таблицы"
 
 #: src/tables/InvenTreeTable.tsx:483
 msgid "Server returned incorrect data type"
-msgstr ""
+msgstr "Сервер вернул неверный тип данных"
 
 #: src/tables/InvenTreeTable.tsx:510
 #~ msgid "Are you sure you want to delete the selected records?"
@@ -7957,7 +7957,7 @@ msgstr "Обновить данные"
 
 #: src/tables/bom/BomTable.tsx:97
 msgid "This BOM item is defined for a different parent"
-msgstr ""
+msgstr "Эта позиция в спецификации унаследована от родительской детали"
 
 #: src/tables/bom/BomTable.tsx:112
 msgid "Part Information"
@@ -8021,16 +8021,16 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:321
 #: src/tables/build/BuildLineTable.tsx:202
 msgid "Show assembled items"
-msgstr ""
+msgstr "Показать сборные детали"
 
 #: src/tables/bom/BomTable.tsx:326
 #: src/tables/build/BuildLineTable.tsx:187
 msgid "Show items with available stock"
-msgstr ""
+msgstr "Показать элементы, которые есть в наличии на складе"
 
 #: src/tables/bom/BomTable.tsx:331
 msgid "Show items on order"
-msgstr ""
+msgstr "Показать элементы, которые находятся в заказе"
 
 #: src/tables/bom/BomTable.tsx:331
 #~ msgid "Edit Bom Item"
@@ -8042,29 +8042,29 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:335
 msgid "Validated"
-msgstr ""
+msgstr "Утверждено"
 
 #: src/tables/bom/BomTable.tsx:336
 msgid "Show validated items"
-msgstr ""
+msgstr "Показать утверждённые элементы"
 
 #: src/tables/bom/BomTable.tsx:340
 #: src/tables/bom/UsedInTable.tsx:75
 msgid "Inherited"
-msgstr ""
+msgstr "Унаследовано"
 
 #: src/tables/bom/BomTable.tsx:341
 #: src/tables/bom/UsedInTable.tsx:76
 msgid "Show inherited items"
-msgstr ""
+msgstr "Показать элементы, которые унаследованы"
 
 #: src/tables/bom/BomTable.tsx:345
 msgid "Allow Variants"
-msgstr ""
+msgstr "Есть варианты"
 
 #: src/tables/bom/BomTable.tsx:346
 msgid "Show items which allow variant substitution"
-msgstr ""
+msgstr "Показать элементы, в которых есть варианты замены"
 
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
@@ -8078,12 +8078,12 @@ msgstr ""
 #: src/tables/bom/UsedInTable.tsx:80
 #: src/tables/build/BuildLineTable.tsx:196
 msgid "Optional"
-msgstr ""
+msgstr "Необязательно"
 
 #: src/tables/bom/BomTable.tsx:351
 #: src/tables/bom/UsedInTable.tsx:81
 msgid "Show optional items"
-msgstr ""
+msgstr "Показать необязательные элементы"
 
 #: src/tables/bom/BomTable.tsx:351
 #~ msgid "Are you sure you want to remove this BOM item?"
@@ -8096,20 +8096,20 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:355
 #: src/tables/build/BuildLineTable.tsx:191
 msgid "Consumable"
-msgstr ""
+msgstr "Расходник"
 
 #: src/tables/bom/BomTable.tsx:356
 msgid "Show consumable items"
-msgstr ""
+msgstr "Показать элементы, которые являются расходниками"
 
 #: src/tables/bom/BomTable.tsx:360
 #: src/tables/part/PartTable.tsx:291
 msgid "Has Pricing"
-msgstr ""
+msgstr "Есть цена"
 
 #: src/tables/bom/BomTable.tsx:361
 msgid "Show items with pricing"
-msgstr ""
+msgstr "Показать позиции с ценой"
 
 #: src/tables/bom/BomTable.tsx:383
 #: src/tables/bom/BomTable.tsx:519
@@ -8119,65 +8119,65 @@ msgstr "Импортировать данные спецификации"
 #: src/tables/bom/BomTable.tsx:393
 #: src/tables/bom/BomTable.tsx:533
 msgid "Add BOM Item"
-msgstr "Добавить элемент спецификации"
+msgstr "Создать позицию в спецификацию"
 
 #: src/tables/bom/BomTable.tsx:398
 msgid "BOM item created"
-msgstr ""
+msgstr "Создана позиция в спецификации"
 
 #: src/tables/bom/BomTable.tsx:405
 msgid "Edit BOM Item"
-msgstr ""
+msgstr "Редактировать позицию спецификации"
 
 #: src/tables/bom/BomTable.tsx:407
 msgid "BOM item updated"
-msgstr ""
+msgstr "Позиция в спецификации обновлена"
 
 #: src/tables/bom/BomTable.tsx:414
 msgid "Delete BOM Item"
-msgstr ""
+msgstr "Удалить позицию в спецификации"
 
 #: src/tables/bom/BomTable.tsx:415
 msgid "BOM item deleted"
-msgstr ""
+msgstr "Позиция в спецификации удалена"
 
 #: src/tables/bom/BomTable.tsx:428
 #: src/tables/bom/BomTable.tsx:431
 #: src/tables/bom/BomTable.tsx:526
 msgid "Validate BOM"
-msgstr ""
+msgstr "Утвердить спецификацию"
 
 #: src/tables/bom/BomTable.tsx:432
 msgid "Do you want to validate the bill of materials for this assembly?"
-msgstr ""
+msgstr "Вы хотите утвердить спецификацию для данной сборочной детали?"
 
 #: src/tables/bom/BomTable.tsx:435
 msgid "BOM validated"
-msgstr ""
+msgstr "Спецификация утверждена"
 
 #: src/tables/bom/BomTable.tsx:447
 msgid "BOM item validated"
-msgstr ""
+msgstr "Позиция в спецификации утверждена"
 
 #: src/tables/bom/BomTable.tsx:456
 msgid "Failed to validate BOM item"
-msgstr ""
+msgstr "При утверждении позиции в спецификации произошла ошибка"
 
 #: src/tables/bom/BomTable.tsx:468
 msgid "View BOM"
-msgstr ""
+msgstr "Показать спецификацию"
 
 #: src/tables/bom/BomTable.tsx:479
 msgid "Validate BOM Line"
-msgstr ""
+msgstr "Утвердить позицию в спецификации"
 
 #: src/tables/bom/BomTable.tsx:496
 msgid "Edit Substitutes"
-msgstr ""
+msgstr "Редактировать варианты замены"
 
 #: src/tables/bom/BomTable.tsx:554
 msgid "Bill of materials cannot be edited, as the part is locked"
-msgstr ""
+msgstr "Невозможно отредактировать спецификацию, поскольку деталь заблокирована"
 
 #: src/tables/bom/UsedInTable.tsx:33
 #: src/tables/build/BuildLineTable.tsx:201
@@ -8688,7 +8688,7 @@ msgstr ""
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:74
 #: src/tables/settings/ErrorTable.tsx:59
 msgid "Timestamp"
-msgstr ""
+msgstr "Метка времени"
 
 #: src/tables/general/BarcodeScanTable.tsx:75
 msgid "View Item"
@@ -8830,11 +8830,11 @@ msgstr "Драйвер"
 
 #: src/tables/machine/MachineTypeTable.tsx:79
 msgid "Builtin driver"
-msgstr ""
+msgstr "Встроенный драйвер"
 
 #: src/tables/machine/MachineTypeTable.tsx:97
 msgid "Not Found"
-msgstr ""
+msgstr "Не найдено"
 
 #: src/tables/machine/MachineTypeTable.tsx:99
 #~ msgid "Machine type information"
@@ -8842,26 +8842,26 @@ msgstr ""
 
 #: src/tables/machine/MachineTypeTable.tsx:100
 msgid "Machine type not found."
-msgstr ""
+msgstr "Тип оборудования не найден."
 
 #: src/tables/machine/MachineTypeTable.tsx:110
 msgid "Machine Type Information"
-msgstr ""
+msgstr "Информация о типе оборудования"
 
 #: src/tables/machine/MachineTypeTable.tsx:125
 #: src/tables/machine/MachineTypeTable.tsx:239
 msgid "Slug"
-msgstr ""
+msgstr "Часть URL-адреса"
 
 #: src/tables/machine/MachineTypeTable.tsx:136
 #: src/tables/machine/MachineTypeTable.tsx:260
 msgid "Provider plugin"
-msgstr ""
+msgstr "Плагин поставщика"
 
 #: src/tables/machine/MachineTypeTable.tsx:148
 #: src/tables/machine/MachineTypeTable.tsx:272
 msgid "Provider file"
-msgstr ""
+msgstr "Файл поставщика"
 
 #: src/tables/machine/MachineTypeTable.tsx:148
 #~ msgid "Available drivers"
@@ -8869,19 +8869,19 @@ msgstr ""
 
 #: src/tables/machine/MachineTypeTable.tsx:163
 msgid "Available Drivers"
-msgstr ""
+msgstr "Доступные драйверы"
 
 #: src/tables/machine/MachineTypeTable.tsx:218
 msgid "Machine driver not found."
-msgstr ""
+msgstr "Драйвер оборудования не найден."
 
 #: src/tables/machine/MachineTypeTable.tsx:226
 msgid "Machine driver information"
-msgstr ""
+msgstr "Информация о драйвере оборудования"
 
 #: src/tables/machine/MachineTypeTable.tsx:246
 msgid "Machine type"
-msgstr ""
+msgstr "Тип оборудования"
 
 #: src/tables/machine/MachineTypeTable.tsx:338
 #~ msgid "Machine type detail"
@@ -8893,15 +8893,15 @@ msgstr ""
 
 #: src/tables/machine/MachineTypeTable.tsx:349
 msgid "Builtin type"
-msgstr ""
+msgstr "Встроенный тип"
 
 #: src/tables/machine/MachineTypeTable.tsx:358
 msgid "Machine Type Detail"
-msgstr ""
+msgstr "Сведения о типе оборудования"
 
 #: src/tables/machine/MachineTypeTable.tsx:368
 msgid "Machine Driver Detail"
-msgstr ""
+msgstr "Сведения о драйвере оборудования"
 
 #: src/tables/notifications/NotificationTable.tsx:26
 msgid "Age"
@@ -8915,7 +8915,7 @@ msgstr "Уведомление"
 #: src/tables/plugin/PluginErrorTable.tsx:37
 #: src/tables/settings/ErrorTable.tsx:50
 msgid "Message"
-msgstr ""
+msgstr "Сообщение"
 
 #: src/tables/part/ParametricPartTable.tsx:74
 msgid "Click to edit"
@@ -8958,7 +8958,7 @@ msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:51
 msgid "You are subscribed to notifications for this category"
-msgstr ""
+msgstr "Вы подписаны на получение уведомлений для этой категории"
 
 #: src/tables/part/PartCategoryTable.tsx:83
 #: src/tables/part/PartTable.tsx:199
@@ -8971,32 +8971,32 @@ msgstr "Включить подкатегории в результаты"
 
 #: src/tables/part/PartCategoryTable.tsx:89
 msgid "Show structural categories"
-msgstr ""
+msgstr "Показать категории, которые являются структурами"
 
 #: src/tables/part/PartCategoryTable.tsx:94
 msgid "Show categories to which the user is subscribed"
-msgstr ""
+msgstr "Показать категории, на которые пользователь подписан"
 
 #: src/tables/part/PartCategoryTable.tsx:103
 msgid "New Part Category"
-msgstr ""
+msgstr "Создать категорию деталей"
 
 #: src/tables/part/PartCategoryTable.tsx:129
 msgid "Set Parent Category"
-msgstr ""
+msgstr "Задать родительскую категорию"
 
 #: src/tables/part/PartCategoryTable.tsx:147
 #: src/tables/stock/StockLocationTable.tsx:145
 msgid "Set Parent"
-msgstr "Задать вышестоящий склад"
+msgstr "Установить родителя"
 
 #: src/tables/part/PartCategoryTable.tsx:149
 msgid "Set parent category for the selected items"
-msgstr ""
+msgstr "Задать родительскую категорию для выбранных элементов"
 
 #: src/tables/part/PartCategoryTable.tsx:160
 msgid "Add Part Category"
-msgstr ""
+msgstr "Создать категорию деталей"
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:38
 #: src/tables/part/PartCategoryTemplateTable.tsx:132
@@ -9227,7 +9227,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:304
 msgid "Filter by parts to which the user is subscribed"
-msgstr ""
+msgstr "Показать детали, на которые пользователь подписан"
 
 #: src/tables/part/PartTable.tsx:309
 msgid "Has Stocktake"
@@ -9614,7 +9614,7 @@ msgstr "Установлено"
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:59
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:108
 msgid "Add Parameter"
-msgstr ""
+msgstr "Создать параметр"
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:60
 #~ msgid "Parameter updated"
@@ -9622,7 +9622,7 @@ msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:70
 msgid "Edit Parameter"
-msgstr ""
+msgstr "Редактировать параметр"
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:73
 #~ msgid "Parameter deleted"
@@ -9634,7 +9634,7 @@ msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:78
 msgid "Delete Parameter"
-msgstr ""
+msgstr "Удалить параметр"
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:63
 #~ msgid "Create Manufacturer Part"
@@ -9705,23 +9705,23 @@ msgstr "Создать деталь поставщика"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:194
 msgid "Show active supplier parts"
-msgstr ""
+msgstr "Показать активные детали поставщиков"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:198
 msgid "Active Part"
-msgstr ""
+msgstr "Активная деталь"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:199
 msgid "Show active internal parts"
-msgstr ""
+msgstr "Показать активные детали"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:203
 msgid "Active Supplier"
-msgstr ""
+msgstr "Активный поставщик"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:204
 msgid "Show active suppliers"
-msgstr ""
+msgstr "Показать активных поставщиков"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:205
 #~ msgid "Supplier part deleted"
@@ -9733,7 +9733,7 @@ msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:209
 msgid "Show supplier parts with stock"
-msgstr ""
+msgstr "Показать детали поставщиков в наличии"
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:147
 msgid "Received Date"
@@ -9912,57 +9912,57 @@ msgstr "Токены показываются только один раз - о�
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:59
 msgid "Barcode Information"
-msgstr ""
+msgstr "Информация о штрихкоде"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:84
 msgid "Endpoint"
-msgstr ""
+msgstr "Конечная точка"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:88
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:207
 #: src/tables/stock/StockItemTestResultTable.tsx:175
 msgid "Result"
-msgstr ""
+msgstr "Результат"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:96
 msgid "Context"
-msgstr ""
+msgstr "Контекст"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:117
 msgid "Response"
-msgstr ""
+msgstr "Ответ"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:208
 msgid "Filter by result"
-msgstr ""
+msgstr "Фильтр по результату"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:222
 msgid "Delete Barcode Scan Record"
-msgstr ""
+msgstr "Удалить запись сканирования штрихкода"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:248
 msgid "Barcode Scan Details"
-msgstr ""
+msgstr "Детали сканирования штрихкода"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:258
 msgid "Logging Disabled"
-msgstr ""
+msgstr "Журналирование отключено"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:260
 msgid "Barcode logging is not enabled"
-msgstr ""
+msgstr "Журналирование штрихкода отключено"
 
 #: src/tables/settings/CustomStateTable.tsx:63
 msgid "Status Group"
-msgstr ""
+msgstr "Группа статусов"
 
 #: src/tables/settings/CustomStateTable.tsx:84
 msgid "Logical State"
-msgstr ""
+msgstr "Логическое состояние"
 
 #: src/tables/settings/CustomStateTable.tsx:96
 msgid "Identifier"
-msgstr ""
+msgstr "Идентификатор"
 
 #: src/tables/settings/CustomStateTable.tsx:115
 #~ msgid "Add state"
@@ -9972,15 +9972,15 @@ msgstr ""
 #: src/tables/settings/CustomStateTable.tsx:140
 #: src/tables/settings/CustomStateTable.tsx:202
 msgid "Add State"
-msgstr ""
+msgstr "Создать состояние"
 
 #: src/tables/settings/CustomStateTable.tsx:153
 msgid "Edit State"
-msgstr ""
+msgstr "Редактировать состояние"
 
 #: src/tables/settings/CustomStateTable.tsx:161
 msgid "Delete State"
-msgstr ""
+msgstr "Удалить состояние"
 
 #: src/tables/settings/CustomUnitsTable.tsx:50
 msgid "Add Custom Unit"
@@ -10004,27 +10004,27 @@ msgstr "Создать единицу измерения"
 
 #: src/tables/settings/ErrorTable.tsx:67
 msgid "Traceback"
-msgstr ""
+msgstr "Трассировка"
 
 #: src/tables/settings/ErrorTable.tsx:103
 msgid "When"
-msgstr ""
+msgstr "Когда"
 
 #: src/tables/settings/ErrorTable.tsx:113
 msgid "Error Information"
-msgstr ""
+msgstr "Сведения об ошибке"
 
 #: src/tables/settings/ErrorTable.tsx:123
 msgid "Delete Error Report"
-msgstr ""
+msgstr "Удалить отчет об ошибках"
 
 #: src/tables/settings/ErrorTable.tsx:125
 msgid "Are you sure you want to delete this error report?"
-msgstr ""
+msgstr "Вы уверены, что хотите удалить этот отчёт об ошибках?"
 
 #: src/tables/settings/ErrorTable.tsx:127
 msgid "Error report deleted"
-msgstr ""
+msgstr "Отчёт об ошибках удалён"
 
 #: src/tables/settings/ErrorTable.tsx:146
 #: src/tables/settings/FailedTasksTable.tsx:65
@@ -10145,15 +10145,15 @@ msgstr "Аргументы"
 
 #: src/tables/settings/ProjectCodeTable.tsx:42
 msgid "Add Project Code"
-msgstr ""
+msgstr "Создать код проекта"
 
 #: src/tables/settings/ProjectCodeTable.tsx:54
 msgid "Edit Project Code"
-msgstr ""
+msgstr "Редактировать код проекта"
 
 #: src/tables/settings/ProjectCodeTable.tsx:62
 msgid "Delete Project Code"
-msgstr ""
+msgstr "Удалить код проекта"
 
 #: src/tables/settings/ProjectCodeTable.tsx:93
 msgid "Add project code"

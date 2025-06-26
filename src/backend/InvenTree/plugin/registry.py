@@ -603,7 +603,7 @@ class PluginsRegistry:
                 raise e
             except Exception as error:
                 handle_error(
-                    error, log_name='init'
+                    error, log_name=f'{plg_name}:init_plugin'
                 )  # log error and raise it -> disable plugin
 
                 logger.warning('Plugin `%s` could not be loaded', plg_name)
@@ -629,7 +629,7 @@ class PluginsRegistry:
                 if v := plg_i.MAX_VERSION:
                     _msg += _(f'Plugin requires at most version {v}')
                 # Log to error stack
-                log_error(_msg, reference='init')
+                log_error(_msg, reference=f'{p}:init_plugin')
             else:
                 safe_reference(plugin=plg_i, key=plg_key)
         else:  # pragma: no cover
@@ -666,7 +666,7 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
-                        handle_error(error, log_name='init', do_raise=True)
+                        handle_error(error, log_name='init_plugins', do_raise=True)
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',

@@ -130,6 +130,9 @@ export default function InstalledItemsTable({
           columns={tableColumns}
           props={{
             tableActions: tableActions,
+            enableSelection: true,
+            enableLabels: true,
+            enableReports: true,
             rowActions: rowActions,
             modelType: ModelType.stockitem,
             params: {

@@ -100,7 +100,8 @@ export function SupplierPartTable({
         accessor: 'active',
         title: t`Active`,
         sortable: true,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
       }),
       {
         accessor: 'in_stock',
@@ -108,7 +109,8 @@ export function SupplierPartTable({
       },
       {
         accessor: 'packaging',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'pack_quantity',
@@ -141,7 +143,7 @@ export function SupplierPartTable({
       {
         accessor: 'available',
         sortable: true,
-
+        defaultVisible: false,
         render: (record: any) => {
           const extra = [];
 
