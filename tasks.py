@@ -485,10 +485,14 @@ def plugins(c, uv=False):
     }
 )
 @state_logger('TASK02')
-def install(c, uv=False, skip_plugins=False):
+def install(c, uv=False, skip_plugins=False, path=None):
     """Installs required python packages."""
     # Ensure path is relative to *this* directory
-    INSTALL_FILE = local_dir().joinpath('src/backend/requirements.txt')
+    INSTALL_FILE = (
+        Path(path).resolve()
+        if path and Path(path).exists()
+        else local_dir().joinpath('src/backend/requirements.txt')
+    )
 
     info(f"Installing required python packages from '{INSTALL_FILE}'")
 
