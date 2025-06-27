@@ -45,7 +45,7 @@ def log_error(
         InvenTree.ready.isRunningMigrations(),
         InvenTree.ready.isRunningBackup(),
     ]):
-        logger.exception('Failed to log exception to database')
+        logger.exception('Exception occurred during import, migration, or backup')
         return
 
     if not path:
