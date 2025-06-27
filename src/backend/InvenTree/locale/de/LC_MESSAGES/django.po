@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-25 23:54+0000\n"
-"PO-Revision-Date: 2025-06-25 23:56\n"
+"POT-Creation-Date: 2025-06-26 21:57+0000\n"
+"PO-Revision-Date: 2025-06-26 22:00\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -57,23 +57,23 @@ msgstr ""
 msgid "User does not have permission to view this model"
 msgstr "Benutzer hat keine Berechtigung, dieses Modell anzuzeigen"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:56
 msgid "Email (again)"
 msgstr "E-Mail (nochmal)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:60
 msgid "Email address confirmation"
 msgstr "Bestätigung der E-Mail Adresse"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:83
 msgid "You must type the same email each time."
 msgstr "E-Mail Adressen müssen übereinstimmen."
 
-#: InvenTree/auth_overrides.py:126 InvenTree/auth_overrides.py:134
+#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
 msgid "The provided primary email address is not valid."
 msgstr "Die angegebene primäre E-Mail-Adresse ist ungültig."
 
-#: InvenTree/auth_overrides.py:140
+#: InvenTree/auth_overrides.py:138
 msgid "The provided email domain is not approved."
 msgstr "Die angegebene E-Mail-Domain ist nicht freigegeben."
 
@@ -96,7 +96,7 @@ msgstr "Konnte {original} nicht in {unit} umwandeln"
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
-#: InvenTree/exceptions.py:121
+#: InvenTree/exceptions.py:125
 msgid "Error details can be found in the admin panel"
 msgstr "Fehlerdetails finden Sie im Admin-Panel"
 
@@ -7156,52 +7156,52 @@ msgstr "Unterstützt das Scannen von TME-Barcodes"
 msgid "The Supplier which acts as 'TME'"
 msgstr "Der Lieferant, der als 'TME' fungiert"
 
-#: plugin/installer.py:229 plugin/installer.py:307
+#: plugin/installer.py:240 plugin/installer.py:320
 msgid "Only staff users can administer plugins"
 msgstr "Nur Mitarbeiter können Plugins verwalten"
 
-#: plugin/installer.py:232
+#: plugin/installer.py:243
 msgid "Plugin installation is disabled"
 msgstr "Plugin-Installation ist deaktiviert"
 
-#: plugin/installer.py:269
+#: plugin/installer.py:280
 msgid "Installed plugin successfully"
 msgstr "Plugin wurde erfolgreich installiert"
 
-#: plugin/installer.py:274
+#: plugin/installer.py:285
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "Plugin installiert in {path}"
 
-#: plugin/installer.py:298
+#: plugin/installer.py:311
 msgid "Plugin was not found in registry"
 msgstr "Plugin wurde nicht in der Registry gefunden"
 
-#: plugin/installer.py:301
+#: plugin/installer.py:314
 msgid "Plugin is not a packaged plugin"
 msgstr "Plugin ist kein gepacktes Plugin"
 
-#: plugin/installer.py:304
+#: plugin/installer.py:317
 msgid "Plugin package name not found"
 msgstr "Plugin-Paketname nicht gefunden"
 
-#: plugin/installer.py:324
+#: plugin/installer.py:337
 msgid "Plugin uninstalling is disabled"
 msgstr "Plugin-Deinstallation ist deaktiviert"
 
-#: plugin/installer.py:328
+#: plugin/installer.py:341
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr "Plugin kann nicht deinstalliert werden, da es momentan aktiv ist"
 
-#: plugin/installer.py:332
+#: plugin/installer.py:345
 msgid "Plugin is not installed"
 msgstr ""
 
-#: plugin/installer.py:348
+#: plugin/installer.py:363
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:363
+#: plugin/installer.py:378
 msgid "Uninstalled plugin successfully"
 msgstr "Plugin erfolgreich deinstallieren"
 
@@ -7261,17 +7261,17 @@ msgstr "Methode"
 msgid "No author found"
 msgstr "Kein Autor gefunden"
 
-#: plugin/registry.py:625
+#: plugin/registry.py:639
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Plugin '{p}' ist nicht kompatibel mit der aktuellen InvenTree Version {v}"
 
-#: plugin/registry.py:628
+#: plugin/registry.py:642
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Plugin benötigt mindestens Version {v}"
 
-#: plugin/registry.py:630
+#: plugin/registry.py:644
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Plugin benötigt maximal Version {v}"

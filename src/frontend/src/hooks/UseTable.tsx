@@ -72,6 +72,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   const [pageSize, setPageSize] = useLocalStorage<number>({
     key: 'inventree-table-page-size',
     defaultValue: 25,
+    sync: false,
     deserialize: (value: string | undefined) => {
       setPageSizeLoaded(true);
       return value === undefined ? 25 : JSON.parse(value);
@@ -85,6 +86,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[] | null>({
     key: `inventree-hidden-table-columns-${tableName}`,
     defaultValue: null,
+    sync: false,
     deserialize: (value) => {
       setHiddenColumnsLoaded(true);
       return value === undefined ? null : JSON.parse(value);

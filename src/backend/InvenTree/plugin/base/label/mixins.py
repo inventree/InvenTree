@@ -51,7 +51,7 @@ class LabelPrintingMixin:
         try:
             return label.render(instance, request)
         except Exception:
-            log_error('label.render_to_pdf')
+            log_error('render_to_pdf', plugin=self.slug)
             raise ValidationError(_('Error rendering label to PDF'))
 
     def render_to_html(self, label: LabelTemplate, instance, request, **kwargs):
@@ -65,7 +65,7 @@ class LabelPrintingMixin:
         try:
             return label.render_as_string(instance, request)
         except Exception:
-            log_error('label.render_to_html')
+            log_error('render_to_html', plugin=self.slug)
             raise ValidationError(_('Error rendering label to HTML'))
 
     def render_to_png(self, label: LabelTemplate, instance, request=None, **kwargs):
@@ -99,7 +99,7 @@ class LabelPrintingMixin:
         try:
             return pdf2image.convert_from_bytes(pdf_data, **pdf2image_kwargs)[0]
         except Exception:
-            log_error('label.render_to_png')
+            log_error('render_to_png', plugin=self.slug)
             return None
 
     def print_labels(
