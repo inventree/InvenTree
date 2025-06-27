@@ -391,7 +391,7 @@ class DataExportViewMixin:
             raise ValidationError(_('Error occurred during data export'))
 
         # Update the output object with the exported data
-        output.mark_complete(ContentFile(datafile, filename))
+        output.mark_complete(output=ContentFile(datafile, filename))
 
     def get(self, request, *args, **kwargs):
         """Override the GET method to determine export options."""
