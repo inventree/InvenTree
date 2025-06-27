@@ -570,7 +570,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         except Exception as exc:
             # Something went wrong during the report generation process
             if get_global_setting('REPORT_LOG_ERRORS', backup_value=True):
-                InvenTree.exceptions.log_error('report.print')
+                InvenTree.exceptions.log_error('print', plugin=self.slug)
 
             raise ValidationError({
                 'error': _('Error generating report'),
@@ -601,7 +601,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 data = pdf_file.getvalue()
                 pdf_file.close()
             except Exception:
-                InvenTree.exceptions.log_error('report.print')
+                InvenTree.exceptions.log_error('print', plugin=self.slug)
                 data = None
 
         # Save the generated report to the database

@@ -206,7 +206,7 @@ def offload_task(
             return False
         except Exception as exc:
             raise_warning(f"WARNING: '{taskname}' not offloaded due to {exc!s}")
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             return False
     else:
         if callable(taskname):
@@ -227,7 +227,7 @@ def offload_task(
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
                 )
@@ -244,7 +244,7 @@ def offload_task(
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No function named '{func}'"
                 )
@@ -255,7 +255,7 @@ def offload_task(
             with tracer.start_as_current_span(f'sync worker: {taskname}'):
                 _func(*args, **kwargs)
         except Exception as exc:
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             raise_warning(f"WARNING: '{taskname}' failed due to {exc!s}")
             raise exc
 
