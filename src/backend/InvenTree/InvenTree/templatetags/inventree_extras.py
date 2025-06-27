@@ -38,7 +38,7 @@ def decimal(x, *args, **kwargs):
     return InvenTree.helpers.decimal2string(x)
 
 
-@register.simple_tag(takes_context=True)
+@register.simple_tag()
 def render_date(date_object):
     """Renders a date object as a string."""
     if date_object is None:
