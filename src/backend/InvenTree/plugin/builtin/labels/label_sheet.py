@@ -165,17 +165,14 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
         if str2bool(self.get_setting('DEBUG')):
             # In debug mode return with the raw HTML
-            output.output = ContentFile(html_data, 'labels.html')
+            generated_file = ContentFile(html_data, 'labels.html')
         else:
             # Render HTML to PDF
             html = weasyprint.HTML(string=html_data)
             document = html.render().write_pdf()
+            generated_file = ContentFile(document, 'labels.pdf')
 
-            output.output = ContentFile(document, 'labels.pdf')
-
-        output.progress = n_labels
-        output.complete = True
-        output.save()
+        output.mark_complete(progress=n_labels, output=generated_file)
 
     def print_page(self, label: LabelTemplate, items: list, request, **kwargs):
         """Generate a single page of labels.
