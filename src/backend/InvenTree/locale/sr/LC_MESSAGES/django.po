@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-25 23:54+0000\n"
-"PO-Revision-Date: 2025-06-25 23:56\n"
+"POT-Creation-Date: 2025-06-26 21:57+0000\n"
+"PO-Revision-Date: 2025-06-26 22:00\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -57,23 +57,23 @@ msgstr ""
 msgid "User does not have permission to view this model"
 msgstr "Korisnik nema dozvolu za pregled ovog modela"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:56
 msgid "Email (again)"
 msgstr "E-pošta (ponovo)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:60
 msgid "Email address confirmation"
 msgstr "Potvrda adrese e-pošte"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:83
 msgid "You must type the same email each time."
 msgstr "Svaki put morate upisati istu e-poštu."
 
-#: InvenTree/auth_overrides.py:126 InvenTree/auth_overrides.py:134
+#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
 msgid "The provided primary email address is not valid."
 msgstr "Navedena primarna adresa e-pošte nije važeća."
 
-#: InvenTree/auth_overrides.py:140
+#: InvenTree/auth_overrides.py:138
 msgid "The provided email domain is not approved."
 msgstr "Navedeni domen adrese e-pošte nije prihvaćen."
 
@@ -96,7 +96,7 @@ msgstr "Nije moguće konvertovati {original} u {unit}"
 msgid "Invalid quantity provided"
 msgstr "Isporučena nevažeća količina"
 
-#: InvenTree/exceptions.py:121
+#: InvenTree/exceptions.py:125
 msgid "Error details can be found in the admin panel"
 msgstr "Detalji o grešci se mogu naći u admin sekciji"
 
@@ -7156,52 +7156,52 @@ msgstr "Pruža podršku za skeniranje TME bar kodova"
 msgid "The Supplier which acts as 'TME'"
 msgstr "Dobavljač koji se ponaša kao 'TME'"
 
-#: plugin/installer.py:229 plugin/installer.py:307
+#: plugin/installer.py:240 plugin/installer.py:320
 msgid "Only staff users can administer plugins"
 msgstr "Samo osoblje može da administrira pluginove"
 
-#: plugin/installer.py:232
+#: plugin/installer.py:243
 msgid "Plugin installation is disabled"
 msgstr "Instalacija plugina je onemogućena"
 
-#: plugin/installer.py:269
+#: plugin/installer.py:280
 msgid "Installed plugin successfully"
 msgstr "Plugin instaliran uspešno"
 
-#: plugin/installer.py:274
+#: plugin/installer.py:285
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "Instaliran plugin na {path}"
 
-#: plugin/installer.py:298
+#: plugin/installer.py:311
 msgid "Plugin was not found in registry"
 msgstr "Plugin nije pronađen u registru"
 
-#: plugin/installer.py:301
+#: plugin/installer.py:314
 msgid "Plugin is not a packaged plugin"
 msgstr "Plugin nije paket plugin"
 
-#: plugin/installer.py:304
+#: plugin/installer.py:317
 msgid "Plugin package name not found"
 msgstr "Ime paketa plugina nije pronađeno"
 
-#: plugin/installer.py:324
+#: plugin/installer.py:337
 msgid "Plugin uninstalling is disabled"
 msgstr "Deinstaliranje plugina je onemogućeno"
 
-#: plugin/installer.py:328
+#: plugin/installer.py:341
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr "Plugin ne može biti deinstaliran jer je trenutno aktivan"
 
-#: plugin/installer.py:332
+#: plugin/installer.py:345
 msgid "Plugin is not installed"
 msgstr "Plugin nije instaliran"
 
-#: plugin/installer.py:348
+#: plugin/installer.py:363
 msgid "Plugin installation not found"
 msgstr "Instalacija plugina nije pronađena"
 
-#: plugin/installer.py:363
+#: plugin/installer.py:378
 msgid "Uninstalled plugin successfully"
 msgstr "Plugin uspešno deinstaliran"
 
@@ -7261,17 +7261,17 @@ msgstr "Metod"
 msgid "No author found"
 msgstr "Nije pronađen autor"
 
-#: plugin/registry.py:625
+#: plugin/registry.py:639
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Plugin '{p}' nije kompatibilan sa trenutnom verzijom aplikacije {v}"
 
-#: plugin/registry.py:628
+#: plugin/registry.py:642
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Plugin zahteva najmanje verziju {v}"
 
-#: plugin/registry.py:630
+#: plugin/registry.py:644
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Plugin zahteva najviše verziju {v}"
