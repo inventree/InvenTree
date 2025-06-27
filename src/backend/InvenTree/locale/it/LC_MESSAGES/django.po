@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-25 23:54+0000\n"
-"PO-Revision-Date: 2025-06-25 23:56\n"
+"POT-Creation-Date: 2025-06-26 21:57+0000\n"
+"PO-Revision-Date: 2025-06-26 22:00\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -57,23 +57,23 @@ msgstr "Nessun elemento corrisponde ai criteri forniti"
 msgid "User does not have permission to view this model"
 msgstr "L'utente non ha i permessi per vedere questo modello"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:56
 msgid "Email (again)"
 msgstr "Email (ancora)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:60
 msgid "Email address confirmation"
 msgstr "Conferma indirizzo email"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:83
 msgid "You must type the same email each time."
 msgstr "È necessario digitare la stessa e-mail ogni volta."
 
-#: InvenTree/auth_overrides.py:126 InvenTree/auth_overrides.py:134
+#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
 msgid "The provided primary email address is not valid."
 msgstr "L'indirizzo email principale fornito non è valido."
 
-#: InvenTree/auth_overrides.py:140
+#: InvenTree/auth_overrides.py:138
 msgid "The provided email domain is not approved."
 msgstr "L'indirizzo di posta elettronica fornito non è approvato."
 
@@ -96,7 +96,7 @@ msgstr "Impossibile convertire {original} in {unit}"
 msgid "Invalid quantity provided"
 msgstr "Quantità inserita non valida"
 
-#: InvenTree/exceptions.py:121
+#: InvenTree/exceptions.py:125
 msgid "Error details can be found in the admin panel"
 msgstr "I dettagli dell'errore possono essere trovati nel pannello di amministrazione"
 
@@ -2130,11 +2130,11 @@ msgstr "Errore generato dal plugin"
 
 #: common/serializers.py:132
 msgid "Indicates if the setting is overridden by an environment variable"
-msgstr ""
+msgstr "Indica se l'impostazione è sovrascritta da una variabile ambiente"
 
 #: common/serializers.py:134
 msgid "Override"
-msgstr ""
+msgstr "Sovrascrivi"
 
 #: common/serializers.py:473
 msgid "Is Running"
@@ -2235,31 +2235,31 @@ msgstr "Migrazioni in sospeso"
 
 #: common/setting/system.py:181
 msgid "Number of pending database migrations"
-msgstr ""
+msgstr "Numero di migrazioni del database in sospeso"
 
 #: common/setting/system.py:186
 msgid "Active warning codes"
-msgstr ""
+msgstr "Codici di avviso attivi"
 
 #: common/setting/system.py:187
 msgid "A dict of active warning codes"
-msgstr ""
+msgstr "Un dizionario di codici di avviso attivi"
 
 #: common/setting/system.py:193
 msgid "Instance ID"
-msgstr ""
+msgstr "ID istanza"
 
 #: common/setting/system.py:194
 msgid "Unique identifier for this InvenTree instance"
-msgstr ""
+msgstr "Identificatore unico per questa istanza InvenTree"
 
 #: common/setting/system.py:199
 msgid "Announce ID"
-msgstr ""
+msgstr "Annuncio ID"
 
 #: common/setting/system.py:201
 msgid "Announce the instance ID of the server in the server status info (unauthenticated)"
-msgstr ""
+msgstr "Annuncia l'ID dell'istanza del server nelle informazioni sullo stato del server (non autenticato)"
 
 #: common/setting/system.py:207
 msgid "Server Instance Name"
@@ -2307,23 +2307,23 @@ msgstr "Valuta predefinita"
 
 #: common/setting/system.py:238
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Selezionare la valuta di base per i calcoli dei prezzi"
 
 #: common/setting/system.py:244
 msgid "Supported Currencies"
-msgstr ""
+msgstr "Valute Supportate"
 
 #: common/setting/system.py:245
 msgid "List of supported currency codes"
-msgstr ""
+msgstr "Elenco dei codici valuta supportati"
 
 #: common/setting/system.py:251
 msgid "Currency Update Interval"
-msgstr ""
+msgstr "Intervallo Aggiornamento Valuta"
 
 #: common/setting/system.py:252
 msgid "How often to update exchange rates (set to zero to disable)"
-msgstr ""
+msgstr "Quanto spesso aggiornare i tassi di cambio (impostare a zero per disabilitare)"
 
 #: common/setting/system.py:254 common/setting/system.py:294
 #: common/setting/system.py:307 common/setting/system.py:315
@@ -2335,11 +2335,11 @@ msgstr "giorni"
 
 #: common/setting/system.py:258
 msgid "Currency Update Plugin"
-msgstr ""
+msgstr "Plugin di aggiornamento della valuta"
 
 #: common/setting/system.py:259
 msgid "Currency update plugin to use"
-msgstr ""
+msgstr "Plugin di aggiornamento valuta da usare"
 
 #: common/setting/system.py:264
 msgid "Download from URL"
@@ -2367,11 +2367,11 @@ msgstr "Consenti di sovrascrivere l'user-agent utilizzato per scaricare immagini
 
 #: common/setting/system.py:284
 msgid "Strict URL Validation"
-msgstr ""
+msgstr "Convalida URL rigoroso"
 
 #: common/setting/system.py:285
 msgid "Require schema specification when validating URLs"
-msgstr ""
+msgstr "Richiede specifico schema quando si convalidano gli URL"
 
 #: common/setting/system.py:290
 msgid "Update Check Interval"
@@ -2399,7 +2399,7 @@ msgstr "Definisci i giorni intercorrenti tra un backup automatico e l'altro"
 
 #: common/setting/system.py:310
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "Intervallo Eliminazione Attività"
 
 #: common/setting/system.py:312
 msgid "Background task results will be deleted after specified number of days"
@@ -2407,7 +2407,7 @@ msgstr "I risultati delle attività in background verranno eliminati dopo un det
 
 #: common/setting/system.py:319
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Intervallo Di Cancellazione Registro Errori"
 
 #: common/setting/system.py:320
 msgid "Error logs will be deleted after specified number of days"
@@ -2415,7 +2415,7 @@ msgstr "I log di errore verranno eliminati dopo il numero specificato di giorni"
 
 #: common/setting/system.py:326
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Intervallo Di Cancellazione Notifica"
 
 #: common/setting/system.py:328
 msgid "User notifications will be deleted after specified number of days"
@@ -2427,7 +2427,7 @@ msgstr "Supporto Codice A Barre"
 
 #: common/setting/system.py:336
 msgid "Enable barcode scanner support in the web interface"
-msgstr ""
+msgstr "Abilita il supporto per lo scanner di codice a barre nell'interfaccia web"
 
 #: common/setting/system.py:341
 msgid "Store Barcode Results"
@@ -2463,23 +2463,23 @@ msgstr "Consenti la scansione del codice a barre tramite webcam nel browser"
 
 #: common/setting/system.py:366
 msgid "Barcode Show Data"
-msgstr ""
+msgstr "Visualizza dati codice a barre"
 
 #: common/setting/system.py:367
 msgid "Display barcode data in browser as text"
-msgstr ""
+msgstr "Visualizza i dati del codice a barre nel browser come testo"
 
 #: common/setting/system.py:372
 msgid "Barcode Generation Plugin"
-msgstr ""
+msgstr "Plugin Generazione Codice A Barre"
 
 #: common/setting/system.py:373
 msgid "Plugin to use for internal barcode data generation"
-msgstr ""
+msgstr "Plugin da usare per la generazione interna di codice a barre"
 
 #: common/setting/system.py:378
 msgid "Part Revisions"
-msgstr ""
+msgstr "Revisioni Articolo"
 
 #: common/setting/system.py:379
 msgid "Enable revision field for Part"
@@ -2487,7 +2487,7 @@ msgstr "Abilita il campo revisione per l'articolo"
 
 #: common/setting/system.py:384
 msgid "Assembly Revision Only"
-msgstr ""
+msgstr "Solo revisione assemblaggio"
 
 #: common/setting/system.py:385
 msgid "Only allow revisions for assembly parts"
@@ -7156,52 +7156,52 @@ msgstr ""
 msgid "The Supplier which acts as 'TME'"
 msgstr ""
 
-#: plugin/installer.py:229 plugin/installer.py:307
+#: plugin/installer.py:240 plugin/installer.py:320
 msgid "Only staff users can administer plugins"
 msgstr ""
 
-#: plugin/installer.py:232
+#: plugin/installer.py:243
 msgid "Plugin installation is disabled"
 msgstr ""
 
-#: plugin/installer.py:269
+#: plugin/installer.py:280
 msgid "Installed plugin successfully"
 msgstr ""
 
-#: plugin/installer.py:274
+#: plugin/installer.py:285
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr ""
 
-#: plugin/installer.py:298
+#: plugin/installer.py:311
 msgid "Plugin was not found in registry"
 msgstr ""
 
-#: plugin/installer.py:301
+#: plugin/installer.py:314
 msgid "Plugin is not a packaged plugin"
 msgstr ""
 
-#: plugin/installer.py:304
+#: plugin/installer.py:317
 msgid "Plugin package name not found"
 msgstr ""
 
-#: plugin/installer.py:324
+#: plugin/installer.py:337
 msgid "Plugin uninstalling is disabled"
 msgstr ""
 
-#: plugin/installer.py:328
+#: plugin/installer.py:341
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr ""
 
-#: plugin/installer.py:332
+#: plugin/installer.py:345
 msgid "Plugin is not installed"
 msgstr ""
 
-#: plugin/installer.py:348
+#: plugin/installer.py:363
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:363
+#: plugin/installer.py:378
 msgid "Uninstalled plugin successfully"
 msgstr ""
 
@@ -7261,17 +7261,17 @@ msgstr "Metodo"
 msgid "No author found"
 msgstr "Nessun autore trovato"
 
-#: plugin/registry.py:625
+#: plugin/registry.py:639
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:628
+#: plugin/registry.py:642
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:630
+#: plugin/registry.py:644
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
