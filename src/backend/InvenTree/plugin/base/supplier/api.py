@@ -20,8 +20,6 @@ from .serializers import (
     SearchResultSerializer,
 )
 
-# from .supplier import ImportParameter, PartNotFoundError
-
 
 class SearchPart(APIView):
     """Search parts by supplier.

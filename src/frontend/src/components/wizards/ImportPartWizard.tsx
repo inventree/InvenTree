@@ -505,10 +505,12 @@ export default function ImportPartWizard({
         });
         wizard.nextStep();
         setIsImporting(false);
-      } catch {
+      } catch (err: any) {
         showNotification({
           title: t`Error`,
-          message: t`Failed to import part`,
+          message:
+            t`Failed to import part: ` +
+            (err?.response?.data?.detail || err.message),
           color: 'red'
         });
         setIsImporting(false);

@@ -4,7 +4,12 @@ from django.urls import reverse
 
 from company.models import ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import Part
+from part.models import (
+    Part,
+    PartCategory,
+    PartCategoryParameterTemplate,
+    PartParameterTemplate,
+)
 from plugin import registry
 
 
@@ -41,18 +46,50 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         config = plugin.plugin_config()
         config.active = True
         config.save()
-        plugin.set_setting('SUPPLIER', 1)
 
         # Test APIs
         url = reverse('api-supplier-import')
 
         # No supplier
-        self.post(url, {'supplier': 'non-existent-supplier'}, expected_code=400)
+        self.post(
+            url,
+            {'supplier': 'non-existent-supplier', 'part_import_id': 'BOLT-Steel-M5-5'},
+            expected_code=404,
+        )
 
         # valid supplier, no part or category provided
-        self.post(url, {'supplier': 'samplesupplier'}, expected_code=400)
+        self.post(
+            url,
+            {'supplier': 'samplesupplier', 'part_import_id': 'BOLT-Steel-M5-5'},
+            expected_code=400,
+        )
+
+        # valid supplier, but no supplier company set
+        self.post(
+            url,
+            {
+                'supplier': 'samplesupplier',
+                'part_import_id': 'BOLT-Steel-M5-5',
+                'category_id': 1,
+            },
+            expected_code=500,
+        )
+
+        # Set the supplier company now
+        plugin.set_setting('SUPPLIER', 1)
 
         # valid supplier, valid part import
+        category = PartCategory.objects.get(pk=1)
+        p_len, p_test = PartParameterTemplate.objects.bulk_create([
+            PartParameterTemplate(name='Length', units='mm'),
+            PartParameterTemplate(name='Test Parameter'),
+        ])
+        PartCategoryParameterTemplate.objects.bulk_create([
+            PartCategoryParameterTemplate(category=category, parameter_template=p_len),
+            PartCategoryParameterTemplate(
+                category=category, parameter_template=p_test, default_value='Test Value'
+            ),
+        ])
         res = self.post(
             url,
             {
@@ -70,6 +107,20 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         self.assertIsNotNone(
             ManufacturerPart.objects.get(pk=res.data['manufacturer_part_id'])
         )
+
+        self.assertSetEqual(
+            {x['name'] for x in res.data['parameters']},
+            {'Thread', 'Length', 'Material', 'Head', 'Test Parameter'},
+        )
+        for p in res.data['parameters']:
+            if p['name'] == 'Length':
+                self.assertEqual(p['value'], '5mm')
+                self.assertEqual(p['parameter_template'], p_len.pk)
+                self.assertTrue(p['on_category'])
+            elif p['name'] == 'Test Parameter':
+                self.assertEqual(p['value'], 'Test Value')
+                self.assertEqual(p['parameter_template'], p_test.pk)
+                self.assertTrue(p['on_category'])
 
         # valid supplier, import only manufacturer and supplier part
         part2 = Part.objects.create(name='Test Part', purchaseable=True)

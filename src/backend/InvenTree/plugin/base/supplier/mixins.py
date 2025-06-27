@@ -43,9 +43,11 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
     @property
     def supplier(self):
         """Return the supplier company object."""
-        return company.models.Company.objects.get(
-            pk=self.get_setting('SUPPLIER', cache=True)
-        )
+        pk = self.get_setting('SUPPLIER', cache=True)
+        if not pk:
+            raise SupplierMixin.PartImportError('Supplier setting is missing.')
+
+        return company.models.Company.objects.get(pk=pk)
 
     @dataclass
     class SearchResult:
