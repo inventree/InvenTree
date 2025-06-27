@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(auto_now_add=True, verbose_name='Date')),
-                ('report', models.FileField(help_text='Stocktake report file (generated internally)', upload_to=part.models.save_stocktake_report, verbose_name='Report')),
+                ('report', models.FileField(help_text='Stocktake report file (generated internally)', verbose_name='Report')),
                 ('user', models.ForeignKey(blank=True, help_text='User who requested this stocktake report', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='stocktake_reports', to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
         ),

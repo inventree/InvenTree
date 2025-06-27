@@ -254,29 +254,3 @@ export function usePartParameterFields({
     };
   }, [editTemplate, fieldType, choices]);
 }
-
-export function partStocktakeFields(): ApiFormFieldSet {
-  return {
-    part: {
-      hidden: true
-    },
-    quantity: {},
-    item_count: {},
-    cost_min: {},
-    cost_min_currency: {},
-    cost_max: {},
-    cost_max_currency: {},
-    note: {}
-  };
-}
-
-export function generateStocktakeReportFields(): ApiFormFieldSet {
-  return {
-    part: {},
-    category: {},
-    location: {},
-    exclude_external: {},
-    generate_report: {},
-    update_parts: {}
-  };
-}

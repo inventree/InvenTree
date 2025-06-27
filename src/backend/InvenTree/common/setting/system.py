@@ -1049,39 +1049,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'STOCKTAKE_ENABLE': {
-        'name': _('Stocktake Functionality'),
-        'description': _(
-            'Enable stocktake functionality for recording stock levels and calculating stock value'
-        ),
-        'validator': bool,
-        'default': False,
-    },
-    'STOCKTAKE_EXCLUDE_EXTERNAL': {
-        'name': _('Exclude External Locations'),
-        'description': _(
-            'Exclude stock items in external locations from stocktake calculations'
-        ),
-        'validator': bool,
-        'default': False,
-    },
-    'STOCKTAKE_AUTO_DAYS': {
-        'name': _('Automatic Stocktake Period'),
-        'description': _(
-            'Number of days between automatic stocktake recording (set to zero to disable)'
-        ),
-        'validator': [int, MinValueValidator(0)],
-        'default': 0,
-    },
-    'STOCKTAKE_DELETE_REPORT_DAYS': {
-        'name': _('Report Deletion Interval'),
-        'description': _(
-            'Stocktake reports will be deleted after specified number of days'
-        ),
-        'default': 30,
-        'units': _('days'),
-        'validator': [int, MinValueValidator(7)],
-    },
     'DISPLAY_FULL_NAMES': {
         'name': _('Display Users full names'),
         'description': _('Display Users full names instead of usernames'),

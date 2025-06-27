@@ -83,7 +83,7 @@ The *actions* tab displays the available actions for the selected stock item:
 
 #### Count Stock
 
-Select the *Count Stock* action to validate the current number of items in stock. Use this option to perform a quick stocktake!
+Select the *Count Stock* action to validate the current number of items in stock. Use this option to perform a quick stock count!
 
 {{ image("app/stock_count.png", "Count Stock") }}
 

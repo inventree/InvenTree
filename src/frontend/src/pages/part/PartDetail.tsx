@@ -11,7 +11,6 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
-  IconClipboardList,
   IconCurrencyDollar,
   IconInfoCircle,
   IconLayersLinked,
@@ -101,7 +100,6 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
-import PartStocktakeDetail from './PartStocktakeDetail';
 import PartSupplierDetail from './PartSupplierDetail';
 
 /**
@@ -639,16 +637,6 @@ export default function PartDetail() {
           !user.hasViewRole(UserRoles.return_order) ||
           !globalSettings.isSet('RETURNORDER_ENABLED'),
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
-      },
-      {
-        name: 'stocktake',
-        label: t`Stock History`,
-        icon: <IconClipboardList />,
-        content: part ? <PartStocktakeDetail partId={part.pk} /> : <Skeleton />,
-        hidden:
-          !user.hasViewRole(UserRoles.stocktake) ||
-          !globalSettings.isSet('STOCKTAKE_ENABLE') ||
-          !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
       {
         name: 'test_templates',

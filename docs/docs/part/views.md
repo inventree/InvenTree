@@ -63,7 +63,7 @@ The following functions are available from the *Part Stock* view.
 
 ##### Export
 
-Exports the stocktake data for the selected Part. Launches a dialog to select export options, and then downloads a file containing data for all stock items for this Part.
+Exports the stock data for the selected Part. Launches a dialog to select export options, and then downloads a file containing data for all stock items for this Part.
 
 ##### New Stock Item
 
@@ -106,10 +106,6 @@ This tab is only displayed if the part is marked as *Purchaseable*.
 ### Sales Orders
 
 The *Sales Orders* tab shows a list of the sales orders for this part. It provides a view for important sales order information like customer, status, creation and shipment dates.
-
-### Stocktake
-
-The *Stocktake* tab provide historical stock level information, based on user-provided stocktake data. Refer to the [stocktake documentation](./stocktake.md) for further information.
 
 ### Test Templates
 

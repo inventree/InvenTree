@@ -29,15 +29,11 @@ import InvenTree.serializers
 import InvenTree.status
 import part.filters as part_filters
 import part.helpers as part_helpers
-import part.stocktake
-import part.tasks
 import stock.models
 import users.models
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
-from InvenTree.tasks import offload_task
-from users.serializers import UserSerializer
 
 from .models import (
     BomItem,
@@ -52,8 +48,6 @@ from .models import (
     PartRelated,
     PartSellPriceBreak,
     PartStar,
-    PartStocktake,
-    PartStocktakeReport,
     PartTestTemplate,
 )
 
@@ -662,7 +656,6 @@ class PartSerializer(
             'IPN',
             'is_template',
             'keywords',
-            'last_stocktake',
             'link',
             'locked',
             'minimum_stock',
@@ -1255,150 +1248,6 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     def get_allocated_to_sales_orders(self, part) -> float:
         """Return the allocated sales order quantity."""
         return part.sales_order_allocation_count(pending=True)
-
-
-class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for the PartStocktake model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = PartStocktake
-        fields = [
-            'pk',
-            'date',
-            'part',
-            'item_count',
-            'quantity',
-            'cost_min',
-            'cost_min_currency',
-            'cost_max',
-            'cost_max_currency',
-            'note',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = ['date', 'user']
-
-    quantity = serializers.FloatField()
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
-    cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
-
-    cost_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
-    cost_max_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
-
-    def save(self):
-        """Called when this serializer is saved."""
-        data = self.validated_data
-
-        # Add in user information automatically
-        request = self.context.get('request')
-        data['user'] = request.user if request else None
-        super().save()
-
-
-class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for stocktake report class."""
-
-    class Meta:
-        """Metaclass defines serializer fields."""
-
-        model = PartStocktakeReport
-        fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
-        read_only_fields = ['date', 'report', 'part_count', 'user']
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    report = InvenTree.serializers.InvenTreeAttachmentSerializerField(read_only=True)
-
-
-class PartStocktakeReportGenerateSerializer(serializers.Serializer):
-    """Serializer class for manually generating a new PartStocktakeReport via the API."""
-
-    part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        required=False,
-        allow_null=True,
-        label=_('Part'),
-        help_text=_(
-            'Limit stocktake report to a particular part, and any variant parts'
-        ),
-    )
-
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=PartCategory.objects.all(),
-        required=False,
-        allow_null=True,
-        label=_('Category'),
-        help_text=_(
-            'Limit stocktake report to a particular part category, and any child categories'
-        ),
-    )
-
-    location = serializers.PrimaryKeyRelatedField(
-        queryset=stock.models.StockLocation.objects.all(),
-        required=False,
-        allow_null=True,
-        label=_('Location'),
-        help_text=_(
-            'Limit stocktake report to a particular stock location, and any child locations'
-        ),
-    )
-
-    exclude_external = serializers.BooleanField(
-        default=True,
-        label=_('Exclude External Stock'),
-        help_text=_('Exclude stock items in external locations'),
-    )
-
-    generate_report = serializers.BooleanField(
-        default=True,
-        label=_('Generate Report'),
-        help_text=_('Generate report file containing calculated stocktake data'),
-    )
-
-    update_parts = serializers.BooleanField(
-        default=True,
-        label=_('Update Parts'),
-        help_text=_('Update specified parts with calculated stocktake data'),
-    )
-
-    def validate(self, data):
-        """Custom validation for this serializer."""
-        # Stocktake functionality must be enabled
-        if not common.settings.get_global_setting('STOCKTAKE_ENABLE'):
-            raise serializers.ValidationError(
-                _('Stocktake functionality is not enabled')
-            )
-
-        # Check that background worker is running
-        if not InvenTree.status.is_worker_running():
-            raise serializers.ValidationError(_('Background worker check failed'))
-
-        return data
-
-    def save(self):
-        """Saving this serializer instance requests generation of a new stocktake report."""
-        data = self.validated_data
-        user = self.context['request'].user
-
-        # Generate a new report
-        offload_task(
-            part.stocktake.generate_stocktake_report,
-            force_async=True,
-            user=user,
-            part=data.get('part', None),
-            category=data.get('category', None),
-            location=data.get('location', None),
-            exclude_external=data.get('exclude_external', True),
-            generate_report=data.get('generate_report', True),
-            update_parts=data.get('update_parts', True),
-            group='report',
-        )
 
 
 @extend_schema_field(

@@ -48,20 +48,6 @@ class PartPricingAdmin(admin.ModelAdmin):
     autocomplete_fields = ['part']
 
 
-@admin.register(models.PartStocktake)
-class PartStocktakeAdmin(admin.ModelAdmin):
-    """Admin class for PartStocktake model."""
-
-    list_display = ['part', 'date', 'quantity', 'user']
-
-
-@admin.register(models.PartStocktakeReport)
-class PartStocktakeReportAdmin(admin.ModelAdmin):
-    """Admin class for PartStocktakeReport model."""
-
-    list_display = ['date', 'user']
-
-
 @admin.register(models.PartCategory)
 class PartCategoryAdmin(admin.ModelAdmin):
     """Admin class for the PartCategory model."""

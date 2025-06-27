@@ -14,14 +14,8 @@ import company.models
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models as part_models
-import part.stocktake
 from common.settings import get_global_setting
-from InvenTree.tasks import (
-    ScheduledTask,
-    check_daily_holdoff,
-    record_task_success,
-    scheduled_task,
-)
+from InvenTree.tasks import ScheduledTask, scheduled_task
 
 tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
@@ -145,49 +139,6 @@ def check_missing_pricing(limit=250):
             pricing = p.pricing
             pricing.save()
             pricing.schedule_for_update()
-
-
-@tracer.start_as_current_span('scheduled_stocktake_reports')
-@scheduled_task(ScheduledTask.DAILY)
-def scheduled_stocktake_reports():
-    """Scheduled tasks for creating automated stocktake reports.
-
-    This task runs daily, and performs the following functions:
-
-    - Delete 'old' stocktake report files after the specified period
-    - Generate new reports at the specified period
-    """
-    # First let's delete any old stocktake reports
-    delete_n_days = int(
-        get_global_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False)
-    )
-    threshold = datetime.now() - timedelta(days=delete_n_days)
-    old_reports = part_models.PartStocktakeReport.objects.filter(date__lt=threshold)
-
-    if old_reports.count() > 0:
-        logger.info('Deleting %s stale stocktake reports', old_reports.count())
-        old_reports.delete()
-
-    # Next, check if stocktake functionality is enabled
-    if not get_global_setting('STOCKTAKE_ENABLE', False, cache=False):
-        logger.info('Stocktake functionality is not enabled - exiting')
-        return
-
-    report_n_days = int(get_global_setting('STOCKTAKE_AUTO_DAYS', 0, cache=False))
-
-    if report_n_days < 1:
-        logger.info('Stocktake auto reports are disabled, exiting')
-        return
-
-    if not check_daily_holdoff('STOCKTAKE_RECENT_REPORT', report_n_days):
-        logger.info('Stocktake report was recently generated - exiting')
-        return
-
-    # Let's start a new stocktake report for all parts
-    part.stocktake.generate_stocktake_report(update_parts=True)
-
-    # Record the date of this report
-    record_task_success('STOCKTAKE_RECENT_REPORT')
 
 
 @tracer.start_as_current_span('rebuild_parameters')
