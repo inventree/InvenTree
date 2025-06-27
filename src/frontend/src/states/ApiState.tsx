@@ -11,7 +11,7 @@ import type { ServerAPIProps } from './states';
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
-  fetchServerApiState: () => void;
+  fetchServerApiState: () => Promise<void>;
   auth_config?: AuthConfig;
   auth_context?: AuthContext;
   setAuthContext: (auth_context: AuthContext) => void;

@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-06-25 10:34\n"
+"PO-Revision-Date: 2025-06-26 06:32\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1251,11 +1251,11 @@ msgstr "已启用"
 
 #: src/components/forms/InstanceOptions.tsx:144
 msgid "Disabled"
-msgstr ""
+msgstr "已禁用"
 
 #: src/components/forms/InstanceOptions.tsx:150
 msgid "Worker"
-msgstr ""
+msgstr "工作人员"
 
 #: src/components/forms/InstanceOptions.tsx:151
 #: src/tables/settings/FailedTasksTable.tsx:48
@@ -2210,7 +2210,7 @@ msgstr "定位项目"
 
 #: src/components/plugins/LocateItemButton.tsx:70
 msgid "Item location requested"
-msgstr ""
+msgstr "已请求项目位置"
 
 #: src/components/plugins/PluginDrawer.tsx:47
 msgid "Plugin Inactive"
@@ -3554,7 +3554,7 @@ msgstr "打开主导航菜单"
 
 #: src/defaults/actions.tsx:70
 msgid "Scan a barcode or QR code"
-msgstr ""
+msgstr "扫描条形码或二维码"
 
 #: src/defaults/actions.tsx:81
 msgid "Go to the Admin Center"
@@ -3656,11 +3656,11 @@ msgstr "常见问题"
 
 #: src/defaults/links.tsx:114
 msgid "GitHub Repository"
-msgstr ""
+msgstr "GitHub 存储库"
 
 #: src/defaults/links.tsx:117
 msgid "InvenTree source code on GitHub"
-msgstr ""
+msgstr "GitHub 上的 InvenTree 源代码"
 
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
@@ -3677,11 +3677,11 @@ msgstr "系统信息"
 
 #: src/defaults/links.tsx:176
 msgid "Licenses for dependencies of the InvenTree software"
-msgstr ""
+msgstr "InvenTree软件依赖许可"
 
 #: src/defaults/links.tsx:187
 msgid "About the InvenTree Project"
-msgstr ""
+msgstr "关于InvenTree项目"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -3761,7 +3761,7 @@ msgstr ""
 
 #: src/enums/Roles.tsx:32
 msgid "Admin"
-msgstr ""
+msgstr "管理员"
 
 #: src/enums/Roles.tsx:34
 #: src/pages/Index/Settings/SystemSettings.tsx:243
@@ -3959,11 +3959,11 @@ msgstr "订阅此类别的通知"
 
 #: src/forms/PurchaseOrderForms.tsx:350
 msgid "Assign Batch Code and Serial Numbers"
-msgstr ""
+msgstr "分配批次代码和序列号"
 
 #: src/forms/PurchaseOrderForms.tsx:352
 msgid "Assign Batch Code"
-msgstr ""
+msgstr "分配批号"
 
 #: src/forms/PurchaseOrderForms.tsx:372
 msgid "Choose Location"
@@ -4000,7 +4000,7 @@ msgstr "设置位置"
 
 #: src/forms/PurchaseOrderForms.tsx:481
 msgid "Set Expiry Date"
-msgstr ""
+msgstr "设置到期日期"
 
 #: src/forms/PurchaseOrderForms.tsx:489
 #: src/forms/StockForms.tsx:606
@@ -4067,7 +4067,7 @@ msgstr "批号"
 
 #: src/forms/PurchaseOrderForms.tsx:619
 msgid "Enter batch code for received items"
-msgstr ""
+msgstr "输入接收项目的批号"
 
 #: src/forms/PurchaseOrderForms.tsx:632
 #: src/forms/StockForms.tsx:166
@@ -4076,7 +4076,7 @@ msgstr "序列号"
 
 #: src/forms/PurchaseOrderForms.tsx:633
 msgid "Enter serial numbers for received items"
-msgstr ""
+msgstr "输入接收项目的序列号"
 
 #: src/forms/PurchaseOrderForms.tsx:647
 #: src/pages/stock/StockDetail.tsx:306
@@ -4086,7 +4086,7 @@ msgstr "有效期至"
 
 #: src/forms/PurchaseOrderForms.tsx:648
 msgid "Enter an expiry date for received items"
-msgstr ""
+msgstr "输入接收项目的到期日期"
 
 #: src/forms/PurchaseOrderForms.tsx:658
 #~ msgid "Receive line items"
@@ -4139,7 +4139,7 @@ msgstr "已收到库存物品"
 
 #: src/forms/StockForms.tsx:76
 msgid "Next batch code"
-msgstr ""
+msgstr "下一个批号"
 
 #: src/forms/StockForms.tsx:84
 #: src/hooks/UsePlaceholder.tsx:57
@@ -4183,7 +4183,7 @@ msgstr "选择要安装的零件"
 
 #: src/forms/StockForms.tsx:404
 msgid "Confirm Stock Transfer"
-msgstr ""
+msgstr "确认库存转移"
 
 #: src/forms/StockForms.tsx:527
 msgid "Loading..."
@@ -4227,7 +4227,7 @@ msgstr "添加库存"
 
 #: src/forms/StockForms.tsx:1103
 msgid "Stock added"
-msgstr ""
+msgstr "库存已添加"
 
 #: src/forms/StockForms.tsx:1112
 #: src/pages/stock/StockDetail.tsx:729
@@ -4237,7 +4237,7 @@ msgstr "移除库存"
 
 #: src/forms/StockForms.tsx:1113
 msgid "Stock removed"
-msgstr ""
+msgstr "库存已移除"
 
 #: src/forms/StockForms.tsx:1122
 #: src/pages/part/PartDetail.tsx:925
@@ -4248,7 +4248,7 @@ msgstr "转移库存"
 
 #: src/forms/StockForms.tsx:1123
 msgid "Stock transferred"
-msgstr ""
+msgstr "库存已转移"
 
 #: src/forms/StockForms.tsx:1132
 #: src/pages/part/PartDetail.tsx:914
@@ -4261,7 +4261,7 @@ msgstr "库存数量"
 
 #: src/forms/StockForms.tsx:1133
 msgid "Stock counted"
-msgstr ""
+msgstr "库存计数"
 
 #: src/forms/StockForms.tsx:1142
 msgid "Change Stock Status"
@@ -4269,7 +4269,7 @@ msgstr "更改库存状态"
 
 #: src/forms/StockForms.tsx:1143
 msgid "Stock status changed"
-msgstr ""
+msgstr "库存状态已改变"
 
 #: src/forms/StockForms.tsx:1152
 msgid "Merge Stock"
@@ -4277,15 +4277,15 @@ msgstr "合并库存"
 
 #: src/forms/StockForms.tsx:1153
 msgid "Stock merged"
-msgstr ""
+msgstr "库存已合并"
 
 #: src/forms/StockForms.tsx:1168
 msgid "Assign Stock to Customer"
-msgstr ""
+msgstr "将库存分配给客户"
 
 #: src/forms/StockForms.tsx:1169
 msgid "Stock assigned to customer"
-msgstr ""
+msgstr "库存已分配给客户"
 
 #: src/forms/StockForms.tsx:1179
 #: src/tables/stock/StockItemTable.tsx:655
@@ -4294,7 +4294,7 @@ msgstr "删除库存项"
 
 #: src/forms/StockForms.tsx:1180
 msgid "Stock deleted"
-msgstr ""
+msgstr "库存已删除"
 
 #: src/forms/StockForms.tsx:1187
 msgid "Parent stock location"
@@ -4302,11 +4302,11 @@ msgstr "上级库存地点"
 
 #: src/forms/selectionListFields.tsx:99
 msgid "Entries"
-msgstr ""
+msgstr "条目"
 
 #: src/forms/selectionListFields.tsx:100
 msgid "List of entries to choose from"
-msgstr ""
+msgstr "要选择的条目列表"
 
 #: src/forms/selectionListFields.tsx:104
 #: src/pages/part/PartStocktakeDetail.tsx:64
@@ -4321,7 +4321,7 @@ msgstr "值"
 
 #: src/forms/selectionListFields.tsx:105
 msgid "Label"
-msgstr ""
+msgstr "标签"
 
 #: src/functions/api.tsx:33
 #: src/tables/InvenTreeTable.tsx:491
@@ -4345,11 +4345,11 @@ msgstr "未找到"
 
 #: src/functions/api.tsx:45
 msgid "Method not allowed"
-msgstr ""
+msgstr "不被允许的方法"
 
 #: src/functions/api.tsx:48
 msgid "Internal server error"
-msgstr ""
+msgstr "服务内部错误"
 
 #: src/functions/auth.tsx:34
 #~ msgid "Error fetching token from server."
@@ -4374,12 +4374,12 @@ msgstr ""
 #: src/functions/auth.tsx:117
 #: src/functions/auth.tsx:276
 msgid "Already logged in"
-msgstr ""
+msgstr "您已经登陆了"
 
 #: src/functions/auth.tsx:118
 #: src/functions/auth.tsx:277
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
-msgstr ""
+msgstr "此浏览器的服务器上存在冲突会话。请先登出该会话。"
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
@@ -4399,19 +4399,19 @@ msgstr "已成功登出"
 
 #: src/functions/auth.tsx:189
 msgid "Language changed"
-msgstr ""
+msgstr "语言已更改"
 
 #: src/functions/auth.tsx:190
 msgid "Your active language has been changed to the one set in your profile"
-msgstr ""
+msgstr "您的活动语言已被更改为您个人资料中设置的语言"
 
 #: src/functions/auth.tsx:210
 msgid "Theme changed"
-msgstr ""
+msgstr "主题已更改"
 
 #: src/functions/auth.tsx:211
 msgid "Your active theme has been changed to the one set in your profile"
-msgstr ""
+msgstr "您的活动主题已被更改为您个人资料中设置的主题"
 
 #: src/functions/auth.tsx:236
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -4432,7 +4432,7 @@ msgstr "已成功登入"
 
 #: src/functions/auth.tsx:413
 msgid "Failed to set up MFA"
-msgstr ""
+msgstr "设置 MFA 失败"
 
 #: src/functions/auth.tsx:443
 msgid "Password set"
@@ -4445,15 +4445,15 @@ msgstr "密码设置成功。您现在可以使用新密码登录"
 
 #: src/functions/auth.tsx:518
 msgid "Password could not be changed"
-msgstr ""
+msgstr "无法更改密码"
 
 #: src/functions/auth.tsx:536
 msgid "The two password fields didn’t match"
-msgstr ""
+msgstr "两个密码不匹配"
 
 #: src/functions/auth.tsx:552
 msgid "Password Changed"
-msgstr ""
+msgstr "密码已更改"
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -4505,24 +4505,24 @@ msgstr "请求已超时"
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
-msgstr ""
+msgstr "正在导出数据"
 
 #: src/hooks/UseDataExport.tsx:112
 msgid "Export Data"
-msgstr ""
+msgstr "导出数据"
 
 #: src/hooks/UseDataExport.tsx:115
 msgid "Export"
-msgstr ""
+msgstr "导出"
 
 #: src/hooks/UseDataOutput.tsx:57
 msgid "Process completed successfully"
-msgstr ""
+msgstr "处理成功"
 
 #: src/hooks/UseDataOutput.tsx:73
 #: src/hooks/UseDataOutput.tsx:103
 msgid "Process failed"
-msgstr ""
+msgstr "处理失败"
 
 #: src/hooks/UseForm.tsx:90
 msgid "Item Created"
@@ -4534,7 +4534,7 @@ msgstr "项目已更新"
 
 #: src/hooks/UseForm.tsx:135
 msgid "Items Updated"
-msgstr ""
+msgstr "项目已更新"
 
 #: src/hooks/UseForm.tsx:137
 msgid "Update multiple items"
@@ -8601,7 +8601,7 @@ msgstr "添加联系人"
 
 #: src/tables/general/AttachmentTable.tsx:104
 msgid "Uploading file {filename}"
-msgstr ""
+msgstr "正在上传文件 {filename}"
 
 #: src/tables/general/AttachmentTable.tsx:139
 #~ msgid "File uploaded"
@@ -8614,15 +8614,15 @@ msgstr ""
 #: src/tables/general/AttachmentTable.tsx:156
 #: src/tables/general/AttachmentTable.tsx:170
 msgid "Uploading File"
-msgstr ""
+msgstr "正在上传文件"
 
 #: src/tables/general/AttachmentTable.tsx:181
 msgid "File Uploaded"
-msgstr ""
+msgstr "文件已上传"
 
 #: src/tables/general/AttachmentTable.tsx:182
 msgid "File {name} uploaded successfully"
-msgstr ""
+msgstr "文件 {name} 上传成功"
 
 #: src/tables/general/AttachmentTable.tsx:198
 msgid "File could not be uploaded"
@@ -8692,7 +8692,7 @@ msgstr "时间戳"
 
 #: src/tables/general/BarcodeScanTable.tsx:75
 msgid "View Item"
-msgstr ""
+msgstr "查看项目"
 
 #: src/tables/general/ExtraLineItemTable.tsx:86
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:268
@@ -8747,7 +8747,7 @@ msgstr "你确定要删除设备 \"{0}\" 吗?"
 
 #: src/tables/machine/MachineListTable.tsx:251
 msgid "Machine"
-msgstr ""
+msgstr "设备"
 
 #: src/tables/machine/MachineListTable.tsx:256
 #: src/tables/machine/MachineListTable.tsx:443
@@ -8776,7 +8776,7 @@ msgstr "需要手动重启"
 
 #: src/tables/machine/MachineListTable.tsx:294
 msgid "Machine Information"
-msgstr ""
+msgstr "设备信息"
 
 #: src/tables/machine/MachineListTable.tsx:304
 #: src/tables/machine/MachineListTable.tsx:610
@@ -8810,7 +8810,7 @@ msgstr "驱动设置"
 
 #: src/tables/machine/MachineListTable.tsx:516
 msgid "Add Machine"
-msgstr ""
+msgstr "添加设备"
 
 #: src/tables/machine/MachineListTable.tsx:558
 msgid "Add machine"
@@ -8822,7 +8822,7 @@ msgstr "添加设备"
 
 #: src/tables/machine/MachineListTable.tsx:572
 msgid "Machine Detail"
-msgstr ""
+msgstr "设备详情"
 
 #: src/tables/machine/MachineListTable.tsx:619
 msgid "Driver"
@@ -8834,7 +8834,7 @@ msgstr "内置驱动"
 
 #: src/tables/machine/MachineTypeTable.tsx:97
 msgid "Not Found"
-msgstr ""
+msgstr "未找到"
 
 #: src/tables/machine/MachineTypeTable.tsx:99
 #~ msgid "Machine type information"
@@ -8846,7 +8846,7 @@ msgstr "找不到设备类型。"
 
 #: src/tables/machine/MachineTypeTable.tsx:110
 msgid "Machine Type Information"
-msgstr ""
+msgstr "设备类型信息"
 
 #: src/tables/machine/MachineTypeTable.tsx:125
 #: src/tables/machine/MachineTypeTable.tsx:239
@@ -8869,7 +8869,7 @@ msgstr "供应商文件"
 
 #: src/tables/machine/MachineTypeTable.tsx:163
 msgid "Available Drivers"
-msgstr ""
+msgstr "可用驱动程序"
 
 #: src/tables/machine/MachineTypeTable.tsx:218
 msgid "Machine driver not found."
@@ -8897,11 +8897,11 @@ msgstr "内置类型"
 
 #: src/tables/machine/MachineTypeTable.tsx:358
 msgid "Machine Type Detail"
-msgstr ""
+msgstr "设备类型详情"
 
 #: src/tables/machine/MachineTypeTable.tsx:368
 msgid "Machine Driver Detail"
-msgstr ""
+msgstr "设备驱动详情"
 
 #: src/tables/notifications/NotificationTable.tsx:26
 msgid "Age"
@@ -8950,11 +8950,11 @@ msgstr "显示已装配的零件"
 #: src/tables/part/PartBuildAllocationsTable.tsx:67
 #: src/tables/part/PartSalesAllocationsTable.tsx:62
 msgid "Required Stock"
-msgstr ""
+msgstr "所需库存"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:83
 msgid "View Build Order"
-msgstr ""
+msgstr "查看生产订单"
 
 #: src/tables/part/PartCategoryTable.tsx:51
 msgid "You are subscribed to notifications for this category"
@@ -8983,16 +8983,16 @@ msgstr "新建零件类别"
 
 #: src/tables/part/PartCategoryTable.tsx:129
 msgid "Set Parent Category"
-msgstr ""
+msgstr "设置父类别"
 
 #: src/tables/part/PartCategoryTable.tsx:147
 #: src/tables/stock/StockLocationTable.tsx:145
 msgid "Set Parent"
-msgstr ""
+msgstr "设置父级"
 
 #: src/tables/part/PartCategoryTable.tsx:149
 msgid "Set parent category for the selected items"
-msgstr ""
+msgstr "为所选项目设置父类别"
 
 #: src/tables/part/PartCategoryTable.tsx:160
 msgid "Add Part Category"
@@ -9097,7 +9097,7 @@ msgstr "显示已收到的条目"
 
 #: src/tables/part/PartSalesAllocationsTable.tsx:78
 msgid "View Sales Order"
-msgstr ""
+msgstr "查看销售订单"
 
 #: src/tables/part/PartTable.tsx:84
 msgid "Minimum stock"
@@ -9199,7 +9199,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:276
 msgid "Filter by parts which are variants"
-msgstr ""
+msgstr "按变体零件筛选"
 
 #: src/tables/part/PartTable.tsx:281
 msgid "Is Revision"
@@ -9240,15 +9240,15 @@ msgstr "按有盘点信息的零件筛选"
 #: src/tables/part/PartTable.tsx:350
 #: src/tables/part/PartTable.tsx:367
 msgid "Set Category"
-msgstr ""
+msgstr "设置类别"
 
 #: src/tables/part/PartTable.tsx:369
 msgid "Set category for selected parts"
-msgstr ""
+msgstr "设置所选零件的类别"
 
 #: src/tables/part/PartTable.tsx:379
 msgid "Order selected parts"
-msgstr ""
+msgstr "订购选定的零件"
 
 #: src/tables/part/PartTestTemplateTable.tsx:56
 msgid "Test is defined for a parent template part"
@@ -9370,20 +9370,20 @@ msgstr "删除关联零件"
 
 #: src/tables/part/RelatedPartTable.tsx:122
 msgid "Edit Related Part"
-msgstr ""
+msgstr "编辑关联零件"
 
 #: src/tables/part/SelectionListTable.tsx:61
 #: src/tables/part/SelectionListTable.tsx:112
 msgid "Add Selection List"
-msgstr ""
+msgstr "添加选择列表"
 
 #: src/tables/part/SelectionListTable.tsx:73
 msgid "Edit Selection List"
-msgstr ""
+msgstr "编辑选择列表"
 
 #: src/tables/part/SelectionListTable.tsx:81
 msgid "Delete Selection List"
-msgstr ""
+msgstr "删除选择列表"
 
 #: src/tables/plugin/PluginErrorTable.tsx:29
 msgid "Stage"
@@ -9504,11 +9504,11 @@ msgstr "激活插件"
 
 #: src/tables/plugin/PluginListTable.tsx:266
 msgid "The plugin was activated"
-msgstr ""
+msgstr "插件已激活"
 
 #: src/tables/plugin/PluginListTable.tsx:267
 msgid "The plugin was deactivated"
-msgstr ""
+msgstr "插件已停用"
 
 #: src/tables/plugin/PluginListTable.tsx:280
 msgid "Install plugin"
@@ -9671,7 +9671,7 @@ msgstr "制造商编号"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:253
 msgid "Show line items which have been received"
-msgstr ""
+msgstr "显示已收到的行项目"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:321
 msgid "Receive line item"
@@ -9733,7 +9733,7 @@ msgstr "显示活跃供应商"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:209
 msgid "Show supplier parts with stock"
-msgstr ""
+msgstr "显示供应商零件库存"
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:147
 msgid "Received Date"
@@ -9761,20 +9761,20 @@ msgstr "显示未完成的分配"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:82
 msgid "Assigned to Shipment"
-msgstr ""
+msgstr "已安排发货"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:83
 msgid "Show allocations assigned to a shipment"
-msgstr ""
+msgstr "显示已分配至货运的库存"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:176
 #: src/tables/sales/SalesOrderAllocationTable.tsx:190
 msgid "No shipment"
-msgstr ""
+msgstr "无货运记录"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:188
 msgid "Not shipped"
-msgstr ""
+msgstr "未发货"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:210
 #: src/tables/sales/SalesOrderAllocationTable.tsx:232
@@ -9788,11 +9788,11 @@ msgstr "删除分配"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:264
 msgid "Assign to Shipment"
-msgstr ""
+msgstr "安排发货"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:279
 msgid "Assign to shipment"
-msgstr ""
+msgstr "安排发货"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:263
 msgid "Allocate Serial Numbers"
@@ -9808,11 +9808,11 @@ msgstr "分配序列号"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:307
 msgid "Show lines which are fully allocated"
-msgstr ""
+msgstr "显示已完全分配的行"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:312
 msgid "Show lines which are completed"
-msgstr ""
+msgstr "显示已完成的行"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:389
 msgid "Allocate serials"
@@ -9866,37 +9866,37 @@ msgstr "显示已送达的货物"
 #: src/tables/settings/ApiTokenTable.tsx:29
 #: src/tables/settings/ApiTokenTable.tsx:43
 msgid "Generate Token"
-msgstr ""
+msgstr "生成令牌"
 
 #: src/tables/settings/ApiTokenTable.tsx:31
 msgid "Token generated"
-msgstr ""
+msgstr "令牌已生成"
 
 #: src/tables/settings/ApiTokenTable.tsx:66
 #: src/tables/settings/ApiTokenTable.tsx:110
 msgid "Revoked"
-msgstr ""
+msgstr "撤销"
 
 #: src/tables/settings/ApiTokenTable.tsx:70
 #: src/tables/settings/ApiTokenTable.tsx:172
 msgid "Token"
-msgstr ""
+msgstr "令牌"
 
 #: src/tables/settings/ApiTokenTable.tsx:77
 msgid "In Use"
-msgstr ""
+msgstr "使用中"
 
 #: src/tables/settings/ApiTokenTable.tsx:86
 msgid "Last Seen"
-msgstr ""
+msgstr "最近一次在线"
 
 #: src/tables/settings/ApiTokenTable.tsx:91
 msgid "Expiry"
-msgstr ""
+msgstr "到期"
 
 #: src/tables/settings/ApiTokenTable.tsx:111
 msgid "Show revoked tokens"
-msgstr ""
+msgstr "显示已撤销的令牌"
 
 #: src/tables/settings/ApiTokenTable.tsx:130
 msgid "Revoke"

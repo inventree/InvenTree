@@ -50,6 +50,7 @@ export interface SettingsStateProps {
   lookup: SettingsLookup;
   fetchSettings: () => Promise<boolean>;
   loaded: boolean;
+  isError: boolean;
   endpoint: ApiEndpoints;
   pathParams?: PathParams;
   getSetting: (key: string, default_value?: string) => string; // Return a raw setting value

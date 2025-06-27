@@ -1,5 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Box, type MantineStyleProp, Skeleton, Stack } from '@mantine/core';
+import {
+  Box,
+  LoadingOverlay,
+  type MantineStyleProp,
+  Stack
+} from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ContextMenuItemOptions,
@@ -412,7 +417,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       newOrder.push(ACTIONS_COLUMN_ACCESSOR);
       tableColumns.setColumnsOrder(newOrder);
     }
-  }, [tableColumns.columnsOrder]);
+  }, [tableColumns.columnsOrder, tableColumns.setColumnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -670,7 +675,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       columnIndex: number;
     }) => {
       // Ignore any click on the 'actions' column
-      if (column.accessor == '--actions--') {
+      if (column.accessor == ACTIONS_COLUMN_ACCESSOR) {
         return;
       }
 
@@ -815,10 +820,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
     );
   }, [tableProps.onCellClick, tableProps.onRowClick, tableProps.modelType]);
 
-  if (!tableState.storedDataLoaded) {
-    return <Skeleton w='100%' h='100%' animate />;
-  }
-
   return (
     <>
       <Stack gap='xs'>
@@ -837,6 +838,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         )}
         <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
           <Box pos='relative'>
+            <LoadingOverlay visible={!tableState.storedDataLoaded} />
             <DataTable
               withTableBorder={!tableProps.noHeader}
               withColumnBorders

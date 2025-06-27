@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-25 23:54+0000\n"
-"PO-Revision-Date: 2025-06-25 23:56\n"
+"POT-Creation-Date: 2025-06-26 21:57+0000\n"
+"PO-Revision-Date: 2025-06-26 22:00\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -57,23 +57,23 @@ msgstr ""
 msgid "User does not have permission to view this model"
 msgstr "Käyttäjän oikeudet eivät riitä kohteen tarkastelemiseen"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:56
 msgid "Email (again)"
 msgstr "Sähköposti (uudelleen)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:60
 msgid "Email address confirmation"
 msgstr "Sähköpostiosoitteen vahvistus"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:83
 msgid "You must type the same email each time."
 msgstr "Sinun täytyy kirjoittaa sama sähköposti joka kerta."
 
-#: InvenTree/auth_overrides.py:126 InvenTree/auth_overrides.py:134
+#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
 msgid "The provided primary email address is not valid."
 msgstr "Annettu ensisijainen sähköpostiosoite ei kelpaa."
 
-#: InvenTree/auth_overrides.py:140
+#: InvenTree/auth_overrides.py:138
 msgid "The provided email domain is not approved."
 msgstr "Annetun sähköpostiosoitteen verkkotunnusta ei hyväksytä."
 
@@ -96,7 +96,7 @@ msgstr ""
 msgid "Invalid quantity provided"
 msgstr "Annettu määrä on virheellinen"
 
-#: InvenTree/exceptions.py:121
+#: InvenTree/exceptions.py:125
 msgid "Error details can be found in the admin panel"
 msgstr "Virheen tiedot löytyvät hallintapaneelista"
 
@@ -7156,52 +7156,52 @@ msgstr ""
 msgid "The Supplier which acts as 'TME'"
 msgstr ""
 
-#: plugin/installer.py:229 plugin/installer.py:307
+#: plugin/installer.py:240 plugin/installer.py:320
 msgid "Only staff users can administer plugins"
 msgstr ""
 
-#: plugin/installer.py:232
+#: plugin/installer.py:243
 msgid "Plugin installation is disabled"
 msgstr ""
 
-#: plugin/installer.py:269
+#: plugin/installer.py:280
 msgid "Installed plugin successfully"
 msgstr ""
 
-#: plugin/installer.py:274
+#: plugin/installer.py:285
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr ""
 
-#: plugin/installer.py:298
+#: plugin/installer.py:311
 msgid "Plugin was not found in registry"
 msgstr ""
 
-#: plugin/installer.py:301
+#: plugin/installer.py:314
 msgid "Plugin is not a packaged plugin"
 msgstr ""
 
-#: plugin/installer.py:304
+#: plugin/installer.py:317
 msgid "Plugin package name not found"
 msgstr ""
 
-#: plugin/installer.py:324
+#: plugin/installer.py:337
 msgid "Plugin uninstalling is disabled"
 msgstr ""
 
-#: plugin/installer.py:328
+#: plugin/installer.py:341
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr ""
 
-#: plugin/installer.py:332
+#: plugin/installer.py:345
 msgid "Plugin is not installed"
 msgstr ""
 
-#: plugin/installer.py:348
+#: plugin/installer.py:363
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:363
+#: plugin/installer.py:378
 msgid "Uninstalled plugin successfully"
 msgstr ""
 
@@ -7261,17 +7261,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:625
+#: plugin/registry.py:639
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:628
+#: plugin/registry.py:642
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:630
+#: plugin/registry.py:644
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""

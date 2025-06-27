@@ -1191,10 +1191,15 @@ class TestSettings(InvenTreeTestCase):
 
     def test_initial_install(self):
         """Test if install of plugins on startup works."""
+        from common.settings import set_global_setting
         from plugin import registry
+
+        set_global_setting('PLUGIN_ON_STARTUP', True)
 
         registry.reload_plugins(full_reload=True, collect=True)
         self.assertGreater(len(settings.PLUGIN_FILE_HASH), 0)
+
+        set_global_setting('PLUGIN_ON_STARTUP', False)
 
     def test_helpers_cfg_file(self):
         """Test get_config_file."""
