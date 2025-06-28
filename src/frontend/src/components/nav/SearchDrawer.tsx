@@ -397,11 +397,7 @@ export function SearchDrawer({
 
     return api
       .post(apiUrl(ApiEndpoints.api_search), params)
-      .then((response) => response.data)
-      .catch((error) => {
-        console.error(error);
-        return [];
-      });
+      .then((response) => response.data);
   };
 
   // Search query manager
