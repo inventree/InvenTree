@@ -28,6 +28,7 @@ import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableState } from '@lib/types/Tables';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconArrowRight } from '@tabler/icons-react';
 import { Boundary } from '../components/Boundary';
 import { useApi } from '../contexts/ApiContext';
@@ -41,6 +42,8 @@ import { type RowAction, RowActions } from './RowActions';
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
+
+const TABLE_QUERY_RETRY: number = 5;
 
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component
@@ -198,8 +201,18 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableProps.params,
       props.enableColumnCaching
     ],
-    retry: 5,
+    retry: TABLE_QUERY_RETRY,
     retryDelay: (attempt: number, error: any) => {
+      if (attempt >= TABLE_QUERY_RETRY) {
+        hideNotification('table-options-error');
+        showNotification({
+          id: 'table-options-error',
+          title: t`API Error`,
+          message: t`Failed to load table options`,
+          color: 'red'
+        });
+      }
+
       return 100 + attempt * attempt * 100;
     },
     refetchOnMount: true,
@@ -581,7 +594,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.searchTerm,
       tableState.storedDataLoaded
     ],
-    retry: 5,
+    retry: TABLE_QUERY_RETRY,
     retryDelay: (attempt: number, error: any) => {
       let msg: string = t`Error loading table data`;
       switch (error?.status) {
@@ -602,6 +615,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
       }
 
       setMissingRecordsText(`${error.status} - ${msg}`);
+
+      if (attempt >= TABLE_QUERY_RETRY) {
+        hideNotification('table-data-error');
+        showNotification({
+          id: 'table-data-error',
+          title: t`API Error`,
+          message: t`Failed to load table data`,
+          color: 'red'
+        });
+      }
 
       return 100 + attempt * attempt * 100;
     },
