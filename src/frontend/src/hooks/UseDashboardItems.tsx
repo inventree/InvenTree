@@ -19,6 +19,7 @@ import { useUserState } from '../states/UserState';
 interface DashboardLibraryProps {
   items: DashboardWidgetProps[];
   loaded: boolean;
+  error: any;
 }
 
 /**
@@ -51,13 +52,7 @@ export function useDashboardItems(): DashboardLibraryProps {
         feature_type: PluginUIFeatureType.dashboard
       });
 
-      return api
-        .get(url)
-        .then((response: any) => response.data)
-        .catch((_error: any) => {
-          console.error('ERR: Failed to fetch plugin dashboard items');
-          return [];
-        });
+      return api.get(url).then((response: any) => response.data);
     }
   });
 
@@ -90,7 +85,7 @@ export function useDashboardItems(): DashboardLibraryProps {
         };
       }) ?? []
     );
-  }, [pluginQuery, inventreeContext]);
+  }, [pluginQuery.data, inventreeContext]);
 
   const items: DashboardWidgetProps[] = useMemo(() => {
     const widgets = [...builtin, ...pluginDashboardItems];
@@ -113,6 +108,7 @@ export function useDashboardItems(): DashboardLibraryProps {
 
   return {
     items: items,
-    loaded: loaded
+    loaded: loaded,
+    error: pluginQuery.error
   };
 }
