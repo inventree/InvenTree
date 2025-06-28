@@ -122,10 +122,7 @@ export function NotificationDrawer({
             ordering: '-creation'
           }
         })
-        .then((response) => response.data)
-        .catch((error) => {
-          return error;
-        }),
+        .then((response) => response.data),
     refetchOnMount: false
   });
 

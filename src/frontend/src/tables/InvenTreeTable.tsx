@@ -207,7 +207,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         title: t`Error loading table options`
       });
 
-      return false;
+      return true;
     },
     refetchOnMount: true,
     gcTime: 5000,
@@ -596,7 +596,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         title: t`Error loading table data`
       });
 
-      return false;
+      return true;
     },
     enabled: !!url && !tableData && tableState.storedDataLoaded,
     queryFn: fetchTableData
