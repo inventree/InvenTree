@@ -28,7 +28,6 @@ import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableState } from '@lib/types/Tables';
-import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconArrowRight } from '@tabler/icons-react';
 import { Boundary } from '../components/Boundary';
 import { useApi } from '../contexts/ApiContext';
@@ -109,7 +108,7 @@ export type InvenTreeTableProps<T = any> = {
  */
 const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
-  noRecordsText: t`No records found`,
+  noRecordsText: t`Loading records`,
   enableDownload: false,
   enableLabels: false,
   enableReports: false,
@@ -199,7 +198,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableProps.params,
       props.enableColumnCaching
     ],
-    retry: 3,
+    retry: 5,
+    retryDelay: (attempt: number, error: any) => {
+      return 100 + attempt * attempt * 100;
+    },
     refetchOnMount: true,
     gcTime: 5000,
     queryFn: async () => {
@@ -241,17 +243,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
           }
 
           return null;
-        })
-        .catch(() => {
-          hideNotification('table-options-error');
-          showNotification({
-            id: 'table-options-error',
-            title: t`API Error`,
-            message: t`Failed to load table options`,
-            color: 'red'
-          });
-
-          return null;
         });
     }
   });
@@ -270,9 +261,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       setFieldNames(cachedNames);
       return;
     }
-
-    tableOptionQuery.refetch();
-  }, [cacheKey, url, props.params, props.enableColumnCaching]);
+  }, []);
 
   const enableSelection: boolean = useMemo(() => {
     return tableProps.enableSelection || tableProps.enableBulkDelete || false;
@@ -553,51 +542,23 @@ export function InvenTreeTable<T extends Record<string, any>>({
         timeout: 5 * 1000
       })
       .then((response) => {
-        switch (response.status) {
-          case 200:
-            setMissingRecordsText(
-              tableProps.noRecordsText ?? t`No records found`
-            );
+        setMissingRecordsText(tableProps.noRecordsText ?? t`Loading records`);
 
-            let results = response.data?.results ?? response.data ?? [];
+        let results = response.data?.results ?? response.data ?? [];
 
-            if (props.dataFormatter) {
-              // Custom data formatter provided
-              results = props.dataFormatter(results);
-            }
-
-            if (!Array.isArray(results)) {
-              setMissingRecordsText(t`Server returned incorrect data type`);
-              results = [];
-            }
-
-            tableState.setRecordCount(response.data?.count ?? results.length);
-
-            return results;
-          case 400:
-            setMissingRecordsText(t`Bad request`);
-            break;
-          case 401:
-            setMissingRecordsText(t`Unauthorized`);
-            break;
-          case 403:
-            setMissingRecordsText(t`Forbidden`);
-            break;
-          case 404:
-            setMissingRecordsText(t`Not found`);
-            break;
-          default:
-            setMissingRecordsText(
-              `${t`Unknown error`}: ${response.statusText}`
-            );
-            break;
+        if (props.dataFormatter) {
+          // Custom data formatter provided
+          results = props.dataFormatter(results);
         }
 
-        return [];
-      })
-      .catch((error) => {
-        setMissingRecordsText(`${t`Error`}: ${error.message}`);
-        return [];
+        if (!Array.isArray(results)) {
+          setMissingRecordsText(t`Server returned incorrect data type`);
+          results = [];
+        }
+
+        tableState.setRecordCount(response.data?.count ?? results.length);
+
+        return results;
       });
   };
 
@@ -617,11 +578,35 @@ export function InvenTreeTable<T extends Record<string, any>>({
       sortStatus.direction,
       tableState.tableKey,
       tableState.filterSet.activeFilters,
-      tableState.searchTerm
+      tableState.searchTerm,
+      tableState.storedDataLoaded
     ],
+    retry: 5,
+    retryDelay: (attempt: number, error: any) => {
+      let msg: string = t`Error loading table data`;
+      switch (error?.status) {
+        case 400:
+          msg = t`Bad request`;
+          break;
+        case 401:
+          msg = t`Unauthorized`;
+          break;
+        case 403:
+          msg = t`Forbidden`;
+          break;
+        case 404:
+          msg = t`Not found`;
+          break;
+        default:
+          break;
+      }
+
+      setMissingRecordsText(`${error.status} - ${msg}`);
+
+      return 100 + attempt * attempt * 100;
+    },
     enabled: !!url && !tableData && tableState.storedDataLoaded,
-    queryFn: fetchTableData,
-    refetchOnMount: true
+    queryFn: fetchTableData
   });
 
   // Refetch data when the query parameters change
