@@ -43,8 +43,6 @@ const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
-const TABLE_QUERY_RETRY: number = 5;
-
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component
  *
@@ -201,8 +199,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableProps.params,
       props.enableColumnCaching
     ],
-    retry: TABLE_QUERY_RETRY,
-    retryDelay: (attempt: number, error: any) => 250 * (1 + attempt),
+    retry: 5,
+    retryDelay: (attempt: number) => (1 + attempt) * 250,
     throwOnError: (error: any) => {
       showApiErrorMessage({
         error: error,
@@ -590,8 +588,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.searchTerm,
       tableState.storedDataLoaded
     ],
-    retry: TABLE_QUERY_RETRY,
-    retryDelay: (attempt: number, error: any) => 250 * (1 + attempt),
+    retry: 5,
+    retryDelay: (attempt: number) => (1 + attempt) * 250,
     throwOnError: (error: any) => {
       showApiErrorMessage({
         error: error,
