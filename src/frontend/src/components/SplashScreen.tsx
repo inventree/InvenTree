@@ -2,7 +2,7 @@ import { BackgroundImage } from '@mantine/core';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../functions/urls';
-import { useServerApiState } from '../states/ApiState';
+import { useServerApiState } from '../states/ServerApiState';
 
 /**
  * Render content within a "splash screen" container.

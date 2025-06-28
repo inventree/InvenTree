@@ -19,7 +19,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { useGlobalStatusState } from '../../states/StatusState';
+import { useGlobalStatusState } from '../../states/GlobalStatusState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';

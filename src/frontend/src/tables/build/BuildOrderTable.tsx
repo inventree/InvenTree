@@ -12,7 +12,7 @@ import { RenderUser } from '../../components/render/User';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,

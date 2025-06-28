@@ -5,8 +5,8 @@ import { useMemo, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { docLinks } from '../../defaults/links';
-import { useServerApiState } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useServerApiState } from '../../states/ServerApiState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
 interface AlertInfo {

@@ -14,7 +14,7 @@ import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import { resolveItem } from '../functions/conversion';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 

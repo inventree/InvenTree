@@ -41,7 +41,7 @@ import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
