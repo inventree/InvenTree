@@ -80,12 +80,14 @@ export function showApiErrorMessage({
   error,
   title,
   message,
-  field
+  field,
+  id
 }: {
   error: any;
   title: string;
   message?: string;
   field?: string;
+  id?: string;
 }) {
   const errorMessage = extractErrorMessage({
     error: error,
@@ -93,7 +95,10 @@ export function showApiErrorMessage({
     defaultMessage: message
   });
 
+  notifications.hide(id ?? 'api-error');
+
   notifications.show({
+    id: id ?? 'api-error',
     title: title,
     message: errorMessage,
     color: 'red'

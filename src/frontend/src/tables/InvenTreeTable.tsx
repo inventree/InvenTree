@@ -28,12 +28,12 @@ import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableState } from '@lib/types/Tables';
-import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconArrowRight } from '@tabler/icons-react';
 import { Boundary } from '../components/Boundary';
 import { useApi } from '../contexts/ApiContext';
 import { resolveItem } from '../functions/conversion';
 import { extractAvailableFields, mapFields } from '../functions/forms';
+import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
@@ -202,18 +202,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
       props.enableColumnCaching
     ],
     retry: TABLE_QUERY_RETRY,
-    retryDelay: (attempt: number, error: any) => {
-      if (attempt >= TABLE_QUERY_RETRY) {
-        hideNotification('table-options-error');
-        showNotification({
-          id: 'table-options-error',
-          title: t`API Error`,
-          message: t`Failed to load table options`,
-          color: 'red'
-        });
-      }
+    retryDelay: (attempt: number, error: any) => 250 * (1 + attempt),
+    throwOnError: (error: any) => {
+      showApiErrorMessage({
+        error: error,
+        title: t`Error loading table options`
+      });
 
-      return 100 + attempt * attempt * 100;
+      return false;
     },
     refetchOnMount: true,
     gcTime: 5000,
@@ -552,7 +548,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     return api
       .get(url, {
         params: queryParams,
-        timeout: 5 * 1000
+        timeout: 10 * 1000
       })
       .then((response) => {
         setMissingRecordsText(tableProps.noRecordsText ?? t`Loading records`);
@@ -595,38 +591,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.storedDataLoaded
     ],
     retry: TABLE_QUERY_RETRY,
-    retryDelay: (attempt: number, error: any) => {
-      let msg: string = t`Error loading table data`;
-      switch (error?.status) {
-        case 400:
-          msg = t`Bad request`;
-          break;
-        case 401:
-          msg = t`Unauthorized`;
-          break;
-        case 403:
-          msg = t`Forbidden`;
-          break;
-        case 404:
-          msg = t`Not found`;
-          break;
-        default:
-          break;
-      }
+    retryDelay: (attempt: number, error: any) => 250 * (1 + attempt),
+    throwOnError: (error: any) => {
+      showApiErrorMessage({
+        error: error,
+        title: t`Error loading table data`
+      });
 
-      setMissingRecordsText(`${error.status} - ${msg}`);
-
-      if (attempt >= TABLE_QUERY_RETRY) {
-        hideNotification('table-data-error');
-        showNotification({
-          id: 'table-data-error',
-          title: t`API Error`,
-          message: t`Failed to load table data`,
-          color: 'red'
-        });
-      }
-
-      return 100 + attempt * attempt * 100;
+      return false;
     },
     enabled: !!url && !tableData && tableState.storedDataLoaded,
     queryFn: fetchTableData
