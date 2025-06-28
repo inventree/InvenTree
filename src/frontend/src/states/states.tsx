@@ -55,18 +55,9 @@ export async function fetchGlobalStates(
   }
 
   setApiDefaults();
-
-  await useServerApiState.getState().fetchServerApiState();
-  const result = await useUserSettingsState.getState().fetchSettings();
-
-  if (!result && navigate) {
-    console.log('MFA is required - setting up');
-    // call mfa setup
-    navigate('/mfa-setup');
-    return;
-  }
-
   await Promise.all([
+    useServerApiState.getState().fetchServerApiState(),
+    useUserSettingsState.getState().fetchSettings(),
     useGlobalSettingsState.getState().fetchSettings(),
     useGlobalStatusState.getState().fetchStatus(),
     useIconState.getState().fetchIcons()
