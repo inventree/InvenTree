@@ -196,19 +196,14 @@ function NameBadge({
 
       const url = apiUrl(path, pk);
 
-      return api
-        .get(url)
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              return response.data;
-            default:
-              return {};
-          }
-        })
-        .catch(() => {
-          return {};
-        });
+      return api.get(url).then((response) => {
+        switch (response.status) {
+          case 200:
+            return response.data;
+          default:
+            return {};
+        }
+      });
     }
   });
 
@@ -356,9 +351,6 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
             default:
               return {};
           }
-        })
-        .catch(() => {
-          return {};
         });
     }
   });

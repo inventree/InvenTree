@@ -57,10 +57,7 @@ export function LicenseModal() {
     queryKey: ['license'],
     refetchOnMount: true,
     queryFn: () =>
-      api
-        .get(apiUrl(ApiEndpoints.license))
-        .then((res) => res.data ?? {})
-        .catch(() => {})
+      api.get(apiUrl(ApiEndpoints.license)).then((res) => res.data ?? {})
   });
 
   const packageKeys = useMemo(() => {
