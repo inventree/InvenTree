@@ -92,11 +92,10 @@ export default function NotesEditor({
 
   const dataQuery = useQuery({
     queryKey: ['notes-editor', noteUrl, modelType, modelId],
+    retry: 5,
+    retryDelay: 250,
     queryFn: () =>
-      api
-        .get(noteUrl)
-        .then((response) => response.data?.notes ?? '')
-        .catch(() => ''),
+      api.get(noteUrl).then((response) => response.data?.notes ?? ''),
     enabled: true
   });
 
