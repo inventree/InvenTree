@@ -78,23 +78,17 @@ export function Header() {
         return null;
       }
 
-      try {
-        const params = {
+      return api
+        .get(apiUrl(ApiEndpoints.notifications_list), {
           params: {
             read: false,
             limit: 1
           }
-        };
-        const response = await api
-          .get(apiUrl(ApiEndpoints.notifications_list), params)
-          .catch(() => {
-            return null;
-          });
-        setNotificationCount(response?.data?.count ?? 0);
-        return response?.data ?? null;
-      } catch (error) {
-        return null;
-      }
+        })
+        .then((response: any) => {
+          setNotificationCount(response?.data?.count ?? 0);
+          return response.data ?? null;
+        });
     },
     // Refetch every minute, *if* the tab is visible
     refetchInterval: 60 * 1000,
