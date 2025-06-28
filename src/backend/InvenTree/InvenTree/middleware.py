@@ -5,7 +5,7 @@ import sys
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import resolve, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 
@@ -223,3 +223,38 @@ class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
         """Clear the cache object."""
         delete_session_cache()
         return response
+
+
+class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
+    """Middleware to check the host settings.
+
+    Especially SITE_URL, trusted_origins.
+    """
+
+    def process_request(self, request):
+        """Check the host settings."""
+        # Debug setups do not enforce these checks so we ignore that case
+        if settings.DEBUG:
+            return None
+
+        # Handle commonly ignored paths that might also work without a correct setup (api, auth)
+        path = request.path_info
+        if path in urls or any(path.startswith(p) for p in paths_ignore):
+            return None
+
+        # Ensure that the settings are set correctly with the current request
+        accessed_scheme = request._current_scheme_host
+        if accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL):
+            msg = f'INVE-W11: The used path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`'
+            logger.error(msg)
+            return render(request, 'config_error.html', {'error_message': msg})
+
+        # Check trusted origins
+        if not any(
+            accessed_scheme.startswith(origin)
+            for origin in settings.CSRF_TRUSTED_ORIGINS
+        ):
+            msg = f'INVE-W11: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
+            logger.error(msg)
+            return render(request, 'config_error.html', {'error_message': msg})
+        return None
