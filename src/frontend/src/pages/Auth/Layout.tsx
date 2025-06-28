@@ -14,7 +14,7 @@ import SplashScreen from '../../components/SplashScreen';
 import { StylishText } from '../../components/items/StylishText';
 import { doLogout } from '../../functions/auth';
 
-export default function Layout() {
+export default function LoginLayoutComponent() {
   return (
     <SplashScreen>
       <Center mih='100vh'>
