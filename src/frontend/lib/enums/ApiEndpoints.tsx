@@ -216,7 +216,7 @@ export enum ApiEndpoints {
   plugin_admin = 'plugins/:key/admin/',
 
   // User interface plugin endpoints
-  plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
+  plugin_ui_features_list = 'plugins/ui/features/:feature_type/xx/',
 
   // Special plugin endpoints
   plugin_locate_item = 'locate/',

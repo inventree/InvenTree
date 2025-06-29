@@ -72,9 +72,6 @@ export default function useDataExport({
         .then((response: any) => {
           return extractAvailableFields(response, 'GET') || {};
         })
-        .catch(() => {
-          return {};
-        })
   });
 
   // Construct a field set for the export form
