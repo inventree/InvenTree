@@ -53,8 +53,7 @@ export default function BuildOrderTestTable({
             required: true
           }
         })
-        .then((res) => res.data)
-        .catch((err) => []);
+        .then((res) => res.data);
     }
   });
 

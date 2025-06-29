@@ -137,10 +137,7 @@ export function RenderRemoteInstance({
     queryFn: async () => {
       const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
 
-      return api
-        .get(url)
-        .then((response) => response.data)
-        .catch(() => null);
+      return api.get(url).then((response) => response.data);
     }
   });
 
