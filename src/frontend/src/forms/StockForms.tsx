@@ -56,7 +56,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
 /**
@@ -85,21 +85,21 @@ export function useStockFields({
   const batchGenerator = useBatchCodeGenerator({
     modalId: modalId,
     initialQuery: {
-      part: partInstance?.pk || partId
+      part: partId
     }
   });
 
   const serialGenerator = useSerialNumberGenerator({
     modalId: modalId,
     initialQuery: {
-      part: partInstance?.pk || partId
+      part: partId
     }
   });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        value: partInstance.pk,
+        value: partId || partInstance?.pk,
         disabled: !create,
         filters: {
           active: create ? true : undefined
@@ -107,6 +107,14 @@ export function useStockFields({
         onValueChange: (value, record) => {
           // Update the tracked part instance
           setPartInstance(record);
+
+          serialGenerator.update({
+            part: value
+          });
+
+          batchGenerator.update({
+            part: value
+          });
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);

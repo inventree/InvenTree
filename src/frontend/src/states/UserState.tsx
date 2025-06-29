@@ -198,5 +198,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   hasViewPermission: (model: ModelType) => {
     return get().checkUserPermission(model, UserPermissions.view);
+  },
+  // login state
+  login_checked: false,
+  setLoginChecked: (value) => {
+    set({ login_checked: value });
   }
 }));

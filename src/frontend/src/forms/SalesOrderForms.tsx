@@ -22,7 +22,7 @@ import type {
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { PartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({

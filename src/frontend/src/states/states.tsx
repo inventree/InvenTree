@@ -1,10 +1,10 @@
 import type { PluginProps } from '@lib/types/Plugins';
 import type { NavigateFunction } from 'react-router-dom';
 import { setApiDefaults } from '../App';
-import { useServerApiState } from './ApiState';
+import { useGlobalStatusState } from './GlobalStatusState';
 import { useIconState } from './IconState';
-import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
-import { useGlobalStatusState } from './StatusState';
+import { useServerApiState } from './ServerApiState';
+import { useGlobalSettingsState, useUserSettingsState } from './SettingsStates';
 import { useUserState } from './UserState';
 
 // Type interface fully defining the current server
@@ -55,18 +55,9 @@ export async function fetchGlobalStates(
   }
 
   setApiDefaults();
-
-  await useServerApiState.getState().fetchServerApiState();
-  const result = await useUserSettingsState.getState().fetchSettings();
-
-  if (!result && navigate) {
-    console.log('MFA is required - setting up');
-    // call mfa setup
-    navigate('/mfa-setup');
-    return;
-  }
-
   await Promise.all([
+    useServerApiState.getState().fetchServerApiState(),
+    useUserSettingsState.getState().fetchSettings(),
     useGlobalSettingsState.getState().fetchSettings(),
     useGlobalStatusState.getState().fetchStatus(),
     useIconState.getState().fetchIcons()

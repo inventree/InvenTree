@@ -169,17 +169,12 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
 
     def process_exception(self, request, exception):
         """Check if kind is ignored before processing."""
-        kind, info, data = sys.exc_info()
+        kind, _info, _data = sys.exc_info()
 
         # Check if the error is on the ignore list
         if kind in settings.IGNORED_ERRORS:
             return
 
-        import traceback
-
-        from django.views.debug import ExceptionReporter
-
-        from error_report.models import Error
         from error_report.settings import ERROR_DETAIL_SETTINGS
 
         # Error reporting is disabled
@@ -194,15 +189,10 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         if len(path) > 200:
             path = path[:195] + '...'
 
-        error = Error.objects.create(
-            kind=kind.__name__,
-            html=ExceptionReporter(request, kind, info, data).get_traceback_html(),
-            path=path,
-            info=info,
-            data='\n'.join(traceback.format_exception(kind, info, data)),
-        )
+        # Pass off to the exception reporter
+        from InvenTree.exceptions import log_error
 
-        error.save()
+        log_error(path)
 
 
 class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
