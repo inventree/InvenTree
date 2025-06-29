@@ -631,6 +631,11 @@ export function InvenTreeTable<T extends Record<string, any>>({
     }
   }, [tableProps.enablePagination, pageSize, tableState.recordCount]);
 
+  // Update tableState.records when new data received
+  useEffect(() => {
+    tableState.setRecords(tableData ?? apiData ?? []);
+  }, [tableData, apiData]);
+
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
     ({
