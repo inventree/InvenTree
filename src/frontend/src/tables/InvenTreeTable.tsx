@@ -547,6 +547,11 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return [];
     }
 
+    if (!tableState.storedDataLoaded) {
+      // Table data not yet loaded - do not load!
+      return [];
+    }
+
     return api
       .get(url, {
         params: queryParams,
@@ -610,6 +615,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     queryKey: [
       'tabledata',
       url,
+      tableState.tableKey,
       tableState.page,
       props.params,
       sortingLoaded,
@@ -617,6 +623,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       sortStatus.direction,
       tableState.tableKey,
       tableState.filterSet.activeFilters,
+      tableState.storedDataLoaded,
       tableState.searchTerm
     ],
     enabled: !!url && !tableData && tableState.storedDataLoaded,
