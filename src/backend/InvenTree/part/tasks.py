@@ -13,7 +13,6 @@ import common.notifications
 import company.models
 import InvenTree.helpers_model
 import InvenTree.tasks
-import part.models as part_models
 import part.stocktake
 import stock.models as stock_models
 from common.settings import get_global_setting
@@ -29,7 +28,7 @@ logger = structlog.get_logger('inventree')
 
 
 @tracer.start_as_current_span('notify_low_stock')
-def notify_low_stock(part: part_models.Part):
+def notify_low_stock(part):
     """Notify interested users that a part is 'low stock'.
 
     Rules:
@@ -135,9 +134,11 @@ def notify_low_stock_if_required(part_id: int):
 
     If true, notify the users who have subscribed to the part
     """
+    from part.models import Part
+
     try:
-        part = part_models.Part.objects.get(pk=part_id)
-    except part_models.Part.DoesNotExist:
+        part = Part.objects.get(pk=part_id)
+    except Part.DoesNotExist:
         logger.warning(
             'notify_low_stock_if_required: Part with ID %s does not exist', part_id
         )
@@ -222,7 +223,7 @@ def check_stale_stock():
 
 
 @tracer.start_as_current_span('update_part_pricing')
-def update_part_pricing(pricing: part_models.PartPricing, counter: int = 0):
+def update_part_pricing(pricing, counter: int = 0):
     """Update cached pricing data for the specified PartPricing instance.
 
     Arguments:
@@ -251,8 +252,10 @@ def check_missing_pricing(limit=250):
     Arguments:
         limit: Maximum number of parts to process at once
     """
+    from part.models import Part, PartPricing
+
     # Find parts for which pricing information has never been updated
-    results = part_models.PartPricing.objects.filter(updated=None)[:limit]
+    results = PartPricing.objects.filter(updated=None)[:limit]
 
     if results.count() > 0:
         logger.info('Found %s parts with empty pricing', results.count())
@@ -264,7 +267,7 @@ def check_missing_pricing(limit=250):
     days = int(get_global_setting('PRICING_UPDATE_DAYS', 30))
     stale_date = datetime.now().date() - timedelta(days=days)
 
-    results = part_models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
+    results = PartPricing.objects.filter(updated__lte=stale_date)[:limit]
 
     if results.count() > 0:
         logger.info('Found %s stale pricing entries', results.count())
@@ -274,7 +277,7 @@ def check_missing_pricing(limit=250):
 
     # Find any pricing data which is in the wrong currency
     currency = common.currency.currency_code_default()
-    results = part_models.PartPricing.objects.exclude(currency=currency)
+    results = PartPricing.objects.exclude(currency=currency)
 
     if results.count() > 0:
         logger.info('Found %s pricing entries in the wrong currency', results.count())
@@ -283,7 +286,7 @@ def check_missing_pricing(limit=250):
             pp.schedule_for_update()
 
     # Find any parts which do not have pricing information
-    results = part_models.Part.objects.filter(pricing_data=None)[:limit]
+    results = Part.objects.filter(pricing_data=None)[:limit]
 
     if results.count() > 0:
         logger.info('Found %s parts without pricing', results.count())
@@ -304,12 +307,14 @@ def scheduled_stocktake_reports():
     - Delete 'old' stocktake report files after the specified period
     - Generate new reports at the specified period
     """
+    from part.models import PartStocktakeReport
+
     # First let's delete any old stocktake reports
     delete_n_days = int(
         get_global_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False)
     )
     threshold = datetime.now() - timedelta(days=delete_n_days)
-    old_reports = part_models.PartStocktakeReport.objects.filter(date__lt=threshold)
+    old_reports = PartStocktakeReport.objects.filter(date__lt=threshold)
 
     if old_reports.count() > 0:
         logger.info('Deleting %s stale stocktake reports', old_reports.count())
@@ -344,12 +349,14 @@ def rebuild_parameters(template_id):
     This function is called when a base template is changed,
     which may cause the base unit to be adjusted.
     """
+    from part.models import PartParameter, PartParameterTemplate
+
     try:
-        template = part_models.PartParameterTemplate.objects.get(pk=template_id)
-    except part_models.PartParameterTemplate.DoesNotExist:
+        template = PartParameterTemplate.objects.get(pk=template_id)
+    except PartParameterTemplate.DoesNotExist:
         return
 
-    parameters = part_models.PartParameter.objects.filter(template=template)
+    parameters = PartParameter.objects.filter(template=template)
 
     n = 0
 
@@ -374,9 +381,11 @@ def rebuild_supplier_parts(part_id):
     This function is called when a bart part is changed,
     which may cause the native units of any supplier parts to be updated
     """
+    from part.models import Part
+
     try:
-        prt = part_models.Part.objects.get(pk=part_id)
-    except part_models.Part.DoesNotExist:
+        prt = Part.objects.get(pk=part_id)
+    except Part.DoesNotExist:
         return
 
     supplier_parts = company.models.SupplierPart.objects.filter(part=prt)
