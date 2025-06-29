@@ -23,8 +23,8 @@ import {
 import type { HostList } from '@lib/types/Server';
 import { useShallow } from 'zustand/react/shallow';
 import { Wrapper } from '../../pages/Auth/Layout';
-import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { ActionButton } from '../buttons/ActionButton';
 import { HostOptionsForm } from './HostOptionsForm';
 

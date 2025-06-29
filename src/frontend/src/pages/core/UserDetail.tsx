@@ -17,7 +17,7 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
 /**
