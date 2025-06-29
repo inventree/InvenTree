@@ -6,8 +6,8 @@ import { type JSX, useEffect, useRef, useState } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
-import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { useServerApiState } from '../states/ServerApiState';
 import { fetchGlobalStates } from '../states/states';
 
 export const defaultLocale = 'en';

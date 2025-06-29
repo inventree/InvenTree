@@ -19,7 +19,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { generateUrl } from '../../functions/urls';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';

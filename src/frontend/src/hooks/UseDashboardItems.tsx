@@ -13,7 +13,7 @@ import {
 } from '../components/plugins/PluginUIFeature';
 import RemoteComponent from '../components/plugins/RemoteComponent';
 import { identifierString } from '../functions/conversion';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 
 interface DashboardLibraryProps {

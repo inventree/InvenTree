@@ -13,7 +13,7 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({

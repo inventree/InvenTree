@@ -26,12 +26,12 @@ import { getNavTabs } from '../../defaults/links';
 import { generateUrl } from '../../functions/urls';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
-import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useServerApiState } from '../../states/ServerApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
