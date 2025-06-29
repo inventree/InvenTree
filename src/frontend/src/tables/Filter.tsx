@@ -8,8 +8,11 @@ import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import { useGlobalSettingsState } from '../states/SettingsState';
-import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
+import {
+  type StatusLookup,
+  useGlobalStatusState
+} from '../states/GlobalStatusState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Return list of available filter options for a given filter

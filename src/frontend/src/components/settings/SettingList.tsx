@@ -16,7 +16,7 @@ import {
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { SettingItem } from './SettingItem';
 
 /**
