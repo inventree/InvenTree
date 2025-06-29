@@ -109,7 +109,7 @@ export type InvenTreeTableProps<T = any> = {
  */
 const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
-  noRecordsText: t`Loading records`,
+  noRecordsText: t`No records found`,
   enableDownload: false,
   enableLabels: false,
   enableReports: false,
@@ -549,8 +549,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
         timeout: 10 * 1000
       })
       .then((response) => {
-        setMissingRecordsText(tableProps.noRecordsText ?? t`Loading records`);
-
         let results = response.data?.results ?? response.data ?? [];
 
         if (props.dataFormatter) {
