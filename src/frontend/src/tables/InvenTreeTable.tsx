@@ -140,11 +140,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }>) {
-  const { getTableColumnNames, setTableColumnNames, userTheme } =
-    useLocalState();
+  const { userTheme } = useLocalState();
 
-  const { pageSize, setPageSize, getTableSorting, setTableSorting } =
-    useStoredTableState();
+  const {
+    pageSize,
+    setPageSize,
+    getTableColumnNames,
+    setTableColumnNames,
+    getTableSorting,
+    setTableSorting
+  } = useStoredTableState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 

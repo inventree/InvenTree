@@ -21,6 +21,13 @@ interface StoredTableStateProps {
   setTableSorting: (
     tableKey: string
   ) => (sorting: DataTableSortStatus<any>) => void;
+  tableColumnNames: Record<string, Record<string, string>>;
+  getTableColumnNames: (tableKey: string) => Record<string, string>;
+  setTableColumnNames: (
+    tableKey: string
+  ) => (names: Record<string, string>) => void;
+
+  clearTableColumnNames: () => void;
 }
 
 export const useStoredTableState = create<StoredTableStateProps>()(
@@ -44,6 +51,22 @@ export const useStoredTableState = create<StoredTableStateProps>()(
             [tableKey]: sorting
           }
         });
+      },
+      tableColumnNames: {},
+      getTableColumnNames: (tableKey) => {
+        return get().tableColumnNames[tableKey] || null;
+      },
+      setTableColumnNames: (tableKey) => (names) => {
+        // Update the table column names for the given table
+        set({
+          tableColumnNames: {
+            ...get().tableColumnNames,
+            [tableKey]: names
+          }
+        });
+      },
+      clearTableColumnNames: () => {
+        set({ tableColumnNames: {} });
       }
     }),
     {
