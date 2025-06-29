@@ -13,7 +13,6 @@ import common.notifications
 import company.models
 import InvenTree.helpers_model
 import InvenTree.tasks
-import part.stocktake
 import stock.models as stock_models
 from common.settings import get_global_setting
 from InvenTree.tasks import (
@@ -308,6 +307,7 @@ def scheduled_stocktake_reports():
     - Generate new reports at the specified period
     """
     from part.models import PartStocktakeReport
+    from part.stocktake import generate_stocktake_report
 
     # First let's delete any old stocktake reports
     delete_n_days = int(
@@ -336,7 +336,7 @@ def scheduled_stocktake_reports():
         return
 
     # Let's start a new stocktake report for all parts
-    part.stocktake.generate_stocktake_report(update_parts=True)
+    generate_stocktake_report(update_parts=True)
 
     # Record the date of this report
     record_task_success('STOCKTAKE_RECENT_REPORT')
