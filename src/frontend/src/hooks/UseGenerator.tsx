@@ -94,8 +94,8 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
     },
     queryFn: async () => {
       const generatorQuery = {
-        ...debouncedQuery,
-        ...(props.initialQuery ?? {})
+        ...(props.initialQuery ?? {}),
+        ...debouncedQuery
       };
 
       if (!isEnabled()) {
