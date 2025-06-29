@@ -126,13 +126,15 @@ test('Part - Editing', async ({ browser }) => {
     .fill(keywords ? '' : 'table furniture');
 
   // Test URL validation
-  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page
+    .getByRole('textbox', { name: 'text-field-link' })
+    .fill('htxp-??QQQ++');
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill with an empty URL
-  await page.getByLabel('text-field-link').fill('');
+  await page.getByRole('textbox', { name: 'text-field-link' }).fill('');
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();

@@ -7,6 +7,7 @@ export function useFilterSet(filterKey: string): FilterSetState {
   const [activeFilters, setActiveFilters] = useLocalStorage<TableFilter[]>({
     key: `inventree-filterset-${filterKey}`,
     defaultValue: [],
+    sync: false,
     getInitialValueInEffect: false
   });
 

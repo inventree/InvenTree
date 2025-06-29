@@ -1,5 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Box, type MantineStyleProp, Stack } from '@mantine/core';
+import {
+  Box,
+  LoadingOverlay,
+  type MantineStyleProp,
+  Stack
+} from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ContextMenuItemOptions,
@@ -186,7 +191,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: !!url && !tableData,
+    enabled: !!url && !tableData && tableState.storedDataLoaded,
     queryKey: [
       'options',
       url,
@@ -273,6 +278,30 @@ export function InvenTreeTable<T extends Record<string, any>>({
     return tableProps.enableSelection || tableProps.enableBulkDelete || false;
   }, [tableProps]);
 
+  useEffect(() => {
+    // On first table render, "hide" any default hidden columns
+    if (tableProps.enableColumnSwitching == false) {
+      return;
+    }
+
+    // A "null" value indicates that the initial "hidden" columns have not been set
+    if (tableState.storedDataLoaded && tableState.hiddenColumns == null) {
+      const columnNames: string[] = columns
+        .filter((col) => {
+          // Find any switchable columns which are hidden by default
+          return col.switchable != false && col.defaultVisible == false;
+        })
+        .map((col) => col.accessor);
+
+      tableState.setHiddenColumns(columnNames);
+    }
+  }, [
+    columns,
+    tableProps.enableColumnSwitching,
+    tableState.hiddenColumns,
+    tableState.storedDataLoaded
+  ]);
+
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
     if (props.enableColumnSwitching == false) {
@@ -300,22 +329,28 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    const cols: TableColumn[] = columns
-      .filter((col) => col?.hidden != true)
-      .map((col) => {
-        let hidden: boolean = col.hidden ?? false;
+    let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
 
-        if (col.switchable ?? true) {
-          hidden = tableState.hiddenColumns.includes(col.accessor);
-        }
+    if (!tableState.storedDataLoaded) {
+      cols = cols.filter((col) => col?.defaultVisible != false);
+    }
 
-        return {
-          ...col,
-          hidden: hidden,
-          resizable: col.resizable ?? true,
-          title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
-        };
-      });
+    cols = cols.map((col) => {
+      // If the column is *not* switchable, it is always visible
+      // Otherwise, check if it is "default hidden"
+
+      const hidden: boolean =
+        col.switchable == false
+          ? false
+          : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
+
+      return {
+        ...col,
+        hidden: hidden,
+        resizable: col.resizable ?? true,
+        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
+      };
+    });
 
     // If row actions are available, add a column for them
     if (tableProps.rowActions) {
@@ -342,7 +377,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
     fieldNames,
     tableProps.rowActions,
     tableState.hiddenColumns,
-    tableState.selectedRecords
+    tableState.selectedRecords,
+    tableState.storedDataLoaded
   ]);
 
   // Callback when column visibility is toggled
@@ -381,7 +417,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       newOrder.push(ACTIONS_COLUMN_ACCESSOR);
       tableColumns.setColumnsOrder(newOrder);
     }
-  }, [tableColumns.columnsOrder]);
+  }, [tableColumns.columnsOrder, tableColumns.setColumnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -583,7 +619,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.filterSet.activeFilters,
       tableState.searchTerm
     ],
-    enabled: !!url && !tableData,
+    enabled: !!url && !tableData && tableState.storedDataLoaded,
     queryFn: fetchTableData,
     refetchOnMount: true
   });
@@ -639,7 +675,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       columnIndex: number;
     }) => {
       // Ignore any click on the 'actions' column
-      if (column.accessor == '--actions--') {
+      if (column.accessor == ACTIONS_COLUMN_ACCESSOR) {
         return;
       }
 
@@ -802,6 +838,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         )}
         <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
           <Box pos='relative'>
+            <LoadingOverlay visible={!tableState.storedDataLoaded} />
             <DataTable
               withTableBorder={!tableProps.noHeader}
               withColumnBorders

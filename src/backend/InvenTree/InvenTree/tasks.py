@@ -2,9 +2,7 @@
 
 import json
 import os
-import random
 import re
-import time
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -94,17 +92,11 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     Note that this function creates some *hidden* global settings (designated with the _ prefix),
     which are used to keep a running track of when the particular task was was last run.
     """
-    from InvenTree.ready import isInTestMode
-
     if n_days <= 0:
         logger.info(
             "Specified interval for task '%s' < 1 - task will not run", task_name
         )
         return False
-
-    # Sleep a random number of seconds to prevent worker conflict
-    if not isInTestMode():
-        time.sleep(random.randint(1, 5))
 
     attempt_key = f'_{task_name}_ATTEMPT'
     success_key = f'_{task_name}_SUCCESS'
@@ -214,7 +206,7 @@ def offload_task(
             return False
         except Exception as exc:
             raise_warning(f"WARNING: '{taskname}' not offloaded due to {exc!s}")
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             return False
     else:
         if callable(taskname):
@@ -235,7 +227,7 @@ def offload_task(
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
                 )
@@ -252,7 +244,7 @@ def offload_task(
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No function named '{func}'"
                 )
@@ -263,7 +255,7 @@ def offload_task(
             with tracer.start_as_current_span(f'sync worker: {taskname}'):
                 _func(*args, **kwargs)
         except Exception as exc:
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             raise_warning(f"WARNING: '{taskname}' failed due to {exc!s}")
             raise exc
 

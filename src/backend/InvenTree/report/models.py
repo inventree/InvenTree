@@ -14,7 +14,7 @@ from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
-from django.template.exceptions import TemplateDoesNotExist
+from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -44,6 +44,17 @@ except OSError as err:  # pragma: no cover
 
 
 logger = structlog.getLogger('inventree')
+
+
+def log_report_error(*args, **kwargs):
+    """Log an error message when a report fails to render."""
+    try:
+        do_log = get_global_setting('REPORT_LOG_ERRORS', backup_value=True)
+    except Exception:
+        do_log = True
+
+    if do_log:
+        InvenTree.exceptions.log_error(*args, **kwargs)
 
 
 def rename_template(instance, filename):
@@ -528,7 +539,17 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         report = self.render(instance, request, contexts)
                 except TemplateDoesNotExist as e:
                     t_name = str(e) or self.template
-                    raise ValidationError(f'Template file {t_name} does not exist')
+                    msg = f'Template file {t_name} does not exist'
+                    output.mark_failure(error=msg)
+                    raise ValidationError(msg)
+                except TemplateSyntaxError as e:
+                    msg = _('Template syntax error')
+                    output.mark_failure(msg)
+                    raise ValidationError(f'{msg}: {e!s}')
+                except Exception as e:
+                    msg = _('Error rendering report')
+                    output.mark_failure(msg)
+                    raise ValidationError(f'{msg}: {e!s}')
 
                 outputs.append(report)
                 self.handle_attachment(
@@ -554,7 +575,17 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                             report = self.render(instance, request, None)
                     except TemplateDoesNotExist as e:
                         t_name = str(e) or self.template
-                        raise ValidationError(f'Template file {t_name} does not exist')
+                        msg = f'Template file {t_name} does not exist'
+                        output.mark_failure(error=msg)
+                        raise ValidationError(msg)
+                    except TemplateSyntaxError as e:
+                        msg = _('Template syntax error')
+                        output.mark_failure(error=_('Template syntax error'))
+                        raise ValidationError(f'{msg}: {e!s}')
+                    except Exception as e:
+                        msg = _('Error rendering report')
+                        output.mark_failure(error=msg)
+                        raise ValidationError(f'{msg}: {e!s}')
 
                     outputs.append(report)
 
@@ -569,8 +600,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         except Exception as exc:
             # Something went wrong during the report generation process
-            if get_global_setting('REPORT_LOG_ERRORS', backup_value=True):
-                InvenTree.exceptions.log_error('report.print')
+            log_report_error('ReportTemplate.print')
 
             raise ValidationError({
                 'error': _('Error generating report'),
@@ -601,13 +631,15 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 data = pdf_file.getvalue()
                 pdf_file.close()
             except Exception:
-                InvenTree.exceptions.log_error('report.print')
-                data = None
+                log_report_error('ReportTemplate.print')
+                msg = _('Error merging report outputs')
+                output.mark_failure(error=msg)
+                raise ValidationError(msg)
 
         # Save the generated report to the database
-        output.complete = True
-        output.output = ContentFile(data, report_name)
-        output.save()
+        generated_file = ContentFile(data, report_name)
+
+        output.mark_complete(output=generated_file)
 
         return output
 
@@ -711,10 +743,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             ValidationError: If there is an error during label printing
         """
         logger.info(
-            "Printing %s labels against template '%s' using plugin '%s'",
-            len(items),
-            plugin.slug,
-            self.name,
+            f"Printing {len(items)} labels against template '{self.name}' using plugin '{plugin.slug}'"
         )
 
         if not output:

@@ -65,6 +65,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
       {
         accessor: 'structural',
         sortable: true,
+        defaultVisible: false,
         render: (record: any) => {
           return <YesNoButton value={record.structural} />;
         }

@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -83,7 +84,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
@@ -661,16 +662,44 @@ export default function StockDetail() {
     modalId: 'duplicate-stock-item'
   });
 
+  const duplicateStockData = useMemo(() => {
+    const duplicate = {
+      ...stockitem,
+      serial_numbers: stockitem.serial
+    };
+
+    // Omit the "serial" field for item creation
+    delete duplicate.serial;
+
+    return duplicate;
+  }, [stockitem]);
+
   const duplicateStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     title: t`Add Stock Item`,
     modalId: 'duplicate-stock-item',
     fields: duplicateStockItemFields,
     initialData: {
-      ...stockitem
+      ...duplicateStockData
     },
     follow: true,
-    modelType: ModelType.stockitem
+    successMessage: null,
+    modelType: ModelType.stockitem,
+    onFormSuccess: (data) => {
+      // Handle case where multiple stock items are created
+      if (Array.isArray(data) && data.length > 0) {
+        if (data.length == 1) {
+          navigate(getDetailUrl(ModelType.stockitem, data[0]?.pk));
+        } else {
+          const n: number = data.length;
+          notifications.show({
+            title: t`Items Created`,
+            message: t`Created ${n} stock items`,
+            color: 'green'
+          });
+        }
+      }
+    }
   });
 
   const preDeleteContent = useMemo(() => {

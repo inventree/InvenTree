@@ -4,8 +4,9 @@ import { useCallback, useMemo } from 'react';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
+import { eventModified } from '@lib/functions/Navigation';
 import { generateUrl } from '../../functions/urls';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import { ActionButton } from './ActionButton';
 
@@ -66,7 +67,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
         `${server.server.django_admin}${modelDef.admin_url}${props.id}/`
       );
 
-      if (event?.ctrlKey || event?.shiftKey) {
+      if (eventModified(event)) {
         // Open the link in a new tab
         window.open(url, '_blank');
       } else {

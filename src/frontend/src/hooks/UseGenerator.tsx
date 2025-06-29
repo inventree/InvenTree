@@ -87,13 +87,13 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const generatorQuery = {
-        ...debouncedQuery,
-        ...(props.initialQuery ?? {})
+        ...(props.initialQuery ?? {}),
+        ...debouncedQuery
       };
 
       if (!isEnabled()) {
         setResult(null);
-        return;
+        return null;
       }
 
       return api
@@ -111,6 +111,8 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
             `Error generating ${props.key} @ ${props.endpoint}:`,
             error
           );
+
+          return null;
         });
     }
   });

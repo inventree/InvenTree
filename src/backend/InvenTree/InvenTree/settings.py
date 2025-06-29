@@ -73,7 +73,7 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
+version_file = config.get_root_dir().joinpath('VERSION')
 if version_file.exists():
     load_dotenv(version_file)
 
@@ -878,7 +878,7 @@ if TRACING_ENABLED:  # pragma: no cover
 
         # Run tracing/logging instrumentation
         setup_tracing(**TRACING_DETAILS)
-        setup_instruments()
+        setup_instruments(DB_ENGINE)
     else:
         logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
 

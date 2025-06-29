@@ -6,7 +6,7 @@ import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import { useGlobalStatusState } from '../states/StatusState';
+import { useGlobalStatusState } from '../states/GlobalStatusState';
 
 export function projectCodeFields(): ApiFormFieldSet {
   return {

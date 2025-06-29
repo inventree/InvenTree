@@ -26,7 +26,7 @@ import {
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
@@ -64,7 +64,8 @@ function stockItemTableColumns({
     {
       accessor: 'part_detail.revision',
       title: t`Revision`,
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
     DescriptionColumn({
       accessor: 'part_detail.description'
@@ -228,6 +229,7 @@ function stockItemTableColumns({
     {
       accessor: 'purchase_order',
       title: t`Purchase Order`,
+      defaultVisible: false,
       render: (record: any) => {
         return record.purchase_order_reference;
       }
@@ -235,12 +237,14 @@ function stockItemTableColumns({
     {
       accessor: 'SKU',
       title: t`Supplier Part`,
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
     {
       accessor: 'MPN',
       title: t`Manufacturer Part`,
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
     {
       accessor: 'purchase_price',
@@ -248,6 +252,7 @@ function stockItemTableColumns({
       sortable: true,
       switchable: true,
       hidden: !showPricing,
+      defaultVisible: false,
       render: (record: any) =>
         formatCurrency(record.purchase_price, {
           currency: record.purchase_price_currency
@@ -273,13 +278,15 @@ function stockItemTableColumns({
     },
     {
       accessor: 'packaging',
-      sortable: true
+      sortable: true,
+      defaultVisible: false
     },
 
     DateColumn({
       title: t`Expiry Date`,
       accessor: 'expiry_date',
-      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY')
+      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
+      defaultVisible: false
     }),
     DateColumn({
       title: t`Last Updated`,
@@ -563,8 +570,7 @@ export function StockItemTable({
     const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
     const can_add_stock = user.hasAddRole(UserRoles.stock);
     const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-    const can_add_order = user.hasAddRole(UserRoles.purchase_order);
-    const can_change_order = user.hasChangeRole(UserRoles.purchase_order);
+
     return [
       <ActionDropdown
         key='stock-actions'

@@ -8,6 +8,7 @@ from django.conf import settings as djangosettings
 import structlog
 
 import common.models
+import InvenTree.config
 import InvenTree.helpers
 import plugin.models
 from common.settings import get_global_setting
@@ -37,7 +38,7 @@ def decimal(x, *args, **kwargs):
     return InvenTree.helpers.decimal2string(x)
 
 
-@register.simple_tag(takes_context=True)
+@register.simple_tag()
 def render_date(date_object):
     """Renders a date object as a string."""
     if date_object is None:
@@ -119,7 +120,7 @@ def inventree_commit_hash(*args, **kwargs):
 @register.simple_tag()
 def inventree_installer(*args, **kwargs):
     """Return InvenTree package installer string."""
-    return version.inventreeInstaller()
+    return InvenTree.config.inventreeInstaller()
 
 
 @register.simple_tag()

@@ -14,7 +14,7 @@ import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import { resolveItem } from '../functions/conversion';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
@@ -96,6 +96,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     title: t`Description`,
     sortable: false,
     switchable: true,
+    width: 300,
     ...props
   };
 }
@@ -104,6 +105,7 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'link',
     sortable: false,
+    defaultVisible: false,
     render: (record: any) => {
       const url = resolveItem(record, props.accessor ?? 'link');
 
