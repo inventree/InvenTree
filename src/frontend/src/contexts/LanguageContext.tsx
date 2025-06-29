@@ -8,6 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
+import { useStoredTableState } from '../states/StoredTableState';
 import { fetchGlobalStates } from '../states/states';
 
 export const defaultLocale = 'en';
@@ -117,7 +118,7 @@ export function LanguageContext({
         fetchGlobalStates();
 
         // Clear out cached table column names
-        useLocalState.getState().clearTableColumnNames();
+        useStoredTableState.getState().clearTableColumnNames();
       })
       /* istanbul ignore next */
       .catch((err) => {
