@@ -140,15 +140,11 @@ export function InvenTreeTable<T extends Record<string, any>>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }>) {
-  const {
-    getTableColumnNames,
-    setTableColumnNames,
-    getTableSorting,
-    setTableSorting,
-    userTheme
-  } = useLocalState();
+  const { getTableColumnNames, setTableColumnNames, userTheme } =
+    useLocalState();
 
-  const { pageSize, setPageSize } = useStoredTableState();
+  const { pageSize, setPageSize, getTableSorting, setTableSorting } =
+    useStoredTableState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
@@ -486,18 +482,17 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ]
   );
 
-  const [sortingLoaded, setSortingLoaded] = useState<boolean>(false);
+  const [cacheLoaded, setCacheLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const tableKey: string = tableState.tableKey.split('-')[0];
-    const sorting: DataTableSortStatus = getTableSorting(tableKey);
+    const sorting: DataTableSortStatus = getTableSorting(cacheKey);
 
     if (sorting && !!sorting.columnAccessor && !!sorting.direction) {
       setSortStatus(sorting);
     }
 
-    setSortingLoaded(true);
-  }, []);
+    setCacheLoaded(true);
+  }, [cacheKey]);
 
   // Return the ordering parameter
   function getOrderingTerm() {
@@ -519,13 +514,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableProps.noRecordsText ?? t`No records found`
   );
 
-  const handleSortStatusChange = (status: DataTableSortStatus<T>) => {
-    tableState.setPage(1);
-    setSortStatus(status);
+  const handleSortStatusChange = useCallback(
+    (status: DataTableSortStatus<T>) => {
+      tableState.setPage(1);
+      setSortStatus(status);
 
-    const tableKey = tableState.tableKey.split('-')[0];
-    setTableSorting(tableKey)(status);
-  };
+      setTableSorting(cacheKey)(status);
+    },
+    [cacheKey]
+  );
 
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
@@ -536,7 +533,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return [];
     }
 
-    if (!sortingLoaded) {
+    if (!cacheLoaded) {
       // Sorting not yet loaded - do not load!
       return [];
     }
@@ -579,10 +576,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
     queryKey: [
       'tabledata',
       url,
-      tableState.tableKey,
       tableState.page,
       props.params,
-      sortingLoaded,
+      cacheLoaded,
       sortStatus.columnAccessor,
       sortStatus.direction,
       tableState.tableKey,
@@ -800,7 +796,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     <>
       <Stack gap='xs'>
         {!tableProps.noHeader && (
-          <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
+          <Boundary label={`InvenTreeTableHeader-${cacheKey}`}>
             <InvenTreeTableHeader
               tableUrl={url}
               tableState={tableState}
@@ -812,7 +808,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
             />
           </Boundary>
         )}
-        <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
+        <Boundary label={`InvenTreeTable-${cacheKey}`}>
           <Box pos='relative'>
             <LoadingOverlay visible={!tableState.storedDataLoaded} />
             <DataTable
