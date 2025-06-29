@@ -8,7 +8,6 @@ import { useFilterSet } from './UseFilterSet';
 
 // Interface for the stored table data in local storage
 interface StoredTableData {
-  pageSize: number;
   hiddenColumns: string[] | null;
 }
 
@@ -76,7 +75,6 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   const [storedDataLoaded, setStoredDataLoaded] = useState<boolean>(false);
 
   const [tableData, setTableData] = useState<StoredTableData>({
-    pageSize: 25,
     hiddenColumns: null
   });
 
@@ -86,14 +84,12 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
       getInitialValueInEffect: true,
       // sync: false,  // Do not use this option - see below
       defaultValue: {
-        pageSize: 25,
         hiddenColumns: null
       },
       deserialize: (value: any) => {
         const tableData =
           value === undefined
             ? {
-                pageSize: 25,
                 hiddenColumns: null
               }
             : JSON.parse(value);
@@ -112,17 +108,6 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
         return tableData;
       }
     });
-
-  const setPageSize = useCallback((size: number) => {
-    setStoredTableData((prev) => ({
-      ...prev,
-      pageSize: size
-    }));
-    setTableData((prev) => ({
-      ...prev,
-      pageSize: size
-    }));
-  }, []);
 
   const setHiddenColumns = useCallback((columns: string[] | null) => {
     setStoredTableData((prev) => {
@@ -186,7 +171,6 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     setSelectedRecords,
     clearSelectedRecords,
     hasSelectedRecords,
-    pageSize: tableData.pageSize,
     hiddenColumns: tableData.hiddenColumns,
     setHiddenColumns,
     searchTerm,
@@ -195,7 +179,6 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     setRecordCount,
     page,
     setPage,
-    setPageSize,
     storedDataLoaded,
     records,
     setRecords,

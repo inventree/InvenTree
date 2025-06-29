@@ -60,8 +60,6 @@ export type TableState = {
   setRecordCount: (count: number) => void;
   page: number;
   setPage: (page: number) => void;
-  pageSize: number;
-  setPageSize: (pageSize: number) => void;
   storedDataLoaded: boolean;
   records: any[];
   setRecords: (records: any[]) => void;

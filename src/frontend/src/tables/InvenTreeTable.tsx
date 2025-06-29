@@ -35,12 +35,12 @@ import { resolveItem } from '../functions/conversion';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
+import { useStoredTableState } from '../states/StoredTableState';
 import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
-const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
 /**
@@ -147,6 +147,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableSorting,
     userTheme
   } = useLocalState();
+
+  const { pageSize, setPageSize } = useStoredTableState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
@@ -456,8 +458,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
       // Pagination
       if (tableProps.enablePagination && paginate) {
-        const pageSize = tableState.pageSize ?? defaultPageSize;
-        if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
         queryParams.limit = pageSize;
         queryParams.offset = (tableState.page - 1) * pageSize;
       }
@@ -476,14 +476,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return queryParams;
     },
     [
+      sortStatus,
       tableProps.params,
       tableProps.enablePagination,
       tableState.filterSet.activeFilters,
       tableState.queryFilters,
       tableState.searchTerm,
-      tableState.pageSize,
-      tableState.setPageSize,
-      sortStatus,
       getOrderingTerm
     ]
   );
@@ -629,17 +627,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.isLoading
   ]);
 
-  // Update tableState.records when new data received
-  useEffect(() => {
-    const data = tableData ?? apiData ?? [];
-
-    tableState.setRecords(data);
-
-    // set pagesize to length if pagination is disabled
-    if (!tableProps.enablePagination) {
-      tableState.setPageSize(data?.length ?? defaultPageSize);
+  const tablePageSize = useMemo(() => {
+    if (tableProps.enablePagination != false) {
+      return pageSize;
+    } else {
+      return tableState.recordCount;
     }
-  }, [tableData, apiData]);
+  }, [tableProps.enablePagination, pageSize, tableState.recordCount]);
 
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
@@ -735,12 +729,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
     return showContextMenu(items)(event);
   };
 
-  // pagination refresh table if pageSize changes
-  function updatePageSize(newData: number) {
-    tableState.setPageSize(newData);
+  // Pagination refresh table if pageSize changes
+  const updatePageSize = useCallback((size: number) => {
+    setPageSize(size);
     tableState.setPage(1);
     tableState.refreshTable();
-  }
+  }, []);
 
   /**
    * Memoize row expansion options:
@@ -776,7 +770,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       _params = {
         ..._params,
         totalRecords: tableState.recordCount,
-        recordsPerPage: tableState.pageSize,
+        recordsPerPage: tablePageSize,
         page: tableState.page,
         onPageChange: tableState.setPage,
         recordsPerPageOptions: PAGE_SIZES,
@@ -786,9 +780,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     return _params;
   }, [
+    tablePageSize,
     tableProps.enablePagination,
     tableState.recordCount,
-    tableState.pageSize,
     tableState.page,
     tableState.setPage,
     updatePageSize
