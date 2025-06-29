@@ -188,14 +188,10 @@ class LabelPrintingMixin:
             output.progress += 1
             output.save()
 
+        generated_file = self.get_generated_file(**print_args)
+
         # Mark the output as complete
-        output.complete = True
-        output.progress = N
-
-        # Add in the generated file (if applicable)
-        output.output = self.get_generated_file(**print_args)
-
-        output.save()
+        output.mark_complete(progress=N, output=generated_file)
 
     def get_generated_file(self, **kwargs):
         """Return the generated file for download (or None, if this plugin does not generate a file output).

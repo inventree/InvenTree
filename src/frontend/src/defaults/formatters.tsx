@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../states/SettingsState';
+} from '../states/SettingsStates';
 
 interface FormatDecmimalOptionsInterface {
   digits?: number;
