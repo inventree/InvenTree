@@ -34,13 +34,6 @@ interface LocalStateProps {
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
-  tableColumnNames: Record<string, Record<string, string>>;
-  getTableColumnNames: (tableKey: string) => Record<string, string>;
-  setTableColumnNames: (
-    tableKey: string
-  ) => (names: Record<string, string>) => void;
-
-  clearTableColumnNames: () => void;
   detailDrawerStack: number;
   addDetailDrawer: (value: number | false) => void;
   navigationOpen: boolean;
@@ -134,23 +127,6 @@ export const useLocalState = create<LocalStateProps>()(
             lastUsedPanels: { ...get().lastUsedPanels, [panelKey]: value }
           });
         }
-      },
-      // tables
-      tableColumnNames: {},
-      getTableColumnNames: (tableKey) => {
-        return get().tableColumnNames[tableKey] || null;
-      },
-      setTableColumnNames: (tableKey) => (names) => {
-        // Update the table column names for the given table
-        set({
-          tableColumnNames: {
-            ...get().tableColumnNames,
-            [tableKey]: names
-          }
-        });
-      },
-      clearTableColumnNames: () => {
-        set({ tableColumnNames: {} });
       },
 
       // detail drawers

@@ -1,10 +1,5 @@
 import { t } from '@lingui/core/macro';
-import {
-  Box,
-  LoadingOverlay,
-  type MantineStyleProp,
-  Stack
-} from '@mantine/core';
+import { Box, type MantineStyleProp, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ContextMenuItemOptions,
@@ -145,6 +140,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const {
     pageSize,
     setPageSize,
+    getHiddenColumns,
+    setHiddenColumns,
     getTableColumnNames,
     setTableColumnNames,
     getTableSorting,
@@ -194,7 +191,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: !!url && !tableData && tableState.storedDataLoaded,
+    enabled: !!url && !tableData,
     queryKey: [
       'options',
       url,
@@ -277,30 +274,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
     return tableProps.enableSelection || tableProps.enableBulkDelete || false;
   }, [tableProps]);
 
-  useEffect(() => {
-    // On first table render, "hide" any default hidden columns
-    if (tableProps.enableColumnSwitching == false) {
-      return;
-    }
-
-    // A "null" value indicates that the initial "hidden" columns have not been set
-    if (tableState.storedDataLoaded && tableState.hiddenColumns == null) {
-      const columnNames: string[] = columns
-        .filter((col) => {
-          // Find any switchable columns which are hidden by default
-          return col.switchable != false && col.defaultVisible == false;
-        })
-        .map((col) => col.accessor);
-
-      tableState.setHiddenColumns(columnNames);
-    }
-  }, [
-    columns,
-    tableProps.enableColumnSwitching,
-    tableState.hiddenColumns,
-    tableState.storedDataLoaded
-  ]);
-
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
     if (props.enableColumnSwitching == false) {
@@ -329,10 +302,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
     let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
-
-    if (!tableState.storedDataLoaded) {
-      cols = cols.filter((col) => col?.defaultVisible != false);
-    }
 
     cols = cols.map((col) => {
       // If the column is *not* switchable, it is always visible
@@ -376,24 +345,29 @@ export function InvenTreeTable<T extends Record<string, any>>({
     fieldNames,
     tableProps.rowActions,
     tableState.hiddenColumns,
-    tableState.selectedRecords,
-    tableState.storedDataLoaded
+    tableState.selectedRecords
   ]);
 
   // Callback when column visibility is toggled
-  function toggleColumn(columnName: string) {
-    const newColumns = [...dataColumns];
+  const toggleColumn = useCallback(
+    (columnName: string) => {
+      const newColumns = [...dataColumns];
 
-    const colIdx = newColumns.findIndex((col) => col.accessor == columnName);
+      const colIdx = newColumns.findIndex((col) => col.accessor == columnName);
 
-    if (colIdx >= 0 && colIdx < newColumns.length) {
-      newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
-    }
+      if (colIdx >= 0 && colIdx < newColumns.length) {
+        newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
+      }
 
-    tableState.setHiddenColumns(
-      newColumns.filter((col) => col.hidden).map((col) => col.accessor)
-    );
-  }
+      const hiddenColumns = newColumns
+        .filter((col) => col.hidden)
+        .map((col) => col.accessor);
+
+      tableState.setHiddenColumns(hiddenColumns);
+      setHiddenColumns(cacheKey)(hiddenColumns);
+    },
+    [cacheKey, dataColumns]
+  );
 
   // Final state of the table columns
   const tableColumns = useDataTableColumns({
@@ -496,6 +470,23 @@ export function InvenTreeTable<T extends Record<string, any>>({
       setSortStatus(sorting);
     }
 
+    const hiddenColumns = getHiddenColumns(cacheKey);
+
+    if (hiddenColumns == null) {
+      // A "null" value indicates that the initial "hidden" columns have not been set
+      const columnNames: string[] = columns
+        .filter((col) => {
+          // Find any switchable columns which are hidden by default
+          return col.switchable != false && col.defaultVisible == false;
+        })
+        .map((col) => col.accessor);
+
+      setHiddenColumns(cacheKey)(columnNames);
+      tableState.setHiddenColumns(columnNames);
+    } else {
+      tableState.setHiddenColumns(hiddenColumns);
+    }
+
     setCacheLoaded(true);
   }, [cacheKey]);
 
@@ -543,11 +534,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return [];
     }
 
-    if (!tableState.storedDataLoaded) {
-      // Table data not yet loaded - do not load!
-      return [];
-    }
-
     return api
       .get(url, {
         params: queryParams,
@@ -588,7 +574,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       sortStatus.direction,
       tableState.tableKey,
       tableState.filterSet.activeFilters,
-      tableState.storedDataLoaded,
       tableState.searchTerm
     ],
     retry: 5,
@@ -601,7 +586,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
       return true;
     },
-    enabled: !!url && !tableData && tableState.storedDataLoaded,
+    enabled: !!url && !tableData,
     queryFn: fetchTableData
   });
 
@@ -820,7 +805,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
         )}
         <Boundary label={`InvenTreeTable-${cacheKey}`}>
           <Box pos='relative'>
-            <LoadingOverlay visible={!tableState.storedDataLoaded} />
             <DataTable
               withTableBorder={!tableProps.noHeader}
               withColumnBorders

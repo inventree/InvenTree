@@ -1,15 +1,10 @@
-import { randomId, useLocalStorage } from '@mantine/hooks';
+import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import type { FilterSetState } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
 import { useFilterSet } from './UseFilterSet';
-
-// Interface for the stored table data in local storage
-interface StoredTableData {
-  hiddenColumns: string[] | null;
-}
 
 /**
  * A custom hook for managing the state of an <InvenTreeTable> component.
@@ -50,6 +45,9 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     [expandedRecords]
   );
 
+  // Array of columns which are hidden
+  const [hiddenColumns, setHiddenColumns] = useState<string[]>([]);
+
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
@@ -71,56 +69,6 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   const [recordCount, setRecordCount] = useState<number>(0);
 
   const [page, setPage] = useState<number>(1);
-
-  const [storedDataLoaded, setStoredDataLoaded] = useState<boolean>(false);
-
-  const [tableData, setTableData] = useState<StoredTableData>({
-    hiddenColumns: null
-  });
-
-  const [storedTableData, setStoredTableData] =
-    useLocalStorage<StoredTableData>({
-      key: `inventree-table-data-${tableName}`,
-      getInitialValueInEffect: true,
-      // sync: false,  // Do not use this option - see below
-      defaultValue: {
-        hiddenColumns: null
-      },
-      deserialize: (value: any) => {
-        const tableData =
-          value === undefined
-            ? {
-                hiddenColumns: null
-              }
-            : JSON.parse(value);
-
-        if (!storedDataLoaded) {
-          setStoredDataLoaded((wasLoaded: boolean) => {
-            if (!wasLoaded) {
-              // First load of stored table data - copy to local state
-              // We only do this on first load, to avoid live syncing between tabs
-              // Note: The 'sync: false' option is not used, it does not perform as expected
-              setTableData(tableData);
-            }
-            return true;
-          });
-        }
-        return tableData;
-      }
-    });
-
-  const setHiddenColumns = useCallback((columns: string[] | null) => {
-    setStoredTableData((prev) => {
-      return {
-        ...prev,
-        hiddenColumns: columns
-      };
-    });
-    setTableData((prev) => ({
-      ...prev,
-      hiddenColumns: columns
-    }));
-  }, []);
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -171,15 +119,14 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     setSelectedRecords,
     clearSelectedRecords,
     hasSelectedRecords,
-    hiddenColumns: tableData.hiddenColumns,
-    setHiddenColumns,
     searchTerm,
     setSearchTerm,
     recordCount,
     setRecordCount,
+    hiddenColumns,
+    setHiddenColumns,
     page,
     setPage,
-    storedDataLoaded,
     records,
     setRecords,
     updateRecord,

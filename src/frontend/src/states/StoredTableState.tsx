@@ -26,8 +26,10 @@ interface StoredTableStateProps {
   setTableColumnNames: (
     tableKey: string
   ) => (names: Record<string, string>) => void;
-
   clearTableColumnNames: () => void;
+  hiddenColumns: Record<string, string[]>;
+  getHiddenColumns: (tableKey: string) => string[] | null;
+  setHiddenColumns: (tableKey: string) => (columns: string[]) => void;
 }
 
 export const useStoredTableState = create<StoredTableStateProps>()(
@@ -67,6 +69,19 @@ export const useStoredTableState = create<StoredTableStateProps>()(
       },
       clearTableColumnNames: () => {
         set({ tableColumnNames: {} });
+      },
+      hiddenColumns: {},
+      getHiddenColumns: (tableKey) => {
+        return get().hiddenColumns?.[tableKey] ?? null;
+      },
+      setHiddenColumns: (tableKey) => (columns) => {
+        // Update the hidden columns for the given table
+        set({
+          hiddenColumns: {
+            ...get().hiddenColumns,
+            [tableKey]: columns
+          }
+        });
       }
     }),
     {
