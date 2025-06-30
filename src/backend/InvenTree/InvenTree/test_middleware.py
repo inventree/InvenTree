@@ -102,11 +102,13 @@ class MiddlewareTests(InvenTreeTestCase):
         # wrongly set site URL
         with self.settings(SITE_URL='https://example.com'):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 500)
             self.assertContains(
-                response, 'INVE-W11: The used path `http://testserver` does not match'
+                response,
+                'INVE-W11: The used path `http://testserver` does not match',
+                status_code=500,
             )
-            self.assertNotContains(response, 'id="spa_bundle"')
+            self.assertNotContains(response, 'id="spa_bundle"', status_code=500)
 
         # wrongly set but in debug -> is ignored
         with self.settings(SITE_URL='https://example.com', DEBUG=True):
@@ -122,6 +124,8 @@ class MiddlewareTests(InvenTreeTestCase):
             CSRF_TRUSTED_ORIGINS=['https://example.com'],
         ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
-            self.assertContains(response, 'is not in the TRUSTED_ORIGINS')
-            self.assertNotContains(response, 'id="spa_bundle"')
+            self.assertEqual(response.status_code, 500)
+            self.assertContains(
+                response, 'is not in the TRUSTED_ORIGINS', status_code=500
+            )
+            self.assertNotContains(response, 'id="spa_bundle"', status_code=500)
