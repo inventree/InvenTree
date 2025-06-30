@@ -22,10 +22,8 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 import build.tasks
-import common.models
 import company.serializers
 import InvenTree.helpers
-import InvenTree.tasks
 import part.filters
 import part.serializers as part_serializers
 from common.serializers import ProjectCodeSerializer
@@ -567,6 +565,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Perform data validation for this serializer."""
+        import common.settings
+
         super().validate(data)
 
         outputs = data.get('outputs', [])
@@ -594,6 +594,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to complete the build outputs."""
+        import common.settings
+
         build = self.context['build']
         request = self.context.get('request')
 
