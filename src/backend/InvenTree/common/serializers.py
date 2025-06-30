@@ -21,6 +21,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.models import InvenTreeAttachmentMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -612,9 +613,9 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if len(self.fields['model_type'].choices) == 0:
-            self.fields[
-                'model_type'
-            ].choices = common.validators.attachment_model_options()
+            self.fields['model_type'].choices = common.validators.get_model_options(
+                InvenTreeAttachmentMixin
+            )
 
     tags = TagListSerializerField(required=False)
 
@@ -632,7 +633,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     # Note: The choices are overridden at run-time on class initialization
     model_type = serializers.ChoiceField(
         label=_('Model Type'),
-        choices=common.validators.attachment_model_options(),
+        choices=common.validators.get_model_options(InvenTreeAttachmentMixin),
         required=True,
         allow_blank=False,
         allow_null=False,

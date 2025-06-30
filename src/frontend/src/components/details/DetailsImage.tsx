@@ -41,6 +41,7 @@ import { StylishText } from '../items/StylishText';
  */
 export type DetailImageProps = {
   appRole?: UserRoles;
+  primary?: boolean;
   src: string;
   apiPath: string;
   refresh?: () => void;
@@ -64,7 +65,8 @@ export type DetailImageButtonProps = {
 };
 
 // Image is expected to be 1:1 square, so only 1 dimension is needed
-const IMAGE_DIMENSION = 256;
+const PRIMARY_IMAGE_DIMENSION = 256;
+const OTHER_IMAGE_DIMENSION = 64;
 
 // Image to display if instance has no image
 const backup_image = '/static/img/blank_image.png';
@@ -386,6 +388,9 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
     props.refresh?.();
   };
 
+  const image_dimantion =
+    props.primary === true ? PRIMARY_IMAGE_DIMENSION : OTHER_IMAGE_DIMENSION;
+
   const permissions = useUserState();
 
   const downloadImage = useEditApiFormModal({
@@ -426,7 +431,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
       <Grid.Col span={{ base: 12, sm: 4 }}>
         <AspectRatio
           ref={ref}
-          maw={IMAGE_DIMENSION}
+          maw={image_dimantion}
           ratio={1}
           pos='relative'
           visibleFrom='xs'
@@ -434,8 +439,8 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
           <>
             <ApiImage
               src={img}
-              mah={IMAGE_DIMENSION}
-              maw={IMAGE_DIMENSION}
+              mah={image_dimantion}
+              maw={image_dimantion}
               onClick={expandImage}
             />
             {props.appRole &&

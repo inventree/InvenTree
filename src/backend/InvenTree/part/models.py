@@ -402,6 +402,7 @@ class PartReportContext(report.mixins.BaseReportContext):
 @cleanup.ignore
 class Part(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeImageUploadMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,

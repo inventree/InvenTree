@@ -48,6 +48,7 @@ import {
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
+import { ImageThumbnails } from '../../components/details/ImageThumbnails';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
@@ -479,6 +480,7 @@ export default function PartDetail() {
 
     return part ? (
       <ItemDetailsGrid>
+        {/* TODO: For add multiple image you have to change here  */}
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.part}
@@ -495,6 +497,19 @@ export default function PartDetail() {
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={data} />
+            <ImageThumbnails
+              appRole={UserRoles.part}
+              imageActions={{
+                selectExisting: true,
+                downloadImage: true,
+                uploadFile: true,
+                deleteFile: true
+              }}
+              src={part.image}
+              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+              refresh={refreshInstance}
+              pk={part.pk}
+            />
           </Grid.Col>
         </Grid>
         <DetailsTable fields={tr} item={data} />

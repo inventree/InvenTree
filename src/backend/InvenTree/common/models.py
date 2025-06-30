@@ -43,6 +43,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
 from rest_framework.exceptions import PermissionDenied
+from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.validators
@@ -1845,6 +1846,37 @@ def rename_attachment(instance, filename: str):
     )
 
 
+UPLOAD_IMAGE_DIR = 'upload_images'
+
+
+class UploadedImage(models.Model):
+    """Class which represents an uploaded image for Part and Company.
+
+    Attributes:
+        primary: Is image primary
+        image: The uploaded file
+    """
+
+    model_type = models.CharField(
+        max_length=100,
+        validators=[common.validators.validate_upload_image_model_type],
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for image'),
+    )
+
+    model_id = models.PositiveIntegerField()
+
+    primary = models.BooleanField(default=False)
+    image = StdImageField(
+        upload_to=UPLOAD_IMAGE_DIR,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+        delete_orphans=False,
+        verbose_name=_('Image'),
+    )
+
+
 class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """Class which represents an uploaded file attachment.
 
@@ -1869,7 +1901,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     class ModelChoices(RenderChoices):
         """Model choices for attachments."""
 
-        choice_fnc = common.validators.attachment_model_options
+        # choice_fnc = common.validators.attachment_model_options
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.

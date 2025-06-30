@@ -897,6 +897,42 @@ class InvenTreeNotesMixin(models.Model):
     )
 
 
+class InvenTreeImageUploadMixin(models.Model):
+    """A mixin class for adding images functionality to a model class."""
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+
+        abstract = True
+
+    def delete(self):
+        """Custom delete method for InvenTreeImageUploadMixin.
+
+        - Before deleting the object, check if there are any uploaded images associated with it.
+        - If so, delete the notes first
+        """
+        from common.models import UploadedImage
+
+        images = UploadedImage.objects.filter(
+            model_type=self.__class__.__name__.lower(), model_id=self.pk
+        )
+
+        if images.exists():
+            logger.info(
+                'Deleting %s uploaded images associated with %s <%s>',
+                images.count(),
+                self.__class__.__name__,
+                self.pk,
+            )
+
+            images.delete()
+
+        super().delete()
+
+
 class InvenTreeBarcodeMixin(models.Model):
     """A mixin class for adding barcode functionality to a model class.
 

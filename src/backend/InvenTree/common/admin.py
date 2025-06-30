@@ -4,6 +4,7 @@ from django.contrib import admin
 
 import common.models
 import common.validators
+import InvenTree.models
 
 
 @admin.register(common.models.Attachment)
@@ -13,7 +14,9 @@ class AttachmentAdmin(admin.ModelAdmin):
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         """Provide custom choices for 'model_type' field."""
         if db_field.name == 'model_type':
-            db_field.choices = common.validators.attachment_model_options()
+            db_field.choices = common.validators.get_model_options(
+                InvenTree.models.InvenTreeAttachmentMixin
+            )
 
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
@@ -31,6 +34,22 @@ class AttachmentAdmin(admin.ModelAdmin):
     readonly_fields = ['file_size', 'upload_date', 'upload_user']
 
     search_fields = ('content_type', 'comment')
+
+
+@admin.register(common.models.UploadedImage)
+class UploadImageAdmin(admin.ModelAdmin):
+    """Admin interface for UploadedImage objects."""
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Provide custom choices for 'model_type' field."""
+        if db_field.name == 'model_type':
+            db_field.choices = common.validators.get_model_options(
+                InvenTree.models.InvenTreeImageUploadMixin
+            )
+
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    list_display = ('model_type', 'model_id')
 
 
 @admin.register(common.models.DataOutput)
