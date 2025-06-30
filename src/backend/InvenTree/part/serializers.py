@@ -1229,7 +1229,7 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         read_only=True, label=_('In Production'), source='quantity_in_production'
     )
 
-    scheduled_to_build = serializers.FloatField(
+    scheduled_to_build = serializers.IntegerField(
         read_only=True, label=_('Scheduled to Build'), source='quantity_being_built'
     )
 

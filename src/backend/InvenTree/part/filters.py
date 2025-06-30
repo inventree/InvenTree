@@ -75,18 +75,18 @@ def annotate_scheduled_to_build_quantity(reference: str = ''):
         SubquerySum(
             Greatest(
                 ExpressionWrapper(
-                    Cast(F(f'{reference}builds__quantity'), output_field=DecimalField())
+                    Cast(F(f'{reference}builds__quantity'), output_field=IntegerField())
                     - Cast(
-                        F(f'{reference}builds__completed'), output_field=DecimalField()
+                        F(f'{reference}builds__completed'), output_field=IntegerField()
                     ),
-                    output_field=DecimalField(),
+                    output_field=IntegerField(),
                 ),
-                Decimal(0),
+                0,
             ),
             filter=building_filter,
         ),
-        Decimal(0),
-        output_field=DecimalField(),
+        0,
+        output_field=IntegerField(),
     )
 
 
