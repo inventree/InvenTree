@@ -1,6 +1,5 @@
 """Test the sso and auth module functionality."""
 
-from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.test import override_settings
@@ -130,12 +129,10 @@ class EmailSettingsContext:
     def __enter__(self):
         """Enable stuff."""
         InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', True)
-        settings.EMAIL_HOST = 'localhost'
 
     def __exit__(self, type, value, traceback):
         """Exit stuff."""
         InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', False)
-        settings.EMAIL_HOST = ''
 
 
 class TestAuth(InvenTreeAPITestCase):
@@ -185,7 +182,7 @@ class TestAuth(InvenTreeAPITestCase):
         self.post(self.reg_url, self.email_args(), expected_code=403)
 
         # Enable registration - now it should work
-        with EmailSettingsContext():
+        with self.settings(EMAIL_HOST='localhost') and EmailSettingsContext():
             resp = self.post(self.reg_url, self.email_args(), expected_code=200)
             self.assertEqual(resp.json()['data']['user']['email'], self.test_email)
 
@@ -216,6 +213,6 @@ class TestAuth(InvenTreeAPITestCase):
         self.assertIn('The provided email domain is not approved.', str(resp.json()))
 
         # Right format should work
-        with EmailSettingsContext():
+        with self.settings(EMAIL_HOST='localhost') and EmailSettingsContext():
             resp = self.post(self.reg_url, self.email_args(), expected_code=200)
             self.assertEqual(resp.json()['data']['user']['email'], self.test_email)

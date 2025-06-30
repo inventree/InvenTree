@@ -1153,41 +1153,37 @@ class TestSettings(InvenTreeTestCase):
         # add shortcut
         user_count = user_model.objects.count
         # enable testing mode
-        settings.TESTING_ENV = True
+        with self.settings(TESTING_ENV=True):
+            # nothing set
+            self.run_reload()
+            self.assertEqual(user_count(), 1)
 
-        # nothing set
-        self.run_reload()
-        self.assertEqual(user_count(), 1)
+            # not enough set
+            self.run_reload({'INVENTREE_ADMIN_USER': 'admin'})
+            self.assertEqual(user_count(), 1)
 
-        # not enough set
-        self.run_reload({'INVENTREE_ADMIN_USER': 'admin'})
-        self.assertEqual(user_count(), 1)
+            # enough set
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': 'admin',  # set username
+                'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
+                'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
+            })
+            self.assertEqual(user_count(), 2)
 
-        # enough set
-        self.run_reload({
-            'INVENTREE_ADMIN_USER': 'admin',  # set username
-            'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
-            'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
-        })
-        self.assertEqual(user_count(), 2)
+            username2 = 'testuser1'
+            email2 = 'test1@testing.com'
+            password2 = 'password1'
 
-        username2 = 'testuser1'
-        email2 = 'test1@testing.com'
-        password2 = 'password1'
-
-        # create user manually
-        user_model.objects.create_user(username2, email2, password2)
-        self.assertEqual(user_count(), 3)
-        # check it will not be created again
-        self.run_reload({
-            'INVENTREE_ADMIN_USER': username2,
-            'INVENTREE_ADMIN_EMAIL': email2,
-            'INVENTREE_ADMIN_PASSWORD': password2,
-        })
-        self.assertEqual(user_count(), 3)
-
-        # make sure to clean up
-        settings.TESTING_ENV = False
+            # create user manually
+            user_model.objects.create_user(username2, email2, password2)
+            self.assertEqual(user_count(), 3)
+            # check it will not be created again
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': username2,
+                'INVENTREE_ADMIN_EMAIL': email2,
+                'INVENTREE_ADMIN_PASSWORD': password2,
+            })
+            self.assertEqual(user_count(), 3)
 
     def test_initial_install(self):
         """Test if install of plugins on startup works."""
