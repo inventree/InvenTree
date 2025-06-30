@@ -31,6 +31,7 @@ export function PartColumn({
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
         text={full_name ? part?.full_name : part?.name}
+        hover
       />
       <Group justify='flex-end' wrap='nowrap' gap='xs'>
         {part?.active == false && (
