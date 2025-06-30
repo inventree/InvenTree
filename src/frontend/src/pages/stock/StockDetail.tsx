@@ -84,7 +84,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
@@ -491,9 +491,6 @@ export default function StockDetail() {
           } else {
             return null;
           }
-        })
-        .catch(() => {
-          return null;
         });
     }
   });
@@ -504,7 +501,7 @@ export default function StockDetail() {
       return true;
     }
 
-    if (trackedBomItemQuery.data != null) {
+    if (!!trackedBomItemQuery.data) {
       return trackedBomItemQuery.data;
     }
 

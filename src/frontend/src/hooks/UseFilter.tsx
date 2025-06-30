@@ -39,8 +39,7 @@ export function useFilters(props: UseFilterProps) {
           }
 
           return data;
-        })
-        .catch((error) => []);
+        });
     }
   });
 

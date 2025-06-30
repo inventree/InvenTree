@@ -7,7 +7,7 @@ import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';

@@ -26,7 +26,7 @@ import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
@@ -196,19 +196,14 @@ function NameBadge({
 
       const url = apiUrl(path, pk);
 
-      return api
-        .get(url)
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              return response.data;
-            default:
-              return {};
-          }
-        })
-        .catch(() => {
-          return {};
-        });
+      return api.get(url).then((response) => {
+        switch (response.status) {
+          case 200:
+            return response.data;
+          default:
+            return {};
+        }
+      });
     }
   });
 
@@ -356,9 +351,6 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
             default:
               return {};
           }
-        })
-        .catch(() => {
-          return {};
         });
     }
   });

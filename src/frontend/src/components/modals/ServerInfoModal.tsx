@@ -3,7 +3,7 @@ import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 
 import { useShallow } from 'zustand/react/shallow';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
 
 export function ServerInfoModal({

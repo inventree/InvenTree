@@ -640,7 +640,7 @@ def translate(c, ignore_static=False, no_frontend=False):
     manage(c, 'compilemessages')
 
     if not no_frontend and node_available():
-        frontend_compile(c)
+        frontend_compile(c, extract=True)
 
     # Update static files
     if not ignore_static:
@@ -1525,17 +1525,18 @@ def frontend_check(c):
     print(node_available())
 
 
-@task
+@task(help={'extract': 'Extract translation strings. Default: False'})
 @state_logger('TASK06')
-def frontend_compile(c):
+def frontend_compile(c, extract: bool = False):
     """Generate react frontend.
 
-    Args:
+    Arguments:
         c: Context variable
+        extract (bool): Whether to extract translations from source code. Defaults to False.
     """
     info('Compiling frontend code...')
     frontend_install(c)
-    frontend_trans(c, extract=False)
+    frontend_trans(c, extract=extract)
     frontend_build(c)
     success('Frontend compilation complete')
 

@@ -26,12 +26,12 @@ import { getNavTabs } from '../../defaults/links';
 import { generateUrl } from '../../functions/urls';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
-import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useServerApiState } from '../../states/ServerApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
@@ -78,23 +78,17 @@ export function Header() {
         return null;
       }
 
-      try {
-        const params = {
+      return api
+        .get(apiUrl(ApiEndpoints.notifications_list), {
           params: {
             read: false,
             limit: 1
           }
-        };
-        const response = await api
-          .get(apiUrl(ApiEndpoints.notifications_list), params)
-          .catch(() => {
-            return null;
-          });
-        setNotificationCount(response?.data?.count ?? 0);
-        return response?.data ?? null;
-      } catch (error) {
-        return null;
-      }
+        })
+        .then((response: any) => {
+          setNotificationCount(response?.data?.count ?? 0);
+          return response.data ?? null;
+        });
     },
     // Refetch every minute, *if* the tab is visible
     refetchInterval: 60 * 1000,
