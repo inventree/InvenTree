@@ -1,6 +1,5 @@
 """Tests for middleware functions."""
 
-from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
 
@@ -81,9 +80,9 @@ class MiddlewareTests(InvenTreeTestCase):
             log_error('testpath')
 
         # Test setup without ignored errors
-        settings.IGNORED_ERRORS = []
-        try:
-            raise Http404
-        except Http404:
-            log_error('testpath')
-        check(1)
+        with self.settings(IGNORED_ERRORS=[]):
+            try:
+                raise Http404
+            except Http404:
+                log_error('testpath')
+            check(1)
