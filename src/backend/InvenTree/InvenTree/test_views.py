@@ -14,6 +14,9 @@ class ViewTests(InvenTreeTestCase):
     username = 'test_user'
     password = 'test_pass'
 
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
     def test_api_doc(self):
         """Test that the api-doc view works."""
         api_url = os.path.join(reverse('index'), 'api-doc') + '/'
