@@ -1,10 +1,5 @@
 import { t } from '@lingui/core/macro';
-import {
-  Box,
-  LoadingOverlay,
-  type MantineStyleProp,
-  Stack
-} from '@mantine/core';
+import { Box, type MantineStyleProp, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ContextMenuItemOptions,
@@ -35,12 +30,12 @@ import { resolveItem } from '../functions/conversion';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
+import { useStoredTableState } from '../states/StoredTableState';
 import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
-const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
 /**
@@ -140,13 +135,18 @@ export function InvenTreeTable<T extends Record<string, any>>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }>) {
+  const { userTheme } = useLocalState();
+
   const {
+    pageSize,
+    setPageSize,
+    getHiddenColumns,
+    setHiddenColumns,
     getTableColumnNames,
     setTableColumnNames,
     getTableSorting,
-    setTableSorting,
-    userTheme
-  } = useLocalState();
+    setTableSorting
+  } = useStoredTableState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
@@ -191,7 +191,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: !!url && !tableData && tableState.storedDataLoaded,
+    enabled: !!url && !tableData,
     queryKey: [
       'options',
       url,
@@ -274,30 +274,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
     return tableProps.enableSelection || tableProps.enableBulkDelete || false;
   }, [tableProps]);
 
-  useEffect(() => {
-    // On first table render, "hide" any default hidden columns
-    if (tableProps.enableColumnSwitching == false) {
-      return;
-    }
-
-    // A "null" value indicates that the initial "hidden" columns have not been set
-    if (tableState.storedDataLoaded && tableState.hiddenColumns == null) {
-      const columnNames: string[] = columns
-        .filter((col) => {
-          // Find any switchable columns which are hidden by default
-          return col.switchable != false && col.defaultVisible == false;
-        })
-        .map((col) => col.accessor);
-
-      tableState.setHiddenColumns(columnNames);
-    }
-  }, [
-    columns,
-    tableProps.enableColumnSwitching,
-    tableState.hiddenColumns,
-    tableState.storedDataLoaded
-  ]);
-
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
     if (props.enableColumnSwitching == false) {
@@ -326,10 +302,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
     let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
-
-    if (!tableState.storedDataLoaded) {
-      cols = cols.filter((col) => col?.defaultVisible != false);
-    }
 
     cols = cols.map((col) => {
       // If the column is *not* switchable, it is always visible
@@ -373,24 +345,29 @@ export function InvenTreeTable<T extends Record<string, any>>({
     fieldNames,
     tableProps.rowActions,
     tableState.hiddenColumns,
-    tableState.selectedRecords,
-    tableState.storedDataLoaded
+    tableState.selectedRecords
   ]);
 
   // Callback when column visibility is toggled
-  function toggleColumn(columnName: string) {
-    const newColumns = [...dataColumns];
+  const toggleColumn = useCallback(
+    (columnName: string) => {
+      const newColumns = [...dataColumns];
 
-    const colIdx = newColumns.findIndex((col) => col.accessor == columnName);
+      const colIdx = newColumns.findIndex((col) => col.accessor == columnName);
 
-    if (colIdx >= 0 && colIdx < newColumns.length) {
-      newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
-    }
+      if (colIdx >= 0 && colIdx < newColumns.length) {
+        newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
+      }
 
-    tableState.setHiddenColumns(
-      newColumns.filter((col) => col.hidden).map((col) => col.accessor)
-    );
-  }
+      const hiddenColumns = newColumns
+        .filter((col) => col.hidden)
+        .map((col) => col.accessor);
+
+      tableState.setHiddenColumns(hiddenColumns);
+      setHiddenColumns(cacheKey)(hiddenColumns);
+    },
+    [cacheKey, dataColumns]
+  );
 
   // Final state of the table columns
   const tableColumns = useDataTableColumns({
@@ -456,8 +433,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
       // Pagination
       if (tableProps.enablePagination && paginate) {
-        const pageSize = tableState.pageSize ?? defaultPageSize;
-        if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
         queryParams.limit = pageSize;
         queryParams.offset = (tableState.page - 1) * pageSize;
       }
@@ -476,30 +451,44 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return queryParams;
     },
     [
+      sortStatus,
       tableProps.params,
       tableProps.enablePagination,
       tableState.filterSet.activeFilters,
       tableState.queryFilters,
       tableState.searchTerm,
-      tableState.pageSize,
-      tableState.setPageSize,
-      sortStatus,
       getOrderingTerm
     ]
   );
 
-  const [sortingLoaded, setSortingLoaded] = useState<boolean>(false);
+  const [cacheLoaded, setCacheLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const tableKey: string = tableState.tableKey.split('-')[0];
-    const sorting: DataTableSortStatus = getTableSorting(tableKey);
+    const sorting: DataTableSortStatus = getTableSorting(cacheKey);
 
     if (sorting && !!sorting.columnAccessor && !!sorting.direction) {
       setSortStatus(sorting);
     }
 
-    setSortingLoaded(true);
-  }, []);
+    const hiddenColumns = getHiddenColumns(cacheKey);
+
+    if (hiddenColumns == null) {
+      // A "null" value indicates that the initial "hidden" columns have not been set
+      const columnNames: string[] = columns
+        .filter((col) => {
+          // Find any switchable columns which are hidden by default
+          return col.switchable != false && col.defaultVisible == false;
+        })
+        .map((col) => col.accessor);
+
+      setHiddenColumns(cacheKey)(columnNames);
+      tableState.setHiddenColumns(columnNames);
+    } else {
+      tableState.setHiddenColumns(hiddenColumns);
+    }
+
+    setCacheLoaded(true);
+  }, [cacheKey]);
 
   // Return the ordering parameter
   function getOrderingTerm() {
@@ -521,13 +510,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableProps.noRecordsText ?? t`No records found`
   );
 
-  const handleSortStatusChange = (status: DataTableSortStatus<T>) => {
-    tableState.setPage(1);
-    setSortStatus(status);
+  const handleSortStatusChange = useCallback(
+    (status: DataTableSortStatus<T>) => {
+      tableState.setPage(1);
+      setSortStatus(status);
 
-    const tableKey = tableState.tableKey.split('-')[0];
-    setTableSorting(tableKey)(status);
-  };
+      setTableSorting(cacheKey)(status);
+    },
+    [cacheKey]
+  );
 
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
@@ -538,13 +529,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return [];
     }
 
-    if (!sortingLoaded) {
+    if (!cacheLoaded) {
       // Sorting not yet loaded - do not load!
-      return [];
-    }
-
-    if (!tableState.storedDataLoaded) {
-      // Table data not yet loaded - do not load!
       return [];
     }
 
@@ -581,15 +567,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     queryKey: [
       'tabledata',
       url,
-      tableState.tableKey,
       tableState.page,
       props.params,
-      sortingLoaded,
+      cacheLoaded,
       sortStatus.columnAccessor,
       sortStatus.direction,
       tableState.tableKey,
       tableState.filterSet.activeFilters,
-      tableState.storedDataLoaded,
       tableState.searchTerm
     ],
     retry: 5,
@@ -602,7 +586,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
       return true;
     },
-    enabled: !!url && !tableData && tableState.storedDataLoaded,
+    enabled: !!url && !tableData,
     queryFn: fetchTableData
   });
 
@@ -629,16 +613,17 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.isLoading
   ]);
 
+  const tablePageSize = useMemo(() => {
+    if (tableProps.enablePagination != false) {
+      return pageSize;
+    } else {
+      return tableState.recordCount;
+    }
+  }, [tableProps.enablePagination, pageSize, tableState.recordCount]);
+
   // Update tableState.records when new data received
   useEffect(() => {
-    const data = tableData ?? apiData ?? [];
-
-    tableState.setRecords(data);
-
-    // set pagesize to length if pagination is disabled
-    if (!tableProps.enablePagination) {
-      tableState.setPageSize(data?.length ?? defaultPageSize);
-    }
+    tableState.setRecords(tableData ?? apiData ?? []);
   }, [tableData, apiData]);
 
   // Callback when a cell is clicked
@@ -735,12 +720,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
     return showContextMenu(items)(event);
   };
 
-  // pagination refresh table if pageSize changes
-  function updatePageSize(newData: number) {
-    tableState.setPageSize(newData);
+  // Pagination refresh table if pageSize changes
+  const updatePageSize = useCallback((size: number) => {
+    setPageSize(size);
     tableState.setPage(1);
     tableState.refreshTable();
-  }
+  }, []);
 
   /**
    * Memoize row expansion options:
@@ -776,7 +761,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       _params = {
         ..._params,
         totalRecords: tableState.recordCount,
-        recordsPerPage: tableState.pageSize,
+        recordsPerPage: tablePageSize,
         page: tableState.page,
         onPageChange: tableState.setPage,
         recordsPerPageOptions: PAGE_SIZES,
@@ -786,9 +771,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     return _params;
   }, [
+    tablePageSize,
     tableProps.enablePagination,
     tableState.recordCount,
-    tableState.pageSize,
     tableState.page,
     tableState.setPage,
     updatePageSize
@@ -806,7 +791,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     <>
       <Stack gap='xs'>
         {!tableProps.noHeader && (
-          <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
+          <Boundary label={`InvenTreeTableHeader-${cacheKey}`}>
             <InvenTreeTableHeader
               tableUrl={url}
               tableState={tableState}
@@ -818,9 +803,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
             />
           </Boundary>
         )}
-        <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
+        <Boundary label={`InvenTreeTable-${cacheKey}`}>
           <Box pos='relative'>
-            <LoadingOverlay visible={!tableState.storedDataLoaded} />
             <DataTable
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
