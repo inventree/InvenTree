@@ -2021,7 +2021,7 @@ class Part(
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False):
+    def schedule_pricing_update(self, create: bool = False, force: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -2031,7 +2031,13 @@ class Part(
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
+            force: If True, force the pricing to be updated even auto pricing is disabled
         """
+        if not force and not get_global_setting(
+            'PRICING_AUTO_UPDATE', backup_value=True
+        ):
+            return
+
         try:
             self.refresh_from_db()
         except Part.DoesNotExist:
@@ -2693,7 +2699,11 @@ class PartPricing(common.models.MetaMixin):
         return result
 
     def schedule_for_update(self, counter: int = 0):
-        """Schedule this pricing to be updated."""
+        """Schedule this pricing to be updated.
+
+        Arguments:
+            counter: Recursion counter (used to prevent infinite recursion)
+        """
         import InvenTree.ready
 
         # If importing data, skip pricing update

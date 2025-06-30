@@ -251,6 +251,13 @@ def check_missing_pricing(limit=250):
     Arguments:
         limit: Maximum number of parts to process at once
     """
+    # Find any parts which have 'old' pricing information
+    days = int(get_global_setting('PRICING_UPDATE_DAYS', 30))
+
+    if days <= 0:
+        # Task does not run if the interval is zero
+        return
+
     # Find parts for which pricing information has never been updated
     results = part_models.PartPricing.objects.filter(updated=None)[:limit]
 
@@ -260,8 +267,6 @@ def check_missing_pricing(limit=250):
         for pp in results:
             pp.schedule_for_update()
 
-    # Find any parts which have 'old' pricing information
-    days = int(get_global_setting('PRICING_UPDATE_DAYS', 30))
     stale_date = datetime.now().date() - timedelta(days=days)
 
     results = part_models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
