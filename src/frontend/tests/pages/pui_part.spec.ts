@@ -134,7 +134,12 @@ test('Part - Editing', async ({ browser }) => {
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill with an empty URL
+  const description = await page
+    .getByLabel('text-field-description')
+    .inputValue();
+
   await page.getByRole('textbox', { name: 'text-field-link' }).fill('');
+  await page.getByLabel('text-field-description').fill(`${description}+`);
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
