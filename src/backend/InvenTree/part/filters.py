@@ -29,7 +29,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 
 from sql_util.utils import SubquerySum
 
@@ -74,7 +74,11 @@ def annotate_scheduled_to_build_quantity(reference: str = ''):
     return Coalesce(
         SubquerySum(
             ExpressionWrapper(
-                F(f'{reference}builds__quantity') - F(f'{reference}builds__completed'),
+                Greatest(
+                    F(f'{reference}builds__quantity')
+                    - F(f'{reference}builds__completed'),
+                    0,
+                ),
                 output_field=DecimalField(),
             ),
             filter=building_filter,
