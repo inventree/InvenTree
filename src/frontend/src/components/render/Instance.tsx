@@ -97,7 +97,8 @@ const RendererLookup: EnumDictionary<
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
-  [ModelType.error]: RenderError
+  [ModelType.error]: RenderError,
+  [ModelType.allparts]: RenderPart // For aggregate report types we borrow the same renderer as individual parts
 };
 
 export type RenderInstanceProps = {

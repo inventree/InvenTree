@@ -237,6 +237,14 @@ class ReportConfig(AppConfig):
                 'description': 'Sample stock location report',
                 'model_type': 'stocklocation',
             },
+            {
+                'file': 'inventree_parts_report.html',
+                'name': 'Inventree All Parts Report',
+                'description': 'Basic report showing all parts in a table format',
+                'model_type': 'allparts',
+                'merge': True,
+                'filename_pattern': 'AllPartsReport-{{ date }}.pdf',
+            },
         ]
 
         for template in report_templates:

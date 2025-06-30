@@ -18,7 +18,7 @@ repos:
         exclude: mkdocs.yml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.13
+    rev: v0.12.1
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -29,7 +29,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.7.12
+    rev: 0.7.16
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -71,7 +71,7 @@ repos:
           src/frontend/vite.config.ts |
       )$
 -   repo: https://github.com/biomejs/pre-commit
-    rev: v2.0.0-beta.5
+    rev: v2.0.6
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]

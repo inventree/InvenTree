@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Parts Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .part-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .part-count {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>All Parts Report</h1>
+        <p>Complete listing of all parts in the database</p>
+        <div class="part-count">Total Parts: {{ instances|length }}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Part Number</th>
+                <th>Name & Description</th>
+                <th>Category</th>
+                <th>In Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for part in instances %}
+            <tr>
+                <td>{{ part.full_name|default:part.name }}</td>
+                <td>
+                    <div><strong>{{ part.name }}</strong></div>
+                    {% if part.description %}
+                        <div class="part-description">{{ part.description }}</div>
+                    {% endif %}
+                </td>
+                <td>{{ part.category.name|default:"No Category" }}</td>
+                <td>{{ part.total_stock|floatformat:0 }}{% if part.units %} {{ part.units }}{% endif %}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; color: #666;">No parts found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

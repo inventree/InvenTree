@@ -376,6 +376,7 @@ class PartReportContext(report.mixins.BaseReportContext):
         description: The description field of the Part
         IPN: The IPN (internal part number) of the Part
         name: The name of the Part
+        notes: Notes field for the Part
         parameters: Dict object containing the parameters associated with the Part
         part: The Part object itself
         qr_data: Formatted QR code data for the Part
@@ -383,6 +384,7 @@ class PartReportContext(report.mixins.BaseReportContext):
         revision: The revision of the Part
         test_template_list: List of test templates associated with the Part
         test_templates: Dict object of test templates associated with the Part
+        total_in_stock: Total stock quantity for the Part
     """
 
     bom_items: report.mixins.QuerySet[BomItem]
@@ -390,6 +392,7 @@ class PartReportContext(report.mixins.BaseReportContext):
     description: str
     IPN: Optional[str]
     name: str
+    notes: str
     parameters: dict[str, str]
     part: Part
     qr_data: str
@@ -397,6 +400,7 @@ class PartReportContext(report.mixins.BaseReportContext):
     revision: Optional[str]
     test_template_list: report.mixins.QuerySet[PartTestTemplate]
     test_templates: dict[str, PartTestTemplate]
+    total_in_stock: float
 
 
 @cleanup.ignore
@@ -489,6 +493,7 @@ class Part(
             'description': self.description,
             'IPN': self.IPN,
             'name': self.name,
+            'notes': self.notes,
             'parameters': self.parameters_map(),
             'part': self,
             'qr_data': self.barcode,
@@ -496,6 +501,8 @@ class Part(
             'revision': self.revision,
             'test_template_list': self.getTestTemplates(),
             'test_templates': self.getTestTemplateMap(),
+            'total_stock': self.total_stock,
+            'units': self.units,
         }
 
     def delete(self, **kwargs):

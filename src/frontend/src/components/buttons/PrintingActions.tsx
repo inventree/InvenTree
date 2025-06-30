@@ -3,7 +3,13 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
+import {
+  IconFileReport,
+  IconPrinter,
+  IconReport,
+  IconTags
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { api } from '../../App';
@@ -32,7 +38,7 @@ export function PrintingActions({
   const userSettings = useUserSettingsState();
   const globalSettings = useGlobalSettingsState();
 
-  const enabled = useMemo(() => items.length > 0, [items]);
+  const hasSelectedItems = useMemo(() => items.length > 0, [items]);
 
   const [pluginKey, setPluginKey] = useState<string>('');
 
@@ -46,6 +52,10 @@ export function PrintingActions({
 
   const [labelId, setLabelId] = useState<number | undefined>(undefined);
   const [reportId, setReportId] = useState<number | undefined>(undefined);
+  const [allPartsReportId, setAllPartsReportId] = useState<number | undefined>(
+    undefined
+  );
+  const [allPartIds, setAllPartIds] = useState<number[]>([]);
 
   const labelProgress = useDataOutput({
     title: t`Printing Labels`,
@@ -55,6 +65,11 @@ export function PrintingActions({
   const reportProgress = useDataOutput({
     title: t`Printing Reports`,
     id: reportId
+  });
+
+  const allPartsReportProgress = useDataOutput({
+    title: t`Printing All Parts Report`,
+    id: allPartsReportId
   });
 
   // Fetch available printing fields via OPTIONS request
@@ -153,6 +168,69 @@ export function PrintingActions({
     }
   });
 
+  const allPartsReportModal = useCreateApiFormModal({
+    title: t`Print All Parts Report`,
+    url: apiUrl(ApiEndpoints.report_print),
+    timeout: 120000, // Longer timeout for potentially large reports
+    fields: {
+      template: {
+        filters: {
+          enabled: true,
+          model_type: 'allparts', // Use the new aggregate model type
+          merge: true // Only show merge-enabled templates
+        },
+        label: t`Report Template`,
+        description: t`Select a report template for all parts`
+      },
+      items: {
+        hidden: true,
+        value: allPartIds // Use state value
+      }
+    },
+    preFormContent: (
+      <div
+        style={{
+          marginBottom: '1rem',
+          padding: '0.5rem',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '4px'
+        }}
+      >
+        <Text size='sm' c='dimmed'>
+          <IconFileReport
+            size={16}
+            style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}
+          />
+          {t`This will generate a report for ALL parts in the database (${allPartIds.length} parts), not just those visible on the current page.`}
+        </Text>
+      </div>
+    ),
+    submitText: t`Generate Report`,
+    successMessage: null,
+    onFormSuccess: async (response: any) => {
+      setAllPartsReportId(response.pk);
+    }
+  });
+
+  const fetchAllPartIds = async () => {
+    try {
+      const response = await api.get(apiUrl(ApiEndpoints.part_list), {
+        params: {
+          limit: 10000, // Adjust based on your needs
+          active: true // Only active parts
+        }
+      });
+
+      const partIds = response.data.results?.map((part: any) => part.pk) || [];
+      setAllPartIds(partIds);
+
+      // Open the modal after fetching IDs
+      allPartsReportModal.open();
+    } catch (error) {
+      console.error('Failed to fetch all parts:', error);
+    }
+  };
+
   if (!modelType) {
     return null;
   }
@@ -166,22 +244,32 @@ export function PrintingActions({
       <>
         {reportModal.modal}
         {labelModal.modal}
+        {allPartsReportModal.modal}
         <ActionDropdown
           tooltip={t`Printing Actions`}
           icon={<IconPrinter />}
-          disabled={!enabled}
+          disabled={false} // Always enable the dropdown
           actions={[
             {
               name: t`Print Labels`,
               icon: <IconTags />,
               onClick: () => labelModal.open(),
-              hidden: !labelPrintingEnabled
+              hidden: !labelPrintingEnabled,
+              disabled: !hasSelectedItems // Only enabled when items are selected
             },
             {
               name: t`Print Reports`,
               icon: <IconReport />,
               onClick: () => reportModal.open(),
-              hidden: !reportPrintingEnabled
+              hidden: !reportPrintingEnabled,
+              disabled: !hasSelectedItems // Only enabled when items are selected
+            },
+            {
+              name: t`Print All Parts Report`,
+              icon: <IconFileReport />,
+              onClick: fetchAllPartIds,
+              hidden: !reportPrintingEnabled || modelType !== 'part',
+              disabled: false // Always enabled for parts
             }
           ]}
         />

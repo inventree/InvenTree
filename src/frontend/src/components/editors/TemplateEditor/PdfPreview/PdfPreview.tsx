@@ -32,18 +32,23 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           }
         }
 
-        let preview = await api.post(
-          printingUrl,
-          {
-            items: [previewItem],
-            template: template.pk
-          },
-          {
-            responseType: 'json',
-            timeout: 30000,
-            validateStatus: () => true
-          }
-        );
+        // For aggregate reports, use model_type instead of specific items
+        const isAggregateReport = previewItem === 'aggregate';
+        const requestData = isAggregateReport
+          ? {
+              model_type: template.model_type,
+              template: template.pk
+            }
+          : {
+              items: [previewItem],
+              template: template.pk
+            };
+
+        let preview = await api.post(printingUrl, requestData, {
+          responseType: 'json',
+          timeout: 30000,
+          validateStatus: () => true
+        });
 
         if (preview.status !== 200 && preview.status !== 201) {
           let message: string =

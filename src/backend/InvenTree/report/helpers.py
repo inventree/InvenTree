@@ -24,17 +24,34 @@ def report_model_from_name(model_name: str):
     if not model_name:
         return None
 
+    # Handle aggregate report types
+    if model_name == 'allparts':
+        # Return the Part model for all parts aggregate reports
+        for model in report_model_types():
+            if model.__name__.lower() == 'part':
+                return model
+        return None
+
+    # Handle standard model types
     for model in report_model_types():
         if model.__name__.lower() == model_name:
             return model
 
+    return None
+
 
 def report_model_options():
     """Return a list of options for models which support report printing."""
-    return [
+    # Standard model-based reports (for selected instances)
+    standard_options = [
         (model.__name__.lower(), model._meta.verbose_name)
         for model in report_model_types()
     ]
+
+    # Aggregate reports (for all instances of a model type)
+    aggregate_options = [('allparts', _('All Parts (Aggregate)'))]
+
+    return standard_options + aggregate_options
 
 
 def report_page_size_options():

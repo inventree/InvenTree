@@ -85,7 +85,7 @@ class ReportPrintSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['template', 'items']
+        fields = ['template', 'items', 'model_type']
 
     template = serializers.PrimaryKeyRelatedField(
         queryset=report.models.ReportTemplate.objects.all(),
@@ -98,11 +98,35 @@ class ReportPrintSerializer(serializers.Serializer):
 
     items = serializers.ListField(
         child=serializers.IntegerField(),
-        required=True,
+        required=False,
         allow_empty=False,
         label=_('Items'),
         help_text=_('List of item primary keys to include in the report'),
     )
+
+    model_type = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        label=_('Model Type'),
+        help_text=_('Model type for aggregate reports (e.g., "allparts")'),
+    )
+
+    def validate(self, data):
+        """Validate that either items or model_type is provided, but not both."""
+        items = data.get('items')
+        model_type = data.get('model_type')
+
+        if not items and not model_type:
+            raise serializers.ValidationError(
+                _('Either "items" or "model_type" must be provided')
+            )
+
+        if items and model_type:
+            raise serializers.ValidationError(
+                _('Cannot specify both "items" and "model_type"')
+            )
+
+        return data
 
 
 class LabelPrintSerializer(serializers.Serializer):

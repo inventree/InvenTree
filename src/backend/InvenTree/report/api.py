@@ -258,14 +258,35 @@ class ReportPrint(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         template = serializer.validated_data['template']
-        items = serializer.validated_data['items']
+        items = serializer.validated_data.get('items')
+        model_type = serializer.validated_data.get('model_type')
 
-        instances = template.get_model().objects.filter(pk__in=items)
-
-        if instances.count() == 0:
-            raise ValidationError(_('No valid items provided to template'))
+        if items:
+            # Standard report with specific items
+            instances = template.get_model().objects.filter(pk__in=items)
+            if instances.count() == 0:
+                raise ValidationError(_('No valid items provided to template'))
+        elif model_type:
+            # Aggregate report - fetch all items based on model type
+            instances = self.get_aggregate_instances(template, model_type)
+            if instances.count() == 0:
+                raise ValidationError(_('No items found for aggregate report'))
+        else:
+            # This shouldn't happen due to serializer validation, but just in case
+            raise ValidationError(_('Either items or model_type must be provided'))
 
         return self.print(template, instances, request)
+
+    def get_aggregate_instances(self, template, model_type):
+        """Get instances for aggregate reports based on model type."""
+        if model_type == 'allparts':
+            # Import here to avoid circular imports
+            from part.models import Part
+
+            # Get all active parts
+            return Part.objects.filter(active=True)
+        else:
+            raise ValidationError(_(f'Unsupported aggregate model type: {model_type}'))
 
     def print(self, template, items_to_print, request):
         """Print this report template against a number of provided items.

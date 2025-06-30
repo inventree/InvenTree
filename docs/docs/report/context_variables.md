@@ -78,6 +78,7 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 | [stockitem](#stock-item) | A [StockItem](../stock/index.md#stock-item) instance |
 | [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-location) instance |
 | [part](#part) | A [Part](../part/index.md) instance |
+| [allparts](#aggregate-reports) | Aggregate report for all active parts |
 
 ### Company
 
@@ -359,3 +360,18 @@ Each part object has access to a lot of context variables about the part. The fo
 | last_name | The last name of the user |
 | email | The email address of the user |
 | pk | The primary key of the user |
+
+## Aggregate Reports
+
+Aggregate reports automatically include all items of a particular type without requiring manual selection.
+
+### All Parts (allparts)
+
+The `allparts` model type generates reports for all active parts in the system.
+
+| Variable | Description |
+|----------|-------------|
+| instances | A list of all active [Part](#part) objects in the system |
+| merge | Always `True` for aggregate reports |
+
+Each part in the `instances` list provides access to all standard [Part model variables](#part).

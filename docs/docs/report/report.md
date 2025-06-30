@@ -46,3 +46,24 @@ For example, rendering the name of a part (which is available in the particular 
 ```
 #### Rendering a single report vs. multiple report from selection
 Users can select multiple items such as `part`, `stockItem`,...etc to render from a report template. By default, the `merge` attribute of report template is disabled, which means an independent report will be generated for each item in the list of selected items. If `merge` is enabled, all selected items will be available in the `instances` context variable of the report template. Users are free to access them by indexing or in a loop. For more details, visit [context variable](./context_variables.md)
+
+### Aggregate vs Instance Reports
+
+InvenTree supports two types of reports:
+
+- **Instance Reports**: Generate reports for manually selected items (default behavior)
+- **Aggregate Reports**: Automatically include all items of a particular type
+
+#### Aggregate Reports
+
+Aggregate reports use special model types like `allparts` to automatically fetch all relevant items from the database. These reports require the **Merge** option to be enabled and use the `instances` context variable to access all items.
+
+```html
+{% raw %}
+{% for item in instances %}
+  <!-- Template content for each item -->
+{% endfor %}
+{% endraw %}
+```
+
+Aggregate reports are useful for generating comprehensive system-wide reports without manual item selection.

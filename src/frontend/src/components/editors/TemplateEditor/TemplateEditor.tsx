@@ -101,6 +101,11 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
 
   const codeRef = useRef<string | undefined>(undefined);
 
+  // Check if this is an aggregate report type that doesn't need instance selection
+  const isAggregateType = useMemo(() => {
+    return template.model_type === 'allparts';
+  }, [template.model_type]);
+
   const loadCodeToEditor = useCallback(async (code: string) => {
     try {
       return await Promise.resolve(editorRef.current?.setCode(code));
@@ -198,7 +203,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
       }
 
       const code = await getCodeFromEditor();
-      if (code === undefined || !previewItem) return;
+      if (code === undefined || (!previewItem && !isAggregateType)) return;
 
       setIsPreviewLoading(true);
       Promise.resolve(
@@ -228,7 +233,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
           setIsPreviewLoading(false);
         });
     },
-    [previewItem]
+    [previewItem, isAggregateType]
   );
 
   const previewApiUrl = useMemo(
@@ -248,13 +253,19 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   }, [template]);
 
   useEffect(() => {
+    // Skip instance selection for aggregate types
+    if (isAggregateType) {
+      setPreviewItem('aggregate'); // Set a placeholder value
+      return;
+    }
+
     api
       .get(apiUrl(previewApiUrl), { params: { limit: 1, ...templateFilters } })
       .then((res) => {
         if (res.data.results.length === 0) return;
         setPreviewItem(res.data.results[0].pk);
       });
-  }, [previewApiUrl, templateFilters]);
+  }, [previewApiUrl, templateFilters, isAggregateType]);
 
   return (
     <Boundary label='TemplateEditor'>
@@ -299,7 +310,8 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                       tooltip: t`Use the currently stored template from the server`,
                       icon: IconRefresh,
                       onClick: () => updatePreview(true, false),
-                      disabled: !previewItem || isPreviewLoading
+                      disabled:
+                        (!previewItem && !isAggregateType) || isPreviewLoading
                     },
                     {
                       key: 'preview_save',
@@ -307,7 +319,8 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                       tooltip: t`Save the current template and reload the preview`,
                       icon: IconDeviceFloppy,
                       onClick: () => updatePreview(hasSaveConfirmed),
-                      disabled: !previewItem || isPreviewLoading
+                      disabled:
+                        (!previewItem && !isAggregateType) || isPreviewLoading
                     }
                   ]}
                 />
@@ -351,26 +364,43 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
               ))}
             </Tabs.List>
 
-            <div
-              style={{
-                minWidth: '100%',
-                paddingBottom: '10px',
-                paddingTop: '10px'
-              }}
-            >
-              <StandaloneField
-                fieldDefinition={{
-                  field_type: 'related field',
-                  api_url: apiUrl(previewApiUrl),
-                  description: '',
-                  label: t`Select instance to preview`,
-                  model: template.model_type,
-                  value: previewItem,
-                  filters: templateFilters,
-                  onValueChange: (value) => setPreviewItem(value)
+            {!isAggregateType && (
+              <div
+                style={{
+                  minWidth: '100%',
+                  paddingBottom: '10px',
+                  paddingTop: '10px'
                 }}
-              />
-            </div>
+              >
+                <StandaloneField
+                  fieldDefinition={{
+                    field_type: 'related field',
+                    api_url: apiUrl(previewApiUrl),
+                    description: '',
+                    label: t`Select instance to preview`,
+                    model: template.model_type,
+                    value: previewItem,
+                    filters: templateFilters,
+                    onValueChange: (value) => setPreviewItem(value)
+                  }}
+                />
+              </div>
+            )}
+
+            {isAggregateType && (
+              <div
+                style={{
+                  minWidth: '100%',
+                  paddingBottom: '10px',
+                  paddingTop: '10px',
+                  textAlign: 'center',
+                  color: '#666',
+                  fontSize: '0.9em'
+                }}
+              >
+                {t`Aggregate report - no instance selection required`}
+              </div>
+            )}
 
             {previewAreas.map((PreviewArea) => (
               <Tabs.Panel
