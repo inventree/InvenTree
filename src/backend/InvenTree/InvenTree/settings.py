@@ -340,6 +340,7 @@ MIDDLEWARE = CONFIG.get(
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
+        'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
