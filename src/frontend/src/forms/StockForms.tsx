@@ -1100,10 +1100,7 @@ function useStockOperationModal({
         .get(url, {
           params: params
         })
-        .then((response) => response.data ?? [])
-        .catch(() => {
-          return [];
-        });
+        .then((response) => response.data ?? []);
     }
   });
 
@@ -1368,7 +1365,7 @@ export function useFindSerialNumberForm({
       }
     },
     checkClose: (data, form) => {
-      if (data.length == 0) {
+      if (!data || data?.length == 0) {
         form.setError('serial', { message: t`No matching items` });
         return false;
       }

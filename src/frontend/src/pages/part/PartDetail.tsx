@@ -723,8 +723,7 @@ export default function PartDetail() {
             default:
               break;
           }
-        })
-        .catch(() => {});
+        });
 
       return revisions;
     }
