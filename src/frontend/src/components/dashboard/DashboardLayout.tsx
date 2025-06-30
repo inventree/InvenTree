@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Alert, Card, Center, Divider, Loader, Text } from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -220,6 +220,11 @@ export default function DashboardLayout() {
         removing={removing}
       />
       <Divider p='xs' />
+      {availableWidgets.error && (
+        <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
+          {t`Failed to load dashboard widgets.`}
+        </Alert>
+      )}
       {layouts && loaded && availableWidgets.loaded ? (
         <>
           {widgetLabels.length == 0 ? (
