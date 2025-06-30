@@ -132,6 +132,7 @@ jobs:
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke update
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty --translations
 
   # Run migration test
@@ -154,6 +155,7 @@ jobs:
       - name: Run Migration Tests
         run: |
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke update
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --migrations --translations
 
   # Build and publish
