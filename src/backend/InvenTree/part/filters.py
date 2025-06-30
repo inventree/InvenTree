@@ -106,25 +106,30 @@ def annotate_on_order_quantity(reference: str = ''):
         order__status__in=PurchaseOrderStatusGroups.OPEN, quantity__gt=F('received')
     )
 
-    return Coalesce(
-        SubquerySum(
-            ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__quantity')
-                * F(f'{reference}supplier_parts__pack_quantity_native'),
-                output_field=DecimalField(),
+    return Greatest(
+        Coalesce(
+            SubquerySum(
+                ExpressionWrapper(
+                    F(f'{reference}supplier_parts__purchase_order_line_items__quantity')
+                    * F(f'{reference}supplier_parts__pack_quantity_native'),
+                    output_field=DecimalField(),
+                ),
+                filter=order_filter,
             ),
-            filter=order_filter,
-        ),
-        Decimal(0),
-        output_field=DecimalField(),
-    ) - Coalesce(
-        SubquerySum(
-            ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__received')
-                * F(f'{reference}supplier_parts__pack_quantity_native'),
-                output_field=DecimalField(),
+            Decimal(0),
+            output_field=DecimalField(),
+        )
+        - Coalesce(
+            SubquerySum(
+                ExpressionWrapper(
+                    F(f'{reference}supplier_parts__purchase_order_line_items__received')
+                    * F(f'{reference}supplier_parts__pack_quantity_native'),
+                    output_field=DecimalField(),
+                ),
+                filter=order_filter,
             ),
-            filter=order_filter,
+            Decimal(0),
+            output_field=DecimalField(),
         ),
         Decimal(0),
         output_field=DecimalField(),

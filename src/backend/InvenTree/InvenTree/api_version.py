@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 358
+INVENTREE_API_VERSION = 359
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v359 -> 2025-07-01 : https://github.com/inventree/InvenTree/pull/9909
+    - Fixes annotated types for various part fields
 
 v358 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9857
     - Provide list of generated stock items against "StockItemSerialize" API endpoint
