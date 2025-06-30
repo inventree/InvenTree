@@ -258,10 +258,6 @@ def check_missing_pricing(limit=250):
         # Task does not run if the interval is zero
         return
 
-    # Task has been run recently, so do not run again
-    if not check_daily_holdoff('check_missing_pricing', days):
-        return
-
     # Find parts for which pricing information has never been updated
     results = part_models.PartPricing.objects.filter(updated=None)[:limit]
 
@@ -301,8 +297,6 @@ def check_missing_pricing(limit=250):
             pricing = p.pricing
             pricing.save()
             pricing.schedule_for_update()
-
-    record_task_success('check_missing_pricing')
 
 
 @tracer.start_as_current_span('scheduled_stocktake_reports')
