@@ -7,6 +7,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
@@ -114,7 +115,8 @@ export default function BuildOrderTestTable({
                     size='xs'
                     color='green'
                     variant='transparent'
-                    onClick={() => {
+                    onClick={(event: any) => {
+                      cancelEvent(event);
                       setSelectedOutput(record.pk);
                       setSelectedTemplate(template.pk);
                       createTestResult.open();
@@ -244,6 +246,7 @@ export default function BuildOrderTestTable({
           tableFilters: tableFilters,
           tableActions: tableActions,
           modelType: ModelType.stockitem
+          // onCellClick: onCellClick,
         }}
       />
     </>
