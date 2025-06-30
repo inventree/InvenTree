@@ -2357,13 +2357,15 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             )
 
         # Let's also update the "completeed" count
+        builds[1].completed = 5
+        builds[1].save()
         builds[2].completed = 13
         builds[2].save()
 
         data = self.get(url).data
 
         self.assertEqual(data['building'], 55)
-        self.assertEqual(data['scheduled_to_build'], 37)
+        self.assertEqual(data['scheduled_to_build'], 32)
 
 
 class BomItemTest(InvenTreeAPITestCase):
