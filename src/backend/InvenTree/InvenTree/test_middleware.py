@@ -96,7 +96,7 @@ class MiddlewareTests(InvenTreeTestCase):
         ):
             response = self.client.get(reverse('web'))
             self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-W11')
+            self.assertNotContains(response, 'INVE-E7')
             self.assertContains(response, 'id="spa_bundle"')
 
         # wrongly set site URL
@@ -105,7 +105,7 @@ class MiddlewareTests(InvenTreeTestCase):
             self.assertEqual(response.status_code, 500)
             self.assertContains(
                 response,
-                'INVE-W11: The used path `http://testserver` does not match',
+                'INVE-E7: The used path `http://testserver` does not match',
                 status_code=500,
             )
             self.assertNotContains(response, 'id="spa_bundle"', status_code=500)
@@ -114,7 +114,7 @@ class MiddlewareTests(InvenTreeTestCase):
         with self.settings(SITE_URL='https://example.com', DEBUG=True):
             response = self.client.get(reverse('web'))
             self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-W11')
+            self.assertNotContains(response, 'INVE-E7')
             self.assertContains(response, 'id="spa_bundle"')
 
         # wrongly set cors

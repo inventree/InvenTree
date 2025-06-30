@@ -235,7 +235,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         # Ensure that the settings are set correctly with the current request
         accessed_scheme = request._current_scheme_host
         if accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL):
-            msg = f'INVE-W11: The used path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`'
+            msg = f'INVE-E7: The used path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`'
             logger.error(msg)
             return render(
                 request, 'config_error.html', {'error_message': msg}, status=500
@@ -246,7 +246,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
             accessed_scheme.startswith(origin)
             for origin in settings.CSRF_TRUSTED_ORIGINS
         ):
-            msg = f'INVE-W11: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
+            msg = f'INVE-E7: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
             logger.error(msg)
             return render(
                 request, 'config_error.html', {'error_message': msg}, status=500
