@@ -24,12 +24,13 @@ def annotate_on_order_quantity():
 
     return Coalesce(
         SubquerySum(
-            ExpressionWrapper(
-                Greatest(
+            Greatest(
+                ExpressionWrapper(
                     F('purchase_order_line_items__quantity')
                     - F('purchase_order_line_items__received'),
-                    0,
+                    output_field=DecimalField(),
                 ),
+                0,
                 output_field=DecimalField(),
             ),
             filter=order_filter,

@@ -1530,10 +1530,12 @@ class Part(
 
         # Calculate the 'available stock' based on previous annotations
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                Greatest(
-                    F('total_stock') - F('so_allocations') - F('bo_allocations'), 0
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock') - F('so_allocations') - F('bo_allocations'),
+                    output_field=models.DecimalField(),
                 ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1551,13 +1553,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            substitute_stock=ExpressionWrapper(
-                Greatest(
+            substitute_stock=Greatest(
+                ExpressionWrapper(
                     F('sub_total_stock')
                     - F('sub_so_allocations')
                     - F('sub_bo_allocations'),
-                    0,
+                    output_field=models.DecimalField(),
                 ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1578,13 +1581,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            variant_stock=ExpressionWrapper(
-                Greatest(
+            variant_stock=Greatest(
+                ExpressionWrapper(
                     F('var_total_stock')
                     - F('var_bo_allocations')
                     - F('var_so_allocations'),
-                    0,
+                    output_field=models.DecimalField(),
                 ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
