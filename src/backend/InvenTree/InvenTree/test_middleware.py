@@ -97,7 +97,7 @@ class MiddlewareTests(InvenTreeTestCase):
             response = self.client.get(reverse('web'))
             self.assertEqual(response.status_code, 200)
             self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'id="spa_bundle"')
+            self.assertContains(response, 'window.INVENTREE_SETTINGS')
 
         # wrongly set site URL
         with self.settings(SITE_URL='https://example.com'):
@@ -108,14 +108,16 @@ class MiddlewareTests(InvenTreeTestCase):
                 'INVE-E7: The used path `http://testserver` does not match',
                 status_code=500,
             )
-            self.assertNotContains(response, 'id="spa_bundle"', status_code=500)
+            self.assertNotContains(
+                response, 'window.INVENTREE_SETTINGS', status_code=500
+            )
 
         # wrongly set but in debug -> is ignored
         with self.settings(SITE_URL='https://example.com', DEBUG=True):
             response = self.client.get(reverse('web'))
             self.assertEqual(response.status_code, 200)
             self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'id="spa_bundle"')
+            self.assertContains(response, 'window.INVENTREE_SETTINGS')
 
         # wrongly set cors
         with self.settings(
@@ -128,4 +130,6 @@ class MiddlewareTests(InvenTreeTestCase):
             self.assertContains(
                 response, 'is not in the TRUSTED_ORIGINS', status_code=500
             )
-            self.assertNotContains(response, 'id="spa_bundle"', status_code=500)
+            self.assertNotContains(
+                response, 'window.INVENTREE_SETTINGS', status_code=500
+            )
