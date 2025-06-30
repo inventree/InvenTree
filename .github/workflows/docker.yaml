@@ -184,6 +184,10 @@ jobs:
           python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+      - name: Prepare Image
+        run: |
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
+          rm -rf InvenTree/_testfolder
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # pin@v3.6.0
