@@ -87,3 +87,41 @@ class MiddlewareTests(InvenTreeTestCase):
         except Http404:
             log_error('testpath')
         check(1)
+
+    def test_site_url_checks(self):
+        """Test that the site URL check is correctly working."""
+        # correctly set
+        with self.settings(
+            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+        ):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, 'INVE-W11')
+            self.assertContains(response, 'id="spa_bundle"')
+
+        # wrongly set site URL
+        with self.settings(SITE_URL='https://example.com'):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(
+                response, 'INVE-W11: The used path `http://testserver` does not match'
+            )
+            self.assertNotContains(response, 'id="spa_bundle"')
+
+        # wrongly set but in debug -> is ignored
+        with self.settings(SITE_URL='https://example.com', DEBUG=True):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, 'INVE-W11')
+            self.assertContains(response, 'id="spa_bundle"')
+
+        # wrongly set cors
+        with self.settings(
+            SITE_URL='http://testserver',
+            CORS_ORIGIN_ALLOW_ALL=False,
+            CSRF_TRUSTED_ORIGINS=['https://example.com'],
+        ):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, 'is not in the TRUSTED_ORIGINS')
+            self.assertNotContains(response, 'id="spa_bundle"')
