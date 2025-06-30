@@ -2699,7 +2699,11 @@ class PartPricing(common.models.MetaMixin):
         return result
 
     def schedule_for_update(self, counter: int = 0):
-        """Schedule this pricing to be updated."""
+        """Schedule this pricing to be updated.
+
+        Arguments:
+            counter: Recursion counter (used to prevent infinite recursion)
+        """
         import InvenTree.ready
 
         # If importing data, skip pricing update
@@ -2708,10 +2712,6 @@ class PartPricing(common.models.MetaMixin):
 
         # If running data migrations, skip pricing update
         if InvenTree.ready.isRunningMigrations():
-            return
-
-        # If the pricing auto-update feature is disabled, skip pricing update
-        if not get_global_setting('PRICING_AUTO_UPDATE', backup_value=True):
             return
 
         if (
