@@ -160,8 +160,7 @@ export default function BuildOutputTable({
             required: true
           }
         })
-        .then((response) => response.data)
-        .catch(() => []);
+        .then((response) => response.data);
     }
   });
 
@@ -184,8 +183,7 @@ export default function BuildOutputTable({
             tracked: true
           }
         })
-        .then((response) => response.data)
-        .catch(() => []);
+        .then((response) => response.data);
     }
   });
 

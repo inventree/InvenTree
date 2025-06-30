@@ -138,10 +138,6 @@ export function useBuildOrderFields({
       external: {}
     };
 
-    if (create) {
-      fields.create_child_builds = {};
-    }
-
     if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
       delete fields.project_code;
     }

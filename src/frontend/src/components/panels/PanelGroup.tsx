@@ -272,22 +272,28 @@ function BasePanelGroup({
                 )}
               </Box>
             ))}
+            {collapsible && <Divider />}
             {collapsible && (
               <Group wrap='nowrap' gap='xs'>
-                <ActionIcon
-                  style={{
-                    paddingLeft: '10px'
-                  }}
-                  onClick={() => setExpanded(!expanded)}
-                  variant='transparent'
-                  size='md'
+                <Tooltip
+                  position='right'
+                  label={expanded ? t`Collapse panels` : t`Expand panels`}
                 >
-                  {expanded ? (
-                    <IconLayoutSidebarLeftCollapse opacity={0.5} />
-                  ) : (
-                    <IconLayoutSidebarRightCollapse opacity={0.5} />
-                  )}
-                </ActionIcon>
+                  <ActionIcon
+                    style={{
+                      paddingLeft: '10px'
+                    }}
+                    onClick={() => setExpanded(!expanded)}
+                    variant='transparent'
+                    size='lg'
+                  >
+                    {expanded ? (
+                      <IconLayoutSidebarLeftCollapse opacity={0.75} />
+                    ) : (
+                      <IconLayoutSidebarRightCollapse opacity={0.75} />
+                    )}
+                  </ActionIcon>
+                </Tooltip>
                 {pluginPanelSet.isLoading && <Loader size='xs' />}
               </Group>
             )}

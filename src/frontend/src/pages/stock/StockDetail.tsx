@@ -491,9 +491,6 @@ export default function StockDetail() {
           } else {
             return null;
           }
-        })
-        .catch(() => {
-          return null;
         });
     }
   });
@@ -504,7 +501,7 @@ export default function StockDetail() {
       return true;
     }
 
-    if (trackedBomItemQuery.data != null) {
+    if (!!trackedBomItemQuery.data) {
       return trackedBomItemQuery.data;
     }
 

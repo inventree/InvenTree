@@ -72,9 +72,6 @@ export function PrintingActions({
         .then((response: any) => {
           return extractAvailableFields(response, 'POST') || {};
         })
-        .catch(() => {
-          return {};
-        })
   });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {

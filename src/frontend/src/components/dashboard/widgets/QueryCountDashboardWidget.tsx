@@ -47,8 +47,7 @@ function QueryCountWidget({
             limit: 1
           }
         })
-        .then((res) => res.data)
-        .catch(() => {});
+        .then((res) => res.data);
     }
   });
 
