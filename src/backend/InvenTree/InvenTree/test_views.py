@@ -2,6 +2,7 @@
 
 import os
 
+from django.test import override_settings
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeTestCase
@@ -20,6 +21,9 @@ class ViewTests(InvenTreeTestCase):
         response = self.client.get(api_url)
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
     def test_index_redirect(self):
         """Top-level URL should redirect to "index" page."""
         response = self.client.get('/')

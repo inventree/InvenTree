@@ -44,6 +44,12 @@ This might be caused by an addition or removal of models to the code base. Runni
 The scopes used for oAuth permissions have an issue and do not match the rulesets.
 This might be caused by an addition or removal of models to the code base or changes to the rulesets. Running the test suit should surface more logs with the error code indicating the exact infractions.
 
+#### INVE-E7
+**The host used does not match settings - Backend**
+
+The settings for SITE_URL and ALLOWED_HOSTS do not match the host used to access the server. This might lead to issues with CSRF protection, CORS and other security features.
+The settings must be adjusted.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 

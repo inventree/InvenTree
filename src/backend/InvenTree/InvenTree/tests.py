@@ -1809,6 +1809,9 @@ class URLCompatibilityTest(InvenTreeTestCase):
         ('/stock/item/1/', '/web/stock/item/1/'),
     ]
 
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
     def test_legacy_urls(self):
         """Test legacy URLs."""
         for old_url, new_url in self.URL_MAPPINGS:
