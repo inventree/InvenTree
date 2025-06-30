@@ -16,7 +16,7 @@ Pricing information can be determined from multiple sources:
 | Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../purchasing/purchase_order.md) |
 | BOM Price | Total price for an assembly (total price of all component items) | [Part](../part/index.md) |
 
-#### Override Pricing
+### Override Pricing
 
 In addition to caching pricing data as documented in the above table, manual pricing overrides can be specified for a particular part. Both the *minimum price* and *maximum price* can be specified manually, independent of the calculated values. If an manual price is specified for a part, it overrides any calculated value.
 
@@ -120,10 +120,28 @@ For this reason, all information displayed in the [pricing overview](#pricing-ov
 
 Pricing data is cached in the [default currency](../concepts/pricing.md/#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
 
-#### Data Updates
+## Pricing Updates
 
-The pricing data caching is intended to occur *automatically*, and generally be up-to-date without user interaction. Pricing data is re-calculated and cached by the [background worker](../settings/tasks.md) in the following ways:
+If automated pricing updates are enabled, the pricing data updated *automatically*, and will generally be up-to-date without user interaction. Pricing data is re-calculated and cached by the [background worker](../settings/tasks.md) in the following ways:
 
-- **Automatically** - If the underlying pricing data changes, part pricing is scheduled to be updated
-- **Periodically** - A daily task ensures that any outdated or missing pricing is kept updated
-- **Manually** - The user can manually recalculate pricing for a given part in the [pricing overview](#pricing-overview) display
+### Response to Data Changes
+
+When underlying pricing data changes, the cached pricing data is automatically updated. This includes (but is not limited to):
+
+- Stock items being received against a [Purchase Order](../purchasing/purchase_order.md) with provided pricing
+- Stock items being sold against a [Sales Order](../sales/sales_order.md) with provided pricing
+- [Bills of Material](../manufacturing//bom.md) being created or modified, which may change the pricing of an assembly
+
+### Periodic Updates
+
+A periodic task runs in the background to ensure that any outdated or missing pricing data is kept up-to-date. This task runs daily, and ensures that any parts with missing (or outdated) pricing data are updated.
+
+### Manual Updates
+
+Additionally, the user can manually recalculate pricing for a given part. This can be done from the [pricing overview](#pricing-overview) display, by pressing the "Recalculate" button.
+
+### Disable Automatic Updates
+
+Automatic pricing updates are enabled by default. If desired, this functionality can be disabled (via the {{ globalsetting("PRICING_AUTO_UPDATE", short=True) }} setting). If this is done, then pricing data will not be automatically updated, and the user must manually recalculate pricing data as required.
+
+Disabling automatic pricing updates may be prudent in systems where pricing data changes frequently, but the user wants to control when the pricing data is updated. In this case, the user can manually recalculate pricing data as required.
