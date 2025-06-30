@@ -601,7 +601,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of days before part pricing is automatically updated'),
         'units': _('days'),
         'default': 30,
-        'validator': [int, MinValueValidator(10)],
+        'validator': [int, MinValueValidator(0)],
     },
     'PART_INTERNAL_PRICE': {
         'name': _('Internal Prices'),

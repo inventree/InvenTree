@@ -134,7 +134,7 @@ When underlying pricing data changes, the cached pricing data is automatically u
 
 ### Periodic Updates
 
-A periodic task runs in the background to ensure that any outdated or missing pricing data is kept up-to-date. This task runs daily, and ensures that any parts with missing (or outdated) pricing data are updated.
+A periodic task runs in the background to ensure that any outdated or missing pricing data is kept up-to-date. This task runs at a scheduled regular interval, as controlled via the {{ globalsetting("PRICING_UPDATE_DAYS", short=True) }} setting. The default value is 30 days, meaning that pricing data is updated at least once every 30 days. Setting this value to zero disables periodic updates.
 
 ### Manual Updates
 
