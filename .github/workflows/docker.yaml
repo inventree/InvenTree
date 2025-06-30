@@ -110,29 +110,9 @@ jobs:
           test -f data/plugins.txt
           test -f data/secret_key.txt
           test -f data/oidc.pem
-
-  # Run unit test
-  unit_test:
-    name: Unit Test
-    needs: paths-filter
-    if: needs.paths-filter.outputs.docker == 'true' || github.event_name == 'release' || github.event_name == 'push'
-    permissions:
-      contents: read
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      python_version: "3.11"
-    runs-on: ubuntu-latest # in the future we can try to use alternative runners here
-
-    steps:
-      - name: Check out repo
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
-        with:
-          persist-credentials: false
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke update
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty --translations
 
   # Run migration test
@@ -161,7 +141,7 @@ jobs:
   # Build and publish
   publish:
     name: Publish Docker Image
-    needs: [build, unit_test, migration_test]
+    needs: [build, migration_test]
     permissions:
       contents: read
       packages: write
