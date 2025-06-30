@@ -56,6 +56,26 @@ export function PartColumn({
   );
 }
 
+export function CompanyColumn({
+  company
+}: {
+  company: any;
+}) {
+  return company ? (
+    <Group gap='xs' wrap='nowrap'>
+      <Thumbnail
+        src={company.thumbnail ?? company.image ?? ''}
+        alt={company.name}
+        size={24}
+        hover
+      />
+      <Text>{company.name}</Text>
+    </Group>
+  ) : (
+    <Skeleton />
+  );
+}
+
 export function LocationColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'location',
