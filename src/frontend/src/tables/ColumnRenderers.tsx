@@ -31,6 +31,7 @@ export function PartColumn({
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
         text={full_name ? part?.full_name : part?.name}
+        hover
       />
       <Group justify='flex-end' wrap='nowrap' gap='xs'>
         {part?.active == false && (
@@ -49,6 +50,26 @@ export function PartColumn({
           </Tooltip>
         )}
       </Group>
+    </Group>
+  ) : (
+    <Skeleton />
+  );
+}
+
+export function CompanyColumn({
+  company
+}: {
+  company: any;
+}) {
+  return company ? (
+    <Group gap='xs' wrap='nowrap'>
+      <Thumbnail
+        src={company.thumbnail ?? company.image ?? ''}
+        alt={company.name}
+        size={24}
+        hover
+      />
+      <Text>{company.name}</Text>
     </Group>
   ) : (
     <Skeleton />
