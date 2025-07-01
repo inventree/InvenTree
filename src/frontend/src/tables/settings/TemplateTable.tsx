@@ -80,8 +80,7 @@ export function TemplateDrawer({
   } = useInstance<TemplateI>({
     endpoint: templateEndpoint,
     hasPrimaryKey: true,
-    pk: id,
-    throwError: true
+    pk: id
   });
 
   // Editors
