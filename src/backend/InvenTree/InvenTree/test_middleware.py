@@ -132,3 +132,11 @@ class MiddlewareTests(InvenTreeTestCase):
             self.assertNotContains(
                 response, 'window.INVENTREE_SETTINGS', status_code=500
             )
+
+        with self.settings(
+            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://*.testserver']
+        ):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, 'INVE-E7')
+            self.assertContains(response, 'window.INVENTREE_SETTINGS')
