@@ -592,7 +592,9 @@ class StockItem(
         StockItem.objects.bulk_create(items)
 
         # We will need to rebuild the stock item tree manually, due to the bulk_create operation
-        InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock')
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock'
+        )
 
         # Return the newly created StockItem objects
         return StockItem.objects.filter(part=part, serial__in=serials)
