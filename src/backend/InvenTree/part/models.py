@@ -3630,16 +3630,23 @@ class PartCategoryStar(models.Model):
 
 
 class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
-    """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
+    """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem.
 
-    The test template applies "recursively" to part variants, allowing tests to be
-    defined in a hierarchy.
-
-    Test names are simply strings, rather than enforcing any sort of structure or pattern.
-    It is up to the user to determine what tests are defined (and how they are run).
+    - A StockItem is linked to a PartTestTemplate via a StockItemTestResult instance.
+    - To define which tests are associated with a given Part, there is the PartTest model
 
     To enable generation of unique lookup-keys for each test, there are some validation tests
     run on the model (refer to the validate_unique function).
+
+    Attributes:
+        test_name: The name of the test [string]
+        key: An identifiable key for the test, generated from the test_name [string]
+        description: A description of the test [string]
+        enabled: Boolean flag to indicate whether the test is enabled [bool]
+        required: Boolean flag to indicate whether the test is required to pass [bool]
+        requires_value: Boolean flag to indicate whether the test requires a value when adding a test result [bool]
+        requires_attachment: Boolean flag to indicate whether the test requires an attachment when adding a test result [bool]
+        choices: A comma-separated list of valid choices for this test [string]
     """
 
     class Meta:
@@ -3649,7 +3656,7 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
     def __str__(self):
         """Format a string representation of this PartTestTemplate."""
-        return ' | '.join([self.part.name, self.test_name])
+        return self.test_name
 
     @staticmethod
     def get_api_url():
@@ -3790,6 +3797,78 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
             return []
 
         return [x.strip() for x in self.choices.split(',') if x.strip()]
+
+
+class PartTest(InvenTree.models.InvenTreeModel):
+    """Link a PartTestTemplate to a Part or PartCategory.
+
+    This model allows a single PartTestTemplate to map to
+    multiple Part or PartCategory instances.
+
+    - This allows a test template to be "reused" across multiple parts
+    - It allows a test to be defined against a Part, which will apply to that specific part
+    - It allows a test to be defined against a PartCategory, which will apply to all parts within that category
+
+    Attributes:
+        template: The PartTestTemplate to apply [ForeignKey]
+        part: The Part to which this test applies [ForeignKey, optional]
+        category: The PartCategory to which this test applies [ForeignKey, optional]
+    """
+
+    class Meta:
+        """Metaclass options for the PartTest model."""
+
+        verbose_name = _('Part Test')
+        unique_together = [('template', 'part'), ('template', 'category')]
+
+    def save(self, *args, **kwargs):
+        """Enforce 'clean' operation when saving a PartTest instance."""
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Custom cleaning step for this model.
+
+        Checks:
+        - A PartTest cannot be created with both a part and a category
+        """
+        super().clean()
+
+        if self.part and self.category:
+            msg = _('A test cannot be created with both a part and a category')
+            raise ValidationError({'part': msg, 'category': msg})
+
+        if not self.part and not self.category:
+            msg = _('A test must be associated with either a part or a category')
+            raise ValidationError({'part': msg, 'category': msg})
+
+    template = models.ForeignKey(
+        PartTestTemplate,
+        on_delete=models.CASCADE,
+        related_name='tests',
+        verbose_name=_('Test Template'),
+        help_text=_('Part test template to apply'),
+    )
+
+    part = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='tests',
+        blank=True,
+        null=True,
+        verbose_name=_('Part'),
+        help_text=_('Part to which this test applies'),
+    )
+
+    category = models.ForeignKey(
+        PartCategory,
+        on_delete=models.CASCADE,
+        related_name='tests',
+        blank=True,
+        null=True,
+        verbose_name=_('Part Category'),
+        help_text=_('Part category to which this test applies'),
+    )
 
 
 def validate_template_name(name):
