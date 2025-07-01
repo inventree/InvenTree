@@ -68,8 +68,7 @@ export function UserDrawer({
     instanceQuery: { isFetching, error }
   } = useInstance<UserDetailI>({
     endpoint: ApiEndpoints.user_list,
-    pk: id,
-    throwError: true
+    pk: id
   });
 
   const currentUserPk = useUserState(useShallow((s) => s.user?.pk));
