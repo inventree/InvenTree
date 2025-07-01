@@ -71,6 +71,8 @@ const MachineManagementPanel = Loadable(
 
 const PartParameterPanel = Loadable(lazy(() => import('./PartParameterPanel')));
 
+const TestTemplatePanel = Loadable(lazy(() => import('./TestTemplatePanel')));
+
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
@@ -198,6 +200,13 @@ export default function AdminCenter() {
         hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
+        name: 'test-templates',
+        label: t`Test Templates`,
+        icon: <IconClipboardCheck />,
+        content: <TestTemplatePanel />,
+        hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
         name: 'stocktake',
         label: t`Stocktake`,
         icon: <IconClipboardCheck />,
@@ -274,6 +283,7 @@ export default function AdminCenter() {
         panelIDs: [
           'part-parameters',
           'category-parameters',
+          'test-templates',
           'location-types',
           'stocktake'
         ]

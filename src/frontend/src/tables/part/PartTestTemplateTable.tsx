@@ -21,7 +21,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DescriptionColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -31,12 +36,14 @@ import {
 } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
-export default function PartTestTemplateTable({
+export function TestTemplateTable({
   partId,
-  partLocked
+  categoryId,
+  locked
 }: Readonly<{
-  partId: number;
-  partLocked?: boolean;
+  partId?: number;
+  categoryId?: number;
+  locked?: boolean;
 }>) {
   const table = useTable('part-test-template');
   const user = useUserState();
@@ -44,6 +51,15 @@ export default function PartTestTemplateTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      {
+        accessor: 'part',
+        title: t`Part`,
+        render: (record: any) => <PartColumn part={record.part_detail} />
+      },
+      CategoryColumn({
+        accessor: 'category_detail',
+        title: t`Category`
+      }),
       {
         accessor: 'test_name',
         switchable: false,
@@ -216,14 +232,14 @@ export default function PartTestTemplateTable({
 
       return [
         RowEditAction({
-          hidden: partLocked || !can_edit,
+          hidden: locked || !can_edit,
           onClick: () => {
             setSelectedTest(record.pk);
             editTestTemplate.open();
           }
         }),
         RowDeleteAction({
-          hidden: partLocked || !can_delete,
+          hidden: locked || !can_delete,
           onClick: () => {
             setSelectedTest(record.pk);
             deleteTestTemplate.open();
@@ -231,7 +247,7 @@ export default function PartTestTemplateTable({
         })
       ];
     },
-    [user, partId, partLocked]
+    [user, partId, locked]
   );
 
   const tableActions = useMemo(() => {
@@ -242,49 +258,69 @@ export default function PartTestTemplateTable({
         key='add-test-template'
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
-        hidden={partLocked || !can_add}
+        hidden={locked || !can_add}
       />
     ];
-  }, [user, partLocked]);
+  }, [user, locked]);
 
   return (
     <>
       {newTestTemplate.modal}
       {editTestTemplate.modal}
       {deleteTestTemplate.modal}
-      <Stack gap='xs'>
-        {partLocked && (
-          <Alert
-            title={t`Part is Locked`}
-            color='orange'
-            icon={<IconLock />}
-            p='xs'
-          >
-            <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
-          </Alert>
-        )}
-        <InvenTreeTable
-          url={apiUrl(ApiEndpoints.part_test_template_list)}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            params: {
-              part: partId,
-              part_detail: true
-            },
-            tableFilters: tableFilters,
-            tableActions: tableActions,
-            enableDownload: true,
-            rowActions: rowActions,
-            onRowClick: (row) => {
-              if (row.part && row.part != partId) {
-                // This test is defined for a different part
-                navigate(getDetailUrl(ModelType.part, row.part));
-              }
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.part_test_template_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            part: partId,
+            category: categoryId,
+            part_detail: true,
+            category_detail: true
+          },
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          enableDownload: true,
+          rowActions: rowActions,
+          onRowClick: (row) => {
+            if (row.part && row.part != partId) {
+              // This test is defined for a different part
+              navigate(getDetailUrl(ModelType.part, row.part));
             }
-          }}
-        />
-      </Stack>
+          }
+        }}
+      />
     </>
+  );
+}
+
+export function PartTestTemplateTable({
+  partId,
+  categoryId,
+  locked
+}: Readonly<{
+  partId?: number;
+  categoryId?: number;
+  locked?: boolean;
+}>) {
+  return (
+    <Stack gap='xs'>
+      {locked && (
+        <Alert
+          title={t`Part is Locked`}
+          color='orange'
+          icon={<IconLock />}
+          p='xs'
+        >
+          <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
+        </Alert>
+      )}
+      <TestTemplateTable
+        partId={partId}
+        categoryId={categoryId}
+        locked={locked}
+      />
+    </Stack>
   );
 }
