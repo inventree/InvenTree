@@ -190,7 +190,6 @@ class PartTestTemplateSerializer(
         fields = [
             'pk',
             'key',
-            'part',
             'test_name',
             'description',
             'enabled',

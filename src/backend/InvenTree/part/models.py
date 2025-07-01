@@ -2392,6 +2392,10 @@ class Part(
         if not self.testable:
             return
 
+        raise ValidationError('THIS NEEDS TO BE FIXED - DO NOT USE')
+
+        # TODO: Refactor this function
+        # The test_templates function must look at the Part and the Category
         for template in other.test_templates.all():
             # Skip if a test template already exists for this part / key combination
             if PartTestTemplate.objects.filter(
@@ -3707,36 +3711,15 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
     def validate_unique(self, exclude=None):
-        """Test that this test template is 'unique' within this part tree."""
-        if not self.part.testable:
-            raise ValidationError({
-                'part': _('Test templates can only be created for testable parts')
-            })
-
-        # Check that this test is unique for this part
-        # (including template parts of which this part is a variant)
-        parts = self.part.get_ancestors(include_self=True)
-
-        tests = PartTestTemplate.objects.filter(key=self.key, part__in=parts).exclude(
-            pk=self.pk
-        )
+        """Test that this test template is 'unique'."""
+        tests = PartTestTemplate.objects.filter(key=self.key).exclude(pk=self.pk)
 
         if tests.exists():
             raise ValidationError({
-                'test_name': _(
-                    'Test template with the same key already exists for part'
-                )
+                'test_name': _('Test template with the same key already exists')
             })
 
         super().validate_unique(exclude)
-
-    part = models.ForeignKey(
-        Part,
-        on_delete=models.CASCADE,
-        related_name='test_templates',
-        limit_choices_to={'testable': True},
-        verbose_name=_('Part'),
-    )
 
     test_name = models.CharField(
         blank=False,
