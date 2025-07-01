@@ -114,8 +114,7 @@ export default function StockDetail() {
     instance: stockitem,
     refreshInstance,
     refreshInstancePromise,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.stock_item_list,
     pk: id,
@@ -1053,9 +1052,8 @@ export default function StockDetail() {
       {findBySerialNumber.modal}
       {scanIntoLocation.dialog}
       <InstanceDetail
-        requiredRole={UserRoles.stock}
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
+        requiredPermission={ModelType.stockitem}
       >
         <Stack>
           {user.hasViewRole(UserRoles.stock_location) && (

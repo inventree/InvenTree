@@ -26,7 +26,6 @@ export default function InstanceDetail({
 
   useEffect(() => {
     if (query.isSuccess) {
-      console.log('loaded for the first time!!!');
       setLoaded(true);
     }
   }, [query.isSuccess]);

@@ -12,7 +12,6 @@ export interface UseInstanceResult {
   refreshInstance: () => void;
   refreshInstancePromise: () => Promise<QueryObserverResult<any, any>>;
   instanceQuery: any;
-  requestStatus: number;
   isLoaded: boolean;
 }
 
@@ -51,8 +50,6 @@ export function useInstance<T = any>({
 
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
-  const [requestStatus, setRequestStatus] = useState<number>(0);
-
   const instanceQuery = useQuery<T>({
     queryKey: [
       'instance',
@@ -82,7 +79,6 @@ export function useInstance<T = any>({
           params: params
         })
         .then((response) => {
-          setRequestStatus(response.status);
           switch (response.status) {
             case 200:
               setInstance(response.data);
@@ -120,7 +116,6 @@ export function useInstance<T = any>({
     refreshInstance,
     refreshInstancePromise,
     instanceQuery,
-    requestStatus,
     isLoaded
   };
 }
