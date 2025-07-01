@@ -22,7 +22,7 @@ export default function InstanceDetail({
 }>) {
   const user = useUserState();
 
-  if (loading || !user.isLoggedIn()) {
+  if (!user.isLoggedIn()) {
     return <LoadingOverlay />;
   }
 
@@ -42,5 +42,10 @@ export default function InstanceDetail({
     return <PermissionDenied />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <LoadingOverlay visible={loading} />
+      {children}
+    </>
+  );
 }
