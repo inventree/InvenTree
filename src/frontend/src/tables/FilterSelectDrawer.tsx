@@ -145,6 +145,7 @@ function FilterElement({
           data={valueOptions}
           searchable={filterProps.type == 'choice'}
           label={t`Value`}
+          withScrollArea={false}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}
           maxDropdownHeight={800}
@@ -258,7 +259,7 @@ function FilterAddGroup({
         placeholder={t`Select filter`}
         label={t`Filter`}
         onChange={(value: string | null) => setSelectedFilter(value)}
-        maxDropdownHeight={800}
+        maxDropdownHeight={400}
       />
       {selectedFilter && filterProps && (
         <FilterElement
