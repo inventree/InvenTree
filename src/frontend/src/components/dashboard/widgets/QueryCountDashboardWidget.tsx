@@ -39,6 +39,7 @@ function QueryCountWidget({
     queryKey: ['dashboard-query-count', modelType, params],
     enabled: user.hasViewPermission(modelType),
     refetchOnMount: true,
+    refetchInterval: 5 * 60 * 1000, // 5 minutes
     queryFn: () => {
       return api
         .get(apiUrl(modelProperties.api_endpoint), {
