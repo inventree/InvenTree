@@ -97,7 +97,7 @@ def registration_enabled():
             return True
         else:
             logger.warning(
-                'Registration cannot be enabled, because EMAIL_HOST is not configured.'
+                'INVE-W11: Registration cannot be enabled, because EMAIL_HOST is not configured.'
             )
     return False
 
