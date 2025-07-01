@@ -93,7 +93,7 @@ import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
-import { PartTestTemplateTable } from '../../tables/part/PartTestTemplateTable';
+import { PartTestTable } from '../../tables/part/PartTestTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
@@ -655,11 +655,7 @@ export default function PartDetail() {
         label: t`Test Templates`,
         icon: <IconTestPipe />,
         hidden: !part.testable,
-        content: part?.pk ? (
-          <PartTestTemplateTable partId={part?.pk} />
-        ) : (
-          <Skeleton />
-        )
+        content: part?.pk ? <PartTestTable partId={part?.pk} /> : <Skeleton />
       },
       {
         name: 'related_parts',
