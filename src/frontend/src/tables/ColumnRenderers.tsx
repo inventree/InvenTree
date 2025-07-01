@@ -3,7 +3,12 @@
  */
 import { t } from '@lingui/core/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
-import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
+import {
+  IconBell,
+  IconExclamationCircle,
+  IconLink,
+  IconLock
+} from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
@@ -144,8 +149,9 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
 
             window.open(url, '_blank', 'noopener,noreferrer');
           }}
+          title={url}
         >
-          {url}
+          <IconLink size={18} />
         </Anchor>
       );
     },
