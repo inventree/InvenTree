@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Badge, Stack, Text } from '@mantine/core';
-import { IconLock } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -38,12 +37,10 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export function TestTemplateTable({
   partId,
-  categoryId,
-  locked
+  categoryId
 }: Readonly<{
   partId?: number;
   categoryId?: number;
-  locked?: boolean;
 }>) {
   const table = useTable('part-test-template');
   const user = useUserState();
@@ -67,19 +64,17 @@ export function TestTemplateTable({
         render: (record: any) => {
           const extra: ReactNode[] = [];
 
-          if (record.part != partId) {
-            extra.push(
-              <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
-            );
-          }
+          // TODO: Look into this again
+          // if (record.part != partId) {
+          //   extra.push(
+          //     <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
+          //   );
+          // }
 
           return (
             <TableHoverCard
               value={
-                <Text
-                  fw={record.required && 700}
-                  c={record.enabled ? undefined : 'red'}
-                >
+                <Text c={record.enabled ? undefined : 'red'}>
                   {record.test_name}
                 </Text>
               }
@@ -218,11 +213,11 @@ export function TestTemplateTable({
       const can_edit = user.hasChangeRole(UserRoles.part);
       const can_delete = user.hasDeleteRole(UserRoles.part);
 
-      if (record.part != partId) {
-        // This test is defined for a parent part
+      // This test is defined for a different part
+      if (partId && record.part != partId) {
         return [
           RowViewAction({
-            title: t`View Parent Part`,
+            title: t`View Part`,
             modelType: ModelType.part,
             modelId: record.part,
             navigate: navigate
@@ -230,16 +225,28 @@ export function TestTemplateTable({
         ];
       }
 
+      // This test is defined for a different category
+      if (categoryId && record.category != categoryId) {
+        return [
+          RowViewAction({
+            title: t`View Category`,
+            modelType: ModelType.partcategory,
+            modelId: record.category,
+            navigate: navigate
+          })
+        ];
+      }
+
       return [
         RowEditAction({
-          hidden: locked || !can_edit,
+          hidden: !can_edit,
           onClick: () => {
             setSelectedTest(record.pk);
             editTestTemplate.open();
           }
         }),
         RowDeleteAction({
-          hidden: locked || !can_delete,
+          hidden: !can_delete,
           onClick: () => {
             setSelectedTest(record.pk);
             deleteTestTemplate.open();
@@ -247,7 +254,7 @@ export function TestTemplateTable({
         })
       ];
     },
-    [user, partId, locked]
+    [user, partId]
   );
 
   const tableActions = useMemo(() => {
@@ -258,10 +265,10 @@ export function TestTemplateTable({
         key='add-test-template'
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
-        hidden={locked || !can_add}
+        hidden={!can_add}
       />
     ];
-  }, [user, locked]);
+  }, [user]);
 
   return (
     <>
@@ -297,30 +304,14 @@ export function TestTemplateTable({
 
 export function PartTestTemplateTable({
   partId,
-  categoryId,
-  locked
+  categoryId
 }: Readonly<{
   partId?: number;
   categoryId?: number;
-  locked?: boolean;
 }>) {
   return (
     <Stack gap='xs'>
-      {locked && (
-        <Alert
-          title={t`Part is Locked`}
-          color='orange'
-          icon={<IconLock />}
-          p='xs'
-        >
-          <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
-        </Alert>
-      )}
-      <TestTemplateTable
-        partId={partId}
-        categoryId={categoryId}
-        locked={locked}
-      />
+      <TestTemplateTable partId={partId} categoryId={categoryId} />
     </Stack>
   );
 }
