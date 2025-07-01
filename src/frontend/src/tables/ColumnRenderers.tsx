@@ -240,6 +240,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
 export function StatusColumn({
   model,
   sortable,
+  switchable,
   ordering,
   accessor,
   title,
@@ -247,6 +248,7 @@ export function StatusColumn({
 }: {
   model: ModelType;
   sortable?: boolean;
+  switchable?: boolean;
   accessor?: string;
   ordering?: string;
   hidden?: boolean;
@@ -255,6 +257,7 @@ export function StatusColumn({
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
+    switchable: switchable ?? true,
     ordering: ordering,
     title: title,
     hidden: hidden,

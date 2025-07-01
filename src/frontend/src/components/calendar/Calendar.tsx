@@ -25,7 +25,7 @@ import {
   IconDownload,
   IconFilter
 } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
@@ -66,6 +66,11 @@ export default function Calendar({
     },
     [state.selectMonth]
   );
+
+  useEffect(() => {
+    // Select initial month on first calendar render
+    state.ref?.current?.getApi()?.gotoDate(new Date());
+  }, []);
 
   // Callback when the calendar date range is adjusted
   const datesSet = useCallback(
