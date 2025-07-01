@@ -222,10 +222,6 @@ function stockItemTableColumns({
       accessor: 'batch',
       sortable: true
     },
-    // LocationColumn({
-    //   hidden: !showLocation,
-    //   accessor: 'location_detail'
-    // }),
     PathColumn({
       accessor: 'location_detail',
       title: t`Location`,
