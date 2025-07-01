@@ -3,7 +3,12 @@
  */
 import { t } from '@lingui/core/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
-import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
+import {
+  IconBell,
+  IconExclamationCircle,
+  IconLink,
+  IconLock
+} from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
@@ -16,7 +21,7 @@ import { formatCurrency, formatDate } from '../defaults/formatters';
 import { resolveItem } from '../functions/conversion';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import type { TableColumn, TableColumnProps } from './Column';
-import { ProjectCodeHoverCard } from './TableHoverCard';
+import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
 export function PartColumn({
@@ -76,28 +81,57 @@ export function CompanyColumn({
   );
 }
 
-export function LocationColumn(props: TableColumnProps): TableColumn {
+/**
+ * Return a column which displays a tree path for a given record.
+ */
+export function PathColumn(props: TableColumnProps): TableColumn {
   return {
+    ...props,
+    accessor: props.accessor ?? 'path',
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? '');
+
+      if (!instance || !instance.name) {
+        return '-';
+      }
+
+      const name = instance.name ?? '';
+      const pathstring = instance.pathstring || name;
+
+      if (name == pathstring) {
+        return <Text>{name}</Text>;
+      }
+
+      return (
+        <TableHoverCard
+          value={<Text>{instance.name}</Text>}
+          icon='sitemap'
+          title={props.title}
+          extra={[<Text>{instance.pathstring}</Text>]}
+        />
+      );
+    }
+  };
+}
+
+export function LocationColumn(props: TableColumnProps): TableColumn {
+  return PathColumn({
     accessor: 'location',
     title: t`Location`,
     sortable: true,
     ordering: 'location',
-    render: (record: any) => {
-      const location = resolveItem(record, props.accessor ?? '');
-
-      if (!location) {
-        return (
-          <Text
-            size='sm'
-            style={{ fontStyle: 'italic' }}
-          >{t`No location set`}</Text>
-        );
-      }
-
-      return <Text size='sm'>{location.pathstring}</Text>;
-    },
     ...props
-  };
+  });
+}
+
+export function CategoryColumn(props: TableColumnProps): TableColumn {
+  return PathColumn({
+    accessor: 'category',
+    title: t`Category`,
+    sortable: true,
+    ordering: 'category',
+    ...props
+  });
 }
 
 export function BooleanColumn(props: TableColumn): TableColumn {
@@ -144,8 +178,9 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
 
             window.open(url, '_blank', 'noopener,noreferrer');
           }}
+          title={url}
         >
-          {url}
+          <IconLink size={18} />
         </Anchor>
       );
     },
