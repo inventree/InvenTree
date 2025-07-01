@@ -44,9 +44,9 @@ export function Thumbnail({
     <HoverCard
       disabled={!hover}
       withinPortal
-      position='left'
       shadow='xs'
-      closeDelay={100}
+      openDelay={300}
+      closeDelay={50}
     >
       <HoverCard.Target>
         <Group align={align ?? 'left'} gap='xs' wrap='nowrap'>
