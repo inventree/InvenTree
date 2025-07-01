@@ -59,7 +59,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
-  const { isLoggedIn, isStaff } = useUserState();
+  const { isLoggedIn } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
 
@@ -71,10 +71,10 @@ export function Header() {
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
-    queryKey: ['notification-count'],
+    queryKey: ['notification-count', visibility],
     enabled: isLoggedIn() && visibility === 'visible',
     queryFn: async () => {
-      if (!isLoggedIn()) {
+      if (!isLoggedIn() || visibility != 'visible') {
         return null;
       }
 
