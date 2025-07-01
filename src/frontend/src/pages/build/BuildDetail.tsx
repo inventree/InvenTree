@@ -334,7 +334,7 @@ export default function BuildDetail() {
       },
       {
         name: 'line-items',
-        label: t`Required Stock`,
+        label: t`Required Items`,
         icon: <IconListNumbers />,
         content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
       },
