@@ -35,7 +35,6 @@ export function useInstance<T = any>({
   hasPrimaryKey = true,
   refetchOnMount = true,
   refetchOnWindowFocus = false,
-  throwError = false,
   updateInterval
 }: {
   endpoint: ApiEndpoints;
@@ -46,7 +45,6 @@ export function useInstance<T = any>({
   defaultValue?: any;
   refetchOnMount?: boolean;
   refetchOnWindowFocus?: boolean;
-  throwError?: boolean;
   updateInterval?: number;
 }): UseInstanceResult {
   const api = useApi();
@@ -93,20 +91,16 @@ export function useInstance<T = any>({
               setInstance(defaultValue);
               return defaultValue;
           }
-        })
-        .catch((error) => {
-          setRequestStatus(error.response?.status || 0);
-          setInstance(defaultValue);
-          console.error(`ERR: Error fetching instance ${url}:`, error);
-
-          if (throwError) throw error;
-
-          return defaultValue;
         });
     },
     refetchOnMount: refetchOnMount,
     refetchOnWindowFocus: refetchOnWindowFocus ?? false,
-    refetchInterval: updateInterval
+    refetchInterval: updateInterval,
+    throwOnError: (error: any) => {
+      setRequestStatus(error.response?.status ?? error.status ?? 0);
+      setInstance(defaultValue);
+      return true;
+    }
   });
 
   const isLoaded = useMemo(() => {
