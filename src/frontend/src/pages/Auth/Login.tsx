@@ -109,7 +109,7 @@ export default function Login() {
             ) : (
               <>
                 <AuthenticationForm />
-                {both_reg_enabled === false && (
+                {both_reg_enabled != false && (
                   <Text ta='center' size={'xs'} mt={'md'}>
                     <Trans>Don&apos;t have an account?</Trans>{' '}
                     <Anchor
