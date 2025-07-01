@@ -1,37 +1,45 @@
-import { LoadingOverlay } from '@mantine/core';
+import { Center, Container, Loader } from '@mantine/core';
 
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { useUserState } from '../../states/UserState';
 import ClientError from '../errors/ClientError';
 import PermissionDenied from '../errors/PermissionDenied';
 import ServerError from '../errors/ServerError';
 
 export default function InstanceDetail({
-  status,
-  loading,
+  query,
   children,
   requiredRole,
   requiredPermission
 }: Readonly<{
-  status: number;
-  loading: boolean;
+  query: UseQueryResult;
   children: React.ReactNode;
   requiredRole?: UserRoles;
   requiredPermission?: ModelType;
 }>) {
   const user = useUserState();
 
-  if (!user.isLoggedIn()) {
-    return <LoadingOverlay />;
-  }
+  const [loaded, setLoaded] = useState<boolean>(false);
 
-  if (status >= 500) {
-    return <ServerError status={status} />;
-  }
+  useEffect(() => {
+    if (query.isSuccess) {
+      console.log('loaded for the first time!!!');
+      setLoaded(true);
+    }
+  }, [query.isSuccess]);
 
-  if (status >= 400) {
-    return <ClientError status={status} />;
+  if (query.isError) {
+    const reason = query.failureReason as any;
+    const statusCode = reason?.response?.status ?? reason?.status ?? 0;
+
+    if (statusCode >= 500) {
+      return <ServerError status={statusCode} />;
+    }
+
+    return <ClientError status={statusCode} />;
   }
 
   if (requiredRole && !user.hasViewRole(requiredRole)) {
@@ -42,10 +50,16 @@ export default function InstanceDetail({
     return <PermissionDenied />;
   }
 
-  return (
-    <>
-      <LoadingOverlay visible={loading} />
-      {children}
-    </>
-  );
+  if (!loaded || !user.isLoggedIn()) {
+    // Return a loader for the first page load
+    return (
+      <Center>
+        <Container>
+          <Loader />
+        </Container>
+      </Center>
+    );
+  }
+
+  return <>{children}</>;
 }

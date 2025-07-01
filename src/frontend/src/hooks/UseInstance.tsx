@@ -95,12 +95,7 @@ export function useInstance<T = any>({
     },
     refetchOnMount: refetchOnMount,
     refetchOnWindowFocus: refetchOnWindowFocus ?? false,
-    refetchInterval: updateInterval,
-    throwOnError: (error: any) => {
-      setRequestStatus(error.response?.status ?? error.status ?? 0);
-      setInstance(defaultValue);
-      return true;
-    }
+    refetchInterval: updateInterval
   });
 
   const isLoaded = useMemo(() => {
