@@ -102,7 +102,7 @@ export default function useCalendar({
 
   const query = useQuery({
     enabled: !!startDate && !!endDate,
-    queryKey: ['calendar', name, endpoint, queryFilters],
+    queryKey: ['calendar', name, endpoint, queryFilters, startDate, endDate],
     throwOnError: (error: any) => {
       showApiErrorMessage({
         error: error,
