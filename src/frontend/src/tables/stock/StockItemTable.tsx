@@ -26,14 +26,14 @@ import {
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   DateColumn,
   DescriptionColumn,
-  LocationColumn,
   PartColumn,
+  PathColumn,
   StatusColumn
 } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
@@ -222,9 +222,10 @@ function stockItemTableColumns({
       accessor: 'batch',
       sortable: true
     },
-    LocationColumn({
-      hidden: !showLocation,
-      accessor: 'location_detail'
+    PathColumn({
+      accessor: 'location_detail',
+      title: t`Location`,
+      hidden: !showLocation
     }),
     {
       accessor: 'purchase_order',

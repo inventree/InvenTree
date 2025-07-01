@@ -51,7 +51,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
@@ -75,8 +75,7 @@ export default function BuildDetail() {
   const {
     instance: build,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
@@ -621,11 +620,7 @@ export default function BuildDetail() {
       {holdOrder.modal}
       {issueOrder.modal}
       {completeOrder.modal}
-      <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
-        requiredRole={UserRoles.build}
-      >
+      <InstanceDetail query={instanceQuery} requiredRole={UserRoles.build}>
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Build Order`}: ${build.reference}`}

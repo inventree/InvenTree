@@ -35,7 +35,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { useServerApiState } from '../../../../states/ApiState';
+import { useServerApiState } from '../../../../states/ServerApiState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';

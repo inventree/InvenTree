@@ -47,7 +47,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
@@ -68,8 +68,7 @@ export default function SalesOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_list,
     pk: id,
@@ -563,8 +562,7 @@ export default function SalesOrderDetail() {
       {editSalesOrder.modal}
       {duplicateSalesOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>

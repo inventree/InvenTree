@@ -8,7 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { StylishText } from '../../../../components/items/StylishText';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
-import { useServerApiState } from '../../../../states/ApiState';
+import { useServerApiState } from '../../../../states/ServerApiState';
 import { useUserState } from '../../../../states/UserState';
 
 const PluginListTable = Loadable(

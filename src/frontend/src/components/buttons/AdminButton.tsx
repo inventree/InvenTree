@@ -6,7 +6,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { eventModified } from '@lib/functions/Navigation';
 import { generateUrl } from '../../functions/urls';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import { ActionButton } from './ActionButton';
 

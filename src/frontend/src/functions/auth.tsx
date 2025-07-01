@@ -7,8 +7,8 @@ import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { useServerApiState } from '../states/ServerApiState';
 import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
@@ -356,6 +356,7 @@ export const checkLoginState = async (
   redirect?: any,
   no_redirect?: boolean
 ) => {
+  const { setLoginChecked } = useUserState.getState();
   setApiDefaults();
 
   if (redirect == '/') {
@@ -366,6 +367,7 @@ export const checkLoginState = async (
 
   // Callback function when login is successful
   const loginSuccess = () => {
+    setLoginChecked(true);
     showLoginNotification({
       title: t`Logged In`,
       message: t`Successfully logged in`
@@ -390,8 +392,10 @@ export const checkLoginState = async (
   if (isLoggedIn()) {
     loginSuccess();
   } else if (!no_redirect) {
+    setLoginChecked(true);
     navigate('/login', { state: redirect });
   }
+  setLoginChecked(true);
 };
 
 function handleSuccessFullAuth(

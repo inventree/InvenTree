@@ -64,8 +64,7 @@ export default function Stock() {
   const {
     instance: location,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.stock_location_list,
     hasPrimaryKey: true,
@@ -423,8 +422,7 @@ export default function Stock() {
       {scanInStockItem.dialog}
       {scanInStockLocation.dialog}
       <InstanceDetail
-        status={requestStatus}
-        loading={id ? instanceQuery.isFetching : false}
+        query={instanceQuery}
         requiredRole={UserRoles.stock_location}
       >
         <Stack>

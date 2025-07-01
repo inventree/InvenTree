@@ -16,8 +16,8 @@ import {
   doBasicLogin,
   followRedirect
 } from '../../functions/auth';
-import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { Wrapper } from './Layout';
 
 export default function Login() {

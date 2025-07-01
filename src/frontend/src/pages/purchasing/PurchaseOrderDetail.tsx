@@ -41,7 +41,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
@@ -59,8 +59,7 @@ export default function PurchaseOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
@@ -514,8 +513,7 @@ export default function PurchaseOrderDetail() {
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>

@@ -86,7 +86,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
@@ -130,8 +130,7 @@ export default function PartDetail() {
   const {
     instance: part,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.part_list,
     pk: id,
@@ -723,8 +722,7 @@ export default function PartDetail() {
             default:
               break;
           }
-        })
-        .catch(() => {});
+        });
 
       return revisions;
     }
@@ -1029,11 +1027,7 @@ export default function PartDetail() {
       {orderPartsWizard.wizard}
       {findBySerialNumber.modal}
       {transferStockItems.modal}
-      <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
-        requiredRole={UserRoles.part}
-      >
+      <InstanceDetail query={instanceQuery} requiredRole={UserRoles.part}>
         <Stack gap='xs'>
           {user.hasViewRole(UserRoles.part_category) && (
             <NavigationTree

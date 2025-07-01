@@ -84,7 +84,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
@@ -114,8 +114,7 @@ export default function StockDetail() {
     instance: stockitem,
     refreshInstance,
     refreshInstancePromise,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.stock_item_list,
     pk: id,
@@ -491,9 +490,6 @@ export default function StockDetail() {
           } else {
             return null;
           }
-        })
-        .catch(() => {
-          return null;
         });
     }
   });
@@ -504,7 +500,7 @@ export default function StockDetail() {
       return true;
     }
 
-    if (trackedBomItemQuery.data != null) {
+    if (!!trackedBomItemQuery.data) {
       return trackedBomItemQuery.data;
     }
 
@@ -1056,9 +1052,8 @@ export default function StockDetail() {
       {findBySerialNumber.modal}
       {scanIntoLocation.dialog}
       <InstanceDetail
-        requiredRole={UserRoles.stock}
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
+        requiredPermission={ModelType.stockitem}
       >
         <Stack>
           {user.hasViewRole(UserRoles.stock_location) && (
