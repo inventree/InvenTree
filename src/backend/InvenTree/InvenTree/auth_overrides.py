@@ -20,6 +20,8 @@ from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
 from users.models import ApiToken
 
+from .helpers_email import is_email_configured
+
 logger = structlog.get_logger('inventree')
 
 
@@ -91,7 +93,7 @@ def registration_enabled():
         get_global_setting('LOGIN_ENABLE_REG')
         or InvenTree.sso.sso_registration_enabled()
     ):
-        if settings.EMAIL_HOST:
+        if is_email_configured:
             return True
         else:
             logger.warning(
