@@ -39,7 +39,7 @@ function QueryCountWidget({
 
   const query = useQuery({
     queryKey: ['dashboard-query-count', modelType, params, visibility],
-    enabled: user.hasViewPermission(modelType), // && visibility === 'visible',
+    enabled: user.hasViewPermission(modelType) && visibility === 'visible',
     refetchOnMount: true,
     refetchInterval: 10 * 60 * 1000, // 10 minute refetch interval
     queryFn: () => {
