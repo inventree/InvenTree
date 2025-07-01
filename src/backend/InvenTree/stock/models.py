@@ -571,8 +571,10 @@ class StockItem(
         for key in ['parent_id', 'part_id', 'build_id']:
             data.pop(key, None)
 
+        tree_id = kwargs.pop('tree_id', 0)
+
         data['parent'] = kwargs.pop('parent', None)
-        data['tree_id'] = kwargs.pop('tree_id', 0)
+        data['tree_id'] = tree_id
         data['level'] = kwargs.pop('level', 0)
         data['rght'] = kwargs.pop('rght', 0)
         data['lft'] = kwargs.pop('lft', 0)
@@ -588,6 +590,9 @@ class StockItem(
 
         # Create the StockItem objects in bulk
         StockItem.objects.bulk_create(items)
+
+        # We will need to rebuild the stock item tree manually, due to the bulk_create operation
+        InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_item_tree, tree_id)
 
         # Return the newly created StockItem objects
         return StockItem.objects.filter(part=part, serial__in=serials)
@@ -1809,11 +1814,6 @@ class StockItem(
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
-
-        # Rebuild the stock tree
-        InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='stock'
-        )
 
         return items
 
