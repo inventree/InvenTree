@@ -15,7 +15,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -1566,10 +1566,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Calculate 'available_stock' based on previously annotated fields
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1603,10 +1607,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Calculate 'available_substitute_stock' field
         queryset = queryset.annotate(
-            available_substitute_stock=ExpressionWrapper(
-                F('substitute_stock')
-                - F('substitute_build_allocations')
-                - F('substitute_sales_allocations'),
+            available_substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('substitute_stock')
+                    - F('substitute_build_allocations')
+                    - F('substitute_sales_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1629,10 +1637,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=FloatField(),
+                ),
+                0,
                 output_field=FloatField(),
             )
         )

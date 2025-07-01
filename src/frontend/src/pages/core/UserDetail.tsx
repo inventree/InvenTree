@@ -29,7 +29,7 @@ export default function UserDetail() {
   const user = useUserState();
   const settings = useGlobalSettingsState();
 
-  const { instance, instanceQuery, requestStatus } = useInstance({
+  const { instance, instanceQuery } = useInstance({
     endpoint: ApiEndpoints.user_list,
     pk: id
   });
@@ -214,7 +214,7 @@ export default function UserDetail() {
   }, [instance, instanceQuery]);
 
   return (
-    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+    <InstanceDetail query={instanceQuery}>
       <Stack gap='xs'>
         <PageDetail
           title={`${t`User`}: ${instance.username}`}

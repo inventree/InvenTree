@@ -14,6 +14,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   DescriptionColumn,
+  PartColumn,
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -40,6 +41,7 @@ export default function PartBuildAllocationsTable({
         accessor: 'build',
         title: t`Build Order`,
         sortable: true,
+        switchable: false,
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
@@ -50,6 +52,11 @@ export default function PartBuildAllocationsTable({
           </Group>
         )
       },
+      {
+        accessor: 'part',
+        title: t`Assembly`,
+        render: (record: any) => <PartColumn part={record.part_detail} />
+      },
       DescriptionColumn({
         accessor: 'build_detail.title'
       }),
@@ -59,11 +66,13 @@ export default function PartBuildAllocationsTable({
       StatusColumn({
         accessor: 'build_detail.status',
         model: ModelType.build,
-        title: t`Order Status`
+        title: t`Order Status`,
+        switchable: false
       }),
       {
         accessor: 'allocated',
         sortable: true,
+        switchable: false,
         title: t`Required Stock`,
         render: (record: any) => (
           <ProgressBar
@@ -118,7 +127,7 @@ export default function PartBuildAllocationsTable({
           build_detail: true,
           order_outstanding: true
         },
-        enableColumnSwitching: false,
+        enableColumnSwitching: true,
         enableSearch: false,
         rowActions: rowActions,
         rowExpansion: rowExpansion
