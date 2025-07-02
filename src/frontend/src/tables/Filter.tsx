@@ -298,3 +298,14 @@ export function PartCategoryFilter(): TableFilter {
     modelRenderer: (instance: any) => instance.name
   };
 }
+
+export function StockLocationFilter(): TableFilter {
+  return {
+    name: 'location',
+    label: t`Location`,
+    description: t`Filter by stock location`,
+    apiUrl: apiUrl(ApiEndpoints.stock_location_list),
+    model: ModelType.stocklocation,
+    modelRenderer: (instance: any) => instance.name
+  };
+}

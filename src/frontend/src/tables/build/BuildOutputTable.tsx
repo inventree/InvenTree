@@ -46,7 +46,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import { StatusFilterOptions, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -350,7 +350,8 @@ export default function BuildOutputTable({
         label: t`Status`,
         description: t`Filter by stock status`,
         choiceFunction: StatusFilterOptions(ModelType.stockitem)
-      }
+      },
+      StockLocationFilter()
     ];
   }, []);
 
