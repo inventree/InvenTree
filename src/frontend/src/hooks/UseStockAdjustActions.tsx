@@ -32,6 +32,7 @@ interface StockAdjustActionProps {
 interface StockAdjustActionReturnProps {
   modals: UseModalReturn[];
   menuActions: ActionDropdownItem[];
+  hasActions: boolean;
 }
 
 /**
@@ -167,8 +168,13 @@ export function useStockAdjustActions(
     return menuActions;
   }, [props, user]);
 
+  const hasActions: boolean = useMemo(() => {
+    return menuActions.length > 0;
+  }, [menuActions]);
+
   return {
     modals,
-    menuActions
+    menuActions,
+    hasActions
   };
 }

@@ -514,7 +514,7 @@ export function StockItemTable({
     [stockExpiryEnabled]
   );
 
-  const tableActionParams: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
       model: ModelType.stockitem,
@@ -552,7 +552,7 @@ export function StockItemTable({
   });
 
   const stockAdjustActions = useStockAdjustActions({
-    formProps: tableActionParams
+    formProps: stockOperationProps
   });
 
   const tableActions = useMemo(() => {
@@ -586,7 +586,13 @@ export function StockItemTable({
         onClick={() => newStockItem.open()}
       />
     ];
-  }, [user, allowAdd, table.hasSelectedRecords, table.selectedRecords]);
+  }, [
+    user,
+    allowAdd,
+    table.hasSelectedRecords,
+    table.selectedRecords,
+    stockAdjustActions
+  ]);
 
   return (
     <>
