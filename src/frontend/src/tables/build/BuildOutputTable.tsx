@@ -27,7 +27,6 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
@@ -380,14 +379,7 @@ export default function BuildOutputTable({
 
   const tableActions = useMemo(() => {
     return [
-      <ActionDropdown
-        key='stock-actions'
-        tooltip={t`Stock Actions`}
-        icon={<InvenTreeIcon icon='stock' />}
-        disabled={!table.hasSelectedRecords}
-        actions={stockAdjustActions.menuActions}
-        hidden={!stockAdjustActions.hasActions}
-      />,
+      stockAdjustActions.dropdown,
       <ActionButton
         key='complete-selected-outputs'
         tooltip={t`Complete selected outputs`}
@@ -433,7 +425,7 @@ export default function BuildOutputTable({
     user,
     table.selectedRecords,
     table.hasSelectedRecords,
-    stockAdjustActions
+    stockAdjustActions.dropdown
   ]);
 
   const rowActions = useCallback(

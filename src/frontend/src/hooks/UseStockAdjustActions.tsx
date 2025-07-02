@@ -1,8 +1,9 @@
 import { UserRoles } from '@lib/index';
 import type { UseModalReturn } from '@lib/types/Modals';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import type { ActionDropdownItem } from '../components/items/ActionDropdown';
+import { ActionDropdown } from '../components/items/ActionDropdown';
 import {
   type StockOperationProps,
   useAddStockItem,
@@ -19,6 +20,7 @@ import { useUserState } from '../states/UserState';
 
 interface StockAdjustActionProps {
   formProps: StockOperationProps;
+  enabled?: boolean;
   add?: boolean;
   assign?: boolean;
   count?: boolean;
@@ -31,6 +33,7 @@ interface StockAdjustActionProps {
 
 interface StockAdjustActionReturnProps {
   modals: UseModalReturn[];
+  dropdown: ReactNode;
   menuActions: ActionDropdownItem[];
   hasActions: boolean;
 }
@@ -56,6 +59,7 @@ export function useStockAdjustActions(
   const removeStock = useRemoveStockItem(props.formProps);
   const transferStock = useTransferStockItem(props.formProps);
 
+  // Construct a list of modals available for stock adjustment actions
   const modals: UseModalReturn[] = useMemo(() => {
     const modals: UseModalReturn[] = [];
 
@@ -77,6 +81,7 @@ export function useStockAdjustActions(
     return modals;
   }, [props, user]);
 
+  // Construct a list of actions available in the stock adjustment dropdown menu
   const menuActions: ActionDropdownItem[] = useMemo(() => {
     const menuActions: ActionDropdownItem[] = [];
 
@@ -168,13 +173,34 @@ export function useStockAdjustActions(
     return menuActions;
   }, [props, user]);
 
+  // Determine if there are any items selected
+  const hasItems: boolean = useMemo(() => {
+    return (props.formProps?.items?.length ?? 0) > 0;
+  }, [props.formProps.items]);
+
+  // Determine if there are any actions available
   const hasActions: boolean = useMemo(() => {
     return menuActions.length > 0;
   }, [menuActions]);
 
+  // Construct a dropdown menu for stock actions
+  const dropdown: ReactNode = useMemo(() => {
+    return (
+      <ActionDropdown
+        key='stock-adjust-actions'
+        tooltip={t`Stock Actions`}
+        icon={<InvenTreeIcon icon='stock' />}
+        actions={menuActions}
+        disabled={props.enabled == false || !hasItems}
+        hidden={!hasActions}
+      />
+    );
+  }, [props.enabled, hasActions, hasItems, menuActions]);
+
   return {
     modals,
     menuActions,
-    hasActions
+    hasActions,
+    dropdown
   };
 }
