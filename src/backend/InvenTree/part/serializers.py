@@ -480,8 +480,10 @@ class TemplateUniquenessListSerializer(serializers.ListSerializer):
     ]
 
 
-class PartParameterBulkSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartParameterBulkSerializer(serializers.ModelSerializer):
     """JSON serializers for the PartParameter model."""
+
+    validators = []
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -492,7 +494,7 @@ class PartParameterBulkSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for the serializer."""
-        serializers.ModelSerializer.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class DuplicatePartSerializer(serializers.Serializer):
