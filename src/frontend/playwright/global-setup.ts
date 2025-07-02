@@ -28,7 +28,9 @@ async function globalSetup(config: FullConfig) {
   while (tries--) {
     // Perform GET request to the API URL
     console.log('... waiting for API to be available at', apiUrl, '...');
-    const response = await apiContext.get(apiUrl, { timeout: 5000 });
+    const response = await apiContext
+      .get(apiUrl, { timeout: 5000 })
+      .catch(() => {});
 
     if (response.ok() && response.status() === 200) {
       console.log('... API is available!');
