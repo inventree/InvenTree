@@ -62,8 +62,12 @@ export const doCachedLogin = async (
     console.log(`Using cached login state for ${username}`);
     await navigate(page, 'http://localhost:5173/web/');
     await navigate(page, url);
-    await page.waitForURL('**/web/**');
+
+    await page.waitForTimeout(2500);
+    await page.getByRole('link', { name: 'Dashboard' }).waitFor();
+    await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
     await page.waitForLoadState('load');
+    await page.waitForURL('/web**');
     return page;
   }
 
@@ -72,12 +76,12 @@ export const doCachedLogin = async (
 
   console.log(`No cache found - logging in for ${username}`);
 
+  // Ensure we start from the login page
+  await navigate(page, 'http://localhost:5173/web/');
+
   // Completely clear the browser cache and cookies, etc
   await page.context().clearCookies();
   await page.context().clearPermissions();
-
-  // Ensure we start from the login page
-  await navigate(page, 'http://localhost:5173/web/');
 
   await doLogin(page, username, password);
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
