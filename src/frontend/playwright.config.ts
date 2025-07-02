@@ -36,6 +36,10 @@ const WEB_SERVER_CMD: string = IS_CI
   ? 'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi'
   : 'invoke dev.server -a 127.0.0.1:8000';
 
+const BASE_URL: string = IS_CI
+  ? 'http://localhost:8000'
+  : 'http://localhost:5173';
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: false,
@@ -92,7 +96,7 @@ export default defineConfig({
   ],
   globalSetup: './playwright/global-setup.ts',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: BASE_URL,
     headless: IS_CI ? true : undefined,
     trace: 'on-first-retry',
     contextOptions: {
