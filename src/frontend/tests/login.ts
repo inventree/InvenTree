@@ -23,7 +23,7 @@ export const doLogin = async (page, options?: LoginOptions) => {
 
   await navigate(page, loginUrl, {
     baseUrl: options?.baseUrl,
-    waitUntil: 'load'
+    waitUntil: 'networkidle'
   });
 
   await expect(page).toHaveTitle(/^InvenTree.*$/);
@@ -31,6 +31,8 @@ export const doLogin = async (page, options?: LoginOptions) => {
   await page.getByLabel('username').fill(username);
   await page.getByLabel('password').fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
+
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
 };
 
@@ -69,8 +71,14 @@ export const doCachedLogin = async (
       storageState: fn
     });
     console.log(`Using cached login state for ${username}`);
-    await navigate(page, webUrl, { baseUrl: options?.baseUrl });
-    await navigate(page, url, { baseUrl: options?.baseUrl });
+    await navigate(page, webUrl, {
+      baseUrl: options?.baseUrl,
+      waitUntil: 'networkidle'
+    });
+    await navigate(page, url, {
+      baseUrl: options?.baseUrl,
+      waitUntil: 'networkidle'
+    });
 
     await page.getByRole('link', { name: 'Dashboard' }).waitFor();
     await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
@@ -85,7 +93,10 @@ export const doCachedLogin = async (
   console.log(`No cache found - logging in for ${username}`);
 
   // Ensure we start from the login page
-  await navigate(page, webUrl, { baseUrl: options?.baseUrl });
+  await navigate(page, webUrl, {
+    baseUrl: options?.baseUrl,
+    waitUntil: 'networkidle'
+  });
 
   // Completely clear the browser cache and cookies, etc
   await page.context().clearCookies();
@@ -96,6 +107,7 @@ export const doCachedLogin = async (
     password: password,
     baseUrl: options?.baseUrl
   });
+
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
   await page.waitForLoadState('load');
 
