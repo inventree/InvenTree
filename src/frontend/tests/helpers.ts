@@ -1,5 +1,3 @@
-import { baseUrl } from './defaults';
-
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
@@ -79,14 +77,6 @@ export const clickOnRowMenu = async (cell) => {
  * @param url
  */
 export const navigate = async (page, url: string) => {
-  if (!url.startsWith(baseUrl)) {
-    if (url.startsWith('/')) {
-      url = url.slice(1);
-    }
-
-    url = `${baseUrl}/${url}`;
-  }
-
   await page.goto(url, { waituntil: 'load' });
 };
 

@@ -60,7 +60,7 @@ export const doCachedLogin = async (
       storageState: fn
     });
     console.log(`Using cached login state for ${username}`);
-    await navigate(page, 'http://localhost:5173/web/');
+    await navigate(page, '/web');
     await navigate(page, url);
 
     await page.waitForTimeout(2500);
@@ -77,7 +77,7 @@ export const doCachedLogin = async (
   console.log(`No cache found - logging in for ${username}`);
 
   // Ensure we start from the login page
-  await navigate(page, 'http://localhost:5173/web/');
+  await navigate(page, '/web');
 
   // Completely clear the browser cache and cookies, etc
   await page.context().clearCookies();
