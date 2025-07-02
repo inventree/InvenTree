@@ -1,6 +1,5 @@
 """Tests for general API tests for the plugin app."""
 
-from django.conf import settings
 from django.test import override_settings
 from django.urls import reverse
 
@@ -92,9 +91,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         )
 
         # install disabled
-        settings.PLUGINS_INSTALL_DISABLED = True
-        self.post(url, {}, expected_code=400)
-        settings.PLUGINS_INSTALL_DISABLED = False
+        with self.settings(PLUGINS_INSTALL_DISABLED=True):
+            self.post(url, {}, expected_code=400)
 
     def test_plugin_activate(self):
         """Test the plugin activate."""

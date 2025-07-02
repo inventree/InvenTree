@@ -10,7 +10,6 @@ from pathlib import Path
 from unittest import mock
 from unittest.mock import patch
 
-from django.conf import settings
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
@@ -410,16 +409,11 @@ class RegistryTests(TestCase):
         # Check that the registry is not reloaded
         self.assertFalse(registry.check_reload())
 
-        settings.TESTING = False
-        settings.PLUGIN_TESTING_RELOAD = True
+        with self.settings(TESTING=False, PLUGIN_TESTING_RELOAD=True):
+            # Check that the registry is reloaded
+            registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+            self.assertFalse(registry.check_reload())
 
-        # Check that the registry is reloaded
-        registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
-        self.assertFalse(registry.check_reload())
-
-        # Check that changed hashes run through
-        registry.registry_hash = 'abc'
-        self.assertTrue(registry.check_reload())
-
-        settings.TESTING = True
-        settings.PLUGIN_TESTING_RELOAD = False
+            # Check that changed hashes run through
+            registry.registry_hash = 'abc'
+            self.assertTrue(registry.check_reload())
