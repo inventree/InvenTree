@@ -7,8 +7,8 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
 import {
@@ -557,27 +557,19 @@ export function StockItemTable({
 
   const tableActions = useMemo(() => {
     return [
-      <ActionDropdown
-        key='stock-actions'
-        tooltip={t`Stock Actions`}
-        icon={<InvenTreeIcon icon='stock' />}
-        disabled={table.selectedRecords.length === 0}
-        actions={[
-          ...stockAdjustActions.menuActions,
-          {
-            name: t`Order stock`,
-            icon: <InvenTreeIcon icon='buy' />,
-            tooltip: t`Order new stock`,
-            hidden: !user.hasAddRole(UserRoles.purchase_order),
-            disabled: !table.hasSelectedRecords,
-            onClick: () => {
-              setPartsToOrder(
-                table.selectedRecords.map((record) => record.part_detail)
-              );
-              orderPartsWizard.openWizard();
-            }
-          }
-        ]}
+      stockAdjustActions.dropdown,
+      <ActionButton
+        key='stock-order'
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        tooltip={t`Order items`}
+        icon={<InvenTreeIcon icon='buy' />}
+        disabled={!table.hasSelectedRecords}
+        onClick={() => {
+          setPartsToOrder(
+            table.selectedRecords.map((record) => record.part_detail)
+          );
+          orderPartsWizard.openWizard();
+        }}
       />,
       <AddItemButton
         key='add-stock-item'
@@ -591,7 +583,7 @@ export function StockItemTable({
     allowAdd,
     table.hasSelectedRecords,
     table.selectedRecords,
-    stockAdjustActions
+    stockAdjustActions.dropdown
   ]);
 
   return (
