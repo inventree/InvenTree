@@ -46,8 +46,8 @@ test('Login - Failures', async ({ page }) => {
 
 test('Login - Change Password', async ({ page }) => {
   await doLogin(page, {
-    password: 'noaccess',
-    username: 'youshallnotpass'
+    username: 'noaccess',
+    password: 'youshallnotpass'
   });
 
   // Navigate to the 'change password' page
