@@ -13,7 +13,9 @@ export const doLogin = async (page, username?: string, password?: string) => {
   username = username ?? user.username;
   password = password ?? user.password;
 
-  await page.goto('http://localhost:8000/web/logout', { waituntil: 'load' });
+  console.log('- Logging in with username:', username);
+
+  await navigate(page, '/logout/');
 
   await expect(page).toHaveTitle(/^InvenTree.*$/);
   await page.waitForURL('**/web/login');
@@ -58,6 +60,7 @@ export const doCachedLogin = async (
       storageState: fn
     });
     console.log(`Using cached login state for ${username}`);
+    await navigate(page, 'http://localhost:5173/web/');
     await navigate(page, url);
     await page.waitForURL('**/web/**');
     await page.waitForLoadState('load');
@@ -69,8 +72,12 @@ export const doCachedLogin = async (
 
   console.log(`No cache found - logging in for ${username}`);
 
+  // Completely clear the browser cache and cookies, etc
+  await page.context().clearCookies();
+  await page.context().clearPermissions();
+
   // Ensure we start from the login page
-  await page.goto('http://localhost:8000/web/', { waitUntil: 'load' });
+  await navigate(page, 'http://localhost:5173/web/');
 
   await doLogin(page, username, password);
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
@@ -92,6 +99,6 @@ export const doCachedLogin = async (
 };
 
 export const doLogout = async (page) => {
-  await page.goto('http://localhost:8000/web/logout', { waitUntil: 'load' });
+  await navigate(page, '/logout');
   await page.waitForURL('**/web/login');
 };

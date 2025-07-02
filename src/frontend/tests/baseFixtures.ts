@@ -68,13 +68,13 @@ export const test = baseTest.extend({
         msg.text() !=
           'Failed to load resource: the server responded with a status of 400 (Bad Request)' &&
         !msg.text().includes('http://localhost:8000/this/does/not/exist.js') &&
-        url != 'http://localhost:8000/this/does/not/exist.js' &&
-        url != 'http://localhost:8000/api/user/me/' &&
-        url != 'http://localhost:8000/api/user/token/' &&
-        url != 'http://localhost:8000/api/auth/v1/auth/login' &&
-        url != 'http://localhost:8000/api/auth/v1/auth/session' &&
-        url != 'http://localhost:8000/api/auth/v1/account/password/change' &&
-        url != 'http://localhost:8000/api/barcode/' &&
+        !url.includes('/this/does/not/exist.js') &&
+        !url.includes('/api/user/me/') &&
+        !url.includes('/api/user/token/') &&
+        !url.includes('/api/auth/v1/auth/login') &&
+        !url.includes('/api/auth/v1/auth/session') &&
+        !url.includes('/api/auth/v1/account/password/change') &&
+        !url.includes('/api/barcode/') &&
         url != 'https://docs.inventree.org/en/versions.json' &&
         url != 'http://localhost:5173/favicon.ico' &&
         !url.startsWith('https://api.github.com/repos/inventree') &&

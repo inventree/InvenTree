@@ -18,25 +18,23 @@ async function globalSetup(config: FullConfig) {
     });
   }
 
-  // Perform login for each user
-  const browser = await chromium.launch();
-
-  await doCachedLogin(browser, {
+  // Perform login for each user (each in a separate browser instance)
+  await doCachedLogin(await chromium.launch(), {
     username: 'admin',
     password: 'inventree'
   });
 
-  await doCachedLogin(browser, {
+  await doCachedLogin(await chromium.launch(), {
     username: 'allaccess',
     password: 'nolimits'
   });
 
-  await doCachedLogin(browser, {
+  await doCachedLogin(await chromium.launch(), {
     username: 'reader',
     password: 'readonly'
   });
 
-  await doCachedLogin(browser, {
+  await doCachedLogin(await chromium.launch(), {
     username: 'steven',
     password: 'wizardstaff'
   });
