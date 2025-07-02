@@ -66,7 +66,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
   await loadTab(page, 'Incomplete Outputs');
-  await loadTab(page, 'Required Stock');
+  await loadTab(page, 'Required Items');
   await loadTab(page, 'Allocated Stock');
 
   // Check for expected text in the table
