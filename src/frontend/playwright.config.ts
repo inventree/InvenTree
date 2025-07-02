@@ -3,9 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 // Detect if running in CI
 const IS_CI = !!process.env.CI;
 
-console.log('Running Playwright tests:');
-console.log(`  - CI Mode: ${IS_CI}`);
-
 const MAX_WORKERS: number = 3;
 const MAX_RETRIES: number = 3;
 
@@ -41,6 +38,7 @@ const BASE_URL: string = IS_CI
   : 'http://localhost:5173';
 
 console.log('Running Playwright Tests:');
+console.log(`- CI Mode: ${IS_CI}`);
 console.log('- Base URL:', BASE_URL);
 console.log('- Web Server:', WEB_SERVER_CMD);
 

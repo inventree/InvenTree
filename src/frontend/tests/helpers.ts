@@ -93,6 +93,7 @@ export const navigate = async (
   const path: string = options?.baseUrl
     ? new URL(url, options.baseUrl).toString()
     : url;
+
   await page.goto(path, { waitUntil: options?.waitUntil ?? 'load' });
 };
 
