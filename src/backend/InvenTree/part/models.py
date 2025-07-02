@@ -18,7 +18,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
@@ -368,7 +368,7 @@ class PartManager(TreeManager):
 
 
 class PartReportContext(report.mixins.BaseReportContext):
-    """Context for the part model.
+    """Report context for the Part model.
 
     Attributes:
         bom_items: Query set of all BomItem objects associated with the Part
@@ -1530,8 +1530,12 @@ class Part(
 
         # Calculate the 'available stock' based on previous annotations
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock') - F('so_allocations') - F('bo_allocations'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock') - F('so_allocations') - F('bo_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1549,10 +1553,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            substitute_stock=ExpressionWrapper(
-                F('sub_total_stock')
-                - F('sub_so_allocations')
-                - F('sub_bo_allocations'),
+            substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('sub_total_stock')
+                    - F('sub_so_allocations')
+                    - F('sub_bo_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1573,10 +1581,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            variant_stock=ExpressionWrapper(
-                F('var_total_stock')
-                - F('var_bo_allocations')
-                - F('var_so_allocations'),
+            variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('var_total_stock')
+                    - F('var_bo_allocations')
+                    - F('var_so_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )

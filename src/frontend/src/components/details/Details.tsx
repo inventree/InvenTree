@@ -24,9 +24,9 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
-import { formatDate } from '../../defaults/formatters';
+import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
@@ -43,6 +43,7 @@ export type DetailsField = {
   copy?: boolean;
   value_formatter?: () => ValueFormatterReturn;
 } & (
+  | NumberDetailField
   | StringDetailField
   | BooleanField
   | LinkDetailField
@@ -55,6 +56,11 @@ type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
   type: 'string' | 'text' | 'date';
+  unit?: boolean;
+};
+
+type NumberDetailField = {
+  type: 'number';
   unit?: boolean;
 };
 
@@ -190,19 +196,14 @@ function NameBadge({
 
       const url = apiUrl(path, pk);
 
-      return api
-        .get(url)
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              return response.data;
-            default:
-              return {};
-          }
-        })
-        .catch(() => {
-          return {};
-        });
+      return api.get(url).then((response) => {
+        switch (response.status) {
+          case 200:
+            return response.data;
+          default:
+            return {};
+        }
+      });
     }
   });
 
@@ -260,6 +261,27 @@ function NameBadge({
 
 function DateValue(props: Readonly<FieldProps>) {
   return <Text size='sm'>{formatDate(props.field_value?.toString())}</Text>;
+}
+
+// Return a formatted "number" value, with optional unit
+function NumberValue(props: Readonly<FieldProps>) {
+  const value = props?.field_value;
+
+  // Convert to double
+  const numberValue = Number.parseFloat(value.toString());
+
+  if (value === null || value === undefined) {
+    return <Text size='sm'>'---'</Text>;
+  }
+
+  return (
+    <Group wrap='nowrap' gap='xs' justify='left'>
+      <Text size='sm'>{formatDecimal(numberValue)}</Text>
+      {!!props.field_data?.unit && (
+        <Text size='xs'>[{props.field_data?.unit}]</Text>
+      )}
+    </Group>
+  );
 }
 
 /**
@@ -329,9 +351,6 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
             default:
               return {};
           }
-        })
-        .catch(() => {
-          return {};
         });
     }
   });
@@ -447,6 +466,8 @@ export function DetailsTableField({
         return StatusValue;
       case 'date':
         return DateValue;
+      case 'number':
+        return NumberValue;
       case 'text':
       case 'string':
       default:

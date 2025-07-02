@@ -113,8 +113,7 @@ export default function ParametricPartTable({
             category: categoryId
           }
         })
-        .then((response) => response.data)
-        .catch((_error) => []);
+        .then((response) => response.data);
     },
     refetchOnMount: true
   });
@@ -290,7 +289,7 @@ export default function ParametricPartTable({
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
-    const data = categoryParameters.data ?? [];
+    const data = categoryParameters?.data || [];
 
     return data.map((template: any) => {
       let title = template.name;
@@ -368,15 +367,19 @@ export default function ParametricPartTable({
     const partColumns: TableColumn[] = [
       {
         accessor: 'name',
+        title: t`Part`,
         sortable: true,
         switchable: false,
         noWrap: true,
         render: (record: any) => PartColumn({ part: record })
       },
-      DescriptionColumn({}),
+      DescriptionColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'IPN',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'total_in_stock',

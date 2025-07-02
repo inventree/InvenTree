@@ -571,8 +571,10 @@ class StockItem(
         for key in ['parent_id', 'part_id', 'build_id']:
             data.pop(key, None)
 
+        tree_id = kwargs.pop('tree_id', 0)
+
         data['parent'] = kwargs.pop('parent', None)
-        data['tree_id'] = kwargs.pop('tree_id', 0)
+        data['tree_id'] = tree_id
         data['level'] = kwargs.pop('level', 0)
         data['rght'] = kwargs.pop('rght', 0)
         data['lft'] = kwargs.pop('lft', 0)
@@ -588,6 +590,11 @@ class StockItem(
 
         # Create the StockItem objects in bulk
         StockItem.objects.bulk_create(items)
+
+        # We will need to rebuild the stock item tree manually, due to the bulk_create operation
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock'
+        )
 
         # Return the newly created StockItem objects
         return StockItem.objects.filter(part=part, serial__in=serials)
@@ -1332,9 +1339,10 @@ class StockItem(
         self.sales_order = None
         self.location = location
 
-        if status := kwargs.get('status'):
-            self.status = status
-            tracking_info['status'] = status
+        if status := kwargs.pop('status', None):
+            if not self.compare_status(status):
+                self.set_status(status)
+                tracking_info['status'] = status
 
         self.save()
 
@@ -1699,23 +1707,33 @@ class StockItem(
         return entry
 
     @transaction.atomic
-    def serializeStock(self, quantity, serials, user, notes='', location=None):
+    def serializeStock(
+        self,
+        quantity: int,
+        serials: list[str],
+        user: User,
+        notes: str = '',
+        location: Optional[StockLocation] = None,
+    ):
         """Split this stock item into unique serial numbers.
 
         - Quantity can be less than or equal to the quantity of the stock item
         - Number of serial numbers must match the quantity
         - Provided serial numbers must not already be in use
 
-        Args:
+        Arguments:
             quantity: Number of items to serialize (integer)
             serials: List of serial numbers
             user: User object associated with action
             notes: Optional notes for tracking
             location: If specified, serialized items will be placed in the given location
+
+        Returns:
+            List of newly created StockItem objects, each with a unique serial number.
         """
         # Cannot serialize stock that is already serialized!
         if self.serialized:
-            return
+            return None
 
         if not self.part.trackable:
             raise ValidationError({'part': _('Part is not set as trackable')})
@@ -1799,10 +1817,7 @@ class StockItem(
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
 
-        # Rebuild the stock tree
-        InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='part'
-        )
+        return items
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -2228,7 +2243,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2313,7 +2328,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2376,7 +2391,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             tracking_info['status'] = status
 
@@ -2430,7 +2445,7 @@ class StockItem(
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
-        if status and status != self.status:
+        if status and not self.compare_status(status):
             self.set_status(status)
             deltas['status'] = status
 

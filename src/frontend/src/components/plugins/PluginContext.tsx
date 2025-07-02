@@ -7,9 +7,10 @@ import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import {
   INVENTREE_MANTINE_VERSION,
   INVENTREE_PLUGIN_VERSION,
@@ -48,6 +49,7 @@ export const useInvenTreeContext = () => {
       navigate: navigate,
       globalSettings: globalSettings,
       userSettings: userSettings,
+      modelInformation: ModelInformationDict,
       theme: theme,
       colorScheme: colorScheme,
       forms: {

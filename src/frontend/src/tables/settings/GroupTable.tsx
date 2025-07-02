@@ -7,6 +7,8 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/index';
+import { IconUsersGroup } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
@@ -43,7 +45,6 @@ export function GroupDrawer({
   } = useInstance({
     endpoint: ApiEndpoints.group_list,
     pk: id,
-    throwError: true,
     params: {
       permission_detail: true,
       role_detail: true,
@@ -159,7 +160,14 @@ export function GroupTable({
             setSelectedGroup(record.pk);
             deleteGroup.open();
           }
-        })
+        }),
+        {
+          icon: <IconUsersGroup />,
+          title: t`Open Profile`,
+          onClick: () => {
+            navigate(getDetailUrl(ModelType.group, record.pk));
+          }
+        }
       ];
     },
     [user]

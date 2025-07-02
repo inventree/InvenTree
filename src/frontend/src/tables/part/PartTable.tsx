@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -18,13 +18,20 @@ import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useBulkEditApiFormModal,
-  useCreateApiFormModal
+  useCreateApiFormModal,
+  useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  CategoryColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import { type RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -53,15 +60,14 @@ function partTableColumns(): TableColumn[] {
       sortable: true
     },
     DescriptionColumn({}),
-    {
-      accessor: 'category',
-      sortable: true,
-      render: (record: any) => record.category_detail?.pathstring
-    },
+    CategoryColumn({
+      accessor: 'category_detail'
+    }),
     {
       accessor: 'default_location',
       sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring
+      render: (record: any) => record.default_location_detail?.pathstring,
+      defaultVisible: false
     },
     {
       accessor: 'total_in_stock',
@@ -167,6 +173,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
@@ -347,6 +354,16 @@ export function PartListTable({
     modelType: ModelType.part
   });
 
+  const [selectedPart, setSelectedPart] = useState<number>(-1);
+
+  const editPart = useEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: selectedPart,
+    title: t`Edit Part`,
+    fields: usePartFields({ create: false }),
+    onFormSuccess: table.refreshTable
+  });
+
   const setCategory = useBulkEditApiFormModal({
     url: ApiEndpoints.part_list,
     items: table.selectedIds,
@@ -361,6 +378,23 @@ export function PartListTable({
   const importPartWizard = ImportPartWizard({
     categoryId: initialPartData.category
   });
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      const can_edit = user.hasChangePermission(ModelType.part);
+
+      return [
+        RowEditAction({
+          hidden: !can_edit,
+          onClick: () => {
+            setSelectedPart(record.pk);
+            editPart.open();
+          }
+        })
+      ];
+    },
+    [user, editPart]
+  );
 
   const tableActions = useMemo(() => {
     return [
@@ -410,6 +444,7 @@ export function PartListTable({
   return (
     <>
       {newPart.modal}
+      {editPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}
       {importPartWizard.wizard}
@@ -423,6 +458,7 @@ export function PartListTable({
           modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,
+          rowActions: rowActions,
           enableSelection: true,
           enableReports: true,
           enableLabels: true,

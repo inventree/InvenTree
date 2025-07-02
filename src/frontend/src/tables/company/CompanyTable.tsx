@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +9,6 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -18,7 +16,11 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  CompanyColumn,
+  DescriptionColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 
@@ -45,16 +47,7 @@ export function CompanyTable({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          return (
-            <Group gap='xs' wrap='nowrap'>
-              <Thumbnail
-                src={record.thumbnail ?? record.image ?? ''}
-                alt={record.name}
-                size={24}
-              />
-              <Text>{record.name}</Text>
-            </Group>
-          );
+          return <CompanyColumn company={record} />;
         }
       },
       DescriptionColumn({}),
@@ -169,6 +162,8 @@ export function CompanyTable({
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,
+          enableSelection: true,
+          enableReports: true,
           rowActions: rowActions
         }}
       />

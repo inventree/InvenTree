@@ -31,6 +31,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   CurrencyColumn,
+  DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
@@ -52,12 +53,14 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 export function PurchaseOrderLineItemTable({
   order,
+  orderDetailRefresh,
   orderId,
   currency,
   supplierId,
   params
 }: Readonly<{
   order: any;
+  orderDetailRefresh: () => void;
   orderId: number;
   currency: string;
   supplierId?: number;
@@ -141,15 +144,15 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         ordering: 'IPN'
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       ReferenceColumn({}),
       {
         accessor: 'build_order',
         title: t`Build Order`,
         sortable: true,
+        defaultVisible: false,
         render: (record: any) => {
           if (record.build_order_detail) {
             return (
@@ -217,7 +220,8 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'supplier_part_detail.packaging',
         sortable: false,
-        title: t`Packaging`
+        title: t`Packaging`,
+        defaultVisible: false
       },
       {
         accessor: 'supplier_part_detail.pack_quantity',
@@ -234,13 +238,15 @@ export function PurchaseOrderLineItemTable({
       LinkColumn({
         accessor: 'supplier_part_detail.link',
         title: t`Supplier Link`,
-        sortable: false
+        sortable: false,
+        defaultVisible: false
       }),
       {
         accessor: 'mpn',
         ordering: 'MPN',
         title: t`Manufacturer Code`,
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       CurrencyColumn({
         accessor: 'purchase_price',
@@ -292,6 +298,7 @@ export function PurchaseOrderLineItemTable({
       ...initialData,
       purchase_price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -308,6 +315,7 @@ export function PurchaseOrderLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: editLineItemFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -315,6 +323,7 @@ export function PurchaseOrderLineItemTable({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 

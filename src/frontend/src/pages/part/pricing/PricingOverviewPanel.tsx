@@ -36,7 +36,7 @@ import {
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useEditApiFormModal } from '../../../hooks/UseForm';
-import { useGlobalSettingsState } from '../../../states/SettingsState';
+import { useGlobalSettingsState } from '../../../states/SettingsStates';
 import { panelOptions } from '../PartPricingPanel';
 
 interface PricingOverviewEntry {

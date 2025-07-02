@@ -28,7 +28,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
@@ -72,8 +72,7 @@ export default function StockItemTestResultTable({
             enabled: true
           }
         })
-        .then((response) => response.data)
-        .catch((_error) => []);
+        .then((response) => response.data);
     }
   });
 
@@ -85,13 +84,14 @@ export default function StockItemTestResultTable({
   const formatRecords = useCallback(
     (records: any[]): any[] => {
       // Construct a list of test templates
-      const results = testTemplates.map((template: any) => {
-        return {
-          ...template,
-          templateId: template.pk,
-          results: []
-        };
-      });
+      const results =
+        testTemplates?.map((template: any) => {
+          return {
+            ...template,
+            templateId: template.pk,
+            results: []
+          };
+        }) ?? [];
 
       // If any of the tests results point to templates which we do not have, add them in
       records.forEach((record) => {
@@ -185,9 +185,7 @@ export default function StockItemTestResultTable({
           }
         }
       },
-      DescriptionColumn({
-        accessor: 'description'
-      }),
+      DescriptionColumn({}),
       {
         accessor: 'value',
         title: t`Value`

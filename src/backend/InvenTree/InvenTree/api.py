@@ -17,6 +17,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
+import InvenTree.config
 import InvenTree.version
 from common.settings import get_global_setting
 from InvenTree import helpers
@@ -72,7 +73,7 @@ def read_license_file(path: Path) -> list:
         names.add(name)
         output.append({key.lower(): value for key, value in entry.items()})
 
-    return output
+    return sorted(output, key=lambda x: x.get('name', '').lower())
 
 
 class LicenseViewSerializer(serializers.Serializer):
@@ -309,7 +310,7 @@ class InfoView(APIView):
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
-            'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
+            'installer': InvenTree.config.inventreeInstaller() if is_staff else None,
             'target': InvenTree.version.inventreeTarget() if is_staff else None,
             'django_admin': settings.INVENTREE_ADMIN_URL
             if (is_staff and settings.INVENTREE_ADMIN_ENABLED)

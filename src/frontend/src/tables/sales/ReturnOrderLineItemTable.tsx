@@ -25,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   DateColumn,
+  DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
@@ -38,11 +39,13 @@ import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export default function ReturnOrderLineItemTable({
   orderId,
   order,
+  orderDetailRefresh,
   customerId,
   currency
 }: Readonly<{
   orderId: number;
   order: any;
+  orderDetailRefresh: () => void;
   customerId: number;
   currency: string;
 }>) {
@@ -76,6 +79,7 @@ export default function ReturnOrderLineItemTable({
       order: orderId,
       price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -84,6 +88,7 @@ export default function ReturnOrderLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -91,6 +96,7 @@ export default function ReturnOrderLineItemTable({
     url: ApiEndpoints.return_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -106,10 +112,9 @@ export default function ReturnOrderLineItemTable({
         accessor: 'part_detail.IPN',
         sortable: false
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'item_detail.serial',
         title: t`Quantity`,

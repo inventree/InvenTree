@@ -36,7 +36,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DateColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -51,11 +56,13 @@ import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
   orderId,
+  orderDetailRefresh,
   currency,
   customerId,
   editable
 }: Readonly<{
   orderId: number;
+  orderDetailRefresh: () => void;
   currency: string;
   customerId: number;
   editable: boolean;
@@ -87,12 +94,9 @@ export default function SalesOrderLineItemTable({
         title: t`IPN`,
         switchable: true
       },
-      {
-        accessor: 'part_detail.description',
-        title: t`Description`,
-        sortable: false,
-        switchable: true
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'reference',
         sortable: false,
@@ -228,6 +232,7 @@ export default function SalesOrderLineItemTable({
       ...initialData,
       sale_price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -242,6 +247,7 @@ export default function SalesOrderLineItemTable({
     pk: selectedLineId,
     title: t`Edit Line Item`,
     fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -249,6 +255,7 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_line_list,
     pk: selectedLineId,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -271,11 +278,15 @@ export default function SalesOrderLineItemTable({
     table: table
   });
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'build-order-create-from-sales-order'
+  });
 
   const newBuildOrder = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
+    modalId: 'build-order-create-from-sales-order',
     fields: buildOrderFields,
     initialData: initialData,
     follow: true,
@@ -469,7 +480,8 @@ export default function SalesOrderLineItemTable({
             orderId={orderId}
             lineItemId={record.pk}
             partId={record.part}
-            allowEdit
+            allowEdit={false}
+            modelTarget={ModelType.stockitem}
             isSubTable
           />
         );

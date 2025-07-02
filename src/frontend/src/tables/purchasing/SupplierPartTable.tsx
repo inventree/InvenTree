@@ -10,7 +10,6 @@ import type { TableFilter } from '@lib/types/Filters';
 import { IconPackageImport } from '@tabler/icons-react';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
@@ -23,6 +22,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
+  CompanyColumn,
   DescriptionColumn,
   LinkColumn,
   NoteColumn,
@@ -56,18 +56,9 @@ export function SupplierPartTable({
       {
         accessor: 'supplier',
         sortable: true,
-        render: (record: any) => {
-          const supplier = record?.supplier_detail ?? {};
-
-          return supplier?.pk ? (
-            <Thumbnail
-              src={supplier?.thumbnail ?? supplier.image}
-              text={supplier.name}
-            />
-          ) : (
-            '-'
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record?.supplier_detail} />
+        )
       },
       {
         accessor: 'SKU',
@@ -79,18 +70,9 @@ export function SupplierPartTable({
         accessor: 'manufacturer',
         title: t`Manufacturer`,
         sortable: true,
-        render: (record: any) => {
-          const manufacturer = record?.manufacturer_detail ?? {};
-
-          return manufacturer?.pk ? (
-            <Thumbnail
-              src={manufacturer?.thumbnail ?? manufacturer.image}
-              text={manufacturer.name}
-            />
-          ) : (
-            '-'
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record?.manufacturer_detail} />
+        )
       },
       {
         accessor: 'MPN',
@@ -103,7 +85,8 @@ export function SupplierPartTable({
         accessor: 'active',
         title: t`Active`,
         sortable: true,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
       }),
       {
         accessor: 'in_stock',
@@ -111,7 +94,8 @@ export function SupplierPartTable({
       },
       {
         accessor: 'packaging',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'pack_quantity',
@@ -144,7 +128,7 @@ export function SupplierPartTable({
       {
         accessor: 'available',
         sortable: true,
-
+        defaultVisible: false,
         render: (record: any) => {
           const extra = [];
 

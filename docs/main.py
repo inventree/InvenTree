@@ -81,7 +81,7 @@ def get_repo_url(raw=False):
     mkdocs_yml = here.joinpath('mkdocs.yml')
 
     with open(mkdocs_yml, encoding='utf-8') as f:
-        mkdocs_config = yaml.safe_load(f)
+        mkdocs_config = yaml.load(f, yaml.BaseLoader)
         repo_name = mkdocs_config['repo_name']
 
     if raw:

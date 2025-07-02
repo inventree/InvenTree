@@ -85,10 +85,12 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         sortable: true
       },
       BooleanColumn({
-        accessor: 'structural'
+        accessor: 'structural',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'external'
+        accessor: 'external',
+        defaultVisible: false
       }),
       {
         accessor: 'location_type',

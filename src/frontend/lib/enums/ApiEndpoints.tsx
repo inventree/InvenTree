@@ -11,6 +11,7 @@ export enum ApiEndpoints {
 
   // User API endpoints
   user_list = 'user/',
+  user_set_password = 'user/:id/set-password/',
   user_me = 'user/me/',
   user_profile = 'user/profile/',
   user_roles = 'user/roles/',
@@ -112,6 +113,7 @@ export enum ApiEndpoints {
   part_parameter_bulk = 'part/parameter/bulk/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
+  part_requirements = 'part/:id/requirements/',
   part_serial_numbers = 'part/:id/serial-numbers/',
   part_scheduling = 'part/:id/scheduling/',
   part_pricing_internal = 'part/internal-price/',
@@ -236,5 +238,8 @@ export enum ApiEndpoints {
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  notes_image_upload = 'notes-image-upload/'
+  notes_image_upload = 'notes-image-upload/',
+  email_list = 'admin/email/',
+  email_test = 'admin/email/test/',
+  config_list = 'admin/config/'
 }

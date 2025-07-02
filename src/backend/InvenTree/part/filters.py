@@ -29,7 +29,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Cast, Coalesce, Greatest
 
 from sql_util.utils import SubquerySum
 
@@ -73,14 +73,20 @@ def annotate_scheduled_to_build_quantity(reference: str = ''):
 
     return Coalesce(
         SubquerySum(
-            ExpressionWrapper(
-                F(f'{reference}builds__quantity') - F(f'{reference}builds__completed'),
-                output_field=DecimalField(),
+            Greatest(
+                ExpressionWrapper(
+                    Cast(F(f'{reference}builds__quantity'), output_field=IntegerField())
+                    - Cast(
+                        F(f'{reference}builds__completed'), output_field=IntegerField()
+                    ),
+                    output_field=IntegerField(),
+                ),
+                0,
             ),
             filter=building_filter,
         ),
-        Decimal(0),
-        output_field=DecimalField(),
+        0,
+        output_field=IntegerField(),
     )
 
 
@@ -100,25 +106,30 @@ def annotate_on_order_quantity(reference: str = ''):
         order__status__in=PurchaseOrderStatusGroups.OPEN, quantity__gt=F('received')
     )
 
-    return Coalesce(
-        SubquerySum(
-            ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__quantity')
-                * F(f'{reference}supplier_parts__pack_quantity_native'),
-                output_field=DecimalField(),
+    return Greatest(
+        Coalesce(
+            SubquerySum(
+                ExpressionWrapper(
+                    F(f'{reference}supplier_parts__purchase_order_line_items__quantity')
+                    * F(f'{reference}supplier_parts__pack_quantity_native'),
+                    output_field=DecimalField(),
+                ),
+                filter=order_filter,
             ),
-            filter=order_filter,
-        ),
-        Decimal(0),
-        output_field=DecimalField(),
-    ) - Coalesce(
-        SubquerySum(
-            ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__received')
-                * F(f'{reference}supplier_parts__pack_quantity_native'),
-                output_field=DecimalField(),
+            Decimal(0),
+            output_field=DecimalField(),
+        )
+        - Coalesce(
+            SubquerySum(
+                ExpressionWrapper(
+                    F(f'{reference}supplier_parts__purchase_order_line_items__received')
+                    * F(f'{reference}supplier_parts__pack_quantity_native'),
+                    output_field=DecimalField(),
+                ),
+                filter=order_filter,
             ),
-            filter=order_filter,
+            Decimal(0),
+            output_field=DecimalField(),
         ),
         Decimal(0),
         output_field=DecimalField(),

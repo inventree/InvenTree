@@ -25,7 +25,7 @@ import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { useServerApiState } from '../../../states/ApiState';
+import { useServerApiState } from '../../../states/ServerApiState';
 import { useUserState } from '../../../states/UserState';
 
 /**
@@ -222,7 +222,6 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'SERIAL_NUMBER_GLOBALLY_UNIQUE',
-              'SERIAL_NUMBER_AUTOFILL',
               'STOCK_DELETE_DEPLETED_DEFAULT',
               'STOCK_BATCH_CODE_TEMPLATE',
               'STOCK_ENABLE_EXPIRY',

@@ -137,6 +137,8 @@ backendpatterns = [
     ),  # Add a redirect for login views
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
+    # Emails
+    path('anymail/', include('anymail.urls')),
 ]
 
 urlpatterns = []
@@ -181,7 +183,7 @@ if settings.FRONTEND_SETTINGS.get('url_compatibility'):
 urlpatterns += [
     re_path(
         r'^.*$',
-        RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
         name='index',
     )
 ]

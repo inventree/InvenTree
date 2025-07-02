@@ -64,6 +64,7 @@ class SampleIntegrationPlugin(
             'description': _('A numerical setting'),
             'validator': int,
             'default': 123,
+            'units': 'metres',
         },
         'CHOICE_SETTING': {
             'name': _('Choice Setting'),

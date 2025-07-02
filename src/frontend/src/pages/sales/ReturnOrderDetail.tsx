@@ -41,7 +41,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
@@ -59,8 +59,7 @@ export default function ReturnOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.return_order_list,
     pk: id,
@@ -298,6 +297,7 @@ export default function ReturnOrderDetail() {
                 <ReturnOrderLineItemTable
                   orderId={order.pk}
                   order={order}
+                  orderDetailRefresh={refreshInstance}
                   customerId={order.customer}
                   currency={orderCurrency}
                 />
@@ -311,6 +311,7 @@ export default function ReturnOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.return_order_extra_line_list}
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.return_order}
                 />
@@ -497,8 +498,7 @@ export default function ReturnOrderDetail() {
       {completeOrder.modal}
       {duplicateReturnOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.return_order}
       >
         <Stack gap='xs'>
