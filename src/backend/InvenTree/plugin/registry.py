@@ -105,12 +105,14 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug, active=None, with_mixin=None):
+    def get_plugin(
+        self, slug: str, active: bool = True, with_mixin: Optional[str] = None
+    ) -> InvenTreePlugin | None:
         """Lookup plugin by slug (unique key).
 
         Args:
             slug (str): The slug of the plugin to look up.
-            active (bool, optional): Filter by 'active' status of the plugin. If None, no filtering is applied. Defaults to None.
+            active (bool, optional): Filter by 'active' status of the plugin. If None, no filtering is applied. Defaults to True.
             with_mixin (str, optional): Filter by mixin name. If None, no filtering is applied. Defaults to None.
 
         Returns:
