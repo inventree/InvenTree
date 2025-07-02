@@ -480,7 +480,8 @@ export default function SalesOrderLineItemTable({
             orderId={orderId}
             lineItemId={record.pk}
             partId={record.part}
-            allowEdit
+            allowEdit={false}
+            modelTarget={ModelType.stockitem}
             isSubTable
           />
         );
