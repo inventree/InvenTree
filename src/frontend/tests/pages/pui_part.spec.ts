@@ -265,7 +265,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
 
   // Part with history
-  await navigate(page, 'part/108/pricing');
+  await navigate(page, 'part/108/pricing', { waitUntil: 'networkidle' });
   await page.getByText('A chair - with blue paint').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
