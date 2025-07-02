@@ -64,8 +64,7 @@ export default function CategoryDetail() {
   const {
     instance: category,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.category_list,
     hasPrimaryKey: true,
@@ -325,8 +324,7 @@ export default function CategoryDetail() {
       {editCategory.modal}
       {deleteCategory.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={id ? instanceQuery.isFetching : false}
+        query={instanceQuery}
         requiredRole={UserRoles.part_category}
       >
         <Stack gap='xs'>
