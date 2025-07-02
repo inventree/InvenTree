@@ -27,12 +27,6 @@ const MAX_RETRIES: number = 3;
  * - WORKERS = 1 (to avoid conflicts with HMR)
  */
 
-// Command to spin-up the backend server
-// In production mode, we want a stronger webserver to handle multiple requests
-const WEB_SERVER_CMD: string = IS_CI
-  ? 'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi'
-  : 'invoke dev.server -a 127.0.0.1:8000';
-
 const BASE_URL: string = IS_CI
   ? 'http://localhost:8000'
   : 'http://localhost:5173';
@@ -40,7 +34,6 @@ const BASE_URL: string = IS_CI
 console.log('Running Playwright Tests:');
 console.log(`- CI Mode: ${IS_CI}`);
 console.log('- Base URL:', BASE_URL);
-console.log('- Web Server:', WEB_SERVER_CMD);
 
 export default defineConfig({
   testDir: './tests',
@@ -78,9 +71,10 @@ export default defineConfig({
       timeout: 120 * 1000
     },
     {
-      command: WEB_SERVER_CMD,
+      command: 'invoke dev.server',
       env: {
         INVENTREE_DEBUG: 'True',
+        INVENTREE_LOG_LEVEL: 'WARNING',
         INVENTREE_PLUGINS_ENABLED: 'True',
         INVENTREE_ADMIN_URL: 'test-admin',
         INVENTREE_SITE_URL: 'http://localhost:8000',
