@@ -320,6 +320,8 @@ export default function SalesOrderAllocationTable({
           tableActions: isSubTable ? undefined : tableActions,
           tableFilters: tableFilters,
           modelField: modelField ?? 'order',
+          enableReports: true,
+          enableLabels: true,
           modelType: modelTarget ?? ModelType.salesorder
         }}
       />
