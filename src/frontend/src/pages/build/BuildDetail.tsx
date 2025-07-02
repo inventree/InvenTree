@@ -401,7 +401,7 @@ export default function BuildDetail() {
       },
       {
         name: 'line-items',
-        label: t`Required Items`,
+        label: t`Required Parts`,
         icon: <IconListNumbers />,
         content: (
           <BuildLinesPanel
