@@ -93,7 +93,7 @@ def registration_enabled():
         get_global_setting('LOGIN_ENABLE_REG')
         or InvenTree.sso.sso_registration_enabled()
     ):
-        if is_email_configured:
+        if is_email_configured():
             return True
         else:
             logger.warning(
