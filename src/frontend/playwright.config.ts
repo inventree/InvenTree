@@ -30,12 +30,6 @@ const MAX_RETRIES: number = 3;
  * - WORKERS = 1 (to avoid conflicts with HMR)
  */
 
-// Command to spin-up the backend server
-// In production mode, we want a stronger webserver to handle multiple requests
-const WEB_SERVER_CMD: string = IS_CI
-  ? 'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi'
-  : 'invoke dev.server -a 127.0.0.1:8000';
-
 export default defineConfig({
   testDir: './tests',
   fullyParallel: false,
@@ -72,7 +66,7 @@ export default defineConfig({
       timeout: 120 * 1000
     },
     {
-      command: WEB_SERVER_CMD,
+      command: 'invoke dev.server -a 127.0.0.1:8000',
       env: {
         INVENTREE_DEBUG: 'True',
         INVENTREE_PLUGINS_ENABLED: 'True',
