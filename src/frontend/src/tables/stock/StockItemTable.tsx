@@ -523,7 +523,7 @@ export function StockItemTable({
         in_stock: true
       }
     };
-  }, [table]);
+  }, [table.selectedRecords, table.refreshTable]);
 
   const newStockItemFields = useStockFields({
     create: true,
@@ -556,10 +556,6 @@ export function StockItemTable({
   });
 
   const tableActions = useMemo(() => {
-    const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
-    const can_add_stock = user.hasAddRole(UserRoles.stock);
-    const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-
     return [
       <ActionDropdown
         key='stock-actions'
