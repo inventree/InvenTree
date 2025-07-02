@@ -191,7 +191,9 @@ export function useStockAdjustActions(
         tooltip={t`Stock Actions`}
         icon={<InvenTreeIcon icon='stock' />}
         actions={menuActions}
-        disabled={props.enabled == false || !hasItems}
+        disabled={
+          props.enabled != true && (props.enabled == false || !hasItems)
+        }
         hidden={!hasActions}
       />
     );

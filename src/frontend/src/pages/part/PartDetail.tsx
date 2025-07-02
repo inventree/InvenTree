@@ -910,7 +910,8 @@ export default function PartDetail() {
 
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
-    merge: false
+    merge: false,
+    enabled: true
   });
 
   const orderPartsWizard = OrderPartsWizard({
