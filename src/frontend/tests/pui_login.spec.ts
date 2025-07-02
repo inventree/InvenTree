@@ -45,7 +45,10 @@ test('Login - Failures', async ({ page }) => {
 });
 
 test('Login - Change Password', async ({ page }) => {
-  await doLogin(page, 'noaccess', 'youshallnotpass');
+  await doLogin(page, {
+    password: 'noaccess',
+    username: 'youshallnotpass'
+  });
 
   // Navigate to the 'change password' page
   await navigate(page, 'settings/user/account', { waitUntil: 'networkidle' });
