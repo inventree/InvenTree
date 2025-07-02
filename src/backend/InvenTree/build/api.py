@@ -16,6 +16,7 @@ from rest_framework.response import Response
 import build.serializers
 import common.models
 import part.models as part_models
+import stock.models as stock_models
 import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
@@ -829,6 +830,17 @@ class BuildItemFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(install_into=None)
         return queryset.filter(install_into=None)
+
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    def filter_location(self, queryset, name, location):
+        """Filter the queryset based on the specified location."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(stock_item__location__in=locations)
 
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
