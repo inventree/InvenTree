@@ -475,8 +475,14 @@ export default function SalesOrderDetail() {
       (order.status == soStatus.PENDING ||
         order.status == soStatus.IN_PROGRESS);
 
-    const canShip: boolean = canEdit && order.status == soStatus.IN_PROGRESS;
-    const canComplete: boolean = canEdit && order.status == soStatus.SHIPPED;
+    const autoComplete = globalSettings.isSet('SALESORDER_SHIP_COMPLETE');
+
+    const canShip: boolean =
+      !autoComplete && canEdit && order.status == soStatus.IN_PROGRESS;
+    const canComplete: boolean =
+      canEdit &&
+      (order.status == soStatus.SHIPPED ||
+        (autoComplete && order.status == soStatus.IN_PROGRESS));
 
     return [
       <PrimaryActionButton
@@ -537,7 +543,7 @@ export default function SalesOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, soStatus]);
+  }, [user, order, soStatus, globalSettings]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
