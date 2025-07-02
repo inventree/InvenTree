@@ -13,18 +13,11 @@ import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
 import {
   type StockOperationProps,
-  useAddStockItem,
-  useAssignStockItem,
-  useChangeStockStatus,
-  useCountStockItem,
-  useDeleteStockItem,
-  useMergeStockItem,
-  useRemoveStockItem,
-  useStockFields,
-  useTransferStockItem
+  useStockFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -558,14 +551,9 @@ export function StockItemTable({
     parts: partsToOrder
   });
 
-  const transferStock = useTransferStockItem(tableActionParams);
-  const addStock = useAddStockItem(tableActionParams);
-  const removeStock = useRemoveStockItem(tableActionParams);
-  const countStock = useCountStockItem(tableActionParams);
-  const changeStockStatus = useChangeStockStatus(tableActionParams);
-  const mergeStock = useMergeStockItem(tableActionParams);
-  const assignStock = useAssignStockItem(tableActionParams);
-  const deleteStock = useDeleteStockItem(tableActionParams);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: tableActionParams
+  });
 
   const tableActions = useMemo(() => {
     const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
@@ -579,64 +567,7 @@ export function StockItemTable({
         icon={<InvenTreeIcon icon='stock' />}
         disabled={table.selectedRecords.length === 0}
         actions={[
-          {
-            name: t`Count Stock`,
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: t`Count Stock`,
-            disabled: !can_add_stocktake,
-            onClick: () => {
-              countStock.open();
-            }
-          },
-          {
-            name: t`Add Stock`,
-            icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
-            tooltip: t`Add a new stock item`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              addStock.open();
-            }
-          },
-          {
-            name: t`Remove Stock`,
-            icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
-            tooltip: t`Remove some quantity from a stock item`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              removeStock.open();
-            }
-          },
-          {
-            name: t`Transfer Stock`,
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: t`Move Stock items to new locations`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              transferStock.open();
-            }
-          },
-          {
-            name: t`Change stock status`,
-            icon: <InvenTreeIcon icon='info' iconProps={{ color: 'blue' }} />,
-            tooltip: t`Change the status of stock items`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              changeStockStatus.open();
-            }
-          },
-          {
-            name: t`Merge stock`,
-            icon: <InvenTreeIcon icon='merge' />,
-            tooltip: t`Merge stock items`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              mergeStock.open();
-            }
-          },
+          ...stockAdjustActions.menuActions,
           {
             name: t`Order stock`,
             icon: <InvenTreeIcon icon='buy' />,
@@ -648,24 +579,6 @@ export function StockItemTable({
                 table.selectedRecords.map((record) => record.part_detail)
               );
               orderPartsWizard.openWizard();
-            }
-          },
-          {
-            name: t`Assign to customer`,
-            icon: <InvenTreeIcon icon='customer' />,
-            tooltip: t`Assign items to a customer`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              assignStock.open();
-            }
-          },
-          {
-            name: t`Delete stock`,
-            icon: <InvenTreeIcon icon='delete' iconProps={{ color: 'red' }} />,
-            tooltip: t`Delete Stock Items`,
-            disabled: !can_delete_stock,
-            onClick: () => {
-              deleteStock.open();
             }
           }
         ]}
@@ -682,15 +595,8 @@ export function StockItemTable({
   return (
     <>
       {newStockItem.modal}
-      {transferStock.modal}
-      {removeStock.modal}
-      {addStock.modal}
-      {countStock.modal}
-      {changeStockStatus.modal}
-      {mergeStock.modal}
-      {assignStock.modal}
-      {deleteStock.modal}
       {orderPartsWizard.wizard}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
