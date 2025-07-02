@@ -198,7 +198,8 @@ test('Settings - Admin - Barcode History', async ({ browser, request }) => {
   const barcodes = ['ABC1234', 'XYZ5678', 'QRS9012'];
 
   barcodes.forEach(async (barcode) => {
-    await request.post(`${apiUrl}/barcode/`, {
+    const url = new URL('barcode/', apiUrl).toString();
+    await request.post(url, {
       data: {
         barcode: barcode
       },
