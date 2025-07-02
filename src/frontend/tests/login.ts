@@ -72,11 +72,10 @@ export const doCachedLogin = async (
     await navigate(page, webUrl, { baseUrl: options?.baseUrl });
     await navigate(page, url, { baseUrl: options?.baseUrl });
 
-    await page.waitForTimeout(2500);
     await page.getByRole('link', { name: 'Dashboard' }).waitFor();
     await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
-    await page.waitForLoadState('load');
-    await page.waitForURL('/web**');
+    await page.waitForLoadState('networkidle');
+
     return page;
   }
 
