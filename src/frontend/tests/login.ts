@@ -1,5 +1,4 @@
 import type { Browser, Page } from '@playwright/test';
-import { expect } from './baseFixtures.js';
 import { loginUrl, logoutUrl, user, webUrl } from './defaults';
 
 import fs from 'node:fs';
@@ -26,14 +25,22 @@ export const doLogin = async (page, options?: LoginOptions) => {
     waitUntil: 'networkidle'
   });
 
-  await expect(page).toHaveTitle(/^InvenTree.*$/);
   await page.waitForURL('**/web/login');
+
   await page.getByLabel('username').fill(username);
   await page.getByLabel('password').fill(password);
+
+  await page.waitForTimeout(100);
+
   await page.getByRole('button', { name: 'Log in' }).click();
 
+  await page.waitForTimeout(100);
   await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(250);
+
+  await page.getByRole('link', { name: 'Dashboard' }).waitFor();
+  await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+  await page.waitForURL(/\/web(\/home)?/);
+  await page.waitForLoadState('networkidle');
 };
 
 export interface CachedLoginOptions {
@@ -71,17 +78,15 @@ export const doCachedLogin = async (
       storageState: fn
     });
     console.log(`Using cached login state for ${username}`);
-    await navigate(page, webUrl, {
-      baseUrl: options?.baseUrl,
-      waitUntil: 'networkidle'
-    });
-    await navigate(page, url, {
+
+    await navigate(page, url ?? webUrl, {
       baseUrl: options?.baseUrl,
       waitUntil: 'networkidle'
     });
 
     await page.getByRole('link', { name: 'Dashboard' }).waitFor();
     await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+    await page.waitForURL(/\/web(\/home)?/);
     await page.waitForLoadState('networkidle');
 
     return page;
@@ -91,12 +96,6 @@ export const doCachedLogin = async (
   const page = await browser.newPage();
 
   console.log(`No cache found - logging in for ${username}`);
-
-  // Ensure we start from the login page
-  await navigate(page, webUrl, {
-    baseUrl: options?.baseUrl,
-    waitUntil: 'networkidle'
-  });
 
   // Completely clear the browser cache and cookies, etc
   await page.context().clearCookies();

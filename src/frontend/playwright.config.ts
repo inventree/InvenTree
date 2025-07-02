@@ -17,7 +17,6 @@ const MAX_RETRIES: number = 3;
  * - In CI (GitHub actions), we run "vite build" to generate a production build
  * - This build is then served by a local server for testing
  * - This allows the tests to run much faster and with parallel workers
- * - Run a Gunicorn multi-threaded web server to handle multiple requests
  * - WORKERS = MAX_WORKERS (to speed up the tests)
  *
  * CI Mode (Coverage):
