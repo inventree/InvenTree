@@ -107,7 +107,7 @@ class PluginsRegistry:
 
     def get_plugin(
         self, slug: str, active: bool = True, with_mixin: Optional[str] = None
-    ) -> InvenTreePlugin | None:
+    ) -> InvenTreePlugin:
         """Lookup plugin by slug (unique key).
 
         Args:
