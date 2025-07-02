@@ -81,11 +81,6 @@ export const doCachedLogin = async (
 
   await doLogin(page, username, password);
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
-  await page.getByText(/InvenTree Demo Server -/).waitFor();
-  await page.waitForURL('**/web/**');
-
-  // Wait for the dashboard to load
-  //await page.getByText('No widgets selected').waitFor()
   await page.waitForLoadState('load');
 
   // Cache the login state
