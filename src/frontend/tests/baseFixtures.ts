@@ -52,7 +52,7 @@ export const test = baseTest.extend({
     }
   },
   // Ensure no errors are thrown in the console
-  page: async ({ baseURL, page }, use) => {
+  page: async ({ page }, use) => {
     const messages = [];
     page.on('console', (msg) => {
       const url = msg.location().url;
@@ -67,7 +67,7 @@ export const test = baseTest.extend({
           ) < 0 &&
         msg.text() !=
           'Failed to load resource: the server responded with a status of 400 (Bad Request)' &&
-        !msg.text().includes('http://localhost:8000/this/does/not/exist.js') &&
+        !msg.text().includes('/this/does/not/exist.js') &&
         !url.includes('/this/does/not/exist.js') &&
         !url.includes('/api/user/me/') &&
         !url.includes('/api/user/token/') &&
@@ -75,12 +75,12 @@ export const test = baseTest.extend({
         !url.includes('/api/auth/v1/auth/session') &&
         !url.includes('/api/auth/v1/account/password/change') &&
         !url.includes('/api/barcode/') &&
-        url != 'https://docs.inventree.org/en/versions.json' &&
-        url != 'http://localhost:5173/favicon.ico' &&
+        !url.includes('/favicon.ico') &&
         !url.startsWith('https://api.github.com/repos/inventree') &&
-        !url.startsWith('http://localhost:8000/api/news/') &&
-        !url.startsWith('http://localhost:8000/api/notifications/') &&
+        !url.includes('/api/news/') &&
+        !url.includes('/api/notifications/') &&
         !url.startsWith('chrome://') &&
+        url != 'https://docs.inventree.org/en/versions.json' &&
         url.indexOf('99999') < 0
       )
         messages.push(msg);
