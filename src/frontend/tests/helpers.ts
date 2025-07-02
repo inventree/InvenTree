@@ -86,6 +86,10 @@ export const navigate = async (
   url: string,
   options?: NavigateOptions
 ) => {
+  if (!url.startsWith('http') && !url.includes('web')) {
+    url = `/web/${url}`.replaceAll('//', '/');
+  }
+
   const path: string = options?.baseUrl
     ? new URL(url, options.baseUrl).toString()
     : url;
