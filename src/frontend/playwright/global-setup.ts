@@ -18,25 +18,31 @@ async function globalSetup(config: FullConfig) {
     });
   }
 
+  const baseUrl = config.projects[0].use?.baseURL || 'http://localhost:5173';
+
   // Perform login for each user (each in a separate browser instance)
   await doCachedLogin(await chromium.launch(), {
     username: 'admin',
-    password: 'inventree'
+    password: 'inventree',
+    baseUrl: baseUrl
   });
 
   await doCachedLogin(await chromium.launch(), {
     username: 'allaccess',
-    password: 'nolimits'
+    password: 'nolimits',
+    baseUrl: baseUrl
   });
 
   await doCachedLogin(await chromium.launch(), {
     username: 'reader',
-    password: 'readonly'
+    password: 'readonly',
+    baseUrl: baseUrl
   });
 
   await doCachedLogin(await chromium.launch(), {
     username: 'steven',
-    password: 'wizardstaff'
+    password: 'wizardstaff',
+    baseUrl: baseUrl
   });
 }
 

@@ -1,21 +1,30 @@
 import type { Browser, Page } from '@playwright/test';
 import { expect } from './baseFixtures.js';
-import { user } from './defaults';
-import { navigate } from './helpers.js';
+import { loginUrl, logoutUrl, user, webUrl } from './defaults';
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { navigate } from './helpers.js';
+
+interface LoginOptions {
+  username?: string;
+  password?: string;
+  baseUrl?: string;
+}
 
 /*
  * Perform form based login operation from the "login" URL
  */
-export const doLogin = async (page, username?: string, password?: string) => {
-  username = username ?? user.username;
-  password = password ?? user.password;
+export const doLogin = async (page, options?: LoginOptions) => {
+  const username: string = options?.username ?? user.username;
+  const password: string = options?.password ?? user.password;
 
   console.log('- Logging in with username:', username);
 
-  await navigate(page, '/logout/');
+  await navigate(page, loginUrl, {
+    baseUrl: options?.baseUrl,
+    waitUntil: 'load'
+  });
 
   await expect(page).toHaveTitle(/^InvenTree.*$/);
   await page.waitForURL('**/web/login');
@@ -30,6 +39,7 @@ export interface CachedLoginOptions {
   username?: string;
   password?: string;
   url?: string;
+  baseUrl?: string;
 }
 
 // Set of users allowed to do cached login
@@ -60,8 +70,8 @@ export const doCachedLogin = async (
       storageState: fn
     });
     console.log(`Using cached login state for ${username}`);
-    await navigate(page, '/web');
-    await navigate(page, url);
+    await navigate(page, webUrl, { baseUrl: options?.baseUrl });
+    await navigate(page, url, { baseUrl: options?.baseUrl });
 
     await page.waitForTimeout(2500);
     await page.getByRole('link', { name: 'Dashboard' }).waitFor();
@@ -77,13 +87,17 @@ export const doCachedLogin = async (
   console.log(`No cache found - logging in for ${username}`);
 
   // Ensure we start from the login page
-  await navigate(page, '/web');
+  await navigate(page, webUrl, { baseUrl: options?.baseUrl });
 
   // Completely clear the browser cache and cookies, etc
   await page.context().clearCookies();
   await page.context().clearPermissions();
 
-  await doLogin(page, username, password);
+  await doLogin(page, {
+    username: username,
+    password: password,
+    baseUrl: options?.baseUrl
+  });
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
   await page.waitForLoadState('load');
 
@@ -91,13 +105,20 @@ export const doCachedLogin = async (
   await page.context().storageState({ path: fn });
 
   if (url) {
-    await navigate(page, url);
+    await navigate(page, url, { baseUrl: options?.baseUrl });
   }
 
   return page;
 };
 
-export const doLogout = async (page) => {
-  await navigate(page, '/logout');
+interface LogoutOptions {
+  baseUrl?: string;
+}
+
+export const doLogout = async (page, options?: LogoutOptions) => {
+  await navigate(page, logoutUrl, {
+    baseUrl: options?.baseUrl,
+    waitUntil: 'load'
+  });
   await page.waitForURL('**/web/login');
 };

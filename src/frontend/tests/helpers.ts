@@ -71,13 +71,25 @@ export const clickOnRowMenu = async (cell) => {
   await row.getByLabel(/row-action-menu-/i).click();
 };
 
+interface NavigateOptions {
+  waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+  baseUrl?: string;
+}
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
  * @param url
  */
-export const navigate = async (page, url: string) => {
-  await page.goto(url, { waituntil: 'load' });
+export const navigate = async (
+  page,
+  url: string,
+  options?: NavigateOptions
+) => {
+  const path: string = options?.baseUrl
+    ? new URL(url, options.baseUrl).toString()
+    : url;
+  await page.goto(path, { waitUntil: options?.waitUntil ?? 'load' });
 };
 
 /**
