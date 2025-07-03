@@ -36,7 +36,15 @@ import {
   PathColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import {
+  BatchFilter,
+  HasBatchCodeFilter,
+  IsSerializedFilter,
+  SerialFilter,
+  SerialGTEFilter,
+  SerialLTEFilter,
+  StatusFilterOptions
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -376,40 +384,12 @@ function stockItemTableFilters({
       label: t`Sent to Customer`,
       description: t`Show items which have been sent to a customer`
     },
-    {
-      name: 'serialized',
-      label: t`Is Serialized`,
-      description: t`Show items which have a serial number`
-    },
-    {
-      name: 'batch',
-      label: t`Batch Code`,
-      description: t`Filter items by batch code`,
-      type: 'text'
-    },
-    {
-      name: 'serial',
-      label: t`Serial Number`,
-      description: t`Filter items by serial number`,
-      type: 'text'
-    },
-    {
-      name: 'serial_lte',
-      label: t`Serial Number LTE`,
-      description: t`Show items with serial numbers less than or equal to a given value`,
-      type: 'text'
-    },
-    {
-      name: 'serial_gte',
-      label: t`Serial Number GTE`,
-      description: t`Show items with serial numbers greater than or equal to a given value`,
-      type: 'text'
-    },
-    {
-      name: 'has_batch',
-      label: t`Has Batch Code`,
-      description: t`Show items which have a batch code`
-    },
+    HasBatchCodeFilter(),
+    BatchFilter(),
+    IsSerializedFilter(),
+    SerialFilter(),
+    SerialLTEFilter(),
+    SerialGTEFilter(),
     {
       name: 'tracked',
       label: t`Tracked`,
