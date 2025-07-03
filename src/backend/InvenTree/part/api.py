@@ -716,8 +716,8 @@ class PartFilter(rest_filters.FilterSet):
     def filter_has_ipn(self, queryset, name, value):
         """Filter by whether the Part has an IPN (internal part number) or not."""
         if str2bool(value):
-            return queryset.exclude(IPN='')
-        return queryset.filter(IPN='')
+            return queryset.exclude(IPN='').exclude(IPN=None)
+        return queryset.filter(Q(IPN='') | Q(IPN=None)).distinct()
 
     # Regex filter for name
     name_regex = rest_filters.CharFilter(
