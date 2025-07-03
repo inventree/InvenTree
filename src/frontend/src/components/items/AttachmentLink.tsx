@@ -1,4 +1,4 @@
-import { Anchor, Group, Text } from '@mantine/core';
+import { Anchor, Group } from '@mantine/core';
 import {
   IconFile,
   IconFileTypeCsv,
@@ -88,7 +88,7 @@ export function AttachmentLink({
           {text}
         </Anchor>
       ) : (
-        <Text>'-'</Text>
+        text
       )}
     </Group>
   );
