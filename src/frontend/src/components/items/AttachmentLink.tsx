@@ -1,4 +1,4 @@
-import { Anchor, Group } from '@mantine/core';
+import { Anchor, Group, Text } from '@mantine/core';
 import {
   IconFile,
   IconFileTypeCsv,
@@ -64,12 +64,6 @@ export function AttachmentLink({
   attachment: string;
   external?: boolean;
 }>): ReactNode {
-  const text = external
-    ? attachment
-    : !!attachment
-      ? attachment.split('/').pop()
-      : '-';
-
   const url = useMemo(() => {
     if (external) {
       return attachment;
@@ -78,12 +72,24 @@ export function AttachmentLink({
     return generateUrl(attachment);
   }, [attachment, external]);
 
+  const text: string = useMemo(() => {
+    if (!attachment) {
+      return '-';
+    }
+
+    return external ? attachment : (attachment.split('/').pop() ?? '-');
+  }, [attachment, external]);
+
   return (
     <Group justify='left' gap='sm' wrap='nowrap'>
       {external ? <IconLink /> : attachmentIcon(attachment)}
-      <Anchor href={url} target='_blank' rel='noopener noreferrer'>
-        {text}
-      </Anchor>
+      {!!attachment ? (
+        <Anchor href={url} target='_blank' rel='noopener noreferrer'>
+          {text}
+        </Anchor>
+      ) : (
+        <Text>'-'</Text>
+      )}
     </Group>
   );
 }
