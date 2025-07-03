@@ -334,14 +334,19 @@ class Order(
     def check_locked(self, db: bool = False) -> bool:
         """Check if this order is 'locked'.
 
+        A locked order cannot be modified after it has been completed.
+
         Args:
             db: If True, check with the database. If False, check the instance (default False).
         """
-        return (
-            self.UNLOCK_SETTING
-            and get_global_setting(self.UNLOCK_SETTING, backup_value=False) is False
-            and self.check_complete(db)
-        )
+        if not self.check_complete(db=db):
+            # If the order is not complete, it is not locked
+            return False
+
+        if self.UNLOCK_SETTING:
+            return get_global_setting(self.UNLOCK_SETTING, backup_value=False) is False
+
+        return False
 
     def check_complete(self, db: bool = False) -> bool:
         """Check if this order is 'complete'.
