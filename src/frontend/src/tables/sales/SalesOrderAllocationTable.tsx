@@ -136,7 +136,8 @@ export default function SalesOrderAllocationTable({
         accessor: 'part_detail.IPN',
         title: t`IPN`,
         hidden: showPartInfo != true,
-        sortable: false
+        sortable: true,
+        ordering: 'IPN'
       },
       {
         accessor: 'serial',
