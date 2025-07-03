@@ -378,19 +378,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Ensure that the "actions" column is always at the end of the list
   // This effect is necessary as sometimes the underlying mantine-datatable columns change
   useEffect(() => {
-    const idx: number = tableColumns.columnsOrder.indexOf(
-      ACTIONS_COLUMN_ACCESSOR
-    );
-
-    if (idx >= 0 && idx < tableColumns.columnsOrder.length - 1) {
-      // Actions column is not at the end of the list - move it there
-      const newOrder = tableColumns.columnsOrder.filter(
-        (col) => col != ACTIONS_COLUMN_ACCESSOR
-      );
-      newOrder.push(ACTIONS_COLUMN_ACCESSOR);
-      tableColumns.setColumnsOrder(newOrder);
-    }
-
     // Ensure that the columns are always in the order specified by the columns prop
     const columnOrder = tableColumns.columnsOrder.slice().sort((a, b) => {
       const idxA = dataColumns.findIndex((col: any) => col.accessor == a);
