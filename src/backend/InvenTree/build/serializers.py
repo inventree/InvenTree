@@ -1228,7 +1228,14 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     stock_item_detail = StockItemSerializer(
-        source='stock_item', read_only=True, allow_null=True, label=_('Stock Item')
+        source='stock_item',
+        read_only=True,
+        allow_null=True,
+        label=_('Stock Item'),
+        part_detail=False,
+        location_detail=False,
+        supplier_part_detail=False,
+        path_detail=False,
     )
 
     location = serializers.PrimaryKeyRelatedField(
