@@ -708,7 +708,7 @@ export default function BuildDetail() {
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Build Order`}: ${build.reference}`}
-            subtitle={build.title}
+            subtitle={`${build.quantity} x ${build.part_detail?.full_name}`}
             badges={buildBadges}
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}
