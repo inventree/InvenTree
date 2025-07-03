@@ -82,7 +82,7 @@ class OrderTest(TestCase, ExchangeRateMixin):
         order.save()
 
         # Turn on auto-locking
-        set_global_setting(PurchaseOrder.LOCK_SETTING, True)
+        set_global_setting(PurchaseOrder.UNLOCK_SETTING, False)
         # still not locked
         self.assertFalse(order.check_locked())
 

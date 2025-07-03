@@ -297,7 +297,7 @@ class Order(
     """
 
     REQUIRE_RESPONSIBLE_SETTING = None
-    LOCK_SETTING = None
+    UNLOCK_SETTING = None
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -338,8 +338,8 @@ class Order(
             db: If True, check with the database. If False, check the instance (default False).
         """
         return (
-            self.LOCK_SETTING
-            and get_global_setting(self.LOCK_SETTING)
+            self.UNLOCK_SETTING
+            and get_global_setting(self.UNLOCK_SETTING, backup_value=False) is False
             and self.check_complete(db)
         )
 
@@ -532,7 +532,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = PurchaseOrderStatus
-    LOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -1114,7 +1114,7 @@ class SalesOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = SalesOrderStatus
-    LOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -2415,7 +2415,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = ReturnOrderStatus
-    LOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
