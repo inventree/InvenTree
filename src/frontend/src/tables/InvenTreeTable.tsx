@@ -413,7 +413,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      if (tableState.queryFilters) {
+      if (tableState.queryFilters && tableState.queryFilters.size > 0) {
         // Allow override of filters based on URL query parameters
         for (const [key, value] of tableState.queryFilters) {
           queryParams[key] = value;
