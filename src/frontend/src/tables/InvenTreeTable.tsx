@@ -413,18 +413,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      // Add custom filters
-      if (tableState.filterSet.activeFilters) {
-        tableState.filterSet.activeFilters.forEach((flt) => {
-          queryParams[flt.name] = flt.value;
-        });
-      }
-
-      // Allow override of filters based on URL query parameters
       if (tableState.queryFilters) {
+        // Allow override of filters based on URL query parameters
         for (const [key, value] of tableState.queryFilters) {
           queryParams[key] = value;
         }
+      } else if (tableState.filterSet.activeFilters) {
+        // Use custom table filters only if not overridden by query parameters
+        tableState.filterSet.activeFilters.forEach((flt) => {
+          queryParams[flt.name] = flt.value;
+        });
       }
 
       // Add custom search term
