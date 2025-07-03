@@ -113,12 +113,6 @@ export default function BuildAllocatedStockTable({
         switchable: true
       },
       {
-        accessor: 'quantity',
-        title: t`Allocated Quantity`,
-        sortable: true,
-        switchable: false
-      },
-      {
         accessor: 'serial',
         title: t`Serial Number`,
         sortable: false,
@@ -136,6 +130,12 @@ export default function BuildAllocatedStockTable({
         accessor: 'available',
         title: t`Available Quantity`,
         render: (record: any) => record?.stock_item_detail?.quantity
+      },
+      {
+        accessor: 'quantity',
+        title: t`Allocated Quantity`,
+        sortable: true,
+        switchable: false
       },
       LocationColumn({
         accessor: 'location_detail',
