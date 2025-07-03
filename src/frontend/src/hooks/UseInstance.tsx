@@ -31,6 +31,7 @@ export function useInstance<T = any>({
   params = {},
   defaultValue = {},
   pathParams,
+  disabled,
   hasPrimaryKey = true,
   refetchOnMount = true,
   refetchOnWindowFocus = false,
@@ -41,6 +42,7 @@ export function useInstance<T = any>({
   hasPrimaryKey?: boolean;
   params?: any;
   pathParams?: PathParams;
+  disabled?: boolean;
   defaultValue?: any;
   refetchOnMount?: boolean;
   refetchOnWindowFocus?: boolean;
@@ -51,14 +53,20 @@ export function useInstance<T = any>({
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
   const instanceQuery = useQuery<T>({
+    enabled: !disabled,
     queryKey: [
       'instance',
       endpoint,
       pk,
       JSON.stringify(params),
-      JSON.stringify(pathParams)
+      JSON.stringify(pathParams),
+      disabled
     ],
     queryFn: async () => {
+      if (disabled) {
+        return defaultValue;
+      }
+
       if (hasPrimaryKey) {
         if (
           pk == null ||
