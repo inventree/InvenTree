@@ -290,7 +290,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -299,7 +299,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -308,7 +308,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
