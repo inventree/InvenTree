@@ -552,6 +552,16 @@ export default function SalesOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
+  const subtitle: string = useMemo(() => {
+    let t = order.customer_detail?.name || '';
+
+    if (order.customer_reference) {
+      t += ` (${order.customer_reference})`;
+    }
+
+    return t;
+  }, [order]);
+
   return (
     <>
       {issueOrder.modal}
@@ -568,7 +578,7 @@ export default function SalesOrderDetail() {
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Sales Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={soActions}
