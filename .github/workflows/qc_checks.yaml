@@ -609,7 +609,7 @@ jobs:
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: |
-          invoke int.frontend-compile
+          invoke int.frontend-compile --extract
           cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
