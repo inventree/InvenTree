@@ -57,7 +57,7 @@ export function ActionDropdown({
   disabled?: boolean;
   hidden?: boolean;
   noindicator?: boolean;
-}) {
+}): ReactNode {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
   }, [actions]);

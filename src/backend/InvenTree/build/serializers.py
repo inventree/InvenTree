@@ -42,7 +42,7 @@ from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import (
     LocationBriefSerializer,
-    StockItemSerializerBrief,
+    StockItemSerializer,
     StockStatusCustomSerializer,
 )
 from stock.status_codes import StockStatus
@@ -1227,7 +1227,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
 
-    stock_item_detail = StockItemSerializerBrief(
+    stock_item_detail = StockItemSerializer(
         source='stock_item', read_only=True, allow_null=True, label=_('Stock Item')
     )
 
