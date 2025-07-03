@@ -105,6 +105,8 @@ export const loadTab = async (page, tabName) => {
     .getByLabel(/panel-tabs-/)
     .getByRole('tab', { name: tabName })
     .click();
+
+  await page.waitForLoadState('networkidle');
 };
 
 // Activate "table" view in certain contexts
