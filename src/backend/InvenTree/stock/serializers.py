@@ -307,41 +307,6 @@ class StockItemTestResultSerializer(
         return data
 
 
-class StockItemSerializerBrief(
-    InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.InvenTreeModelSerializer,
-):
-    """Brief serializers for a StockItem."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItem
-        fields = [
-            'part',
-            'part_name',
-            'pk',
-            'location',
-            'quantity',
-            'serial',
-            'batch',
-            'supplier_part',
-            'barcode_hash',
-        ]
-
-        read_only_fields = ['barcode_hash']
-
-    part_name = serializers.CharField(source='part.full_name', read_only=True)
-
-    quantity = InvenTreeDecimalField()
-
-    def validate_serial(self, value):
-        """Make sure serial is not to big."""
-        if abs(InvenTree.helpers.extract_int(value)) > 0x7FFFFFFF:
-            raise serializers.ValidationError(_('Serial number is too large'))
-        return value
-
-
 @register_importer()
 class StockItemSerializer(
     DataImportExportSerializerMixin,
@@ -1336,7 +1301,7 @@ class StockTrackingSerializer(
 
     label = serializers.CharField(read_only=True)
 
-    item_detail = StockItemSerializerBrief(
+    item_detail = StockItemSerializer(
         source='item', many=False, read_only=True, allow_null=True
     )
 

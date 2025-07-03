@@ -68,14 +68,9 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency } from '../../defaults/formatters';
 import {
   type StockOperationProps,
-  useAddStockItem,
-  useAssignStockItem,
-  useCountStockItem,
   useFindSerialNumberForm,
-  useRemoveStockItem,
   useStockFields,
-  useStockItemSerializeFields,
-  useTransferStockItem
+  useStockItemSerializeFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -84,6 +79,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
@@ -715,7 +711,7 @@ export default function StockDetail() {
     }
   });
 
-  const stockActionProps: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: [stockitem],
       model: ModelType.stockitem,
@@ -726,11 +722,11 @@ export default function StockDetail() {
     };
   }, [stockitem]);
 
-  const countStockItem = useCountStockItem(stockActionProps);
-  const addStockItem = useAddStockItem(stockActionProps);
-  const removeStockItem = useRemoveStockItem(stockActionProps);
-  const transferStockItem = useTransferStockItem(stockActionProps);
-  const assignToCustomer = useAssignStockItem(stockActionProps);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    delete: false,
+    merge: false
+  });
 
   const serializeStockFields = useStockItemSerializeFields({
     partId: stockitem.part,
@@ -862,50 +858,7 @@ export default function StockDetail() {
         tooltip={t`Stock Operations`}
         icon={<IconPackages />}
         actions={[
-          {
-            name: t`Count`,
-            tooltip: t`Count stock`,
-            hidden: serialized || !canTransfer || isBuilding,
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            onClick: () => {
-              stockitem.pk && countStockItem.open();
-            }
-          },
-          {
-            name: t`Add`,
-            tooltip: t`Add Stock`,
-            hidden: serialized || !canTransfer || isBuilding,
-            icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
-            onClick: () => {
-              stockitem.pk && addStockItem.open();
-            }
-          },
-          {
-            name: t`Remove`,
-            tooltip: t`Remove Stock`,
-            hidden:
-              serialized ||
-              !canTransfer ||
-              isBuilding ||
-              stockitem.quantity <= 0,
-            icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
-            onClick: () => {
-              stockitem.pk && removeStockItem.open();
-            }
-          },
-          {
-            name: t`Transfer`,
-            tooltip: t`Transfer Stock`,
-            hidden: !canTransfer,
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
-            onClick: () => {
-              stockitem.pk && transferStockItem.open();
-            }
-          },
+          ...stockAdjustActions.menuActions,
           {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
@@ -944,17 +897,6 @@ export default function StockDetail() {
             onClick: () => {
               stockitem.pk && returnStockItem.open();
             }
-          },
-          {
-            name: t`Assign to Customer`,
-            tooltip: t`Assign to a customer`,
-            hidden: !!stockitem.customer,
-            icon: (
-              <InvenTreeIcon icon='customer' iconProps={{ color: 'blue' }} />
-            ),
-            onClick: () => {
-              stockitem.pk && assignToCustomer.open();
-            }
           }
         ]}
       />,
@@ -976,7 +918,7 @@ export default function StockDetail() {
         ]}
       />
     ];
-  }, [id, stockitem, user]);
+  }, [id, stockitem, user, stockAdjustActions.menuActions]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
@@ -1099,13 +1041,9 @@ export default function StockDetail() {
           {editStockItem.modal}
           {duplicateStockItem.modal}
           {deleteStockItem.modal}
-          {countStockItem.modal}
-          {addStockItem.modal}
-          {removeStockItem.modal}
-          {transferStockItem.modal}
           {serializeStockItem.modal}
           {returnStockItem.modal}
-          {assignToCustomer.modal}
+          {stockAdjustActions.modals.map((modal) => modal.modal)}
           {orderPartsWizard.wizard}
         </Stack>
       </InstanceDetail>
