@@ -1430,8 +1430,14 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(
         source='item.part', many=False, read_only=True, allow_null=True
     )
-    item_detail = stock.serializers.StockItemSerializerBrief(
-        source='item', many=False, read_only=True, allow_null=True
+    item_detail = stock.serializers.StockItemSerializer(
+        source='item',
+        many=False,
+        read_only=True,
+        allow_null=True,
+        part_detail=False,
+        location_detail=False,
+        supplier_part_detail=False,
     )
     location_detail = stock.serializers.LocationBriefSerializer(
         source='item.location', many=False, read_only=True, allow_null=True

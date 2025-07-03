@@ -10,11 +10,13 @@ import { IconTruckDelivery } from '@tabler/icons-react';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
+import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
@@ -248,6 +250,37 @@ export default function SalesOrderAllocationTable({
     [allowEdit, user]
   );
 
+  const stockOperationProps: StockOperationProps = useMemo(() => {
+    // Extract stock items from the selected records
+    // Note that the table is actually a list of SalesOrderAllocation instances,
+    // so we need to reconstruct the stock item details
+    const stockItems: any[] = table.selectedRecords
+      .filter((item: any) => !!item.item_detail)
+      .map((item: any) => {
+        return {
+          ...item.item_detail,
+          part_detail: item.part_detail,
+          location_detail: item.location_detail
+        };
+      });
+
+    return {
+      items: stockItems,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable
+    };
+  }, [table.selectedRecords, table.refreshTable]);
+
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    assign: false,
+    delete: false,
+    add: false,
+    count: false,
+    remove: false
+  });
+
   // A subset of the selected allocations, which can be assigned to a shipment
   const nonShippedAllocationIds: number[] = useMemo(() => {
     // Only allow allocations which have not been shipped
@@ -275,6 +308,7 @@ export default function SalesOrderAllocationTable({
 
   const tableActions = useMemo(() => {
     return [
+      stockAdjustActions.dropdown,
       <ActionButton
         tooltip={t`Assign to shipment`}
         icon={<IconTruckDelivery />}
@@ -288,13 +322,20 @@ export default function SalesOrderAllocationTable({
         // TODO: Hide if order is already shipped
       />
     ];
-  }, [allowEdit, nonShippedAllocationIds, orderId, user]);
+  }, [
+    allowEdit,
+    nonShippedAllocationIds,
+    orderId,
+    user,
+    stockAdjustActions.dropdown
+  ]);
 
   return (
     <>
       {setShipment.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
+      {!isSubTable && stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
         tableState={table}
