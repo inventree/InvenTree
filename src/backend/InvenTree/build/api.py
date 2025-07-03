@@ -837,6 +837,7 @@ class BuildItemFilter(rest_filters.FilterSet):
         method='filter_location',
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Location')))
     def filter_location(self, queryset, name, location):
         """Filter the queryset based on the specified location."""
         locations = location.get_descendants(include_self=True)

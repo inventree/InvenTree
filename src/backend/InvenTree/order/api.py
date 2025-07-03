@@ -1185,6 +1185,9 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         method='filter_location',
     )
 
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Location'))
+    )
     def filter_location(self, queryset, name, location):
         """Filter by the location of the allocated StockItem."""
         locations = location.get_descendants(include_self=True)
