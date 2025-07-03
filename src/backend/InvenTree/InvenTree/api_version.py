@@ -7,6 +7,10 @@ INVENTREE_API_VERSION = 359
 
 INVENTREE_API_TEXT = """
 
+v360 -> 2025-07-03 : https://github.com/inventree/InvenTree/pull/9944
+    - Enable SalesOrderAllocation list to be filtered by part IPN value
+    - Enable SalesOrderAllocation list to be ordered by part MPN value
+
 v359 -> 2025-07-01 : https://github.com/inventree/InvenTree/pull/9909
     - Fixes annotated types for various part fields
 
