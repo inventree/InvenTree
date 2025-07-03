@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 361
 
 INVENTREE_API_TEXT = """
 
-v360 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9939
+v361 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9939
     - Allow filtering of BuildItem API by "location" of StockItem
     - Allow filtering of SalesOrderAllocation API by "location" of StockItem
 
