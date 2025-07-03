@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 360
+INVENTREE_API_VERSION = 361
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v361 -> 2025-07-03 : https://github.com/inventree/InvenTree/pull/9944
+    - Enable SalesOrderAllocation list to be filtered by part IPN value
+    - Enable SalesOrderAllocation list to be ordered by part MPN value
 
 v360 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9937
     - Provide more detailed StockItem information in the BuildItem serializer
