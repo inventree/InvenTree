@@ -8,7 +8,7 @@ __pycache__/
 env/
 inventree-env/
 .venv/
-./build/
+build/
 .cache/
 develop-eggs/
 dist/
@@ -111,3 +111,4 @@ api.yaml
 # web frontend (static files)
 src/backend/InvenTree/web/static
 InvenTree/web/static
+.env
