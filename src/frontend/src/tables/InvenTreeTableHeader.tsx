@@ -137,12 +137,8 @@ export default function InvenTreeTableHeader({
   }, [tableState.queryFilters]);
 
   const hasCustomFilters = useMemo(() => {
-    if (hasCustomSearch) {
-      return tableState.queryFilters.size > 1;
-    } else {
-      return tableState.queryFilters.size > 0;
-    }
-  }, [hasCustomSearch, tableState.queryFilters]);
+    return (tableState?.queryFilters?.size ?? 0) > 0;
+  }, [tableState.queryFilters]);
 
   return (
     <>
