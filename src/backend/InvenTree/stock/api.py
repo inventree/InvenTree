@@ -115,12 +115,13 @@ class StockItemContextMixin:
         return context
 
 
+@extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
 class StockItemSerialize(StockItemContextMixin, CreateAPI):
     """API endpoint for serializing a stock item."""
 
     serializer_class = StockSerializers.SerializeStockItemSerializer
+    pagination_class = None
 
-    @extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
     def create(self, request, *args, **kwargs):
         """Serialize the provided StockItem."""
         serializer = self.get_serializer(data=request.data)
