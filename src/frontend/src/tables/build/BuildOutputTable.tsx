@@ -57,7 +57,8 @@ import {
   SerialFilter,
   SerialGTEFilter,
   SerialLTEFilter,
-  StatusFilterOptions
+  StatusFilterOptions,
+  StockLocationFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
@@ -363,6 +364,7 @@ export default function BuildOutputTable({
         description: t`Filter by stock status`,
         choiceFunction: StatusFilterOptions(ModelType.stockitem)
       },
+      StockLocationFilter(),
       HasBatchCodeFilter(),
       BatchFilter(),
       IsSerializedFilter(),

@@ -3,7 +3,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
+import { Badge, Code, Flex, Modal, Paper, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
@@ -11,6 +11,7 @@ import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { CopyButton } from '../../components/buttons/CopyButton';
 import { StylishText } from '../../components/items/StylishText';
+import { RenderUser } from '../../components/render/User';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -99,7 +100,18 @@ export function ApiTokenTable({
       }
     ];
     if (!only_myself) {
-      cols.push({ accessor: 'user', title: t`User`, sortable: true });
+      cols.push({
+        accessor: 'user',
+        title: t`User`,
+        sortable: true,
+        render: (record: any) => {
+          if (record.user_detail) {
+            return <RenderUser instance={record.user_detail} />;
+          } else {
+            return record.user;
+          }
+        }
+      });
     }
     return cols;
   }, [only_myself]);
@@ -178,10 +190,12 @@ export function ApiTokenTable({
                 Tokens are only shown once - make sure to note it down.
               </Trans>
             </Text>
-            <Flex>
-              <Code>{token}</Code>
-              <CopyButton value={token} />
-            </Flex>
+            <Paper p='sm'>
+              <Flex>
+                <Code>{token}</Code>
+                <CopyButton value={token} />
+              </Flex>
+            </Paper>
           </Modal>
         </>
       )}
