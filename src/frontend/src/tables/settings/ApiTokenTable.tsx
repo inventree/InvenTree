@@ -11,6 +11,7 @@ import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { CopyButton } from '../../components/buttons/CopyButton';
 import { StylishText } from '../../components/items/StylishText';
+import { RenderUser } from '../../components/render/User';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -99,7 +100,18 @@ export function ApiTokenTable({
       }
     ];
     if (!only_myself) {
-      cols.push({ accessor: 'user', title: t`User`, sortable: true });
+      cols.push({
+        accessor: 'user',
+        title: t`User`,
+        sortable: true,
+        render: (record: any) => {
+          if (record.user_detail) {
+            return <RenderUser instance={record.user_detail} />;
+          } else {
+            return record.user;
+          }
+        }
+      });
     }
     return cols;
   }, [only_myself]);
