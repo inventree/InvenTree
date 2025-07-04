@@ -73,7 +73,7 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
+version_file = config.get_root_dir().joinpath('VERSION')
 if version_file.exists():
     load_dotenv(version_file)
 
@@ -340,6 +340,7 @@ MIDDLEWARE = CONFIG.get(
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
+        'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
@@ -878,7 +879,7 @@ if TRACING_ENABLED:  # pragma: no cover
 
         # Run tracing/logging instrumentation
         setup_tracing(**TRACING_DETAILS)
-        setup_instruments()
+        setup_instruments(DB_ENGINE)
     else:
         logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
 

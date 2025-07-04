@@ -6,7 +6,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -16,7 +15,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  CompanyColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -42,16 +46,9 @@ export function ManufacturerPartTable({
       {
         accessor: 'manufacturer',
         sortable: true,
-        render: (record: any) => {
-          const manufacturer = record?.manufacturer_detail ?? {};
-
-          return (
-            <Thumbnail
-              src={manufacturer?.thumbnail ?? manufacturer.image}
-              text={manufacturer.name}
-            />
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record?.manufacturer_detail} />
+        )
       },
       {
         accessor: 'MPN',

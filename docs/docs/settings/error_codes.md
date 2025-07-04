@@ -44,6 +44,12 @@ This might be caused by an addition or removal of models to the code base. Runni
 The scopes used for oAuth permissions have an issue and do not match the rulesets.
 This might be caused by an addition or removal of models to the code base or changes to the rulesets. Running the test suit should surface more logs with the error code indicating the exact infractions.
 
+#### INVE-E7
+**The host used does not match settings - Backend**
+
+The settings for SITE_URL and ALLOWED_HOSTS do not match the host used to access the server. This might lead to issues with CSRF protection, CORS and other security features.
+The settings must be adjusted.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
@@ -111,6 +117,12 @@ Steps very between deployment methods.
 The command that was used to run invoke is not the one that is recommended. This might be caused by a wrong PATH variable or by thinking you are using a different deployment method.
 The warning text will show the recommended command for intended use.
 
+#### INVE-W10
+**Config not in recommended directory - Backend**
+
+A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusinon.
+
+The warning text will show the recommended directory for your deployment method.
 
 #### INVE-W10
 **Exception during mail delivery - Backend**

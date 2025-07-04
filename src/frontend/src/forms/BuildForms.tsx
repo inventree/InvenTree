@@ -29,7 +29,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { PartColumn } from '../tables/ColumnRenderers';
 
 /**
@@ -137,10 +137,6 @@ export function useBuildOrderFields({
       },
       external: {}
     };
-
-    if (create) {
-      fields.create_child_builds = {};
-    }
 
     if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
       delete fields.project_code;

@@ -1590,6 +1590,8 @@ class SalesOrderTest(OrderTest):
 
     def test_export(self):
         """Test we can export the SalesOrder list."""
+        set_global_setting(models.SalesOrder.UNLOCK_SETTING, True)
+
         n = models.SalesOrder.objects.count()
 
         # Check there are some sales orders

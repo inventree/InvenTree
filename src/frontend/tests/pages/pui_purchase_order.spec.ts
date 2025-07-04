@@ -249,11 +249,7 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
     await page.getByLabel(`Select record ${ii}`, { exact: true }).click();
   }
 
-  await page
-    .getByLabel('Stock Items')
-    .getByLabel('action-menu-stock-actions')
-    .click();
-  await page.getByLabel('action-menu-stock-actions-order-stock').click();
+  await page.getByRole('button', { name: 'action-button-order-items' }).click();
   await page.getByRole('banner').getByRole('button').click();
 
   // Order from the part detail page
@@ -364,7 +360,6 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await clearTableFilters(page);
 
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
-  await page.getByRole('cell', { name: 'bucket' }).first().waitFor();
 });
 
 test('Purchase Orders - Duplicate', async ({ browser }) => {

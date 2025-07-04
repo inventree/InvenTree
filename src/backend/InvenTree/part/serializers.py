@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -843,10 +843,14 @@ class PartSerializer(
         # Annotate with the total 'available stock' quantity
         # This is the current stock, minus any allocations
         queryset = queryset.annotate(
-            unallocated_stock=ExpressionWrapper(
-                F('total_in_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            unallocated_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_in_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                Decimal(0),
                 output_field=models.DecimalField(),
             )
         )
@@ -1226,7 +1230,7 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         read_only=True, label=_('In Production'), source='quantity_in_production'
     )
 
-    scheduled_to_build = serializers.FloatField(
+    scheduled_to_build = serializers.IntegerField(
         read_only=True, label=_('Scheduled to Build'), source='quantity_being_built'
     )
 
@@ -1866,10 +1870,14 @@ class BomItemSerializer(
 
         # Calculate 'available_stock' based on previously annotated fields
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                Decimal(0),
                 output_field=models.DecimalField(),
             )
         )
@@ -1896,10 +1904,14 @@ class BomItemSerializer(
 
         # Calculate 'available_substitute_stock' field
         queryset = queryset.annotate(
-            available_substitute_stock=ExpressionWrapper(
-                F('substitute_stock')
-                - F('substitute_build_allocations')
-                - F('substitute_sales_allocations'),
+            available_substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('substitute_stock')
+                    - F('substitute_build_allocations')
+                    - F('substitute_sales_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                Decimal(0),
                 output_field=models.DecimalField(),
             )
         )
@@ -1920,10 +1932,14 @@ class BomItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=FloatField(),
+                ),
+                0,
                 output_field=FloatField(),
             )
         )

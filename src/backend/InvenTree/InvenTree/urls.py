@@ -183,7 +183,7 @@ if settings.FRONTEND_SETTINGS.get('url_compatibility'):
 urlpatterns += [
     re_path(
         r'^.*$',
-        RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
         name='index',
     )
 ]

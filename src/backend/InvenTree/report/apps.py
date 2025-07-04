@@ -163,7 +163,7 @@ class ReportConfig(AppConfig):
                 )
                 logger.info("Creating new label template: '%s'", template['name'])
             except Exception:
-                InvenTree.exceptions.log_error('create_default_labels')
+                InvenTree.exceptions.log_error('create_default_labels', scope='init')
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -262,4 +262,4 @@ class ReportConfig(AppConfig):
                 )
                 logger.info("Created new report template: '%s'", template['name'])
             except Exception:
-                InvenTree.exceptions.log_error('create_default_reports')
+                InvenTree.exceptions.log_error('create_default_reports', scope='init')

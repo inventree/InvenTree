@@ -14,7 +14,7 @@ export type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 interface ServerStateProps {
   status?: StatusLookup;
   setStatus: (newStatus: StatusLookup) => void;
-  fetchStatus: () => void;
+  fetchStatus: () => Promise<void>;
 }
 
 export const useGlobalStatusState = create<ServerStateProps>()(

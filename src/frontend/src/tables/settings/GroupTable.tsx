@@ -45,7 +45,6 @@ export function GroupDrawer({
   } = useInstance({
     endpoint: ApiEndpoints.group_list,
     pk: id,
-    throwError: true,
     params: {
       permission_detail: true,
       role_detail: true,

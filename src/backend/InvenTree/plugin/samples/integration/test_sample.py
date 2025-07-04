@@ -1,6 +1,7 @@
 """Unit tests for action plugins."""
 
 from django.core.exceptions import ValidationError
+from django.test import override_settings
 
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin import registry
@@ -9,6 +10,9 @@ from plugin import registry
 class SampleIntegrationPluginTests(InvenTreeTestCase):
     """Tests for SampleIntegrationPlugin."""
 
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
     def test_view(self):
         """Check the function of the custom  sample plugin."""
         from common.models import InvenTreeSetting

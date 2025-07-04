@@ -126,13 +126,20 @@ test('Part - Editing', async ({ browser }) => {
     .fill(keywords ? '' : 'table furniture');
 
   // Test URL validation
-  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page
+    .getByRole('textbox', { name: 'text-field-link' })
+    .fill('htxp-??QQQ++');
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill with an empty URL
-  await page.getByLabel('text-field-link').fill('');
+  const description = await page
+    .getByLabel('text-field-description')
+    .inputValue();
+
+  await page.getByRole('textbox', { name: 'text-field-link' }).fill('');
+  await page.getByLabel('text-field-description').fill(`${description}+`);
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
@@ -218,9 +225,7 @@ test('Parts - Allocations', async ({ browser }) => {
   // Expand allocations against BO0001
   await build_order_cell.click();
   await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
-  await page
-    .getByRole('cell', { name: 'Factory/Office Block/Room 101', exact: true })
-    .waitFor();
+  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
   await build_order_cell.click();
 
   // Check row options for BO0001
@@ -260,7 +265,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
 
   // Part with history
-  await navigate(page, 'part/108/pricing');
+  await navigate(page, 'part/108/pricing', { waitUntil: 'networkidle' });
   await page.getByText('A chair - with blue paint').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();

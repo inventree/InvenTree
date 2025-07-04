@@ -10,7 +10,6 @@ from pathlib import Path
 from unittest import mock
 from unittest.mock import patch
 
-from django.conf import settings
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
@@ -280,7 +279,7 @@ class RegistryTests(TestCase):
             # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True, collect=True)
 
-        self.assertEqual(len(registry.errors), 2)
+        self.assertEqual(len(registry.errors), 3)
 
         # There should be at least one discovery error in the module `broken_file`
         self.assertGreater(len(registry.errors.get('discovery')), 0)
@@ -290,9 +289,10 @@ class RegistryTests(TestCase):
         )
 
         # There should be at least one load error with an intentional KeyError
-        self.assertGreater(len(registry.errors.get('init')), 0)
+        self.assertGreater(len(registry.errors.get('Test:init_plugin')), 0)
         self.assertEqual(
-            registry.errors.get('init')[0]['broken_sample'], "'This is a dummy error'"
+            registry.errors.get('Test:init_plugin')[0]['broken_sample'],
+            "'This is a dummy error'",
         )
 
     @override_settings(PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
@@ -409,16 +409,11 @@ class RegistryTests(TestCase):
         # Check that the registry is not reloaded
         self.assertFalse(registry.check_reload())
 
-        settings.TESTING = False
-        settings.PLUGIN_TESTING_RELOAD = True
+        with self.settings(TESTING=False, PLUGIN_TESTING_RELOAD=True):
+            # Check that the registry is reloaded
+            registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+            self.assertFalse(registry.check_reload())
 
-        # Check that the registry is reloaded
-        registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
-        self.assertFalse(registry.check_reload())
-
-        # Check that changed hashes run through
-        registry.registry_hash = 'abc'
-        self.assertTrue(registry.check_reload())
-
-        settings.TESTING = True
-        settings.PLUGIN_TESTING_RELOAD = False
+            # Check that changed hashes run through
+            registry.registry_hash = 'abc'
+            self.assertTrue(registry.check_reload())

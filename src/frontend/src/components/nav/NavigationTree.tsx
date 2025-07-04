@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Anchor,
   Divider,
   Drawer,
@@ -15,6 +16,7 @@ import {
 import {
   IconChevronDown,
   IconChevronRight,
+  IconExclamationCircle,
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -24,8 +26,12 @@ import { useNavigate } from 'react-router-dom';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import { useApi } from '../../contexts/ApiContext';
 import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';
@@ -64,16 +70,12 @@ export default function NavigationTree({
           }
         })
         .then((response) => response.data ?? [])
-        .catch((error) => {
-          console.error(`Error fetching ${modelType} tree`);
-          return [];
-        })
   });
 
   const follow = useCallback(
     (node: TreeNodeData, event?: any) => {
       const url = getDetailUrl(modelType, node.value);
-      if (event?.shiftKey || event?.ctrlKey) {
+      if (eventModified(event)) {
         navigateToLink(url, navigate, event);
       } else {
         onClose();
@@ -93,7 +95,7 @@ export default function NavigationTree({
     const nodes: Record<number, any> = {};
     const tree: TreeNodeData[] = [];
 
-    if (!query?.data?.length) {
+    if (!query || !query?.data?.length) {
       return [];
     }
 
@@ -204,7 +206,13 @@ export default function NavigationTree({
       <Stack gap='xs'>
         <Divider />
         <LoadingOverlay visible={query.isFetching || query.isLoading} />
-        <Tree data={data} tree={treeState} renderNode={renderNode} />
+        {query.isError ? (
+          <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
+            {t`Error loading navigation tree.`}
+          </Alert>
+        ) : (
+          <Tree data={data} tree={treeState} renderNode={renderNode} />
+        )}
       </Stack>
     </Drawer>
   );

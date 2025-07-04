@@ -28,6 +28,8 @@ test('Plugins - Settings', async ({ browser, request }) => {
   await navigate(page, 'settings/admin/plugin/');
   await clearTableFilters(page);
   await page.getByLabel('table-search-input').fill('integration');
+  await page.waitForTimeout(250);
+  await page.waitForLoadState('networkidle');
 
   await page
     .getByRole('row', { name: 'SampleIntegrationPlugin' })
