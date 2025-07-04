@@ -21,6 +21,7 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -68,6 +69,8 @@ export default function BuildAllocatedStockTable({
         description: t`Include orders for part variants`
       });
     }
+
+    filters.push(StockLocationFilter());
 
     return filters;
   }, [partId]);
