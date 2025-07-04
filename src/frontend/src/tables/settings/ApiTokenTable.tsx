@@ -3,7 +3,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Badge, Code, Flex, Modal, Text } from '@mantine/core';
+import { Badge, Code, Flex, Modal, Paper, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
@@ -178,10 +178,12 @@ export function ApiTokenTable({
                 Tokens are only shown once - make sure to note it down.
               </Trans>
             </Text>
-            <Flex>
-              <Code>{token}</Code>
-              <CopyButton value={token} />
-            </Flex>
+            <Paper p='sm'>
+              <Flex>
+                <Code>{token}</Code>
+                <CopyButton value={token} />
+              </Flex>
+            </Paper>
           </Modal>
         </>
       )}
