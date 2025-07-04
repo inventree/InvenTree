@@ -69,6 +69,58 @@ export function StatusFilterOptions(
 
 // Define some commonly used filters
 
+export function HasBatchCodeFilter(): TableFilter {
+  return {
+    name: 'has_batch',
+    label: t`Has Batch Code`,
+    description: t`Show items which have a batch code`
+  };
+}
+
+export function BatchFilter(): TableFilter {
+  return {
+    name: 'batch',
+    label: t`Batch Code`,
+    description: t`Filter items by batch code`,
+    type: 'text'
+  };
+}
+
+export function IsSerializedFilter(): TableFilter {
+  return {
+    name: 'serialized',
+    label: t`Is Serialized`,
+    description: t`Show items which have a serial number`
+  };
+}
+
+export function SerialFilter(): TableFilter {
+  return {
+    name: 'serial',
+    label: t`Serial`,
+    description: t`Filter items by serial number`,
+    type: 'text'
+  };
+}
+
+export function SerialLTEFilter(): TableFilter {
+  return {
+    name: 'serial_lte',
+    label: t`Serial Below`,
+    description: t`Show items with serial numbers less than or equal to a given value`,
+    type: 'text'
+  };
+}
+
+export function SerialGTEFilter(): TableFilter {
+  return {
+    name: 'serial_gte',
+    label: t`Serial Above`,
+    description: t`Show items with serial numbers greater than or equal to a given value`,
+    type: 'text'
+  };
+}
+
 export function AssignedToMeFilter(): TableFilter {
   return {
     name: 'assigned_to_me',
@@ -295,6 +347,17 @@ export function PartCategoryFilter(): TableFilter {
     description: t`Filter by part category`,
     apiUrl: apiUrl(ApiEndpoints.category_list),
     model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
+
+export function StockLocationFilter(): TableFilter {
+  return {
+    name: 'location',
+    label: t`Location`,
+    description: t`Filter by stock location`,
+    apiUrl: apiUrl(ApiEndpoints.stock_location_list),
+    model: ModelType.stocklocation,
     modelRenderer: (instance: any) => instance.name
   };
 }

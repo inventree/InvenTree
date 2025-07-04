@@ -489,6 +489,16 @@ export default function ReturnOrderDetail() {
     ];
   }, [user, order, roStatus]);
 
+  const subtitle: string = useMemo(() => {
+    let t = order.customer_detail?.name || '';
+
+    if (order.customer_reference) {
+      t += ` (${order.customer_reference})`;
+    }
+
+    return t;
+  }, [order]);
+
   return (
     <>
       {editReturnOrder.modal}
@@ -504,7 +514,7 @@ export default function ReturnOrderDetail() {
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Return Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={orderActions}

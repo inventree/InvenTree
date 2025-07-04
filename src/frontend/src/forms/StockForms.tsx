@@ -934,7 +934,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
-      default: items[0]?.part_detail.default_location,
+      default: items[0]?.part_detail?.default_location,
       filters: {
         structural: false
       }
