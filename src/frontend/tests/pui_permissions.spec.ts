@@ -3,7 +3,7 @@
  */
 
 import test from '@playwright/test';
-import { loadTab } from './helpers';
+import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';
 
 /**
@@ -29,10 +29,10 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Change password
-  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
-    button: 'right'
-  });
-  await page.getByRole('button', { name: 'Change Password' }).click();
+  await clickOnRowMenu(
+    await page.getByRole('cell', { name: 'Ian', exact: true })
+  );
+  await page.getByRole('menuitem', { name: 'Change Password' }).click();
   await page.getByLabel('text-field-password').fill('123');
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText("['This password is too short").waitFor();
@@ -46,10 +46,10 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await page.getByText('Password updated').click();
 
   // Open profile
-  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
-    button: 'right'
-  });
-  await page.getByRole('button', { name: 'Open Profile' }).click();
+  await clickOnRowMenu(
+    await page.getByRole('cell', { name: 'Ian', exact: true })
+  );
+  await page.getByRole('menuitem', { name: 'Open Profile' }).click();
   await page.getByText('User: ian', { exact: true }).click();
 });
 

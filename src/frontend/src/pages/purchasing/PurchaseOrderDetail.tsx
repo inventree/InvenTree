@@ -59,8 +59,7 @@ export default function PurchaseOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
@@ -505,6 +504,16 @@ export default function PurchaseOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
+  const subtitle: string = useMemo(() => {
+    let t = order.supplier_detail?.name || '';
+
+    if (order.supplier_reference) {
+      t += ` (${order.supplier_reference})`;
+    }
+
+    return t;
+  }, [order]);
+
   return (
     <>
       {issueOrder.modal}
@@ -514,14 +523,13 @@ export default function PurchaseOrderDetail() {
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Purchase Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
             lastCrumb={[

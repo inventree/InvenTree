@@ -51,8 +51,7 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -273,7 +272,10 @@ export default function ManufacturerPartDetail() {
       {deleteManufacturerPart.modal}
       {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.manufacturerpart}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={t`ManufacturerPart`}

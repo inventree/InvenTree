@@ -72,17 +72,15 @@ import { formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
-  useCountStockItem,
-  useFindSerialNumberForm,
-  useTransferStockItem
+  useFindSerialNumberForm
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -130,8 +128,7 @@ export default function PartDetail() {
   const {
     instance: part,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.part_list,
     pk: id,
@@ -896,7 +893,7 @@ export default function PartDetail() {
     )
   });
 
-  const stockActionProps: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       pk: part.pk,
       model: ModelType.part,
@@ -907,8 +904,11 @@ export default function PartDetail() {
     };
   }, [part]);
 
-  const countStockItems = useCountStockItem(stockActionProps);
-  const transferStockItems = useTransferStockItem(stockActionProps);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    enabled: true
+  });
 
   const orderPartsWizard = OrderPartsWizard({
     parts: [part]
@@ -944,28 +944,7 @@ export default function PartDetail() {
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
         actions={[
-          {
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            name: t`Count Stock`,
-            tooltip: t`Count part stock`,
-            hidden: !user.hasChangeRole(UserRoles.stock),
-            onClick: () => {
-              part.pk && countStockItems.open();
-            }
-          },
-          {
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
-            name: t`Transfer Stock`,
-            tooltip: t`Transfer part stock`,
-            hidden: !user.hasChangeRole(UserRoles.stock),
-            onClick: () => {
-              part.pk && transferStockItems.open();
-            }
-          },
+          ...stockAdjustActions.menuActions,
           {
             name: t`Order`,
             tooltip: t`Order Stock`,
@@ -1006,7 +985,7 @@ export default function PartDetail() {
         ]}
       />
     ];
-  }, [id, part, user]);
+  }, [id, part, user, stockAdjustActions.menuActions]);
 
   const enableRevisionSelection: boolean = useMemo(() => {
     return (
@@ -1020,15 +999,10 @@ export default function PartDetail() {
       {editPart.modal}
       {deletePart.modal}
       {duplicatePart.modal}
-      {countStockItems.modal}
       {orderPartsWizard.wizard}
       {findBySerialNumber.modal}
-      {transferStockItems.modal}
-      <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
-        requiredRole={UserRoles.part}
-      >
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
+      <InstanceDetail query={instanceQuery} requiredRole={UserRoles.part}>
         <Stack gap='xs'>
           {user.hasViewRole(UserRoles.part_category) && (
             <NavigationTree

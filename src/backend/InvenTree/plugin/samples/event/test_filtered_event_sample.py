@@ -1,6 +1,5 @@
 """Unit tests for event_sample sample plugins."""
 
-from django.conf import settings
 from django.test import TestCase
 
 from common.models import InvenTreeSetting
@@ -21,14 +20,11 @@ class FilteredEventPluginSampleTests(TestCase):
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         # Enable event testing
-        settings.PLUGIN_TESTING_EVENTS = True
-        # Check that an event is issued
-        with self.assertLogs(logger='inventree', level='DEBUG') as cm:
-            trigger_event('test.event')
-        self.assertIn('Event `test.event` triggered in sample plugin', str(cm[1]))
-
-        # Disable again
-        settings.PLUGIN_TESTING_EVENTS = False
+        with self.settings(PLUGIN_TESTING_EVENTS=True):
+            # Check that an event is issued
+            with self.assertLogs(logger='inventree', level='DEBUG') as cm:
+                trigger_event('test.event')
+            self.assertIn('Event `test.event` triggered in sample plugin', str(cm[1]))
 
     def test_ignore_event(self):
         """Check if the event is issued."""
@@ -40,14 +36,11 @@ class FilteredEventPluginSampleTests(TestCase):
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         # Enable event testing
-        settings.PLUGIN_TESTING_EVENTS = True
-        # Check that an event is issued
-        with self.assertLogs(logger='inventree', level='DEBUG') as cm:
-            trigger_event('test.some.other.event')
-        self.assertNotIn(
-            'DEBUG:inventree:Event `test.some.other.event` triggered in sample plugin',
-            cm[1],
-        )
-
-        # Disable again
-        settings.PLUGIN_TESTING_EVENTS = False
+        with self.settings(PLUGIN_TESTING_EVENTS=True):
+            # Check that an event is issued
+            with self.assertLogs(logger='inventree', level='DEBUG') as cm:
+                trigger_event('test.some.other.event')
+            self.assertNotIn(
+                'DEBUG:inventree:Event `test.some.other.event` triggered in sample plugin',
+                cm[1],
+            )

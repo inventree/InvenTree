@@ -7,24 +7,17 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
 import {
   type StockOperationProps,
-  useAddStockItem,
-  useAssignStockItem,
-  useChangeStockStatus,
-  useCountStockItem,
-  useDeleteStockItem,
-  useMergeStockItem,
-  useRemoveStockItem,
-  useStockFields,
-  useTransferStockItem
+  useStockFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -36,7 +29,15 @@ import {
   PathColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import {
+  BatchFilter,
+  HasBatchCodeFilter,
+  IsSerializedFilter,
+  SerialFilter,
+  SerialGTEFilter,
+  SerialLTEFilter,
+  StatusFilterOptions
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -376,40 +377,12 @@ function stockItemTableFilters({
       label: t`Sent to Customer`,
       description: t`Show items which have been sent to a customer`
     },
-    {
-      name: 'serialized',
-      label: t`Is Serialized`,
-      description: t`Show items which have a serial number`
-    },
-    {
-      name: 'batch',
-      label: t`Batch Code`,
-      description: t`Filter items by batch code`,
-      type: 'text'
-    },
-    {
-      name: 'serial',
-      label: t`Serial Number`,
-      description: t`Filter items by serial number`,
-      type: 'text'
-    },
-    {
-      name: 'serial_lte',
-      label: t`Serial Number LTE`,
-      description: t`Show items with serial numbers less than or equal to a given value`,
-      type: 'text'
-    },
-    {
-      name: 'serial_gte',
-      label: t`Serial Number GTE`,
-      description: t`Show items with serial numbers greater than or equal to a given value`,
-      type: 'text'
-    },
-    {
-      name: 'has_batch',
-      label: t`Has Batch Code`,
-      description: t`Show items which have a batch code`
-    },
+    HasBatchCodeFilter(),
+    BatchFilter(),
+    IsSerializedFilter(),
+    SerialFilter(),
+    SerialLTEFilter(),
+    SerialGTEFilter(),
     {
       name: 'tracked',
       label: t`Tracked`,
@@ -513,7 +486,7 @@ export function StockItemTable({
     [showLocation, showPricing]
   );
 
-  const tableFilters = useMemo(
+  const tableFilters: TableFilter[] = useMemo(
     () =>
       stockItemTableFilters({
         enableExpiry: stockExpiryEnabled
@@ -521,7 +494,7 @@ export function StockItemTable({
     [stockExpiryEnabled]
   );
 
-  const tableActionParams: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
       model: ModelType.stockitem,
@@ -530,7 +503,7 @@ export function StockItemTable({
         in_stock: true
       }
     };
-  }, [table]);
+  }, [table.selectedRecords, table.refreshTable]);
 
   const newStockItemFields = useStockFields({
     create: true,
@@ -558,117 +531,25 @@ export function StockItemTable({
     parts: partsToOrder
   });
 
-  const transferStock = useTransferStockItem(tableActionParams);
-  const addStock = useAddStockItem(tableActionParams);
-  const removeStock = useRemoveStockItem(tableActionParams);
-  const countStock = useCountStockItem(tableActionParams);
-  const changeStockStatus = useChangeStockStatus(tableActionParams);
-  const mergeStock = useMergeStockItem(tableActionParams);
-  const assignStock = useAssignStockItem(tableActionParams);
-  const deleteStock = useDeleteStockItem(tableActionParams);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps
+  });
 
   const tableActions = useMemo(() => {
-    const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
-    const can_add_stock = user.hasAddRole(UserRoles.stock);
-    const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-
     return [
-      <ActionDropdown
-        key='stock-actions'
-        tooltip={t`Stock Actions`}
-        icon={<InvenTreeIcon icon='stock' />}
-        disabled={table.selectedRecords.length === 0}
-        actions={[
-          {
-            name: t`Count Stock`,
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: t`Count Stock`,
-            disabled: !can_add_stocktake,
-            onClick: () => {
-              countStock.open();
-            }
-          },
-          {
-            name: t`Add Stock`,
-            icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
-            tooltip: t`Add a new stock item`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              addStock.open();
-            }
-          },
-          {
-            name: t`Remove Stock`,
-            icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
-            tooltip: t`Remove some quantity from a stock item`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              removeStock.open();
-            }
-          },
-          {
-            name: t`Transfer Stock`,
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: t`Move Stock items to new locations`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              transferStock.open();
-            }
-          },
-          {
-            name: t`Change stock status`,
-            icon: <InvenTreeIcon icon='info' iconProps={{ color: 'blue' }} />,
-            tooltip: t`Change the status of stock items`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              changeStockStatus.open();
-            }
-          },
-          {
-            name: t`Merge stock`,
-            icon: <InvenTreeIcon icon='merge' />,
-            tooltip: t`Merge stock items`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              mergeStock.open();
-            }
-          },
-          {
-            name: t`Order stock`,
-            icon: <InvenTreeIcon icon='buy' />,
-            tooltip: t`Order new stock`,
-            hidden: !user.hasAddRole(UserRoles.purchase_order),
-            disabled: !table.hasSelectedRecords,
-            onClick: () => {
-              setPartsToOrder(
-                table.selectedRecords.map((record) => record.part_detail)
-              );
-              orderPartsWizard.openWizard();
-            }
-          },
-          {
-            name: t`Assign to customer`,
-            icon: <InvenTreeIcon icon='customer' />,
-            tooltip: t`Assign items to a customer`,
-            disabled: !can_add_stock,
-            onClick: () => {
-              assignStock.open();
-            }
-          },
-          {
-            name: t`Delete stock`,
-            icon: <InvenTreeIcon icon='delete' iconProps={{ color: 'red' }} />,
-            tooltip: t`Delete Stock Items`,
-            disabled: !can_delete_stock,
-            onClick: () => {
-              deleteStock.open();
-            }
-          }
-        ]}
+      stockAdjustActions.dropdown,
+      <ActionButton
+        key='stock-order'
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        tooltip={t`Order items`}
+        icon={<InvenTreeIcon icon='buy' />}
+        disabled={!table.hasSelectedRecords}
+        onClick={() => {
+          setPartsToOrder(
+            table.selectedRecords.map((record) => record.part_detail)
+          );
+          orderPartsWizard.openWizard();
+        }}
       />,
       <AddItemButton
         key='add-stock-item'
@@ -677,20 +558,19 @@ export function StockItemTable({
         onClick={() => newStockItem.open()}
       />
     ];
-  }, [user, allowAdd, table.hasSelectedRecords, table.selectedRecords]);
+  }, [
+    user,
+    allowAdd,
+    table.hasSelectedRecords,
+    table.selectedRecords,
+    stockAdjustActions.dropdown
+  ]);
 
   return (
     <>
       {newStockItem.modal}
-      {transferStock.modal}
-      {removeStock.modal}
-      {addStock.modal}
-      {countStock.modal}
-      {changeStockStatus.modal}
-      {mergeStock.modal}
-      {assignStock.modal}
-      {deleteStock.modal}
       {orderPartsWizard.wizard}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}

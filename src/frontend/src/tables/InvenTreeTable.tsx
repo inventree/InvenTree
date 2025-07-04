@@ -52,6 +52,7 @@ const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
  * @param enableSearch : boolean - Enable search actions
  * @param enableLabels : boolean - Enable printing of labels against selected items
  * @param enableReports : boolean - Enable printing of reports against selected items
+ * @param printingAccessor : string - Accessor for label and report printing (default = 'pk')
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
  * @param enableColumnSwitching : boolean - Enable column switching
@@ -82,6 +83,7 @@ export type InvenTreeTableProps<T = any> = {
   enableColumnCaching?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
+  printingAccessor?: string;
   afterBulkDelete?: () => void;
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
@@ -115,6 +117,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   enableSelection: false,
   defaultSortColumn: '',
   barcodeActions: [],
+  printingAccessor: 'pk',
   tableFilters: [],
   tableActions: []
 };
@@ -378,19 +381,20 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Ensure that the "actions" column is always at the end of the list
   // This effect is necessary as sometimes the underlying mantine-datatable columns change
   useEffect(() => {
-    const idx: number = tableColumns.columnsOrder.indexOf(
-      ACTIONS_COLUMN_ACCESSOR
-    );
+    // Ensure that the columns are always in the order specified by the columns prop
+    const columnOrder = tableColumns.columnsOrder.slice().sort((a, b) => {
+      const idxA = dataColumns.findIndex((col: any) => col.accessor == a);
+      const idxB = dataColumns.findIndex((col: any) => col.accessor == b);
+      return idxA - idxB;
+    });
 
-    if (idx >= 0 && idx < tableColumns.columnsOrder.length - 1) {
-      // Actions column is not at the end of the list - move it there
-      const newOrder = tableColumns.columnsOrder.filter(
-        (col) => col != ACTIONS_COLUMN_ACCESSOR
-      );
-      newOrder.push(ACTIONS_COLUMN_ACCESSOR);
-      tableColumns.setColumnsOrder(newOrder);
+    // Update the columns order only if it has changed
+    if (
+      JSON.stringify(tableColumns.columnsOrder) != JSON.stringify(columnOrder)
+    ) {
+      tableColumns.setColumnsOrder(columnOrder);
     }
-  }, [tableColumns.columnsOrder, tableColumns.setColumnsOrder]);
+  }, [dataColumns, tableColumns.columnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -412,18 +416,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      // Add custom filters
-      if (tableState.filterSet.activeFilters) {
-        tableState.filterSet.activeFilters.forEach((flt) => {
-          queryParams[flt.name] = flt.value;
-        });
-      }
-
-      // Allow override of filters based on URL query parameters
-      if (tableState.queryFilters) {
+      if (tableState.queryFilters && tableState.queryFilters.size > 0) {
+        // Allow override of filters based on URL query parameters
         for (const [key, value] of tableState.queryFilters) {
           queryParams[key] = value;
         }
+      } else if (tableState.filterSet.activeFilters) {
+        // Use custom table filters only if not overridden by query parameters
+        tableState.filterSet.activeFilters.forEach((flt) => {
+          queryParams[flt.name] = flt.value;
+        });
       }
 
       // Add custom search term
