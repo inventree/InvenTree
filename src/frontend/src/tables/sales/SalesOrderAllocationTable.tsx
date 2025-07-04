@@ -27,6 +27,7 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -84,7 +85,8 @@ export default function SalesOrderAllocationTable({
         name: 'assigned_to_shipment',
         label: t`Assigned to Shipment`,
         description: t`Show allocations assigned to a shipment`
-      }
+      },
+      StockLocationFilter()
     ];
 
     if (!!partId) {
@@ -364,6 +366,7 @@ export default function SalesOrderAllocationTable({
           modelField: modelField ?? 'order',
           enableReports: !isSubTable,
           enableLabels: !isSubTable,
+          printingAccessor: 'item',
           modelType: modelTarget ?? ModelType.salesorder
         }}
       />

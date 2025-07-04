@@ -52,6 +52,7 @@ const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
  * @param enableSearch : boolean - Enable search actions
  * @param enableLabels : boolean - Enable printing of labels against selected items
  * @param enableReports : boolean - Enable printing of reports against selected items
+ * @param printingAccessor : string - Accessor for label and report printing (default = 'pk')
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
  * @param enableColumnSwitching : boolean - Enable column switching
@@ -82,6 +83,7 @@ export type InvenTreeTableProps<T = any> = {
   enableColumnCaching?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
+  printingAccessor?: string;
   afterBulkDelete?: () => void;
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
@@ -115,6 +117,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   enableSelection: false,
   defaultSortColumn: '',
   barcodeActions: [],
+  printingAccessor: 'pk',
   tableFilters: [],
   tableActions: []
 };
@@ -413,18 +416,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      // Add custom filters
-      if (tableState.filterSet.activeFilters) {
-        tableState.filterSet.activeFilters.forEach((flt) => {
-          queryParams[flt.name] = flt.value;
-        });
-      }
-
-      // Allow override of filters based on URL query parameters
-      if (tableState.queryFilters) {
+      if (tableState.queryFilters && tableState.queryFilters.size > 0) {
+        // Allow override of filters based on URL query parameters
         for (const [key, value] of tableState.queryFilters) {
           queryParams[key] = value;
         }
+      } else if (tableState.filterSet.activeFilters) {
+        // Use custom table filters only if not overridden by query parameters
+        tableState.filterSet.activeFilters.forEach((flt) => {
+          queryParams[flt.name] = flt.value;
+        });
       }
 
       // Add custom search term

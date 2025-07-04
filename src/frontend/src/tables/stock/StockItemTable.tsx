@@ -486,7 +486,7 @@ export function StockItemTable({
     [showLocation, showPricing]
   );
 
-  const tableFilters = useMemo(
+  const tableFilters: TableFilter[] = useMemo(
     () =>
       stockItemTableFilters({
         enableExpiry: stockExpiryEnabled
