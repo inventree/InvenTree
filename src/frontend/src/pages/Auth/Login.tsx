@@ -40,8 +40,7 @@ export default function Login() {
       state.registration_enabled
     ])
   );
-  const both_reg_enabled =
-    registration_enabled() || sso_registration() || false;
+  const any_reg_enabled = registration_enabled() || sso_registration() || false;
 
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
@@ -109,7 +108,7 @@ export default function Login() {
             ) : (
               <>
                 <AuthenticationForm />
-                {both_reg_enabled === false && (
+                {any_reg_enabled && (
                   <Text ta='center' size={'xs'} mt={'md'}>
                     <Trans>Don&apos;t have an account?</Trans>{' '}
                     <Anchor

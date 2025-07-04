@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { ActionIcon, Checkbox, Menu, Tooltip } from '@mantine/core';
+import { ActionIcon, Checkbox, Divider, Menu, Tooltip } from '@mantine/core';
 import { IconAdjustments } from '@tabler/icons-react';
 
 export function TableColumnSelect({
@@ -19,8 +19,9 @@ export function TableColumnSelect({
         </ActionIcon>
       </Menu.Target>
 
-      <Menu.Dropdown>
+      <Menu.Dropdown style={{ maxHeight: '400px', overflowY: 'auto' }}>
         <Menu.Label>{t`Select Columns`}</Menu.Label>
+        <Divider />
         {columns
           .filter((col) => col.switchable ?? true)
           .map((col) => (

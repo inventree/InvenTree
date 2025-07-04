@@ -66,7 +66,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
   await loadTab(page, 'Incomplete Outputs');
-  await loadTab(page, 'Required Stock');
+  await loadTab(page, 'Required Parts');
   await loadTab(page, 'Allocated Stock');
 
   // Check for expected text in the table
@@ -80,7 +80,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await page.getByText('Quantity: 25').waitFor();
   await page.getByText('Continuity Checks').waitFor();
   await page
-    .getByRole('row', { name: 'Quantity: 16 No location set' })
+    .getByRole('row', { name: 'Quantity: 16' })
     .getByRole('button')
     .hover();
   await page.getByText('Add Test Result').waitFor();
@@ -241,9 +241,7 @@ test('Build Order - Allocation', async ({ browser }) => {
   // Expand this row
   await cell.click();
   await page.getByRole('cell', { name: '2022-4-27', exact: true }).waitFor();
-  await page
-    .getByRole('cell', { name: 'Electronics Lab/Reel Storage', exact: true })
-    .waitFor();
+  await page.getByRole('cell', { name: 'Reel Storage', exact: true }).waitFor();
 
   // Navigate to the "Incomplete Outputs" tab
   await loadTab(page, 'Incomplete Outputs');

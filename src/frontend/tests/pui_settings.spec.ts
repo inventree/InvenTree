@@ -197,16 +197,19 @@ test('Settings - Admin - Barcode History', async ({ browser, request }) => {
   // Scan some barcodes (via API calls)
   const barcodes = ['ABC1234', 'XYZ5678', 'QRS9012'];
 
-  barcodes.forEach(async (barcode) => {
-    await request.post(`${apiUrl}/barcode/`, {
+  for (let i = 0; i < barcodes.length; i++) {
+    const barcode = barcodes[i];
+    const url = new URL('barcode/', apiUrl).toString();
+    await request.post(url, {
       data: {
         barcode: barcode
       },
+      timeout: 5000,
       headers: {
         Authorization: `Basic ${btoa('admin:inventree')}`
       }
     });
-  });
+  }
 
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();

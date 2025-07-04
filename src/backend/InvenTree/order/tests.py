@@ -65,6 +65,8 @@ class OrderTest(TestCase, ExchangeRateMixin):
         """Test the (auto)locking functionality of the (Purchase)Order model."""
         order = PurchaseOrder.objects.get(pk=1)
 
+        set_global_setting(PurchaseOrder.UNLOCK_SETTING, True)
+
         order.status = PurchaseOrderStatus.PENDING
         order.save()
         self.assertFalse(order.check_locked())
@@ -82,16 +84,18 @@ class OrderTest(TestCase, ExchangeRateMixin):
         order.save()
 
         # Turn on auto-locking
-        set_global_setting(PurchaseOrder.LOCK_SETTING, True)
+        set_global_setting(PurchaseOrder.UNLOCK_SETTING, False)
         # still not locked
         self.assertFalse(order.check_locked())
 
         order.status = PurchaseOrderStatus.COMPLETE
-        # the instance is locked, the db instance is not
+
+        # The instance is locked, the db instance is not
         self.assertFalse(order.check_locked(True))
         self.assertTrue(order.check_locked())
         order.save()
-        # now everything is locked
+
+        # Now everything is locked
         self.assertTrue(order.check_locked(True))
         self.assertTrue(order.check_locked())
 
@@ -99,6 +103,7 @@ class OrderTest(TestCase, ExchangeRateMixin):
         with self.assertRaises(django_exceptions.ValidationError):
             order.description = 'test1'
             order.save()
+
         order.refresh_from_db()
         self.assertEqual(order.description, 'Ordering some screws')
 

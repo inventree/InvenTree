@@ -36,17 +36,30 @@ import {
   useCompleteBuildOutputsForm,
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
-import { useStockFields } from '../../forms/StockForms';
+import {
+  type StockOperationProps,
+  useStockFields
+} from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import {
+  BatchFilter,
+  HasBatchCodeFilter,
+  IsSerializedFilter,
+  SerialFilter,
+  SerialGTEFilter,
+  SerialLTEFilter,
+  StatusFilterOptions,
+  StockLocationFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -278,7 +291,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -287,7 +300,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -296,7 +309,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -350,12 +363,39 @@ export default function BuildOutputTable({
         label: t`Status`,
         description: t`Filter by stock status`,
         choiceFunction: StatusFilterOptions(ModelType.stockitem)
-      }
+      },
+      StockLocationFilter(),
+      HasBatchCodeFilter(),
+      BatchFilter(),
+      IsSerializedFilter(),
+      SerialFilter(),
+      SerialLTEFilter(),
+      SerialGTEFilter()
     ];
   }, []);
 
+  const stockOperationProps: StockOperationProps = useMemo(() => {
+    return {
+      items: table.selectedRecords,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable,
+      filters: {}
+    };
+  }, [table.selectedRecords, table.refreshTable]);
+
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    assign: false,
+    delete: false,
+    add: false,
+    count: false,
+    remove: false
+  });
+
   const tableActions = useMemo(() => {
     return [
+      stockAdjustActions.dropdown,
       <ActionButton
         key='complete-selected-outputs'
         tooltip={t`Complete selected outputs`}
@@ -396,7 +436,13 @@ export default function BuildOutputTable({
         onClick={addBuildOutput.open}
       />
     ];
-  }, [build, user, table.selectedRecords, table.hasSelectedRecords]);
+  }, [
+    build,
+    user,
+    table.selectedRecords,
+    table.hasSelectedRecords,
+    stockAdjustActions.dropdown
+  ]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -581,6 +627,7 @@ export default function BuildOutputTable({
       {editBuildOutput.modal}
       {deallocateBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
       <OutputAllocationDrawer
         build={build}
         output={selectedOutputs[0]}
