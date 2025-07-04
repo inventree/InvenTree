@@ -79,6 +79,7 @@ export function ChoiceField({
       required={definition.required}
       disabled={definition.disabled}
       leftSection={definition.icon}
+      leftSectionPointerEvents={'inherit'}
       comboboxProps={{ withinPortal: true }}
       searchable
     />
