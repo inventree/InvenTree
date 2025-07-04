@@ -364,6 +364,7 @@ export default function SalesOrderAllocationTable({
           modelField: modelField ?? 'order',
           enableReports: !isSubTable,
           enableLabels: !isSubTable,
+          printingAccessor: 'item',
           modelType: modelTarget ?? ModelType.salesorder
         }}
       />
