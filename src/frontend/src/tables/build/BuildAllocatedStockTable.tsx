@@ -263,6 +263,9 @@ export default function BuildAllocatedStockTable({
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,
+          enableLabels: true,
+          enableReports: true,
+          printingAccessor: 'stock_item',
           modelField: modelField ?? 'stock_item',
           modelType: modelTarget ?? ModelType.stockitem
         }}
