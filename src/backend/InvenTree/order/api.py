@@ -23,6 +23,7 @@ import build.models
 import common.models
 import common.settings
 import company.models
+import stock.models as stock_models
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
@@ -1177,6 +1178,20 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(shipment=None)
         return queryset.filter(shipment=None)
+
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Location'))
+    )
+    def filter_location(self, queryset, name, location):
+        """Filter by the location of the allocated StockItem."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(item__location__in=locations)
 
 
 class SalesOrderAllocationMixin:
