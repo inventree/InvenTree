@@ -37,7 +37,7 @@ import type { FilterSetState } from './Filters';
  */
 export type TableState = {
   tableKey: string;
-  refreshTable: () => void;
+  refreshTable: (clearSelected?: boolean) => void;
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
   filterSet: FilterSetState;

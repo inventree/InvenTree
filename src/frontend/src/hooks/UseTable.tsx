@@ -28,9 +28,15 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   const [tableKey, setTableKey] = useState<string>(generateTableName());
 
   // Callback used to refresh (reload) the table
-  const refreshTable = useCallback(() => {
-    setTableKey(generateTableName());
-  }, [generateTableName]);
+  const refreshTable = useCallback(
+    (clearSelection?: boolean) => {
+      setTableKey(generateTableName());
+      if (clearSelection) {
+        clearSelectedRecords();
+      }
+    },
+    [generateTableName]
+  );
 
   const filterSet: FilterSetState = useFilterSet(`table-${tableName}`);
 
