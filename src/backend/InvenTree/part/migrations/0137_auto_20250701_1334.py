@@ -60,10 +60,8 @@ def migrate_test_template(apps, schema_editor):
             if results.exists():
                 results.update(template=matching_template)
             
-            assert(
-                StockItemTestResult.objects.filter(template=matching_template).count() == 0,
-                "There should be no StockItemTestResult entries linked to the matching template!"
-            )
+            # There should be no StockItemTestResult entries linked to the matching template!"
+            assert StockItemTestResult.objects.filter(template=matching_template).count() == 0
 
             # Now that the results have been migrated, we can delete the old template
             template.delete()
@@ -82,16 +80,10 @@ def migrate_test_template(apps, schema_editor):
     N_PART_TEST = PartTest.objects.count()
 
     # The number of PartTest entries should match the number of unique PartTestTemplate entries
-    assert(
-        N_PART_TEST + duplicate_count == N_TEMPLATES,
-        "The number of PartTest entries does not match the number of PartTestTemplate entries!"
-    )
+    assert N_PART_TEST + duplicate_count == N_TEMPLATES
 
     # The total number of results *MUST* not change
-    assert(
-        StockItemTestResult.objects.count() == N_RESULTS,
-        "The number of StockItemTestResult entries has changed during migration!"
-    )
+    assert StockItemTestResult.objects.count() == N_RESULTS
 
     print(f"- Created {PartTest.objects.count()} PartTest entries.")
 
