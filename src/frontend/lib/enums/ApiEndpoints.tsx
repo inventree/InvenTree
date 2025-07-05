@@ -124,6 +124,7 @@ export enum ApiEndpoints {
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
   related_part_list = 'part/related/',
+  part_test_list = 'part/test/',
   part_test_template_list = 'part/test-template/',
 
   // Company API endpoints
