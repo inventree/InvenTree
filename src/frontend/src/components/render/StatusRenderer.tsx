@@ -3,7 +3,7 @@ import { Badge, Center, type MantineSize } from '@mantine/core';
 import type { ModelType } from '@lib/enums/ModelType';
 import { statusColorMap } from '../../defaults/backendMappings';
 import { resolveItem } from '../../functions/conversion';
-import { useGlobalStatusState } from '../../states/StatusState';
+import { useGlobalStatusState } from '../../states/GlobalStatusState';
 
 export interface StatusCodeInterface {
   key: number;

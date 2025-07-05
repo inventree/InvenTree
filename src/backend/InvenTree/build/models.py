@@ -943,14 +943,24 @@ class Build(
                     for bom_item in trackable_parts:
                         valid_part_ids = valid_parts.get(bom_item.pk, [])
 
-                        items = stock.models.StockItem.objects.filter(
-                            part__pk__in=valid_part_ids,
-                            serial=output.serial,
-                            quantity=1,
-                        ).filter(stock.models.StockItem.IN_STOCK_FILTER)
+                        # Find all matching stock items, based on serial number
+                        stock_items = list(
+                            stock.models.StockItem.objects.filter(
+                                part__pk__in=valid_part_ids,
+                                serial=output.serial,
+                                quantity=1,
+                            )
+                        )
 
-                        if items.exists() and items.count() == 1:
-                            stock_item = items[0]
+                        # Filter stock items to only those which are in stock
+                        # Note that we can accept "in production" items here
+                        available_items = filter(
+                            lambda item: item.is_in_stock(check_in_production=False),
+                            stock_items,
+                        )
+
+                        if len(available_items) == 1:
+                            stock_item = available_items[0]
 
                             # Find the 'BuildLine' object which points to this BomItem
                             try:

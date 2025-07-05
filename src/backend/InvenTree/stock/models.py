@@ -571,8 +571,10 @@ class StockItem(
         for key in ['parent_id', 'part_id', 'build_id']:
             data.pop(key, None)
 
+        tree_id = kwargs.pop('tree_id', 0)
+
         data['parent'] = kwargs.pop('parent', None)
-        data['tree_id'] = kwargs.pop('tree_id', 0)
+        data['tree_id'] = tree_id
         data['level'] = kwargs.pop('level', 0)
         data['rght'] = kwargs.pop('rght', 0)
         data['lft'] = kwargs.pop('lft', 0)
@@ -588,6 +590,11 @@ class StockItem(
 
         # Create the StockItem objects in bulk
         StockItem.objects.bulk_create(items)
+
+        # We will need to rebuild the stock item tree manually, due to the bulk_create operation
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock'
+        )
 
         # Return the newly created StockItem objects
         return StockItem.objects.filter(part=part, serial__in=serials)
@@ -1585,18 +1592,25 @@ class StockItem(
         return self.children.count()
 
     def is_in_stock(
-        self, check_status: bool = True, check_quantity: bool = True
+        self,
+        check_status: bool = True,
+        check_quantity: bool = True,
+        check_in_production: bool = True,
     ) -> bool:
         """Return True if this StockItem is "in stock".
 
-        Args:
+        Arguments:
             check_status: If True, check the status of the StockItem. Defaults to True.
             check_quantity: If True, check the quantity of the StockItem. Defaults to True.
+            check_in_production: If True, check if the item is in production. Defaults to True.
         """
         if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
             return False
 
         if check_quantity and self.quantity <= 0:
+            return False
+
+        if check_in_production and self.is_building:
             return False
 
         return all([
@@ -1809,11 +1823,6 @@ class StockItem(
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
-
-        # Rebuild the stock tree
-        InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='stock'
-        )
 
         return items
 

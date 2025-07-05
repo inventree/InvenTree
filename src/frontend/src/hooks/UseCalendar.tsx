@@ -102,7 +102,15 @@ export default function useCalendar({
 
   const query = useQuery({
     enabled: !!startDate && !!endDate,
-    queryKey: ['calendar', name, endpoint, queryFilters],
+    queryKey: ['calendar', name, endpoint, queryFilters, startDate, endDate],
+    throwOnError: (error: any) => {
+      showApiErrorMessage({
+        error: error,
+        title: 'Error fetching calendar data'
+      });
+
+      return true;
+    },
     queryFn: async () => {
       // Fetch data from the API
       return api
@@ -111,12 +119,6 @@ export default function useCalendar({
         })
         .then((response) => {
           return response.data ?? [];
-        })
-        .catch((error) => {
-          showApiErrorMessage({
-            error: error,
-            title: 'Error fetching calendar data'
-          });
         });
     }
   });
@@ -173,6 +175,6 @@ export default function useCalendar({
     setEndDate,
     exportModal,
     query: query,
-    data: query.data
+    data: query.data ?? []
   };
 }

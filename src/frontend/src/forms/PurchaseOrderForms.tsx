@@ -51,7 +51,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -436,7 +436,10 @@ function LineItemFormRow({
     }
 
     // Selected location is base part's default location
-    if (location === record.part_detail.default_location) {
+    if (
+      record.part_detail?.default_location &&
+      location === record.part_detail.default_location
+    ) {
       return t`Default location selected`;
     }
 

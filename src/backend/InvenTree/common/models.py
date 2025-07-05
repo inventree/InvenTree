@@ -24,6 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
@@ -2431,6 +2432,39 @@ class DataOutput(models.Model):
     output = models.FileField(upload_to='data_output', blank=True, null=True)
 
     errors = models.JSONField(blank=True, null=True)
+
+    def mark_complete(self, progress: int = 100, output: Optional[ContentFile] = None):
+        """Mark the data output generation process as complete.
+
+        Arguments:
+            progress (int, optional): Progress percentage of the data output generation. Defaults to 100.
+            output (ContentFile, optional): The generated output file. Defaults to None.
+        """
+        self.complete = True
+        self.progress = progress
+        self.output = output
+        self.save()
+
+    def mark_failure(
+        self, error: Optional[str] = None, error_dict: Optional[dict] = None
+    ):
+        """Log an error message to the errors field.
+
+        Arguments:
+            error (str, optional): Error message to log. Defaults to None.
+            error_dict (dict): Dictionary containing error messages. Defaults to None.
+        """
+        self.complete = False
+        self.output = None
+
+        if error_dict is not None:
+            self.errors = error_dict
+        elif error is not None:
+            self.errors = {'error': str(error)}
+        else:
+            self.errors = {'error': str(_('An error occurred'))}
+
+        self.save()
 
 
 # region Email

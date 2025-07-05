@@ -9,7 +9,8 @@ import type { ApiFormFieldType } from '@lib/types/Forms';
  * @param ordering - The key in the record to sort by (defaults to accessor)
  * @param sortable - Whether the column is sortable
  * @param switchable - Whether the column is switchable
- * @param hidden - Whether the column is hidden
+ * @param defaultVisible - Whether the column is visible by default (defaults to true)
+ * @param hidden - Whether the column is hidden (forced hidden, cannot be toggled by the user))
  * @param editable - Whether the value of this column can be edited
  * @param definition - Optional field definition for the column
  * @param render - A custom render function
@@ -31,6 +32,7 @@ export type TableColumnProps<T = any> = {
   sortable?: boolean;
   switchable?: boolean;
   hidden?: boolean;
+  defaultVisible?: boolean;
   editable?: boolean;
   definition?: ApiFormFieldType;
   render?: (record: T, index?: number) => any;

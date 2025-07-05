@@ -73,7 +73,7 @@ def read_license_file(path: Path) -> list:
         names.add(name)
         output.append({key.lower(): value for key, value in entry.items()})
 
-    return output
+    return sorted(output, key=lambda x: x.get('name', '').lower())
 
 
 class LicenseViewSerializer(serializers.Serializer):

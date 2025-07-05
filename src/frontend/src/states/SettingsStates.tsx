@@ -11,6 +11,7 @@ import type {
   SettingsLookup,
   SettingsStateProps
 } from '@lib/types/Settings';
+import { useEffect } from 'react';
 import { api } from '../App';
 import { isTrue } from '../functions/conversion';
 import { useUserState } from './UserState';
@@ -22,6 +23,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
   (set, get) => ({
     settings: [],
     loaded: false,
+    isError: false,
     lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
@@ -30,7 +32,8 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
 
       if (!isLoggedIn()) {
         set({
-          loaded: false
+          loaded: false,
+          isError: true
         });
         return success;
       }
@@ -40,8 +43,9 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
         .then((response) => {
           set({
             settings: response.data,
+            lookup: generate_lookup(response.data),
             loaded: true,
-            lookup: generate_lookup(response.data)
+            isError: false
           });
         })
         .catch((_error) => {
@@ -49,7 +53,8 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
           success = false;
 
           set({
-            loaded: false
+            loaded: false,
+            isError: true
           });
         });
 
@@ -72,6 +77,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   settings: [],
   lookup: {},
   loaded: false,
+  isError: false,
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
     let success = true;
@@ -126,14 +132,29 @@ export const createPluginSettingsState = ({
 }: CreatePluginSettingStateProps) => {
   const pathParams: PathParams = { plugin };
 
-  return createStore<SettingsStateProps>()((set, get) => ({
+  const store = createStore<SettingsStateProps>()((set, get) => ({
     settings: [],
     lookup: {},
     loaded: false,
-    endpoint: endpoint,
+    isError: false,
+    endpoint: ApiEndpoints.plugin_setting_list,
     pathParams,
     fetchSettings: async () => {
       let success = true;
+
+      if (!plugin) {
+        set({
+          loaded: false,
+          isError: true
+        });
+
+        return false;
+      }
+
+      set({
+        loaded: false,
+        isError: false
+      });
 
       await api
         .get(apiUrl(endpoint, undefined, { plugin }))
@@ -142,14 +163,16 @@ export const createPluginSettingsState = ({
           set({
             settings,
             lookup: generate_lookup(settings),
-            loaded: true
+            loaded: true,
+            isError: false
           });
         })
         .catch((_error) => {
           console.error(`Error fetching plugin settings for plugin ${plugin}`);
           success = false;
           set({
-            loaded: false
+            loaded: false,
+            isError: true
           });
         });
 
@@ -163,6 +186,13 @@ export const createPluginSettingsState = ({
       return isTrue(value);
     }
   }));
+
+  useEffect(() => {
+    console.log('fetching plugin settings for', plugin);
+    store.getState().fetchSettings();
+  }, [plugin]);
+
+  return store;
 };
 
 /**
@@ -183,6 +213,7 @@ export const createMachineSettingsState = ({
     settings: [],
     lookup: {},
     loaded: false,
+    isError: false,
     endpoint: ApiEndpoints.machine_setting_detail,
     pathParams,
     fetchSettings: async () => {
@@ -197,7 +228,8 @@ export const createMachineSettingsState = ({
           set({
             settings,
             lookup: generate_lookup(settings),
-            loaded: true
+            loaded: true,
+            isError: false
           });
         })
         .catch((error) => {
@@ -207,7 +239,8 @@ export const createMachineSettingsState = ({
           );
           success = false;
           set({
-            loaded: false
+            loaded: false,
+            isError: true
           });
         });
 

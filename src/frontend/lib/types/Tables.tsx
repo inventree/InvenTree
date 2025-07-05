@@ -37,7 +37,7 @@ import type { FilterSetState } from './Filters';
  */
 export type TableState = {
   tableKey: string;
-  refreshTable: () => void;
+  refreshTable: (clearSelected?: boolean) => void;
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
   filterSet: FilterSetState;
@@ -52,18 +52,16 @@ export type TableState = {
   hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
-  hiddenColumns: string[];
-  setHiddenColumns: (columns: string[]) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   recordCount: number;
   setRecordCount: (count: number) => void;
   page: number;
   setPage: (page: number) => void;
-  pageSize: number;
-  setPageSize: (pageSize: number) => void;
   records: any[];
   setRecords: (records: any[]) => void;
   updateRecord: (record: any) => void;
+  hiddenColumns: string[];
+  setHiddenColumns: (columns: string[]) => void;
   idAccessor?: string;
 };

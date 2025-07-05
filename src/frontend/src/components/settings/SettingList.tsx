@@ -1,20 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Skeleton, Stack, Text } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useStore } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
@@ -22,7 +17,7 @@ import {
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { SettingItem } from './SettingItem';
 
 /**
@@ -39,17 +34,6 @@ export function SettingList({
   onChange?: () => void;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
-  useEffect(() => {
-    settingsState.fetchSettings();
-  }, [keys]);
-
-  useEffect(() => {
-    if (settingsState.loaded) {
-      // Call the onLoaded callback if provided
-      onLoaded?.(settingsState);
-    }
-  }, [settingsState.loaded, settingsState.settings]);
-
   const api = useApi();
 
   const allKeys = useMemo(
@@ -142,6 +126,14 @@ export function SettingList({
     },
     [settingsState]
   );
+
+  if (settingsState.isError) {
+    return (
+      <Alert color='red' icon={<IconExclamationCircle />} title={t`Error`}>
+        <Text>{t`Error loading settings`}</Text>
+      </Alert>
+    );
+  }
 
   if (!settingsState?.loaded) {
     return <Skeleton animate />;

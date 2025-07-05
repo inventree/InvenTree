@@ -22,7 +22,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  CategoryColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -53,15 +58,14 @@ function partTableColumns(): TableColumn[] {
       sortable: true
     },
     DescriptionColumn({}),
-    {
-      accessor: 'category',
-      sortable: true,
-      render: (record: any) => record.category_detail?.pathstring
-    },
+    CategoryColumn({
+      accessor: 'category_detail'
+    }),
     {
       accessor: 'default_location',
       sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring
+      render: (record: any) => record.default_location_detail?.pathstring,
+      defaultVisible: false
     },
     {
       accessor: 'total_in_stock',
@@ -167,6 +171,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },

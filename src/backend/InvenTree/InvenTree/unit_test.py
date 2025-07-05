@@ -15,7 +15,7 @@ from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
-from django.test.utils import CaptureQueriesContext
+from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
@@ -659,6 +659,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         self.assertEqual(b, b | a)
 
 
+@override_settings(
+    SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+)
 class AdminTestCase(InvenTreeAPITestCase):
     """Tests for the admin interface integration."""
 
@@ -685,6 +688,7 @@ class AdminTestCase(InvenTreeAPITestCase):
             max_query_count=300,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Django site admin')
 
         return obj
 

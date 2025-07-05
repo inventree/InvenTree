@@ -41,7 +41,7 @@ import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
@@ -397,11 +397,7 @@ export function SearchDrawer({
 
     return api
       .post(apiUrl(ApiEndpoints.api_search), params)
-      .then((response) => response.data)
-      .catch((error) => {
-        console.error(error);
-        return [];
-      });
+      .then((response) => response.data);
   };
 
   // Search query manager

@@ -3,7 +3,12 @@
  */
 import { t } from '@lingui/core/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
-import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
+import {
+  IconBell,
+  IconExclamationCircle,
+  IconLink,
+  IconLock
+} from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
@@ -14,9 +19,9 @@ import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import { resolveItem } from '../functions/conversion';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import type { TableColumn, TableColumnProps } from './Column';
-import { ProjectCodeHoverCard } from './TableHoverCard';
+import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
 export function PartColumn({
@@ -31,6 +36,7 @@ export function PartColumn({
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
         text={full_name ? part?.full_name : part?.name}
+        hover
       />
       <Group justify='flex-end' wrap='nowrap' gap='xs'>
         {part?.active == false && (
@@ -55,28 +61,77 @@ export function PartColumn({
   );
 }
 
-export function LocationColumn(props: TableColumnProps): TableColumn {
+export function CompanyColumn({
+  company
+}: {
+  company: any;
+}) {
+  return company ? (
+    <Group gap='xs' wrap='nowrap'>
+      <Thumbnail
+        src={company.thumbnail ?? company.image ?? ''}
+        alt={company.name}
+        size={24}
+        hover
+      />
+      <Text>{company.name}</Text>
+    </Group>
+  ) : (
+    <Skeleton />
+  );
+}
+
+/**
+ * Return a column which displays a tree path for a given record.
+ */
+export function PathColumn(props: TableColumnProps): TableColumn {
   return {
+    ...props,
+    accessor: props.accessor ?? 'path',
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? '');
+
+      if (!instance || !instance.name) {
+        return '-';
+      }
+
+      const name = instance.name ?? '';
+      const pathstring = instance.pathstring || name;
+
+      if (name == pathstring) {
+        return <Text>{name}</Text>;
+      }
+
+      return (
+        <TableHoverCard
+          value={<Text>{instance.name}</Text>}
+          icon='sitemap'
+          title={props.title}
+          extra={[<Text>{instance.pathstring}</Text>]}
+        />
+      );
+    }
+  };
+}
+
+export function LocationColumn(props: TableColumnProps): TableColumn {
+  return PathColumn({
     accessor: 'location',
     title: t`Location`,
     sortable: true,
     ordering: 'location',
-    render: (record: any) => {
-      const location = resolveItem(record, props.accessor ?? '');
-
-      if (!location) {
-        return (
-          <Text
-            size='sm'
-            style={{ fontStyle: 'italic' }}
-          >{t`No location set`}</Text>
-        );
-      }
-
-      return <Text size='sm'>{location.pathstring}</Text>;
-    },
     ...props
-  };
+  });
+}
+
+export function CategoryColumn(props: TableColumnProps): TableColumn {
+  return PathColumn({
+    accessor: 'category',
+    title: t`Category`,
+    sortable: true,
+    ordering: 'category',
+    ...props
+  });
 }
 
 export function BooleanColumn(props: TableColumn): TableColumn {
@@ -105,6 +160,7 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'link',
     sortable: false,
+    defaultVisible: false,
     render: (record: any) => {
       const url = resolveItem(record, props.accessor ?? 'link');
 
@@ -122,8 +178,9 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
 
             window.open(url, '_blank', 'noopener,noreferrer');
           }}
+          title={url}
         >
-          {url}
+          <IconLink size={18} />
         </Anchor>
       );
     },
@@ -189,6 +246,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
 export function StatusColumn({
   model,
   sortable,
+  switchable,
   ordering,
   accessor,
   title,
@@ -196,6 +254,7 @@ export function StatusColumn({
 }: {
   model: ModelType;
   sortable?: boolean;
+  switchable?: boolean;
   accessor?: string;
   ordering?: string;
   hidden?: boolean;
@@ -204,6 +263,7 @@ export function StatusColumn({
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
+    switchable: switchable ?? true,
     ordering: ordering,
     title: title,
     hidden: hidden,

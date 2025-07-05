@@ -27,7 +27,7 @@ import {
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
 

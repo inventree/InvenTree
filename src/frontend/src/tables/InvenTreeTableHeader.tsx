@@ -25,6 +25,7 @@ import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
+import { resolveItem } from '../functions/conversion';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableColumnSelect } from './ColumnSelect';
@@ -137,12 +138,17 @@ export default function InvenTreeTableHeader({
   }, [tableState.queryFilters]);
 
   const hasCustomFilters = useMemo(() => {
-    if (hasCustomSearch) {
-      return tableState.queryFilters.size > 1;
-    } else {
-      return tableState.queryFilters.size > 0;
-    }
-  }, [hasCustomSearch, tableState.queryFilters]);
+    return (tableState?.queryFilters?.size ?? 0) > 0;
+  }, [tableState.queryFilters]);
+
+  // Extract ID values for label and report printing
+  const printingIdValues = useMemo(() => {
+    return (
+      tableState.selectedRecords?.map((record) => {
+        return resolveItem(record, tableProps.printingAccessor ?? 'pk');
+      }) ?? []
+    );
+  }, [tableProps.printingAccessor, tableState.selectedRecords]);
 
   return (
     <>
@@ -169,7 +175,7 @@ export default function InvenTreeTableHeader({
       <Group justify='apart' grow wrap='nowrap'>
         <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
           <PrintingActions
-            items={tableState.selectedIds}
+            items={printingIdValues}
             modelType={tableProps.modelType}
             enableLabels={tableProps.enableLabels}
             enableReports={tableProps.enableReports}

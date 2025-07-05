@@ -56,8 +56,7 @@ export default function SupplierPartDetail() {
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
@@ -401,8 +400,7 @@ export default function SupplierPartDetail() {
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>
