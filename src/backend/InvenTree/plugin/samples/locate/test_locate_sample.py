@@ -8,7 +8,7 @@ from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import LocateMixin
 
 
-class SampleLocatePlugintests(InvenTreeAPITestCase):
+class SampleLocatePluginTests(InvenTreeAPITestCase):
     """Tests for SampleLocatePlugin."""
 
     fixtures = ['location', 'category', 'part', 'stock']
@@ -16,7 +16,7 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
     def test_run_locator(self):
         """Check if the event is issued."""
         # Activate plugin
-        config = registry.get_plugin('samplelocate').plugin_config()
+        config = registry.get_plugin('samplelocate', active=None).plugin_config()
         config.active = True
         config.save()
 

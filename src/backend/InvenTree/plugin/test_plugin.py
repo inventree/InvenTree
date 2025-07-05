@@ -217,6 +217,7 @@ class RegistryTests(TestCase):
         with mock.patch.dict(os.environ, envs):
             # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True, collect=True)
+            registry.set_plugin_state('simple', True)
 
             # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
             plg = registry.get_plugin('simple')
