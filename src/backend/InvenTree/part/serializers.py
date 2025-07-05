@@ -22,6 +22,7 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
+import common.serializers as common_serializers
 import common.settings
 import company.models
 import InvenTree.helpers
@@ -656,7 +657,7 @@ class PartSerializer(
             'default_supplier',
             'description',
             'full_name',
-            'image',
+            'images',
             'remote_image',
             'existing_image',
             'IPN',
@@ -676,7 +677,7 @@ class PartSerializer(
             'revision_count',
             'salable',
             'starred',
-            'thumbnail',
+            'thumbnails',
             'testable',
             'trackable',
             'units',
@@ -869,6 +870,13 @@ class PartSerializer(
         """Return "true" if the part is starred by the current user."""
         return part in self.starred_parts
 
+    def get_images(self, obj):
+        """Return the images associated with this Part instance."""
+        images = obj.images
+        return common_serializers.UploadedImageSerializer(
+            images, many=True, context=self.context
+        ).data
+
     # Extra detail for the category
     category_detail = CategorySerializer(
         source='category', many=False, read_only=True, allow_null=True
@@ -978,10 +986,11 @@ class PartSerializer(
         required=False, label=_('Minimum Stock'), default=0
     )
 
-    image = InvenTree.serializers.InvenTreeImageSerializerField(
-        required=False, allow_null=True
-    )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    images = serializers.SerializerMethodField()
+
+    # thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnails = serializers.SerializerMethodField()
+
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
@@ -1081,9 +1090,9 @@ class PartSerializer(
                 instance.notes = original.notes
                 instance.save()
 
-            if duplicate.get('copy_image', False):
-                instance.image = original.image
-                instance.save()
+            # if duplicate.get('copy_image', False):
+            #     instance.image = original.image
+            #     instance.save()
 
             if duplicate.get('copy_parameters', False):
                 instance.copy_parameters_from(original)

@@ -58,6 +58,7 @@ from common.settings import global_setting_overrides
 from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
+from InvenTree import helpers
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.tracing import TRACE_PROC, TRACE_PROV
@@ -1846,6 +1847,7 @@ def rename_attachment(instance, filename: str):
     )
 
 
+# TODO:
 UPLOAD_IMAGE_DIR = 'upload_images'
 
 
@@ -1875,6 +1877,18 @@ class UploadedImage(models.Model):
         delete_orphans=False,
         verbose_name=_('Image'),
     )
+
+    def get_image_url(self):
+        """Return the URL of the image for this part."""
+        if self.image:
+            return helpers.getMediaUrl(self.image.url)
+        return helpers.getBlankImage()
+
+    def get_thumbnail_url(self) -> str:
+        """Return the URL of the image thumbnail for this part."""
+        if self.image:
+            return helpers.getMediaUrl(self.image.thumbnail.url)
+        return helpers.getBlankThumbnail()
 
 
 class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):

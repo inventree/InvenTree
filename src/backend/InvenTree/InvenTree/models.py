@@ -932,6 +932,19 @@ class InvenTreeImageUploadMixin(models.Model):
 
         super().delete()
 
+    @property
+    def images(self):
+        """Return a queryset containing all images for this model."""
+        return self.images_for_model().filter(model_id=self.pk)
+
+    def images_for_model(self):
+        """Return all images for this model class."""
+        from common.models import UploadedImage
+
+        model_type = self.__class__.__name__.lower()
+
+        return UploadedImage.objects.filter(model_type=model_type)
+
 
 class InvenTreeBarcodeMixin(models.Model):
     """A mixin class for adding barcode functionality to a model class.

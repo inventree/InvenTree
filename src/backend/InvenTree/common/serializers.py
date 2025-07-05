@@ -17,6 +17,7 @@ from taggit.serializers import TagListSerializerField
 import common.models as common_models
 import common.validators
 import generic.states.custom
+import InvenTree.serializers
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
@@ -582,6 +583,21 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     pk = serializers.CharField(source='id', read_only=True)
 
     result = serializers.CharField()
+
+
+class UploadedImageSerializer(serializers.ModelSerializer):
+    """Serializer class for the UploadedImage model."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = common_models.UploadedImage
+        fields = ['id', 'primary', 'image', 'thumbnail']
+
+    image = InvenTree.serializers.InvenTreeImageSerializerField(
+        required=False, allow_null=True
+    )
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
 class AttachmentSerializer(InvenTreeModelSerializer):
