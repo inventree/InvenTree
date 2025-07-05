@@ -265,7 +265,7 @@ class RegistryTests(TestCase):
         registry.reload_plugins(full_reload=True, collect=True)
 
         # Test that plugin was installed
-        plg = registry.get_plugin('zapier')
+        plg = registry.get_plugin('zapier', active=None)
         self.assertEqual(plg.slug, 'zapier')
         self.assertEqual(plg.name, 'inventree_zapier')
 
