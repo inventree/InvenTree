@@ -225,6 +225,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_FULL_LOCATION_PATH_IN_TABLES': {
+        'name': _('Show Stock Item Location Path in Tables as text'),
+        'description': _(
+            'Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text.'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),
         'description': _('Receive notifications for system errors'),
