@@ -10,11 +10,13 @@ import { IconTruckDelivery } from '@tabler/icons-react';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
+import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
@@ -25,6 +27,7 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -82,7 +85,8 @@ export default function SalesOrderAllocationTable({
         name: 'assigned_to_shipment',
         label: t`Assigned to Shipment`,
         description: t`Show allocations assigned to a shipment`
-      }
+      },
+      StockLocationFilter()
     ];
 
     if (!!partId) {
@@ -132,7 +136,8 @@ export default function SalesOrderAllocationTable({
         accessor: 'part_detail.IPN',
         title: t`IPN`,
         hidden: showPartInfo != true,
-        sortable: false
+        sortable: true,
+        ordering: 'IPN'
       },
       {
         accessor: 'serial',
@@ -246,6 +251,37 @@ export default function SalesOrderAllocationTable({
     [allowEdit, user]
   );
 
+  const stockOperationProps: StockOperationProps = useMemo(() => {
+    // Extract stock items from the selected records
+    // Note that the table is actually a list of SalesOrderAllocation instances,
+    // so we need to reconstruct the stock item details
+    const stockItems: any[] = table.selectedRecords
+      .filter((item: any) => !!item.item_detail)
+      .map((item: any) => {
+        return {
+          ...item.item_detail,
+          part_detail: item.part_detail,
+          location_detail: item.location_detail
+        };
+      });
+
+    return {
+      items: stockItems,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable
+    };
+  }, [table.selectedRecords, table.refreshTable]);
+
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    assign: false,
+    delete: false,
+    add: false,
+    count: false,
+    remove: false
+  });
+
   // A subset of the selected allocations, which can be assigned to a shipment
   const nonShippedAllocationIds: number[] = useMemo(() => {
     // Only allow allocations which have not been shipped
@@ -273,6 +309,7 @@ export default function SalesOrderAllocationTable({
 
   const tableActions = useMemo(() => {
     return [
+      stockAdjustActions.dropdown,
       <ActionButton
         tooltip={t`Assign to shipment`}
         icon={<IconTruckDelivery />}
@@ -286,13 +323,20 @@ export default function SalesOrderAllocationTable({
         // TODO: Hide if order is already shipped
       />
     ];
-  }, [allowEdit, nonShippedAllocationIds, orderId, user]);
+  }, [
+    allowEdit,
+    nonShippedAllocationIds,
+    orderId,
+    user,
+    stockAdjustActions.dropdown
+  ]);
 
   return (
     <>
       {setShipment.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
+      {!isSubTable && stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
         tableState={table}
@@ -322,6 +366,7 @@ export default function SalesOrderAllocationTable({
           modelField: modelField ?? 'order',
           enableReports: !isSubTable,
           enableLabels: !isSubTable,
+          printingAccessor: 'item',
           modelType: modelTarget ?? ModelType.salesorder
         }}
       />
