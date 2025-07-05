@@ -25,6 +25,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("PART_SHOW_QUANTITY_IN_FORMS") }}
 {{ usersetting("DISPLAY_STOCKTAKE_TAB") }}
 {{ usersetting("ENABLE_LAST_BREADCRUMB") }}
+{{ usersetting("SHOW_FULL_LOCATION_PATH_IN_TABLES") }}
 
 ### Search Settings
 

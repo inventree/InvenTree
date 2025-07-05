@@ -19,7 +19,10 @@ import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import { resolveItem } from '../functions/conversion';
-import { useGlobalSettingsState } from '../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsStates';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
@@ -114,14 +117,49 @@ export function PathColumn(props: TableColumnProps): TableColumn {
   };
 }
 
-export function LocationColumn(props: TableColumnProps): TableColumn {
-  return PathColumn({
+export function PathColumnPlainText(props: TableColumnProps): TableColumn {
+  return {
     accessor: 'location',
     title: t`Location`,
     sortable: true,
     ordering: 'location',
+    render: (record: any) => {
+      const location = resolveItem(record, props.accessor ?? '');
+      if (!location) {
+        return (
+          <Text style={{ fontStyle: 'italic' }}>{t`No location set`}</Text>
+        );
+      }
+
+      return <Text>{location.pathstring}</Text>;
+    },
     ...props
-  });
+  };
+}
+
+export function LocationColumn(props: TableColumnProps): TableColumn {
+  const userSettings = useUserSettingsState.getState();
+  const enabled = userSettings.isSet(
+    'SHOW_FULL_LOCATION_PATH_IN_TABLES',
+    false
+  );
+  if (enabled) {
+    return PathColumnPlainText({
+      accessor: 'location',
+      title: t`Location`,
+      sortable: true,
+      ordering: 'location',
+      ...props
+    });
+  } else {
+    return PathColumn({
+      accessor: 'location',
+      title: t`Location`,
+      sortable: true,
+      ordering: 'location',
+      ...props
+    });
+  }
 }
 
 export function CategoryColumn(props: TableColumnProps): TableColumn {

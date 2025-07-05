@@ -55,7 +55,8 @@ export default function UserSettings() {
               'FORMS_CLOSE_USING_ESCAPE',
               'PART_SHOW_QUANTITY_IN_FORMS',
               'DISPLAY_STOCKTAKE_TAB',
-              'ENABLE_LAST_BREADCRUMB'
+              'ENABLE_LAST_BREADCRUMB',
+              'SHOW_FULL_LOCATION_PATH_IN_TABLES'
             ]}
           />
         )
