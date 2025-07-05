@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-06-30 03:54\n"
+"PO-Revision-Date: 2025-07-04 01:42\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: src/forms/BuildForms.tsx:378
 #: src/forms/BuildForms.tsx:442
 #: src/forms/BuildForms.tsx:588
-#: src/forms/PurchaseOrderForms.tsx:788
+#: src/forms/PurchaseOrderForms.tsx:791
 #: src/forms/ReturnOrderForms.tsx:239
 #: src/forms/SalesOrderForms.tsx:267
 #: src/forms/StockForms.tsx:302
@@ -36,16 +36,16 @@ msgstr ""
 #: src/forms/StockForms.tsx:929
 #: src/forms/StockForms.tsx:977
 #: src/forms/StockForms.tsx:1021
-#: src/pages/build/BuildDetail.tsx:111
-#: src/pages/part/PartDetail.tsx:1050
-#: src/tables/build/BuildAllocatedStockTable.tsx:95
+#: src/pages/build/BuildDetail.tsx:177
+#: src/pages/part/PartDetail.tsx:1024
+#: src/tables/build/BuildAllocatedStockTable.tsx:100
 #: src/tables/build/BuildLineTable.tsx:76
 #: src/tables/part/ParametricPartTable.tsx:370
-#: src/tables/part/PartTable.tsx:37
+#: src/tables/part/PartTable.tsx:42
 #: src/tables/part/RelatedPartTable.tsx:49
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:136
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:107
-#: src/tables/sales/SalesOrderAllocationTable.tsx:122
+#: src/tables/sales/SalesOrderAllocationTable.tsx:126
 #: src/tables/stock/StockTrackingTable.tsx:86
 msgid "Part"
 msgstr "パーツ"
@@ -55,10 +55,10 @@ msgstr "パーツ"
 #: src/components/nav/NavigationDrawer.tsx:77
 #: src/defaults/links.tsx:36
 #: src/pages/Index/Settings/SystemSettings.tsx:185
-#: src/pages/part/CategoryDetail.tsx:131
-#: src/pages/part/CategoryDetail.tsx:274
-#: src/pages/part/CategoryDetail.tsx:313
-#: src/pages/part/PartDetail.tsx:765
+#: src/pages/part/CategoryDetail.tsx:130
+#: src/pages/part/CategoryDetail.tsx:273
+#: src/pages/part/CategoryDetail.tsx:312
+#: src/pages/part/PartDetail.tsx:762
 msgid "Parts"
 msgstr "パーツ"
 
@@ -81,12 +81,12 @@ msgstr "部品試験テンプレート"
 
 #: lib/enums/ModelInformation.tsx:51
 #: src/components/wizards/OrderPartsWizard.tsx:143
-#: src/pages/company/SupplierPartDetail.tsx:410
-#: src/pages/stock/StockDetail.tsx:292
-#: src/tables/build/BuildAllocatedStockTable.tsx:152
+#: src/pages/company/SupplierPartDetail.tsx:408
+#: src/pages/stock/StockDetail.tsx:287
+#: src/tables/build/BuildAllocatedStockTable.tsx:157
 #: src/tables/part/PartPurchaseOrdersTable.tsx:50
 #: src/tables/purchasing/SupplierPartTable.tsx:62
-#: src/tables/stock/StockItemTable.tsx:239
+#: src/tables/stock/StockItemTable.tsx:241
 msgid "Supplier Part"
 msgstr "サプライヤー"
 
@@ -97,7 +97,7 @@ msgstr "サプライヤー・パーツ"
 
 #: lib/enums/ModelInformation.tsx:60
 #: src/tables/part/PartPurchaseOrdersTable.tsx:56
-#: src/tables/stock/StockItemTable.tsx:245
+#: src/tables/stock/StockItemTable.tsx:247
 msgid "Manufacturer Part"
 msgstr "メーカー・パーツ"
 
@@ -107,14 +107,14 @@ msgid "Manufacturer Parts"
 msgstr "メーカー・パーツ"
 
 #: lib/enums/ModelInformation.tsx:69
-#: src/pages/part/CategoryDetail.tsx:345
+#: src/pages/part/CategoryDetail.tsx:343
 msgid "Part Category"
 msgstr "パーツカテゴリ"
 
 #: lib/enums/ModelInformation.tsx:70
 #: lib/enums/Roles.tsx:38
-#: src/pages/part/CategoryDetail.tsx:336
-#: src/pages/part/PartDetail.tsx:1039
+#: src/pages/part/CategoryDetail.tsx:334
+#: src/pages/part/PartDetail.tsx:1013
 msgid "Part Categories"
 msgstr "パーツカテゴリ"
 
@@ -123,7 +123,7 @@ msgstr "パーツカテゴリ"
 #: src/forms/BuildForms.tsx:443
 #: src/forms/BuildForms.tsx:590
 #: src/forms/SalesOrderForms.tsx:269
-#: src/pages/stock/StockDetail.tsx:1072
+#: src/pages/stock/StockDetail.tsx:1012
 #: src/tables/stock/StockTrackingTable.tsx:47
 #: src/tables/stock/StockTrackingTable.tsx:54
 msgid "Stock Item"
@@ -131,24 +131,24 @@ msgstr "在庫商品"
 
 #: lib/enums/ModelInformation.tsx:79
 #: lib/enums/Roles.tsx:46
-#: src/pages/company/CompanyDetail.tsx:206
-#: src/pages/part/CategoryDetail.tsx:288
+#: src/pages/company/CompanyDetail.tsx:205
+#: src/pages/part/CategoryDetail.tsx:287
 #: src/pages/part/PartStocktakeDetail.tsx:116
-#: src/pages/stock/LocationDetail.tsx:126
-#: src/pages/stock/LocationDetail.tsx:185
+#: src/pages/stock/LocationDetail.tsx:123
+#: src/pages/stock/LocationDetail.tsx:182
 msgid "Stock Items"
 msgstr "在庫商品"
 
 #: lib/enums/ModelInformation.tsx:87
 #: lib/enums/Roles.tsx:48
-#: src/pages/stock/LocationDetail.tsx:440
+#: src/pages/stock/LocationDetail.tsx:420
 msgid "Stock Location"
 msgstr "在庫場所"
 
 #: lib/enums/ModelInformation.tsx:88
-#: src/pages/stock/LocationDetail.tsx:179
-#: src/pages/stock/LocationDetail.tsx:432
-#: src/pages/stock/StockDetail.tsx:1063
+#: src/pages/stock/LocationDetail.tsx:176
+#: src/pages/stock/LocationDetail.tsx:412
+#: src/pages/stock/StockDetail.tsx:1003
 msgid "Stock Locations"
 msgstr "在庫場所"
 
@@ -161,7 +161,7 @@ msgid "Stock Location Types"
 msgstr "ストックロケーションの種類"
 
 #: lib/enums/ModelInformation.tsx:102
-#: src/pages/part/PartDetail.tsx:645
+#: src/pages/part/PartDetail.tsx:642
 msgid "Stock History"
 msgstr "株式履歴"
 
@@ -194,7 +194,7 @@ msgid "Build Items"
 msgstr "ビルドアイテム"
 
 #: lib/enums/ModelInformation.tsx:131
-#: src/pages/company/CompanyDetail.tsx:332
+#: src/pages/company/CompanyDetail.tsx:334
 #: src/tables/company/ContactTable.tsx:63
 msgid "Company"
 msgstr "会社名"
@@ -204,13 +204,13 @@ msgid "Companies"
 msgstr "会社"
 
 #: lib/enums/ModelInformation.tsx:139
-#: src/pages/build/BuildDetail.tsx:238
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:236
-#: src/pages/sales/ReturnOrderDetail.tsx:200
-#: src/pages/sales/SalesOrderDetail.tsx:212
-#: src/tables/ColumnRenderers.tsx:198
-#: src/tables/Filter.tsx:217
-#: src/tables/TableHoverCard.tsx:82
+#: src/pages/build/BuildDetail.tsx:304
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:235
+#: src/pages/sales/ReturnOrderDetail.tsx:199
+#: src/pages/sales/SalesOrderDetail.tsx:211
+#: src/tables/ColumnRenderers.tsx:233
+#: src/tables/Filter.tsx:269
+#: src/tables/TableHoverCard.tsx:84
 msgid "Project Code"
 msgstr "プロジェクトコード"
 
@@ -221,12 +221,12 @@ msgstr "プロジェクトコード"
 
 #: lib/enums/ModelInformation.tsx:146
 #: src/components/wizards/OrderPartsWizard.tsx:183
-#: src/pages/build/BuildDetail.tsx:155
+#: src/pages/build/BuildDetail.tsx:221
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:523
-#: src/pages/stock/StockDetail.tsx:355
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:531
+#: src/pages/stock/StockDetail.tsx:350
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
-#: src/tables/stock/StockItemTable.tsx:231
+#: src/tables/stock/StockItemTable.tsx:233
 #: src/tables/stock/StockTrackingTable.tsx:119
 msgid "Purchase Order"
 msgstr "注文"
@@ -234,9 +234,9 @@ msgstr "注文"
 #: lib/enums/ModelInformation.tsx:147
 #: lib/enums/Roles.tsx:40
 #: src/pages/Index/Settings/SystemSettings.tsx:263
-#: src/pages/company/CompanyDetail.tsx:199
-#: src/pages/company/SupplierPartDetail.tsx:266
-#: src/pages/part/PartDetail.tsx:616
+#: src/pages/company/CompanyDetail.tsx:198
+#: src/pages/company/SupplierPartDetail.tsx:265
+#: src/pages/part/PartDetail.tsx:613
 #: src/pages/purchasing/PurchasingIndex.tsx:60
 msgid "Purchase Orders"
 msgstr "購入注文"
@@ -250,14 +250,14 @@ msgid "Purchase Order Lines"
 msgstr "発注ライン"
 
 #: lib/enums/ModelInformation.tsx:161
-#: src/pages/build/BuildDetail.tsx:211
+#: src/pages/build/BuildDetail.tsx:277
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:24
-#: src/pages/sales/SalesOrderDetail.tsx:572
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:96
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:361
-#: src/pages/stock/StockDetail.tsx:364
+#: src/pages/sales/SalesOrderDetail.tsx:586
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:94
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:358
+#: src/pages/stock/StockDetail.tsx:359
 #: src/tables/part/PartSalesAllocationsTable.tsx:38
-#: src/tables/sales/SalesOrderAllocationTable.tsx:104
+#: src/tables/sales/SalesOrderAllocationTable.tsx:108
 #: src/tables/stock/StockTrackingTable.tsx:130
 msgid "Sales Order"
 msgstr "セールスオーダー"
@@ -265,14 +265,14 @@ msgstr "セールスオーダー"
 #: lib/enums/ModelInformation.tsx:162
 #: lib/enums/Roles.tsx:44
 #: src/pages/Index/Settings/SystemSettings.tsx:279
-#: src/pages/company/CompanyDetail.tsx:219
-#: src/pages/part/PartDetail.tsx:628
+#: src/pages/company/CompanyDetail.tsx:218
+#: src/pages/part/PartDetail.tsx:625
 #: src/pages/sales/SalesIndex.tsx:82
 msgid "Sales Orders"
 msgstr "セールスオーダー"
 
 #: lib/enums/ModelInformation.tsx:170
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:360
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:357
 msgid "Sales Order Shipment"
 msgstr "販売注文の出荷"
 
@@ -281,7 +281,7 @@ msgid "Sales Order Shipments"
 msgstr "販売注文の出荷"
 
 #: lib/enums/ModelInformation.tsx:177
-#: src/pages/sales/ReturnOrderDetail.tsx:508
+#: src/pages/sales/ReturnOrderDetail.tsx:516
 #: src/tables/stock/StockTrackingTable.tsx:141
 msgid "Return Order"
 msgstr "リターンオーダー"
@@ -289,8 +289,8 @@ msgstr "リターンオーダー"
 #: lib/enums/ModelInformation.tsx:178
 #: lib/enums/Roles.tsx:42
 #: src/pages/Index/Settings/SystemSettings.tsx:295
-#: src/pages/company/CompanyDetail.tsx:226
-#: src/pages/part/PartDetail.tsx:635
+#: src/pages/company/CompanyDetail.tsx:225
+#: src/pages/part/PartDetail.tsx:632
 #: src/pages/sales/SalesIndex.tsx:103
 msgid "Return Orders"
 msgstr "返品注文"
@@ -309,21 +309,21 @@ msgid "Address"
 msgstr "住所"
 
 #: lib/enums/ModelInformation.tsx:193
-#: src/pages/company/CompanyDetail.tsx:259
+#: src/pages/company/CompanyDetail.tsx:258
 msgid "Addresses"
 msgstr "マイアカウント"
 
 #: lib/enums/ModelInformation.tsx:199
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:135
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:212
-#: src/pages/sales/ReturnOrderDetail.tsx:176
-#: src/pages/sales/SalesOrderDetail.tsx:188
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:211
+#: src/pages/sales/ReturnOrderDetail.tsx:175
+#: src/pages/sales/SalesOrderDetail.tsx:187
 msgid "Contact"
 msgstr "お問い合わせ"
 
 #: lib/enums/ModelInformation.tsx:200
-#: src/pages/company/CompanyDetail.tsx:253
+#: src/pages/company/CompanyDetail.tsx:252
 #: src/pages/core/CoreIndex.tsx:33
 msgid "Contacts"
 msgstr "連絡先"
@@ -339,9 +339,9 @@ msgstr "所有者"
 #: lib/enums/ModelInformation.tsx:213
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:220
-#: src/tables/Filter.tsx:266
-#: src/tables/settings/ApiTokenTable.tsx:102
-#: src/tables/settings/ApiTokenTable.tsx:120
+#: src/tables/Filter.tsx:318
+#: src/tables/settings/ApiTokenTable.tsx:105
+#: src/tables/settings/ApiTokenTable.tsx:132
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:40
 #: src/tables/settings/ImportSessionTable.tsx:75
@@ -371,7 +371,7 @@ msgstr "グループ"
 #: src/pages/core/CoreIndex.tsx:27
 #: src/pages/core/GroupDetail.tsx:82
 #: src/pages/core/UserDetail.tsx:99
-#: src/tables/settings/UserTable.tsx:273
+#: src/tables/settings/UserTable.tsx:272
 msgid "Groups"
 msgstr "グループ"
 
@@ -438,6 +438,7 @@ msgstr "セレクション・リスト"
 #: src/components/importer/ImporterColumnSelector.tsx:216
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:210
+#: src/components/nav/NotificationDrawer.tsx:235
 #: src/components/nav/SearchDrawer.tsx:572
 #: src/components/settings/SettingList.tsx:129
 #: src/forms/BomForms.tsx:67
@@ -448,7 +449,7 @@ msgstr "セレクション・リスト"
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/InvenTreeTableHeader.tsx:118
+#: src/tables/InvenTreeTableHeader.tsx:119
 #: src/tables/bom/BomTable.tsx:473
 #: src/tables/stock/StockItemTestResultTable.tsx:319
 msgid "Error"
@@ -467,8 +468,8 @@ msgstr "管理者"
 #: lib/enums/Roles.tsx:34
 #: src/pages/Index/Settings/SystemSettings.tsx:244
 #: src/pages/build/BuildIndex.tsx:75
-#: src/pages/part/PartDetail.tsx:583
-#: src/pages/sales/SalesOrderDetail.tsx:395
+#: src/pages/part/PartDetail.tsx:580
+#: src/pages/sales/SalesOrderDetail.tsx:394
 msgid "Build Orders"
 msgstr "組立注文"
 
@@ -548,8 +549,8 @@ msgstr "バーコードデータの入力"
 #: src/components/barcodes/BarcodeScanDialog.tsx:49
 #: src/components/buttons/ScanButton.tsx:15
 #: src/components/nav/NavigationDrawer.tsx:129
-#: src/forms/PurchaseOrderForms.tsx:451
-#: src/forms/PurchaseOrderForms.tsx:557
+#: src/forms/PurchaseOrderForms.tsx:454
+#: src/forms/PurchaseOrderForms.tsx:560
 msgid "Scan Barcode"
 msgstr "バーコードをスキャン"
 
@@ -617,11 +618,11 @@ msgid "Failed to link barcode"
 msgstr "バーコードのリンクに失敗"
 
 #: src/components/barcodes/QRCode.tsx:179
-#: src/pages/part/PartDetail.tsx:263
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:205
-#: src/pages/sales/ReturnOrderDetail.tsx:169
-#: src/pages/sales/SalesOrderDetail.tsx:181
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:170
+#: src/pages/part/PartDetail.tsx:260
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:204
+#: src/pages/sales/ReturnOrderDetail.tsx:168
+#: src/pages/sales/SalesOrderDetail.tsx:180
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:168
 msgid "Link"
 msgstr "リンク"
 
@@ -631,7 +632,7 @@ msgstr "これにより、関連するバーコードへのリンクが削除さ
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:190
-#: src/forms/PurchaseOrderForms.tsx:548
+#: src/forms/PurchaseOrderForms.tsx:551
 msgid "Unlink Barcode"
 msgstr "リンク解除バーコード"
 
@@ -774,25 +775,25 @@ msgstr "はい"
 msgid "No"
 msgstr "いいえ"
 
-#: src/components/calendar/Calendar.tsx:94
-#: src/components/calendar/Calendar.tsx:157
+#: src/components/calendar/Calendar.tsx:99
+#: src/components/calendar/Calendar.tsx:162
 msgid "Calendar Filters"
 msgstr "カレンダーフィルター"
 
-#: src/components/calendar/Calendar.tsx:109
+#: src/components/calendar/Calendar.tsx:114
 msgid "Previous month"
 msgstr "先月"
 
-#: src/components/calendar/Calendar.tsx:118
+#: src/components/calendar/Calendar.tsx:123
 msgid "Select month"
 msgstr "月を選択"
 
-#: src/components/calendar/Calendar.tsx:139
+#: src/components/calendar/Calendar.tsx:144
 msgid "Next month"
 msgstr "来月"
 
-#: src/components/calendar/Calendar.tsx:170
-#: src/tables/InvenTreeTableHeader.tsx:248
+#: src/components/calendar/Calendar.tsx:175
+#: src/tables/InvenTreeTableHeader.tsx:254
 msgid "Download data"
 msgstr "ダウンロードデータ"
 
@@ -805,7 +806,7 @@ msgid "Error updating order"
 msgstr "オーダー更新エラー"
 
 #: src/components/calendar/OrderCalendar.tsx:178
-#: src/tables/Filter.tsx:92
+#: src/tables/Filter.tsx:144
 msgid "Overdue"
 msgstr "締め切り超過"
 
@@ -887,7 +888,7 @@ msgid "Show the number of part categories which you have subscribed to"
 msgstr "登録済み部品カテゴリー数を表示"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:38
-#: src/tables/part/PartTable.tsx:246
+#: src/tables/part/PartTable.tsx:249
 msgid "Low Stock"
 msgstr "在庫少"
 
@@ -1053,7 +1054,7 @@ msgid "Change the language of the user interface"
 msgstr "ユーザーインターフェースの言語変更"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:60
-#: src/components/nav/NotificationDrawer.tsx:89
+#: src/components/nav/NotificationDrawer.tsx:94
 #: src/pages/Notifications.tsx:53
 msgid "Mark as read"
 msgstr "既読にする"
@@ -1082,14 +1083,14 @@ msgstr "未読のニュースはありません"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
 #: src/pages/core/UserDetail.tsx:93
 #: src/pages/core/UserDetail.tsx:203
-#: src/tables/settings/UserTable.tsx:417
+#: src/tables/settings/UserTable.tsx:416
 msgid "Superuser"
 msgstr "スーパーユーザー"
 
 #: src/components/details/Details.tsx:124
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
-#: src/tables/settings/UserTable.tsx:412
+#: src/tables/settings/UserTable.tsx:411
 msgid "Staff"
 msgstr "スタッフ"
 
@@ -1116,9 +1117,9 @@ msgstr "このアイテムから関連画像を削除しますか？"
 #: src/contexts/ThemeContext.tsx:45
 #: src/hooks/UseForm.tsx:33
 #: src/pages/Index/Settings/AccountSettings/useConfirm.tsx:106
-#: src/tables/FilterSelectDrawer.tsx:333
+#: src/tables/FilterSelectDrawer.tsx:334
 #: src/tables/RowActions.tsx:85
-#: src/tables/build/BuildOutputTable.tsx:460
+#: src/tables/build/BuildOutputTable.tsx:506
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -1126,7 +1127,6 @@ msgstr "キャンセル"
 #: src/forms/StockForms.tsx:778
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:203
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:408
-#: src/pages/stock/StockDetail.tsx:887
 msgid "Remove"
 msgstr "削除"
 
@@ -1583,7 +1583,7 @@ msgid "Repeat password"
 msgstr "パスワードを再入力"
 
 #: src/components/forms/AuthenticationForm.tsx:329
-#: src/pages/Auth/Login.tsx:122
+#: src/pages/Auth/Login.tsx:121
 #: src/pages/Auth/Register.tsx:13
 msgid "Register"
 msgstr "登録"
@@ -1602,19 +1602,19 @@ msgstr "ホスト"
 #: src/components/forms/InstanceOptions.tsx:124
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
-#: src/pages/part/CategoryDetail.tsx:87
-#: src/pages/part/PartDetail.tsx:188
-#: src/pages/stock/LocationDetail.tsx:87
+#: src/pages/part/CategoryDetail.tsx:86
+#: src/pages/part/PartDetail.tsx:185
+#: src/pages/stock/LocationDetail.tsx:84
 #: src/tables/machine/MachineTypeTable.tsx:71
 #: src/tables/machine/MachineTypeTable.tsx:117
 #: src/tables/machine/MachineTypeTable.tsx:235
 #: src/tables/machine/MachineTypeTable.tsx:338
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:32
-#: src/tables/settings/ApiTokenTable.tsx:57
-#: src/tables/settings/GroupTable.tsx:92
-#: src/tables/settings/GroupTable.tsx:145
-#: src/tables/settings/GroupTable.tsx:193
+#: src/tables/settings/ApiTokenTable.tsx:58
+#: src/tables/settings/GroupTable.tsx:91
+#: src/tables/settings/GroupTable.tsx:144
+#: src/tables/settings/GroupTable.tsx:192
 #: src/tables/settings/PendingTasksTable.tsx:37
 #: src/tables/stock/LocationTypesTable.tsx:70
 msgid "Name"
@@ -1698,8 +1698,8 @@ msgstr "プラグイン"
 
 #: src/components/forms/InstanceOptions.tsx:143
 #: src/tables/part/PartTestTemplateTable.tsx:117
-#: src/tables/settings/TemplateTable.tsx:248
-#: src/tables/settings/TemplateTable.tsx:359
+#: src/tables/settings/TemplateTable.tsx:247
+#: src/tables/settings/TemplateTable.tsx:358
 #: src/tables/stock/StockItemTestResultTable.tsx:400
 msgid "Enabled"
 msgstr "有効"
@@ -1751,7 +1751,7 @@ msgstr "{0} アイコン"
 #: src/components/forms/fields/RelatedModelField.tsx:322
 #: src/components/nav/Header.tsx:134
 #: src/pages/Index/Settings/UserSettings.tsx:65
-#: src/pages/part/PartDetail.tsx:986
+#: src/pages/part/PartDetail.tsx:965
 #: src/tables/Search.tsx:27
 msgid "Search"
 msgstr "検索"
@@ -1828,7 +1828,7 @@ msgstr "行の検証ステータスによるフィルタリング"
 
 #: src/components/importer/ImportDataSelector.tsx:366
 #: src/components/wizards/WizardDrawer.tsx:101
-#: src/tables/build/BuildOutputTable.tsx:433
+#: src/tables/build/BuildOutputTable.tsx:479
 msgid "Complete"
 msgstr "完了"
 
@@ -1970,8 +1970,8 @@ msgstr "オプション"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:169
-#: src/tables/InvenTreeTableHeader.tsx:181
-#: src/tables/InvenTreeTableHeader.tsx:182
+#: src/tables/InvenTreeTableHeader.tsx:187
+#: src/tables/InvenTreeTableHeader.tsx:188
 msgid "Barcode Actions"
 msgstr "バーコードアクション"
 
@@ -2109,7 +2109,6 @@ msgstr "変更"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:817
-#: src/pages/stock/StockDetail.tsx:878
 #: src/tables/stock/StockItemTestResultTable.tsx:348
 msgid "Add"
 msgstr "追加"
@@ -2131,13 +2130,13 @@ msgid "No items"
 msgstr "項目なし"
 
 #: src/components/items/TransferList.tsx:161
-#: src/pages/part/PartDetail.tsx:789
-#: src/pages/stock/StockDetail.tsx:268
-#: src/pages/stock/StockDetail.tsx:1008
+#: src/pages/part/PartDetail.tsx:786
+#: src/pages/stock/StockDetail.tsx:263
+#: src/pages/stock/StockDetail.tsx:949
 #: src/tables/build/BuildLineTable.tsx:191
-#: src/tables/part/PartTable.tsx:126
-#: src/tables/stock/StockItemTable.tsx:174
-#: src/tables/stock/StockItemTable.tsx:335
+#: src/tables/part/PartTable.tsx:129
+#: src/tables/stock/StockItemTable.tsx:175
+#: src/tables/stock/StockItemTable.tsx:337
 msgid "Available"
 msgstr "利用可能"
 
@@ -2386,7 +2385,7 @@ msgstr "{code} についてもっと知る"
 
 #: src/components/nav/Header.tsx:153
 #: src/components/nav/NavigationDrawer.tsx:141
-#: src/components/nav/NotificationDrawer.tsx:176
+#: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:113
 #: src/pages/Index/Settings/UserSettings.tsx:97
 #: src/pages/Notifications.tsx:45
@@ -2471,16 +2470,16 @@ msgstr "ログアウト"
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:733
 #: src/pages/Index/Settings/SystemSettings.tsx:219
-#: src/pages/part/PartDetail.tsx:540
-#: src/pages/stock/LocationDetail.tsx:409
-#: src/pages/stock/StockDetail.tsx:632
-#: src/tables/stock/StockItemTable.tsx:77
+#: src/pages/part/PartDetail.tsx:537
+#: src/pages/stock/LocationDetail.tsx:390
+#: src/pages/stock/StockDetail.tsx:627
+#: src/tables/stock/StockItemTable.tsx:78
 msgid "Stock"
 msgstr "在庫"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:48
-#: src/pages/build/BuildDetail.tsx:637
+#: src/pages/build/BuildDetail.tsx:716
 #: src/pages/build/BuildIndex.tsx:102
 msgid "Manufacturing"
 msgstr "製造"
@@ -2488,10 +2487,10 @@ msgstr "製造"
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:54
 #: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:261
+#: src/pages/company/ManufacturerPartDetail.tsx:260
 #: src/pages/company/SupplierDetail.tsx:9
-#: src/pages/company/SupplierPartDetail.tsx:356
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:526
+#: src/pages/company/SupplierPartDetail.tsx:355
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:534
 #: src/pages/purchasing/PurchasingIndex.tsx:122
 msgid "Purchasing"
 msgstr "購買"
@@ -2499,10 +2498,10 @@ msgstr "購買"
 #: src/components/nav/NavigationDrawer.tsx:105
 #: src/defaults/links.tsx:60
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:513
+#: src/pages/sales/ReturnOrderDetail.tsx:521
 #: src/pages/sales/SalesIndex.tsx:139
-#: src/pages/sales/SalesOrderDetail.tsx:577
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:363
+#: src/pages/sales/SalesOrderDetail.tsx:591
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:360
 msgid "Sales"
 msgstr "販売"
 
@@ -2517,7 +2516,7 @@ msgid "Navigation"
 msgstr "ナビゲーション"
 
 #: src/components/nav/NavigationDrawer.tsx:198
-#: src/forms/PurchaseOrderForms.tsx:792
+#: src/forms/PurchaseOrderForms.tsx:795
 #: src/forms/StockForms.tsx:735
 #: src/forms/StockForms.tsx:779
 #: src/forms/StockForms.tsx:818
@@ -2537,18 +2536,22 @@ msgstr "概要"
 msgid "Error loading navigation tree."
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:178
+#: src/components/nav/NotificationDrawer.tsx:183
 #: src/pages/Notifications.tsx:74
 msgid "Mark all as read"
 msgstr "すべて既読にする"
 
-#: src/components/nav/NotificationDrawer.tsx:188
+#: src/components/nav/NotificationDrawer.tsx:193
 msgid "View all notifications"
 msgstr "すべての通知を表示"
 
-#: src/components/nav/NotificationDrawer.tsx:208
+#: src/components/nav/NotificationDrawer.tsx:216
 msgid "You have no unread notifications."
 msgstr "未読の通知はありません。"
+
+#: src/components/nav/NotificationDrawer.tsx:238
+msgid "Error loading notifications."
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:106
 msgid "No Overview Available"
@@ -2571,8 +2574,8 @@ msgid "Remove search group"
 msgstr "検索グループの削除"
 
 #: src/components/nav/SearchDrawer.tsx:288
-#: src/pages/company/ManufacturerPartDetail.tsx:177
-#: src/pages/part/PartDetail.tsx:603
+#: src/pages/company/ManufacturerPartDetail.tsx:176
+#: src/pages/part/PartDetail.tsx:600
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:81
 msgid "Suppliers"
@@ -2676,19 +2679,19 @@ msgstr "プラグイン情報"
 
 #: src/components/plugins/PluginDrawer.tsx:73
 #: src/forms/selectionListFields.tsx:104
-#: src/pages/build/BuildDetail.tsx:172
-#: src/pages/company/CompanyDetail.tsx:94
-#: src/pages/company/ManufacturerPartDetail.tsx:92
-#: src/pages/company/ManufacturerPartDetail.tsx:119
-#: src/pages/company/SupplierPartDetail.tsx:144
-#: src/pages/part/CategoryDetail.tsx:107
-#: src/pages/part/PartDetail.tsx:202
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:145
-#: src/pages/sales/ReturnOrderDetail.tsx:110
-#: src/pages/sales/SalesOrderDetail.tsx:119
-#: src/pages/stock/LocationDetail.tsx:107
-#: src/tables/ColumnRenderers.tsx:117
-#: src/tables/build/BuildAllocatedStockTable.tsx:83
+#: src/pages/build/BuildDetail.tsx:238
+#: src/pages/company/CompanyDetail.tsx:93
+#: src/pages/company/ManufacturerPartDetail.tsx:91
+#: src/pages/company/ManufacturerPartDetail.tsx:118
+#: src/pages/company/SupplierPartDetail.tsx:143
+#: src/pages/part/CategoryDetail.tsx:106
+#: src/pages/part/PartDetail.tsx:199
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:144
+#: src/pages/sales/ReturnOrderDetail.tsx:109
+#: src/pages/sales/SalesOrderDetail.tsx:118
+#: src/pages/stock/LocationDetail.tsx:104
+#: src/tables/ColumnRenderers.tsx:151
+#: src/tables/build/BuildAllocatedStockTable.tsx:88
 #: src/tables/machine/MachineTypeTable.tsx:127
 #: src/tables/machine/MachineTypeTable.tsx:238
 #: src/tables/plugin/PluginListTable.tsx:110
@@ -2702,7 +2705,7 @@ msgstr "投稿者"
 #: src/components/plugins/PluginDrawer.tsx:83
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:41
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:38
-#: src/tables/ColumnRenderers.tsx:264
+#: src/tables/ColumnRenderers.tsx:302
 #: src/tables/build/BuildOrderTestTable.tsx:151
 #: src/tables/settings/StocktakeReportTable.tsx:41
 msgid "Date"
@@ -2713,22 +2716,22 @@ msgstr "日付"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
 #: src/pages/core/UserDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:209
-#: src/pages/part/PartDetail.tsx:361
+#: src/pages/part/PartDetail.tsx:358
 #: src/tables/bom/UsedInTable.tsx:93
 #: src/tables/company/CompanyTable.tsx:56
 #: src/tables/company/CompanyTable.tsx:90
 #: src/tables/machine/MachineListTable.tsx:335
 #: src/tables/machine/MachineListTable.tsx:605
 #: src/tables/part/ParametricPartTable.tsx:350
-#: src/tables/part/PartTable.tsx:186
+#: src/tables/part/PartTable.tsx:189
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
 #: src/tables/plugin/PluginListTable.tsx:412
 #: src/tables/purchasing/SupplierPartTable.tsx:83
 #: src/tables/purchasing/SupplierPartTable.tsx:177
-#: src/tables/settings/ApiTokenTable.tsx:62
-#: src/tables/settings/UserTable.tsx:407
-#: src/tables/stock/StockItemTable.tsx:314
+#: src/tables/settings/ApiTokenTable.tsx:63
+#: src/tables/settings/UserTable.tsx:406
+#: src/tables/stock/StockItemTable.tsx:316
 msgid "Active"
 msgstr "有効"
 
@@ -2835,32 +2838,31 @@ msgstr "不明なモデル{model_name}"
 #~ msgstr "Unknown Models"
 
 #: src/components/render/Order.tsx:121
-#: src/tables/sales/SalesOrderAllocationTable.tsx:170
+#: src/tables/sales/SalesOrderAllocationTable.tsx:175
 msgid "Shipment"
 msgstr "発送"
 
 #: src/components/render/Part.tsx:25
 #: src/components/render/Plugin.tsx:17
-#: src/pages/company/CompanyDetail.tsx:318
-#: src/pages/company/SupplierPartDetail.tsx:369
+#: src/pages/company/CompanyDetail.tsx:317
+#: src/pages/company/SupplierPartDetail.tsx:368
 #: src/pages/core/UserDetail.tsx:211
-#: src/pages/part/PartDetail.tsx:819
+#: src/pages/part/PartDetail.tsx:816
 msgid "Inactive"
 msgstr "非アクティブ"
 
 #: src/components/render/Part.tsx:28
 #: src/tables/bom/BomTable.tsx:216
-#: src/tables/part/PartTable.tsx:141
+#: src/tables/part/PartTable.tsx:144
 msgid "No stock"
 msgstr "在庫なし"
 
 #: src/components/render/Stock.tsx:61
-#: src/pages/stock/StockDetail.tsx:201
-#: src/pages/stock/StockDetail.tsx:996
-#: src/tables/build/BuildAllocatedStockTable.tsx:123
-#: src/tables/build/BuildOutputTable.tsx:85
-#: src/tables/sales/SalesOrderAllocationTable.tsx:139
-#: src/tables/stock/StockItemTable.tsx:391
+#: src/pages/stock/StockDetail.tsx:196
+#: src/pages/stock/StockDetail.tsx:937
+#: src/tables/build/BuildAllocatedStockTable.tsx:122
+#: src/tables/build/BuildOutputTable.tsx:98
+#: src/tables/sales/SalesOrderAllocationTable.tsx:144
 msgid "Serial Number"
 msgstr "シリアル番号"
 
@@ -2868,7 +2870,7 @@ msgstr "シリアル番号"
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:237
 #: src/forms/BuildForms.tsx:591
-#: src/forms/PurchaseOrderForms.tsx:791
+#: src/forms/PurchaseOrderForms.tsx:794
 #: src/forms/ReturnOrderForms.tsx:240
 #: src/forms/SalesOrderForms.tsx:270
 #: src/pages/part/PartStocktakeDetail.tsx:61
@@ -2877,8 +2879,8 @@ msgstr "シリアル番号"
 #: src/pages/part/pricing/BomPricingPanel.tsx:148
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
-#: src/pages/stock/StockDetail.tsx:261
-#: src/pages/stock/StockDetail.tsx:1002
+#: src/pages/stock/StockDetail.tsx:256
+#: src/pages/stock/StockDetail.tsx:943
 #: src/tables/build/BuildLineTable.tsx:83
 #: src/tables/build/BuildOrderTestTable.tsx:198
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
@@ -3391,7 +3393,7 @@ msgstr "選択した部品の誤りを訂正してください。"
 
 #: src/components/wizards/OrderPartsWizard.tsx:424
 #: src/tables/build/BuildLineTable.tsx:662
-#: src/tables/part/PartTable.tsx:409
+#: src/tables/part/PartTable.tsx:412
 #: src/tables/sales/SalesOrderLineItemTable.tsx:345
 msgid "Order Parts"
 msgstr "パーツの注文"
@@ -3877,7 +3879,7 @@ msgstr "次のバッチコード"
 #: src/forms/StockForms.tsx:182
 #: src/forms/StockForms.tsx:187
 #: src/forms/StockForms.tsx:357
-#: src/pages/stock/StockDetail.tsx:237
+#: src/pages/stock/StockDetail.tsx:232
 msgid "Next serial number"
 msgstr "次のシリアル番号"
 
@@ -3886,29 +3888,29 @@ msgstr "次のシリアル番号"
 #~ msgstr "Remove output"
 
 #: src/forms/BuildForms.tsx:305
-#: src/tables/build/BuildAllocatedStockTable.tsx:147
+#: src/tables/build/BuildAllocatedStockTable.tsx:152
 #: src/tables/build/BuildOrderTestTable.tsx:177
 #: src/tables/build/BuildOrderTestTable.tsx:201
-#: src/tables/build/BuildOutputTable.tsx:486
+#: src/tables/build/BuildOutputTable.tsx:532
 msgid "Build Output"
 msgstr "ビルド出力"
 
 #: src/forms/BuildForms.tsx:307
 #: src/forms/BuildForms.tsx:381
 #: src/forms/BuildForms.tsx:445
-#: src/forms/PurchaseOrderForms.tsx:711
+#: src/forms/PurchaseOrderForms.tsx:714
 #: src/forms/ReturnOrderForms.tsx:194
 #: src/forms/ReturnOrderForms.tsx:241
 #: src/forms/StockForms.tsx:654
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
-#: src/pages/build/BuildDetail.tsx:133
+#: src/pages/build/BuildDetail.tsx:199
 #: src/pages/core/UserDetail.tsx:151
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:151
-#: src/pages/sales/ReturnOrderDetail.tsx:116
-#: src/pages/sales/SalesOrderDetail.tsx:125
-#: src/pages/stock/StockDetail.tsx:168
-#: src/tables/Filter.tsx:205
-#: src/tables/build/BuildOutputTable.tsx:350
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:150
+#: src/pages/sales/ReturnOrderDetail.tsx:115
+#: src/pages/sales/SalesOrderDetail.tsx:124
+#: src/pages/stock/StockDetail.tsx:163
+#: src/tables/Filter.tsx:257
+#: src/tables/build/BuildOutputTable.tsx:363
 #: src/tables/machine/MachineListTable.tsx:338
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:134
@@ -3916,7 +3918,7 @@ msgstr "ビルド出力"
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:55
 #: src/tables/settings/ImportSessionTable.tsx:115
-#: src/tables/stock/StockItemTable.tsx:319
+#: src/tables/stock/StockItemTable.tsx:321
 #: src/tables/stock/StockTrackingTable.tsx:64
 msgid "Status"
 msgstr "ステータス"
@@ -3975,13 +3977,13 @@ msgstr "ビルドアウトプットはキャンセルされました"
 #: src/forms/SalesOrderForms.tsx:268
 #: src/tables/build/BuildLineTable.tsx:186
 #: src/tables/sales/SalesOrderLineItemTable.tsx:317
-#: src/tables/stock/StockItemTable.tsx:330
+#: src/tables/stock/StockItemTable.tsx:332
 msgid "Allocated"
 msgstr "割り当てられた"
 
 #: src/forms/BuildForms.tsx:623
 #: src/forms/SalesOrderForms.tsx:257
-#: src/pages/build/BuildDetail.tsx:248
+#: src/pages/build/BuildDetail.tsx:314
 msgid "Source Location"
 msgstr "ソース・ロケーション"
 
@@ -4011,10 +4013,10 @@ msgstr "割り当てられた在庫品目"
 
 #: src/forms/PartForms.tsx:70
 #: src/forms/PartForms.tsx:157
-#: src/pages/part/CategoryDetail.tsx:123
-#: src/pages/part/PartDetail.tsx:414
+#: src/pages/part/CategoryDetail.tsx:122
+#: src/pages/part/PartDetail.tsx:411
 #: src/tables/part/PartCategoryTable.tsx:94
-#: src/tables/part/PartTable.tsx:308
+#: src/tables/part/PartTable.tsx:311
 msgid "Subscribed"
 msgstr "登録済み"
 
@@ -4070,7 +4072,7 @@ msgstr "選択されたパートカテゴリーのデフォルトの場所"
 msgid "Received stock location selected"
 msgstr "選択された受入在庫場所"
 
-#: src/forms/PurchaseOrderForms.tsx:440
+#: src/forms/PurchaseOrderForms.tsx:443
 msgid "Default location selected"
 msgstr "デフォルトの場所を選択"
 
@@ -4079,25 +4081,26 @@ msgstr "デフォルトの場所を選択"
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:501
+#: src/forms/PurchaseOrderForms.tsx:504
 msgid "Set Location"
 msgstr "セット場所"
 
-#: src/forms/PurchaseOrderForms.tsx:518
+#: src/forms/PurchaseOrderForms.tsx:521
 msgid "Set Expiry Date"
 msgstr "有効期限の設定"
 
-#: src/forms/PurchaseOrderForms.tsx:526
+#: src/forms/PurchaseOrderForms.tsx:529
 #: src/forms/StockForms.tsx:635
 msgid "Adjust Packaging"
 msgstr "パッケージの調整"
 
-#: src/forms/PurchaseOrderForms.tsx:534
+#: src/forms/PurchaseOrderForms.tsx:537
 #: src/forms/StockForms.tsx:626
+#: src/hooks/UseStockAdjustActions.tsx:144
 msgid "Change Status"
 msgstr "ステータスを変更"
 
-#: src/forms/PurchaseOrderForms.tsx:540
+#: src/forms/PurchaseOrderForms.tsx:543
 msgid "Add Note"
 msgstr "コメントを挿入"
 
@@ -4109,7 +4112,7 @@ msgstr "コメントを挿入"
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:589
+#: src/forms/PurchaseOrderForms.tsx:592
 #: src/forms/StockForms.tsx:731
 #: src/forms/StockForms.tsx:775
 #: src/forms/StockForms.tsx:814
@@ -4120,85 +4123,87 @@ msgstr "コメントを挿入"
 #: src/forms/StockForms.tsx:1022
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
-#: src/pages/stock/StockDetail.tsx:301
-#: src/tables/ColumnRenderers.tsx:82
+#: src/pages/stock/StockDetail.tsx:296
+#: src/tables/ColumnRenderers.tsx:120
+#: src/tables/Filter.tsx:357
+#: src/tables/stock/StockItemTable.tsx:228
 #: src/tables/stock/StockTrackingTable.tsx:97
 msgid "Location"
 msgstr "場所"
 
-#: src/forms/PurchaseOrderForms.tsx:604
+#: src/forms/PurchaseOrderForms.tsx:607
 msgid "Store at default location"
 msgstr "デフォルトの場所に保存"
 
-#: src/forms/PurchaseOrderForms.tsx:619
+#: src/forms/PurchaseOrderForms.tsx:622
 msgid "Store at line item destination "
 msgstr "行先での保存"
 
-#: src/forms/PurchaseOrderForms.tsx:631
+#: src/forms/PurchaseOrderForms.tsx:634
 msgid "Store with already received stock"
 msgstr "入荷済みの在庫がある店舗"
 
-#: src/forms/PurchaseOrderForms.tsx:655
-#: src/pages/build/BuildDetail.tsx:262
-#: src/pages/stock/StockDetail.tsx:283
-#: src/pages/stock/StockDetail.tsx:1018
-#: src/tables/build/BuildAllocatedStockTable.tsx:130
+#: src/forms/PurchaseOrderForms.tsx:658
+#: src/pages/build/BuildDetail.tsx:328
+#: src/pages/stock/StockDetail.tsx:278
+#: src/pages/stock/StockDetail.tsx:959
+#: src/tables/Filter.tsx:83
+#: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildOrderTestTable.tsx:189
-#: src/tables/build/BuildOutputTable.tsx:90
-#: src/tables/sales/SalesOrderAllocationTable.tsx:146
-#: src/tables/stock/StockItemTable.tsx:385
+#: src/tables/build/BuildOutputTable.tsx:103
+#: src/tables/sales/SalesOrderAllocationTable.tsx:151
 msgid "Batch Code"
 msgstr "バッチコード"
-
-#: src/forms/PurchaseOrderForms.tsx:656
-msgid "Enter batch code for received items"
-msgstr "受領品のバッチコードを入力"
 
 #: src/forms/PurchaseOrderForms.tsx:658
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:669
+#: src/forms/PurchaseOrderForms.tsx:659
+msgid "Enter batch code for received items"
+msgstr "受領品のバッチコードを入力"
+
+#: src/forms/PurchaseOrderForms.tsx:672
 #: src/forms/StockForms.tsx:175
 msgid "Serial Numbers"
 msgstr "シリアル番号"
 
-#: src/forms/PurchaseOrderForms.tsx:670
+#: src/forms/PurchaseOrderForms.tsx:673
 msgid "Enter serial numbers for received items"
 msgstr "受け取った商品のシリアル番号を入力"
 
-#: src/forms/PurchaseOrderForms.tsx:684
-#: src/pages/stock/StockDetail.tsx:385
-#: src/tables/stock/StockItemTable.tsx:286
+#: src/forms/PurchaseOrderForms.tsx:687
+#: src/pages/stock/StockDetail.tsx:380
+#: src/tables/stock/StockItemTable.tsx:288
 msgid "Expiry Date"
 msgstr "有効期限"
 
-#: src/forms/PurchaseOrderForms.tsx:685
+#: src/forms/PurchaseOrderForms.tsx:688
 msgid "Enter an expiry date for received items"
 msgstr "受け取った商品の有効期限を入力してください。"
 
-#: src/forms/PurchaseOrderForms.tsx:697
+#: src/forms/PurchaseOrderForms.tsx:700
 #: src/forms/StockForms.tsx:670
-#: src/pages/company/SupplierPartDetail.tsx:172
-#: src/pages/company/SupplierPartDetail.tsx:236
-#: src/pages/stock/StockDetail.tsx:422
+#: src/pages/company/SupplierPartDetail.tsx:171
+#: src/pages/company/SupplierPartDetail.tsx:235
+#: src/pages/stock/StockDetail.tsx:417
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:223
 msgid "Packaging"
 msgstr "パッケージング"
 
-#: src/forms/PurchaseOrderForms.tsx:721
-#: src/pages/company/SupplierPartDetail.tsx:119
-#: src/tables/ColumnRenderers.tsx:170
+#: src/forms/PurchaseOrderForms.tsx:724
+#: src/pages/company/SupplierPartDetail.tsx:118
+#: src/tables/ColumnRenderers.tsx:205
 msgid "Note"
 msgstr "備考"
 
-#: src/forms/PurchaseOrderForms.tsx:789
-#: src/pages/company/SupplierPartDetail.tsx:137
+#: src/forms/PurchaseOrderForms.tsx:792
+#: src/pages/company/SupplierPartDetail.tsx:136
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:45
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:790
+#: src/forms/PurchaseOrderForms.tsx:793
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:279
@@ -4206,11 +4211,11 @@ msgstr "SKU"
 msgid "Received"
 msgstr "受信"
 
-#: src/forms/PurchaseOrderForms.tsx:807
+#: src/forms/PurchaseOrderForms.tsx:810
 msgid "Receive Line Items"
 msgstr "ラインアイテムの受信"
 
-#: src/forms/PurchaseOrderForms.tsx:813
+#: src/forms/PurchaseOrderForms.tsx:816
 msgid "Items received"
 msgstr "受領品目"
 
@@ -4247,9 +4252,9 @@ msgid "Stock Status"
 msgstr "在庫状況"
 
 #: src/forms/StockForms.tsx:259
-#: src/pages/stock/StockDetail.tsx:676
-#: src/tables/stock/StockItemTable.tsx:542
-#: src/tables/stock/StockItemTable.tsx:675
+#: src/pages/stock/StockDetail.tsx:671
+#: src/tables/stock/StockItemTable.tsx:516
+#: src/tables/stock/StockItemTable.tsx:557
 msgid "Add Stock Item"
 msgstr "在庫商品の追加"
 
@@ -4280,24 +4285,22 @@ msgstr "移動"
 #: src/forms/StockForms.tsx:932
 #: src/forms/StockForms.tsx:980
 #: src/forms/StockForms.tsx:1024
-#: src/pages/company/SupplierPartDetail.tsx:190
-#: src/pages/company/SupplierPartDetail.tsx:374
-#: src/pages/part/PartDetail.tsx:276
-#: src/pages/part/PartDetail.tsx:783
+#: src/pages/company/SupplierPartDetail.tsx:189
+#: src/pages/company/SupplierPartDetail.tsx:373
+#: src/pages/part/PartDetail.tsx:273
+#: src/pages/part/PartDetail.tsx:780
 #: src/tables/purchasing/SupplierPartTable.tsx:192
-#: src/tables/stock/StockItemTable.tsx:350
+#: src/tables/stock/StockItemTable.tsx:352
 msgid "In Stock"
 msgstr "在庫あり"
 
 #: src/forms/StockForms.tsx:853
 #: src/pages/Index/Scan.tsx:182
-#: src/pages/stock/StockDetail.tsx:867
 msgid "Count"
 msgstr "カウント"
 
 #: src/forms/StockForms.tsx:1137
-#: src/pages/stock/StockDetail.tsx:879
-#: src/tables/stock/StockItemTable.tsx:593
+#: src/hooks/UseStockAdjustActions.tsx:104
 msgid "Add Stock"
 msgstr "在庫追加"
 
@@ -4306,8 +4309,7 @@ msgid "Stock added"
 msgstr "在庫追加"
 
 #: src/forms/StockForms.tsx:1147
-#: src/pages/stock/StockDetail.tsx:888
-#: src/tables/stock/StockItemTable.tsx:602
+#: src/hooks/UseStockAdjustActions.tsx:114
 msgid "Remove Stock"
 msgstr "在庫の削除"
 
@@ -4316,9 +4318,7 @@ msgid "Stock removed"
 msgstr "在庫一掃"
 
 #: src/forms/StockForms.tsx:1157
-#: src/pages/part/PartDetail.tsx:966
-#: src/pages/stock/StockDetail.tsx:901
-#: src/tables/stock/StockItemTable.tsx:611
+#: src/hooks/UseStockAdjustActions.tsx:124
 msgid "Transfer Stock"
 msgstr "株式譲渡"
 
@@ -4327,11 +4327,7 @@ msgid "Stock transferred"
 msgstr "株式譲渡"
 
 #: src/forms/StockForms.tsx:1167
-#: src/pages/part/PartDetail.tsx:955
-#: src/pages/stock/LocationDetail.tsx:371
-#: src/pages/stock/LocationDetail.tsx:375
-#: src/tables/stock/StockItemTable.tsx:582
-#: src/tables/stock/StockItemTable.tsx:586
+#: src/hooks/UseStockAdjustActions.tsx:94
 msgid "Count Stock"
 msgstr "在庫数"
 
@@ -4348,6 +4344,7 @@ msgid "Stock status changed"
 msgstr "在庫状況の変更"
 
 #: src/forms/StockForms.tsx:1187
+#: src/hooks/UseStockAdjustActions.tsx:134
 msgid "Merge Stock"
 msgstr "株式の併合"
 
@@ -4380,7 +4377,6 @@ msgid "Stock assigned to customer"
 msgstr "顧客に割り当てられた在庫"
 
 #: src/forms/StockForms.tsx:1223
-#: src/tables/stock/StockItemTable.tsx:664
 msgid "Delete Stock Items"
 msgstr "在庫アイテムの削除"
 
@@ -4664,6 +4660,51 @@ msgstr "このアイテムを削除してもよろしいですか？"
 #~ msgid "Latest serial number"
 #~ msgstr "Latest serial number"
 
+#: src/hooks/UseStockAdjustActions.tsx:96
+msgid "Count selected stock items"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:106
+msgid "Add to selected stock items"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:116
+msgid "Remove from selected stock items"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:126
+msgid "Transfer selected stock items"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:136
+msgid "Merge selected stock items"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:146
+msgid "Change status of selected stock items"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:154
+msgid "Assign Stock"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:156
+msgid "Assign selected stock items to a customer"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:164
+msgid "Delete Stock"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:166
+msgid "Delete selected stock items"
+msgstr ""
+
+#: src/hooks/UseStockAdjustActions.tsx:191
+#: src/pages/part/PartDetail.tsx:948
+msgid "Stock Actions"
+msgstr "ストックアクション"
+
 #: src/pages/Auth/ChangePassword.tsx:32
 #: src/pages/Auth/Reset.tsx:14
 msgid "Reset Password"
@@ -4697,7 +4738,7 @@ msgstr "確認のため新しいパスワードを再入力してください"
 msgid "Confirm"
 msgstr "確認"
 
-#: src/pages/Auth/Layout.tsx:67
+#: src/pages/Auth/Layout.tsx:59
 msgid "Log off"
 msgstr "ログオフ"
 
@@ -4717,15 +4758,15 @@ msgstr "選択なし"
 #~ msgid "Register below"
 #~ msgstr "Register below"
 
-#: src/pages/Auth/Login.tsx:101
+#: src/pages/Auth/Login.tsx:100
 msgid "Login"
 msgstr "ログイン"
 
-#: src/pages/Auth/Login.tsx:107
+#: src/pages/Auth/Login.tsx:106
 msgid "Logging you in"
 msgstr "ログイン中"
 
-#: src/pages/Auth/Login.tsx:114
+#: src/pages/Auth/Login.tsx:113
 msgid "Don't have an account?"
 msgstr "アカウントをお持ちですか?"
 
@@ -5272,7 +5313,7 @@ msgid "Edit Account"
 msgstr "アカウント編集"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
-#: src/tables/settings/UserTable.tsx:319
+#: src/tables/settings/UserTable.tsx:318
 msgid "Change Password"
 msgstr "パスワードの変更"
 
@@ -5577,7 +5618,7 @@ msgstr "OK"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:28
-#: src/tables/ColumnRenderers.tsx:327
+#: src/tables/ColumnRenderers.tsx:365
 msgid "Currency"
 msgstr "通貨"
 
@@ -5659,7 +5700,7 @@ msgid "Custom Units"
 msgstr "カスタム単位"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:188
-#: src/pages/part/CategoryDetail.tsx:303
+#: src/pages/part/CategoryDetail.tsx:302
 msgid "Part Parameters"
 msgstr "パーツパラメータ"
 
@@ -5752,7 +5793,7 @@ msgid "There are no machine registry errors"
 msgstr "マシンのレジストリエラーはありません。"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
-#: src/tables/settings/UserTable.tsx:192
+#: src/tables/settings/UserTable.tsx:191
 msgid "Info"
 msgstr "情報"
 
@@ -5959,66 +6000,38 @@ msgstr "未読にする"
 #~ msgid "Delete notifications"
 #~ msgstr "Delete notifications"
 
+#: src/pages/build/BuildDetail.tsx:66
+msgid "No Required Items"
+msgstr ""
+
+#: src/pages/build/BuildDetail.tsx:68
+msgid "This build order does not have any required items."
+msgstr ""
+
+#: src/pages/build/BuildDetail.tsx:69
+msgid "The assembled part may not have a Bill of Materials (BOM) defined, or the BOM is empty."
+msgstr ""
+
 #: src/pages/build/BuildDetail.tsx:80
 #~ msgid "Build Status"
 #~ msgstr "Build Status"
 
-#: src/pages/build/BuildDetail.tsx:118
-#: src/pages/company/ManufacturerPartDetail.tsx:84
-#: src/pages/company/SupplierPartDetail.tsx:95
-#: src/pages/part/PartDetail.tsx:195
-#: src/pages/stock/StockDetail.tsx:159
+#: src/pages/build/BuildDetail.tsx:184
+#: src/pages/company/ManufacturerPartDetail.tsx:83
+#: src/pages/company/SupplierPartDetail.tsx:94
+#: src/pages/part/PartDetail.tsx:192
+#: src/pages/stock/StockDetail.tsx:154
 #: src/tables/bom/BomTable.tsx:120
 #: src/tables/bom/UsedInTable.tsx:43
-#: src/tables/build/BuildAllocatedStockTable.tsx:104
+#: src/tables/build/BuildAllocatedStockTable.tsx:109
 #: src/tables/build/BuildLineTable.tsx:329
 #: src/tables/build/BuildOrderTable.tsx:80
 #: src/tables/part/RelatedPartTable.tsx:69
-#: src/tables/sales/SalesOrderAllocationTable.tsx:133
+#: src/tables/sales/SalesOrderAllocationTable.tsx:137
 #: src/tables/sales/SalesOrderLineItemTable.tsx:94
-#: src/tables/stock/StockItemTable.tsx:61
+#: src/tables/stock/StockItemTable.tsx:62
 msgid "IPN"
 msgstr "即時支払通知"
-
-#: src/pages/build/BuildDetail.tsx:126
-#: src/pages/part/PartDetail.tsx:222
-#: src/tables/bom/UsedInTable.tsx:47
-#: src/tables/build/BuildOrderTable.tsx:84
-#: src/tables/stock/StockItemTable.tsx:66
-msgid "Revision"
-msgstr "リビジョン"
-
-#: src/pages/build/BuildDetail.tsx:139
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:157
-#: src/pages/sales/ReturnOrderDetail.tsx:122
-#: src/pages/sales/SalesOrderDetail.tsx:131
-#: src/pages/stock/StockDetail.tsx:174
-msgid "Custom Status"
-msgstr "カスタムステータス"
-
-#: src/pages/build/BuildDetail.tsx:148
-#: src/pages/build/BuildDetail.tsx:608
-#: src/pages/build/BuildIndex.tsx:28
-#: src/pages/stock/LocationDetail.tsx:145
-#: src/tables/build/BuildOrderTable.tsx:122
-#: src/tables/build/BuildOrderTable.tsx:184
-#: src/tables/stock/StockLocationTable.tsx:48
-msgid "External"
-msgstr "外部"
-
-#: src/pages/build/BuildDetail.tsx:166
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:124
-#: src/pages/sales/ReturnOrderDetail.tsx:89
-#: src/pages/sales/SalesOrderDetail.tsx:98
-#: src/tables/ColumnRenderers.tsx:159
-#: src/tables/build/BuildAllocatedStockTable.tsx:111
-#: src/tables/build/BuildLineTable.tsx:338
-msgid "Reference"
-msgstr "参照"
-
-#: src/pages/build/BuildDetail.tsx:180
-msgid "Parent Build"
-msgstr "親ビルド"
 
 #: src/pages/build/BuildDetail.tsx:185
 #: src/pages/part/PartDetail.tsx:269
@@ -6031,278 +6044,316 @@ msgstr "親ビルド"
 #~ msgid "Link custom barcode to part"
 #~ msgstr "Link custom barcode to part"
 
-#: src/pages/build/BuildDetail.tsx:191
-msgid "Build Quantity"
-msgstr "数量"
+#: src/pages/build/BuildDetail.tsx:192
+#: src/pages/part/PartDetail.tsx:219
+#: src/tables/bom/UsedInTable.tsx:47
+#: src/tables/build/BuildOrderTable.tsx:84
+#: src/tables/stock/StockItemTable.tsx:67
+msgid "Revision"
+msgstr "リビジョン"
 
 #: src/pages/build/BuildDetail.tsx:196
 #: src/pages/part/PartDetail.tsx:280
 #~ msgid "Unlink custom barcode from part"
 #~ msgstr "Unlink custom barcode from part"
 
-#: src/pages/build/BuildDetail.tsx:197
-#: src/pages/part/PartDetail.tsx:351
-#: src/tables/bom/BomTable.tsx:273
-#: src/tables/bom/BomTable.tsx:308
-msgid "Can Build"
-msgstr "ビルド"
-
 #: src/pages/build/BuildDetail.tsx:202
 #~ msgid "Build Order updated"
 #~ msgstr "Build Order updated"
 
-#: src/pages/build/BuildDetail.tsx:206
-#: src/pages/build/BuildDetail.tsx:385
-msgid "Completed Outputs"
-msgstr "完成したアウトプット"
+#: src/pages/build/BuildDetail.tsx:205
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:156
+#: src/pages/sales/ReturnOrderDetail.tsx:121
+#: src/pages/sales/SalesOrderDetail.tsx:130
+#: src/pages/stock/StockDetail.tsx:169
+msgid "Custom Status"
+msgstr "カスタムステータス"
+
+#: src/pages/build/BuildDetail.tsx:214
+#: src/pages/build/BuildDetail.tsx:691
+#: src/pages/build/BuildIndex.tsx:28
+#: src/pages/stock/LocationDetail.tsx:142
+#: src/tables/build/BuildOrderTable.tsx:122
+#: src/tables/build/BuildOrderTable.tsx:184
+#: src/tables/stock/StockLocationTable.tsx:48
+msgid "External"
+msgstr "外部"
 
 #: src/pages/build/BuildDetail.tsx:221
 #~ msgid "Edit build order"
 #~ msgstr "Edit build order"
-
-#: src/pages/build/BuildDetail.tsx:223
-#: src/tables/Filter.tsx:286
-msgid "Issued By"
-msgstr "発行者"
 
 #: src/pages/build/BuildDetail.tsx:226
 #~ msgid "Duplicate build order"
 #~ msgstr "Duplicate build order"
 
 #: src/pages/build/BuildDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:437
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:244
-#: src/pages/sales/ReturnOrderDetail.tsx:208
-#: src/pages/sales/SalesOrderDetail.tsx:220
-#: src/tables/Filter.tsx:250
-msgid "Responsible"
-msgstr "責任"
-
-#: src/pages/build/BuildDetail.tsx:231
 #~ msgid "Delete build order"
 #~ msgstr "Delete build order"
 
-#: src/pages/build/BuildDetail.tsx:249
+#: src/pages/build/BuildDetail.tsx:232
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:123
+#: src/pages/sales/ReturnOrderDetail.tsx:88
+#: src/pages/sales/SalesOrderDetail.tsx:97
+#: src/tables/ColumnRenderers.tsx:194
+#: src/tables/build/BuildAllocatedStockTable.tsx:116
+#: src/tables/build/BuildLineTable.tsx:338
+msgid "Reference"
+msgstr "参照"
+
+#: src/pages/build/BuildDetail.tsx:246
+msgid "Parent Build"
+msgstr "親ビルド"
+
+#: src/pages/build/BuildDetail.tsx:257
+msgid "Build Quantity"
+msgstr "数量"
+
+#: src/pages/build/BuildDetail.tsx:263
+#: src/pages/part/PartDetail.tsx:348
+#: src/tables/bom/BomTable.tsx:273
+#: src/tables/bom/BomTable.tsx:308
+msgid "Can Build"
+msgstr "ビルド"
+
+#: src/pages/build/BuildDetail.tsx:272
+#: src/pages/build/BuildDetail.tsx:459
+msgid "Completed Outputs"
+msgstr "完成したアウトプット"
+
+#: src/pages/build/BuildDetail.tsx:289
+#: src/tables/Filter.tsx:338
+msgid "Issued By"
+msgstr "発行者"
+
+#: src/pages/build/BuildDetail.tsx:297
+#: src/pages/part/PartDetail.tsx:434
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:243
+#: src/pages/sales/ReturnOrderDetail.tsx:207
+#: src/pages/sales/SalesOrderDetail.tsx:219
+#: src/tables/Filter.tsx:302
+msgid "Responsible"
+msgstr "責任"
+
+#: src/pages/build/BuildDetail.tsx:315
 msgid "Any location"
 msgstr "場所"
 
-#: src/pages/build/BuildDetail.tsx:256
+#: src/pages/build/BuildDetail.tsx:322
 msgid "Destination Location"
 msgstr "目的地"
 
-#: src/pages/build/BuildDetail.tsx:272
-#: src/tables/settings/ApiTokenTable.tsx:97
+#: src/pages/build/BuildDetail.tsx:338
+#: src/tables/settings/ApiTokenTable.tsx:98
 #: src/tables/settings/PendingTasksTable.tsx:41
 msgid "Created"
 msgstr "作成日"
 
-#: src/pages/build/BuildDetail.tsx:280
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:269
-#: src/pages/sales/ReturnOrderDetail.tsx:234
-#: src/pages/sales/SalesOrderDetail.tsx:245
-#: src/tables/ColumnRenderers.tsx:275
+#: src/pages/build/BuildDetail.tsx:346
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:268
+#: src/pages/sales/ReturnOrderDetail.tsx:233
+#: src/pages/sales/SalesOrderDetail.tsx:244
+#: src/tables/ColumnRenderers.tsx:313
 msgid "Start Date"
 msgstr "開始日"
-
-#: src/pages/build/BuildDetail.tsx:288
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:277
-#: src/pages/sales/ReturnOrderDetail.tsx:242
-#: src/pages/sales/SalesOrderDetail.tsx:253
-#: src/tables/ColumnRenderers.tsx:283
-#: src/tables/part/PartPurchaseOrdersTable.tsx:101
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:149
-#: src/tables/sales/SalesOrderLineItemTable.tsx:128
-msgid "Target Date"
-msgstr "終了日に達したら"
-
-#: src/pages/build/BuildDetail.tsx:296
-#: src/tables/sales/SalesOrderLineItemTable.tsx:322
-msgid "Completed"
-msgstr "完了"
-
-#: src/pages/build/BuildDetail.tsx:332
-msgid "Build Details"
-msgstr "詳細"
-
-#: src/pages/build/BuildDetail.tsx:338
-#: src/tables/part/PartBuildAllocationsTable.tsx:67
-#: src/tables/part/PartSalesAllocationsTable.tsx:62
-msgid "Required Stock"
-msgstr "必要在庫"
-
-#: src/pages/build/BuildDetail.tsx:344
-#: src/pages/sales/SalesOrderDetail.tsx:381
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:212
-msgid "Allocated Stock"
-msgstr "割当株式"
 
 #: src/pages/build/BuildDetail.tsx:347
 #: src/pages/part/PartDetail.tsx:727
 #~ msgid "Test Statistics"
 #~ msgstr "Test Statistics"
 
-#: src/pages/build/BuildDetail.tsx:357
-msgid "Consumed Stock"
-msgstr "消費在庫"
+#: src/pages/build/BuildDetail.tsx:354
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:276
+#: src/pages/sales/ReturnOrderDetail.tsx:241
+#: src/pages/sales/SalesOrderDetail.tsx:252
+#: src/tables/ColumnRenderers.tsx:321
+#: src/tables/part/PartPurchaseOrdersTable.tsx:101
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:149
+#: src/tables/sales/SalesOrderLineItemTable.tsx:128
+msgid "Target Date"
+msgstr "終了日に達したら"
+
+#: src/pages/build/BuildDetail.tsx:362
+#: src/tables/sales/SalesOrderLineItemTable.tsx:322
+msgid "Completed"
+msgstr "完了"
 
 #: src/pages/build/BuildDetail.tsx:368
 #~ msgid "Reporting Actions"
 #~ msgstr "Reporting Actions"
 
-#: src/pages/build/BuildDetail.tsx:372
-msgid "Incomplete Outputs"
-msgstr "不完全なアウトプット"
-
 #: src/pages/build/BuildDetail.tsx:374
 #~ msgid "Print build report"
 #~ msgstr "Print build report"
 
-#: src/pages/build/BuildDetail.tsx:400
+#: src/pages/build/BuildDetail.tsx:398
+msgid "Build Details"
+msgstr "詳細"
+
+#: src/pages/build/BuildDetail.tsx:404
+msgid "Required Parts"
+msgstr ""
+
+#: src/pages/build/BuildDetail.tsx:416
+#: src/pages/sales/SalesOrderDetail.tsx:380
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:210
+msgid "Allocated Stock"
+msgstr "割当株式"
+
+#: src/pages/build/BuildDetail.tsx:431
+msgid "Consumed Stock"
+msgstr "消費在庫"
+
+#: src/pages/build/BuildDetail.tsx:446
+msgid "Incomplete Outputs"
+msgstr "不完全なアウトプット"
+
+#: src/pages/build/BuildDetail.tsx:474
 msgid "External Orders"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:414
+#: src/pages/build/BuildDetail.tsx:488
 msgid "Child Build Orders"
 msgstr "チャイルド・ビルド・オーダー"
 
-#: src/pages/build/BuildDetail.tsx:424
-#: src/tables/build/BuildOutputTable.tsx:558
+#: src/pages/build/BuildDetail.tsx:498
+#: src/tables/build/BuildOutputTable.tsx:604
 #: src/tables/stock/StockItemTestResultTable.tsx:157
 msgid "Test Results"
 msgstr "テストの結果"
 
-#: src/pages/build/BuildDetail.tsx:452
+#: src/pages/build/BuildDetail.tsx:535
 msgid "Edit Build Order"
 msgstr "ビルド順序の編集"
 
-#: src/pages/build/BuildDetail.tsx:474
+#: src/pages/build/BuildDetail.tsx:557
 #: src/tables/build/BuildOrderTable.tsx:213
 #: src/tables/build/BuildOrderTable.tsx:229
 msgid "Add Build Order"
 msgstr "ビルドオーダーの追加"
 
-#: src/pages/build/BuildDetail.tsx:484
+#: src/pages/build/BuildDetail.tsx:567
 msgid "Cancel Build Order"
 msgstr "ビルドオーダーのキャンセル"
 
-#: src/pages/build/BuildDetail.tsx:486
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:399
-#: src/pages/sales/ReturnOrderDetail.tsx:394
-#: src/pages/sales/SalesOrderDetail.tsx:428
-msgid "Order cancelled"
-msgstr "注文のキャンセル"
-
-#: src/pages/build/BuildDetail.tsx:487
+#: src/pages/build/BuildDetail.tsx:569
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:398
 #: src/pages/sales/ReturnOrderDetail.tsx:393
 #: src/pages/sales/SalesOrderDetail.tsx:427
+msgid "Order cancelled"
+msgstr "注文のキャンセル"
+
+#: src/pages/build/BuildDetail.tsx:570
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:397
+#: src/pages/sales/ReturnOrderDetail.tsx:392
+#: src/pages/sales/SalesOrderDetail.tsx:426
 msgid "Cancel this order"
 msgstr "この注文をキャンセル"
 
-#: src/pages/build/BuildDetail.tsx:496
+#: src/pages/build/BuildDetail.tsx:579
 msgid "Hold Build Order"
 msgstr "ホールドビルドオーダー"
 
-#: src/pages/build/BuildDetail.tsx:498
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:406
-#: src/pages/sales/ReturnOrderDetail.tsx:401
-#: src/pages/sales/SalesOrderDetail.tsx:435
+#: src/pages/build/BuildDetail.tsx:581
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:405
+#: src/pages/sales/ReturnOrderDetail.tsx:400
+#: src/pages/sales/SalesOrderDetail.tsx:434
 msgid "Place this order on hold"
 msgstr "この注文を保留にします"
 
-#: src/pages/build/BuildDetail.tsx:499
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:407
-#: src/pages/sales/ReturnOrderDetail.tsx:402
-#: src/pages/sales/SalesOrderDetail.tsx:436
+#: src/pages/build/BuildDetail.tsx:582
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:406
+#: src/pages/sales/ReturnOrderDetail.tsx:401
+#: src/pages/sales/SalesOrderDetail.tsx:435
 msgid "Order placed on hold"
 msgstr "注文の保留"
 
-#: src/pages/build/BuildDetail.tsx:504
+#: src/pages/build/BuildDetail.tsx:587
 msgid "Issue Build Order"
 msgstr "ビルドオーダーの発行"
 
-#: src/pages/build/BuildDetail.tsx:506
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:390
-#: src/pages/sales/ReturnOrderDetail.tsx:385
-#: src/pages/sales/SalesOrderDetail.tsx:419
+#: src/pages/build/BuildDetail.tsx:589
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:389
+#: src/pages/sales/ReturnOrderDetail.tsx:384
+#: src/pages/sales/SalesOrderDetail.tsx:418
 msgid "Issue this order"
 msgstr "本命令の発令"
 
-#: src/pages/build/BuildDetail.tsx:507
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:391
-#: src/pages/sales/ReturnOrderDetail.tsx:386
-#: src/pages/sales/SalesOrderDetail.tsx:420
+#: src/pages/build/BuildDetail.tsx:590
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:390
+#: src/pages/sales/ReturnOrderDetail.tsx:385
+#: src/pages/sales/SalesOrderDetail.tsx:419
 msgid "Order issued"
 msgstr "オーダー発行"
 
-#: src/pages/build/BuildDetail.tsx:512
+#: src/pages/build/BuildDetail.tsx:595
 msgid "Complete Build Order"
 msgstr "コンプリート・ビルド・オーダー"
 
-#: src/pages/build/BuildDetail.tsx:514
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:419
-#: src/pages/sales/ReturnOrderDetail.tsx:409
-#: src/pages/sales/SalesOrderDetail.tsx:454
+#: src/pages/build/BuildDetail.tsx:597
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:418
+#: src/pages/sales/ReturnOrderDetail.tsx:408
+#: src/pages/sales/SalesOrderDetail.tsx:453
 msgid "Mark this order as complete"
 msgstr "この注文を完了としてマークしてください。"
 
-#: src/pages/build/BuildDetail.tsx:515
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:413
-#: src/pages/sales/ReturnOrderDetail.tsx:410
-#: src/pages/sales/SalesOrderDetail.tsx:455
+#: src/pages/build/BuildDetail.tsx:598
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:412
+#: src/pages/sales/ReturnOrderDetail.tsx:409
+#: src/pages/sales/SalesOrderDetail.tsx:454
 msgid "Order completed"
 msgstr "注文完了"
 
-#: src/pages/build/BuildDetail.tsx:546
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:442
-#: src/pages/sales/ReturnOrderDetail.tsx:439
-#: src/pages/sales/SalesOrderDetail.tsx:484
+#: src/pages/build/BuildDetail.tsx:629
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:441
+#: src/pages/sales/ReturnOrderDetail.tsx:438
+#: src/pages/sales/SalesOrderDetail.tsx:489
 msgid "Issue Order"
 msgstr "発行順序"
 
-#: src/pages/build/BuildDetail.tsx:553
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:449
-#: src/pages/sales/ReturnOrderDetail.tsx:446
-#: src/pages/sales/SalesOrderDetail.tsx:498
+#: src/pages/build/BuildDetail.tsx:636
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:448
+#: src/pages/sales/ReturnOrderDetail.tsx:445
+#: src/pages/sales/SalesOrderDetail.tsx:503
 msgid "Complete Order"
 msgstr "完全な注文"
 
-#: src/pages/build/BuildDetail.tsx:571
+#: src/pages/build/BuildDetail.tsx:654
 msgid "Build Order Actions"
 msgstr "ビルドオーダーアクション"
 
-#: src/pages/build/BuildDetail.tsx:576
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:471
-#: src/pages/sales/ReturnOrderDetail.tsx:468
-#: src/pages/sales/SalesOrderDetail.tsx:521
+#: src/pages/build/BuildDetail.tsx:659
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:470
+#: src/pages/sales/ReturnOrderDetail.tsx:467
+#: src/pages/sales/SalesOrderDetail.tsx:526
 msgid "Edit order"
 msgstr "掲載依頼を編集"
 
-#: src/pages/build/BuildDetail.tsx:580
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:479
-#: src/pages/sales/ReturnOrderDetail.tsx:474
-#: src/pages/sales/SalesOrderDetail.tsx:526
+#: src/pages/build/BuildDetail.tsx:663
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:478
+#: src/pages/sales/ReturnOrderDetail.tsx:473
+#: src/pages/sales/SalesOrderDetail.tsx:531
 msgid "Duplicate order"
 msgstr "重複した注文"
 
-#: src/pages/build/BuildDetail.tsx:584
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:482
-#: src/pages/sales/ReturnOrderDetail.tsx:479
-#: src/pages/sales/SalesOrderDetail.tsx:529
+#: src/pages/build/BuildDetail.tsx:667
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:481
+#: src/pages/sales/ReturnOrderDetail.tsx:478
+#: src/pages/sales/SalesOrderDetail.tsx:534
 msgid "Hold order"
 msgstr "ホールドオーダー"
 
-#: src/pages/build/BuildDetail.tsx:589
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:487
-#: src/pages/sales/ReturnOrderDetail.tsx:484
-#: src/pages/sales/SalesOrderDetail.tsx:534
+#: src/pages/build/BuildDetail.tsx:672
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:486
+#: src/pages/sales/ReturnOrderDetail.tsx:483
+#: src/pages/sales/SalesOrderDetail.tsx:539
 msgid "Cancel order"
 msgstr "お見積をキャンセル"
 
-#: src/pages/build/BuildDetail.tsx:631
-#: src/pages/stock/StockDetail.tsx:347
-#: src/tables/build/BuildAllocatedStockTable.tsx:77
-#: src/tables/part/PartBuildAllocationsTable.tsx:41
+#: src/pages/build/BuildDetail.tsx:710
+#: src/pages/stock/StockDetail.tsx:342
+#: src/tables/build/BuildAllocatedStockTable.tsx:82
+#: src/tables/part/PartBuildAllocationsTable.tsx:42
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:153
 #: src/tables/stock/StockTrackingTable.tsx:108
 msgid "Build Order"
@@ -6335,28 +6386,28 @@ msgstr "テーブルビュー"
 msgid "Calendar View"
 msgstr "カレンダービュー"
 
-#: src/pages/company/CompanyDetail.tsx:100
+#: src/pages/company/CompanyDetail.tsx:99
 msgid "Website"
 msgstr "ウェブサイト"
 
-#: src/pages/company/CompanyDetail.tsx:108
+#: src/pages/company/CompanyDetail.tsx:107
 msgid "Phone Number"
 msgstr "電話番号"
 
-#: src/pages/company/CompanyDetail.tsx:115
+#: src/pages/company/CompanyDetail.tsx:114
 msgid "Email Address"
 msgstr "メールアドレス"
 
-#: src/pages/company/CompanyDetail.tsx:125
+#: src/pages/company/CompanyDetail.tsx:124
 msgid "Default Currency"
 msgstr "デフォルトの通貨"
 
-#: src/pages/company/CompanyDetail.tsx:130
+#: src/pages/company/CompanyDetail.tsx:129
 #: src/pages/company/SupplierDetail.tsx:8
-#: src/pages/company/SupplierPartDetail.tsx:129
-#: src/pages/company/SupplierPartDetail.tsx:235
-#: src/pages/company/SupplierPartDetail.tsx:360
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:139
+#: src/pages/company/SupplierPartDetail.tsx:128
+#: src/pages/company/SupplierPartDetail.tsx:234
+#: src/pages/company/SupplierPartDetail.tsx:359
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:138
 #: src/tables/company/CompanyTable.tsx:95
 #: src/tables/part/PartPurchaseOrdersTable.tsx:43
 #: src/tables/purchasing/PurchaseOrderTable.tsx:107
@@ -6364,23 +6415,23 @@ msgstr "デフォルトの通貨"
 msgid "Supplier"
 msgstr "仕入先"
 
-#: src/pages/company/CompanyDetail.tsx:136
+#: src/pages/company/CompanyDetail.tsx:135
 #: src/pages/company/ManufacturerDetail.tsx:8
-#: src/pages/company/ManufacturerPartDetail.tsx:103
-#: src/pages/company/ManufacturerPartDetail.tsx:265
-#: src/pages/company/SupplierPartDetail.tsx:151
+#: src/pages/company/ManufacturerPartDetail.tsx:102
+#: src/pages/company/ManufacturerPartDetail.tsx:264
+#: src/pages/company/SupplierPartDetail.tsx:150
 #: src/tables/company/CompanyTable.tsx:100
 #: src/tables/purchasing/SupplierPartTable.tsx:68
 msgid "Manufacturer"
 msgstr "製造元"
 
-#: src/pages/company/CompanyDetail.tsx:142
+#: src/pages/company/CompanyDetail.tsx:141
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:31
-#: src/pages/sales/ReturnOrderDetail.tsx:104
-#: src/pages/sales/SalesOrderDetail.tsx:113
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:104
-#: src/pages/stock/StockDetail.tsx:373
+#: src/pages/sales/ReturnOrderDetail.tsx:103
+#: src/pages/sales/SalesOrderDetail.tsx:112
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:102
+#: src/pages/stock/StockDetail.tsx:368
 #: src/tables/company/CompanyTable.tsx:105
 #: src/tables/sales/ReturnOrderTable.tsx:112
 #: src/tables/sales/SalesOrderTable.tsx:137
@@ -6388,7 +6439,7 @@ msgstr "製造元"
 msgid "Customer"
 msgstr "顧客"
 
-#: src/pages/company/CompanyDetail.tsx:175
+#: src/pages/company/CompanyDetail.tsx:174
 msgid "Company Details"
 msgstr "会社詳細"
 
@@ -6396,100 +6447,100 @@ msgstr "会社詳細"
 #~ msgid "Edit company"
 #~ msgstr "Edit company"
 
-#: src/pages/company/CompanyDetail.tsx:181
+#: src/pages/company/CompanyDetail.tsx:180
 msgid "Supplied Parts"
 msgstr "供給部品"
+
+#: src/pages/company/CompanyDetail.tsx:189
+msgid "Manufactured Parts"
+msgstr "製造部品"
 
 #: src/pages/company/CompanyDetail.tsx:189
 #~ msgid "Delete company"
 #~ msgstr "Delete company"
 
-#: src/pages/company/CompanyDetail.tsx:190
-msgid "Manufactured Parts"
-msgstr "製造部品"
-
-#: src/pages/company/CompanyDetail.tsx:237
+#: src/pages/company/CompanyDetail.tsx:236
 msgid "Assigned Stock"
 msgstr "割り当て在庫"
 
-#: src/pages/company/CompanyDetail.tsx:277
+#: src/pages/company/CompanyDetail.tsx:276
 #: src/tables/company/CompanyTable.tsx:81
 msgid "Edit Company"
 msgstr "会社情報を編集"
 
-#: src/pages/company/CompanyDetail.tsx:285
+#: src/pages/company/CompanyDetail.tsx:284
 msgid "Delete Company"
 msgstr "削除会社"
 
-#: src/pages/company/CompanyDetail.tsx:300
+#: src/pages/company/CompanyDetail.tsx:299
 msgid "Company Actions"
 msgstr "会社の動き"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:77
-#: src/pages/company/SupplierPartDetail.tsx:88
+#: src/pages/company/ManufacturerPartDetail.tsx:76
+#: src/pages/company/SupplierPartDetail.tsx:87
 msgid "Internal Part"
 msgstr "内部パーツ"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:111
-#: src/pages/company/SupplierPartDetail.tsx:160
+#: src/pages/company/ManufacturerPartDetail.tsx:110
+#: src/pages/company/SupplierPartDetail.tsx:159
 #: src/tables/purchasing/ManufacturerPartTable.tsx:55
 msgid "Manufacturer Part Number"
 msgstr "メーカー品番"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:128
-#: src/pages/company/SupplierPartDetail.tsx:112
+#: src/pages/company/ManufacturerPartDetail.tsx:127
+#: src/pages/company/SupplierPartDetail.tsx:111
 msgid "External Link"
 msgstr "外部リンク"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:147
-#: src/pages/company/SupplierPartDetail.tsx:232
-#: src/pages/part/PartDetail.tsx:523
+#: src/pages/company/ManufacturerPartDetail.tsx:146
+#: src/pages/company/SupplierPartDetail.tsx:231
+#: src/pages/part/PartDetail.tsx:520
 msgid "Part Details"
 msgstr "部品詳細"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:150
+#: src/pages/company/ManufacturerPartDetail.tsx:149
 msgid "Manufacturer Details"
 msgstr "メーカー詳細"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:159
+#: src/pages/company/ManufacturerPartDetail.tsx:158
 msgid "Manufacturer Part Details"
 msgstr "メーカーパーツ詳細"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:165
-#: src/pages/part/PartDetail.tsx:529
+#: src/pages/company/ManufacturerPartDetail.tsx:164
+#: src/pages/part/PartDetail.tsx:526
 msgid "Parameters"
 msgstr "パラメータ"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:205
+#: src/pages/company/ManufacturerPartDetail.tsx:204
 #: src/tables/purchasing/ManufacturerPartTable.tsx:83
 msgid "Edit Manufacturer Part"
 msgstr "メーカー・パーツの編集"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:212
+#: src/pages/company/ManufacturerPartDetail.tsx:211
 #: src/tables/purchasing/ManufacturerPartTable.tsx:71
 #: src/tables/purchasing/ManufacturerPartTable.tsx:103
 msgid "Add Manufacturer Part"
 msgstr "メーカー部品の追加"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:224
+#: src/pages/company/ManufacturerPartDetail.tsx:223
 #: src/tables/purchasing/ManufacturerPartTable.tsx:91
 msgid "Delete Manufacturer Part"
 msgstr "メーカー部品の削除"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:239
+#: src/pages/company/ManufacturerPartDetail.tsx:238
 msgid "Manufacturer Part Actions"
 msgstr "メーカー品番"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:279
+#: src/pages/company/ManufacturerPartDetail.tsx:281
 msgid "ManufacturerPart"
 msgstr "メーカー部品"
 
-#: src/pages/company/SupplierPartDetail.tsx:103
+#: src/pages/company/SupplierPartDetail.tsx:102
 #: src/tables/part/RelatedPartTable.tsx:78
 msgid "Part Description"
 msgstr "パーツ説明"
 
-#: src/pages/company/SupplierPartDetail.tsx:179
+#: src/pages/company/SupplierPartDetail.tsx:178
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:187
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:229
@@ -6497,62 +6548,62 @@ msgstr "パーツ説明"
 msgid "Pack Quantity"
 msgstr "パック数量"
 
-#: src/pages/company/SupplierPartDetail.tsx:197
-#: src/pages/company/SupplierPartDetail.tsx:390
-#: src/pages/part/PartDetail.tsx:807
+#: src/pages/company/SupplierPartDetail.tsx:196
+#: src/pages/company/SupplierPartDetail.tsx:389
+#: src/pages/part/PartDetail.tsx:804
 #: src/tables/bom/BomTable.tsx:340
-#: src/tables/part/PartTable.tsx:97
+#: src/tables/part/PartTable.tsx:100
 msgid "On Order"
 msgstr "注文中"
 
-#: src/pages/company/SupplierPartDetail.tsx:204
+#: src/pages/company/SupplierPartDetail.tsx:203
 msgid "Supplier Availability"
 msgstr "サプライヤーの空き状況"
 
-#: src/pages/company/SupplierPartDetail.tsx:212
+#: src/pages/company/SupplierPartDetail.tsx:211
 msgid "Availability Updated"
 msgstr "空席状況更新"
 
-#: src/pages/company/SupplierPartDetail.tsx:237
+#: src/pages/company/SupplierPartDetail.tsx:236
 msgid "Availability"
 msgstr "有効性"
 
-#: src/pages/company/SupplierPartDetail.tsx:246
+#: src/pages/company/SupplierPartDetail.tsx:245
 msgid "Supplier Part Details"
 msgstr "サプライヤー部品詳細"
 
-#: src/pages/company/SupplierPartDetail.tsx:252
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:362
+#: src/pages/company/SupplierPartDetail.tsx:251
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:361
 msgid "Received Stock"
 msgstr "受入在庫"
 
-#: src/pages/company/SupplierPartDetail.tsx:279
+#: src/pages/company/SupplierPartDetail.tsx:278
 #: src/pages/part/PartPricingPanel.tsx:113
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:232
 msgid "Supplier Pricing"
 msgstr "サプライヤー価格"
 
-#: src/pages/company/SupplierPartDetail.tsx:304
+#: src/pages/company/SupplierPartDetail.tsx:303
 msgid "Supplier Part Actions"
 msgstr "サプライヤー"
 
-#: src/pages/company/SupplierPartDetail.tsx:328
+#: src/pages/company/SupplierPartDetail.tsx:327
 #: src/tables/purchasing/SupplierPartTable.tsx:205
 msgid "Edit Supplier Part"
 msgstr "サプライヤーパーツの編集"
 
-#: src/pages/company/SupplierPartDetail.tsx:336
+#: src/pages/company/SupplierPartDetail.tsx:335
 #: src/tables/purchasing/SupplierPartTable.tsx:213
 msgid "Delete Supplier Part"
 msgstr "サプライヤーの削除"
 
-#: src/pages/company/SupplierPartDetail.tsx:344
+#: src/pages/company/SupplierPartDetail.tsx:343
 #: src/tables/purchasing/SupplierPartTable.tsx:152
 msgid "Add Supplier Part"
 msgstr "サプライヤー部品の追加"
 
-#: src/pages/company/SupplierPartDetail.tsx:384
-#: src/pages/part/PartDetail.tsx:795
+#: src/pages/company/SupplierPartDetail.tsx:383
+#: src/pages/part/PartDetail.tsx:792
 msgid "No Stock"
 msgstr "在庫切れ"
 
@@ -6568,12 +6619,12 @@ msgstr "グループ名"
 
 #: src/pages/core/GroupDetail.tsx:52
 #: src/pages/core/GroupDetail.tsx:67
-#: src/tables/settings/GroupTable.tsx:82
+#: src/tables/settings/GroupTable.tsx:81
 msgid "Group Details"
 msgstr "グループの詳細"
 
 #: src/pages/core/GroupDetail.tsx:55
-#: src/tables/settings/GroupTable.tsx:109
+#: src/tables/settings/GroupTable.tsx:108
 msgid "Group Roles"
 msgstr "グループロール"
 
@@ -6590,7 +6641,7 @@ msgid "User Profile"
 msgstr "ユーザープロフィール"
 
 #: src/pages/core/UserDetail.tsx:188
-#: src/tables/settings/UserTable.tsx:161
+#: src/tables/settings/UserTable.tsx:160
 msgid "User Details"
 msgstr "ユーザー詳細"
 
@@ -6598,155 +6649,156 @@ msgstr "ユーザー詳細"
 msgid "Basic user"
 msgstr "基本ユーザー"
 
-#: src/pages/part/CategoryDetail.tsx:99
-#: src/pages/stock/LocationDetail.tsx:99
+#: src/pages/part/CategoryDetail.tsx:98
+#: src/pages/stock/LocationDetail.tsx:96
 #: src/tables/settings/ErrorTable.tsx:63
 #: src/tables/settings/ErrorTable.tsx:108
 msgid "Path"
 msgstr "パス"
 
-#: src/pages/part/CategoryDetail.tsx:115
+#: src/pages/part/CategoryDetail.tsx:114
 msgid "Parent Category"
 msgstr "親カテゴリ"
 
-#: src/pages/part/CategoryDetail.tsx:138
-#: src/pages/part/CategoryDetail.tsx:268
+#: src/pages/part/CategoryDetail.tsx:137
+#: src/pages/part/CategoryDetail.tsx:267
 msgid "Subcategories"
 msgstr "サブカテゴリ"
 
-#: src/pages/part/CategoryDetail.tsx:145
-#: src/pages/stock/LocationDetail.tsx:139
+#: src/pages/part/CategoryDetail.tsx:144
+#: src/pages/stock/LocationDetail.tsx:136
 #: src/tables/part/PartCategoryTable.tsx:89
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
 msgstr "構造に関するパターン"
 
-#: src/pages/part/CategoryDetail.tsx:151
+#: src/pages/part/CategoryDetail.tsx:150
 msgid "Parent default location"
 msgstr "親のデフォルトの場所"
 
-#: src/pages/part/CategoryDetail.tsx:158
+#: src/pages/part/CategoryDetail.tsx:157
 msgid "Default location"
 msgstr "デフォルトの場所"
 
-#: src/pages/part/CategoryDetail.tsx:169
+#: src/pages/part/CategoryDetail.tsx:168
 msgid "Top level part category"
 msgstr "トップレベルのパーツカテゴリ"
 
-#: src/pages/part/CategoryDetail.tsx:179
-#: src/pages/part/CategoryDetail.tsx:245
+#: src/pages/part/CategoryDetail.tsx:178
+#: src/pages/part/CategoryDetail.tsx:244
 #: src/tables/part/PartCategoryTable.tsx:122
 msgid "Edit Part Category"
 msgstr "部品カテゴリーの編集"
 
-#: src/pages/part/CategoryDetail.tsx:188
+#: src/pages/part/CategoryDetail.tsx:187
 msgid "Move items to parent category"
 msgstr "項目を親カテゴリに移動"
 
-#: src/pages/part/CategoryDetail.tsx:192
-#: src/pages/stock/LocationDetail.tsx:231
+#: src/pages/part/CategoryDetail.tsx:191
+#: src/pages/stock/LocationDetail.tsx:228
 msgid "Delete items"
 msgstr "アイテムの削除"
 
-#: src/pages/part/CategoryDetail.tsx:200
-#: src/pages/part/CategoryDetail.tsx:250
+#: src/pages/part/CategoryDetail.tsx:199
+#: src/pages/part/CategoryDetail.tsx:249
 msgid "Delete Part Category"
 msgstr "部品カテゴリの削除"
 
-#: src/pages/part/CategoryDetail.tsx:203
+#: src/pages/part/CategoryDetail.tsx:202
 msgid "Parts Action"
 msgstr "パーツアクション"
 
-#: src/pages/part/CategoryDetail.tsx:204
+#: src/pages/part/CategoryDetail.tsx:203
 msgid "Action for parts in this category"
 msgstr "このカテゴリの部品のアクション"
 
-#: src/pages/part/CategoryDetail.tsx:209
+#: src/pages/part/CategoryDetail.tsx:208
 msgid "Child Categories Action"
 msgstr "チャイルド・カテゴリー・アクション"
 
-#: src/pages/part/CategoryDetail.tsx:210
+#: src/pages/part/CategoryDetail.tsx:209
 msgid "Action for child categories in this category"
 msgstr "このカテゴリーに含まれる子どもの行動"
 
-#: src/pages/part/CategoryDetail.tsx:241
+#: src/pages/part/CategoryDetail.tsx:240
 #: src/tables/part/PartCategoryTable.tsx:143
 msgid "Category Actions"
 msgstr "カテゴリー・アクション"
 
-#: src/pages/part/CategoryDetail.tsx:262
+#: src/pages/part/CategoryDetail.tsx:261
 msgid "Category Details"
 msgstr "カテゴリー詳細"
 
 #: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:545
-#: src/tables/part/PartTable.tsx:110
+#: src/pages/stock/StockDetail.tsx:540
+#: src/tables/part/PartTable.tsx:113
 msgid "Build Order Allocations"
 msgstr "ビルド・オーダー・アロケーション"
 
 #: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:560
-#: src/tables/part/PartTable.tsx:118
+#: src/pages/stock/StockDetail.tsx:555
+#: src/tables/part/PartTable.tsx:121
 msgid "Sales Order Allocations"
 msgstr "販売注文の割り当て"
 
-#: src/pages/part/PartDetail.tsx:208
+#: src/pages/part/PartDetail.tsx:205
 msgid "Variant of"
 msgstr "変種"
 
-#: src/pages/part/PartDetail.tsx:215
+#: src/pages/part/PartDetail.tsx:212
 msgid "Revision of"
 msgstr "改訂版"
 
-#: src/pages/part/PartDetail.tsx:229
-#: src/tables/Filter.tsx:294
+#: src/pages/part/PartDetail.tsx:226
+#: src/tables/ColumnRenderers.tsx:130
+#: src/tables/Filter.tsx:346
 #: src/tables/notifications/NotificationTable.tsx:32
 #: src/tables/part/PartCategoryTemplateTable.tsx:67
 msgid "Category"
 msgstr "カテゴリ"
 
-#: src/pages/part/PartDetail.tsx:235
+#: src/pages/part/PartDetail.tsx:232
 msgid "Default Location"
 msgstr "デフォルトの場所"
 
-#: src/pages/part/PartDetail.tsx:242
+#: src/pages/part/PartDetail.tsx:239
 msgid "Category Default Location"
 msgstr "カテゴリー デフォルトの場所"
 
-#: src/pages/part/PartDetail.tsx:249
+#: src/pages/part/PartDetail.tsx:246
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:44
 msgid "Units"
 msgstr "単位"
 
-#: src/pages/part/PartDetail.tsx:256
+#: src/pages/part/PartDetail.tsx:253
 #: src/tables/settings/PendingTasksTable.tsx:51
 msgid "Keywords"
 msgstr "キーワード"
 
-#: src/pages/part/PartDetail.tsx:282
+#: src/pages/part/PartDetail.tsx:279
 #: src/tables/bom/BomTable.tsx:335
 #: src/tables/build/BuildLineTable.tsx:298
-#: src/tables/part/PartTable.tsx:302
+#: src/tables/part/PartTable.tsx:305
 #: src/tables/sales/SalesOrderLineItemTable.tsx:132
 msgid "Available Stock"
 msgstr "在庫状況"
 
-#: src/pages/part/PartDetail.tsx:289
+#: src/pages/part/PartDetail.tsx:286
 msgid "Variant Stock"
 msgstr "バリアントストック"
 
-#: src/pages/part/PartDetail.tsx:297
+#: src/pages/part/PartDetail.tsx:294
 msgid "Minimum Stock"
 msgstr "最小在庫"
 
-#: src/pages/part/PartDetail.tsx:303
+#: src/pages/part/PartDetail.tsx:300
 #: src/tables/bom/BomTable.tsx:249
 #: src/tables/build/BuildLineTable.tsx:260
 #: src/tables/sales/SalesOrderLineItemTable.tsx:170
 msgid "On order"
 msgstr "注文中"
 
-#: src/pages/part/PartDetail.tsx:310
+#: src/pages/part/PartDetail.tsx:307
 msgid "Required for Orders"
 msgstr "ご注文に必要なもの"
 
@@ -6754,7 +6806,7 @@ msgstr "ご注文に必要なもの"
 #~ msgid "Edit part"
 #~ msgstr "Edit part"
 
-#: src/pages/part/PartDetail.tsx:321
+#: src/pages/part/PartDetail.tsx:318
 msgid "Allocated to Build Orders"
 msgstr "建設受注に割り当て"
 
@@ -6766,93 +6818,93 @@ msgstr "建設受注に割り当て"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:333
+#: src/pages/part/PartDetail.tsx:330
 msgid "Allocated to Sales Orders"
 msgstr "販売注文に割り当て"
 
-#: src/pages/part/PartDetail.tsx:342
-#: src/pages/part/PartDetail.tsx:813
-#: src/pages/stock/StockDetail.tsx:991
+#: src/pages/part/PartDetail.tsx:339
+#: src/pages/part/PartDetail.tsx:810
+#: src/pages/stock/StockDetail.tsx:932
 #: src/tables/build/BuildOrderTestTable.tsx:220
-#: src/tables/stock/StockItemTable.tsx:355
+#: src/tables/stock/StockItemTable.tsx:357
 msgid "In Production"
 msgstr "生産中"
 
-#: src/pages/part/PartDetail.tsx:366
+#: src/pages/part/PartDetail.tsx:363
 #: src/tables/part/ParametricPartTable.tsx:355
-#: src/tables/part/PartTable.tsx:192
+#: src/tables/part/PartTable.tsx:195
 msgid "Locked"
 msgstr "ロック中"
 
-#: src/pages/part/PartDetail.tsx:372
+#: src/pages/part/PartDetail.tsx:369
 msgid "Template Part"
 msgstr "テンプレート部品"
 
-#: src/pages/part/PartDetail.tsx:377
+#: src/pages/part/PartDetail.tsx:374
 #: src/tables/bom/BomTable.tsx:330
 msgid "Assembled Part"
 msgstr "組立部品"
 
-#: src/pages/part/PartDetail.tsx:382
+#: src/pages/part/PartDetail.tsx:379
 msgid "Component Part"
 msgstr "構成部品"
 
-#: src/pages/part/PartDetail.tsx:387
+#: src/pages/part/PartDetail.tsx:384
 #: src/tables/bom/BomTable.tsx:320
 msgid "Testable Part"
 msgstr "テスト可能な部分"
 
-#: src/pages/part/PartDetail.tsx:393
+#: src/pages/part/PartDetail.tsx:390
 #: src/tables/bom/BomTable.tsx:325
 msgid "Trackable Part"
 msgstr "追跡可能部品"
 
-#: src/pages/part/PartDetail.tsx:398
+#: src/pages/part/PartDetail.tsx:395
 msgid "Purchaseable Part"
 msgstr "購入可能部品"
 
-#: src/pages/part/PartDetail.tsx:404
+#: src/pages/part/PartDetail.tsx:401
 msgid "Saleable Part"
 msgstr "売却可能部分"
 
-#: src/pages/part/PartDetail.tsx:409
+#: src/pages/part/PartDetail.tsx:406
 msgid "Virtual Part"
 msgstr "バーチャルパート"
 
-#: src/pages/part/PartDetail.tsx:424
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:254
-#: src/pages/sales/ReturnOrderDetail.tsx:218
-#: src/pages/sales/SalesOrderDetail.tsx:230
-#: src/tables/ColumnRenderers.tsx:291
+#: src/pages/part/PartDetail.tsx:421
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:253
+#: src/pages/sales/ReturnOrderDetail.tsx:217
+#: src/pages/sales/SalesOrderDetail.tsx:229
+#: src/tables/ColumnRenderers.tsx:329
 msgid "Creation Date"
 msgstr "作成日時"
 
-#: src/pages/part/PartDetail.tsx:429
-#: src/tables/ColumnRenderers.tsx:239
-#: src/tables/Filter.tsx:278
+#: src/pages/part/PartDetail.tsx:426
+#: src/tables/ColumnRenderers.tsx:277
+#: src/tables/Filter.tsx:330
 msgid "Created By"
 msgstr "作成者"
 
-#: src/pages/part/PartDetail.tsx:444
+#: src/pages/part/PartDetail.tsx:441
 msgid "Default Supplier"
 msgstr "デフォルト・サプライヤー"
 
-#: src/pages/part/PartDetail.tsx:450
+#: src/pages/part/PartDetail.tsx:447
 msgid "Default Expiry"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:455
+#: src/pages/part/PartDetail.tsx:452
 msgid "days"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:465
+#: src/pages/part/PartDetail.tsx:462
 #: src/pages/part/pricing/BomPricingPanel.tsx:113
 #: src/pages/part/pricing/VariantPricingPanel.tsx:97
-#: src/tables/part/PartTable.tsx:168
+#: src/tables/part/PartTable.tsx:171
 msgid "Price Range"
 msgstr "料金帯"
 
-#: src/pages/part/PartDetail.tsx:475
+#: src/pages/part/PartDetail.tsx:472
 msgid "Latest Serial Number"
 msgstr "最新のシリアル番号"
 
@@ -6860,24 +6912,24 @@ msgstr "最新のシリアル番号"
 #~ msgid "Stocktake By"
 #~ msgstr "Stocktake By"
 
-#: src/pages/part/PartDetail.tsx:558
+#: src/pages/part/PartDetail.tsx:555
 msgid "Variants"
 msgstr "バリアント"
 
-#: src/pages/part/PartDetail.tsx:565
-#: src/pages/stock/StockDetail.tsx:532
+#: src/pages/part/PartDetail.tsx:562
+#: src/pages/stock/StockDetail.tsx:527
 msgid "Allocations"
 msgstr "割り当て"
 
-#: src/pages/part/PartDetail.tsx:572
+#: src/pages/part/PartDetail.tsx:569
 msgid "Bill of Materials"
 msgstr "部品表"
 
-#: src/pages/part/PartDetail.tsx:590
+#: src/pages/part/PartDetail.tsx:587
 msgid "Used In"
 msgstr "中古"
 
-#: src/pages/part/PartDetail.tsx:597
+#: src/pages/part/PartDetail.tsx:594
 msgid "Part Pricing"
 msgstr "部品価格"
 
@@ -6885,74 +6937,68 @@ msgstr "部品価格"
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:655
+#: src/pages/part/PartDetail.tsx:652
 msgid "Test Templates"
 msgstr "テストテンプレート"
 
-#: src/pages/part/PartDetail.tsx:666
+#: src/pages/part/PartDetail.tsx:663
 msgid "Related Parts"
 msgstr "関連部品"
 
-#: src/pages/part/PartDetail.tsx:801
+#: src/pages/part/PartDetail.tsx:798
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:385
 msgid "Required"
 msgstr "必須"
 
-#: src/pages/part/PartDetail.tsx:832
-#: src/tables/part/PartTable.tsx:357
+#: src/pages/part/PartDetail.tsx:829
+#: src/tables/part/PartTable.tsx:360
 msgid "Edit Part"
 msgstr "パーツを編集"
 
-#: src/pages/part/PartDetail.tsx:872
-#: src/tables/part/PartTable.tsx:345
-#: src/tables/part/PartTable.tsx:422
+#: src/pages/part/PartDetail.tsx:869
+#: src/tables/part/PartTable.tsx:348
+#: src/tables/part/PartTable.tsx:425
 msgid "Add Part"
 msgstr "部品追加"
 
-#: src/pages/part/PartDetail.tsx:886
+#: src/pages/part/PartDetail.tsx:883
 msgid "Delete Part"
 msgstr "削除部分"
 
-#: src/pages/part/PartDetail.tsx:895
+#: src/pages/part/PartDetail.tsx:892
 msgid "Deleting this part cannot be reversed"
 msgstr "この部分の削除は元に戻せません"
 
-#: src/pages/part/PartDetail.tsx:948
-#: src/pages/stock/LocationDetail.tsx:367
-#: src/tables/stock/StockItemTable.tsx:577
-msgid "Stock Actions"
-msgstr "ストックアクション"
-
-#: src/pages/part/PartDetail.tsx:956
-msgid "Count part stock"
-msgstr "部品在庫のカウント"
-
-#: src/pages/part/PartDetail.tsx:967
-msgid "Transfer part stock"
-msgstr "部品在庫の移動"
-
-#: src/pages/part/PartDetail.tsx:974
-#: src/pages/stock/StockDetail.tsx:924
+#: src/pages/part/PartDetail.tsx:953
+#: src/pages/stock/StockDetail.tsx:876
 msgid "Order"
 msgstr "注文"
 
-#: src/pages/part/PartDetail.tsx:975
-#: src/pages/stock/StockDetail.tsx:925
+#: src/pages/part/PartDetail.tsx:954
+#: src/pages/stock/StockDetail.tsx:877
 #: src/tables/build/BuildLineTable.tsx:608
 msgid "Order Stock"
 msgstr "注文在庫"
 
-#: src/pages/part/PartDetail.tsx:987
+#: src/pages/part/PartDetail.tsx:956
+#~ msgid "Count part stock"
+#~ msgstr "Count part stock"
+
+#: src/pages/part/PartDetail.tsx:966
 msgid "Search by serial number"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:995
-#: src/tables/part/PartTable.tsx:394
+#: src/pages/part/PartDetail.tsx:967
+#~ msgid "Transfer part stock"
+#~ msgstr "Transfer part stock"
+
+#: src/pages/part/PartDetail.tsx:974
+#: src/tables/part/PartTable.tsx:397
 msgid "Part Actions"
 msgstr "パートアクション"
 
-#: src/pages/part/PartDetail.tsx:1079
+#: src/pages/part/PartDetail.tsx:1053
 msgid "Select Part Revision"
 msgstr "部品リビジョンの選択"
 
@@ -7051,8 +7097,8 @@ msgstr "ストックテイク報告書予定"
 
 #: src/pages/part/PartStocktakeDetail.tsx:122
 #: src/pages/part/PartStocktakeDetail.tsx:240
-#: src/pages/stock/StockDetail.tsx:405
-#: src/tables/stock/StockItemTable.tsx:263
+#: src/pages/stock/StockDetail.tsx:400
+#: src/tables/stock/StockItemTable.tsx:265
 msgid "Stock Value"
 msgstr "株式価値"
 
@@ -7073,7 +7119,7 @@ msgstr "最大値は"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:87
 #: src/pages/part/pricing/BomPricingPanel.tsx:177
-#: src/tables/ColumnRenderers.tsx:341
+#: src/tables/ColumnRenderers.tsx:379
 #: src/tables/bom/BomTable.tsx:197
 #: src/tables/general/ExtraLineItemTable.tsx:64
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:258
@@ -7088,7 +7134,7 @@ msgstr "合計金額"
 #: src/pages/part/pricing/BomPricingPanel.tsx:141
 #: src/tables/bom/UsedInTable.tsx:57
 #: src/tables/build/BuildLineTable.tsx:308
-#: src/tables/part/PartTable.tsx:210
+#: src/tables/part/PartTable.tsx:213
 msgid "Component"
 msgstr "コンポーネント"
 
@@ -7117,12 +7163,12 @@ msgstr "最大価格"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:71
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:126
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
-#: src/pages/stock/StockDetail.tsx:393
+#: src/pages/stock/StockDetail.tsx:388
 #: src/tables/bom/BomTable.tsx:187
 #: src/tables/general/ExtraLineItemTable.tsx:56
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:253
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:80
-#: src/tables/stock/StockItemTable.tsx:251
+#: src/tables/stock/StockItemTable.tsx:253
 msgid "Unit Price"
 msgstr "単価"
 
@@ -7200,8 +7246,8 @@ msgid "Purchase Pricing"
 msgstr "購入価格"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:281
-#: src/pages/stock/StockDetail.tsx:185
-#: src/tables/stock/StockItemTable.tsx:292
+#: src/pages/stock/StockDetail.tsx:180
+#: src/tables/stock/StockItemTable.tsx:294
 msgid "Last Updated"
 msgstr "最終更新"
 
@@ -7268,17 +7314,17 @@ msgstr "サプライヤー価格"
 msgid "Variant Part"
 msgstr "バリアントパーツ"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:90
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:89
 msgid "Edit Purchase Order"
 msgstr "発注書の編集"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:108
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:107
 #: src/tables/purchasing/PurchaseOrderTable.tsx:152
 #: src/tables/purchasing/PurchaseOrderTable.tsx:165
 msgid "Add Purchase Order"
 msgstr "発注書の追加"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:130
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:129
 msgid "Supplier Reference"
 msgstr "サプライヤー・リファレンス"
 
@@ -7288,26 +7334,26 @@ msgstr "サプライヤー・リファレンス"
 #~ msgid "Order Currency,"
 #~ msgstr "Order Currency,"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:170
-#: src/pages/sales/ReturnOrderDetail.tsx:141
-#: src/pages/sales/SalesOrderDetail.tsx:144
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:169
+#: src/pages/sales/ReturnOrderDetail.tsx:140
+#: src/pages/sales/SalesOrderDetail.tsx:143
 msgid "Completed Line Items"
 msgstr "完了した項目"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:179
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:178
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:263
 msgid "Destination"
 msgstr "目的地"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:185
-#: src/pages/sales/ReturnOrderDetail.tsx:148
-#: src/pages/sales/SalesOrderDetail.tsx:161
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:184
+#: src/pages/sales/ReturnOrderDetail.tsx:147
+#: src/pages/sales/SalesOrderDetail.tsx:160
 msgid "Order Currency"
 msgstr "注文通貨"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:191
-#: src/pages/sales/ReturnOrderDetail.tsx:155
-#: src/pages/sales/SalesOrderDetail.tsx:167
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:190
+#: src/pages/sales/ReturnOrderDetail.tsx:154
+#: src/pages/sales/SalesOrderDetail.tsx:166
 msgid "Total Cost"
 msgstr "合計コスト"
 
@@ -7317,80 +7363,80 @@ msgstr "合計コスト"
 #~ msgid "Created On"
 #~ msgstr "Created On"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:220
-#: src/pages/sales/ReturnOrderDetail.tsx:184
-#: src/pages/sales/SalesOrderDetail.tsx:196
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:219
+#: src/pages/sales/ReturnOrderDetail.tsx:183
+#: src/pages/sales/SalesOrderDetail.tsx:195
 msgid "Contact Email"
 msgstr "連絡先メールアドレス"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:228
-#: src/pages/sales/ReturnOrderDetail.tsx:192
-#: src/pages/sales/SalesOrderDetail.tsx:204
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:227
+#: src/pages/sales/ReturnOrderDetail.tsx:191
+#: src/pages/sales/SalesOrderDetail.tsx:203
 msgid "Contact Phone"
 msgstr "連絡先電話番号"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:261
-#: src/pages/sales/ReturnOrderDetail.tsx:226
-#: src/pages/sales/SalesOrderDetail.tsx:237
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:260
+#: src/pages/sales/ReturnOrderDetail.tsx:225
+#: src/pages/sales/SalesOrderDetail.tsx:236
 msgid "Issue Date"
 msgstr "発行日"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:286
-#: src/pages/sales/ReturnOrderDetail.tsx:250
-#: src/pages/sales/SalesOrderDetail.tsx:260
-#: src/tables/ColumnRenderers.tsx:299
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
+#: src/pages/sales/ReturnOrderDetail.tsx:249
+#: src/pages/sales/SalesOrderDetail.tsx:259
+#: src/tables/ColumnRenderers.tsx:337
 #: src/tables/build/BuildOrderTable.tsx:136
 #: src/tables/part/PartPurchaseOrdersTable.tsx:106
 msgid "Completion Date"
 msgstr "完了日"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:316
-#: src/pages/sales/ReturnOrderDetail.tsx:280
-#: src/pages/sales/SalesOrderDetail.tsx:326
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:315
+#: src/pages/sales/ReturnOrderDetail.tsx:279
+#: src/pages/sales/SalesOrderDetail.tsx:325
 msgid "Order Details"
 msgstr "ご注文の詳細"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:322
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:331
-#: src/pages/sales/ReturnOrderDetail.tsx:134
-#: src/pages/sales/ReturnOrderDetail.tsx:286
-#: src/pages/sales/ReturnOrderDetail.tsx:295
-#: src/pages/sales/SalesOrderDetail.tsx:332
-#: src/pages/sales/SalesOrderDetail.tsx:341
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:321
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:330
+#: src/pages/sales/ReturnOrderDetail.tsx:133
+#: src/pages/sales/ReturnOrderDetail.tsx:285
+#: src/pages/sales/ReturnOrderDetail.tsx:294
+#: src/pages/sales/SalesOrderDetail.tsx:331
+#: src/pages/sales/SalesOrderDetail.tsx:340
 msgid "Line Items"
 msgstr "ラインアイテム"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:345
-#: src/pages/sales/ReturnOrderDetail.tsx:309
-#: src/pages/sales/SalesOrderDetail.tsx:358
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:344
+#: src/pages/sales/ReturnOrderDetail.tsx:308
+#: src/pages/sales/SalesOrderDetail.tsx:357
 msgid "Extra Line Items"
 msgstr "追加項目"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:388
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:387
 msgid "Issue Purchase Order"
 msgstr "発注書の発行"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:396
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:395
 msgid "Cancel Purchase Order"
 msgstr "発注書のキャンセル"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:404
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:403
 msgid "Hold Purchase Order"
 msgstr "発注書の保留"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:412
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:411
 msgid "Complete Purchase Order"
 msgstr "完全な発注書"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:467
-#: src/pages/sales/ReturnOrderDetail.tsx:464
-#: src/pages/sales/SalesOrderDetail.tsx:516
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:466
+#: src/pages/sales/ReturnOrderDetail.tsx:463
+#: src/pages/sales/SalesOrderDetail.tsx:521
 msgid "Order Actions"
 msgstr "注文の操作"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:95
-#: src/pages/sales/SalesOrderDetail.tsx:104
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:113
+#: src/pages/sales/ReturnOrderDetail.tsx:94
+#: src/pages/sales/SalesOrderDetail.tsx:103
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:111
 #: src/tables/sales/SalesOrderTable.tsx:145
 msgid "Customer Reference"
 msgstr "得意先参照"
@@ -7399,33 +7445,33 @@ msgstr "得意先参照"
 #~ msgid "Order canceled"
 #~ msgstr "Order canceled"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:356
+#: src/pages/sales/ReturnOrderDetail.tsx:355
 msgid "Edit Return Order"
 msgstr "返品注文の編集"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:374
+#: src/pages/sales/ReturnOrderDetail.tsx:373
 #: src/tables/sales/ReturnOrderTable.tsx:158
 #: src/tables/sales/ReturnOrderTable.tsx:171
 msgid "Add Return Order"
 msgstr "返品注文の追加"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:383
+#: src/pages/sales/ReturnOrderDetail.tsx:382
 msgid "Issue Return Order"
 msgstr "返品注文の発行"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:391
+#: src/pages/sales/ReturnOrderDetail.tsx:390
 msgid "Cancel Return Order"
 msgstr "返品注文のキャンセル"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:399
+#: src/pages/sales/ReturnOrderDetail.tsx:398
 msgid "Hold Return Order"
 msgstr "返品注文の保留"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:407
+#: src/pages/sales/ReturnOrderDetail.tsx:406
 msgid "Complete Return Order"
 msgstr "リターンオーダー"
 
-#: src/pages/sales/SalesOrderDetail.tsx:153
+#: src/pages/sales/SalesOrderDetail.tsx:152
 msgid "Completed Shipments"
 msgstr "完了した出荷"
 
@@ -7433,83 +7479,83 @@ msgstr "完了した出荷"
 #~ msgid "Pending Shipments"
 #~ msgstr "Pending Shipments"
 
-#: src/pages/sales/SalesOrderDetail.tsx:293
+#: src/pages/sales/SalesOrderDetail.tsx:292
 msgid "Edit Sales Order"
 msgstr "販売注文の編集"
 
-#: src/pages/sales/SalesOrderDetail.tsx:315
+#: src/pages/sales/SalesOrderDetail.tsx:314
 #: src/tables/sales/SalesOrderTable.tsx:112
 #: src/tables/sales/SalesOrderTable.tsx:125
 msgid "Add Sales Order"
 msgstr "販売注文の追加"
 
-#: src/pages/sales/SalesOrderDetail.tsx:375
+#: src/pages/sales/SalesOrderDetail.tsx:374
 #: src/tables/sales/SalesOrderTable.tsx:151
 msgid "Shipments"
 msgstr "発送"
 
-#: src/pages/sales/SalesOrderDetail.tsx:417
+#: src/pages/sales/SalesOrderDetail.tsx:416
 msgid "Issue Sales Order"
 msgstr "販売注文書の発行"
 
-#: src/pages/sales/SalesOrderDetail.tsx:425
+#: src/pages/sales/SalesOrderDetail.tsx:424
 msgid "Cancel Sales Order"
 msgstr "販売注文のキャンセル"
 
-#: src/pages/sales/SalesOrderDetail.tsx:433
+#: src/pages/sales/SalesOrderDetail.tsx:432
 msgid "Hold Sales Order"
 msgstr "販売注文の保留"
 
-#: src/pages/sales/SalesOrderDetail.tsx:441
+#: src/pages/sales/SalesOrderDetail.tsx:440
 msgid "Ship Sales Order"
 msgstr "販売注文の発送"
 
-#: src/pages/sales/SalesOrderDetail.tsx:443
+#: src/pages/sales/SalesOrderDetail.tsx:442
 msgid "Ship this order?"
 msgstr "この注文を発送しますか？"
 
-#: src/pages/sales/SalesOrderDetail.tsx:444
+#: src/pages/sales/SalesOrderDetail.tsx:443
 msgid "Order shipped"
 msgstr "発送済み注文"
 
-#: src/pages/sales/SalesOrderDetail.tsx:452
+#: src/pages/sales/SalesOrderDetail.tsx:451
 msgid "Complete Sales Order"
 msgstr "完全な販売注文"
 
-#: src/pages/sales/SalesOrderDetail.tsx:491
+#: src/pages/sales/SalesOrderDetail.tsx:496
 msgid "Ship Order"
 msgstr "船舶発注"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:121
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:119
 #: src/tables/sales/SalesOrderShipmentTable.tsx:94
 msgid "Shipment Reference"
 msgstr "出荷基準"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:128
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:126
 msgid "Allocated Items"
 msgstr "割当項目"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:137
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:135
 msgid "Tracking Number"
 msgstr "追跡番号"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:145
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:143
 msgid "Invoice Number"
 msgstr "請求書番号"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:153
-#: src/tables/ColumnRenderers.tsx:307
-#: src/tables/sales/SalesOrderAllocationTable.tsx:179
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:151
+#: src/tables/ColumnRenderers.tsx:345
+#: src/tables/sales/SalesOrderAllocationTable.tsx:184
 #: src/tables/sales/SalesOrderShipmentTable.tsx:113
 msgid "Shipment Date"
 msgstr "出荷日"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:161
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:159
 #: src/tables/sales/SalesOrderShipmentTable.tsx:117
 msgid "Delivery Date"
 msgstr "配達日"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:206
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:204
 msgid "Shipment Details"
 msgstr "出荷の詳細"
 
@@ -7517,137 +7563,137 @@ msgstr "出荷の詳細"
 #~ msgid "Assigned Items"
 #~ msgstr "Assigned Items"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:244
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:336
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:242
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:334
 #: src/tables/sales/SalesOrderShipmentTable.tsx:73
 msgid "Edit Shipment"
 msgstr "出荷の編集"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:251
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:341
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:249
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:339
 #: src/tables/sales/SalesOrderShipmentTable.tsx:65
 msgid "Cancel Shipment"
 msgstr "出荷のキャンセル"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:264
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:262
 #: src/tables/sales/SalesOrderShipmentTable.tsx:81
 #: src/tables/sales/SalesOrderShipmentTable.tsx:144
 msgid "Complete Shipment"
 msgstr "完全出荷"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:281
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:279
 #: src/tables/part/PartPurchaseOrdersTable.tsx:122
 msgid "Pending"
 msgstr "処理待ち"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:287
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:285
 #: src/tables/sales/SalesOrderShipmentTable.tsx:106
 #: src/tables/sales/SalesOrderShipmentTable.tsx:190
 msgid "Shipped"
 msgstr "発送済み"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:293
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:291
 #: src/tables/sales/SalesOrderShipmentTable.tsx:195
 #: src/tables/settings/EmailTable.tsx:66
 msgid "Delivered"
 msgstr "配送済み"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:308
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:306
 msgid "Send Shipment"
 msgstr "発送"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:331
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:329
 msgid "Shipment Actions"
 msgstr "出荷アクション"
 
-#: src/pages/stock/LocationDetail.tsx:115
+#: src/pages/stock/LocationDetail.tsx:112
 msgid "Parent Location"
 msgstr "親の位置"
 
-#: src/pages/stock/LocationDetail.tsx:133
+#: src/pages/stock/LocationDetail.tsx:130
 msgid "Sublocations"
 msgstr "サブロケーション"
 
-#: src/pages/stock/LocationDetail.tsx:151
+#: src/pages/stock/LocationDetail.tsx:148
 #: src/tables/stock/StockLocationTable.tsx:57
 msgid "Location Type"
 msgstr "ロケーションタイプ"
 
-#: src/pages/stock/LocationDetail.tsx:162
+#: src/pages/stock/LocationDetail.tsx:159
 msgid "Top level stock location"
 msgstr "トップレベルの在庫ロケーション"
 
-#: src/pages/stock/LocationDetail.tsx:173
+#: src/pages/stock/LocationDetail.tsx:170
 msgid "Location Details"
 msgstr "場所の詳細"
 
-#: src/pages/stock/LocationDetail.tsx:199
+#: src/pages/stock/LocationDetail.tsx:196
 msgid "Default Parts"
 msgstr "デフォルトパーツ"
 
-#: src/pages/stock/LocationDetail.tsx:218
-#: src/pages/stock/LocationDetail.tsx:393
+#: src/pages/stock/LocationDetail.tsx:215
+#: src/pages/stock/LocationDetail.tsx:374
 #: src/tables/stock/StockLocationTable.tsx:121
 msgid "Edit Stock Location"
 msgstr "在庫場所の編集"
 
-#: src/pages/stock/LocationDetail.tsx:227
+#: src/pages/stock/LocationDetail.tsx:224
 msgid "Move items to parent location"
 msgstr "アイテムを親の場所に移動"
 
-#: src/pages/stock/LocationDetail.tsx:239
-#: src/pages/stock/LocationDetail.tsx:398
+#: src/pages/stock/LocationDetail.tsx:236
+#: src/pages/stock/LocationDetail.tsx:379
 msgid "Delete Stock Location"
 msgstr "在庫場所の削除"
 
-#: src/pages/stock/LocationDetail.tsx:242
+#: src/pages/stock/LocationDetail.tsx:239
 msgid "Items Action"
 msgstr "アクション"
 
-#: src/pages/stock/LocationDetail.tsx:243
+#: src/pages/stock/LocationDetail.tsx:240
 msgid "Action for stock items in this location"
 msgstr "この場所にある在庫品に対する措置"
 
-#: src/pages/stock/LocationDetail.tsx:248
+#: src/pages/stock/LocationDetail.tsx:245
 msgid "Child Locations Action"
 msgstr "チャイルド・ロケーション・アクション"
 
-#: src/pages/stock/LocationDetail.tsx:249
+#: src/pages/stock/LocationDetail.tsx:246
 msgid "Action for child locations in this location"
 msgstr "この場所の子供のための行動"
 
-#: src/pages/stock/LocationDetail.tsx:278
+#: src/pages/stock/LocationDetail.tsx:280
 msgid "Scan Stock Item"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:296
-#: src/pages/stock/StockDetail.tsx:809
+#: src/pages/stock/LocationDetail.tsx:298
+#: src/pages/stock/StockDetail.tsx:804
 msgid "Scanned stock item into location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:302
-#: src/pages/stock/StockDetail.tsx:815
+#: src/pages/stock/LocationDetail.tsx:304
+#: src/pages/stock/StockDetail.tsx:810
 msgid "Error scanning stock item"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:309
+#: src/pages/stock/LocationDetail.tsx:311
 msgid "Scan Stock Location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:321
+#: src/pages/stock/LocationDetail.tsx:323
 msgid "Scanned stock location into location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:327
+#: src/pages/stock/LocationDetail.tsx:329
 msgid "Error scanning stock location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:389
+#: src/pages/stock/LocationDetail.tsx:370
 #: src/tables/stock/StockLocationTable.tsx:142
 msgid "Location Actions"
 msgstr "ロケーションアクション"
 
-#: src/pages/stock/StockDetail.tsx:153
+#: src/pages/stock/StockDetail.tsx:148
 msgid "Base Part"
 msgstr "ベース部"
 
@@ -7663,43 +7709,43 @@ msgstr "ベース部"
 #~ msgid "Unlink custom barcode from stock item"
 #~ msgstr "Unlink custom barcode from stock item"
 
-#: src/pages/stock/StockDetail.tsx:191
+#: src/pages/stock/StockDetail.tsx:186
 msgid "Last Stocktake"
 msgstr "最後のストックテイク"
+
+#: src/pages/stock/StockDetail.tsx:204
+msgid "Previous serial number"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
 #~ msgstr "Edit stock item"
 
-#: src/pages/stock/StockDetail.tsx:209
-msgid "Previous serial number"
-msgstr ""
-
 #: src/pages/stock/StockDetail.tsx:217
 #~ msgid "Delete stock item"
 #~ msgstr "Delete stock item"
 
-#: src/pages/stock/StockDetail.tsx:231
+#: src/pages/stock/StockDetail.tsx:226
 msgid "Find serial number"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:275
+#: src/pages/stock/StockDetail.tsx:270
 msgid "Allocated to Orders"
 msgstr "注文に割り当て"
 
-#: src/pages/stock/StockDetail.tsx:308
+#: src/pages/stock/StockDetail.tsx:303
 msgid "Installed In"
 msgstr "設置場所"
 
-#: src/pages/stock/StockDetail.tsx:328
+#: src/pages/stock/StockDetail.tsx:323
 msgid "Parent Item"
 msgstr "親アイテム"
 
-#: src/pages/stock/StockDetail.tsx:332
+#: src/pages/stock/StockDetail.tsx:327
 msgid "Parent stock item"
 msgstr "親株式"
 
-#: src/pages/stock/StockDetail.tsx:338
+#: src/pages/stock/StockDetail.tsx:333
 msgid "Consumed By"
 msgstr "消費者"
 
@@ -7707,27 +7753,27 @@ msgstr "消費者"
 #~ msgid "Duplicate stock item"
 #~ msgstr "Duplicate stock item"
 
-#: src/pages/stock/StockDetail.tsx:516
+#: src/pages/stock/StockDetail.tsx:511
 msgid "Stock Details"
 msgstr "在庫詳細"
 
-#: src/pages/stock/StockDetail.tsx:522
+#: src/pages/stock/StockDetail.tsx:517
 msgid "Stock Tracking"
 msgstr "在庫管理"
 
-#: src/pages/stock/StockDetail.tsx:577
+#: src/pages/stock/StockDetail.tsx:572
 msgid "Test Data"
 msgstr "テスト データ"
 
-#: src/pages/stock/StockDetail.tsx:591
+#: src/pages/stock/StockDetail.tsx:586
 msgid "Installed Items"
 msgstr "設置項目"
 
-#: src/pages/stock/StockDetail.tsx:598
+#: src/pages/stock/StockDetail.tsx:593
 msgid "Child Items"
 msgstr "子供用品"
 
-#: src/pages/stock/StockDetail.tsx:651
+#: src/pages/stock/StockDetail.tsx:646
 msgid "Edit Stock Item"
 msgstr "在庫商品を編集"
 
@@ -7741,11 +7787,11 @@ msgstr "在庫商品を編集"
 #~ msgid "Remove stock"
 #~ msgstr "Remove stock"
 
-#: src/pages/stock/StockDetail.tsx:693
+#: src/pages/stock/StockDetail.tsx:688
 msgid "Items Created"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:694
+#: src/pages/stock/StockDetail.tsx:689
 msgid "Created {n} stock items"
 msgstr ""
 
@@ -7754,93 +7800,93 @@ msgstr ""
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:711
+#: src/pages/stock/StockDetail.tsx:706
 msgid "Delete Stock Item"
 msgstr "ストックアイテムの削除"
 
-#: src/pages/stock/StockDetail.tsx:745
+#: src/pages/stock/StockDetail.tsx:740
 msgid "Serialize Stock Item"
 msgstr "ストックアイテムのシリアル化"
 
-#: src/pages/stock/StockDetail.tsx:759
+#: src/pages/stock/StockDetail.tsx:754
 msgid "Stock item serialized"
 msgstr "シリアル化された在庫品"
 
-#: src/pages/stock/StockDetail.tsx:765
+#: src/pages/stock/StockDetail.tsx:760
 msgid "Return Stock Item"
 msgstr "返品在庫品"
 
-#: src/pages/stock/StockDetail.tsx:768
+#: src/pages/stock/StockDetail.tsx:763
 msgid "Return this item into stock. This will remove the customer assignment."
 msgstr "この商品を在庫に戻します。これで顧客割り当てが削除されます。"
 
-#: src/pages/stock/StockDetail.tsx:780
+#: src/pages/stock/StockDetail.tsx:775
 msgid "Item returned to stock"
 msgstr "在庫に戻った商品"
 
-#: src/pages/stock/StockDetail.tsx:791
+#: src/pages/stock/StockDetail.tsx:786
 msgid "Scan Into Location"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:849
+#: src/pages/stock/StockDetail.tsx:844
 msgid "Scan into location"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:851
+#: src/pages/stock/StockDetail.tsx:846
 msgid "Scan this item into a location"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:863
+#: src/pages/stock/StockDetail.tsx:858
 msgid "Stock Operations"
 msgstr "株式運用"
 
-#: src/pages/stock/StockDetail.tsx:868
-msgid "Count stock"
-msgstr "在庫数"
-
-#: src/pages/stock/StockDetail.tsx:900
-msgid "Transfer"
-msgstr "転送"
-
-#: src/pages/stock/StockDetail.tsx:911
+#: src/pages/stock/StockDetail.tsx:863
 msgid "Serialize"
 msgstr "シリアライズ"
 
-#: src/pages/stock/StockDetail.tsx:912
+#: src/pages/stock/StockDetail.tsx:864
 msgid "Serialize stock"
 msgstr "在庫のシリアル化"
 
-#: src/pages/stock/StockDetail.tsx:936
+#: src/pages/stock/StockDetail.tsx:868
+#~ msgid "Count stock"
+#~ msgstr "Count stock"
+
+#: src/pages/stock/StockDetail.tsx:888
 msgid "Return"
 msgstr "戻る"
 
-#: src/pages/stock/StockDetail.tsx:937
+#: src/pages/stock/StockDetail.tsx:889
 msgid "Return from customer"
 msgstr "顧客からの返品"
 
-#: src/pages/stock/StockDetail.tsx:950
-msgid "Assign to Customer"
-msgstr "顧客に割り当てる"
+#: src/pages/stock/StockDetail.tsx:900
+#~ msgid "Transfer"
+#~ msgstr "Transfer"
 
-#: src/pages/stock/StockDetail.tsx:951
-msgid "Assign to a customer"
-msgstr "顧客に割り当てる"
-
-#: src/pages/stock/StockDetail.tsx:963
+#: src/pages/stock/StockDetail.tsx:904
 msgid "Stock Item Actions"
 msgstr "在庫品アクション"
 
-#: src/pages/stock/StockDetail.tsx:1032
-#: src/tables/stock/StockItemTable.tsx:430
+#: src/pages/stock/StockDetail.tsx:950
+#~ msgid "Assign to Customer"
+#~ msgstr "Assign to Customer"
+
+#: src/pages/stock/StockDetail.tsx:951
+#~ msgid "Assign to a customer"
+#~ msgstr "Assign to a customer"
+
+#: src/pages/stock/StockDetail.tsx:973
+#: src/tables/stock/StockItemTable.tsx:404
 msgid "Stale"
 msgstr "期限失効"
 
-#: src/pages/stock/StockDetail.tsx:1038
-#: src/tables/stock/StockItemTable.tsx:424
+#: src/pages/stock/StockDetail.tsx:979
+#: src/tables/stock/StockItemTable.tsx:398
 msgid "Expired"
 msgstr "期限切れ"
 
-#: src/pages/stock/StockDetail.tsx:1044
+#: src/pages/stock/StockDetail.tsx:985
 msgid "Unavailable"
 msgstr "利用不可"
 
@@ -7849,28 +7895,28 @@ msgstr "利用不可"
 msgid "Error loading icon package from server"
 msgstr "サーバーからのアイコンパッケージの読み込みエラー"
 
-#: src/tables/ColumnRenderers.tsx:38
-msgid "Part is not active"
-msgstr "パートはアクティブではありません"
-
 #: src/tables/ColumnRenderers.tsx:41
 #~ msgid "Part is locked"
 #~ msgstr "Part is locked"
 
 #: src/tables/ColumnRenderers.tsx:43
+msgid "Part is not active"
+msgstr "パートはアクティブではありません"
+
+#: src/tables/ColumnRenderers.tsx:48
 #: src/tables/bom/BomTable.tsx:571
 #: src/tables/part/PartParameterTable.tsx:194
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
 msgstr "部品がロックされています"
 
-#: src/tables/ColumnRenderers.tsx:48
+#: src/tables/ColumnRenderers.tsx:53
 msgid "You are subscribed to notifications for this part"
 msgstr "このパートに関する通知を購読しています。"
 
 #: src/tables/ColumnRenderers.tsx:93
-msgid "No location set"
-msgstr "場所未設定"
+#~ msgid "No location set"
+#~ msgstr "No location set"
 
 #: src/tables/ColumnSelect.tsx:16
 #: src/tables/ColumnSelect.tsx:23
@@ -7905,149 +7951,197 @@ msgstr "列の選択"
 #~ msgid "Download Data"
 #~ msgstr "Download Data"
 
-#: src/tables/Filter.tsx:76
-msgid "Assigned to me"
-msgstr "担当"
+#: src/tables/Filter.tsx:75
+msgid "Has Batch Code"
+msgstr "バッチコード"
 
-#: src/tables/Filter.tsx:77
-msgid "Show orders assigned to me"
-msgstr "私に割り当てられた命令を表示"
+#: src/tables/Filter.tsx:76
+msgid "Show items which have a batch code"
+msgstr "バッチコードを持つアイテムを表示"
 
 #: src/tables/Filter.tsx:84
-#: src/tables/sales/SalesOrderAllocationTable.tsx:78
-msgid "Outstanding"
-msgstr "並外れた"
+msgid "Filter items by batch code"
+msgstr "バッチコードによるアイテムのフィルタリング"
 
-#: src/tables/Filter.tsx:85
-msgid "Show outstanding items"
-msgstr "未処理項目の表示"
+#: src/tables/Filter.tsx:92
+msgid "Is Serialized"
+msgstr "連載中"
 
 #: src/tables/Filter.tsx:93
-msgid "Show overdue items"
-msgstr "期限切れアイテムの表示"
+msgid "Show items which have a serial number"
+msgstr "シリアル番号のある商品を表示"
 
 #: src/tables/Filter.tsx:100
-msgid "Minimum Date"
-msgstr "最小の日付"
+msgid "Serial"
+msgstr ""
 
 #: src/tables/Filter.tsx:101
-msgid "Show items after this date"
-msgstr "この日付以降のアイテムを表示"
+msgid "Filter items by serial number"
+msgstr "シリアル番号で商品を絞り込む"
 
 #: src/tables/Filter.tsx:106
 #~ msgid "Show overdue orders"
 #~ msgstr "Show overdue orders"
 
 #: src/tables/Filter.tsx:109
+msgid "Serial Below"
+msgstr ""
+
+#: src/tables/Filter.tsx:110
+msgid "Show items with serial numbers less than or equal to a given value"
+msgstr "指定された値以下のシリアル番号のアイテムを表示します。"
+
+#: src/tables/Filter.tsx:118
+msgid "Serial Above"
+msgstr ""
+
+#: src/tables/Filter.tsx:119
+msgid "Show items with serial numbers greater than or equal to a given value"
+msgstr "指定された値以上のシリアル番号を持つアイテムを表示します。"
+
+#: src/tables/Filter.tsx:128
+msgid "Assigned to me"
+msgstr "担当"
+
+#: src/tables/Filter.tsx:129
+msgid "Show orders assigned to me"
+msgstr "私に割り当てられた命令を表示"
+
+#: src/tables/Filter.tsx:136
+#: src/tables/sales/SalesOrderAllocationTable.tsx:81
+msgid "Outstanding"
+msgstr "並外れた"
+
+#: src/tables/Filter.tsx:137
+msgid "Show outstanding items"
+msgstr "未処理項目の表示"
+
+#: src/tables/Filter.tsx:145
+msgid "Show overdue items"
+msgstr "期限切れアイテムの表示"
+
+#: src/tables/Filter.tsx:152
+msgid "Minimum Date"
+msgstr "最小の日付"
+
+#: src/tables/Filter.tsx:153
+msgid "Show items after this date"
+msgstr "この日付以降のアイテムを表示"
+
+#: src/tables/Filter.tsx:161
 msgid "Maximum Date"
 msgstr "最大日付"
 
-#: src/tables/Filter.tsx:110
+#: src/tables/Filter.tsx:162
 msgid "Show items before this date"
 msgstr "この日以前の商品を表示"
 
-#: src/tables/Filter.tsx:118
+#: src/tables/Filter.tsx:170
 msgid "Created Before"
 msgstr "作成前"
 
-#: src/tables/Filter.tsx:119
+#: src/tables/Filter.tsx:171
 msgid "Show items created before this date"
 msgstr "この日付より前に作成されたアイテムを表示"
 
-#: src/tables/Filter.tsx:127
+#: src/tables/Filter.tsx:179
 msgid "Created After"
 msgstr "の後に作成されました。"
 
-#: src/tables/Filter.tsx:128
+#: src/tables/Filter.tsx:180
 msgid "Show items created after this date"
 msgstr "この日付以降に作成されたアイテムを表示"
 
-#: src/tables/Filter.tsx:136
+#: src/tables/Filter.tsx:188
 msgid "Start Date Before"
 msgstr "開始日 前"
 
-#: src/tables/Filter.tsx:137
+#: src/tables/Filter.tsx:189
 msgid "Show items with a start date before this date"
 msgstr "この日付より前の開始日のアイテムを表示"
 
-#: src/tables/Filter.tsx:145
+#: src/tables/Filter.tsx:197
 msgid "Start Date After"
 msgstr "開始日 後"
 
-#: src/tables/Filter.tsx:146
+#: src/tables/Filter.tsx:198
 msgid "Show items with a start date after this date"
 msgstr "この日付以降の開始日のアイテムを表示"
 
-#: src/tables/Filter.tsx:154
+#: src/tables/Filter.tsx:206
 msgid "Target Date Before"
 msgstr "目標期日"
 
-#: src/tables/Filter.tsx:155
+#: src/tables/Filter.tsx:207
 msgid "Show items with a target date before this date"
 msgstr "この日付より前の日付のアイテムを表示"
 
-#: src/tables/Filter.tsx:163
+#: src/tables/Filter.tsx:215
 msgid "Target Date After"
 msgstr "以降の目標日"
 
-#: src/tables/Filter.tsx:164
+#: src/tables/Filter.tsx:216
 msgid "Show items with a target date after this date"
 msgstr "この日以降に目標日が設定されたアイテムを表示"
 
-#: src/tables/Filter.tsx:172
+#: src/tables/Filter.tsx:224
 msgid "Completed Before"
 msgstr "完成前"
 
-#: src/tables/Filter.tsx:173
+#: src/tables/Filter.tsx:225
 msgid "Show items completed before this date"
 msgstr "この日までに完了した項目を表示"
 
-#: src/tables/Filter.tsx:181
+#: src/tables/Filter.tsx:233
 msgid "Completed After"
 msgstr "終了後"
 
-#: src/tables/Filter.tsx:182
+#: src/tables/Filter.tsx:234
 msgid "Show items completed after this date"
 msgstr "この日以降に完了した項目を表示"
 
-#: src/tables/Filter.tsx:194
+#: src/tables/Filter.tsx:246
 msgid "Has Project Code"
 msgstr "プロジェクトコード"
 
-#: src/tables/Filter.tsx:195
+#: src/tables/Filter.tsx:247
 msgid "Show orders with an assigned project code"
 msgstr "プロジェクトコードが割り当てられた注文の表示"
 
-#: src/tables/Filter.tsx:206
+#: src/tables/Filter.tsx:258
 #: src/tables/part/PartPurchaseOrdersTable.tsx:133
 msgid "Filter by order status"
 msgstr "注文状況による絞り込み"
 
-#: src/tables/Filter.tsx:218
+#: src/tables/Filter.tsx:270
 msgid "Filter by project code"
 msgstr "プロジェクトコードによるフィルタリング"
 
-#: src/tables/Filter.tsx:251
+#: src/tables/Filter.tsx:303
 msgid "Filter by responsible owner"
 msgstr "責任所有者による絞り込み"
 
-#: src/tables/Filter.tsx:267
-#: src/tables/settings/ApiTokenTable.tsx:121
+#: src/tables/Filter.tsx:319
+#: src/tables/settings/ApiTokenTable.tsx:133
 #: src/tables/stock/StockTrackingTable.tsx:190
 msgid "Filter by user"
 msgstr "レポートのフィルタリング"
 
-#: src/tables/Filter.tsx:279
+#: src/tables/Filter.tsx:331
 msgid "Filter by user who created the order"
 msgstr "注文を作成したユーザーによるフィルタリング"
 
-#: src/tables/Filter.tsx:287
+#: src/tables/Filter.tsx:339
 msgid "Filter by user who issued the order"
 msgstr "注文を発行したユーザーによるフィルタリング"
 
-#: src/tables/Filter.tsx:295
+#: src/tables/Filter.tsx:347
 msgid "Filter by part category"
 msgstr "部品カテゴリーによる絞り込み"
+
+#: src/tables/Filter.tsx:358
+msgid "Filter by stock location"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:58
 msgid "Remove filter"
@@ -8055,7 +8149,7 @@ msgstr "フィルタを削除"
 
 #: src/tables/FilterSelectDrawer.tsx:100
 #: src/tables/FilterSelectDrawer.tsx:102
-#: src/tables/FilterSelectDrawer.tsx:148
+#: src/tables/FilterSelectDrawer.tsx:149
 msgid "Select filter value"
 msgstr "フィルタの値を選択"
 
@@ -8067,33 +8161,33 @@ msgstr "フィルター値の入力"
 msgid "Select date value"
 msgstr "日付の値を選択"
 
-#: src/tables/FilterSelectDrawer.tsx:258
+#: src/tables/FilterSelectDrawer.tsx:259
 msgid "Select filter"
 msgstr "フィルタを選択"
 
-#: src/tables/FilterSelectDrawer.tsx:259
+#: src/tables/FilterSelectDrawer.tsx:260
 msgid "Filter"
 msgstr "フィルタ"
 
-#: src/tables/FilterSelectDrawer.tsx:311
-#: src/tables/InvenTreeTableHeader.tsx:238
+#: src/tables/FilterSelectDrawer.tsx:312
+#: src/tables/InvenTreeTableHeader.tsx:244
 msgid "Table Filters"
 msgstr "テーブルフィルター"
 
-#: src/tables/FilterSelectDrawer.tsx:343
+#: src/tables/FilterSelectDrawer.tsx:344
 msgid "Add Filter"
 msgstr "フィルタを追加"
 
-#: src/tables/FilterSelectDrawer.tsx:352
+#: src/tables/FilterSelectDrawer.tsx:353
 msgid "Clear Filters"
 msgstr "絞り込み条件を解除する"
 
-#: src/tables/InvenTreeTable.tsx:107
-#: src/tables/InvenTreeTable.tsx:510
+#: src/tables/InvenTreeTable.tsx:109
+#: src/tables/InvenTreeTable.tsx:512
 msgid "No records found"
 msgstr "記録が見つかりません"
 
-#: src/tables/InvenTreeTable.tsx:207
+#: src/tables/InvenTreeTable.tsx:210
 msgid "Error loading table options"
 msgstr ""
 
@@ -8117,15 +8211,15 @@ msgstr ""
 #~ msgid "Failed to delete records"
 #~ msgstr "Failed to delete records"
 
-#: src/tables/InvenTreeTable.tsx:551
-msgid "Server returned incorrect data type"
-msgstr "サーバーが不正なデータ型を返しました。"
-
 #: src/tables/InvenTreeTable.tsx:552
 #~ msgid "This action cannot be undone!"
 #~ msgstr "This action cannot be undone!"
 
-#: src/tables/InvenTreeTable.tsx:584
+#: src/tables/InvenTreeTable.tsx:553
+msgid "Server returned incorrect data type"
+msgstr "サーバーが不正なデータ型を返しました。"
+
+#: src/tables/InvenTreeTable.tsx:586
 msgid "Error loading table data"
 msgstr ""
 
@@ -8139,49 +8233,49 @@ msgstr ""
 #~ msgid "Barcode actions"
 #~ msgstr "Barcode actions"
 
-#: src/tables/InvenTreeTable.tsx:711
-msgid "View details"
-msgstr "詳細を見る"
-
 #: src/tables/InvenTreeTable.tsx:712
 #~ msgid "Table filters"
 #~ msgstr "Table filters"
+
+#: src/tables/InvenTreeTable.tsx:713
+msgid "View details"
+msgstr "詳細を見る"
 
 #: src/tables/InvenTreeTable.tsx:725
 #~ msgid "Clear custom query filters"
 #~ msgstr "Clear custom query filters"
 
-#: src/tables/InvenTreeTableHeader.tsx:97
+#: src/tables/InvenTreeTableHeader.tsx:98
 msgid "Delete Selected Items"
 msgstr "選択したアイテムを削除"
 
-#: src/tables/InvenTreeTableHeader.tsx:101
+#: src/tables/InvenTreeTableHeader.tsx:102
 msgid "Are you sure you want to delete the selected items?"
 msgstr "選択したアイテムを削除しますか?"
 
-#: src/tables/InvenTreeTableHeader.tsx:103
+#: src/tables/InvenTreeTableHeader.tsx:104
 #: src/tables/plugin/PluginListTable.tsx:316
 msgid "This action cannot be undone"
 msgstr "この操作は元に戻せません。"
 
-#: src/tables/InvenTreeTableHeader.tsx:114
+#: src/tables/InvenTreeTableHeader.tsx:115
 msgid "Items deleted"
 msgstr "削除されたアイテム"
 
-#: src/tables/InvenTreeTableHeader.tsx:119
+#: src/tables/InvenTreeTableHeader.tsx:120
 msgid "Failed to delete items"
 msgstr "アイテムの削除に失敗しました"
 
-#: src/tables/InvenTreeTableHeader.tsx:165
+#: src/tables/InvenTreeTableHeader.tsx:171
 msgid "Custom table filters are active"
 msgstr "カスタムテーブルフィルターが有効"
 
-#: src/tables/InvenTreeTableHeader.tsx:191
+#: src/tables/InvenTreeTableHeader.tsx:197
 #: src/tables/general/BarcodeScanTable.tsx:93
 msgid "Delete selected records"
 msgstr "選択したレコードの削除"
 
-#: src/tables/InvenTreeTableHeader.tsx:211
+#: src/tables/InvenTreeTableHeader.tsx:217
 msgid "Refresh data"
 msgstr "データを更新する"
 
@@ -8207,7 +8301,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:224
 #: src/tables/build/BuildLineTable.tsx:269
-#: src/tables/part/PartTable.tsx:134
+#: src/tables/part/PartTable.tsx:137
 msgid "External stock"
 msgstr "外部在庫"
 
@@ -8223,14 +8317,14 @@ msgid "Includes variant stock"
 msgstr "バリアントストック付き"
 
 #: src/tables/bom/BomTable.tsx:257
-#: src/tables/part/PartTable.tsx:103
+#: src/tables/part/PartTable.tsx:106
 msgid "Building"
 msgstr "建物"
 
 #: src/tables/bom/BomTable.tsx:266
-#: src/tables/part/PartTable.tsx:160
+#: src/tables/part/PartTable.tsx:163
 #: src/tables/sales/SalesOrderLineItemTable.tsx:179
-#: src/tables/stock/StockItemTable.tsx:214
+#: src/tables/stock/StockItemTable.tsx:215
 msgid "Stock Information"
 msgstr "株式情報"
 
@@ -8345,7 +8439,7 @@ msgid "Show consumable items"
 msgstr "消耗品の表示"
 
 #: src/tables/bom/BomTable.tsx:370
-#: src/tables/part/PartTable.tsx:296
+#: src/tables/part/PartTable.tsx:299
 msgid "Has Pricing"
 msgstr "価格"
 
@@ -8424,8 +8518,9 @@ msgstr "部品がロックされているため、部品表を編集できませ
 #: src/tables/bom/UsedInTable.tsx:37
 #: src/tables/build/BuildLineTable.tsx:206
 #: src/tables/part/ParametricPartTable.tsx:360
-#: src/tables/part/PartTable.tsx:198
-#: src/tables/stock/StockItemTable.tsx:325
+#: src/tables/part/PartBuildAllocationsTable.tsx:57
+#: src/tables/part/PartTable.tsx:201
+#: src/tables/stock/StockItemTable.tsx:327
 msgid "Assembly"
 msgstr "アセンブリ"
 
@@ -8434,7 +8529,7 @@ msgid "Show active assemblies"
 msgstr "アクティブなアセンブリの表示"
 
 #: src/tables/bom/UsedInTable.tsx:98
-#: src/tables/part/PartTable.tsx:222
+#: src/tables/part/PartTable.tsx:225
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "追跡可能"
@@ -8443,66 +8538,66 @@ msgstr "追跡可能"
 msgid "Show trackable assemblies"
 msgstr "追跡可能なアセンブリの表示"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:56
+#: src/tables/build/BuildAllocatedStockTable.tsx:59
 msgid "Allocated to Output"
 msgstr "出力への割り当て"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:57
+#: src/tables/build/BuildAllocatedStockTable.tsx:60
 msgid "Show items allocated to a build output"
 msgstr "ビルド出力に割り当てられた項目を表示"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:65
+#: src/tables/build/BuildAllocatedStockTable.tsx:68
 #: src/tables/build/BuildOrderTable.tsx:196
 #: src/tables/part/PartParameterTable.tsx:213
 #: src/tables/part/PartPurchaseOrdersTable.tsx:139
 #: src/tables/sales/ReturnOrderTable.tsx:99
-#: src/tables/sales/SalesOrderAllocationTable.tsx:92
+#: src/tables/sales/SalesOrderAllocationTable.tsx:96
 #: src/tables/sales/SalesOrderTable.tsx:100
-#: src/tables/stock/StockItemTable.tsx:360
+#: src/tables/stock/StockItemTable.tsx:362
 msgid "Include Variants"
 msgstr "バリアントを含む"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:66
+#: src/tables/build/BuildAllocatedStockTable.tsx:69
 #: src/tables/build/BuildOrderTable.tsx:197
 #: src/tables/part/PartPurchaseOrdersTable.tsx:140
 #: src/tables/sales/ReturnOrderTable.tsx:100
-#: src/tables/sales/SalesOrderAllocationTable.tsx:93
+#: src/tables/sales/SalesOrderAllocationTable.tsx:97
 #: src/tables/sales/SalesOrderTable.tsx:101
 msgid "Include orders for part variants"
 msgstr "部品バリアントの注文を含む"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:89
-#: src/tables/part/PartBuildAllocationsTable.tsx:62
+#: src/tables/build/BuildAllocatedStockTable.tsx:94
+#: src/tables/part/PartBuildAllocationsTable.tsx:69
 #: src/tables/part/PartPurchaseOrdersTable.tsx:132
 #: src/tables/part/PartSalesAllocationsTable.tsx:58
-#: src/tables/sales/SalesOrderAllocationTable.tsx:116
+#: src/tables/sales/SalesOrderAllocationTable.tsx:120
 msgid "Order Status"
 msgstr "注文ステータス"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:117
-#: src/tables/sales/SalesOrderAllocationTable.tsx:160
-msgid "Allocated Quantity"
-msgstr "割当数量"
-
-#: src/tables/build/BuildAllocatedStockTable.tsx:137
-#: src/tables/sales/SalesOrderAllocationTable.tsx:153
+#: src/tables/build/BuildAllocatedStockTable.tsx:136
+#: src/tables/sales/SalesOrderAllocationTable.tsx:158
 msgid "Available Quantity"
 msgstr "利用可能な数量"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:164
-#: src/tables/build/BuildLineTable.tsx:527
-msgid "Edit Stock Allocation"
-msgstr "株式配分の編集"
+#: src/tables/build/BuildAllocatedStockTable.tsx:141
+#: src/tables/sales/SalesOrderAllocationTable.tsx:165
+msgid "Allocated Quantity"
+msgstr "割当数量"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:164
 #~ msgid "Edit Build Item"
 #~ msgstr "Edit Build Item"
 
+#: src/tables/build/BuildAllocatedStockTable.tsx:169
+#: src/tables/build/BuildLineTable.tsx:527
+msgid "Edit Stock Allocation"
+msgstr "株式配分の編集"
+
 #: src/tables/build/BuildAllocatedStockTable.tsx:174
 #~ msgid "Delete Build Item"
 #~ msgstr "Delete Build Item"
 
-#: src/tables/build/BuildAllocatedStockTable.tsx:177
+#: src/tables/build/BuildAllocatedStockTable.tsx:182
 #: src/tables/build/BuildLineTable.tsx:540
 msgid "Delete Stock Allocation"
 msgstr "株式割当の削除"
@@ -8528,12 +8623,12 @@ msgid "Show optional lines"
 msgstr "オプションラインの表示"
 
 #: src/tables/build/BuildLineTable.tsx:211
-#: src/tables/part/PartTable.tsx:216
+#: src/tables/part/PartTable.tsx:219
 msgid "Testable"
 msgstr "テスト可能"
 
 #: src/tables/build/BuildLineTable.tsx:216
-#: src/tables/stock/StockItemTable.tsx:414
+#: src/tables/stock/StockItemTable.tsx:388
 msgid "Tracked"
 msgstr "追跡"
 
@@ -8552,7 +8647,7 @@ msgstr "在庫不足"
 
 #: src/tables/build/BuildLineTable.tsx:295
 #: src/tables/sales/SalesOrderLineItemTable.tsx:150
-#: src/tables/stock/StockItemTable.tsx:183
+#: src/tables/stock/StockItemTable.tsx:184
 msgid "No stock available"
 msgstr "在庫なし"
 
@@ -8590,8 +8685,8 @@ msgstr "選択されたオプションに従って、このビルドに在庫を
 #: src/tables/build/BuildLineTable.tsx:510
 #: src/tables/build/BuildLineTable.tsx:598
 #: src/tables/build/BuildLineTable.tsx:699
-#: src/tables/build/BuildOutputTable.tsx:323
-#: src/tables/build/BuildOutputTable.tsx:328
+#: src/tables/build/BuildOutputTable.tsx:336
+#: src/tables/build/BuildOutputTable.tsx:341
 msgid "Deallocate Stock"
 msgstr "在庫処分"
 
@@ -8697,7 +8792,7 @@ msgstr "結果なし"
 msgid "Show build outputs currently in production"
 msgstr "現在生産中のビルド出力を表示"
 
-#: src/tables/build/BuildOutputTable.tsx:80
+#: src/tables/build/BuildOutputTable.tsx:93
 msgid "Build Output Stock Allocation"
 msgstr "生産量ストック配分"
 
@@ -8705,8 +8800,8 @@ msgstr "生産量ストック配分"
 #~ msgid "Delete build output"
 #~ msgstr "Delete build output"
 
-#: src/tables/build/BuildOutputTable.tsx:264
-#: src/tables/build/BuildOutputTable.tsx:394
+#: src/tables/build/BuildOutputTable.tsx:277
+#: src/tables/build/BuildOutputTable.tsx:434
 msgid "Add Build Output"
 msgstr "ビルド出力の追加"
 
@@ -8714,81 +8809,81 @@ msgstr "ビルド出力の追加"
 #~ msgid "Edit build output"
 #~ msgstr "Edit build output"
 
-#: src/tables/build/BuildOutputTable.tsx:314
-#: src/tables/build/BuildOutputTable.tsx:443
+#: src/tables/build/BuildOutputTable.tsx:327
+#: src/tables/build/BuildOutputTable.tsx:489
 msgid "Edit Build Output"
 msgstr "ビルド出力の編集"
 
-#: src/tables/build/BuildOutputTable.tsx:330
+#: src/tables/build/BuildOutputTable.tsx:343
 msgid "This action will deallocate all stock from the selected build output"
 msgstr "このアクションは、選択されたビルド出力からすべてのストックを割り当て解除します。"
 
-#: src/tables/build/BuildOutputTable.tsx:351
-#: src/tables/stock/StockItemTable.tsx:320
+#: src/tables/build/BuildOutputTable.tsx:364
+#: src/tables/stock/StockItemTable.tsx:322
 msgid "Filter by stock status"
 msgstr "在庫状況で絞り込む"
 
-#: src/tables/build/BuildOutputTable.tsx:361
+#: src/tables/build/BuildOutputTable.tsx:401
 msgid "Complete selected outputs"
 msgstr "選択された出力の完了"
 
-#: src/tables/build/BuildOutputTable.tsx:372
+#: src/tables/build/BuildOutputTable.tsx:412
 msgid "Scrap selected outputs"
 msgstr "選択した出力のスクラップ"
 
-#: src/tables/build/BuildOutputTable.tsx:383
+#: src/tables/build/BuildOutputTable.tsx:423
 msgid "Cancel selected outputs"
 msgstr "選択した出力のキャンセル"
 
-#: src/tables/build/BuildOutputTable.tsx:405
+#: src/tables/build/BuildOutputTable.tsx:451
 msgid "View Build Output"
 msgstr "ビルド出力の表示"
 
-#: src/tables/build/BuildOutputTable.tsx:411
+#: src/tables/build/BuildOutputTable.tsx:457
 msgid "Allocate"
 msgstr "割り当て"
 
-#: src/tables/build/BuildOutputTable.tsx:412
+#: src/tables/build/BuildOutputTable.tsx:458
 msgid "Allocate stock to build output"
 msgstr "生産量を増やすための在庫配分"
 
-#: src/tables/build/BuildOutputTable.tsx:422
+#: src/tables/build/BuildOutputTable.tsx:468
 msgid "Deallocate"
 msgstr "デアロケート"
 
-#: src/tables/build/BuildOutputTable.tsx:423
+#: src/tables/build/BuildOutputTable.tsx:469
 msgid "Deallocate stock from build output"
 msgstr "ビルド出力から在庫を割り当て解除"
 
-#: src/tables/build/BuildOutputTable.tsx:434
+#: src/tables/build/BuildOutputTable.tsx:480
 msgid "Complete build output"
 msgstr "完全なビルド出力"
 
-#: src/tables/build/BuildOutputTable.tsx:450
+#: src/tables/build/BuildOutputTable.tsx:496
 msgid "Scrap"
 msgstr "スクラップ"
 
-#: src/tables/build/BuildOutputTable.tsx:451
+#: src/tables/build/BuildOutputTable.tsx:497
 msgid "Scrap build output"
 msgstr "スクラップビルド出力"
 
-#: src/tables/build/BuildOutputTable.tsx:461
+#: src/tables/build/BuildOutputTable.tsx:507
 msgid "Cancel build output"
 msgstr "ビルド出力のキャンセル"
 
-#: src/tables/build/BuildOutputTable.tsx:514
+#: src/tables/build/BuildOutputTable.tsx:560
 msgid "Allocated Lines"
 msgstr "割り当てライン"
 
-#: src/tables/build/BuildOutputTable.tsx:529
+#: src/tables/build/BuildOutputTable.tsx:575
 msgid "Required Tests"
 msgstr "必須試験"
 
-#: src/tables/build/BuildOutputTable.tsx:595
+#: src/tables/build/BuildOutputTable.tsx:642
 msgid "External Build"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:597
+#: src/tables/build/BuildOutputTable.tsx:644
 msgid "This build order is fulfilled by an external purchase order"
 msgstr ""
 
@@ -9220,7 +9315,12 @@ msgstr ""
 msgid "Enter a value"
 msgstr ""
 
-#: src/tables/part/PartBuildAllocationsTable.tsx:83
+#: src/tables/part/PartBuildAllocationsTable.tsx:76
+#: src/tables/part/PartSalesAllocationsTable.tsx:62
+msgid "Required Stock"
+msgstr "必要在庫"
+
+#: src/tables/part/PartBuildAllocationsTable.tsx:92
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:361
 msgid "View Build Order"
 msgstr "ビルドオーダーを見る"
@@ -9230,7 +9330,7 @@ msgid "You are subscribed to notifications for this category"
 msgstr "このカテゴリの通知を購読しています"
 
 #: src/tables/part/PartCategoryTable.tsx:84
-#: src/tables/part/PartTable.tsx:204
+#: src/tables/part/PartTable.tsx:207
 msgid "Include Subcategories"
 msgstr "サブカテゴリを含む"
 
@@ -9326,7 +9426,7 @@ msgid "Show templates with choices"
 msgstr "選択肢のあるテンプレートを表示"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:41
-#: src/tables/part/PartTable.tsx:228
+#: src/tables/part/PartTable.tsx:231
 msgid "Has Units"
 msgstr "ユニット"
 
@@ -9368,154 +9468,154 @@ msgstr "受信アイテムの表示"
 msgid "View Sales Order"
 msgstr "販売オーダーを見る"
 
-#: src/tables/part/PartTable.tsx:88
+#: src/tables/part/PartTable.tsx:91
 msgid "Minimum stock"
 msgstr "最小在庫"
 
-#: src/tables/part/PartTable.tsx:187
+#: src/tables/part/PartTable.tsx:190
 msgid "Filter by part active status"
 msgstr "有効なパーツでフィルタ"
 
-#: src/tables/part/PartTable.tsx:193
+#: src/tables/part/PartTable.tsx:196
 msgid "Filter by part locked status"
 msgstr "部品ロック状態によるフィルタリング"
 
-#: src/tables/part/PartTable.tsx:199
+#: src/tables/part/PartTable.tsx:202
 msgid "Filter by assembly attribute"
 msgstr "アセンブリ属性によるフィルタリング"
 
-#: src/tables/part/PartTable.tsx:205
+#: src/tables/part/PartTable.tsx:208
 msgid "Include parts in subcategories"
 msgstr "サブカテゴリのパーツを含む"
 
-#: src/tables/part/PartTable.tsx:211
+#: src/tables/part/PartTable.tsx:214
 msgid "Filter by component attribute"
 msgstr "コンポーネント属性でフィルタ"
 
-#: src/tables/part/PartTable.tsx:217
+#: src/tables/part/PartTable.tsx:220
 msgid "Filter by testable attribute"
 msgstr "テスト可能な属性によるフィルタリング"
 
-#: src/tables/part/PartTable.tsx:223
+#: src/tables/part/PartTable.tsx:226
 msgid "Filter by trackable attribute"
 msgstr "追跡可能属性でフィルタ"
 
-#: src/tables/part/PartTable.tsx:229
+#: src/tables/part/PartTable.tsx:232
 msgid "Filter by parts which have units"
 msgstr "単位のある部品でフィルタ"
 
-#: src/tables/part/PartTable.tsx:234
+#: src/tables/part/PartTable.tsx:237
 msgid "Has IPN"
 msgstr "IPNあり"
 
-#: src/tables/part/PartTable.tsx:235
+#: src/tables/part/PartTable.tsx:238
 msgid "Filter by parts which have an internal part number"
 msgstr "内部部品番号を持つ部品によるフィルタリング"
 
-#: src/tables/part/PartTable.tsx:240
+#: src/tables/part/PartTable.tsx:243
 msgid "Has Stock"
 msgstr "在庫あり"
 
-#: src/tables/part/PartTable.tsx:241
+#: src/tables/part/PartTable.tsx:244
 msgid "Filter by parts which have stock"
 msgstr "在庫がある部品でフィルタ"
 
-#: src/tables/part/PartTable.tsx:247
+#: src/tables/part/PartTable.tsx:250
 msgid "Filter by parts which have low stock"
 msgstr "在庫の少ない部品で絞り込み"
 
-#: src/tables/part/PartTable.tsx:252
+#: src/tables/part/PartTable.tsx:255
 msgid "Purchaseable"
 msgstr "購入可能"
 
-#: src/tables/part/PartTable.tsx:253
+#: src/tables/part/PartTable.tsx:256
 msgid "Filter by parts which are purchaseable"
 msgstr "購入可能な部品でフィルタ"
 
-#: src/tables/part/PartTable.tsx:258
+#: src/tables/part/PartTable.tsx:261
 msgid "Salable"
 msgstr "販売可能"
 
-#: src/tables/part/PartTable.tsx:259
+#: src/tables/part/PartTable.tsx:262
 msgid "Filter by parts which are salable"
 msgstr "販売可能な部品でフィルタ"
 
-#: src/tables/part/PartTable.tsx:264
-#: src/tables/part/PartTable.tsx:268
+#: src/tables/part/PartTable.tsx:267
+#: src/tables/part/PartTable.tsx:271
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "仮想部品"
 
-#: src/tables/part/PartTable.tsx:265
+#: src/tables/part/PartTable.tsx:268
 msgid "Filter by parts which are virtual"
 msgstr "仮想部品でフィルタ"
 
-#: src/tables/part/PartTable.tsx:269
+#: src/tables/part/PartTable.tsx:272
 msgid "Not Virtual"
 msgstr "仮想部品ではない"
 
-#: src/tables/part/PartTable.tsx:274
+#: src/tables/part/PartTable.tsx:277
 msgid "Is Template"
 msgstr "テンプレート"
 
-#: src/tables/part/PartTable.tsx:275
+#: src/tables/part/PartTable.tsx:278
 msgid "Filter by parts which are templates"
 msgstr "テンプレートになっているパーツで絞り込み"
 
-#: src/tables/part/PartTable.tsx:280
+#: src/tables/part/PartTable.tsx:283
 msgid "Is Variant"
 msgstr "バリエーション？"
 
-#: src/tables/part/PartTable.tsx:281
+#: src/tables/part/PartTable.tsx:284
 msgid "Filter by parts which are variants"
 msgstr "バリエーション部品によるフィルタリング"
 
-#: src/tables/part/PartTable.tsx:286
+#: src/tables/part/PartTable.tsx:289
 msgid "Is Revision"
 msgstr "改訂版"
 
-#: src/tables/part/PartTable.tsx:287
+#: src/tables/part/PartTable.tsx:290
 msgid "Filter by parts which are revisions"
 msgstr "改定箇所による絞り込み"
 
-#: src/tables/part/PartTable.tsx:291
+#: src/tables/part/PartTable.tsx:294
 msgid "Has Revisions"
 msgstr "改定あり"
 
-#: src/tables/part/PartTable.tsx:292
+#: src/tables/part/PartTable.tsx:295
 msgid "Filter by parts which have revisions"
 msgstr "リビジョンがある部品でフィルタリング"
 
-#: src/tables/part/PartTable.tsx:297
+#: src/tables/part/PartTable.tsx:300
 msgid "Filter by parts which have pricing information"
 msgstr "価格情報のある部品でフィルタリング"
 
-#: src/tables/part/PartTable.tsx:303
+#: src/tables/part/PartTable.tsx:306
 msgid "Filter by parts which have available stock"
 msgstr "在庫のある部品で絞り込み"
 
-#: src/tables/part/PartTable.tsx:309
+#: src/tables/part/PartTable.tsx:312
 msgid "Filter by parts to which the user is subscribed"
 msgstr "ユーザーが購読しているパートによるフィルタリング"
 
-#: src/tables/part/PartTable.tsx:314
+#: src/tables/part/PartTable.tsx:317
 msgid "Has Stocktake"
 msgstr "ストックテイク"
 
-#: src/tables/part/PartTable.tsx:315
+#: src/tables/part/PartTable.tsx:318
 msgid "Filter by parts which have stocktake information"
 msgstr "在庫情報のある部品で絞り込み"
 
-#: src/tables/part/PartTable.tsx:365
-#: src/tables/part/PartTable.tsx:399
+#: src/tables/part/PartTable.tsx:368
+#: src/tables/part/PartTable.tsx:402
 msgid "Set Category"
 msgstr "カテゴリを設定"
 
-#: src/tables/part/PartTable.tsx:401
+#: src/tables/part/PartTable.tsx:404
 msgid "Set category for selected parts"
 msgstr "選択した部品にカテゴリを設定"
 
-#: src/tables/part/PartTable.tsx:411
+#: src/tables/part/PartTable.tsx:414
 msgid "Order selected parts"
 msgstr "選択した部品の注文"
 
@@ -9873,7 +9973,7 @@ msgid "Sample"
 msgstr "サンプル"
 
 #: src/tables/plugin/PluginListTable.tsx:432
-#: src/tables/stock/StockItemTable.tsx:370
+#: src/tables/stock/StockItemTable.tsx:372
 msgid "Installed"
 msgstr "インストール済み"
 
@@ -10025,42 +10125,42 @@ msgstr "選択した商品を受け取る"
 msgid "Receive Item"
 msgstr "商品を受け取る"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:79
+#: src/tables/sales/SalesOrderAllocationTable.tsx:82
 msgid "Show outstanding allocations"
 msgstr "未処理の割り当てを表示"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:83
+#: src/tables/sales/SalesOrderAllocationTable.tsx:86
 msgid "Assigned to Shipment"
 msgstr "出荷に割り当て"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:84
+#: src/tables/sales/SalesOrderAllocationTable.tsx:87
 msgid "Show allocations assigned to a shipment"
 msgstr "貨物に割り当てられた配分を表示"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:174
-#: src/tables/sales/SalesOrderAllocationTable.tsx:188
+#: src/tables/sales/SalesOrderAllocationTable.tsx:179
+#: src/tables/sales/SalesOrderAllocationTable.tsx:193
 msgid "No shipment"
 msgstr "出荷なし"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:186
+#: src/tables/sales/SalesOrderAllocationTable.tsx:191
 msgid "Not shipped"
 msgstr "未出荷"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:208
-#: src/tables/sales/SalesOrderAllocationTable.tsx:230
+#: src/tables/sales/SalesOrderAllocationTable.tsx:213
+#: src/tables/sales/SalesOrderAllocationTable.tsx:235
 msgid "Edit Allocation"
 msgstr "編集配分"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:215
-#: src/tables/sales/SalesOrderAllocationTable.tsx:238
+#: src/tables/sales/SalesOrderAllocationTable.tsx:220
+#: src/tables/sales/SalesOrderAllocationTable.tsx:243
 msgid "Delete Allocation"
 msgstr "割り当ての削除"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:262
+#: src/tables/sales/SalesOrderAllocationTable.tsx:298
 msgid "Assign to Shipment"
 msgstr "出荷への割り当て"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:277
+#: src/tables/sales/SalesOrderAllocationTable.tsx:314
 msgid "Assign to shipment"
 msgstr "出荷への割り当て"
 
@@ -10093,7 +10193,6 @@ msgid "Build stock"
 msgstr "ビルドストック"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:434
-#: src/tables/stock/StockItemTable.tsx:640
 msgid "Order stock"
 msgstr "注文在庫"
 
@@ -10133,50 +10232,50 @@ msgstr "出荷済み貨物の表示"
 msgid "Show shipments which have been delivered"
 msgstr "配送済みの貨物の表示"
 
-#: src/tables/settings/ApiTokenTable.tsx:30
-#: src/tables/settings/ApiTokenTable.tsx:44
+#: src/tables/settings/ApiTokenTable.tsx:31
+#: src/tables/settings/ApiTokenTable.tsx:45
 msgid "Generate Token"
 msgstr "トークンを生成"
 
-#: src/tables/settings/ApiTokenTable.tsx:32
+#: src/tables/settings/ApiTokenTable.tsx:33
 msgid "Token generated"
 msgstr "トークン生成完了"
 
-#: src/tables/settings/ApiTokenTable.tsx:67
-#: src/tables/settings/ApiTokenTable.tsx:111
+#: src/tables/settings/ApiTokenTable.tsx:68
+#: src/tables/settings/ApiTokenTable.tsx:123
 msgid "Revoked"
 msgstr "失効"
 
-#: src/tables/settings/ApiTokenTable.tsx:71
-#: src/tables/settings/ApiTokenTable.tsx:173
+#: src/tables/settings/ApiTokenTable.tsx:72
+#: src/tables/settings/ApiTokenTable.tsx:185
 msgid "Token"
 msgstr "トークン"
 
-#: src/tables/settings/ApiTokenTable.tsx:78
+#: src/tables/settings/ApiTokenTable.tsx:79
 msgid "In Use"
 msgstr "ラベル印刷に使用するプラグインを選択します。"
 
-#: src/tables/settings/ApiTokenTable.tsx:87
+#: src/tables/settings/ApiTokenTable.tsx:88
 msgid "Last Seen"
 msgstr "最終表示"
 
-#: src/tables/settings/ApiTokenTable.tsx:92
+#: src/tables/settings/ApiTokenTable.tsx:93
 msgid "Expiry"
 msgstr "有効 期限"
 
-#: src/tables/settings/ApiTokenTable.tsx:112
+#: src/tables/settings/ApiTokenTable.tsx:124
 msgid "Show revoked tokens"
 msgstr "取り消されたトークンの表示"
 
-#: src/tables/settings/ApiTokenTable.tsx:131
+#: src/tables/settings/ApiTokenTable.tsx:143
 msgid "Revoke"
 msgstr "取消し"
 
-#: src/tables/settings/ApiTokenTable.tsx:155
+#: src/tables/settings/ApiTokenTable.tsx:167
 msgid "Error revoking token"
 msgstr "トークン失効エラー"
 
-#: src/tables/settings/ApiTokenTable.tsx:177
+#: src/tables/settings/ApiTokenTable.tsx:189
 msgid "Tokens are only shown once - make sure to note it down."
 msgstr "トークンは一度しか表示されません。"
 
@@ -10390,16 +10489,16 @@ msgstr "情報がありません"
 msgid "No error details are available for this task"
 msgstr "このタスクに関するエラーの詳細はありません。"
 
-#: src/tables/settings/GroupTable.tsx:68
+#: src/tables/settings/GroupTable.tsx:67
 msgid "Group with id {id} not found"
 msgstr "id {id} を持つグループが見つかりません。"
 
-#: src/tables/settings/GroupTable.tsx:70
+#: src/tables/settings/GroupTable.tsx:69
 msgid "An error occurred while fetching group details"
 msgstr "グループ詳細の取得中にエラーが発生しました"
 
-#: src/tables/settings/GroupTable.tsx:93
-#: src/tables/settings/GroupTable.tsx:194
+#: src/tables/settings/GroupTable.tsx:92
+#: src/tables/settings/GroupTable.tsx:193
 msgid "Name of the user group"
 msgstr "ユーザーグループ名"
 
@@ -10407,28 +10506,28 @@ msgstr "ユーザーグループ名"
 #~ msgid "Permission set"
 #~ msgstr "Permission set"
 
-#: src/tables/settings/GroupTable.tsx:167
-#: src/tables/settings/UserTable.tsx:312
+#: src/tables/settings/GroupTable.tsx:166
+#: src/tables/settings/UserTable.tsx:311
 msgid "Open Profile"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:182
+#: src/tables/settings/GroupTable.tsx:181
 msgid "Delete group"
 msgstr "グループの削除"
 
-#: src/tables/settings/GroupTable.tsx:183
+#: src/tables/settings/GroupTable.tsx:182
 msgid "Group deleted"
 msgstr "グループ削除"
 
-#: src/tables/settings/GroupTable.tsx:185
+#: src/tables/settings/GroupTable.tsx:184
 msgid "Are you sure you want to delete this group?"
 msgstr "本当にこのグループを削除してよいですか？"
 
-#: src/tables/settings/GroupTable.tsx:190
+#: src/tables/settings/GroupTable.tsx:189
 msgid "Add Group"
 msgstr "グループを追加"
 
-#: src/tables/settings/GroupTable.tsx:207
+#: src/tables/settings/GroupTable.tsx:206
 msgid "Add group"
 msgstr "グループ追加"
 
@@ -10436,7 +10535,7 @@ msgstr "グループ追加"
 #~ msgid "Edit group"
 #~ msgstr "Edit group"
 
-#: src/tables/settings/GroupTable.tsx:228
+#: src/tables/settings/GroupTable.tsx:227
 msgid "Edit Group"
 msgstr "グループを編集"
 
@@ -10454,12 +10553,12 @@ msgid "Uploaded"
 msgstr "アップロード"
 
 #: src/tables/settings/ImportSessionTable.tsx:109
-#: src/tables/settings/TemplateTable.tsx:365
+#: src/tables/settings/TemplateTable.tsx:364
 msgid "Model Type"
 msgstr "モデルタイプ"
 
 #: src/tables/settings/ImportSessionTable.tsx:110
-#: src/tables/settings/TemplateTable.tsx:366
+#: src/tables/settings/TemplateTable.tsx:365
 msgid "Filter by target model type"
 msgstr "対象機種による絞り込み"
 
@@ -10531,11 +10630,11 @@ msgstr "レポートの削除"
 #~ msgid "actions"
 #~ msgstr "actions"
 
-#: src/tables/settings/TemplateTable.tsx:162
+#: src/tables/settings/TemplateTable.tsx:161
 msgid "Template not found"
 msgstr "テンプレートが見つかりません"
 
-#: src/tables/settings/TemplateTable.tsx:164
+#: src/tables/settings/TemplateTable.tsx:163
 msgid "An error occurred while fetching template details"
 msgstr "テンプレートの詳細を取得中にエラーが発生しました"
 
@@ -10547,32 +10646,32 @@ msgstr "テンプレートの詳細を取得中にエラーが発生しました
 #~ msgid "Create new"
 #~ msgstr "Create new"
 
-#: src/tables/settings/TemplateTable.tsx:258
+#: src/tables/settings/TemplateTable.tsx:257
 msgid "Modify"
 msgstr "修正する"
 
-#: src/tables/settings/TemplateTable.tsx:259
+#: src/tables/settings/TemplateTable.tsx:258
 msgid "Modify template file"
 msgstr "テンプレートファイルの修正"
 
-#: src/tables/settings/TemplateTable.tsx:310
-#: src/tables/settings/TemplateTable.tsx:378
+#: src/tables/settings/TemplateTable.tsx:309
+#: src/tables/settings/TemplateTable.tsx:377
 msgid "Edit Template"
 msgstr "テンプレートを編集"
 
-#: src/tables/settings/TemplateTable.tsx:318
+#: src/tables/settings/TemplateTable.tsx:317
 msgid "Delete template"
 msgstr "テンプレートを削除"
 
-#: src/tables/settings/TemplateTable.tsx:324
+#: src/tables/settings/TemplateTable.tsx:323
 msgid "Add Template"
 msgstr "テンプレートを新規追加"
 
-#: src/tables/settings/TemplateTable.tsx:337
+#: src/tables/settings/TemplateTable.tsx:336
 msgid "Add template"
 msgstr "テンプレートを新規追加"
 
-#: src/tables/settings/TemplateTable.tsx:360
+#: src/tables/settings/TemplateTable.tsx:359
 msgid "Filter by enabled status"
 msgstr "有効なステータスによるフィルタリング"
 
@@ -10580,23 +10679,23 @@ msgstr "有効なステータスによるフィルタリング"
 #~ msgid "Report Output"
 #~ msgstr "Report Output"
 
-#: src/tables/settings/UserTable.tsx:120
+#: src/tables/settings/UserTable.tsx:119
 msgid "Groups updated"
 msgstr "グループ更新完了"
 
-#: src/tables/settings/UserTable.tsx:121
+#: src/tables/settings/UserTable.tsx:120
 msgid "User groups updated successfully"
 msgstr "ユーザーグループが正常に更新されました"
 
-#: src/tables/settings/UserTable.tsx:128
+#: src/tables/settings/UserTable.tsx:127
 msgid "Error updating user groups"
 msgstr "ユーザーグループの更新エラー"
 
-#: src/tables/settings/UserTable.tsx:147
+#: src/tables/settings/UserTable.tsx:146
 msgid "User with id {id} not found"
 msgstr "id {id} のユーザが見つかりません"
 
-#: src/tables/settings/UserTable.tsx:149
+#: src/tables/settings/UserTable.tsx:148
 msgid "An error occurred while fetching user details"
 msgstr "ユーザー詳細の取得中にエラーが発生しました"
 
@@ -10604,35 +10703,35 @@ msgstr "ユーザー詳細の取得中にエラーが発生しました"
 #~ msgid "No groups"
 #~ msgstr "No groups"
 
-#: src/tables/settings/UserTable.tsx:175
+#: src/tables/settings/UserTable.tsx:174
 msgid "Is Active"
 msgstr "アクティブです"
 
-#: src/tables/settings/UserTable.tsx:176
+#: src/tables/settings/UserTable.tsx:175
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr "このユーザーをアクティブとして扱うかどうかを指定します。アカウントを削除する代わりに、この選択を解除します。"
 
-#: src/tables/settings/UserTable.tsx:180
+#: src/tables/settings/UserTable.tsx:179
 msgid "Is Staff"
 msgstr "スタッフ"
 
-#: src/tables/settings/UserTable.tsx:181
+#: src/tables/settings/UserTable.tsx:180
 msgid "Designates whether the user can log into the django admin site."
 msgstr "ユーザが django admin サイトにログインできるかどうかを指定します。"
 
-#: src/tables/settings/UserTable.tsx:185
+#: src/tables/settings/UserTable.tsx:184
 msgid "Is Superuser"
 msgstr "スーパーユーザー"
 
-#: src/tables/settings/UserTable.tsx:186
+#: src/tables/settings/UserTable.tsx:185
 msgid "Designates that this user has all permissions without explicitly assigning them."
 msgstr "このユーザが明示的に権限を割り当てなくても、すべての権限を持つことを指定します。"
 
-#: src/tables/settings/UserTable.tsx:196
+#: src/tables/settings/UserTable.tsx:195
 msgid "You cannot edit the rights for the currently logged-in user."
 msgstr "現在ログインしているユーザーの権利は編集できません。"
 
-#: src/tables/settings/UserTable.tsx:215
+#: src/tables/settings/UserTable.tsx:214
 msgid "User Groups"
 msgstr "ユーザーグループ"
 
@@ -10640,71 +10739,71 @@ msgstr "ユーザーグループ"
 #~ msgid "Edit user"
 #~ msgstr "Edit user"
 
-#: src/tables/settings/UserTable.tsx:329
+#: src/tables/settings/UserTable.tsx:328
 msgid "Lock user"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:339
+#: src/tables/settings/UserTable.tsx:338
 msgid "Unlock user"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:355
+#: src/tables/settings/UserTable.tsx:354
 msgid "Delete user"
 msgstr "ユーザーの削除"
 
-#: src/tables/settings/UserTable.tsx:356
+#: src/tables/settings/UserTable.tsx:355
 msgid "User deleted"
 msgstr "ユーザーが削除されました"
 
-#: src/tables/settings/UserTable.tsx:358
+#: src/tables/settings/UserTable.tsx:357
 msgid "Are you sure you want to delete this user?"
 msgstr "このユーザーを削除してもよろしいですか？"
 
-#: src/tables/settings/UserTable.tsx:364
+#: src/tables/settings/UserTable.tsx:363
 msgid "Add User"
 msgstr "ユーザーを追加"
 
-#: src/tables/settings/UserTable.tsx:372
+#: src/tables/settings/UserTable.tsx:371
 msgid "Added user"
 msgstr "ユーザー追加"
 
-#: src/tables/settings/UserTable.tsx:379
+#: src/tables/settings/UserTable.tsx:378
 msgid "Set Password"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:384
+#: src/tables/settings/UserTable.tsx:383
 msgid "Password updated"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:395
+#: src/tables/settings/UserTable.tsx:394
 msgid "Add user"
 msgstr "ユーザーを追加"
 
-#: src/tables/settings/UserTable.tsx:408
+#: src/tables/settings/UserTable.tsx:407
 msgid "Show active users"
 msgstr "アクティブユーザーの表示"
 
-#: src/tables/settings/UserTable.tsx:413
+#: src/tables/settings/UserTable.tsx:412
 msgid "Show staff users"
 msgstr "スタッフユーザーを表示"
 
-#: src/tables/settings/UserTable.tsx:418
+#: src/tables/settings/UserTable.tsx:417
 msgid "Show superusers"
 msgstr "スーパーユーザーを表示"
 
-#: src/tables/settings/UserTable.tsx:437
+#: src/tables/settings/UserTable.tsx:436
 msgid "Edit User"
 msgstr "ユーザーを編集"
 
-#: src/tables/settings/UserTable.tsx:473
+#: src/tables/settings/UserTable.tsx:472
 msgid "User updated"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:474
+#: src/tables/settings/UserTable.tsx:473
 msgid "User updated successfully"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:480
+#: src/tables/settings/UserTable.tsx:479
 msgid "Error updating user"
 msgstr ""
 
@@ -10746,51 +10845,51 @@ msgstr "ロケーションタイプの削除"
 msgid "Icon"
 msgstr "アイコン"
 
-#: src/tables/stock/StockItemTable.tsx:98
+#: src/tables/stock/StockItemTable.tsx:99
 msgid "This stock item is in production"
 msgstr "この在庫商品は生産中です"
 
-#: src/tables/stock/StockItemTable.tsx:105
+#: src/tables/stock/StockItemTable.tsx:106
 msgid "This stock item has been assigned to a sales order"
 msgstr "この在庫商品は販売注文に割り当てられています。"
 
-#: src/tables/stock/StockItemTable.tsx:112
+#: src/tables/stock/StockItemTable.tsx:113
 msgid "This stock item has been assigned to a customer"
 msgstr "この在庫商品は顧客に割り当てられています"
 
-#: src/tables/stock/StockItemTable.tsx:119
+#: src/tables/stock/StockItemTable.tsx:120
 msgid "This stock item is installed in another stock item"
 msgstr "この在庫品は他の在庫品に取り付けられています"
 
-#: src/tables/stock/StockItemTable.tsx:126
+#: src/tables/stock/StockItemTable.tsx:127
 msgid "This stock item has been consumed by a build order"
 msgstr "このストックアイテムはビルドオーダーによって消費されました。"
 
-#: src/tables/stock/StockItemTable.tsx:133
+#: src/tables/stock/StockItemTable.tsx:134
 msgid "This stock item is unavailable"
 msgstr "この在庫はありません"
 
-#: src/tables/stock/StockItemTable.tsx:142
+#: src/tables/stock/StockItemTable.tsx:143
 msgid "This stock item has expired"
 msgstr "この在庫商品は有効期限が切れています"
 
-#: src/tables/stock/StockItemTable.tsx:146
+#: src/tables/stock/StockItemTable.tsx:147
 msgid "This stock item is stale"
 msgstr "この在庫商品は古くなっています。"
 
-#: src/tables/stock/StockItemTable.tsx:158
+#: src/tables/stock/StockItemTable.tsx:159
 msgid "This stock item is fully allocated"
 msgstr "このストックアイテムは完全に割り当てられています。"
 
-#: src/tables/stock/StockItemTable.tsx:165
+#: src/tables/stock/StockItemTable.tsx:166
 msgid "This stock item is partially allocated"
 msgstr "このストックアイテムは部分的に配分されています。"
 
-#: src/tables/stock/StockItemTable.tsx:193
+#: src/tables/stock/StockItemTable.tsx:194
 msgid "This stock item has been depleted"
 msgstr "この在庫はなくなりました"
 
-#: src/tables/stock/StockItemTable.tsx:297
+#: src/tables/stock/StockItemTable.tsx:299
 msgid "Stocktake Date"
 msgstr "ストックテイク日"
 
@@ -10798,184 +10897,152 @@ msgstr "ストックテイク日"
 #~ msgid "Show stock for assmebled parts"
 #~ msgstr "Show stock for assmebled parts"
 
-#: src/tables/stock/StockItemTable.tsx:315
+#: src/tables/stock/StockItemTable.tsx:317
 msgid "Show stock for active parts"
 msgstr "現役部品の在庫表示"
 
-#: src/tables/stock/StockItemTable.tsx:326
+#: src/tables/stock/StockItemTable.tsx:328
 msgid "Show stock for assembled parts"
 msgstr "組立部品の在庫表示"
 
-#: src/tables/stock/StockItemTable.tsx:331
+#: src/tables/stock/StockItemTable.tsx:333
 msgid "Show items which have been allocated"
 msgstr "割り当て済みのアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:336
+#: src/tables/stock/StockItemTable.tsx:338
 msgid "Show items which are available"
 msgstr "利用可能なアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:340
+#: src/tables/stock/StockItemTable.tsx:342
 #: src/tables/stock/StockLocationTable.tsx:38
 msgid "Include Sublocations"
 msgstr "サブロケーションを含む"
 
-#: src/tables/stock/StockItemTable.tsx:341
+#: src/tables/stock/StockItemTable.tsx:343
 msgid "Include stock in sublocations"
 msgstr "サブロケ地の在庫を含む"
 
-#: src/tables/stock/StockItemTable.tsx:345
+#: src/tables/stock/StockItemTable.tsx:347
 msgid "Depleted"
 msgstr "枯渇"
 
-#: src/tables/stock/StockItemTable.tsx:346
+#: src/tables/stock/StockItemTable.tsx:348
 msgid "Show depleted stock items"
 msgstr "在庫切れ商品の表示"
 
-#: src/tables/stock/StockItemTable.tsx:351
+#: src/tables/stock/StockItemTable.tsx:353
 msgid "Show items which are in stock"
 msgstr "在庫のある商品を表示"
 
-#: src/tables/stock/StockItemTable.tsx:356
+#: src/tables/stock/StockItemTable.tsx:358
 msgid "Show items which are in production"
 msgstr "生産中のアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:361
+#: src/tables/stock/StockItemTable.tsx:363
 msgid "Include stock items for variant parts"
 msgstr "バリアントパーツのストックアイテムを含む"
 
-#: src/tables/stock/StockItemTable.tsx:365
+#: src/tables/stock/StockItemTable.tsx:367
 msgid "Consumed"
 msgstr "消費済み"
 
-#: src/tables/stock/StockItemTable.tsx:366
+#: src/tables/stock/StockItemTable.tsx:368
 msgid "Show items which have been consumed by a build order"
 msgstr "ビルドオーダーで消費されたアイテムの表示"
 
-#: src/tables/stock/StockItemTable.tsx:371
+#: src/tables/stock/StockItemTable.tsx:373
 msgid "Show stock items which are installed in other items"
 msgstr "他のアイテムにインストールされているストックアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:375
+#: src/tables/stock/StockItemTable.tsx:377
 msgid "Sent to Customer"
 msgstr "お客様に送付"
 
-#: src/tables/stock/StockItemTable.tsx:376
+#: src/tables/stock/StockItemTable.tsx:378
 msgid "Show items which have been sent to a customer"
 msgstr "顧客に送られた商品を表示"
 
-#: src/tables/stock/StockItemTable.tsx:380
-msgid "Is Serialized"
-msgstr "連載中"
-
-#: src/tables/stock/StockItemTable.tsx:381
-msgid "Show items which have a serial number"
-msgstr "シリアル番号のある商品を表示"
-
-#: src/tables/stock/StockItemTable.tsx:386
-msgid "Filter items by batch code"
-msgstr "バッチコードによるアイテムのフィルタリング"
-
-#: src/tables/stock/StockItemTable.tsx:392
-msgid "Filter items by serial number"
-msgstr "シリアル番号で商品を絞り込む"
-
-#: src/tables/stock/StockItemTable.tsx:397
-msgid "Serial Number LTE"
-msgstr "シリアル番号 LTE"
-
-#: src/tables/stock/StockItemTable.tsx:398
-msgid "Show items with serial numbers less than or equal to a given value"
-msgstr "指定された値以下のシリアル番号のアイテムを表示します。"
-
-#: src/tables/stock/StockItemTable.tsx:403
-msgid "Serial Number GTE"
-msgstr "シリアル番号 GTE"
-
-#: src/tables/stock/StockItemTable.tsx:404
-msgid "Show items with serial numbers greater than or equal to a given value"
-msgstr "指定された値以上のシリアル番号を持つアイテムを表示します。"
-
-#: src/tables/stock/StockItemTable.tsx:409
-msgid "Has Batch Code"
-msgstr "バッチコード"
-
-#: src/tables/stock/StockItemTable.tsx:410
-msgid "Show items which have a batch code"
-msgstr "バッチコードを持つアイテムを表示"
-
-#: src/tables/stock/StockItemTable.tsx:415
+#: src/tables/stock/StockItemTable.tsx:389
 msgid "Show tracked items"
 msgstr "追跡済みアイテムの表示"
 
-#: src/tables/stock/StockItemTable.tsx:419
+#: src/tables/stock/StockItemTable.tsx:393
 msgid "Has Purchase Price"
 msgstr "購入価格"
 
-#: src/tables/stock/StockItemTable.tsx:420
+#: src/tables/stock/StockItemTable.tsx:394
 msgid "Show items which have a purchase price"
 msgstr "購入価格のある商品を表示"
 
-#: src/tables/stock/StockItemTable.tsx:425
+#: src/tables/stock/StockItemTable.tsx:397
+#~ msgid "Serial Number LTE"
+#~ msgstr "Serial Number LTE"
+
+#: src/tables/stock/StockItemTable.tsx:399
 msgid "Show items which have expired"
 msgstr "期限切れの商品を表示"
 
-#: src/tables/stock/StockItemTable.tsx:431
+#: src/tables/stock/StockItemTable.tsx:403
+#~ msgid "Serial Number GTE"
+#~ msgstr "Serial Number GTE"
+
+#: src/tables/stock/StockItemTable.tsx:405
 msgid "Show items which are stale"
 msgstr "古くなったアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:436
+#: src/tables/stock/StockItemTable.tsx:410
 msgid "Expired Before"
 msgstr "賞味期限切れ"
 
-#: src/tables/stock/StockItemTable.tsx:437
+#: src/tables/stock/StockItemTable.tsx:411
 msgid "Show items which expired before this date"
 msgstr "この日より前に賞味期限が切れた商品を表示"
 
-#: src/tables/stock/StockItemTable.tsx:443
+#: src/tables/stock/StockItemTable.tsx:417
 msgid "Expired After"
 msgstr "有効期限日数"
 
-#: src/tables/stock/StockItemTable.tsx:444
+#: src/tables/stock/StockItemTable.tsx:418
 msgid "Show items which expired after this date"
 msgstr "期限切れの商品を表示"
 
-#: src/tables/stock/StockItemTable.tsx:450
+#: src/tables/stock/StockItemTable.tsx:424
 msgid "Updated Before"
 msgstr "更新前"
 
-#: src/tables/stock/StockItemTable.tsx:451
+#: src/tables/stock/StockItemTable.tsx:425
 msgid "Show items updated before this date"
 msgstr "この日より前に更新されたアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:456
+#: src/tables/stock/StockItemTable.tsx:430
 msgid "Updated After"
 msgstr "更新後"
 
-#: src/tables/stock/StockItemTable.tsx:457
+#: src/tables/stock/StockItemTable.tsx:431
 msgid "Show items updated after this date"
 msgstr "この日以降に更新されたアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:462
+#: src/tables/stock/StockItemTable.tsx:436
 msgid "Stocktake Before"
 msgstr "ストックテイク前"
 
-#: src/tables/stock/StockItemTable.tsx:463
+#: src/tables/stock/StockItemTable.tsx:437
 msgid "Show items counted before this date"
 msgstr "この日より前にカウントされたアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:468
+#: src/tables/stock/StockItemTable.tsx:442
 msgid "Stocktake After"
 msgstr "ストックテイク後"
 
-#: src/tables/stock/StockItemTable.tsx:469
+#: src/tables/stock/StockItemTable.tsx:443
 msgid "Show items counted after this date"
 msgstr "この日以降にカウントされたアイテムを表示"
 
-#: src/tables/stock/StockItemTable.tsx:474
+#: src/tables/stock/StockItemTable.tsx:448
 msgid "External Location"
 msgstr "外部ロケーション"
 
-#: src/tables/stock/StockItemTable.tsx:475
+#: src/tables/stock/StockItemTable.tsx:449
 msgid "Show items in an external location"
 msgstr "外部ロケーションにアイテムを表示"
 
@@ -10983,49 +11050,53 @@ msgstr "外部ロケーションにアイテムを表示"
 #~ msgid "Delete stock items"
 #~ msgstr "Delete stock items"
 
+#: src/tables/stock/StockItemTable.tsx:544
+msgid "Order items"
+msgstr ""
+
 #: src/tables/stock/StockItemTable.tsx:595
-msgid "Add a new stock item"
-msgstr "新しいストックアイテムの追加"
+#~ msgid "Add a new stock item"
+#~ msgstr "Add a new stock item"
 
 #: src/tables/stock/StockItemTable.tsx:604
-msgid "Remove some quantity from a stock item"
-msgstr "在庫品から数量を削除"
+#~ msgid "Remove some quantity from a stock item"
+#~ msgstr "Remove some quantity from a stock item"
 
 #: src/tables/stock/StockItemTable.tsx:615
-msgid "Move Stock items to new locations"
-msgstr "在庫品の移動"
+#~ msgid "Move Stock items to new locations"
+#~ msgstr "Move Stock items to new locations"
 
 #: src/tables/stock/StockItemTable.tsx:622
-msgid "Change stock status"
-msgstr "在庫状況の変更"
+#~ msgid "Change stock status"
+#~ msgstr "Change stock status"
 
 #: src/tables/stock/StockItemTable.tsx:624
-msgid "Change the status of stock items"
-msgstr "在庫商品のステータス変更"
+#~ msgid "Change the status of stock items"
+#~ msgstr "Change the status of stock items"
 
 #: src/tables/stock/StockItemTable.tsx:631
-msgid "Merge stock"
-msgstr "株式の併合"
+#~ msgid "Merge stock"
+#~ msgstr "Merge stock"
 
 #: src/tables/stock/StockItemTable.tsx:633
-msgid "Merge stock items"
-msgstr "ストックアイテムのマージ"
+#~ msgid "Merge stock items"
+#~ msgstr "Merge stock items"
 
 #: src/tables/stock/StockItemTable.tsx:642
-msgid "Order new stock"
-msgstr "新しい在庫の注文"
+#~ msgid "Order new stock"
+#~ msgstr "Order new stock"
 
 #: src/tables/stock/StockItemTable.tsx:653
-msgid "Assign to customer"
-msgstr "顧客への割り当て"
+#~ msgid "Assign to customer"
+#~ msgstr "Assign to customer"
 
 #: src/tables/stock/StockItemTable.tsx:655
-msgid "Assign items to a customer"
-msgstr "顧客への商品の割り当て"
+#~ msgid "Assign items to a customer"
+#~ msgstr "Assign items to a customer"
 
 #: src/tables/stock/StockItemTable.tsx:662
-msgid "Delete stock"
-msgstr "在庫削除"
+#~ msgid "Delete stock"
+#~ msgstr "Delete stock"
 
 #: src/tables/stock/StockItemTestResultTable.tsx:138
 msgid "Test"

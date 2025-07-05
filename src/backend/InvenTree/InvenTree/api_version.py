@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 362
+INVENTREE_API_VERSION = 363
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v363 -> 2025-07-04 : https://github.com/inventree/InvenTree/pull/9954
+    - Adds "user_detail" field to the ApiToken serializer
 
 v362 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9939
     - Allow filtering of BuildItem API by "location" of StockItem
