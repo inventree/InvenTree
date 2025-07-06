@@ -2,7 +2,13 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useStore } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -34,6 +40,13 @@ export function SettingList({
   onChange?: () => void;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
+  useEffect(() => {
+    if (settingsState.loaded) {
+      // Call the onLoaded callback if provided
+      onLoaded?.(settingsState);
+    }
+  }, [settingsState.loaded, settingsState.settings]);
+
   const api = useApi();
 
   const allKeys = useMemo(

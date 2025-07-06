@@ -61,7 +61,7 @@ export default function UserPluginSettings() {
   return (
     <Stack gap='xs'>
       <Alert color='blue' icon={<IconInfoCircle />}>
-        <Text>{t`Configuration for plugins which require user specific settings`}</Text>
+        <Text>{t`User specific plugin settings`}</Text>
       </Alert>
       <Accordion multiple>
         {activePlugins.instance?.map((plugin: any) => {
