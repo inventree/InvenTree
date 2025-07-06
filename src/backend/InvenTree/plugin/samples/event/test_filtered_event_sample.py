@@ -13,9 +13,7 @@ class FilteredEventPluginSampleTests(TestCase):
     def test_run_event(self):
         """Check if the event is issued."""
         # Activate plugin
-        config = registry.get_plugin('filteredsampleevent').plugin_config()
-        config.active = True
-        config.save()
+        registry.set_plugin_state('filteredsampleevent', True)
 
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
@@ -29,9 +27,7 @@ class FilteredEventPluginSampleTests(TestCase):
     def test_ignore_event(self):
         """Check if the event is issued."""
         # Activate plugin
-        config = registry.get_plugin('filteredsampleevent').plugin_config()
-        config.active = True
-        config.save()
+        registry.set_plugin_state('filteredsampleevent', True)
 
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 

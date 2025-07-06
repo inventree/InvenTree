@@ -101,16 +101,18 @@ class PluginsRegistry:
         self.installed_apps = []  # Holds all added plugin_paths
 
     @property
-    def is_loading(self):
+    def is_loading(self) -> bool:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug, active=None, with_mixin=None):
+    def get_plugin(
+        self, slug: str, active: bool = True, with_mixin: Optional[str] = None
+    ) -> InvenTreePlugin:
         """Lookup plugin by slug (unique key).
 
         Args:
             slug (str): The slug of the plugin to look up.
-            active (bool, optional): Filter by 'active' status of the plugin. If None, no filtering is applied. Defaults to None.
+            active (bool, optional): Filter by 'active' status of the plugin. If None, no filtering is applied. Defaults to True.
             with_mixin (str, optional): Filter by mixin name. If None, no filtering is applied. Defaults to None.
 
         Returns:
@@ -136,7 +138,7 @@ class PluginsRegistry:
     def get_plugin_config(self, slug: str, name: Union[str, None] = None):
         """Return the matching PluginConfig instance for a given plugin.
 
-        Args:
+        Arguments:
             slug: The plugin slug
             name: The plugin name (optional)
         """
@@ -167,10 +169,10 @@ class PluginsRegistry:
 
         return cfg
 
-    def set_plugin_state(self, slug, state):
+    def set_plugin_state(self, slug: str, state: bool):
         """Set the state(active/inactive) of a plugin.
 
-        Args:
+        Arguments:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
@@ -374,7 +376,7 @@ class PluginsRegistry:
             # Ensure the lock is released always
             self.loading_lock.release()
 
-    def plugin_dirs(self):
+    def plugin_dirs(self) -> list[str]:
         """Construct a list of directories from where plugins can be loaded."""
         # Builtin plugins are *always* loaded
         dirs = ['plugin.builtin']
