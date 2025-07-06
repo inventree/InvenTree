@@ -119,21 +119,17 @@ export function PathColumn(props: TableColumnProps): TableColumn {
 
 export function PathColumnPlainText(props: TableColumnProps): TableColumn {
   return {
-    accessor: 'location',
-    title: t`Location`,
-    sortable: true,
-    ordering: 'location',
+    ...props,
+    accessor: props.accessor ?? 'path',
     render: (record: any) => {
-      const location = resolveItem(record, props.accessor ?? '');
-      if (!location) {
-        return (
-          <Text style={{ fontStyle: 'italic' }}>{t`No location set`}</Text>
-        );
+      const instance = resolveItem(record, props.accessor ?? '');
+
+      if (!instance || !instance.name) {
+        return '-';
       }
 
-      return <Text>{location.pathstring}</Text>;
-    },
-    ...props
+      return <Text>{instance.pathstring}</Text>;
+    }
   };
 }
 
@@ -157,6 +153,31 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
       title: t`Location`,
       sortable: true,
       ordering: 'location',
+      ...props
+    });
+  }
+}
+
+export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
+  const userSettings = useUserSettingsState.getState();
+  const enabled = userSettings.isSet(
+    'SHOW_FULL_LOCATION_PATH_IN_TABLES',
+    false
+  );
+  if (enabled) {
+    return PathColumnPlainText({
+      accessor: 'default_location',
+      title: t`Default Location`,
+      sortable: true,
+      ordering: 'default_location',
+      ...props
+    });
+  } else {
+    return PathColumn({
+      accessor: 'default_location',
+      title: t`Default Location`,
+      sortable: true,
+      ordering: 'default_location',
       ...props
     });
   }
