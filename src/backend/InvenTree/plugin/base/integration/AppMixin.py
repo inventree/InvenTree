@@ -115,7 +115,7 @@ class AppMixin:
             # unregister the models (yes, models are just kept in multilevel dicts)
             for model in models:
                 # remove model from general registry
-                apps.all_models[plugin_path].pop(model)
+                apps.all_models[plugin_path.split('.')[-1]].pop(model)
 
             # clear the registry for that app
             # so that the import trick will work on reloading the same plugin
