@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 363
+INVENTREE_API_VERSION = 364
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -9,6 +9,9 @@ INVENTREE_API_TEXT = """
 v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)
     - Remove NotificationSetting model (and associated endpoints)
+
+v364 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9962
+    - Fix permissions for the DataImportSession API endpoints
 
 v363 -> 2025-07-04 : https://github.com/inventree/InvenTree/pull/9954
     - Adds "user_detail" field to the ApiToken serializer
