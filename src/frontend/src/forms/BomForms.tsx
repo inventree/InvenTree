@@ -77,7 +77,7 @@ function BomItemSubstituteRow({
 
 type BomItemSubstituteFormProps = {
   bomItemId: number;
-  substitutes: any[];
+  bomItem: any;
   onClose?: () => void;
 };
 
@@ -88,8 +88,8 @@ export function useEditBomSubstitutesForm(props: BomItemSubstituteFormProps) {
   const [substitutes, setSubstitutes] = useState<any[]>([]);
 
   useEffect(() => {
-    setSubstitutes(props.substitutes);
-  }, [props.substitutes]);
+    setSubstitutes(props.bomItem?.substitutes ?? []);
+  }, [props.bomItem.substitutes]);
 
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
