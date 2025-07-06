@@ -169,6 +169,7 @@ export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
       accessor: 'default_location',
       title: t`Default Location`,
       sortable: true,
+      defaultVisible: false,
       ordering: 'default_location',
       ...props
     });
@@ -177,6 +178,7 @@ export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
       accessor: 'default_location',
       title: t`Default Location`,
       sortable: true,
+      defaultVisible: false,
       ordering: 'default_location',
       ...props
     });
