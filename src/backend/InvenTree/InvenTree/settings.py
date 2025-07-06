@@ -62,6 +62,8 @@ if TESTING:
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
+# Are we bypassing exceptions?
+TESTING_BYPASS_MAILCHECK = False  # Bypass email disablement for tests
 
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
