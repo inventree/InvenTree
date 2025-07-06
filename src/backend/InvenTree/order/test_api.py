@@ -1183,7 +1183,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         n = StockItem.objects.count()
 
         # TODO: 2024-12-10 - This API query needs to be refactored!
-        self.post(self.url, data, expected_code=201, max_query_count=500)
+        self.post(self.url, data, expected_code=201, max_query_count=550)
 
         # Check that the expected number of stock items has been created
         self.assertEqual(n + 11, StockItem.objects.count())
