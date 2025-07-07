@@ -1826,9 +1826,6 @@ class StockItem(
         # Create a new tracking entry for each item
         history_items = []
 
-        # Create duplicate test results for each item
-        test_results = []
-
         for item in items:
             # Construct a tracking entry for the new StockItem
             if entry := item.add_tracking_entry(
@@ -1841,29 +1838,10 @@ class StockItem(
             ):
                 history_items.append(entry)
 
-            # Create a new test result for each item
-            for test_result in list(self.test_results.all()):
-                # Create a copy of the test result
-                test_result.pk = None
-                test_result.stock_item_id = item.pk
-
-                # Add the test result to the list
-                test_results.append(test_result)
+            # Copy any test results from this item to the new one
+            item.copyTestResultsFrom(self)
 
         StockItemTracking.objects.bulk_create(history_items)
-        StockItemTestResult.objects.bulk_create(test_results)
-
-        # Duplicate test results
-        test_results = []
-
-        for test_result in self.test_results.all():
-            for item in items:
-                test_result.pk = None
-                test_result.stock_item = item
-
-                test_results.append(test_result)
-
-        StockItemTestResult.objects.bulk_create(test_results)
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
