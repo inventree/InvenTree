@@ -492,7 +492,7 @@ export default function BuildOutputTable({
           icon: <InvenTreeIcon icon='plus' />,
           onClick: () => {
             setSelectedOutputs([record]);
-            openDrawer();
+            openAllocationDrawer();
           }
         },
         {
@@ -661,8 +661,15 @@ export default function BuildOutputTable({
     trackedItems
   ]);
 
-  const [drawerOpen, { open: openDrawer, close: closeDrawer }] =
-    useDisclosure(false);
+  const [
+    allocationDrawerOpen,
+    { open: openAllocationDrawer, close: closeAllocationDrawer }
+  ] = useDisclosure(false);
+
+  const closeDrawer = useCallback(() => {
+    closeAllocationDrawer();
+    refetchTrackedItems();
+  }, [closeAllocationDrawer, refetchTrackedItems]);
 
   return (
     <>
@@ -677,7 +684,7 @@ export default function BuildOutputTable({
       <OutputAllocationDrawer
         build={build}
         output={selectedOutputs[0]}
-        opened={drawerOpen}
+        opened={allocationDrawerOpen}
         close={closeDrawer}
       />
       <Stack gap='xs'>
@@ -712,7 +719,7 @@ export default function BuildOutputTable({
             onRowClick: (record: any) => {
               if (hasTrackedItems && !!record.serial) {
                 setSelectedOutputs([record]);
-                openDrawer();
+                openAllocationDrawer();
               }
             }
           }}
