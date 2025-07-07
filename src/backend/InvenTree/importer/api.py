@@ -135,7 +135,7 @@ class DataImportSessionAcceptFields(APIView):
         return Response(importer.serializers.DataImportSessionSerializer(session).data)
 
 
-class DataImportSessionAcceptRows(DataImporterPermission, CreateAPI):
+class DataImportSessionAcceptRows(DataImporterPermissionMixin, CreateAPI):
     """API endpoint to accept the rows for a DataImportSession."""
 
     queryset = importer.models.DataImportSession.objects.all()
@@ -174,7 +174,7 @@ class DataImportColumnMappingDetail(DataImporterPermissionMixin, RetrieveUpdateA
     serializer_class = importer.serializers.DataImportColumnMapSerializer
 
 
-class DataImportRowList(DataImporterPermission, BulkDeleteMixin, ListAPI):
+class DataImportRowList(DataImporterPermissionMixin, BulkDeleteMixin, ListAPI):
     """API endpoint for accessing a list of DataImportRow objects."""
 
     queryset = importer.models.DataImportRow.objects.all()
@@ -189,7 +189,7 @@ class DataImportRowList(DataImporterPermission, BulkDeleteMixin, ListAPI):
     ordering = 'row_index'
 
 
-class DataImportRowDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
+class DataImportRowDetail(DataImporterPermissionMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportRow object."""
 
     queryset = importer.models.DataImportRow.objects.all()
