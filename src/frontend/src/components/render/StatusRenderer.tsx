@@ -133,6 +133,29 @@ export function getStatusCodeName(
 }
 
 /*
+ * Return the human-readable label for a status code
+ */
+export function getStatusCodeLabel(
+  type: ModelType | string,
+  key: string | number
+): string | null {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return null;
+  }
+
+  for (const name in statusCodes.values) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
+
+    if (entry.key == key) {
+      return entry.label;
+    }
+  }
+  return null;
+}
+
+/*
  * Render the status for a object.
  * Uses the values specified in "status_codes.py"
  */
