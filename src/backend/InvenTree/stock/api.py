@@ -1168,7 +1168,7 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
                 item.save(user=user)
 
-                response_data = serializer.data
+                response_data = [serializer.data]
 
         return Response(
             response_data,
