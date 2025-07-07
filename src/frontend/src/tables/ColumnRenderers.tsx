@@ -135,10 +135,7 @@ export function PathColumnPlainText(props: TableColumnProps): TableColumn {
 
 export function LocationColumn(props: TableColumnProps): TableColumn {
   const userSettings = useUserSettingsState.getState();
-  const enabled = userSettings.isSet(
-    'SHOW_FULL_LOCATION_PATH_IN_TABLES',
-    false
-  );
+  const enabled = userSettings.isSet('SHOW_FULL_LOCATION_IN_TABLES', false);
   if (enabled) {
     return PathColumnPlainText({
       accessor: 'location',
@@ -160,10 +157,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
 
 export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
   const userSettings = useUserSettingsState.getState();
-  const enabled = userSettings.isSet(
-    'SHOW_FULL_LOCATION_PATH_IN_TABLES',
-    false
-  );
+  const enabled = userSettings.isSet('SHOW_FULL_LOCATION_IN_TABLES', false);
   if (enabled) {
     return PathColumnPlainText({
       accessor: 'default_location',
@@ -187,10 +181,7 @@ export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
 
 export function CategoryColumn(props: TableColumnProps): TableColumn {
   const userSettings = useUserSettingsState.getState();
-  const enabled = userSettings.isSet(
-    'SHOW_FULL_CATEGORY_PATH_IN_TABLES',
-    false
-  );
+  const enabled = userSettings.isSet('SHOW_FULL_CATEGORY_IN_TABLES', false);
   if (enabled) {
     return PathColumnPlainText({
       accessor: 'category',

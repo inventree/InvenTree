@@ -56,8 +56,8 @@ export default function UserSettings() {
               'PART_SHOW_QUANTITY_IN_FORMS',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',
-              'SHOW_FULL_LOCATION_PATH_IN_TABLES',
-              'SHOW_FULL_CATEGORY_PATH_IN_TABLES'
+              'SHOW_FULL_LOCATION_IN_TABLES',
+              'SHOW_FULL_CATEGORY_IN_TABLES'
             ]}
           />
         )
