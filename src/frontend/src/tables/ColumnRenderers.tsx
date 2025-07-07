@@ -124,7 +124,7 @@ export function PathColumnPlainText(props: TableColumnProps): TableColumn {
     render: (record: any) => {
       const instance = resolveItem(record, props.accessor ?? '');
 
-      if (!instance || !instance.name) {
+      if (!instance || !instance.pathstring) {
         return '-';
       }
 
