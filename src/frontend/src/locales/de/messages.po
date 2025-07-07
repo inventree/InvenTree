@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-07-04 01:42\n"
+"PO-Revision-Date: 2025-07-06 08:26\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -54,7 +54,7 @@ msgstr "Teil"
 #: lib/enums/Roles.tsx:36
 #: src/components/nav/NavigationDrawer.tsx:77
 #: src/defaults/links.tsx:36
-#: src/pages/Index/Settings/SystemSettings.tsx:185
+#: src/pages/Index/Settings/SystemSettings.tsx:186
 #: src/pages/part/CategoryDetail.tsx:130
 #: src/pages/part/CategoryDetail.tsx:273
 #: src/pages/part/CategoryDetail.tsx:312
@@ -233,7 +233,7 @@ msgstr "Einkaufsbestellung"
 
 #: lib/enums/ModelInformation.tsx:147
 #: lib/enums/Roles.tsx:40
-#: src/pages/Index/Settings/SystemSettings.tsx:263
+#: src/pages/Index/Settings/SystemSettings.tsx:264
 #: src/pages/company/CompanyDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:265
 #: src/pages/part/PartDetail.tsx:613
@@ -264,7 +264,7 @@ msgstr "Verkaufsauftrag"
 
 #: lib/enums/ModelInformation.tsx:162
 #: lib/enums/Roles.tsx:44
-#: src/pages/Index/Settings/SystemSettings.tsx:279
+#: src/pages/Index/Settings/SystemSettings.tsx:280
 #: src/pages/company/CompanyDetail.tsx:218
 #: src/pages/part/PartDetail.tsx:625
 #: src/pages/sales/SalesIndex.tsx:82
@@ -288,7 +288,7 @@ msgstr "Rückgabe Auftrag"
 
 #: lib/enums/ModelInformation.tsx:178
 #: lib/enums/Roles.tsx:42
-#: src/pages/Index/Settings/SystemSettings.tsx:295
+#: src/pages/Index/Settings/SystemSettings.tsx:296
 #: src/pages/company/CompanyDetail.tsx:225
 #: src/pages/part/PartDetail.tsx:632
 #: src/pages/sales/SalesIndex.tsx:103
@@ -432,7 +432,7 @@ msgstr ""
 #: src/components/dashboard/DashboardLayout.tsx:224
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
-#: src/components/forms/fields/ApiFormField.tsx:258
+#: src/components/forms/fields/ApiFormField.tsx:259
 #: src/components/forms/fields/TableField.tsx:45
 #: src/components/importer/ImportDataSelector.tsx:188
 #: src/components/importer/ImporterColumnSelector.tsx:216
@@ -466,7 +466,7 @@ msgid "Admin"
 msgstr ""
 
 #: lib/enums/Roles.tsx:34
-#: src/pages/Index/Settings/SystemSettings.tsx:244
+#: src/pages/Index/Settings/SystemSettings.tsx:245
 #: src/pages/build/BuildIndex.tsx:75
 #: src/pages/part/PartDetail.tsx:580
 #: src/pages/sales/SalesOrderDetail.tsx:394
@@ -2422,8 +2422,8 @@ msgstr "Kontoeinstellungen"
 #: src/components/nav/MainMenu.tsx:67
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/pages/Index/Settings/SystemSettings.tsx:321
-#: src/pages/Index/Settings/SystemSettings.tsx:326
+#: src/pages/Index/Settings/SystemSettings.tsx:322
+#: src/pages/Index/Settings/SystemSettings.tsx:327
 msgid "System Settings"
 msgstr "Einstellungen"
 
@@ -2469,7 +2469,7 @@ msgstr "Abmelden"
 #: src/components/render/Part.tsx:30
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:733
-#: src/pages/Index/Settings/SystemSettings.tsx:219
+#: src/pages/Index/Settings/SystemSettings.tsx:220
 #: src/pages/part/PartDetail.tsx:537
 #: src/pages/stock/LocationDetail.tsx:390
 #: src/pages/stock/StockDetail.tsx:627
@@ -5735,7 +5735,7 @@ msgid "Data Management"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:268
-#: src/pages/Index/Settings/SystemSettings.tsx:170
+#: src/pages/Index/Settings/SystemSettings.tsx:171
 #: src/pages/Index/Settings/UserSettings.tsx:103
 msgid "Reporting"
 msgstr "Berichte"
@@ -5948,7 +5948,7 @@ msgstr "Preise"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:164
+#: src/pages/Index/Settings/SystemSettings.tsx:165
 msgid "Labels"
 msgstr "Beschriftungen"
 

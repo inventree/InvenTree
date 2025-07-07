@@ -1,0 +1,4 @@
+ID,Supplier Part,Quantity,Reference,Notes,Order,Build Order,Overdue,Received,Purchase price,Currency,Auto Pricing,Destination,Target Date,Total price,Link,SKU,MPN,Internal Part Number,Internal Part,Internal Part Name
+27,1034,100.0,,,11,,False,100.0,2.5,USD,True,,,250.0,,WE-10AWG-WT,,,897,Silicon Wire 10AWG White
+28,1033,10.0,,,11,,False,10.0,135.0,USD,True,,,1350.0,,WE-12AWG-BK-1000,,,899,Silicon Wire 12AWG Black
+29,1028,123.0,,,11,,False,123.0,1.0,USD,True,,,123.0,,WC-12AWG-WT,,,901,Silicon Wire 12AWG White

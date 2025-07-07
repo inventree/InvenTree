@@ -949,9 +949,13 @@ class Build(
 
                         # Filter stock items to only those which are in stock
                         # Note that we can accept "in production" items here
-                        available_items = filter(
-                            lambda item: item.is_in_stock(check_in_production=False),
-                            stock_items,
+                        available_items = list(
+                            filter(
+                                lambda item: item.is_in_stock(
+                                    check_in_production=False
+                                ),
+                                stock_items,
+                            )
                         )
 
                         if len(available_items) == 1:
