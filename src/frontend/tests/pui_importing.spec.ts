@@ -1,4 +1,5 @@
 import test from '@playwright/test';
+import { clearTableFilters, setTableChoiceFilter } from './helpers';
 import { doCachedLogin } from './login';
 
 test('Importing - Admin Center', async ({ browser }) => {
@@ -53,10 +54,62 @@ test('Importing - BOM', async ({ browser }) => {
 
   await page.getByText('Processing Data').waitFor();
   await page.getByText('0 / 4').waitFor();
+
+  await page.waitForTimeout(2500);
+
+  await page.getByText('Torx head screw, M3 thread, 10.0mm').first().waitFor();
+  await page.getByText('Small plastic enclosure, black').first().waitFor();
+
+  await clearTableFilters(page);
+
+  // Select some rows
   await page
-    .getByLabel('Importing DataUpload FileMap')
-    .getByText('002.01-PCBA | Widget Board')
-    .waitFor();
+    .getByRole('row', { name: 'Select record 1 0 Thumbnail' })
+    .getByLabel('Select record')
+    .click();
+  await page
+    .getByRole('row', { name: 'Select record 2 1 Thumbnail' })
+    .getByLabel('Select record')
+    .click();
+
+  // Delete selected rows
+  await page
+    .getByRole('dialog', { name: 'Importing Data Upload File 2' })
+    .getByLabel('action-button-delete-selected')
+    .click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+
+  await page.getByText('Success', { exact: true }).waitFor();
+  await page.getByText('Items deleted', { exact: true }).waitFor();
+
+  // Edit a row
+  await page
+    .getByRole('row', { name: 'Select record 1 2 Thumbnail' })
+    .getByLabel('row-action-menu-')
+    .click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('12');
+
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForTimeout(250);
+
+  await page.getByText('0 / 2', { exact: true }).waitFor();
+
+  // Submit a row
+  await page
+    .getByRole('row', { name: 'Select record 1 2 Thumbnail' })
+    .getByLabel('row-action-menu-')
+    .click();
+  await page.getByRole('menuitem', { name: 'Accept' }).click();
+  await page.getByText('1 / 2', { exact: true }).waitFor();
+
+  // Filter by "accepted" status
+  await page.getByText('1 - 2 / 2', { exact: true }).waitFor();
+
+  await setTableChoiceFilter(page, 'Complete', 'Yes');
+
+  await page.getByText('1 - 1 / 1', { exact: true }).waitFor();
 });
 
 test('Importing - Purchase Order', async ({ browser }) => {
