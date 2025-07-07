@@ -10,7 +10,7 @@ import {
   Stack,
   Stepper
 } from '@mantine/core';
-import { IconCheck } from '@tabler/icons-react';
+import { IconCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
@@ -85,7 +85,7 @@ export default function ImporterDrawer({
   const widget = useMemo(() => {
     if (session.sessionQuery.isError) {
       return (
-        <Alert color='red' title={t`Error`} icon={<IconCheck />}>
+        <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
           {t`Failed to fetch import session data`}
         </Alert>
       );
