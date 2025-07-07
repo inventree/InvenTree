@@ -79,6 +79,7 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
       'generator',
       props.key,
       props.endpoint,
+      props.modalId,
       props.initialQuery,
       modalState.openModals,
       debouncedQuery

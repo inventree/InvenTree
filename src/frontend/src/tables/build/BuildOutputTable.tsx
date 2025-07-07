@@ -38,7 +38,8 @@ import {
 } from '../../forms/BuildForms';
 import {
   type StockOperationProps,
-  useStockFields
+  useStockFields,
+  useStockItemSerializeFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -356,6 +357,28 @@ export default function BuildOutputTable({
     }
   });
 
+  const serializeStockFields = useStockItemSerializeFields({
+    partId: selectedOutputs[0]?.part,
+    trackable: selectedOutputs[0]?.part_detail?.trackable,
+    modalId: 'build-output-serialize'
+  });
+
+  const serializeOutput = useCreateApiFormModal({
+    url: ApiEndpoints.stock_serialize,
+    pk: selectedOutputs[0]?.pk,
+    title: t`Serialize Build Output`,
+    modalId: 'build-output-serialize',
+    fields: serializeStockFields,
+    initialData: {
+      quantity: selectedOutputs[0]?.quantity ?? 1,
+      destination: selectedOutputs[0]?.location ?? build.destination
+    },
+    onFormSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -473,6 +496,17 @@ export default function BuildOutputTable({
           onClick: () => {
             setSelectedOutputs([record]);
             deallocateBuildOutput.open();
+          }
+        },
+        {
+          title: t`Serialize`,
+          tooltip: t`Serialize build output`,
+          color: 'blue',
+          hidden: !record.part_detail?.trackable || !!record.serial,
+          icon: <InvenTreeIcon icon='serial' />,
+          onClick: () => {
+            setSelectedOutputs([record]);
+            serializeOutput.open();
           }
         },
         {
@@ -627,6 +661,7 @@ export default function BuildOutputTable({
       {editBuildOutput.modal}
       {deallocateBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
+      {serializeOutput.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       <OutputAllocationDrawer
         build={build}
