@@ -46,6 +46,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
@@ -151,6 +152,8 @@ export default function BuildOutputTable({
   const partId: number = useMemo(() => {
     return build.part ?? -1;
   }, [build.part]);
+
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   // Fetch the test templates associated with the partId
   const { data: testTemplates } = useQuery({
@@ -469,6 +472,8 @@ export default function BuildOutputTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const production = build?.status == buildStatus.PRODUCTION;
+
       return [
         RowViewAction({
           title: t`View Build Output`,
@@ -480,18 +485,24 @@ export default function BuildOutputTable({
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
           color: 'blue',
-          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
+          hidden:
+            !production ||
+            !hasTrackedItems ||
+            !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon='plus' />,
           onClick: () => {
             setSelectedOutputs([record]);
-            openDrawer();
+            openAllocationDrawer();
           }
         },
         {
           title: t`Deallocate`,
           tooltip: t`Deallocate stock from build output`,
           color: 'red',
-          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
+          hidden:
+            !production ||
+            !hasTrackedItems ||
+            !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon='minus' />,
           onClick: () => {
             setSelectedOutputs([record]);
@@ -548,7 +559,7 @@ export default function BuildOutputTable({
         }
       ];
     },
-    [user, partId, hasTrackedItems]
+    [buildStatus, user, partId, hasTrackedItems]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -650,8 +661,15 @@ export default function BuildOutputTable({
     trackedItems
   ]);
 
-  const [drawerOpen, { open: openDrawer, close: closeDrawer }] =
-    useDisclosure(false);
+  const [
+    allocationDrawerOpen,
+    { open: openAllocationDrawer, close: closeAllocationDrawer }
+  ] = useDisclosure(false);
+
+  const closeDrawer = useCallback(() => {
+    closeAllocationDrawer();
+    refetchTrackedItems();
+  }, [closeAllocationDrawer, refetchTrackedItems]);
 
   return (
     <>
@@ -666,7 +684,7 @@ export default function BuildOutputTable({
       <OutputAllocationDrawer
         build={build}
         output={selectedOutputs[0]}
-        opened={drawerOpen}
+        opened={allocationDrawerOpen}
         close={closeDrawer}
       />
       <Stack gap='xs'>
@@ -701,7 +719,7 @@ export default function BuildOutputTable({
             onRowClick: (record: any) => {
               if (hasTrackedItems && !!record.serial) {
                 setSelectedOutputs([record]);
-                openDrawer();
+                openAllocationDrawer();
               }
             }
           }}
