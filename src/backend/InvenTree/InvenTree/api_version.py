@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 364
+INVENTREE_API_VERSION = 365
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v365 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9969
+    - Correctly apply changes listed in v358
 
 v364 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9962
     - Fix permissions for the DataImportSession API endpoints
