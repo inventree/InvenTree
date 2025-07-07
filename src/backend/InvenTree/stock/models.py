@@ -1857,17 +1857,24 @@ class StockItem(
             item.save()
 
     @transaction.atomic
-    def copyTestResultsFrom(self, other, filters=None):
+    def copyTestResultsFrom(self, other: StockItem, filters: Optional[dict] = None):
         """Copy all test results from another StockItem."""
         # Set default - see B006
-        if filters is None:
-            filters = {}
 
-        for result in other.test_results.all().filter(**filters):
+        results = other.test_results.all()
+
+        if filters:
+            results = results.filter(**filters)
+
+        results_to_create = []
+
+        for result in list(results):
             # Create a copy of the test result by nulling-out the pk
             result.pk = None
             result.stock_item = self
-            result.save()
+            results_to_create.append(result)
+
+        StockItemTestResult.objects.bulk_create(results_to_create)
 
     def add_test_result(self, create_template=True, **kwargs):
         """Helper function to add a new StockItemTestResult.
