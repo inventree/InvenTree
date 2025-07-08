@@ -3,16 +3,6 @@
  * @param page - The page object
  */
 export const openFilterDrawer = async (page) => {
-  if (
-    await page
-      .getByRole('dialog', { name: 'Table Filters' })
-      .getByRole('banner')
-      .isVisible({ timeout: 500 })
-  ) {
-    // If the filter drawer is already open, do nothing
-    return;
-  }
-
   await page.getByLabel('table-select-filters').click();
 };
 
