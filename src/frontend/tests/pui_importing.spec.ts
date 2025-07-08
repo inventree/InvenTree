@@ -51,15 +51,18 @@ test('Importing - BOM', async ({ browser }) => {
 
   await page.getByText('Mapping data columns to database fields').waitFor();
   await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
+  await page.waitForTimeout(500);
 
-  await page.getByText('Processing Data').waitFor();
+  await page.getByText('Importing Data').waitFor();
   await page.getByText('0 / 4').waitFor();
-
-  await page.waitForTimeout(2500);
 
   await page.getByText('Torx head screw, M3 thread, 10.0mm').first().waitFor();
   await page.getByText('Small plastic enclosure, black').first().waitFor();
 
+  await page
+    .getByRole('dialog', { name: 'Importing Data Upload File 2' })
+    .getByLabel('table-select-filters')
+    .click();
   await clearTableFilters(page);
 
   // Select some rows
@@ -107,6 +110,10 @@ test('Importing - BOM', async ({ browser }) => {
   // Filter by "accepted" status
   await page.getByText('1 - 2 / 2', { exact: true }).waitFor();
 
+  await page
+    .getByRole('dialog', { name: 'Importing Data Upload File' })
+    .getByLabel('table-select-filters')
+    .click();
   await setTableChoiceFilter(page, 'Complete', 'Yes');
 
   await page.getByText('1 - 1 / 1', { exact: true }).waitFor();
