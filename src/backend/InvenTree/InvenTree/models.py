@@ -554,12 +554,17 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
 
         order_insertion_by = ['name']
 
-    def delete(self, delete_children=False, delete_items=False):
+    def delete(self, delete_children: bool = False, delete_items: bool = False):
         """Handle the deletion of a tree node.
 
-        1. Update nodes and items under the current node
-        2. Delete this node
-        3. Rebuild the model tree
+        Arguments:
+            delete_children: If True, delete all child nodes (otherwise, point to the parent of this node)
+            delete_items: If True, delete all items associated with this node (otherwise, point to the parent of this node)
+
+        Order of operations:
+            1. Update nodes and items under the current node
+            2. Delete this node
+            3. Rebuild the model tree
         """
         tree_id = self.tree_id if self.parent else None
 
