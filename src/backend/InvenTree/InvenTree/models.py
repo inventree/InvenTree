@@ -785,14 +785,14 @@ class PathStringMixin(models.Model):
 
     def save(self, *args, **kwargs):
         """Update the pathstring field when saving the model instance."""
-        pathstring = self.construct_pathstring()
-
-        rebuild = pathstring != self.pathstring
+        old_pathstring = self.pathstring
 
         # Rebuild upper first, to ensure the lower nodes are updated correctly
         super().save(*args, **kwargs)
 
-        if rebuild:
+        pathstring = self.construct_pathstring()
+
+        if pathstring != old_pathstring:
             kwargs.pop('force_insert', None)
             kwargs['force_update'] = True
 

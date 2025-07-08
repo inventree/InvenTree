@@ -58,81 +58,6 @@ class StockTestBase(InvenTreeTestCase):
 class StockTest(StockTestBase):
     """Tests to ensure that the stock location tree functions correctly."""
 
-    def test_pathstring(self):
-        """Check that pathstring updates occur as expected."""
-        a = StockLocation.objects.create(name='A')
-        b = StockLocation.objects.create(name='B', parent=a)
-        c = StockLocation.objects.create(name='C', parent=b)
-        d = StockLocation.objects.create(name='D', parent=c)
-
-        def refresh():
-            a.refresh_from_db()
-            b.refresh_from_db()
-            c.refresh_from_db()
-            d.refresh_from_db()
-
-        # Initial checks
-        self.assertEqual(a.pathstring, 'A')
-        self.assertEqual(b.pathstring, 'A/B')
-        self.assertEqual(c.pathstring, 'A/B/C')
-        self.assertEqual(d.pathstring, 'A/B/C/D')
-
-        c.name = 'Cc'
-        c.save()
-
-        refresh()
-        self.assertEqual(a.pathstring, 'A')
-        self.assertEqual(b.pathstring, 'A/B')
-        self.assertEqual(c.pathstring, 'A/B/Cc')
-        self.assertEqual(d.pathstring, 'A/B/Cc/D')
-
-        b.name = 'Bb'
-        b.save()
-
-        refresh()
-        self.assertEqual(a.pathstring, 'A')
-        self.assertEqual(b.pathstring, 'A/Bb')
-        self.assertEqual(c.pathstring, 'A/Bb/Cc')
-        self.assertEqual(d.pathstring, 'A/Bb/Cc/D')
-
-        a.name = 'Aa'
-        a.save()
-
-        refresh()
-        self.assertEqual(a.pathstring, 'Aa')
-        self.assertEqual(b.pathstring, 'Aa/Bb')
-        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
-        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/D')
-
-        d.name = 'Dd'
-        d.save()
-
-        refresh()
-        self.assertEqual(a.pathstring, 'Aa')
-        self.assertEqual(b.pathstring, 'Aa/Bb')
-        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
-        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/Dd')
-
-        # Test a really long name
-        # (it will be clipped to < 250 characters)
-        a.name = 'A' * 100
-        a.save()
-        b.name = 'B' * 100
-        b.save()
-        c.name = 'C' * 100
-        c.save()
-        d.name = 'D' * 100
-        d.save()
-
-        refresh()
-        self.assertEqual(len(a.pathstring), 100)
-        self.assertEqual(len(b.pathstring), 201)
-        self.assertEqual(len(c.pathstring), 249)
-        self.assertEqual(len(d.pathstring), 249)
-
-        self.assertTrue(d.pathstring.startswith('AAAAAAAA'))
-        self.assertTrue(d.pathstring.endswith('DDDDDDDD'))
-
     def test_link(self):
         """Test the link URL field validation."""
         item = StockItem.objects.get(pk=1)
@@ -768,132 +693,6 @@ class StockTest(StockTestBase):
         # Serialize the remainder of the stock
         item.serializeStock(2, [99, 100], self.user)
 
-    def test_location_tree(self):
-        """Unit tests for stock location tree structure (MPTT).
-
-        Ensure that the MPTT structure is rebuilt correctly,
-        and the current ancestor tree is observed.
-
-        Ref: https://github.com/inventree/InvenTree/issues/2636
-        Ref: https://github.com/inventree/InvenTree/issues/2733
-        """
-        # First, we will create a stock location structure
-
-        A = StockLocation.objects.create(name='A', description='Top level location')
-        B1 = StockLocation.objects.create(name='B1', parent=A)
-        B2 = StockLocation.objects.create(name='B2', parent=A)
-        B3 = StockLocation.objects.create(name='B3', parent=A)
-        C11 = StockLocation.objects.create(name='C11', parent=B1)
-        C12 = StockLocation.objects.create(name='C12', parent=B1)
-        C21 = StockLocation.objects.create(name='C21', parent=B2)
-        C22 = StockLocation.objects.create(name='C22', parent=B2)
-        C31 = StockLocation.objects.create(name='C31', parent=B3)
-        C32 = StockLocation.objects.create(name='C32', parent=B3)
-
-        # Check that the tree_id is correct for each sublocation
-        for loc in [B1, B2, B3, C11, C12, C21, C22, C31, C32]:
-            self.assertEqual(loc.tree_id, A.tree_id)
-
-        # Check that the tree levels are correct for each node in the tree
-
-        self.assertEqual(A.level, 0)
-        self.assertEqual(A.get_ancestors().count(), 0)
-
-        for loc in [B1, B2, B3]:
-            self.assertEqual(loc.parent, A)
-            self.assertEqual(loc.level, 1)
-            self.assertEqual(loc.get_ancestors().count(), 1)
-
-        for loc in [C11, C12]:
-            self.assertEqual(loc.parent, B1)
-            self.assertEqual(loc.level, 2)
-            self.assertEqual(loc.get_ancestors().count(), 2)
-
-        for loc in [C21, C22]:
-            self.assertEqual(loc.parent, B2)
-            self.assertEqual(loc.level, 2)
-            self.assertEqual(loc.get_ancestors().count(), 2)
-
-        for loc in [C31, C32]:
-            self.assertEqual(loc.parent, B3)
-            self.assertEqual(loc.level, 2)
-            self.assertEqual(loc.get_ancestors().count(), 2)
-
-        # Spot-check for C32
-        ancestors = C32.get_ancestors(include_self=True)
-
-        self.assertEqual(ancestors[0], A)
-        self.assertEqual(ancestors[1], B3)
-        self.assertEqual(ancestors[2], C32)
-
-        # At this point, we are confident that the tree is correctly structured.
-
-        # Let's delete node B3 from the tree. We expect that:
-        # - C31 should move directly under A
-        # - C32 should move directly under A
-
-        # Add some stock items to B3
-        for _ in range(10):
-            StockItem.objects.create(
-                part=Part.objects.get(pk=1), quantity=10, location=B3
-            )
-
-        self.assertEqual(StockItem.objects.filter(location=B3).count(), 10)
-        self.assertEqual(StockItem.objects.filter(location=A).count(), 0)
-
-        B3.delete()
-
-        A.refresh_from_db()
-        C31.refresh_from_db()
-        C32.refresh_from_db()
-
-        # Stock items have been moved to A
-        self.assertEqual(StockItem.objects.filter(location=A).count(), 10)
-
-        # Parent should be A
-        self.assertEqual(C31.parent, A)
-        self.assertEqual(C32.parent, A)
-
-        self.assertEqual(C31.tree_id, A.tree_id)
-        self.assertEqual(C31.level, 1)
-
-        self.assertEqual(C32.tree_id, A.tree_id)
-        self.assertEqual(C32.level, 1)
-
-        # Ancestor tree should be just A
-        ancestors = C31.get_ancestors()
-        self.assertEqual(ancestors.count(), 1)
-        self.assertEqual(ancestors[0], A)
-
-        ancestors = C32.get_ancestors()
-        self.assertEqual(ancestors.count(), 1)
-        self.assertEqual(ancestors[0], A)
-
-        # Delete A
-        A.delete()
-
-        # Stock items have been moved to top-level location
-        self.assertEqual(StockItem.objects.filter(location=None).count(), 10)
-
-        for loc in [B1, B2, C11, C12, C21, C22]:
-            loc.refresh_from_db()
-
-        self.assertEqual(B1.parent, None)
-        self.assertEqual(B2.parent, None)
-
-        self.assertEqual(C11.parent, B1)
-        self.assertEqual(C12.parent, B1)
-        self.assertEqual(C11.get_ancestors().count(), 1)
-        self.assertEqual(C12.get_ancestors().count(), 1)
-
-        self.assertEqual(C21.parent, B2)
-        self.assertEqual(C22.parent, B2)
-
-        ancestors = C21.get_ancestors()
-
-        self.assertEqual(C21.get_ancestors().count(), 1)
-        self.assertEqual(C22.get_ancestors().count(), 1)
-
     def test_metadata(self):
         """Unit tests for the metadata field."""
         for model in [StockItem, StockLocation]:
@@ -1100,6 +899,211 @@ class VariantTest(StockTestBase):
 
         item.serial = int(n) + 2
         item.save()
+
+
+class StockLocationTreeTest(StockTestBase):
+    """Unit test for the StockLocation tree structure."""
+
+    def test_pathstring(self):
+        """Check that pathstring updates occur as expected."""
+        a = StockLocation.objects.create(name='A')
+        b = StockLocation.objects.create(name='B', parent=a)
+        c = StockLocation.objects.create(name='C', parent=b)
+        d = StockLocation.objects.create(name='D', parent=c)
+
+        def refresh():
+            a.refresh_from_db()
+            b.refresh_from_db()
+            c.refresh_from_db()
+            d.refresh_from_db()
+
+        # Initial checks
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/B')
+        self.assertEqual(c.pathstring, 'A/B/C')
+        self.assertEqual(d.pathstring, 'A/B/C/D')
+
+        c.name = 'Cc'
+        c.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/B')
+        self.assertEqual(c.pathstring, 'A/B/Cc')
+        self.assertEqual(d.pathstring, 'A/B/Cc/D')
+
+        b.name = 'Bb'
+        b.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/Bb')
+        self.assertEqual(c.pathstring, 'A/Bb/Cc')
+        self.assertEqual(d.pathstring, 'A/Bb/Cc/D')
+
+        a.name = 'Aa'
+        a.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, 'Aa')
+        self.assertEqual(b.pathstring, 'Aa/Bb')
+        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
+        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/D')
+
+        d.name = 'Dd'
+        d.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, 'Aa')
+        self.assertEqual(b.pathstring, 'Aa/Bb')
+        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
+        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/Dd')
+
+        # Test a really long name
+        # (it will be clipped to < 250 characters)
+        a.name = 'A' * 100
+        a.save()
+        b.name = 'B' * 100
+        b.save()
+        c.name = 'C' * 100
+        c.save()
+        d.name = 'D' * 100
+        d.save()
+
+        refresh()
+        self.assertEqual(len(a.pathstring), 100)
+        self.assertEqual(len(b.pathstring), 201)
+        self.assertEqual(len(c.pathstring), 249)
+        self.assertEqual(len(d.pathstring), 249)
+
+        self.assertTrue(d.pathstring.startswith('AAAAAAAA'))
+        self.assertTrue(d.pathstring.endswith('DDDDDDDD'))
+
+    def test_location_tree(self):
+        """Unit tests for stock location tree structure (MPTT).
+
+        Ensure that the MPTT structure is rebuilt correctly,
+        and the current ancestor tree is observed.
+
+        Ref: https://github.com/inventree/InvenTree/issues/2636
+        Ref: https://github.com/inventree/InvenTree/issues/2733
+        """
+        # First, we will create a stock location structure
+
+        A = StockLocation.objects.create(name='A', description='Top level location')
+        B1 = StockLocation.objects.create(name='B1', parent=A)
+        B2 = StockLocation.objects.create(name='B2', parent=A)
+        B3 = StockLocation.objects.create(name='B3', parent=A)
+        C11 = StockLocation.objects.create(name='C11', parent=B1)
+        C12 = StockLocation.objects.create(name='C12', parent=B1)
+        C21 = StockLocation.objects.create(name='C21', parent=B2)
+        C22 = StockLocation.objects.create(name='C22', parent=B2)
+        C31 = StockLocation.objects.create(name='C31', parent=B3)
+        C32 = StockLocation.objects.create(name='C32', parent=B3)
+
+        # Check that the tree_id is correct for each sublocation
+        for loc in [B1, B2, B3, C11, C12, C21, C22, C31, C32]:
+            self.assertEqual(loc.tree_id, A.tree_id)
+
+        # Check that the tree levels are correct for each node in the tree
+
+        self.assertEqual(A.level, 0)
+        self.assertEqual(A.get_ancestors().count(), 0)
+
+        for loc in [B1, B2, B3]:
+            self.assertEqual(loc.parent, A)
+            self.assertEqual(loc.level, 1)
+            self.assertEqual(loc.get_ancestors().count(), 1)
+
+        for loc in [C11, C12]:
+            self.assertEqual(loc.parent, B1)
+            self.assertEqual(loc.level, 2)
+            self.assertEqual(loc.get_ancestors().count(), 2)
+
+        for loc in [C21, C22]:
+            self.assertEqual(loc.parent, B2)
+            self.assertEqual(loc.level, 2)
+            self.assertEqual(loc.get_ancestors().count(), 2)
+
+        for loc in [C31, C32]:
+            self.assertEqual(loc.parent, B3)
+            self.assertEqual(loc.level, 2)
+            self.assertEqual(loc.get_ancestors().count(), 2)
+
+        # Spot-check for C32
+        ancestors = C32.get_ancestors(include_self=True)
+
+        self.assertEqual(ancestors[0], A)
+        self.assertEqual(ancestors[1], B3)
+        self.assertEqual(ancestors[2], C32)
+
+        # At this point, we are confident that the tree is correctly structured.
+
+        # Let's delete node B3 from the tree. We expect that:
+        # - C31 should move directly under A
+        # - C32 should move directly under A
+
+        # Add some stock items to B3
+        for _ in range(10):
+            StockItem.objects.create(
+                part=Part.objects.get(pk=1), quantity=10, location=B3
+            )
+
+        self.assertEqual(StockItem.objects.filter(location=B3).count(), 10)
+        self.assertEqual(StockItem.objects.filter(location=A).count(), 0)
+
+        B3.delete()
+
+        A.refresh_from_db()
+        C31.refresh_from_db()
+        C32.refresh_from_db()
+
+        # Stock items have been moved to A
+        self.assertEqual(StockItem.objects.filter(location=A).count(), 10)
+
+        # Parent should be A
+        self.assertEqual(C31.parent, A)
+        self.assertEqual(C32.parent, A)
+
+        self.assertEqual(C31.tree_id, A.tree_id)
+        self.assertEqual(C31.level, 1)
+
+        self.assertEqual(C32.tree_id, A.tree_id)
+        self.assertEqual(C32.level, 1)
+
+        # Ancestor tree should be just A
+        ancestors = C31.get_ancestors()
+        self.assertEqual(ancestors.count(), 1)
+        self.assertEqual(ancestors[0], A)
+
+        ancestors = C32.get_ancestors()
+        self.assertEqual(ancestors.count(), 1)
+        self.assertEqual(ancestors[0], A)
+
+        # Delete A
+        A.delete()
+
+        # Stock items have been moved to top-level location
+        self.assertEqual(StockItem.objects.filter(location=None).count(), 10)
+
+        for loc in [B1, B2, C11, C12, C21, C22]:
+            loc.refresh_from_db()
+
+        self.assertEqual(B1.parent, None)
+        self.assertEqual(B2.parent, None)
+
+        self.assertEqual(C11.parent, B1)
+        self.assertEqual(C12.parent, B1)
+        self.assertEqual(C11.get_ancestors().count(), 1)
+        self.assertEqual(C12.get_ancestors().count(), 1)
+
+        self.assertEqual(C21.parent, B2)
+        self.assertEqual(C22.parent, B2)
+
+        ancestors = C21.get_ancestors()
+
+        self.assertEqual(C21.get_ancestors().count(), 1)
+        self.assertEqual(C22.get_ancestors().count(), 1)
 
 
 class StockTreeTest(StockTestBase):
