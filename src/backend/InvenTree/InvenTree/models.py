@@ -661,7 +661,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Arguments:
             nodes: A queryset of nodes to delete
         """
-        nodes.update(**{self.ITEM_PARENT_KEY: None})
+        nodes.update(**{self.NODE_PARENT_KEY: None})
         nodes.delete()
 
     def api_instance_filters(self):
