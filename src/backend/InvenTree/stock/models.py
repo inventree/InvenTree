@@ -628,7 +628,7 @@ class StockItem(
         StockItem.objects.bulk_create(items)
 
         # We will need to rebuild the stock item tree manually, due to the bulk_create operation
-        stock.tasks.rebuild_stock_item_tree(tree_id, group='stock')
+        stock.tasks.rebuild_stock_item_tree(tree_id)
 
         # Return the newly created StockItem objects
         return StockItem.objects.filter(part=part, serial__in=serials)
@@ -1752,8 +1752,8 @@ class StockItem(
         self,
         quantity: int,
         serials: list[str],
-        user: User,
-        notes: str = '',
+        user: Optional[User] = None,
+        notes: Optional[str] = '',
         location: Optional[StockLocation] = None,
     ):
         """Split this stock item into unique serial numbers.
@@ -2096,6 +2096,9 @@ class StockItem(
 
         if not rebuild_result:
             # If the rebuild failed, offload the task to a background worker
+            logger.warning(
+                'Failed to rebuild stock item tree during merge_stock_items operation, offloading task.'
+            )
             InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_items, group='stock')
 
     @transaction.atomic
