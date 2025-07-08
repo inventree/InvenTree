@@ -526,16 +526,7 @@ class InvenTreeAttachmentMixin:
 
 
 class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
-    """Provides an abstracted self-referencing tree model for data categories.
-
-    - Each Category has one parent Category, which can be blank (for a top-level Category).
-    - Each Category can have zero-or-more child Category(y/ies)
-
-    Attributes:
-        name: brief name
-        description: longer form description
-        parent: The item immediately above this one. An item with a null parent is a top-level item
-    """
+    """Provides an abstracted self-referencing tree model for data categories."""
 
     # How each node reference its parent object
     NODE_PARENT_KEY = 'parent'
@@ -550,7 +541,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         abstract = True
 
     class MPTTMeta:
-        """Set insert order."""
+        """MPTT metaclass options."""
 
         order_insertion_by = ['name']
 
@@ -589,14 +580,15 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         if tree_id:
             try:
                 self.__class__.objects.partial_rebuild(tree_id)
-            except Exception:
+            except Exception as e:
                 InvenTree.exceptions.log_error(
                     f'{self.__class__.__name__}.partial_rebuild'
                 )
-                logger.warning(
-                    'Failed to rebuild tree for %s <%s>',
+                logger.exception(
+                    'Failed to rebuild tree for %s <%s>: %s',
                     self.__class__.__name__,
                     self.pk,
+                    e,
                 )
                 # If the partial rebuild fails, rebuild the entire tree
                 self.__class__.objects.rebuild()
