@@ -137,6 +137,7 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 class StockLocation(
     InvenTree.models.InvenTreeBarcodeMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.PathStringMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """Organization tree for StockItem objects.

@@ -70,7 +70,7 @@ from stock import models as StockModels
 logger = structlog.get_logger('inventree')
 
 
-class PartCategory(InvenTree.models.InvenTreeTree):
+class PartCategory(InvenTree.models.PathStringMixin, InvenTree.models.InvenTreeTree):
     """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
