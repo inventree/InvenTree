@@ -14,7 +14,7 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_delete, post_save, pre_delete
+from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError
 from django.dispatch import receiver
 from django.urls import reverse
@@ -23,7 +23,7 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import TreeForeignKey
 from taggit.managers import TaggableManager
 
 import build.models
@@ -415,10 +415,8 @@ class StockItem(
     InvenTree.models.InvenTreeNotesMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
     common.models.MetaMixin,
-    MPTTModel,
+    InvenTree.models.InvenTreeTree,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 
@@ -453,6 +451,11 @@ class StockItem(
         """Model meta options."""
 
         verbose_name = _('Stock Item')
+
+    class MPTTMeta:
+        """MPTT metaclass options."""
+
+        order_insertion_by = ['part']
 
     @staticmethod
     def get_api_url():
@@ -603,11 +606,13 @@ class StockItem(
         part = data['part']
         tree_id = kwargs.pop('tree_id', 0)
 
-        data['parent'] = kwargs.pop('parent', None) or data.get('parent')
-        data['tree_id'] = tree_id
-        data['level'] = kwargs.pop('level', 0)
-        data['rght'] = kwargs.pop('rght', 0)
-        data['lft'] = kwargs.pop('lft', 0)
+        parent = kwargs.pop('parent', None) or data.get('parent')
+
+        data['parent'] = parent
+        data['tree_id'] = tree_id if parent else None
+        data['level'] = 0
+        data['lft'] = 0
+        data['rght'] = 0
 
         # Force single quantity for each item
         data['quantity'] = 1
@@ -623,9 +628,7 @@ class StockItem(
         StockItem.objects.bulk_create(items)
 
         # We will need to rebuild the stock item tree manually, due to the bulk_create operation
-        InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock'
-        )
+        stock.tasks.rebuild_stock_item_tree(tree_id, group='stock')
 
         # Return the newly created StockItem objects
         return StockItem.objects.filter(part=part, serial__in=serials)
@@ -2086,10 +2089,14 @@ class StockItem(
         self.save()
 
         # Rebuild stock trees as required
+        rebuild_result = True
         for tree_id in tree_ids:
-            InvenTree.tasks.offload_task(
-                stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock'
-            )
+            if not stock.tasks.rebuild_stock_item_tree(tree_id, rebuild_on_fail=False):
+                rebuild_result = False
+
+        if not rebuild_result:
+            # If the rebuild failed, offload the task to a background worker
+            InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_items, group='stock')
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -2151,7 +2158,6 @@ class StockItem(
 
         # Update the new stock item to ensure the tree structure is observed
         new_stock.parent = self
-        new_stock.level = self.level + 1
 
         # Move to the new location if specified, otherwise use current location
         if location:
@@ -2193,9 +2199,7 @@ class StockItem(
         )
 
         # Rebuild the tree for this parent item
-        InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='stock'
-        )
+        stock.tasks.rebuild_stock_item_tree(self.tree_id)
 
         # Attempt to reload the new item from the database
         try:
@@ -2647,19 +2651,6 @@ class StockItem(
         status = self.requiredTestStatus(required_tests=required_tests)
 
         return status['passed'] >= status['total']
-
-
-@receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
-def before_delete_stock_item(sender, instance, using, **kwargs):
-    """Receives pre_delete signal from StockItem object.
-
-    Before a StockItem is deleted, ensure that each child object is updated,
-    to point to the new parent item.
-    """
-    # Update each StockItem parent field
-    for child in instance.children.all():
-        child.parent = instance.parent
-        child.save()
 
 
 @receiver(post_delete, sender=StockItem, dispatch_uid='stock_item_post_delete_log')

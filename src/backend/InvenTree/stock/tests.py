@@ -1162,6 +1162,82 @@ class StockTreeTest(StockTestBase):
         item.refresh_from_db()
         self.assertEqual(item.get_descendants(include_self=True).count(), n + 30)
 
+    def test_tree_rebuild(self):
+        """Test that tree rebuild works correctly."""
+        StockItem.objects.rebuild()
+
+        part = Part.objects.create(name='My part', description='My part description')
+        location = StockLocation.objects.create(name='Test Location')
+
+        N = StockItem.objects.count()
+
+        # Create an initial stock item
+        item = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        # Split out ten child items
+        for _idx in range(10):
+            item.splitStock(10)
+
+        item.refresh_from_db()
+
+        self.assertEqual(StockItem.objects.count(), N + 11)
+        self.assertEqual(item.get_children().count(), 10)
+        self.assertEqual(item.get_descendants(include_self=True).count(), 11)
+
+        # Split the first child item
+        child = item.get_children().first()
+
+        self.assertEqual(child.parent, item)
+        self.assertEqual(child.tree_id, item.tree_id)
+        self.assertEqual(child.level, 1)
+
+        # Split out three grandchildren
+        for _ in range(3):
+            child.splitStock(2)
+
+        item.refresh_from_db()
+        child.refresh_from_db()
+
+        self.assertEqual(child.get_descendants(include_self=True).count(), 4)
+        self.assertEqual(child.get_children().count(), 3)
+
+        # Check tree structure for grandchildren
+        grandchildren = child.get_children()
+
+        for gc in grandchildren:
+            self.assertEqual(gc.parent, child)
+            self.assertEqual(gc.parent.parent, item)
+            self.assertEqual(gc.tree_id, item.tree_id)
+            self.assertEqual(gc.level, 2)
+            self.assertGreater(gc.lft, child.lft)
+            self.assertLess(gc.rght, child.rght)
+
+        self.assertEqual(item.get_children().count(), 10)
+        self.assertEqual(item.get_descendants(include_self=True).count(), 14)
+
+        # Now, delete the child node
+        # We expect that the grandchildren will be re-parented to the parent node
+        child.delete()
+
+        for gc in grandchildren:
+            gc.refresh_from_db()
+
+            # Check that the grandchildren have been re-parented to the top-level
+            self.assertEqual(gc.parent, item)
+            self.assertEqual(gc.tree_id, item.tree_id)
+            self.assertEqual(gc.level, 1)
+            self.assertGreater(gc.lft, item.lft)
+            self.assertLess(gc.rght, item.rght)
+
+        item.refresh_from_db()
+
+        self.assertEqual(item.get_children().count(), 12)
+        self.assertEqual(item.get_descendants(include_self=True).count(), 13)
+
+    def test_serialize(self):
+        """Test that StockItem serialization maintains tree structure."""
+        raise NotImplementedError('This test is not yet implemented!')
+
 
 class TestResultTest(StockTestBase):
     """Tests for the StockItemTestResult model."""
