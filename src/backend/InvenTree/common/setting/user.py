@@ -226,7 +226,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'SHOW_FULL_LOCATION_IN_TABLES': {
-        'name': _('Stock full stock location in tables'),
+        'name': _('Show full stock location in tables'),
         'description': _(
             'Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text.'
         ),
