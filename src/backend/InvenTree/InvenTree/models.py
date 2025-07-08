@@ -625,8 +625,8 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Removing a tree "node" from the database must be considered carefully,
         based on what the user intends for any items which exist *under* that node.
 
-        - "children" are any nodes which exist *under* this node (e.g. PartCategory)
-        - "items" are any items which exist *under* this node (e.g. Part)
+        - "children" are any nodes (of the same type) which exist *under* this node (e.g. PartCategory)
+        - "items" are any items (of a different type) which exist *under* this node (e.g. Part)
 
         Arguments:
             delete_children: If True, delete all child items
@@ -645,29 +645,30 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         # - Delete all items at any lower level
         # - Delete all descendant nodes
         if delete_children and delete_items:
-            self.get_items(cascade=True).delete()
+            self.delete_items(cascade=True)
             self.delete_nodes(child_nodes)
 
         # Case B: Delete all child nodes, but move all child items up to the parent
         # - Move all items at any lower level to the parent of this item
         # - Delete all descendant nodes
         elif delete_children and not delete_items:
-            self.get_items(cascade=True).update(**{self.ITEM_PARENT_KEY: self.parent})
-
+            if items := self.get_items(cascade=True):
+                items.update(**{self.ITEM_PARENT_KEY: self.parent})
             self.delete_nodes(child_nodes)
 
         # Case C: Delete all child items, but keep all child nodes
         # - Remove all items directly associated with this node
         # - Move any direct child nodes up one level
         elif not delete_children and delete_items:
-            self.get_items(cascade=False).delete()
+            self.delete_items(cascade=False)
             self.get_children().update(parent=self.parent)
 
         # Case D: Keep all child items, and keep all child nodes
         # - Move all items directly associated with this node up one level
         # - Move any direct child nodes up one level
         elif not delete_children and not delete_items:
-            self.get_items(cascade=False).update(**{self.ITEM_PARENT_KEY: self.parent})
+            if items := self.get_items(cascade=False):
+                items.update(**{self.ITEM_PARENT_KEY: self.parent})
             self.get_children().update(parent=self.parent)
 
     def delete_nodes(self, nodes):
@@ -769,15 +770,24 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         blank=True, max_length=250, verbose_name=_('Path'), help_text=_('Path')
     )
 
-    def get_items(self, cascade=False):
+    def delete_items(self, cascade: bool = False):
+        """Delete any 'items' which exist under this node in the tree.
+
+        - Note that an 'item' is an instance of a different model class.
+        - Not all tree structures will have items associated with them.
+        """
+        if items := self.get_items(cascade=cascade):
+            items.delete()
+
+    def get_items(self, cascade: bool = False):
         """Return a queryset of items which exist *under* this node in the tree.
 
         - For a StockLocation instance, this would be a queryset of StockItem objects
         - For a PartCategory instance, this would be a queryset of Part objects
 
-        The default implementation returns an empty list
+        The default implementation returns None, indicating that no items exist under this node.
         """
-        raise NotImplementedError(f'items() method not implemented for {type(self)}')
+        return None
 
     def getUniqueParents(self) -> QuerySet:
         """Return a flat set of all parent items that exist above this node."""
