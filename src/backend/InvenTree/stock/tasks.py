@@ -16,6 +16,8 @@ def rebuild_stock_item_tree(tree_id=None):
     from InvenTree.exceptions import log_error
     from stock.models import StockItem
 
+    raise NotImplementedError('THIS FUNCTION WILL BE REMOVED!!!')
+
     if tree_id:
         try:
             StockItem.objects.partial_rebuild(tree_id)
