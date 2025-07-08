@@ -541,6 +541,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     # e.g. for StockLocation, this value is 'location'
     ITEM_PARENT_KEY = None
 
+    # Field to use for constructing a "pathstring" for the tree
+    PATH_FIELD = 'name'
+
     # Extra fields to include in the get_path result. E.g. icon
     EXTRA_PATH_FIELDS = []
 
@@ -708,7 +711,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
 
     def construct_pathstring(self):
         """Construct the pathstring for this tree node."""
-        return InvenTree.helpers.constructPathString([item.name for item in self.path])
+        return InvenTree.helpers.constructPathString([
+            getattr(item, self.PATH_FIELD, item.pk) for item in self.path
+        ])
 
     def save(self, *args, **kwargs):
         """Custom save method for InvenTreeTree abstract model."""
@@ -855,7 +860,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return [
             {
                 'pk': item.pk,
-                'name': item.name,
+                'name': getattr(item, self.PATH_FIELD, item.pk),
                 **{k: getattr(item, k, None) for k in self.EXTRA_PATH_FIELDS},
             }
             for item in self.path
