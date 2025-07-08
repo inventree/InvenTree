@@ -36,6 +36,7 @@ export const ModelInformationDict: ModelDict = {
   partparametertemplate: {
     label: () => t`Part Parameter Template`,
     label_multiple: () => t`Part Parameter Templates`,
+    url_overview: '/settings/admin/part-parameters',
     url_detail: '/partparametertemplate/:pk/',
     api_endpoint: ApiEndpoints.part_parameter_template_list,
     icon: 'test_templates'
@@ -265,6 +266,7 @@ export const ModelInformationDict: ModelDict = {
   selectionlist: {
     label: () => t`Selection List`,
     label_multiple: () => t`Selection Lists`,
+    url_overview: '/settings/admin/part-parameters',
     api_endpoint: ApiEndpoints.selectionlist_list,
     icon: 'list_details'
   },
