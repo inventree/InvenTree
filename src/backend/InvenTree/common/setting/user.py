@@ -226,7 +226,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'SHOW_FULL_LOCATION_IN_TABLES': {
-        'name': _('Show Stock Item Location Path in Tables as text'),
+        'name': _('Stock full stock location in tables'),
         'description': _(
             'Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text.'
         ),
@@ -234,7 +234,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'SHOW_FULL_CATEGORY_IN_TABLES': {
-        'name': _('Show Part Category Path in Tables as text'),
+        'name': _('Show full part categories in tables'),
         'description': _(
             'Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text.'
         ),
