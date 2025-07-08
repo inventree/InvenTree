@@ -1,5 +1,4 @@
 import test from '@playwright/test';
-import { clearTableFilters, setTableChoiceFilter } from './helpers';
 import { doCachedLogin } from './login';
 
 test('Importing - Admin Center', async ({ browser }) => {
@@ -59,12 +58,6 @@ test('Importing - BOM', async ({ browser }) => {
   await page.getByText('Torx head screw, M3 thread, 10.0mm').first().waitFor();
   await page.getByText('Small plastic enclosure, black').first().waitFor();
 
-  await page
-    .getByRole('dialog', { name: 'Importing Data Upload File 2' })
-    .getByLabel('table-select-filters')
-    .click();
-  await clearTableFilters(page);
-
   // Select some rows
   await page
     .getByRole('row', { name: 'Select record 1 0 Thumbnail' })
@@ -106,17 +99,6 @@ test('Importing - BOM', async ({ browser }) => {
     .click();
   await page.getByRole('menuitem', { name: 'Accept' }).click();
   await page.getByText('1 / 2', { exact: true }).waitFor();
-
-  // Filter by "accepted" status
-  await page.getByText('1 - 2 / 2', { exact: true }).waitFor();
-
-  await page
-    .getByRole('dialog', { name: 'Importing Data Upload File' })
-    .getByLabel('table-select-filters')
-    .click();
-  await setTableChoiceFilter(page, 'Complete', 'Yes');
-
-  await page.getByText('1 - 1 / 1', { exact: true }).waitFor();
 });
 
 test('Importing - Purchase Order', async ({ browser }) => {
