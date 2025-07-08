@@ -62,6 +62,8 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         # Assign supplier information to the plugins
         # Add supplier information to each custom plugin
+        registry.set_plugin_state('digikeyplugin', True)
+
         digikey_plugin = registry.get_plugin('digikeyplugin')
         digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
 
