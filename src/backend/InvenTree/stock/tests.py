@@ -1236,7 +1236,56 @@ class StockTreeTest(StockTestBase):
 
     def test_serialize(self):
         """Test that StockItem serialization maintains tree structure."""
-        raise NotImplementedError('This test is not yet implemented!')
+        StockItem.objects.rebuild()
+
+        part = Part.objects.create(
+            name='My part', description='My part description', trackable=True
+        )
+
+        N = StockItem.objects.count()
+
+        # Create an initial stock item
+        item_1 = StockItem.objects.create(part=part, quantity=1000)
+        item_2 = item_1.splitStock(750)
+
+        item_1.refresh_from_db()
+
+        self.assertEqual(StockItem.objects.count(), N + 2)
+        self.assertEqual(item_1.get_children().count(), 1)
+        self.assertEqual(item_2.parent, item_1)
+
+        # Serialize the secondary item
+        serials = [str(i) for i in range(20)]
+        items = item_2.serializeStock(20, serials)
+
+        self.assertEqual(len(items), 20)
+        self.assertEqual(StockItem.objects.count(), N + 22)
+
+        item_1.refresh_from_db()
+        item_2.refresh_from_db()
+
+        self.assertEqual(item_1.get_children().count(), 1)
+        self.assertEqual(item_2.get_children().count(), 20)
+
+        for child in items:
+            self.assertEqual(child.tree_id, item_2.tree_id)
+            self.assertEqual(child.level, 2)
+            self.assertEqual(child.parent, item_2)
+            self.assertGreater(child.lft, item_2.lft)
+            self.assertLess(child.rght, item_2.rght)
+
+        # Delete item_2 : we expect that all children will be re-parented to item_1
+        item_2.delete()
+
+        for child in items:
+            child.refresh_from_db()
+
+            # Check that the children have been re-parented to item_1
+            self.assertEqual(child.parent, item_1)
+            self.assertEqual(child.tree_id, item_1.tree_id)
+            self.assertEqual(child.level, 1)
+            self.assertGreater(child.lft, item_1.lft)
+            self.assertLess(child.rght, item_1.rght)
 
 
 class TestResultTest(StockTestBase):
