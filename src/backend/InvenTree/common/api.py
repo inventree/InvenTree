@@ -20,7 +20,7 @@ from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from pint._typing import UnitLike
-from rest_framework import serializers
+from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
@@ -854,7 +854,7 @@ class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
     ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
 
 
-class DataOutputDetail(DataOutputEndpointMixin, RetrieveAPI):
+class DataOutputDetail(DataOutputEndpointMixin, generics.DestroyAPIView, RetrieveAPI):
     """Detail view for a DataOutput object."""
 
 
