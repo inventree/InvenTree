@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -22,7 +23,6 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * Stock location table

@@ -14,6 +14,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { RowDeleteAction } from '@lib/components/RowActions';
 import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
@@ -30,7 +31,6 @@ import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction } from '../RowActions';
 
 /*
  * Render detail information for a particular barcode scan result.

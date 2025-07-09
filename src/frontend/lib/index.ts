@@ -13,6 +13,7 @@ export type { ModelDict } from './enums/ModelInformation';
 export { UserRoles, UserPermissions } from './enums/Roles';
 
 export type { InvenTreePluginContext } from './types/Plugins';
+export type { RowAction, RowViewProps } from './types/Tables';
 
 // Common utility functions
 export { apiUrl } from './functions/Api';
@@ -33,3 +34,12 @@ export {
 export { ActionButton } from './components/ActionButton';
 export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
+
+export {
+  RowViewAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowDeleteAction,
+  RowCancelAction,
+  RowActions
+} from './components/RowActions';

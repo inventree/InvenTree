@@ -2,6 +2,11 @@ import { t } from '@lingui/core/macro';
 import { Anchor, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -20,7 +25,6 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { CompanyColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function calculateSupplierPartUnitPrice(record: any) {
   const pack_quantity = record?.part_detail?.pack_quantity_native ?? 1;

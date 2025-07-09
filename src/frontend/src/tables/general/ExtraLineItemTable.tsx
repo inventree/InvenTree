@@ -1,6 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -17,12 +23,6 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { DescriptionColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
 
 export default function ExtraLineItemTable({
   endpoint,

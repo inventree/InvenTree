@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -16,7 +17,6 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
 
 export default function StocktakeReportTable() {
   const table = useTable('stocktake-report');

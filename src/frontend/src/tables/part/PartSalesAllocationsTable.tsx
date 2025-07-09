@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
+import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -18,7 +19,6 @@ import {
   StatusColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowViewAction } from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
 

@@ -3,6 +3,7 @@ import { Group, Loader, Stack, Table, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableColumn } from '@lib/types/Tables';
@@ -13,7 +14,6 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
 
 function ErrorDetail({ errorId }: Readonly<{ errorId?: number }>) {
   const { id } = useParams();

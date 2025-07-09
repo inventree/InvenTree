@@ -1,7 +1,3 @@
-import { cancelEvent } from '@lib/functions/Events';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
-import type { RowAction, RowViewProps } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import {
@@ -13,8 +9,12 @@ import {
   IconTrash
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
+import { cancelEvent } from '../functions/Events';
+import { getDetailUrl } from '../functions/Navigation';
+import { navigateToLink } from '../functions/Navigation';
+import type { RowAction, RowViewProps } from '../types/Tables';
 
-export type { RowAction, RowViewProps } from '@lib/types/Tables';
+export type { RowAction, RowViewProps } from '../types/Tables';
 
 // Component for viewing a row in a table
 export function RowViewAction(props: RowViewProps): RowAction {

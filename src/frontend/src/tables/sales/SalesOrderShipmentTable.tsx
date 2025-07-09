@@ -3,6 +3,12 @@ import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  type RowAction,
+  RowCancelAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -25,12 +31,6 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { DateColumn, LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowCancelAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId

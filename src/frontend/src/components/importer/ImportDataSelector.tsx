@@ -11,6 +11,11 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -26,11 +31,6 @@ import {
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../tables/RowActions';
 import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({

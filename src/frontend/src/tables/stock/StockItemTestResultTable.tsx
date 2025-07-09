@@ -10,6 +10,12 @@ import { useQuery } from '@tanstack/react-query';
 import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
@@ -33,12 +39,6 @@ import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction
-} from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
 
 export default function StockItemTestResultTable({

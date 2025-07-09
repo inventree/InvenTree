@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
+import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -21,7 +22,6 @@ import { useTable } from '../../hooks/UseTable';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
 
 export default function ImportSessionTable() {
   const table = useTable('importsession');

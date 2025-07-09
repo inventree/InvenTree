@@ -1,4 +1,5 @@
 import { ActionButton } from '@lib/components/ActionButton';
+import { type RowAction, RowViewAction } from '@lib/components/RowActions';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { IconTrash } from '@tabler/icons-react';
@@ -9,7 +10,6 @@ import { RenderInstance } from '../../components/render/Instance';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowViewAction } from '../RowActions';
 
 /**
  * A table for showing barcode scan history data on the scan index page

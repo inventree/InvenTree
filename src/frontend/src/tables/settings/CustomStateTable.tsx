@@ -2,6 +2,12 @@ import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -23,12 +29,6 @@ import { useTable } from '../../hooks/UseTable';
 import { useGlobalStatusState } from '../../states/GlobalStatusState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
 
 /**
  * Table for displaying list of custom states

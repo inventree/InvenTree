@@ -1,3 +1,4 @@
+import { RowActions } from '@lib/components/RowActions';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -30,7 +31,6 @@ import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useStoredTableState } from '../states/StoredTableState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
-import { RowActions } from './RowActions';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
