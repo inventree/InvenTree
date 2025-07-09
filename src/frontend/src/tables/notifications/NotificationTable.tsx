@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableState } from '@lib/types/Tables';
-import type { TableColumn } from '../Column';
+import type { TableColumn } from '@lib/types/Tables';
 import { InvenTreeTable } from '../InvenTreeTable';
 import type { RowAction } from '../RowActions';
 

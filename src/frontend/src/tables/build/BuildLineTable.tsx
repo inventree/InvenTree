@@ -16,6 +16,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -31,7 +32,6 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,

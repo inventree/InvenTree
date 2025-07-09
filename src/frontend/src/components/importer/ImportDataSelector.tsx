@@ -14,6 +14,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useDeleteApiFormModal,
@@ -21,7 +22,6 @@ import {
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import {
   type RowAction,

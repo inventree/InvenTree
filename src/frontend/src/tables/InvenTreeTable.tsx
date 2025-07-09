@@ -23,6 +23,7 @@ import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableState } from '@lib/types/Tables';
+import type { TableColumn } from '@lib/types/Tables';
 import { IconArrowRight } from '@tabler/icons-react';
 import { Boundary } from '../components/Boundary';
 import { useApi } from '../contexts/ApiContext';
@@ -31,7 +32,6 @@ import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useStoredTableState } from '../states/StoredTableState';
-import type { TableColumn } from './Column';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { type RowAction, RowActions } from './RowActions';
 

@@ -12,6 +12,7 @@ import {
 
 import type { ModelType } from '@lib/enums/ModelType';
 import { cancelEvent } from '@lib/functions/Events';
+import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
@@ -23,7 +24,6 @@ import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../states/SettingsStates';
-import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
