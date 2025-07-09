@@ -1631,6 +1631,7 @@ class BomFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter the queryset based on the specified part."""
         return queryset.filter(part.get_bom_item_filter())
@@ -1641,6 +1642,7 @@ class BomFilter(rest_filters.FilterSet):
         label=_('Category'),
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_category(self, queryset, name, category):
         """Filter the queryset based on the specified PartCategory."""
         cats = category.get_descendants(include_self=True)
