@@ -1,13 +1,15 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
+import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import type { TableColumn } from '../Column';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { type RowAction, RowDeleteAction } from '../RowActions';
 
 export default function ExportSessionTable() {
   const table = useTable('exportsession');
@@ -43,8 +45,29 @@ export default function ExportSessionTable() {
     ];
   }, []);
 
+  const [selectedRow, setSeletectedRow] = useState<any>({});
+
+  const deleteRow = useDeleteApiFormModal({
+    url: ApiEndpoints.data_output,
+    pk: selectedRow.pk,
+    title: t`Delete Output`,
+    onFormSuccess: () => table.refreshTable()
+  });
+
+  const rowActions = useCallback((record: any): RowAction[] => {
+    return [
+      RowDeleteAction({
+        onClick: () => {
+          setSeletectedRow(record);
+          deleteRow.open();
+        }
+      })
+    ];
+  }, []);
+
   return (
     <>
+      {deleteRow.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.data_output)}
         tableState={table}
@@ -52,7 +75,8 @@ export default function ExportSessionTable() {
         props={{
           enableBulkDelete: true,
           enableSelection: true,
-          enableSearch: false
+          enableSearch: false,
+          rowActions: rowActions
         }}
       />
     </>
