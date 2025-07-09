@@ -577,10 +577,7 @@ export default function BuildLineTable({
         part.purchaseable;
 
       const canBuild =
-        in_production &&
-        !consumable &&
-        user.hasAddRole(UserRoles.build) &&
-        part.assembly;
+        !consumable && user.hasAddRole(UserRoles.build) && part.assembly;
 
       return [
         {

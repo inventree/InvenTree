@@ -949,9 +949,13 @@ class Build(
 
                         # Filter stock items to only those which are in stock
                         # Note that we can accept "in production" items here
-                        available_items = filter(
-                            lambda item: item.is_in_stock(check_in_production=False),
-                            stock_items,
+                        available_items = list(
+                            filter(
+                                lambda item: item.is_in_stock(
+                                    check_in_production=False
+                                ),
+                                stock_items,
+                            )
                         )
 
                         if len(available_items) == 1:
@@ -1176,10 +1180,12 @@ class Build(
         if prevent_on_incomplete and not output.passedAllRequiredTests(
             required_tests=required_tests
         ):
-            serial = output.serial
-            raise ValidationError(
-                _(f'Build output {serial} has not passed all required tests')
-            )
+            msg = _('Build output has not passed all required tests')
+
+            if serial := output.serial:
+                msg = _(f'Build output {serial} has not passed all required tests')
+
+            raise ValidationError(msg)
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
