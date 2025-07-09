@@ -4,14 +4,15 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DescriptionColumn,
   PartColumn,
@@ -19,7 +20,6 @@ import {
   StatusColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowViewAction } from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { BuildLineSubTable } from '../build/BuildLineTable';
 

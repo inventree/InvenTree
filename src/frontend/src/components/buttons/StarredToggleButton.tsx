@@ -1,3 +1,4 @@
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -6,7 +7,6 @@ import { showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
 import type { JSX } from 'react';
 import { useApi } from '../../contexts/ApiContext';
-import { ActionButton } from './ActionButton';
 
 export default function StarredToggleButton({
   instance,

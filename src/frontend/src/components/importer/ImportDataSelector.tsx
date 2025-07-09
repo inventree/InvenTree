@@ -9,11 +9,20 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useDeleteApiFormModal,
@@ -21,16 +30,7 @@ import {
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../tables/RowActions';
-import { ActionButton } from '../buttons/ActionButton';
-import { YesNoButton } from '../buttons/YesNoButton';
-import { ProgressBar } from '../items/ProgressBar';
 import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({

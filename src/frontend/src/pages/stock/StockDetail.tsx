@@ -28,6 +28,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -35,7 +36,6 @@ import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {

@@ -3,12 +3,18 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
 import {
@@ -18,10 +24,8 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
