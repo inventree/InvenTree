@@ -32,9 +32,10 @@ export {
 
 // Common UI components
 export { ActionButton } from './components/ActionButton';
+export { ButtonMenu } from './components/ButtonMenu';
 export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
-
+export { SearchInput } from './components/SearchInput';
 export {
   RowViewAction,
   RowDuplicateAction,

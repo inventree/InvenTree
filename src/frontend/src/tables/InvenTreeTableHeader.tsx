@@ -19,6 +19,7 @@ import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { ButtonMenu } from '@lib/components/ButtonMenu';
 import { SearchInput } from '@lib/components/SearchInput';
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
@@ -26,7 +27,6 @@ import type { TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
-import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
