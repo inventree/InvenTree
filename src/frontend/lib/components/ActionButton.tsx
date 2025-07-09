@@ -6,7 +6,7 @@ import {
 } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { identifierString } from '@lib/functions/Conversion';
+import { identifierString } from '../functions/Conversion';
 
 export type ActionButtonProps = {
   icon?: ReactNode;

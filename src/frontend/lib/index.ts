@@ -22,3 +22,6 @@ export {
   navigateToLink
 } from './functions/Navigation';
 export { checkPluginVersion } from './functions/Plugins';
+
+// Common UI components
+export { ActionButton } from './components/ActionButton';

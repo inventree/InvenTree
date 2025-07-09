@@ -12,13 +12,13 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { useApi } from '../../contexts/ApiContext';

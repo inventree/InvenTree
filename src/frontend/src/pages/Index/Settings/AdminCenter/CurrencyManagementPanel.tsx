@@ -6,8 +6,8 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { ActionButton } from '../../../../../lib/components/ActionButton';
 import { api } from '../../../../App';
-import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { showApiErrorMessage } from '../../../../functions/notifications';
