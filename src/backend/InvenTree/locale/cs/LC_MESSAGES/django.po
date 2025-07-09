@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-04 01:45+0000\n"
-"PO-Revision-Date: 2025-07-04 01:48\n"
+"POT-Creation-Date: 2025-07-09 01:39+0000\n"
+"PO-Revision-Date: 2025-07-09 01:42\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -110,9 +110,9 @@ msgstr "Neplaté desetinné číslo"
 
 #: InvenTree/fields.py:210 InvenTree/models.py:900 build/serializers.py:495
 #: build/serializers.py:566 company/models.py:867 order/models.py:1626
-#: part/models.py:3428
+#: part/models.py:3438
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:2730 stock/models.py:2854 stock/serializers.py:731
+#: stock/models.py:2759 stock/models.py:2883 stock/serializers.py:731
 #: stock/serializers.py:900 stock/serializers.py:1030 stock/serializers.py:1082
 #: stock/serializers.py:1396 stock/serializers.py:1485
 #: stock/serializers.py:1661
@@ -411,22 +411,22 @@ msgstr "Neplatný výběr"
 #: InvenTree/models.py:747 common/models.py:1367 common/models.py:1794
 #: common/models.py:2053 common/models.py:2178 common/serializers.py:510
 #: company/models.py:626 generic/states/serializers.py:20 machine/models.py:24
-#: part/models.py:1039 part/models.py:3902 plugin/models.py:53
-#: report/models.py:216 stock/models.py:83
+#: part/models.py:1039 part/models.py:3912 plugin/models.py:53
+#: report/models.py:216 stock/models.py:85
 msgid "Name"
 msgstr "Název"
 
 #: InvenTree/models.py:753 build/models.py:250 common/models.py:134
 #: common/models.py:2185 common/models.py:2298 company/models.py:554
 #: company/models.py:858 order/models.py:435 order/models.py:1662
-#: part/models.py:1062 part/models.py:3917 report/models.py:222
+#: part/models.py:1062 part/models.py:3927 report/models.py:222
 #: report/models.py:806 report/models.py:832
 #: report/templates/report/inventree_build_order_report.html:117
-#: stock/models.py:89
+#: stock/models.py:91
 msgid "Description"
 msgstr "Popis"
 
-#: InvenTree/models.py:754 stock/models.py:90
+#: InvenTree/models.py:754 stock/models.py:92
 msgid "Description (optional)"
 msgstr "Popis (volitelně)"
 
@@ -475,11 +475,11 @@ msgstr "Chyba serveru"
 msgid "An error has been logged by the server."
 msgstr "Server zaznamenal chybu."
 
-#: InvenTree/serializers.py:69 part/models.py:4520
+#: InvenTree/serializers.py:69 part/models.py:4530
 msgid "Must be a valid number"
 msgstr "Musí být platné číslo"
 
-#: InvenTree/serializers.py:111 company/models.py:220 part/models.py:3246
+#: InvenTree/serializers.py:111 company/models.py:220 part/models.py:3256
 msgid "Currency"
 msgstr "Měna"
 
@@ -546,10 +546,10 @@ msgstr "Zahrnout varianty"
 #: order/api.py:293 order/api.py:297 order/api.py:898 order/api.py:1137
 #: order/api.py:1140 order/models.py:1775 order/models.py:1945
 #: order/models.py:1946 part/api.py:1252 part/api.py:1255 part/api.py:1321
-#: part/api.py:1631 part/models.py:457 part/models.py:3257 part/models.py:3401
-#: part/models.py:3549 part/models.py:3570 part/models.py:3592
-#: part/models.py:3731 part/models.py:4092 part/models.py:4364
-#: part/models.py:4730 part/serializers.py:1330 part/serializers.py:2011
+#: part/api.py:1631 part/models.py:457 part/models.py:3267 part/models.py:3411
+#: part/models.py:3559 part/models.py:3580 part/models.py:3602
+#: part/models.py:3741 part/models.py:4102 part/models.py:4374
+#: part/models.py:4740 part/serializers.py:1330 part/serializers.py:2014
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -570,7 +570,7 @@ msgid "Part"
 msgstr "Díl"
 
 #: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3620 part/models.py:4201 part/serializers.py:1340
+#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
 #: stock/api.py:833
 msgid "Category"
 msgstr "Kategorie"
@@ -648,16 +648,16 @@ msgstr "Vyloučit strom"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Sestavení musí být zrušeno před odstraněním"
 
-#: build/api.py:456 build/serializers.py:1367 part/models.py:4398
+#: build/api.py:456 build/serializers.py:1367 part/models.py:4408
 msgid "Consumable"
 msgstr "Spotřební materiál"
 
-#: build/api.py:459 build/serializers.py:1370 part/models.py:4392
+#: build/api.py:459 build/serializers.py:1370 part/models.py:4402
 msgid "Optional"
 msgstr "Volitelné"
 
 #: build/api.py:462 common/setting/system.py:442 part/models.py:1211
-#: part/serializers.py:1738 part/serializers.py:1747 stock/api.py:603
+#: part/serializers.py:1741 part/serializers.py:1750 stock/api.py:603
 msgid "Assembly"
 msgstr "Sestava"
 
@@ -744,7 +744,7 @@ msgstr "Referenční číslo výrobního příkazu"
 
 #: build/models.py:244 build/serializers.py:1364 order/models.py:607
 #: order/models.py:1187 order/models.py:1619 order/models.py:2491
-#: part/models.py:4413
+#: part/models.py:4423
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:35
 #: report/templates/report/inventree_return_order_report.html:26
@@ -821,7 +821,7 @@ msgid "Build status code"
 msgstr "Stavový kód sestavení"
 
 #: build/models.py:341 build/serializers.py:345 order/serializers.py:792
-#: stock/models.py:1030 stock/serializers.py:84 stock/serializers.py:1628
+#: stock/models.py:1060 stock/serializers.py:84 stock/serializers.py:1628
 msgid "Batch Code"
 msgstr "Kód dávky"
 
@@ -876,12 +876,12 @@ msgstr "Odpovědný"
 msgid "User or group responsible for this build order"
 msgstr "Uživatel nebo skupina odpovědná za tento výrobní příkaz"
 
-#: build/models.py:402 stock/models.py:1023
+#: build/models.py:402 stock/models.py:1053
 msgid "External Link"
 msgstr "Externí odkaz"
 
 #: build/models.py:404 common/models.py:1941 part/models.py:1114
-#: stock/models.py:1025
+#: stock/models.py:1055
 msgid "Link to external URL"
 msgstr "Odkaz na externí URL"
 
@@ -919,46 +919,50 @@ msgstr "Výrobní příkaz byl dokončen"
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "U sledovatelných dílů musí být uvedena sériová čísla"
 
-#: build/models.py:1024 build/models.py:1109
+#: build/models.py:1028 build/models.py:1113
 msgid "No build output specified"
 msgstr "Nebyl specifikováno žádný výstup sestavení"
 
-#: build/models.py:1027
+#: build/models.py:1031
 msgid "Build output is already completed"
 msgstr "Výstup sestavení je již dokončen"
 
-#: build/models.py:1030
+#: build/models.py:1034
 msgid "Build output does not match Build Order"
 msgstr "Výstup neodpovídá výrobnímu příkazu"
 
-#: build/models.py:1112 build/serializers.py:272 build/serializers.py:321
+#: build/models.py:1116 build/serializers.py:272 build/serializers.py:321
 #: build/serializers.py:941 order/models.py:710 order/serializers.py:604
-#: order/serializers.py:787 part/serializers.py:1732 stock/models.py:870
-#: stock/models.py:1755 stock/serializers.py:702
+#: order/serializers.py:787 part/serializers.py:1735 stock/models.py:900
+#: stock/models.py:1785 stock/serializers.py:702
 msgid "Quantity must be greater than zero"
 msgstr "Množství musí být vyšší než nula"
 
-#: build/models.py:1116 build/serializers.py:276
+#: build/models.py:1120 build/serializers.py:276
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Množství nemůže být větší než výstupní množství"
 
-#: build/models.py:1181 build/serializers.py:584
+#: build/models.py:1183
+msgid "Build output has not passed all required tests"
+msgstr ""
+
+#: build/models.py:1186 build/serializers.py:584
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Výstup sestavy {serial} neprošel všemi požadavky"
 
-#: build/models.py:1567
+#: build/models.py:1573
 msgid "Build Order Line Item"
 msgstr "Řádková položka výrobního příkazu"
 
-#: build/models.py:1591
+#: build/models.py:1597
 msgid "Build object"
 msgstr "Vytvořit objekt"
 
-#: build/models.py:1603 build/models.py:1862 build/serializers.py:260
+#: build/models.py:1609 build/models.py:1868 build/serializers.py:260
 #: build/serializers.py:306 build/serializers.py:1385 common/models.py:1297
 #: order/models.py:1602 order/models.py:2376 order/serializers.py:1692
-#: order/serializers.py:2153 part/models.py:3415 part/models.py:4386
+#: order/serializers.py:2153 part/models.py:3425 part/models.py:4396
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:36
@@ -976,56 +980,56 @@ msgstr "Vytvořit objekt"
 msgid "Quantity"
 msgstr "Množství"
 
-#: build/models.py:1604
+#: build/models.py:1610
 msgid "Required quantity for build order"
 msgstr "Vyžadované množství pro výrobní příkaz"
 
-#: build/models.py:1688
+#: build/models.py:1694
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Položka sestavení musí specifikovat výstup sestavení, protože hlavní díl je označen jako sledovatelný"
 
-#: build/models.py:1699
+#: build/models.py:1705
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Zabrané množství ({q}) nesmí překročit dostupné skladové množství ({a})"
 
-#: build/models.py:1720 order/models.py:2325
+#: build/models.py:1726 order/models.py:2325
 msgid "Stock item is over-allocated"
 msgstr "Skladová položka je nadměrně zabrána"
 
-#: build/models.py:1725 order/models.py:2328
+#: build/models.py:1731 order/models.py:2328
 msgid "Allocation quantity must be greater than zero"
 msgstr "Zabrané množství musí být větší než nula"
 
-#: build/models.py:1731
+#: build/models.py:1737
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Množství musí být 1 pro zřetězený sklad"
 
-#: build/models.py:1791
+#: build/models.py:1797
 msgid "Selected stock item does not match BOM line"
 msgstr "Vybraná skladová položka neodpovídá řádku kusovníku"
 
-#: build/models.py:1852 build/serializers.py:924 build/serializers.py:1234
+#: build/models.py:1858 build/serializers.py:924 build/serializers.py:1234
 #: order/serializers.py:1529 order/serializers.py:1550
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
-#: stock/models.py:452 stock/serializers.py:101 stock/serializers.py:807
+#: stock/models.py:454 stock/serializers.py:101 stock/serializers.py:807
 #: stock/serializers.py:1334 stock/serializers.py:1446
 msgid "Stock Item"
 msgstr "Skladové položky"
 
-#: build/models.py:1853
+#: build/models.py:1859
 msgid "Source stock item"
 msgstr "Zdrojová skladová položka"
 
-#: build/models.py:1863
+#: build/models.py:1869
 msgid "Stock quantity to allocate to build"
 msgstr "Skladové množství pro sestavení"
 
-#: build/models.py:1872
+#: build/models.py:1878
 msgid "Install into"
 msgstr "Instalovat do"
 
-#: build/models.py:1873
+#: build/models.py:1879
 msgid "Destination stock item"
 msgstr "Cílová skladová položka"
 
@@ -1095,7 +1099,7 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automaticky přidělit požadované položky s odpovídajícími sériovými čísly"
 
 #: build/serializers.py:409 order/serializers.py:901 stock/api.py:1101
-#: stock/models.py:1778
+#: stock/models.py:1808
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Následující sériová čísla již existují nebo jsou neplatná"
 
@@ -1306,7 +1310,7 @@ msgstr ""
 
 #: build/serializers.py:1261 company/models.py:695 order/api.py:306
 #: order/api.py:311 order/api.py:526 order/serializers.py:596
-#: stock/models.py:966 stock/serializers.py:606
+#: stock/models.py:996 stock/serializers.py:606
 msgid "Supplier Part"
 msgstr "Díl dodavatele"
 
@@ -1330,12 +1334,12 @@ msgstr "Sledovatelné"
 msgid "Inherited"
 msgstr ""
 
-#: build/serializers.py:1382 part/models.py:4446
+#: build/serializers.py:1382 part/models.py:4456
 msgid "Allow Variants"
 msgstr "Povolit varianty"
 
-#: build/serializers.py:1387 build/serializers.py:1391 part/models.py:4244
-#: part/models.py:4722 stock/api.py:846
+#: build/serializers.py:1387 build/serializers.py:1391 part/models.py:4254
+#: part/models.py:4732 stock/api.py:846
 msgid "BOM Item"
 msgstr "Položka kusovníku"
 
@@ -1345,12 +1349,12 @@ msgstr "Přidělené zásoby"
 
 #: build/serializers.py:1422 company/serializers.py:424
 #: order/serializers.py:1286 part/serializers.py:938 part/serializers.py:1226
-#: part/serializers.py:1765
+#: part/serializers.py:1768
 msgid "On Order"
 msgstr "Na objednávku"
 
 #: build/serializers.py:1424 order/serializers.py:1287 part/serializers.py:1230
-#: part/serializers.py:1769
+#: part/serializers.py:1772
 msgid "In Production"
 msgstr "Ve výrobě"
 
@@ -1358,7 +1362,7 @@ msgstr "Ve výrobě"
 msgid "External Stock"
 msgstr "Externí zásoby"
 
-#: build/serializers.py:1427 part/serializers.py:1220 part/serializers.py:1798
+#: build/serializers.py:1427 part/serializers.py:1220 part/serializers.py:1801
 msgid "Available Stock"
 msgstr "Dostupné zásoby"
 
@@ -1496,8 +1500,8 @@ msgstr "Klíčový text musí být jedinečný"
 #: common/models.py:1275 common/models.py:1276 common/models.py:1380
 #: common/models.py:1381 common/models.py:1626 common/models.py:1627
 #: common/models.py:1957 common/models.py:1958 common/models.py:2339
-#: importer/models.py:97 part/models.py:3438 part/models.py:3525
-#: part/models.py:3599 part/models.py:3627 plugin/models.py:322
+#: importer/models.py:97 part/models.py:3448 part/models.py:3535
+#: part/models.py:3609 part/models.py:3637 plugin/models.py:322
 #: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
 #: users/models.py:130 users/models.py:507
 msgid "User"
@@ -1686,7 +1690,7 @@ msgstr "Definice"
 msgid "Unit definition"
 msgstr "Definice jednotky"
 
-#: common/models.py:1868 common/models.py:1931 stock/models.py:2849
+#: common/models.py:1868 common/models.py:1931 stock/models.py:2878
 #: stock/serializers.py:258
 msgid "Attachment"
 msgstr "Příloha"
@@ -1764,7 +1768,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr ""
 
 #: common/models.py:2047 common/models.py:2286 company/models.py:633
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2841
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:2870
 msgid "Value"
 msgstr "Hodnota"
 
@@ -1832,7 +1836,7 @@ msgstr ""
 msgid "Name must be different from the names of the reference status"
 msgstr "Název se musí lišit od názvů referenčního statusu"
 
-#: common/models.py:2173 common/models.py:2280 part/models.py:3941
+#: common/models.py:2173 common/models.py:2280 part/models.py:3951
 msgid "Selection List"
 msgstr "Výběrové pole"
 
@@ -1932,7 +1936,7 @@ msgstr ""
 msgid "Barcode Scan"
 msgstr ""
 
-#: common/models.py:2328 importer/models.py:523 part/models.py:4106
+#: common/models.py:2328 importer/models.py:523 part/models.py:4116
 msgid "Data"
 msgstr "Data"
 
@@ -1973,7 +1977,7 @@ msgid "Response data from the barcode scan"
 msgstr ""
 
 #: common/models.py:2374 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2835
+#: stock/models.py:2864
 msgid "Result"
 msgstr "Výsledek"
 
@@ -2336,8 +2340,8 @@ msgstr "Jak často aktualizovat směnné kurzy (pro vypnutí nastavte na nulu)"
 #: common/setting/system.py:254 common/setting/system.py:294
 #: common/setting/system.py:307 common/setting/system.py:315
 #: common/setting/system.py:322 common/setting/system.py:331
-#: common/setting/system.py:574 common/setting/system.py:594
-#: common/setting/system.py:685 common/setting/system.py:1082
+#: common/setting/system.py:574 common/setting/system.py:602
+#: common/setting/system.py:693 common/setting/system.py:1090
 msgid "days"
 msgstr "dny"
 
@@ -2565,7 +2569,7 @@ msgstr "Kopírovat šablony parametrů kategorie"
 msgid "Copy category parameter templates when creating a part"
 msgstr "Kopírování šablon parametrů kategorie při vytváření dílu"
 
-#: common/setting/system.py:436 part/models.py:4100 report/models.py:373
+#: common/setting/system.py:436 part/models.py:4110 report/models.py:373
 #: report/models.py:660 report/serializers.py:95 report/serializers.py:136
 #: stock/serializers.py:247
 msgid "Template"
@@ -2579,8 +2583,8 @@ msgstr "Díly jsou ve výchozím nastavení šablony"
 msgid "Parts can be assembled from other components by default"
 msgstr "Díly lze ve výchozím nastavení sestavit z jiných komponentů"
 
-#: common/setting/system.py:448 part/models.py:1217 part/serializers.py:1752
-#: part/serializers.py:1758
+#: common/setting/system.py:448 part/models.py:1217 part/serializers.py:1755
+#: part/serializers.py:1761
 msgid "Component"
 msgstr "Komponent"
 
@@ -2729,589 +2733,597 @@ msgid "Only use active variant parts for calculating variant pricing"
 msgstr "Pro výpočet ceny varianty použijte pouze aktivní díly varianty"
 
 #: common/setting/system.py:592
+msgid "Auto Update Pricing"
+msgstr ""
+
+#: common/setting/system.py:594
+msgid "Automatically update part pricing when internal data changes"
+msgstr ""
+
+#: common/setting/system.py:600
 msgid "Pricing Rebuild Interval"
 msgstr "Interval přestavby cen"
 
-#: common/setting/system.py:593
+#: common/setting/system.py:601
 msgid "Number of days before part pricing is automatically updated"
 msgstr "Počet dní před automatickou aktualizací cen dílů"
 
-#: common/setting/system.py:599
+#: common/setting/system.py:607
 msgid "Internal Prices"
 msgstr "Interní ceny"
 
-#: common/setting/system.py:600
+#: common/setting/system.py:608
 msgid "Enable internal prices for parts"
 msgstr "Povolit interní ceny pro díly"
 
-#: common/setting/system.py:605
+#: common/setting/system.py:613
 msgid "Internal Price Override"
 msgstr "Přepis interní ceny"
 
-#: common/setting/system.py:607
+#: common/setting/system.py:615
 msgid "If available, internal prices override price range calculations"
 msgstr "Pokud jsou k dispozici, interní ceny mají přednost před výpočty cenového rozpětí"
 
-#: common/setting/system.py:613
+#: common/setting/system.py:621
 msgid "Enable label printing"
 msgstr "Povolit tisk štítků"
 
-#: common/setting/system.py:614
+#: common/setting/system.py:622
 msgid "Enable label printing from the web interface"
 msgstr "Povolit tisk štítků z webového rozhraní"
 
-#: common/setting/system.py:619
+#: common/setting/system.py:627
 msgid "Label Image DPI"
 msgstr "DPI rozlišení štítků"
 
-#: common/setting/system.py:621
+#: common/setting/system.py:629
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr "Rozlišení DPI při generování obrazových souborů, které se dodávají do zásuvných modulů pro tisk štítků"
 
-#: common/setting/system.py:627
+#: common/setting/system.py:635
 msgid "Enable Reports"
 msgstr "Povolit reporty"
 
-#: common/setting/system.py:628
+#: common/setting/system.py:636
 msgid "Enable generation of reports"
 msgstr "Povolit generování reportů"
 
-#: common/setting/system.py:633
+#: common/setting/system.py:641
 msgid "Debug Mode"
 msgstr "Režim ladění chyb"
 
-#: common/setting/system.py:634
+#: common/setting/system.py:642
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Generovat reporty v režimu ladění (HTML výstup)"
 
-#: common/setting/system.py:639
+#: common/setting/system.py:647
 msgid "Log Report Errors"
 msgstr "Zaznamenávat chyby reportů"
 
-#: common/setting/system.py:640
+#: common/setting/system.py:648
 msgid "Log errors which occur when generating reports"
 msgstr "Zaznamenávat chyby, které se vyskytnou při vytváření reportů"
 
-#: common/setting/system.py:645 plugin/builtin/labels/label_sheet.py:29
+#: common/setting/system.py:653 plugin/builtin/labels/label_sheet.py:29
 #: report/models.py:381
 msgid "Page Size"
 msgstr "Velikost stránky"
 
-#: common/setting/system.py:646
+#: common/setting/system.py:654
 msgid "Default page size for PDF reports"
 msgstr "Výchozí velikost stránky pro PDF reporty"
 
-#: common/setting/system.py:651
+#: common/setting/system.py:659
 msgid "Globally Unique Serials"
 msgstr "Globálně unikátní sériová čísla"
 
-#: common/setting/system.py:652
+#: common/setting/system.py:660
 msgid "Serial numbers for stock items must be globally unique"
 msgstr "Sériová čísla pro skladové položky musí být globálně unikátní"
 
-#: common/setting/system.py:657
+#: common/setting/system.py:665
 msgid "Delete Depleted Stock"
 msgstr "Odstranit vyčerpané zásoby"
 
-#: common/setting/system.py:658
+#: common/setting/system.py:666
 msgid "Determines default behavior when a stock item is depleted"
 msgstr "Určuje výchozí chování při vyčerpání zásoby položky"
 
-#: common/setting/system.py:663
+#: common/setting/system.py:671
 msgid "Batch Code Template"
 msgstr "Šablona kódu dávky"
 
-#: common/setting/system.py:664
+#: common/setting/system.py:672
 msgid "Template for generating default batch codes for stock items"
 msgstr "Šablona pro generování výchozích kódů dávky pro skladové položky"
 
-#: common/setting/system.py:668
+#: common/setting/system.py:676
 msgid "Stock Expiry"
 msgstr "Expirace zásob"
 
-#: common/setting/system.py:669
+#: common/setting/system.py:677
 msgid "Enable stock expiry functionality"
 msgstr "Povolit funkci expirace zásob"
 
-#: common/setting/system.py:674
+#: common/setting/system.py:682
 msgid "Sell Expired Stock"
 msgstr "Prodat prošlé zásoby"
 
-#: common/setting/system.py:675
+#: common/setting/system.py:683
 msgid "Allow sale of expired stock"
 msgstr "Povolit prodej prošlých zásob"
 
-#: common/setting/system.py:680
+#: common/setting/system.py:688
 msgid "Stock Stale Time"
 msgstr "Čas stáří zásob"
 
-#: common/setting/system.py:682
+#: common/setting/system.py:690
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Počet dnů, po které jsou skladové položky považovány za nevyužité před uplynutím doby expirace"
 
-#: common/setting/system.py:689
+#: common/setting/system.py:697
 msgid "Build Expired Stock"
 msgstr "Sestavit prošlé zásoby"
 
-#: common/setting/system.py:690
+#: common/setting/system.py:698
 msgid "Allow building with expired stock"
 msgstr "Povolit sestavování s prošlými zásobami"
 
-#: common/setting/system.py:695
+#: common/setting/system.py:703
 msgid "Stock Ownership Control"
 msgstr "Kontrola vlastnictví zásob"
 
-#: common/setting/system.py:696
+#: common/setting/system.py:704
 msgid "Enable ownership control over stock locations and items"
 msgstr "Umožnit kontrolu vlastnictví nad skladovými místy a položkami"
 
-#: common/setting/system.py:701
+#: common/setting/system.py:709
 msgid "Stock Location Default Icon"
 msgstr "Výchozí ikona umístění zásob"
 
-#: common/setting/system.py:702
+#: common/setting/system.py:710
 msgid "Stock location default icon (empty means no icon)"
 msgstr "Výchozí ikona umístění zásob (prázdné znamená bez ikony)"
 
-#: common/setting/system.py:707
+#: common/setting/system.py:715
 msgid "Show Installed Stock Items"
 msgstr "Zobrazit nainstalované skladové položky"
 
-#: common/setting/system.py:708
+#: common/setting/system.py:716
 msgid "Display installed stock items in stock tables"
 msgstr "Zobrazit nainstalované skladové položky ve skladových tabulkách"
 
-#: common/setting/system.py:713
+#: common/setting/system.py:721
 msgid "Check BOM when installing items"
 msgstr "Zkontrolovat BOM při instalaci položek"
 
-#: common/setting/system.py:715
+#: common/setting/system.py:723
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr "Nainstalované skladové položky musí existovat v BOM pro nadřazený díl"
 
-#: common/setting/system.py:721
+#: common/setting/system.py:729
 msgid "Allow Out of Stock Transfer"
 msgstr "Povolit převod mimo sklad"
 
-#: common/setting/system.py:723
+#: common/setting/system.py:731
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr "Umožnit přesun skladových položek, které nejsou na skladě, mezi skladovými místy"
 
-#: common/setting/system.py:729
+#: common/setting/system.py:737
 msgid "Build Order Reference Pattern"
 msgstr "Referenční vzor objednávky sestavy"
 
-#: common/setting/system.py:730
+#: common/setting/system.py:738
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Požadovaný vzor pro generování referenčního pole Objednávka sestavy"
 
-#: common/setting/system.py:735 common/setting/system.py:795
-#: common/setting/system.py:815 common/setting/system.py:851
+#: common/setting/system.py:743 common/setting/system.py:803
+#: common/setting/system.py:823 common/setting/system.py:859
 msgid "Require Responsible Owner"
 msgstr "Vyžadovat odpovědného vlastníka"
 
-#: common/setting/system.py:736 common/setting/system.py:796
-#: common/setting/system.py:816 common/setting/system.py:852
+#: common/setting/system.py:744 common/setting/system.py:804
+#: common/setting/system.py:824 common/setting/system.py:860
 msgid "A responsible owner must be assigned to each order"
 msgstr "Ke každé objednávce musí být přiřazen odpovědný vlastník"
 
-#: common/setting/system.py:741
+#: common/setting/system.py:749
 msgid "Require Active Part"
 msgstr "Vyžadovat aktivní díl"
 
-#: common/setting/system.py:742
+#: common/setting/system.py:750
 msgid "Prevent build order creation for inactive parts"
 msgstr "Zabránit vytváření výrobních příkazů pro neaktivní díly"
 
-#: common/setting/system.py:747
+#: common/setting/system.py:755
 msgid "Require Locked Part"
 msgstr ""
 
-#: common/setting/system.py:748
+#: common/setting/system.py:756
 msgid "Prevent build order creation for unlocked parts"
 msgstr ""
 
-#: common/setting/system.py:753
+#: common/setting/system.py:761
 msgid "Require Valid BOM"
 msgstr "Vyžadovat schválený kusovník"
 
-#: common/setting/system.py:754
+#: common/setting/system.py:762
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr "Zabránit vytváření výrobních příkazů, dokud není schválen kusovník"
 
-#: common/setting/system.py:759
+#: common/setting/system.py:767
 msgid "Require Closed Child Orders"
 msgstr ""
 
-#: common/setting/system.py:761
+#: common/setting/system.py:769
 msgid "Prevent build order completion until all child orders are closed"
 msgstr ""
 
-#: common/setting/system.py:767
+#: common/setting/system.py:775
 msgid "External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:768
+#: common/setting/system.py:776
 msgid "Enable external build order functionality"
 msgstr ""
 
-#: common/setting/system.py:773
+#: common/setting/system.py:781
 msgid "Block Until Tests Pass"
 msgstr "Blokovat, dokud testy neprojdou"
 
-#: common/setting/system.py:775
+#: common/setting/system.py:783
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr "Zabránit dokončení výstupů sestavy, dokud neprojdou všechny požadované testy"
 
-#: common/setting/system.py:781
+#: common/setting/system.py:789
 msgid "Enable Return Orders"
 msgstr "Povolit vracení objednávek"
 
-#: common/setting/system.py:782
+#: common/setting/system.py:790
 msgid "Enable return order functionality in the user interface"
 msgstr "Povolit funkci vrácení objednávky v uživatelském rozhraní"
 
-#: common/setting/system.py:787
+#: common/setting/system.py:795
 msgid "Return Order Reference Pattern"
 msgstr "Referenční vzor návratové objednávky"
 
-#: common/setting/system.py:789
+#: common/setting/system.py:797
 msgid "Required pattern for generating Return Order reference field"
 msgstr "Požadovaný vzor pro vygenerování referenčního pole Návratová objednávka"
 
-#: common/setting/system.py:801
+#: common/setting/system.py:809
 msgid "Edit Completed Return Orders"
 msgstr "Úprava dokončených návratových objednávek"
 
-#: common/setting/system.py:803
+#: common/setting/system.py:811
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Umožnit úpravu návratových objednávek po jejich dokončení"
 
-#: common/setting/system.py:809
+#: common/setting/system.py:817
 msgid "Sales Order Reference Pattern"
 msgstr "Referenční vzor prodejní objednávky"
 
-#: common/setting/system.py:810
+#: common/setting/system.py:818
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Požadovaný vzor pro generování referenčního pole prodejní objednávky"
 
-#: common/setting/system.py:821
+#: common/setting/system.py:829
 msgid "Sales Order Default Shipment"
 msgstr "Výchozí přeprava prodejní objednávky"
 
-#: common/setting/system.py:822
+#: common/setting/system.py:830
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Povolit vytvoření výchozí přepravy s prodejními objednávkami"
 
-#: common/setting/system.py:827
+#: common/setting/system.py:835
 msgid "Edit Completed Sales Orders"
 msgstr "Úprava dokončených prodejních objednávek"
 
-#: common/setting/system.py:829
+#: common/setting/system.py:837
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Umožnit úpravy prodejních objednávek po jejich odeslání nebo dokončení"
 
-#: common/setting/system.py:835
+#: common/setting/system.py:843
 msgid "Mark Shipped Orders as Complete"
 msgstr "Označit odeslané objednávky jako dokončené"
 
-#: common/setting/system.py:837
+#: common/setting/system.py:845
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr "Prodejní objednávky označené jako odeslané se automaticky dokončí a obejdou stav „odesláno“"
 
-#: common/setting/system.py:843
+#: common/setting/system.py:851
 msgid "Purchase Order Reference Pattern"
 msgstr "Referenční vzor nákupní objednávky"
 
-#: common/setting/system.py:845
+#: common/setting/system.py:853
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Požadovaný vzor pro generování referenčního pole nákupní objednávky"
 
-#: common/setting/system.py:857
+#: common/setting/system.py:865
 msgid "Edit Completed Purchase Orders"
 msgstr "Úprava dokončených nákupních objednávek"
 
-#: common/setting/system.py:859
+#: common/setting/system.py:867
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Umožnit úpravy nákupních objednávek po jejich odeslání nebo dokončení"
 
-#: common/setting/system.py:865
+#: common/setting/system.py:873
 msgid "Convert Currency"
 msgstr ""
 
-#: common/setting/system.py:866
+#: common/setting/system.py:874
 msgid "Convert item value to base currency when receiving stock"
 msgstr ""
 
-#: common/setting/system.py:871
+#: common/setting/system.py:879
 msgid "Auto Complete Purchase Orders"
 msgstr "Automatické dokončování nákupních objednávek"
 
-#: common/setting/system.py:873
+#: common/setting/system.py:881
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "Automaticky označit nákupní objednávky jako kompletní, jakmile jsou přijaty všechny řádkové položky"
 
-#: common/setting/system.py:880
+#: common/setting/system.py:888
 msgid "Enable password forgot"
 msgstr "Povolit pole zapomenutého hesla"
 
-#: common/setting/system.py:881
+#: common/setting/system.py:889
 msgid "Enable password forgot function on the login pages"
 msgstr "Povolení funkce zapomenutého hesla na přihlašovacích stránkách"
 
-#: common/setting/system.py:886
+#: common/setting/system.py:894
 msgid "Enable registration"
 msgstr "Povolit registrace"
 
-#: common/setting/system.py:887
+#: common/setting/system.py:895
 msgid "Enable self-registration for users on the login pages"
 msgstr "Povolit samoregistraci uživatelů na přihlašovacích stránkách"
 
-#: common/setting/system.py:892
+#: common/setting/system.py:900
 msgid "Enable SSO"
 msgstr "Povolit SSO"
 
-#: common/setting/system.py:893
+#: common/setting/system.py:901
 msgid "Enable SSO on the login pages"
 msgstr "Povolit SSO na přihlašovacích stránkách"
 
-#: common/setting/system.py:898
+#: common/setting/system.py:906
 msgid "Enable SSO registration"
 msgstr "Povolit SSO registraci"
 
-#: common/setting/system.py:900
+#: common/setting/system.py:908
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Povolit samoregistraci uživatelů prostřednictvím SSO na přihlašovacích stránkách"
 
-#: common/setting/system.py:906
+#: common/setting/system.py:914
 msgid "Enable SSO group sync"
 msgstr ""
 
-#: common/setting/system.py:908
+#: common/setting/system.py:916
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:914
+#: common/setting/system.py:922
 msgid "SSO group key"
 msgstr ""
 
-#: common/setting/system.py:915
+#: common/setting/system.py:923
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:920
+#: common/setting/system.py:928
 msgid "SSO group map"
 msgstr ""
 
-#: common/setting/system.py:922
+#: common/setting/system.py:930
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr ""
 
-#: common/setting/system.py:928
+#: common/setting/system.py:936
 msgid "Remove groups outside of SSO"
 msgstr ""
 
-#: common/setting/system.py:930
+#: common/setting/system.py:938
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr ""
 
-#: common/setting/system.py:936
+#: common/setting/system.py:944
 msgid "Email required"
 msgstr "Vyžadován e-mail"
 
-#: common/setting/system.py:937
+#: common/setting/system.py:945
 msgid "Require user to supply mail on signup"
 msgstr "Požadovat, aby uživatel při registraci zadal e-mail"
 
-#: common/setting/system.py:942
+#: common/setting/system.py:950
 msgid "Auto-fill SSO users"
 msgstr "Automaticky vyplnit SSO uživatele"
 
-#: common/setting/system.py:943
+#: common/setting/system.py:951
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Automaticky vyplnit údaje o uživateli z údajů o účtu SSO"
 
-#: common/setting/system.py:948
+#: common/setting/system.py:956
 msgid "Mail twice"
 msgstr "Mail dvakrát"
 
-#: common/setting/system.py:949
+#: common/setting/system.py:957
 msgid "On signup ask users twice for their mail"
 msgstr "Při registraci dvakrát požádat uživatele o zadání e-mailu"
 
-#: common/setting/system.py:954
+#: common/setting/system.py:962
 msgid "Password twice"
 msgstr "Heslo dvakrát"
 
-#: common/setting/system.py:955
+#: common/setting/system.py:963
 msgid "On signup ask users twice for their password"
 msgstr "Při registraci dvakrát požádat uživatele o heslo"
 
-#: common/setting/system.py:960
+#: common/setting/system.py:968
 msgid "Allowed domains"
 msgstr "Povolené domény"
 
-#: common/setting/system.py:962
+#: common/setting/system.py:970
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Omezit registraci na určité domény (oddělené čárkou a začínající @)"
 
-#: common/setting/system.py:968
+#: common/setting/system.py:976
 msgid "Group on signup"
 msgstr "Skupina při registraci"
 
-#: common/setting/system.py:970
+#: common/setting/system.py:978
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr ""
 
-#: common/setting/system.py:976
+#: common/setting/system.py:984
 msgid "Enforce MFA"
 msgstr "Vynutit MFA"
 
-#: common/setting/system.py:977
+#: common/setting/system.py:985
 msgid "Users must use multifactor security."
 msgstr "Uživatelé musí používat vícefaktorové zabezpečení."
 
-#: common/setting/system.py:982
+#: common/setting/system.py:990
 msgid "Check plugins on startup"
 msgstr "Zkontrolovat pluginy při spuštění"
 
-#: common/setting/system.py:984
+#: common/setting/system.py:992
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Zkontrolujte, zda jsou při spuštění nainstalovány všechny pluginy - povolit v kontejnerových prostředích"
 
-#: common/setting/system.py:991
+#: common/setting/system.py:999
 msgid "Check for plugin updates"
 msgstr "Zkontrolovat aktualizace pluginů"
 
-#: common/setting/system.py:992
+#: common/setting/system.py:1000
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr "Povolit pravidelné kontroly aktualizací nainstalovaných pluginů"
 
-#: common/setting/system.py:998
+#: common/setting/system.py:1006
 msgid "Enable URL integration"
 msgstr "Povolit integraci URL"
 
-#: common/setting/system.py:999
+#: common/setting/system.py:1007
 msgid "Enable plugins to add URL routes"
 msgstr "Povolit plug-inům přidávat trasy URL"
 
-#: common/setting/system.py:1005
+#: common/setting/system.py:1013
 msgid "Enable navigation integration"
 msgstr "Povolit integraci navigace"
 
-#: common/setting/system.py:1006
+#: common/setting/system.py:1014
 msgid "Enable plugins to integrate into navigation"
 msgstr "Povolit integrování pluginů do navigace"
 
-#: common/setting/system.py:1012
+#: common/setting/system.py:1020
 msgid "Enable app integration"
 msgstr "Povolit integraci aplikací"
 
-#: common/setting/system.py:1013
+#: common/setting/system.py:1021
 msgid "Enable plugins to add apps"
 msgstr "Povolit pluginům přidávát aplikace"
 
-#: common/setting/system.py:1019
+#: common/setting/system.py:1027
 msgid "Enable schedule integration"
 msgstr "Povolit integraci plánu"
 
-#: common/setting/system.py:1020
+#: common/setting/system.py:1028
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Povolit pluginům spouštění naplánovaných úloh"
 
-#: common/setting/system.py:1026
+#: common/setting/system.py:1034
 msgid "Enable event integration"
 msgstr "Povolit integraci událostí"
 
-#: common/setting/system.py:1027
+#: common/setting/system.py:1035
 msgid "Enable plugins to respond to internal events"
 msgstr "Povolit pluginům reagovat na interní události"
 
-#: common/setting/system.py:1033
+#: common/setting/system.py:1041
 msgid "Enable interface integration"
 msgstr ""
 
-#: common/setting/system.py:1034
+#: common/setting/system.py:1042
 msgid "Enable plugins to integrate into the user interface"
 msgstr ""
 
-#: common/setting/system.py:1040
+#: common/setting/system.py:1048
 msgid "Enable mail integration"
 msgstr ""
 
-#: common/setting/system.py:1041
+#: common/setting/system.py:1049
 msgid "Enable plugins to process outgoing/incoming mails"
 msgstr ""
 
-#: common/setting/system.py:1047
+#: common/setting/system.py:1055
 msgid "Enable project codes"
 msgstr ""
 
-#: common/setting/system.py:1048
+#: common/setting/system.py:1056
 msgid "Enable project codes for tracking projects"
 msgstr ""
 
-#: common/setting/system.py:1053
+#: common/setting/system.py:1061
 msgid "Stocktake Functionality"
 msgstr "Funkce inventury"
 
-#: common/setting/system.py:1055
+#: common/setting/system.py:1063
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr "Povolit funkci inventury pro evidenci stavu zásob a výpočet hodnoty zásob"
 
-#: common/setting/system.py:1061
+#: common/setting/system.py:1069
 msgid "Exclude External Locations"
 msgstr "Vyloučit externí umístění"
 
-#: common/setting/system.py:1063
+#: common/setting/system.py:1071
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "Vyloučit skladové položky na externích místech z výpočtů inventury"
 
-#: common/setting/system.py:1069
+#: common/setting/system.py:1077
 msgid "Automatic Stocktake Period"
 msgstr "Perioda automatické inventury"
 
-#: common/setting/system.py:1071
+#: common/setting/system.py:1079
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr "Počet dní mezi automatickým záznamem inventury (pro vypnutí nastavte nulu)"
 
-#: common/setting/system.py:1077
+#: common/setting/system.py:1085
 msgid "Report Deletion Interval"
 msgstr "Interval mazání reportů"
 
-#: common/setting/system.py:1079
+#: common/setting/system.py:1087
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Reporty o inventuře se po určitém počtu dní vymažou"
 
-#: common/setting/system.py:1086
+#: common/setting/system.py:1094
 msgid "Display Users full names"
 msgstr "Zobrazit celá jména uživatelů"
 
-#: common/setting/system.py:1087
+#: common/setting/system.py:1095
 msgid "Display Users full names instead of usernames"
 msgstr "Zobrazit plná jména uživatelů namísto uživatelských jmen"
 
-#: common/setting/system.py:1092
+#: common/setting/system.py:1100
 msgid "Display User Profiles"
 msgstr ""
 
-#: common/setting/system.py:1093
+#: common/setting/system.py:1101
 msgid "Display Users Profiles on their profile page"
 msgstr ""
 
-#: common/setting/system.py:1098
+#: common/setting/system.py:1106
 msgid "Enable Test Station Data"
 msgstr "Povolit data zkušební stanice"
 
-#: common/setting/system.py:1099
+#: common/setting/system.py:1107
 msgid "Enable test station data collection for test results"
 msgstr "Povolit sběr dat ze zkušební stanice pro výsledky testů"
 
-#: common/setting/system.py:1104
+#: common/setting/system.py:1112
 msgid "Create Template on Upload"
 msgstr ""
 
-#: common/setting/system.py:1106
+#: common/setting/system.py:1114
 msgid "Create a new test template when uploading test data which does not match an existing template"
 msgstr ""
 
@@ -3564,18 +3576,34 @@ msgid "Show the current page in breadcrumbs"
 msgstr ""
 
 #: common/setting/user.py:229
+msgid "Show full stock location in tables"
+msgstr ""
+
+#: common/setting/user.py:231
+msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
+msgstr ""
+
+#: common/setting/user.py:237
+msgid "Show full part categories in tables"
+msgstr ""
+
+#: common/setting/user.py:239
+msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
+msgstr ""
+
+#: common/setting/user.py:245
 msgid "Receive error reports"
 msgstr "Přijímat zprávy o chybách"
 
-#: common/setting/user.py:230
+#: common/setting/user.py:246
 msgid "Receive notifications for system errors"
 msgstr "Dostávat oznámení o systémových chybách"
 
-#: common/setting/user.py:235
+#: common/setting/user.py:251
 msgid "Last used printing machines"
 msgstr "Poslední použité tiskárny"
 
-#: common/setting/user.py:236
+#: common/setting/user.py:252
 msgid "Save the last used printing machines for a user"
 msgstr "Uložte poslední použité tiskárny pro uživatele"
 
@@ -3820,7 +3848,7 @@ msgstr "Odkaz na informace o adrese (externí)"
 msgid "Manufacturer Part"
 msgstr "Výrobce dílu"
 
-#: company/models.py:520 company/models.py:810 stock/models.py:955
+#: company/models.py:520 company/models.py:810 stock/models.py:985
 #: stock/serializers.py:445
 msgid "Base Part"
 msgstr "Základní díl"
@@ -3862,7 +3890,7 @@ msgstr "Název parametru"
 msgid "Parameter value"
 msgstr "Hodnota parametru"
 
-#: company/models.py:641 part/models.py:1204 part/models.py:3909
+#: company/models.py:641 part/models.py:1204 part/models.py:3919
 msgid "Units"
 msgstr "Jednotky"
 
@@ -3915,7 +3943,7 @@ msgid "Supplier part description"
 msgstr "Popis dílu dodavatele"
 
 #: company/models.py:866 order/serializers.py:826 order/serializers.py:2049
-#: part/models.py:4421 part/models.py:4762
+#: part/models.py:4431 part/models.py:4772
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
 #: report/templates/report/inventree_return_order_report.html:27
@@ -3925,15 +3953,15 @@ msgstr "Popis dílu dodavatele"
 msgid "Note"
 msgstr "Poznámka"
 
-#: company/models.py:875 part/models.py:2212
+#: company/models.py:875 part/models.py:2218
 msgid "base cost"
 msgstr "základní cena"
 
-#: company/models.py:876 part/models.py:2213
+#: company/models.py:876 part/models.py:2219
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimální poplatek (např. poplatek za skladování)"
 
-#: company/models.py:883 order/serializers.py:818 stock/models.py:986
+#: company/models.py:883 order/serializers.py:818 stock/models.py:1016
 #: stock/serializers.py:1643
 msgid "Packaging"
 msgstr "Balení"
@@ -3950,7 +3978,7 @@ msgstr "Počet kusů v balení"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Celkové množství dodávané v jednom balení. Pro jednotlivé položky ponechte prázdné."
 
-#: company/models.py:910 part/models.py:2219
+#: company/models.py:910 part/models.py:2225
 msgid "multiple"
 msgstr "více"
 
@@ -4555,8 +4583,8 @@ msgstr "Dodavatel dílu se musí shodovat s dodavatelem PO"
 msgid "Quantity must be a positive number"
 msgstr "Množství musí být kladné"
 
-#: order/models.py:1199 order/models.py:2503 stock/models.py:1008
-#: stock/models.py:1009 stock/serializers.py:1382
+#: order/models.py:1199 order/models.py:2503 stock/models.py:1038
+#: stock/models.py:1039 stock/serializers.py:1382
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
@@ -4674,7 +4702,7 @@ msgstr "Doručeno"
 msgid "Number of items received"
 msgstr "Počet přijatých položek"
 
-#: order/models.py:1792 stock/models.py:1131 stock/serializers.py:654
+#: order/models.py:1792 stock/models.py:1161 stock/serializers.py:654
 msgid "Purchase Price"
 msgstr "Nákupní cena"
 
@@ -5023,7 +5051,7 @@ msgstr "Vyberte cílové umístění pro přijaté položky"
 msgid "Enter batch code for incoming stock items"
 msgstr "Zadat kód šarže pro příchozí skladové položky"
 
-#: order/serializers.py:800 stock/models.py:1090
+#: order/serializers.py:800 stock/models.py:1120
 #: templates/email/stale_stock_notification.html:22 users/models.py:143
 msgid "Expiry Date"
 msgstr ""
@@ -5287,7 +5315,7 @@ msgstr ""
 msgid "Uses"
 msgstr ""
 
-#: part/models.py:90 part/models.py:4202
+#: part/models.py:90 part/models.py:4212
 #: templates/email/part_event_notification.html:16
 msgid "Part Category"
 msgstr "Kategorie dílu"
@@ -5304,7 +5332,7 @@ msgstr "Výchozí umístění"
 msgid "Default location for parts in this category"
 msgstr "Výchozí umístění dílů v této kategorii"
 
-#: part/models.py:115 stock/models.py:212
+#: part/models.py:115 stock/models.py:214
 msgid "Structural"
 msgstr "Strukturální"
 
@@ -5320,12 +5348,12 @@ msgstr "Výchozí klíčová slova"
 msgid "Default keywords for parts in this category"
 msgstr "Výchozí klíčová slova pro díly v této kategorii"
 
-#: part/models.py:134 stock/models.py:96 stock/models.py:194
+#: part/models.py:134 stock/models.py:98 stock/models.py:196
 msgid "Icon"
 msgstr "Ikona"
 
 #: part/models.py:135 part/serializers.py:151 part/serializers.py:170
-#: stock/models.py:195
+#: stock/models.py:197
 msgid "Icon (optional)"
 msgstr "Ikona (volitelná)"
 
@@ -5566,508 +5594,508 @@ msgstr ""
 msgid "Last Stocktake"
 msgstr "Poslední inventura"
 
-#: part/models.py:2220
+#: part/models.py:2226
 msgid "Sell multiple"
 msgstr ""
 
-#: part/models.py:3247
+#: part/models.py:3257
 msgid "Currency used to cache pricing calculations"
 msgstr ""
 
-#: part/models.py:3263
+#: part/models.py:3273
 msgid "Minimum BOM Cost"
 msgstr "Minimální cena kusovníku"
 
-#: part/models.py:3264
+#: part/models.py:3274
 msgid "Minimum cost of component parts"
 msgstr ""
 
-#: part/models.py:3270
+#: part/models.py:3280
 msgid "Maximum BOM Cost"
 msgstr "Maximální cena kusovníku"
 
-#: part/models.py:3271
+#: part/models.py:3281
 msgid "Maximum cost of component parts"
 msgstr ""
 
-#: part/models.py:3277
+#: part/models.py:3287
 msgid "Minimum Purchase Cost"
 msgstr "Minimální nákupní cena"
 
-#: part/models.py:3278
+#: part/models.py:3288
 msgid "Minimum historical purchase cost"
 msgstr ""
 
-#: part/models.py:3284
+#: part/models.py:3294
 msgid "Maximum Purchase Cost"
 msgstr "Maximální nákupní cena"
 
-#: part/models.py:3285
+#: part/models.py:3295
 msgid "Maximum historical purchase cost"
 msgstr ""
 
-#: part/models.py:3291
+#: part/models.py:3301
 msgid "Minimum Internal Price"
 msgstr ""
 
-#: part/models.py:3292
+#: part/models.py:3302
 msgid "Minimum cost based on internal price breaks"
 msgstr ""
 
-#: part/models.py:3298
+#: part/models.py:3308
 msgid "Maximum Internal Price"
 msgstr ""
 
-#: part/models.py:3299
+#: part/models.py:3309
 msgid "Maximum cost based on internal price breaks"
 msgstr ""
 
-#: part/models.py:3305
+#: part/models.py:3315
 msgid "Minimum Supplier Price"
 msgstr ""
 
-#: part/models.py:3306
+#: part/models.py:3316
 msgid "Minimum price of part from external suppliers"
 msgstr ""
 
-#: part/models.py:3312
+#: part/models.py:3322
 msgid "Maximum Supplier Price"
 msgstr ""
 
-#: part/models.py:3313
+#: part/models.py:3323
 msgid "Maximum price of part from external suppliers"
 msgstr ""
 
-#: part/models.py:3319
+#: part/models.py:3329
 msgid "Minimum Variant Cost"
 msgstr "Minimální cena variant"
 
-#: part/models.py:3320
+#: part/models.py:3330
 msgid "Calculated minimum cost of variant parts"
 msgstr ""
 
-#: part/models.py:3326
+#: part/models.py:3336
 msgid "Maximum Variant Cost"
 msgstr "Maximální cena variant"
 
-#: part/models.py:3327
+#: part/models.py:3337
 msgid "Calculated maximum cost of variant parts"
 msgstr ""
 
-#: part/models.py:3333 part/models.py:3347
+#: part/models.py:3343 part/models.py:3357
 msgid "Minimum Cost"
 msgstr "Minimální cena"
 
-#: part/models.py:3334
+#: part/models.py:3344
 msgid "Override minimum cost"
 msgstr ""
 
-#: part/models.py:3340 part/models.py:3354
+#: part/models.py:3350 part/models.py:3364
 msgid "Maximum Cost"
 msgstr "Maximální cena"
 
-#: part/models.py:3341
+#: part/models.py:3351
 msgid "Override maximum cost"
 msgstr ""
 
-#: part/models.py:3348
+#: part/models.py:3358
 msgid "Calculated overall minimum cost"
 msgstr ""
 
-#: part/models.py:3355
+#: part/models.py:3365
 msgid "Calculated overall maximum cost"
 msgstr ""
 
-#: part/models.py:3361
+#: part/models.py:3371
 msgid "Minimum Sale Price"
 msgstr ""
 
-#: part/models.py:3362
+#: part/models.py:3372
 msgid "Minimum sale price based on price breaks"
 msgstr ""
 
-#: part/models.py:3368
+#: part/models.py:3378
 msgid "Maximum Sale Price"
 msgstr ""
 
-#: part/models.py:3369
+#: part/models.py:3379
 msgid "Maximum sale price based on price breaks"
 msgstr ""
 
-#: part/models.py:3375
+#: part/models.py:3385
 msgid "Minimum Sale Cost"
 msgstr "Minimální prodejní cena"
 
-#: part/models.py:3376
+#: part/models.py:3386
 msgid "Minimum historical sale price"
 msgstr ""
 
-#: part/models.py:3382
+#: part/models.py:3392
 msgid "Maximum Sale Cost"
 msgstr "Maximální prodejní cena"
 
-#: part/models.py:3383
+#: part/models.py:3393
 msgid "Maximum historical sale price"
 msgstr ""
 
-#: part/models.py:3402
+#: part/models.py:3412
 msgid "Part for stocktake"
 msgstr ""
 
-#: part/models.py:3407
+#: part/models.py:3417
 msgid "Item Count"
 msgstr "Počet položek"
 
-#: part/models.py:3408
+#: part/models.py:3418
 msgid "Number of individual stock entries at time of stocktake"
 msgstr ""
 
-#: part/models.py:3416
+#: part/models.py:3426
 msgid "Total available stock at time of stocktake"
 msgstr ""
 
-#: part/models.py:3420 part/models.py:3503
+#: part/models.py:3430 part/models.py:3513
 #: report/templates/report/inventree_test_report.html:106
 msgid "Date"
 msgstr "Datum"
 
-#: part/models.py:3421
+#: part/models.py:3431
 msgid "Date stocktake was performed"
 msgstr ""
 
-#: part/models.py:3429
+#: part/models.py:3439
 msgid "Additional notes"
 msgstr "Další poznámky"
 
-#: part/models.py:3439
+#: part/models.py:3449
 msgid "User who performed this stocktake"
 msgstr ""
 
-#: part/models.py:3445
+#: part/models.py:3455
 msgid "Minimum Stock Cost"
 msgstr "Minimální cena zásob"
 
-#: part/models.py:3446
+#: part/models.py:3456
 msgid "Estimated minimum cost of stock on hand"
 msgstr ""
 
-#: part/models.py:3452
+#: part/models.py:3462
 msgid "Maximum Stock Cost"
 msgstr "Maximální cena zásob"
 
-#: part/models.py:3453
+#: part/models.py:3463
 msgid "Estimated maximum cost of stock on hand"
 msgstr ""
 
-#: part/models.py:3509
+#: part/models.py:3519
 msgid "Report"
 msgstr ""
 
-#: part/models.py:3510
+#: part/models.py:3520
 msgid "Stocktake report file (generated internally)"
 msgstr ""
 
-#: part/models.py:3515
+#: part/models.py:3525
 msgid "Part Count"
 msgstr "Počet dílů"
 
-#: part/models.py:3516
+#: part/models.py:3526
 msgid "Number of parts covered by stocktake"
 msgstr ""
 
-#: part/models.py:3526
+#: part/models.py:3536
 msgid "User who requested this stocktake report"
 msgstr ""
 
-#: part/models.py:3536
+#: part/models.py:3546
 msgid "Part Sale Price Break"
 msgstr ""
 
-#: part/models.py:3648
+#: part/models.py:3658
 msgid "Part Test Template"
 msgstr ""
 
-#: part/models.py:3674
+#: part/models.py:3684
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr ""
 
-#: part/models.py:3695 part/models.py:3868
+#: part/models.py:3705 part/models.py:3878
 msgid "Choices must be unique"
 msgstr ""
 
-#: part/models.py:3706
+#: part/models.py:3716
 msgid "Test templates can only be created for testable parts"
 msgstr ""
 
-#: part/models.py:3720
+#: part/models.py:3730
 msgid "Test template with the same key already exists for part"
 msgstr ""
 
-#: part/models.py:3737
+#: part/models.py:3747
 msgid "Test Name"
 msgstr "Název testu"
 
-#: part/models.py:3738
+#: part/models.py:3748
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:3744
+#: part/models.py:3754
 msgid "Test Key"
 msgstr ""
 
-#: part/models.py:3745
+#: part/models.py:3755
 msgid "Simplified key for the test"
 msgstr ""
 
-#: part/models.py:3752
+#: part/models.py:3762
 msgid "Test Description"
 msgstr ""
 
-#: part/models.py:3753
+#: part/models.py:3763
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:3757 report/models.py:287
+#: part/models.py:3767 report/models.py:287
 msgid "Enabled"
 msgstr ""
 
-#: part/models.py:3757
+#: part/models.py:3767
 msgid "Is this test enabled?"
 msgstr ""
 
-#: part/models.py:3762
+#: part/models.py:3772
 msgid "Required"
 msgstr ""
 
-#: part/models.py:3763
+#: part/models.py:3773
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:3768
+#: part/models.py:3778
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:3769
+#: part/models.py:3779
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:3774
+#: part/models.py:3784
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:3776
+#: part/models.py:3786
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:3782 part/models.py:3930
+#: part/models.py:3792 part/models.py:3940
 msgid "Choices"
 msgstr ""
 
-#: part/models.py:3783
+#: part/models.py:3793
 msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
-#: part/models.py:3816
+#: part/models.py:3826
 msgid "Part Parameter Template"
 msgstr ""
 
-#: part/models.py:3843
+#: part/models.py:3853
 msgid "Checkbox parameters cannot have units"
 msgstr ""
 
-#: part/models.py:3848
+#: part/models.py:3858
 msgid "Checkbox parameters cannot have choices"
 msgstr ""
 
-#: part/models.py:3885
+#: part/models.py:3895
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:3903
+#: part/models.py:3913
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:3910
+#: part/models.py:3920
 msgid "Physical units for this parameter"
 msgstr ""
 
-#: part/models.py:3918
+#: part/models.py:3928
 msgid "Parameter description"
 msgstr ""
 
-#: part/models.py:3924
+#: part/models.py:3934
 msgid "Checkbox"
 msgstr ""
 
-#: part/models.py:3925
+#: part/models.py:3935
 msgid "Is this parameter a checkbox?"
 msgstr ""
 
-#: part/models.py:3931
+#: part/models.py:3941
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
-#: part/models.py:3942
+#: part/models.py:3952
 msgid "Selection list for this parameter"
 msgstr ""
 
-#: part/models.py:3978
+#: part/models.py:3988
 msgid "Part Parameter"
 msgstr ""
 
-#: part/models.py:4004
+#: part/models.py:4014
 msgid "Parameter cannot be modified - part is locked"
 msgstr ""
 
-#: part/models.py:4042
+#: part/models.py:4052
 msgid "Invalid choice for parameter value"
 msgstr ""
 
-#: part/models.py:4093
+#: part/models.py:4103
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:4101 part/models.py:4209 part/models.py:4210
+#: part/models.py:4111 part/models.py:4219 part/models.py:4220
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:4107
+#: part/models.py:4117
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:4157
+#: part/models.py:4167
 msgid "Part Category Parameter Template"
 msgstr ""
 
-#: part/models.py:4216
+#: part/models.py:4226
 msgid "Default Value"
 msgstr ""
 
-#: part/models.py:4217
+#: part/models.py:4227
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:4348
+#: part/models.py:4358
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "Položku kusovníku nelze změnit - sestava je uzamčena"
 
-#: part/models.py:4355
+#: part/models.py:4365
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr ""
 
-#: part/models.py:4365
+#: part/models.py:4375
 msgid "Select parent part"
 msgstr "Vyberte nadřazený díl"
 
-#: part/models.py:4375
+#: part/models.py:4385
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:4376
+#: part/models.py:4386
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:4387
+#: part/models.py:4397
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:4393
+#: part/models.py:4403
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:4399
+#: part/models.py:4409
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr ""
 
-#: part/models.py:4406
+#: part/models.py:4416
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:4407
+#: part/models.py:4417
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:4414
+#: part/models.py:4424
 msgid "BOM item reference"
 msgstr "Reference položky kusovníku"
 
-#: part/models.py:4422
+#: part/models.py:4432
 msgid "BOM item notes"
 msgstr "Poznámky k položce kusovníku"
 
-#: part/models.py:4428
+#: part/models.py:4438
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:4429
+#: part/models.py:4439
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:4434
+#: part/models.py:4444
 msgid "Validated"
 msgstr "Schváleno"
 
-#: part/models.py:4435
+#: part/models.py:4445
 msgid "This BOM item has been validated"
 msgstr "Tato položka kusovníku ještě nebyla schválena"
 
-#: part/models.py:4440
+#: part/models.py:4450
 msgid "Gets inherited"
 msgstr ""
 
-#: part/models.py:4441
+#: part/models.py:4451
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:4447
+#: part/models.py:4457
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:4532 stock/models.py:855
+#: part/models.py:4542 stock/models.py:885
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:4542 part/models.py:4544
+#: part/models.py:4552 part/models.py:4554
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:4689
+#: part/models.py:4699
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:4710
+#: part/models.py:4720
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:4723
+#: part/models.py:4733
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:4731
+#: part/models.py:4741
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:4747
+#: part/models.py:4757
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:4755
+#: part/models.py:4765
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:4756
+#: part/models.py:4766
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:4763
+#: part/models.py:4773
 msgid "Note for this relationship"
 msgstr ""
 
-#: part/models.py:4782
+#: part/models.py:4792
 msgid "Part relationship cannot be created between a part and itself"
 msgstr ""
 
-#: part/models.py:4787
+#: part/models.py:4797
 msgid "Duplicate relationship already exists"
 msgstr ""
 
@@ -6286,7 +6314,7 @@ msgstr ""
 msgid "Image file does not exist"
 msgstr ""
 
-#: part/serializers.py:1223 part/serializers.py:1773
+#: part/serializers.py:1223 part/serializers.py:1776
 msgid "Can Build"
 msgstr ""
 
@@ -6395,47 +6423,47 @@ msgstr ""
 msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
-#: part/serializers.py:1739
+#: part/serializers.py:1742
 msgid "Select the parent assembly"
 msgstr "Vybrat nadřazenou sestavu"
 
-#: part/serializers.py:1753
+#: part/serializers.py:1756
 msgid "Select the component part"
 msgstr ""
 
-#: part/serializers.py:2012
+#: part/serializers.py:2015
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:2020
+#: part/serializers.py:2023
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:2021
+#: part/serializers.py:2024
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:2026
+#: part/serializers.py:2029
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:2027
+#: part/serializers.py:2030
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:2032
+#: part/serializers.py:2035
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:2033
+#: part/serializers.py:2036
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:2038
+#: part/serializers.py:2041
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:2039
+#: part/serializers.py:2042
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
@@ -7300,17 +7328,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:639
+#: plugin/registry.py:641
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Plugin '{p}' není kompatibilní s aktuální verzí InvenTree {v}"
 
-#: plugin/registry.py:642
+#: plugin/registry.py:644
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Plugin vyžaduje alespoň verzi {v}"
 
-#: plugin/registry.py:644
+#: plugin/registry.py:646
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Plugin vyžaduje nanejvýš verzi {v}"
@@ -7765,7 +7793,7 @@ msgstr "Celkem"
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
 #: report/templates/report/inventree_stock_report_merge.html:88
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:1013
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:1043
 #: stock/serializers.py:163 templates/email/stale_stock_notification.html:21
 msgid "Serial Number"
 msgstr "Sériové číslo"
@@ -7959,313 +7987,318 @@ msgstr ""
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
-#: stock/models.py:70
+#: stock/models.py:72
 msgid "Stock Location type"
 msgstr "Typ skladového umístění"
 
-#: stock/models.py:71
+#: stock/models.py:73
 msgid "Stock Location types"
 msgstr "Typy skladových umístění"
 
-#: stock/models.py:97
+#: stock/models.py:99
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr ""
 
-#: stock/models.py:155 stock/models.py:975
+#: stock/models.py:157 stock/models.py:1005
 msgid "Stock Location"
 msgstr "Skladové umístění"
 
-#: stock/models.py:156 users/ruleset.py:31
+#: stock/models.py:158 users/ruleset.py:31
 msgid "Stock Locations"
 msgstr "Skladová umístění"
 
-#: stock/models.py:205 stock/models.py:1140
+#: stock/models.py:207 stock/models.py:1170
 msgid "Owner"
 msgstr "Správce"
 
-#: stock/models.py:206 stock/models.py:1141
+#: stock/models.py:208 stock/models.py:1171
 msgid "Select Owner"
 msgstr ""
 
-#: stock/models.py:214
+#: stock/models.py:216
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Skladové položky nelze umístit přímo do strukturálních skladových umístění, ale lze je umístit do podřízených skladových umístění."
 
-#: stock/models.py:221 users/models.py:503
+#: stock/models.py:223 users/models.py:503
 msgid "External"
 msgstr "Externí"
 
-#: stock/models.py:222
+#: stock/models.py:224
 msgid "This is an external stock location"
 msgstr "Toto je externí skladové umístění"
 
-#: stock/models.py:228
+#: stock/models.py:230
 msgid "Location type"
 msgstr "Typ umístění"
 
-#: stock/models.py:232
+#: stock/models.py:234
 msgid "Stock location type of this location"
 msgstr "Typ tohoto skladového umístění"
 
-#: stock/models.py:304
+#: stock/models.py:306
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr "Toto skladové umístění nemůžete označit jako strukturální, protože již obsahuje skladové položky!"
 
-#: stock/models.py:562
+#: stock/models.py:587
+#, python-brace-format
+msgid "{field} does not exist"
+msgstr ""
+
+#: stock/models.py:600
 msgid "Part must be specified"
 msgstr "Díl musí být zadán"
 
-#: stock/models.py:834
+#: stock/models.py:864
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "Skladové položky nelze umístit do strukturálních skladových umístění!"
 
-#: stock/models.py:861 stock/serializers.py:481
+#: stock/models.py:891 stock/serializers.py:481
 msgid "Stock item cannot be created for virtual parts"
 msgstr "Nelze vytvořit skladovou položku pro virtuální díl"
 
-#: stock/models.py:878
+#: stock/models.py:908
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr ""
 
-#: stock/models.py:888 stock/models.py:901
+#: stock/models.py:918 stock/models.py:931
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "Množství musí být 1 pro položku se sériovým číslem"
 
-#: stock/models.py:891
+#: stock/models.py:921
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr ""
 
-#: stock/models.py:913
+#: stock/models.py:943
 msgid "Item cannot belong to itself"
 msgstr "Položka nemůže patřit sama sobě"
 
-#: stock/models.py:918
+#: stock/models.py:948
 msgid "Item must have a build reference if is_building=True"
 msgstr ""
 
-#: stock/models.py:931
+#: stock/models.py:961
 msgid "Build reference does not point to the same part object"
 msgstr ""
 
-#: stock/models.py:945
+#: stock/models.py:975
 msgid "Parent Stock Item"
 msgstr "Nadřazená skladová položka"
 
-#: stock/models.py:957
+#: stock/models.py:987
 msgid "Base part"
 msgstr ""
 
-#: stock/models.py:967
+#: stock/models.py:997
 msgid "Select a matching supplier part for this stock item"
 msgstr "Vyberte odpovídající díl dodavatele pro tuto skladovou položku"
 
-#: stock/models.py:979
+#: stock/models.py:1009
 msgid "Where is this stock item located?"
 msgstr "Kde se tato skladová položka nachází?"
 
-#: stock/models.py:987 stock/serializers.py:1644
+#: stock/models.py:1017 stock/serializers.py:1644
 msgid "Packaging this stock item is stored in"
 msgstr "Balení, ve kterém je tato skladová položka uložena"
 
-#: stock/models.py:993
+#: stock/models.py:1023
 msgid "Installed In"
 msgstr "Instalováno v"
 
-#: stock/models.py:998
+#: stock/models.py:1028
 msgid "Is this item installed in another item?"
 msgstr "Je tato položka nainstalována v jiné položce?"
 
-#: stock/models.py:1017
+#: stock/models.py:1047
 msgid "Serial number for this item"
 msgstr "Sériové číslo pro tuto položku"
 
-#: stock/models.py:1034 stock/serializers.py:1629
+#: stock/models.py:1064 stock/serializers.py:1629
 msgid "Batch code for this stock item"
 msgstr "Kód šarže pro tuto skladovou položku"
 
-#: stock/models.py:1039
+#: stock/models.py:1069
 msgid "Stock Quantity"
 msgstr ""
 
-#: stock/models.py:1049
+#: stock/models.py:1079
 msgid "Source Build"
 msgstr ""
 
-#: stock/models.py:1052
+#: stock/models.py:1082
 msgid "Build for this stock item"
 msgstr ""
 
-#: stock/models.py:1059
+#: stock/models.py:1089
 msgid "Consumed By"
 msgstr ""
 
-#: stock/models.py:1062
+#: stock/models.py:1092
 msgid "Build order which consumed this stock item"
 msgstr "Výrobní příkaz, který spotřeboval tuto skladovou položku"
 
-#: stock/models.py:1071
+#: stock/models.py:1101
 msgid "Source Purchase Order"
 msgstr "Zdrojová nákupní objednávka"
 
-#: stock/models.py:1075
+#: stock/models.py:1105
 msgid "Purchase order for this stock item"
 msgstr "Nákupní objednávka pro tuto skladovou položku"
 
-#: stock/models.py:1081
+#: stock/models.py:1111
 msgid "Destination Sales Order"
 msgstr ""
 
-#: stock/models.py:1092
+#: stock/models.py:1122
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr ""
 
-#: stock/models.py:1110
+#: stock/models.py:1140
 msgid "Delete on deplete"
 msgstr ""
 
-#: stock/models.py:1111
+#: stock/models.py:1141
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "Odstranit tuto skladovou položku po vyčerpání zásob"
 
-#: stock/models.py:1132
+#: stock/models.py:1162
 msgid "Single unit purchase price at time of purchase"
 msgstr ""
 
-#: stock/models.py:1163
+#: stock/models.py:1193
 msgid "Converted to part"
 msgstr ""
 
-#: stock/models.py:1746
+#: stock/models.py:1776
 msgid "Part is not set as trackable"
 msgstr ""
 
-#: stock/models.py:1752
+#: stock/models.py:1782
 msgid "Quantity must be integer"
 msgstr ""
 
-#: stock/models.py:1760
+#: stock/models.py:1790
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr ""
 
-#: stock/models.py:1766
+#: stock/models.py:1796
 msgid "Serial numbers must be provided as a list"
 msgstr ""
 
-#: stock/models.py:1771
+#: stock/models.py:1801
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:1890 stock/models.py:2799
+#: stock/models.py:1919 stock/models.py:2828
 msgid "Test template does not exist"
 msgstr ""
 
-#: stock/models.py:1908
+#: stock/models.py:1937
 msgid "Stock item has been assigned to a sales order"
 msgstr "Skladová položka byla přidělena prodejní objednávce"
 
-#: stock/models.py:1912
+#: stock/models.py:1941
 msgid "Stock item is installed in another item"
 msgstr "Skladová položka je nainstalována v jiné položce"
 
-#: stock/models.py:1915
+#: stock/models.py:1944
 msgid "Stock item contains other items"
 msgstr "Skladová položka obsahuje jiné položky"
 
-#: stock/models.py:1918
+#: stock/models.py:1947
 msgid "Stock item has been assigned to a customer"
 msgstr "Skladová položka byla přidělena zákazníkovi"
 
-#: stock/models.py:1921 stock/models.py:2095
+#: stock/models.py:1950 stock/models.py:2124
 msgid "Stock item is currently in production"
 msgstr "Skladová položka je ve výrobě"
 
-#: stock/models.py:1924
+#: stock/models.py:1953
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1931 stock/serializers.py:1522
+#: stock/models.py:1960 stock/serializers.py:1522
 msgid "Duplicate stock items"
 msgstr "Duplicitní skladové položky"
 
-#: stock/models.py:1935
+#: stock/models.py:1964
 msgid "Stock items must refer to the same part"
 msgstr "Skladové položky musí odkazovat na stejný díl"
 
-#: stock/models.py:1943
+#: stock/models.py:1972
 msgid "Stock items must refer to the same supplier part"
 msgstr "Skladové položky musí odkazovat na stejný díl dodavatele"
 
-#: stock/models.py:1948
+#: stock/models.py:1977
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:2218
+#: stock/models.py:2247
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Zásobová položka nemůže být přesunuta, protože není skladem"
 
-#: stock/models.py:2700
+#: stock/models.py:2729
 msgid "Stock Item Tracking"
 msgstr "Sledování skladových položek"
 
-#: stock/models.py:2731
+#: stock/models.py:2760
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2771
+#: stock/models.py:2800
 msgid "Stock Item Test Result"
 msgstr "Výsledek testu skladové položky"
 
-#: stock/models.py:2802
+#: stock/models.py:2831
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2806
+#: stock/models.py:2835
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2811
+#: stock/models.py:2840
 msgid "Invalid value for this test"
 msgstr ""
 
-#: stock/models.py:2835
+#: stock/models.py:2864
 msgid "Test result"
 msgstr "Výsledek testu"
 
-#: stock/models.py:2842
+#: stock/models.py:2871
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2850 stock/serializers.py:259
+#: stock/models.py:2879 stock/serializers.py:259
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2854
+#: stock/models.py:2883
 msgid "Test notes"
 msgstr ""
 
-#: stock/models.py:2862
+#: stock/models.py:2891
 msgid "Test station"
 msgstr ""
 
-#: stock/models.py:2863
+#: stock/models.py:2892
 msgid "The identifier of the test station where the test was performed"
 msgstr ""
 
-#: stock/models.py:2869
+#: stock/models.py:2898
 msgid "Started"
 msgstr ""
 
-#: stock/models.py:2870
+#: stock/models.py:2899
 msgid "The timestamp of the test start"
 msgstr ""
 
-#: stock/models.py:2876
+#: stock/models.py:2905
 msgid "Finished"
 msgstr ""
 
-#: stock/models.py:2877
+#: stock/models.py:2906
 msgid "The timestamp of the test finish"
 msgstr ""
 

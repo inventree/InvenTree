@@ -781,6 +781,79 @@ class BuildAllocationTest(BuildAPITest):
             expected_code=201,
         )
 
+    def test_auto_allocate(self):
+        """Test the allocation of tracked items against a Build."""
+        N_BUILD_ITEMS = BuildItem.objects.count()
+
+        assembly = Part.objects.create(
+            name='Test Assembly',
+            description='Test Assembly Description',
+            assembly=True,
+            trackable=True,
+        )
+
+        component = Part.objects.create(
+            name='Test Component',
+            description='Test Component Description',
+            trackable=True,
+            component=True,
+        )
+
+        # Create a BOM item for the assembly
+        BomItem.objects.create(part=assembly, sub_part=component, quantity=1)
+
+        # Create a build order for the assembly
+        build = Build.objects.create(part=assembly, reference='BO-12347', quantity=10)
+
+        serials = [str(x) for x in range(100, 110)]
+
+        # Create serialized component items
+        for sn in serials:
+            StockItem.objects.create(part=component, quantity=1, serial=str(sn))
+
+        self.assertEqual(N_BUILD_ITEMS, BuildItem.objects.count())
+
+        # Generate build outputs via API
+        url = reverse('api-build-output-create', kwargs={'pk': build.pk})
+
+        response = self.post(
+            url,
+            {
+                'quantity': 10,
+                'serial_numbers': ', '.join(serials),
+                'auto_allocate': True,
+            },
+            expected_code=201,
+        )
+
+        # 10 new build item objects should have been created
+        self.assertEqual(N_BUILD_ITEMS + 10, BuildItem.objects.count())
+
+        self.assertEqual(len(response.data), 10)
+
+        # Check that the tracked items have been auto-allocated based on serial number
+        for entry in response.data:
+            self.assertIn(entry['serial'], serials)
+
+            # Find the matching output
+            output = StockItem.objects.filter(
+                part=assembly, serial=entry['serial']
+            ).first()
+
+            self.assertIsNotNone(output)
+
+            # Find the matching component
+            c = StockItem.objects.filter(part=component, serial=entry['serial']).first()
+            self.assertIsNotNone(c)
+
+            # Find the matching BuildItem object
+            bi = BuildItem.objects.filter(
+                stock_item=c, quantity=1, install_into=output
+            ).first()
+
+            self.assertIsNotNone(bi)
+            self.assertEqual(bi.build, build)
+
 
 class BuildItemTest(BuildAPITest):
     """Unit tests for build items.

@@ -68,7 +68,7 @@ def print_labels(
     model = template.get_model()
     items = model.objects.filter(pk__in=item_ids)
 
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if not plugin:
         logger.warning("Label printing plugin '%s' not found", plugin_slug)

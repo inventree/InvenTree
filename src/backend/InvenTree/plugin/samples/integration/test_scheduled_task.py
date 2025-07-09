@@ -76,7 +76,15 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
     def test_calling(self):
         """Test calling of plugin functions by name."""
-        # Check with right parameters
+        # First, plugin is *not* enabled
+        registry.set_plugin_state('schedule', False)
+
+        with self.assertRaises(AttributeError):
+            self.assertEqual(call_plugin_function('schedule', 'member_func'), False)
+
+        registry.set_plugin_state('schedule', True)
+
+        # Should work now
         self.assertEqual(call_plugin_function('schedule', 'member_func'), False)
 
         # Check with wrong key

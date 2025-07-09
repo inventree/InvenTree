@@ -179,7 +179,7 @@ export function ApiFormField({
             radius='lg'
             size='sm'
             error={definition.error ?? error?.message}
-            onChange={(event) => onChange(event.currentTarget.checked)}
+            onChange={(event: any) => onChange(event.currentTarget.checked)}
           />
         );
       case 'date':
@@ -217,6 +217,7 @@ export function ApiFormField({
         return (
           <FileInput
             {...reducedDefinition}
+            aria-label={`file-field-${fieldName}`}
             id={fieldId}
             ref={field.ref}
             radius='sm'
