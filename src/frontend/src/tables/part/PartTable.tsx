@@ -24,6 +24,7 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import {
   CategoryColumn,
+  DefaultLocationColumn,
   DescriptionColumn,
   LinkColumn,
   PartColumn
@@ -61,12 +62,9 @@ function partTableColumns(): TableColumn[] {
     CategoryColumn({
       accessor: 'category_detail'
     }),
-    {
-      accessor: 'default_location',
-      sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring,
-      defaultVisible: false
-    },
+    DefaultLocationColumn({
+      accessor: 'default_location_detail'
+    }),
     {
       accessor: 'total_in_stock',
       sortable: true,

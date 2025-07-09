@@ -19,7 +19,10 @@ import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import { resolveItem } from '../functions/conversion';
-import { useGlobalSettingsState } from '../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsStates';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
@@ -114,24 +117,88 @@ export function PathColumn(props: TableColumnProps): TableColumn {
   };
 }
 
+export function PathColumnPlainText(props: TableColumnProps): TableColumn {
+  return {
+    ...props,
+    accessor: props.accessor ?? 'path',
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? '');
+
+      if (!instance || !instance.pathstring) {
+        return '-';
+      }
+
+      return <Text>{instance.pathstring}</Text>;
+    }
+  };
+}
+
 export function LocationColumn(props: TableColumnProps): TableColumn {
-  return PathColumn({
-    accessor: 'location',
-    title: t`Location`,
-    sortable: true,
-    ordering: 'location',
-    ...props
-  });
+  const userSettings = useUserSettingsState.getState();
+  const enabled = userSettings.isSet('SHOW_FULL_LOCATION_IN_TABLES', false);
+  if (enabled) {
+    return PathColumnPlainText({
+      accessor: 'location',
+      title: t`Location`,
+      sortable: true,
+      ordering: 'location',
+      ...props
+    });
+  } else {
+    return PathColumn({
+      accessor: 'location',
+      title: t`Location`,
+      sortable: true,
+      ordering: 'location',
+      ...props
+    });
+  }
+}
+
+export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
+  const userSettings = useUserSettingsState.getState();
+  const enabled = userSettings.isSet('SHOW_FULL_LOCATION_IN_TABLES', false);
+  if (enabled) {
+    return PathColumnPlainText({
+      accessor: 'default_location',
+      title: t`Default Location`,
+      sortable: true,
+      defaultVisible: false,
+      ordering: 'default_location',
+      ...props
+    });
+  } else {
+    return PathColumn({
+      accessor: 'default_location',
+      title: t`Default Location`,
+      sortable: true,
+      defaultVisible: false,
+      ordering: 'default_location',
+      ...props
+    });
+  }
 }
 
 export function CategoryColumn(props: TableColumnProps): TableColumn {
-  return PathColumn({
-    accessor: 'category',
-    title: t`Category`,
-    sortable: true,
-    ordering: 'category',
-    ...props
-  });
+  const userSettings = useUserSettingsState.getState();
+  const enabled = userSettings.isSet('SHOW_FULL_CATEGORY_IN_TABLES', false);
+  if (enabled) {
+    return PathColumnPlainText({
+      accessor: 'category',
+      title: t`Category`,
+      sortable: true,
+      ordering: 'category',
+      ...props
+    });
+  } else {
+    return PathColumn({
+      accessor: 'category',
+      title: t`Category`,
+      sortable: true,
+      ordering: 'category',
+      ...props
+    });
+  }
 }
 
 export function BooleanColumn(props: TableColumn): TableColumn {
