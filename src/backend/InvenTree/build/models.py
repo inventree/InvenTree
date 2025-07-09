@@ -1180,10 +1180,12 @@ class Build(
         if prevent_on_incomplete and not output.passedAllRequiredTests(
             required_tests=required_tests
         ):
-            serial = output.serial
-            raise ValidationError(
-                _(f'Build output {serial} has not passed all required tests')
-            )
+            msg = _('Build output has not passed all required tests')
+
+            if serial := output.serial:
+                msg = _(f'Build output {serial} has not passed all required tests')
+
+            raise ValidationError(msg)
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
