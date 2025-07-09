@@ -23,7 +23,6 @@ const OUTPUT_DIR = '../../src/backend/InvenTree/web/static/web';
 export default defineConfig(({ command, mode }) => {
   // In 'build' mode, we want to use an empty base URL (for static file generation)
   const baseUrl: string | undefined = command === 'build' ? '' : undefined;
-  console.log(`Running Vite in '${command}' mode -> base URL: ${baseUrl}`);
 
   return {
     plugins: [

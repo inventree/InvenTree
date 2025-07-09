@@ -1,6 +1,7 @@
 import { test } from '../baseFixtures';
 import {
   clearTableFilters,
+  clickOnRowMenu,
   getRowFromCell,
   loadTab,
   navigate
@@ -89,17 +90,15 @@ test('Parts - BOM', async ({ browser }) => {
     name: 'Small plastic enclosure, black',
     exact: true
   });
-  await cell.click({ button: 'right' });
+
+  await clickOnRowMenu(cell);
 
   // Check for expected context menu actions
-  await page.getByRole('button', { name: 'Edit', exact: true }).waitFor();
-  await page.getByRole('button', { name: 'Delete', exact: true }).waitFor();
-  await page
-    .getByRole('button', { name: 'View details', exact: true })
-    .waitFor();
+  await page.getByRole('menuitem', { name: 'Edit', exact: true }).waitFor();
+  await page.getByRole('menuitem', { name: 'Delete', exact: true }).waitFor();
 
   await page
-    .getByRole('button', { name: 'Edit Substitutes', exact: true })
+    .getByRole('menuitem', { name: 'Edit Substitutes', exact: true })
     .click();
   await page.getByText('Edit BOM Substitutes').waitFor();
   await page.getByText('1551ACLR').first().waitFor();
