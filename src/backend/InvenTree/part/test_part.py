@@ -173,18 +173,6 @@ class PartTest(TestCase):
         barcode = p.format_barcode()
         self.assertEqual(barcode, '{"part": 1}')
 
-    def test_tree(self):
-        """Test that the part variant tree is working properly."""
-        chair = Part.objects.get(pk=10000)
-        self.assertEqual(chair.get_children().count(), 3)
-        self.assertEqual(chair.get_descendant_count(), 4)
-
-        green = Part.objects.get(pk=10004)
-        self.assertEqual(green.get_ancestors().count(), 2)
-        self.assertEqual(green.get_root(), chair)
-        self.assertEqual(green.get_family().count(), 3)
-        self.assertEqual(Part.objects.filter(tree_id=chair.tree_id).count(), 5)
-
     def test_str(self):
         """Test string representation of a Part."""
         p = Part.objects.get(pk=100)
@@ -464,6 +452,136 @@ class PartTest(TestCase):
         rev_b.save()
 
         self.assertEqual(part.revisions.count(), 2)
+
+
+class VariantTreeTest(TestCase):
+    """Unit test for the Part variant tree structure."""
+
+    fixtures = ['category', 'part', 'location']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Rebuild Part tree before running tests."""
+        super().setUpTestData()
+        Part.objects.rebuild()
+
+    def test_tree(self):
+        """Test tree structure for fixtured data."""
+        chair = Part.objects.get(pk=10000)
+        self.assertEqual(chair.get_children().count(), 3)
+        self.assertEqual(chair.get_descendant_count(), 4)
+
+        green = Part.objects.get(pk=10004)
+        self.assertEqual(green.get_ancestors().count(), 2)
+        self.assertEqual(green.get_root(), chair)
+        self.assertEqual(green.get_family().count(), 3)
+        self.assertEqual(Part.objects.filter(tree_id=chair.tree_id).count(), 5)
+
+    def test_complex_tree(self):
+        """Test a complex part template/variant tree."""
+        template = Part.objects.create(
+            name='Top Level Template',
+            description='A top-level template part',
+            is_template=True,
+        )
+
+        # Create some variant parts
+        for x in ['A', 'B', 'C']:
+            variant = Part.objects.create(
+                name=f'Variant {x}',
+                description=f'Variant part {x}',
+                variant_of=template,
+                is_template=True,
+            )
+
+            for ii in range(1, 4):
+                Part.objects.create(
+                    name=f'Sub-Variant {x}-{ii}',
+                    description=f'Sub-variant part {x}-{ii}',
+                    variant_of=variant,
+                )
+
+        template.refresh_from_db()
+
+        self.assertEqual(template.get_children().count(), 3)
+        self.assertEqual(template.get_descendants(include_self=False).count(), 12)
+
+        for variant in template.get_children():
+            self.assertEqual(variant.variant_of, template)
+            self.assertEqual(variant.get_ancestors().count(), 1)
+            self.assertEqual(variant.get_descendants(include_self=False).count(), 3)
+
+            for child in variant.get_children():
+                self.assertEqual(child.variant_of, variant)
+                self.assertEqual(child.get_ancestors().count(), 2)
+                self.assertEqual(child.get_descendants(include_self=False).count(), 0)
+
+        # Let's graft one variant onto another
+        variant_a = Part.objects.get(name='Variant A')
+        variant_b = Part.objects.get(name='Variant B')
+        variant_c = Part.objects.get(name='Variant C')
+
+        variant_a.variant_of = variant_b
+        variant_a.save()
+
+        template.refresh_from_db()
+        self.assertEqual(template.get_children().count(), 2)
+
+        variant_a.refresh_from_db()
+        variant_b.refresh_from_db()
+
+        self.assertEqual(variant_a.get_ancestors().count(), 2)
+        self.assertEqual(variant_a.variant_of, variant_b)
+        self.assertEqual(variant_b.get_children().count(), 4)
+
+        for child in variant_a.get_children():
+            self.assertEqual(child.variant_of, variant_a)
+            self.assertEqual(child.tree_id, template.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 3)
+            self.assertEqual(child.level, 3)
+            self.assertGreater(child.lft, variant_a.lft)
+            self.assertGreater(child.lft, template.lft)
+            self.assertLess(child.rght, variant_a.rght)
+            self.assertLess(child.rght, template.rght)
+            self.assertLess(child.lft, child.rght)
+
+        # Let's graft one variant to its own tree
+        variant_c.variant_of = None
+        variant_c.save()
+
+        template.refresh_from_db()
+        variant_a.refresh_from_db()
+        variant_b.refresh_from_db()
+        variant_c.refresh_from_db()
+
+        # Check total descendent count
+        self.assertEqual(template.get_descendant_count(), 8)
+        self.assertEqual(variant_a.get_descendant_count(), 3)
+        self.assertEqual(variant_b.get_descendant_count(), 7)
+        self.assertEqual(variant_c.get_descendant_count(), 3)
+
+        # Check tree ID values
+        self.assertEqual(template.tree_id, variant_a.tree_id)
+        self.assertEqual(template.tree_id, variant_b.tree_id)
+        self.assertNotEqual(template.tree_id, variant_c.tree_id)
+
+        for child in variant_a.get_children():
+            # template -> variant_b -> variant_b -> child
+            self.assertEqual(child.tree_id, template.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 3)
+            self.assertLess(child.lft, child.rght)
+
+        for child in variant_b.get_children():
+            # template -> variant_b -> child
+            self.assertEqual(child.tree_id, template.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 2)
+            self.assertLess(child.lft, child.rght)
+
+        for child in variant_c.get_children():
+            # variant_c -> child
+            self.assertEqual(child.tree_id, variant_c.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 1)
+            self.assertLess(child.lft, child.rght)
 
 
 class TestTemplateTest(TestCase):

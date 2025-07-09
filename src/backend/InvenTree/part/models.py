@@ -465,6 +465,11 @@ class Part(
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
+    @property
+    def parent(self):
+        """Return the template part for this Part instance."""
+        return self.variant_of
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the Part model."""
