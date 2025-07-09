@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import useStatusCodes from '../../hooks/UseStatusCodes';
 import { StylishText } from '../items/StylishText';
 import { getStatusCodeLabel } from '../render/StatusRenderer';
 
@@ -14,10 +13,6 @@ export default function ImporterStatus({
 }: Readonly<{
   session: ImportSessionState;
 }>) {
-  const importSessionStatus = useStatusCodes({
-    modelType: ModelType.importsession
-  });
-
   const statusText = useMemo(() => {
     return (
       getStatusCodeLabel(ModelType.importsession, session.status) ||
@@ -26,7 +21,7 @@ export default function ImporterStatus({
   }, [session.status]);
 
   // Periodically refresh the import session data
-  const interval = useInterval(
+  const _interval = useInterval(
     () => {
       session.refreshSession();
     },
