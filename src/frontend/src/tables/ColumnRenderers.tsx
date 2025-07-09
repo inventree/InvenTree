@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import { YesNoButton } from '../components/buttons/YesNoButton';
@@ -19,7 +20,6 @@ import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import { resolveItem } from '../functions/conversion';
 import {
   useGlobalSettingsState,
   useUserSettingsState

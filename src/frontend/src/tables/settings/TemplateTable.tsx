@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { identifierString } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -32,7 +33,6 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import { identifierString } from '../../functions/conversion';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
