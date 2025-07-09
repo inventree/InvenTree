@@ -14,13 +14,13 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { CopyButton } from '../../components/buttons/CopyButton';
-import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { StylishText } from '../../components/items/StylishText';
 import { RenderUser } from '../../components/render/User';
 import { shortenString } from '../../functions/tables';

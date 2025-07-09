@@ -9,7 +9,7 @@ import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { ActionButton } from '../../../../../lib/components/ActionButton';
-import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
+import { YesNoUndefinedButton } from '../../../../../lib/components/YesNoButton';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { StylishText } from '../../../../components/items/StylishText';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';

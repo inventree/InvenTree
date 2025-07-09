@@ -25,3 +25,4 @@ export { checkPluginVersion } from './functions/Plugins';
 
 // Common UI components
 export { ActionButton } from './components/ActionButton';
+export { PassFailButton, YesNoButton } from './components/YesNoButton';

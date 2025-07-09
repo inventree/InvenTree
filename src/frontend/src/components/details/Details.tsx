@@ -17,6 +17,7 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -28,7 +29,6 @@ import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { CopyButton } from '../buttons/CopyButton';
-import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';

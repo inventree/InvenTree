@@ -10,11 +10,11 @@ import {
   IconLock
 } from '@tabler/icons-react';
 
+import { YesNoButton } from '@lib/components/YesNoButton';
 import type { ModelType } from '@lib/enums/ModelType';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
-import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
