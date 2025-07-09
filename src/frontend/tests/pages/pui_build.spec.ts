@@ -109,7 +109,9 @@ test('Build Order - Calendar', async ({ browser }) => {
   await page.getByLabel('calendar-select-filters').click();
   await page.getByRole('button', { name: 'Add Filter' }).click();
   await page.getByPlaceholder('Select filter').fill('category');
-  await page.getByRole('option', { name: 'Category', exact: true }).click();
+  await page
+    .getByRole('option', { name: 'Part Category', exact: true })
+    .click();
   await page.getByLabel('related-field-filter-category').click();
   await page.getByText('Part category, level 1').waitFor();
 
