@@ -9,6 +9,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -29,7 +30,7 @@ import {
   LinkColumn,
   PartColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 

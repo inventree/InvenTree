@@ -20,6 +20,7 @@ import { Fragment } from 'react/jsx-runtime';
 
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -30,7 +31,6 @@ import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableColumnSelect } from './ColumnSelect';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import type { InvenTreeTableProps } from './InvenTreeTable';
 import { TableSearchInput } from './Search';
 
 /**
