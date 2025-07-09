@@ -143,7 +143,7 @@ function FilterElement({
       return (
         <Select
           data={valueOptions}
-          searchable={filterProps.type == 'choice'}
+          searchable={true}
           label={t`Value`}
           withScrollArea={false}
           placeholder={t`Select filter value`}
