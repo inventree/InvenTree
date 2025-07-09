@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 365
+INVENTREE_API_VERSION = 366
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v366 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9969
+    - Correctly apply changes listed in v358
+    - Breaking: StockCreate now always returns a list of StockItem
 
 v365 -> 2025-07-09 : https://github.com/inventree/InvenTree/pull/9984
     - Allow filtering of DataOutput API by "user" field
