@@ -445,6 +445,8 @@ class Part(
         last_stocktake: Date at which last stocktake was performed for this Part
     """
 
+    NODE_PARENT_KEY = 'variant_of'
+
     objects = PartManager()
 
     tags = TaggableManager(blank=True)

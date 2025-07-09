@@ -583,6 +583,34 @@ class VariantTreeTest(TestCase):
             self.assertEqual(child.get_ancestors().count(), 1)
             self.assertLess(child.lft, child.rght)
 
+        # Next, let's delete an entire variant - ensure that sub-variants are moved up
+        b_childs = variant_b.get_children()
+
+        with self.assertRaises(ValidationError):
+            variant_b.delete()
+
+        # Mark as inactive to allow deletion
+        variant_b.active = False
+        variant_b.save()
+        variant_b.delete()
+
+        template.refresh_from_db()
+        variant_a.refresh_from_db()
+
+        # Top-level template should have now 4 direct children:
+        # - 3x children grafted from variant_a
+        # - variant_a - previously child of variant a
+        self.assertEqual(template.get_children().count(), 4)
+
+        self.assertEqual(variant_a.get_children().count(), 3)
+        self.assertEqual(variant_a.variant_of, template)
+
+        for child in b_childs:
+            child.refresh_from_db()
+            self.assertEqual(child.variant_of, template)
+            self.assertEqual(child.get_ancestors().count(), 1)
+            self.assertEqual(child.level, 2)
+
 
 class TestTemplateTest(TestCase):
     """Unit test for the TestTemplate class."""
