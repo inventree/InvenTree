@@ -477,6 +477,23 @@ class VariantTreeTest(TestCase):
         self.assertEqual(green.get_family().count(), 3)
         self.assertEqual(Part.objects.filter(tree_id=chair.tree_id).count(), 5)
 
+    def test_part_creation(self):
+        """Test that parts are created with the correct tree structure."""
+        part_1 = Part.objects.create(name='Part 1', description='Part 1 description')
+
+        part_2 = Part.objects.create(name='Part 2', description='Part 2 description')
+
+        # Check that both parts have been created with unique tree IDs
+        self.assertNotEqual(part_1.tree_id, part_2.tree_id)
+
+        for p in [part_1, part_2]:
+            self.assertEqual(p.level, 0)
+            self.assertGreater(p.lft, 1)
+            self.assertGreater(p.rght, 2)
+            self.assertIsNone(p.variant_of)
+
+            self.assertEqual(Part.objects.filter(tree_id=p.tree_id).count(), 1)
+
     def test_complex_tree(self):
         """Test a complex part template/variant tree."""
         template = Part.objects.create(
