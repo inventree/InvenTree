@@ -32,7 +32,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import TreeForeignKey
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
@@ -405,9 +405,7 @@ class Part(
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
-    MPTTModel,
+    InvenTree.models.InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
