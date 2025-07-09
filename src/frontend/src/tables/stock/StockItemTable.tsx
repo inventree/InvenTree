@@ -25,8 +25,8 @@ import type { TableColumn } from '../Column';
 import {
   DateColumn,
   DescriptionColumn,
+  LocationColumn,
   PartColumn,
-  PathColumn,
   StatusColumn
 } from '../ColumnRenderers';
 import {
@@ -223,10 +223,9 @@ function stockItemTableColumns({
       accessor: 'batch',
       sortable: true
     },
-    PathColumn({
-      accessor: 'location_detail',
-      title: t`Location`,
-      hidden: !showLocation
+    LocationColumn({
+      hidden: !showLocation,
+      accessor: 'location_detail'
     }),
     {
       accessor: 'purchase_order',
