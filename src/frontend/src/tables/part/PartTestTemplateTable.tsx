@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Badge, Stack, Text } from '@mantine/core';
-import { IconLock } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +20,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DescriptionColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
@@ -31,12 +35,12 @@ import {
 } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
-export default function PartTestTemplateTable({
+export function TestTemplateTable({
   partId,
-  partLocked
+  categoryId
 }: Readonly<{
-  partId: number;
-  partLocked?: boolean;
+  partId?: number;
+  categoryId?: number;
 }>) {
   const table = useTable('part-test-template');
   const user = useUserState();
@@ -45,25 +49,32 @@ export default function PartTestTemplateTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
+        accessor: 'part',
+        title: t`Part`,
+        render: (record: any) => <PartColumn part={record.part_detail} />
+      },
+      CategoryColumn({
+        accessor: 'category_detail',
+        title: t`Category`
+      }),
+      {
         accessor: 'test_name',
         switchable: false,
         sortable: true,
         render: (record: any) => {
           const extra: ReactNode[] = [];
 
-          if (record.part != partId) {
-            extra.push(
-              <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
-            );
-          }
+          // TODO: Look into this again
+          // if (record.part != partId) {
+          //   extra.push(
+          //     <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
+          //   );
+          // }
 
           return (
             <TableHoverCard
               value={
-                <Text
-                  fw={record.required && 700}
-                  c={record.enabled ? undefined : 'red'}
-                >
+                <Text c={record.enabled ? undefined : 'red'}>
                   {record.test_name}
                 </Text>
               }
@@ -202,11 +213,11 @@ export default function PartTestTemplateTable({
       const can_edit = user.hasChangeRole(UserRoles.part);
       const can_delete = user.hasDeleteRole(UserRoles.part);
 
-      if (record.part != partId) {
-        // This test is defined for a parent part
+      // This test is defined for a different part
+      if (partId && record.part != partId) {
         return [
           RowViewAction({
-            title: t`View Parent Part`,
+            title: t`View Part`,
             modelType: ModelType.part,
             modelId: record.part,
             navigate: navigate
@@ -214,16 +225,28 @@ export default function PartTestTemplateTable({
         ];
       }
 
+      // This test is defined for a different category
+      if (categoryId && record.category != categoryId) {
+        return [
+          RowViewAction({
+            title: t`View Category`,
+            modelType: ModelType.partcategory,
+            modelId: record.category,
+            navigate: navigate
+          })
+        ];
+      }
+
       return [
         RowEditAction({
-          hidden: partLocked || !can_edit,
+          hidden: !can_edit,
           onClick: () => {
             setSelectedTest(record.pk);
             editTestTemplate.open();
           }
         }),
         RowDeleteAction({
-          hidden: partLocked || !can_delete,
+          hidden: !can_delete,
           onClick: () => {
             setSelectedTest(record.pk);
             deleteTestTemplate.open();
@@ -231,7 +254,7 @@ export default function PartTestTemplateTable({
         })
       ];
     },
-    [user, partId, partLocked]
+    [user, partId]
   );
 
   const tableActions = useMemo(() => {
@@ -242,49 +265,53 @@ export default function PartTestTemplateTable({
         key='add-test-template'
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
-        hidden={partLocked || !can_add}
+        hidden={!can_add}
       />
     ];
-  }, [user, partLocked]);
+  }, [user]);
 
   return (
     <>
       {newTestTemplate.modal}
       {editTestTemplate.modal}
       {deleteTestTemplate.modal}
-      <Stack gap='xs'>
-        {partLocked && (
-          <Alert
-            title={t`Part is Locked`}
-            color='orange'
-            icon={<IconLock />}
-            p='xs'
-          >
-            <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
-          </Alert>
-        )}
-        <InvenTreeTable
-          url={apiUrl(ApiEndpoints.part_test_template_list)}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            params: {
-              part: partId,
-              part_detail: true
-            },
-            tableFilters: tableFilters,
-            tableActions: tableActions,
-            enableDownload: true,
-            rowActions: rowActions,
-            onRowClick: (row) => {
-              if (row.part && row.part != partId) {
-                // This test is defined for a different part
-                navigate(getDetailUrl(ModelType.part, row.part));
-              }
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.part_test_template_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            part: partId,
+            category: categoryId,
+            part_detail: true,
+            category_detail: true
+          },
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          enableDownload: true,
+          rowActions: rowActions,
+          onRowClick: (row) => {
+            if (row.part && row.part != partId) {
+              // This test is defined for a different part
+              navigate(getDetailUrl(ModelType.part, row.part));
             }
-          }}
-        />
-      </Stack>
+          }
+        }}
+      />
     </>
+  );
+}
+
+export function PartTestTemplateTable({
+  partId,
+  categoryId
+}: Readonly<{
+  partId?: number;
+  categoryId?: number;
+}>) {
+  return (
+    <Stack gap='xs'>
+      <TestTemplateTable partId={partId} categoryId={categoryId} />
+    </Stack>
   );
 }
