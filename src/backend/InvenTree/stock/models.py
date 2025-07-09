@@ -604,12 +604,14 @@ class StockItem(
             raise ValidationError({'part': _('Part must be specified')})
 
         part = data['part']
-        tree_id = kwargs.pop('tree_id', 0)
+
+        next_tree_id = StockItem.getNextTreeID()
+        tree_id = kwargs.pop('tree_id', next_tree_id)
 
         parent = kwargs.pop('parent', None) or data.get('parent')
 
+        data['tree_id'] = tree_id if parent else next_tree_id
         data['parent'] = parent
-        data['tree_id'] = tree_id if parent else None
         data['level'] = 0
         data['lft'] = 0
         data['rght'] = 0

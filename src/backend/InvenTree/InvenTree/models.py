@@ -725,6 +725,16 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
 
         return acceptable
 
+    @classmethod
+    def getNextTreeID(cls) -> int:
+        """Return the next available tree_id for this model class."""
+        instance = cls.objects.order_by('-tree_id').first()
+
+        if instance:
+            return instance.tree_id + 1
+        else:
+            return 1
+
 
 class PathStringMixin(models.Model):
     """Mixin class for adding a 'pathstring' field to a model class.
