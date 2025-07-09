@@ -13,6 +13,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
@@ -20,7 +21,6 @@ import type {
   ApiFormFieldType
 } from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { PartColumn } from '../tables/ColumnRenderers';

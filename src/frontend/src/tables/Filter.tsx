@@ -343,7 +343,7 @@ export function IssuedByFilter(): TableFilter {
 export function PartCategoryFilter(): TableFilter {
   return {
     name: 'category',
-    label: t`Category`,
+    label: t`Part Category`,
     description: t`Filter by part category`,
     apiUrl: apiUrl(ApiEndpoints.category_list),
     model: ModelType.partcategory,
