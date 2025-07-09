@@ -26,12 +26,14 @@ from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
 
+import build.models
 import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
+import order.models
 import report.mixins
 import stock.tasks
 from common.icons import validate_icon
@@ -556,24 +558,51 @@ class StockItem(
         kwargs.pop('id', None)
         kwargs.pop('pk', None)
 
-        part = kwargs.get('part')
-
-        if not part:
-            raise ValidationError({'part': _('Part must be specified')})
-
         # Create a list of StockItem objects
         items = []
 
         # Provide some default field values
         data = {**kwargs}
 
-        # Remove some extraneous keys which cause issues
-        for key in ['parent_id', 'part_id', 'build_id']:
-            data.pop(key, None)
+        # Extract foreign-key fields from the provided data
+        fk_relations = {
+            'parent': StockItem,
+            'part': PartModels.Part,
+            'build': build.models.Build,
+            'purchase_order': order.models.PurchaseOrder,
+            'supplier_part': CompanyModels.SupplierPart,
+            'location': StockLocation,
+            'belongs_to': StockItem,
+            'customer': CompanyModels.Company,
+            'consumed_by': build.models.Build,
+            'sales_order': order.models.SalesOrder,
+        }
 
+        for field, model in fk_relations.items():
+            if instance_id := data.pop(f'{field}_id', None):
+                try:
+                    instance = model.objects.get(pk=instance_id)
+                    data[field] = instance
+                except (ValueError, model.DoesNotExist):
+                    raise ValidationError({field: _(f'{field} does not exist')})
+
+        # Remove some fields which we do not want copied across
+        for field in [
+            'barcode_data',
+            'barcode_hash',
+            'stocktake_date',
+            'stocktake_user',
+            'stocktake_user_id',
+        ]:
+            data.pop(field, None)
+
+        if 'part' not in data:
+            raise ValidationError({'part': _('Part must be specified')})
+
+        part = data['part']
         tree_id = kwargs.pop('tree_id', 0)
 
-        data['parent'] = kwargs.pop('parent', None)
+        data['parent'] = kwargs.pop('parent', None) or data.get('parent')
         data['tree_id'] = tree_id
         data['level'] = kwargs.pop('level', 0)
         data['rght'] = kwargs.pop('rght', 0)
@@ -586,6 +615,7 @@ class StockItem(
             data['serial'] = serial
             data['serial_int'] = StockItem.convert_serial_to_int(serial)
 
+            # Construct a new StockItem from the provided dict
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
@@ -1786,7 +1816,7 @@ class StockItem(
         if location:
             data['location'] = location
 
-        data['part'] = self.part
+        # Set the parent ID correctly
         data['parent'] = self
         data['tree_id'] = self.tree_id
 
@@ -1797,6 +1827,7 @@ class StockItem(
         history_items = []
 
         for item in items:
+            # Construct a tracking entry for the new StockItem
             if entry := item.add_tracking_entry(
                 StockHistoryCode.ASSIGNED_SERIAL,
                 user,
@@ -1807,19 +1838,10 @@ class StockItem(
             ):
                 history_items.append(entry)
 
+            # Copy any test results from this item to the new one
+            item.copyTestResultsFrom(self)
+
         StockItemTracking.objects.bulk_create(history_items)
-
-        # Duplicate test results
-        test_results = []
-
-        for test_result in self.test_results.all():
-            for item in items:
-                test_result.pk = None
-                test_result.stock_item = item
-
-                test_results.append(test_result)
-
-        StockItemTestResult.objects.bulk_create(test_results)
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
@@ -1835,17 +1857,24 @@ class StockItem(
             item.save()
 
     @transaction.atomic
-    def copyTestResultsFrom(self, other, filters=None):
+    def copyTestResultsFrom(self, other: StockItem, filters: Optional[dict] = None):
         """Copy all test results from another StockItem."""
         # Set default - see B006
-        if filters is None:
-            filters = {}
 
-        for result in other.test_results.all().filter(**filters):
+        results = other.test_results.all()
+
+        if filters:
+            results = results.filter(**filters)
+
+        results_to_create = []
+
+        for result in list(results):
             # Create a copy of the test result by nulling-out the pk
             result.pk = None
             result.stock_item = self
-            result.save()
+            results_to_create.append(result)
+
+        StockItemTestResult.objects.bulk_create(results_to_create)
 
     def add_test_result(self, create_template=True, **kwargs):
         """Helper function to add a new StockItemTestResult.

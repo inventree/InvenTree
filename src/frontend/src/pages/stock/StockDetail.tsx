@@ -863,7 +863,6 @@ export default function StockDetail() {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
             hidden:
-              isBuilding ||
               serialized ||
               stockitem?.quantity < 1 ||
               stockitem?.part_detail?.trackable != true,
@@ -1038,15 +1037,15 @@ export default function StockDetail() {
             id={stockitem.pk}
             instance={stockitem}
           />
-          {editStockItem.modal}
-          {duplicateStockItem.modal}
-          {deleteStockItem.modal}
-          {serializeStockItem.modal}
-          {returnStockItem.modal}
-          {stockAdjustActions.modals.map((modal) => modal.modal)}
-          {orderPartsWizard.wizard}
         </Stack>
       </InstanceDetail>
+      {editStockItem.modal}
+      {duplicateStockItem.modal}
+      {deleteStockItem.modal}
+      {serializeStockItem.modal}
+      {returnStockItem.modal}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
+      {orderPartsWizard.wizard}
     </>
   );
 }
