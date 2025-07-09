@@ -19,6 +19,7 @@ import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { SearchInput } from '@lib/components/SearchInput';
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
@@ -31,7 +32,6 @@ import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableColumnSelect } from './ColumnSelect';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import { TableSearchInput } from './Search';
 
 /**
  * Render a composite header for an InvenTree table
@@ -207,7 +207,7 @@ export default function InvenTreeTableHeader({
         <Space />
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
-            <TableSearchInput
+            <SearchInput
               disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
