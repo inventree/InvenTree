@@ -225,6 +225,22 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_FULL_LOCATION_IN_TABLES': {
+        'name': _('Show full stock location in tables'),
+        'description': _(
+            'Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text.'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_FULL_CATEGORY_IN_TABLES': {
+        'name': _('Show full part categories in tables'),
+        'description': _(
+            'Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text.'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),
         'description': _('Receive notifications for system errors'),

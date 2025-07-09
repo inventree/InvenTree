@@ -26,10 +26,10 @@ def print_label(plugin_slug: str, **kwargs):
     """
     logger.info("Plugin '%s' is printing a label", plugin_slug)
 
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if plugin is None:  # pragma: no cover
-        logger.error("Could not find matching plugin for '%s'", plugin_slug)
+        logger.error("Could not find matching active plugin for '%s'", plugin_slug)
         return
 
     try:

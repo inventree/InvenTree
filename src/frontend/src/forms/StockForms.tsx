@@ -340,9 +340,10 @@ export function useStockItemSerializeFields({
   partId: number;
   trackable: boolean;
   modalId: string;
-}) {
+}): ApiFormFieldSet {
   const serialGenerator = useSerialNumberGenerator({
     modalId: modalId,
+    isEnabled: () => trackable,
     initialQuery: {
       part: partId
     }

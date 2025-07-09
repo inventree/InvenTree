@@ -357,12 +357,9 @@ class PrintTestMixins:
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
+        registry.set_plugin_state(self.plugin_ref, True)
         plugin = registry.get_plugin(self.plugin_ref)
         self.assertIsNotNone(plugin)
-        config = plugin.plugin_config()
-        self.assertIsNotNone(config)
-        config.active = True
-        config.save()
 
     def run_print_test(self, qs, model_type, label: bool = True):
         """Run tests on single and multiple page printing.

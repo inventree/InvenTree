@@ -30,7 +30,7 @@ class DataImporterPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
-        return True
+        return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         """Check if the user has permission to access the imported object."""
@@ -91,24 +91,24 @@ class DataImporterModelList(APIView):
         return Response(models)
 
 
-class DataImportSessionList(DataImporterPermission, BulkDeleteMixin, ListCreateAPI):
-    """API endpoint for accessing a list of DataImportSession objects."""
+class DataImportSessionMixin:
+    """Mixin class for DataImportSession API views."""
 
     queryset = importer.models.DataImportSession.objects.all()
     serializer_class = importer.serializers.DataImportSessionSerializer
+    permission_classes = [DataImporterPermission]
+
+
+class DataImportSessionList(BulkDeleteMixin, DataImportSessionMixin, ListCreateAPI):
+    """API endpoint for accessing a list of DataImportSession objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
-
     filterset_fields = ['model_type', 'status', 'user']
-
     ordering_fields = ['timestamp', 'status', 'model_type']
 
 
-class DataImportSessionDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
+class DataImportSessionDetail(DataImportSessionMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportSession object."""
-
-    queryset = importer.models.DataImportSession.objects.all()
-    serializer_class = importer.serializers.DataImportSessionSerializer
 
 
 class DataImportSessionAcceptFields(APIView):
