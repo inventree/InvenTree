@@ -852,6 +852,7 @@ class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
+    filterset_fields = ['user']
 
 
 class DataOutputDetail(DataOutputEndpointMixin, generics.DestroyAPIView, RetrieveAPI):

@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
@@ -8,6 +9,7 @@ import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import type { TableColumn } from '../Column';
 import { DateColumn } from '../ColumnRenderers';
+import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 
@@ -45,6 +47,10 @@ export default function ExportSessionTable() {
     ];
   }, []);
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [UserFilter({})];
+  }, []);
+
   const [selectedRow, setSeletectedRow] = useState<any>({});
 
   const deleteRow = useDeleteApiFormModal({
@@ -76,7 +82,8 @@ export default function ExportSessionTable() {
           enableBulkDelete: true,
           enableSelection: true,
           enableSearch: false,
-          rowActions: rowActions
+          rowActions: rowActions,
+          tableFilters: tableFilters
         }}
       />
     </>
