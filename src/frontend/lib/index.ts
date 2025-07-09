@@ -23,6 +23,13 @@ export {
 } from './functions/Navigation';
 export { checkPluginVersion } from './functions/Plugins';
 
+export {
+  formatCurrencyValue,
+  formatDecimal,
+  formatFileSize
+} from './functions/Formatting';
+
 // Common UI components
 export { ActionButton } from './components/ActionButton';
+export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';

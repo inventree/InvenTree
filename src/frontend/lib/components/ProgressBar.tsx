@@ -1,6 +1,6 @@
 import { Progress, Stack, Text } from '@mantine/core';
 import { useMemo } from 'react';
-import { formatDecimal } from '../../defaults/formatters';
+import { formatDecimal } from '../functions/Formatting';
 
 export type ProgressBarProps = {
   value: number;
