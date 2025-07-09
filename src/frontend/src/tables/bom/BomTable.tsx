@@ -428,7 +428,7 @@ export function BomTable({
 
   const editSubstitues = useEditBomSubstitutesForm({
     bomItemId: selectedBomItem.pk,
-    substitutes: selectedBomItem?.substitutes ?? [],
+    bomItem: selectedBomItem,
     onClose: () => {
       table.refreshTable();
     }
@@ -501,7 +501,9 @@ export function BomTable({
             record.validated ||
             !user.hasChangeRole(UserRoles.part),
           icon: <IconCircleCheck />,
-          onClick: () => validateBomItem(record)
+          onClick: () => {
+            validateBomItem(record);
+          }
         },
         RowEditAction({
           hidden: partLocked || !user.hasChangeRole(UserRoles.part),

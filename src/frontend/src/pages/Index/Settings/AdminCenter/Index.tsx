@@ -258,7 +258,8 @@ export default function AdminCenter() {
           'barcode-history',
           'background',
           'errors',
-          'currencies'
+          'currencies',
+          'email'
         ]
       },
       {
