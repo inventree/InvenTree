@@ -207,7 +207,7 @@
     is_template: true
     category: 7
     creation_date: '2031-02-02'
-    trackable: false
+    trackable: true
     testable: true
     tree_id: 1
     level: 0
