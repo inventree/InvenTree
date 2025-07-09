@@ -42,6 +42,7 @@ import {
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -369,7 +370,8 @@ export function BomTable({
         name: 'has_pricing',
         label: t`Has Pricing`,
         description: t`Show items with pricing`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, [partId, params]);
 
