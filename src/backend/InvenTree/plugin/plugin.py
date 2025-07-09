@@ -419,7 +419,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             'description': meta['Summary'],
             'version': meta['Version'],
             'website': website,
-            'license': meta['License'],
+            'license': meta.get('License', None),
         }
 
     def define_package(self):
