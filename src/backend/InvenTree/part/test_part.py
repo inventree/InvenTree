@@ -488,8 +488,8 @@ class VariantTreeTest(TestCase):
 
         for p in [part_1, part_2]:
             self.assertEqual(p.level, 0)
-            self.assertGreater(p.lft, 1)
-            self.assertGreater(p.rght, 2)
+            self.assertEqual(p.lft, 1)
+            self.assertEqual(p.rght, 2)
             self.assertIsNone(p.variant_of)
 
             self.assertEqual(Part.objects.filter(tree_id=p.tree_id).count(), 1)
