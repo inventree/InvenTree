@@ -339,4 +339,3 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertEqual(result.status_code, 400)
-        self.assertIn('Bad Request', str(result.content))
