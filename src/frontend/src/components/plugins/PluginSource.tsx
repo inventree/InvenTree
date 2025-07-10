@@ -32,10 +32,16 @@ export async function findExternalPluginFunction(
   source: string,
   functionName: string
 ): Promise<Function | null> {
-  // The source URL may also include the function name divided by a colon
-  // otherwise the provided function name will be used
-  if (source.includes(':')) {
-    [source, functionName] = source.split(':');
+  // Extract pathstring from the source URL
+  const url = new URL(source);
+
+  // If the pathname contains a ':' character, it indicates a function name
+  // but we need to remove it for the URL lookup to work correctly
+  if (url.pathname.includes(':')) {
+    const parts = url.pathname.split(':');
+    source = parts[0]; // Use the first part as the source URL
+    functionName = parts[1] || functionName; // Use the second part as the
+    url.pathname = source; // Update the pathname to the source URL
   }
 
   const module = await loadExternalPluginSource(source);
