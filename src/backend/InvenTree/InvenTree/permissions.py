@@ -95,8 +95,12 @@ for role, tables in roles.items():
 class OASTokenMixin:
     """Mixin that combines the permissions of normal classes and token classes."""
 
+    ENFORCE_USER_PERMS: bool = False
+
     def has_permission(self, request, view):
         """Check if the user has the required scopes or was authenticated another way."""
+        if self.ENFORCE_USER_PERMS:
+            return super().has_permission(request, view)
         return self.check_oauth2_authentication(
             request, view
         ) or super().has_permission(request, view)
@@ -391,6 +395,8 @@ class GlobalSettingsPermissions(OASTokenMixin, permissions.BasePermission):
 
 class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
     """Mixin class for determining if the user has correct permissions."""
+
+    ENFORCE_USER_PERMS = True
 
     def has_permission(self, request, view):
         """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
