@@ -30,7 +30,6 @@ from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
 from stdimage.models import StdImageField
@@ -555,10 +554,7 @@ class Part(
 
         self.full_clean()
 
-        try:
-            super().save(*args, **kwargs)
-        except InvalidMove:
-            raise ValidationError({'variant_of': _('Invalid choice for parent part')})
+        super().save(*args, **kwargs)
 
         if _new:
             # Only run if the check was not run previously (due to not existing in the database)

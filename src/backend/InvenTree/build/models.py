@@ -14,7 +14,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from mptt.exceptions import InvalidMove
 from mptt.models import TreeForeignKey
 from rest_framework import serializers
 
@@ -186,10 +185,7 @@ class Build(
             if not self.destination:
                 self.destination = self.part.get_default_location()
 
-        try:
-            super().save(*args, **kwargs)
-        except InvalidMove:
-            raise ValidationError({'parent': _('Invalid choice for parent build')})
+        super().save(*args, **kwargs)
 
     def clean(self):
         """Validate the BuildOrder model."""
