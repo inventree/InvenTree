@@ -9,6 +9,7 @@ import { type Root, createRoot } from 'react-dom/client';
 import { api, queryClient } from '../../App';
 import { ApiProvider } from '../../contexts/ApiContext';
 import { LanguageContext } from '../../contexts/LanguageContext';
+import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { findExternalPluginFunction } from './PluginSource';
 
@@ -43,15 +44,26 @@ export default function RemoteComponent({
     undefined
   );
 
-  const sourceFile = useMemo(() => {
-    return source.split(':')[0];
+  // Determine the URL of the external plugin source
+  const sourceFile: string = useMemo(() => {
+    const { getHost } = useLocalState.getState();
+    const url = new URL(source, getHost());
+
+    if (url.pathname.includes(':')) {
+      url.pathname = url.pathname.split(':')[0];
+    }
+
+    return url.toString();
   }, [source]);
 
   // Determine the function to call in the external plugin source
   const functionName = useMemo(() => {
+    const { getHost } = useLocalState.getState();
+    const url = new URL(source, getHost());
+
     // The "source" string may contain a function name, e.g. "source.js:myFunction"
-    if (source.includes(':')) {
-      return source.split(':')[1];
+    if (url.pathname.includes(':')) {
+      return url.pathname.split(':')[1];
     }
 
     // By default, return the default function name
@@ -104,7 +116,7 @@ export default function RemoteComponent({
         })
         .catch((_error) => {
           console.error(
-            `ERR: Failed to load remove plugin function: ${sourceFile}:${functionName}`
+            `ERR: Failed to load remote plugin function: ${sourceFile}:${functionName}`
           );
         });
     } else {

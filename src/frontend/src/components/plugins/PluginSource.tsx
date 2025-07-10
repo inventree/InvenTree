@@ -44,7 +44,7 @@ export async function findExternalPluginFunction(
     url.pathname = source; // Update the pathname to the source URL
   }
 
-  const module = await loadExternalPluginSource(source);
+  const module = await loadExternalPluginSource(url.toString());
 
   if (module?.[functionName]) {
     return module[functionName];
