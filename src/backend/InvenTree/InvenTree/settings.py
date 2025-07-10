@@ -540,15 +540,6 @@ TEMPLATES = [
     }
 ]
 
-OAUTH2_PROVIDER = {
-    # default scopes
-    'SCOPES': oauth2_scopes,
-    # OIDC
-    'OIDC_ENABLED': True,
-    'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
-    'PKCE_REQUIRED': False,
-}
-
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
@@ -1480,7 +1471,7 @@ if CUSTOM_FLAGS:
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
-# Configuration for API schema generation
+# Configuration for API schema generation / oAuth2
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
@@ -1515,6 +1506,18 @@ SPECTACULAR_SETTINGS = {
     'OAUTH2_TOKEN_URL': '/o/token/',
     'OAUTH2_REFRESH_URL': '/o/revoke_token/',
 }
+OAUTH2_PROVIDER = {
+    # default scopes
+    'SCOPES': oauth2_scopes,
+    # OIDC
+    'OIDC_ENABLED': True,
+    'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
+    'PKCE_REQUIRED': False,
+}
+OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
+    '/api/email/generate/:post',
+    '/api/webhook/{endpoint}/:post',
+]
 
 if SITE_URL and not TESTING:
     SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]
