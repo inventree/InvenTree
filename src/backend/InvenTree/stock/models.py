@@ -2163,6 +2163,8 @@ class StockItem(
 
         # Update the new stock item to ensure the tree structure is observed
         new_stock.parent = self
+        new_stock.tree_id = self.tree_id
+        new_stock.level = self.level + 1
 
         # Move to the new location if specified, otherwise use current location
         if location:
