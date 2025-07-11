@@ -26,6 +26,7 @@ import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
+import InvenTree.sentry
 
 logger = structlog.get_logger('inventree')
 
@@ -581,6 +582,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
             try:
                 self.__class__.objects.partial_rebuild(tree_id)
             except Exception as e:
+                # This is a critical error, explicitly report to sentry
+                InvenTree.sentry.report_exception(e)
+
                 InvenTree.exceptions.log_error(
                     f'{self.__class__.__name__}.partial_rebuild'
                 )
