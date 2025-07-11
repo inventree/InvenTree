@@ -24,8 +24,8 @@ def is_email_configured() -> bool:
     configured = True
     testing = settings.TESTING
 
-    if InvenTree.ready.isInTestMode() and not settings.TESTING_BYPASS_MAILCHECK:
-        return False
+    if InvenTree.ready.isInTestMode():
+        return settings.TESTING_BYPASS_MAILCHECK
 
     if InvenTree.ready.isImportingData():
         return False
