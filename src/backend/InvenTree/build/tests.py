@@ -169,8 +169,6 @@ class BuildTreeTest(InvenTreeTestCase):
             part=cls.assembly, quantity=5, reference='BO-1234', target_date=None
         )
 
-        Build.objects.rebuild()
-
     def test_basic_tree(self):
         """Test basic tree structure functionality.
 
