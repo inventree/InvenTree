@@ -51,7 +51,8 @@ class TreeFixtureTest(TestCase):
     def node_string(self, node):
         """Construct a string representation of a tree node."""
         return ':'.join([
-            str(getattr(node, attr)) for attr in ['parent', 'level', 'lft', 'rght']
+            str(getattr(node, attr, None))
+            for attr in ['parent', 'level', 'lft', 'rght']
         ])
 
     def run_tree_test(self, model):
