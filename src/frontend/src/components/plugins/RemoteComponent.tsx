@@ -32,13 +32,13 @@ export default function RemoteComponent({
   context: InvenTreePluginContext;
 }>) {
   const componentRef = useRef<HTMLDivElement>();
-  const [rootElement, setRootElement] = useState<Root | null>(null);
+  const rootElement = useRef<Root | null>(null);
 
   useEffect(() => {
-    if (componentRef.current && !rootElement) {
-      setRootElement(createRoot(componentRef.current));
+    if (componentRef.current && rootElement.current === null) {
+      rootElement.current = createRoot(componentRef.current);
     }
-  }, [componentRef.current]);
+  }, [rootElement]);
 
   const [renderingError, setRenderingError] = useState<string | undefined>(
     undefined
@@ -58,7 +58,7 @@ export default function RemoteComponent({
   }, [source, defaultFunctionName]);
 
   const reloadPluginContent = useCallback(() => {
-    if (!rootElement) {
+    if (!rootElement.current) {
       return;
     }
 
@@ -80,7 +80,7 @@ export default function RemoteComponent({
                 // Render the plugin component into the target element
                 // Note that we have to provide the right context(s) to the component
                 // This approach ensures that the component is rendered in the correct context tree
-                rootElement.render(
+                rootElement.current?.render(
                   <ApiProvider client={queryClient} api={api}>
                     <MantineProvider
                       theme={ctx.theme}
@@ -116,7 +116,7 @@ export default function RemoteComponent({
   // Reload the plugin content dynamically
   useEffect(() => {
     reloadPluginContent();
-  }, [source, func, context, rootElement]);
+  }, [func, context, rootElement.current]);
 
   return (
     <Boundary label={identifierString(`RemoteComponent-${func}`)}>
