@@ -32,12 +32,12 @@ import {
 } from 'react-router-dom';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
-import { identifierString } from '../../functions/conversion';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';

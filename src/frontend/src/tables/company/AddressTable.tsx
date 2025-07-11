@@ -1,12 +1,18 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -14,10 +20,8 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function AddressTable({
   companyId,

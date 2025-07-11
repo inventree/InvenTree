@@ -9,31 +9,12 @@ import {
   IconTrash
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
-import type { NavigateFunction } from 'react-router-dom';
+import { cancelEvent } from '../functions/Events';
+import { getDetailUrl } from '../functions/Navigation';
+import { navigateToLink } from '../functions/Navigation';
+import type { RowAction, RowViewProps } from '../types/Tables';
 
-import type { ModelType } from '@lib/enums/ModelType';
-import { cancelEvent } from '@lib/functions/Events';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
-
-// Type definition for a table row action
-export type RowAction = {
-  title?: string;
-  tooltip?: string;
-  color?: string;
-  icon?: ReactNode;
-  onClick?: (event: any) => void;
-  hidden?: boolean;
-  disabled?: boolean;
-};
-
-type RowModelProps = {
-  modelType: ModelType;
-  modelId: number;
-  navigate: NavigateFunction;
-};
-
-export type RowViewProps = RowAction & RowModelProps;
+export type { RowAction, RowViewProps } from '../types/Tables';
 
 // Component for viewing a row in a table
 export function RowViewAction(props: RowViewProps): RowAction {

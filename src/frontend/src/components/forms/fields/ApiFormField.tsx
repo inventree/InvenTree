@@ -4,8 +4,8 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
+import { isTrue } from '@lib/functions/Conversion';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';

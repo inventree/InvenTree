@@ -3,14 +3,21 @@ import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  type RowAction,
+  RowCancelAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import dayjs from 'dayjs';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
@@ -22,15 +29,8 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DateColumn, LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowCancelAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId

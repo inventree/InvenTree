@@ -3,12 +3,12 @@ import { Alert, MantineProvider, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { identifierString } from '@lib/functions/Conversion';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { type Root, createRoot } from 'react-dom/client';
 import { api, queryClient } from '../../App';
 import { ApiProvider } from '../../contexts/ApiContext';
 import { LanguageContext } from '../../contexts/LanguageContext';
-import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
 import { findExternalPluginFunction } from './PluginSource';
 

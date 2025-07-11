@@ -1,4 +1,8 @@
-import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
+import {
+  type QueryObserverResult,
+  type UseQueryResult,
+  useQuery
+} from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -11,7 +15,7 @@ export interface UseInstanceResult {
   setInstance: (instance: any) => void;
   refreshInstance: () => void;
   refreshInstancePromise: () => Promise<QueryObserverResult<any, any>>;
-  instanceQuery: any;
+  instanceQuery: UseQueryResult;
   isLoaded: boolean;
 }
 

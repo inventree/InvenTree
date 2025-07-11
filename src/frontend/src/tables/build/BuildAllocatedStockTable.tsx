@@ -1,11 +1,17 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useDeleteApiFormModal,
@@ -14,7 +20,6 @@ import {
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   LocationColumn,
   PartColumn,
@@ -23,7 +28,6 @@ import {
 } from '../ColumnRenderers';
 import { StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Render a table of allocated stock for a build.
