@@ -566,7 +566,7 @@ class InvenTreeTree(MPTTModel):
             2. Delete this node
             3. Rebuild the model tree
         """
-        tree_id = self.tree_id if self.parent else None
+        tree_id = self.tree_id
 
         # Ensure that we have the latest version of the database object
         try:
@@ -625,7 +625,8 @@ class InvenTreeTree(MPTTModel):
         # - Delete all descendant nodes
         elif delete_children and not delete_items:
             if items := self.get_items(cascade=True):
-                items.update(**{self.ITEM_PARENT_KEY: self.parent})
+                parent = getattr(self, self.NODE_PARENT_KEY, None)
+                items.update(**{self.ITEM_PARENT_KEY: parent})
             self.delete_nodes(child_nodes)
 
         # Case C: Delete all child items, but keep all child nodes
@@ -633,15 +634,17 @@ class InvenTreeTree(MPTTModel):
         # - Move any direct child nodes up one level
         elif not delete_children and delete_items:
             self.delete_items(cascade=False)
-            self.get_children().update(**{self.NODE_PARENT_KEY: self.parent})
+            parent = getattr(self, self.NODE_PARENT_KEY, None)
+            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
 
         # Case D: Keep all child items, and keep all child nodes
         # - Move all items directly associated with this node up one level
         # - Move any direct child nodes up one level
         elif not delete_children and not delete_items:
+            parent = getattr(self, self.NODE_PARENT_KEY, None)
             if items := self.get_items(cascade=False):
-                items.update(**{self.ITEM_PARENT_KEY: self.parent})
-            self.get_children().update(**{self.NODE_PARENT_KEY: self.parent})
+                items.update(**{self.ITEM_PARENT_KEY: parent})
+            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
 
     def delete_nodes(self, nodes):
         """Delete  a set of nodes from the tree.
