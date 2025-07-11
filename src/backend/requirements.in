@@ -28,7 +28,7 @@ django-sslserver                        # Secure HTTP development server
 django-structlog                        # Structured logging
 django-stdimage                         # Advanced ImageField management
 django-taggit                           # Tagging support
-django-otp==1.3.0                       # Two-factor authentication (legacy to ensure migrations) https://github.com/inventree/InvenTree/pull/6293
+django-otp==1.6.1                       # Two-factor authentication (legacy to ensure migrations) https://github.com/inventree/InvenTree/pull/6293
 django-oauth-toolkit                    # OAuth2 provider
 djangorestframework                     # DRF framework
 djangorestframework-simplejwt[crypto]   # JWT authentication
