@@ -22,7 +22,6 @@ import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderInstance } from '../../components/render/Instance';
-import { RenderStockLocation } from '../../components/render/Stock';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -40,6 +39,7 @@ import {
   CurrencyColumn,
   DescriptionColumn,
   LinkColumn,
+  LocationColumn,
   NoteColumn,
   PartColumn,
   ReferenceColumn,
@@ -258,15 +258,11 @@ export function PurchaseOrderLineItemTable({
         title: t`Total Price`
       }),
       TargetDateColumn({}),
-      {
-        accessor: 'destination',
-        title: t`Destination`,
+      LocationColumn({
+        accessor: 'destination_detail',
         sortable: false,
-        render: (record: any) =>
-          record.destination
-            ? RenderStockLocation({ instance: record.destination_detail })
-            : '-'
-      },
+        title: t`Destination`
+      }),
       NoteColumn({}),
       LinkColumn({})
     ];
