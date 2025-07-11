@@ -80,6 +80,8 @@ class Build(
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.

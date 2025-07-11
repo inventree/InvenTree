@@ -526,8 +526,16 @@ class InvenTreeAttachmentMixin:
         Attachment.objects.create(**kwargs)
 
 
-class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
-    """Provides an abstracted self-referencing tree model for data categories."""
+class InvenTreeTree(MPTTModel):
+    """Provides an abstracted self-referencing tree model, based on the MPTTModel class.
+
+    Our implementation provides the following key improvements:
+
+    - Allow tracking of separate concepts of "nodes" and "items"
+    - Better handling of deletion of nodes and items
+    - Ensure tree is correctly rebuilt after deletion and other operations
+    - Improved protection against recursive tree structures
+    """
 
     # How each node reference its parent object
     NODE_PARENT_KEY = 'parent'
