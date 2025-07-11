@@ -38,6 +38,7 @@ class PluginMixinEnum(StringEnum):
     LOCATE = 'locate'
     MAIL = 'mail'
     NAVIGATION = 'navigation'
+    NOTIFICATION = 'notification'
     REPORT = 'report'
     SCHEDULE = 'schedule'
     SETTINGS = 'settings'
@@ -129,17 +130,32 @@ class MetaBase:
 
         return registry.get_plugin_config(self.plugin_slug())
 
-    def is_active(self):
-        """Return True if this plugin is currently active."""
-        # Builtin plugins are always considered "active"
-        if self.is_builtin:
+    def is_active(self, active_keys: Optional[list] = None) -> bool:
+        """Return True if this plugin is currently active.
+
+        Arguments:
+            active_keys (list, optional): List of keys to check for activation.
+                If provided, the plugin will only be considered active if it is
+                explicitly listed in this list. Defaults to None.
+        """
+        if active_keys and self.slug in active_keys:
+            # If the plugin slug is in the active keys, it is considered active
             return True
 
         config = self.plugin_config()
 
-        if config:
-            return config.active
-        return False  # pragma: no cover
+        if not config:
+            return False
+
+        if self.is_builtin and config.is_mandatory():
+            return True
+
+        return config.active
+
+    def activate(self, active: bool = True) -> None:
+        """Activate or deactivate the plugin."""
+        config = self.plugin_config()
+        config.activate(active)
 
 
 class MixinBase:
