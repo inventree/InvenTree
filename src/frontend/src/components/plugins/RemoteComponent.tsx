@@ -9,6 +9,7 @@ import { type Root, createRoot } from 'react-dom/client';
 import { api, queryClient } from '../../App';
 import { ApiProvider } from '../../contexts/ApiContext';
 import { LanguageContext } from '../../contexts/LanguageContext';
+import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { findExternalPluginFunction } from './PluginSource';
 
@@ -31,35 +32,33 @@ export default function RemoteComponent({
   context: InvenTreePluginContext;
 }>) {
   const componentRef = useRef<HTMLDivElement>();
-  const [rootElement, setRootElement] = useState<Root | null>(null);
+  const rootElement = useRef<Root | null>(null);
 
   useEffect(() => {
-    if (componentRef.current && !rootElement) {
-      setRootElement(createRoot(componentRef.current));
+    if (componentRef.current && rootElement.current === null) {
+      rootElement.current = createRoot(componentRef.current);
     }
-  }, [componentRef.current]);
+  }, [rootElement]);
 
   const [renderingError, setRenderingError] = useState<string | undefined>(
     undefined
   );
 
-  const sourceFile = useMemo(() => {
-    return source.split(':')[0];
-  }, [source]);
+  const func: string = useMemo(() => {
+    // Attempt to extract the function name from the source
+    const { getHost } = useLocalState.getState();
+    const url = new URL(source, getHost());
 
-  // Determine the function to call in the external plugin source
-  const functionName = useMemo(() => {
-    // The "source" string may contain a function name, e.g. "source.js:myFunction"
-    if (source.includes(':')) {
-      return source.split(':')[1];
+    if (url.pathname.includes(':')) {
+      const parts = url.pathname.split(':');
+      return parts[1] || defaultFunctionName; // Use the second part as the function name, or fallback to default
+    } else {
+      return defaultFunctionName;
     }
-
-    // By default, return the default function name
-    return defaultFunctionName;
   }, [source, defaultFunctionName]);
 
   const reloadPluginContent = useCallback(() => {
-    if (!rootElement) {
+    if (!rootElement.current) {
       return;
     }
 
@@ -68,8 +67,8 @@ export default function RemoteComponent({
       reloadContent: reloadPluginContent
     };
 
-    if (sourceFile && functionName) {
-      findExternalPluginFunction(sourceFile, functionName)
+    if (source && defaultFunctionName) {
+      findExternalPluginFunction(source, func)
         .then((func) => {
           if (!!func) {
             try {
@@ -81,7 +80,7 @@ export default function RemoteComponent({
                 // Render the plugin component into the target element
                 // Note that we have to provide the right context(s) to the component
                 // This approach ensures that the component is rendered in the correct context tree
-                rootElement.render(
+                rootElement.current?.render(
                   <ApiProvider client={queryClient} api={api}>
                     <MantineProvider
                       theme={ctx.theme}
@@ -99,30 +98,28 @@ export default function RemoteComponent({
               console.error(error);
             }
           } else {
-            setRenderingError(`${sourceFile}:${functionName}`);
+            setRenderingError(`${source} / ${func}`);
           }
         })
         .catch((_error) => {
           console.error(
-            `ERR: Failed to load remove plugin function: ${sourceFile}:${functionName}`
+            `ERR: Failed to load remote plugin function: ${source} /${func}`
           );
         });
     } else {
       setRenderingError(
-        `${t`Invalid source or function name`} - ${sourceFile}:${functionName}`
+        `${t`Invalid source or function name`} - ${source} /${func}`
       );
     }
-  }, [componentRef, rootElement, sourceFile, functionName, context]);
+  }, [componentRef, rootElement, source, defaultFunctionName, context]);
 
   // Reload the plugin content dynamically
   useEffect(() => {
     reloadPluginContent();
-  }, [sourceFile, functionName, context, rootElement]);
+  }, [func, context, rootElement.current]);
 
   return (
-    <Boundary
-      label={identifierString(`RemoteComponent-${sourceFile}-${functionName}`)}
-    >
+    <Boundary label={identifierString(`RemoteComponent-${func}`)}>
       <Stack gap='xs'>
         {renderingError && (
           <Alert

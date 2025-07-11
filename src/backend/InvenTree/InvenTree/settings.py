@@ -209,6 +209,14 @@ PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
 
+PLUGIN_DEV_SLUG = (
+    get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug') if DEBUG else None
+)
+
+PLUGIN_DEV_HOST = get_setting(
+    'INVENTREE_PLUGIN_DEV_HOST', 'plugin_dev.host', 'http://localhost:5174'
+)  # Host for the plugin development server
+
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?

@@ -23,6 +23,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -50,6 +51,7 @@ export const useInvenTreeContext = () => {
       globalSettings: globalSettings,
       userSettings: userSettings,
       modelInformation: ModelInformationDict,
+      renderInstance: RenderInstance,
       theme: theme,
       colorScheme: colorScheme,
       forms: {
