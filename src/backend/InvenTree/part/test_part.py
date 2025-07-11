@@ -160,10 +160,7 @@ class PartTest(TestCase):
 
         cls.r1 = Part.objects.get(name='R_2K2_0805')
         cls.r2 = Part.objects.get(name='R_4K7_0603')
-
         cls.c1 = Part.objects.get(name='C_22N_0805')
-
-        Part.objects.rebuild()
 
     def test_barcode_mixin(self):
         """Test the barcode mixin functionality."""
@@ -463,7 +460,6 @@ class VariantTreeTest(TestCase):
     def setUpTestData(cls):
         """Rebuild Part tree before running tests."""
         super().setUpTestData()
-        Part.objects.rebuild()
 
     def test_tree(self):
         """Test tree structure for fixtured data."""

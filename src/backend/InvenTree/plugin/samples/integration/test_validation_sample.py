@@ -31,9 +31,6 @@ class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
             assembly=True,
         )
 
-        # Rebuild tree structure first, as updates are not yet committed
-        part.models.Part.objects.rebuild()
-
     def get_plugin(self):
         """Return the SampleValidatorPlugin instance."""
         return registry.get_plugin('validator', active=True)

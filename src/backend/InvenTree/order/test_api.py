@@ -1923,7 +1923,6 @@ class SalesOrderAllocateTest(OrderTest):
     def setUpTestData(cls):
         """Init routine for this unit test class."""
         super().setUpTestData()
-        Part.objects.rebuild()  # Ensure part variant trees are correct
 
     def setUp(self):
         """Init routines for this unit testing class."""

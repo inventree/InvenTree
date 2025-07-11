@@ -51,7 +51,6 @@ class StockTestBase(InvenTreeTestCase):
         cls.drawer3 = StockLocation.objects.get(name='Drawer_3')
 
         # Ensure the MPTT objects are correctly rebuild
-        Part.objects.rebuild()
         StockItem.objects.rebuild()
 
 
