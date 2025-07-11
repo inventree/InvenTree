@@ -112,8 +112,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         url = reverse('api-part-category-list')
 
         # star categories manually for tests as it is not possible with fixures
-        # because the current user is no fixure itself and throws an invalid
-        # foreign key constrain
+        # because the current user is not fixured itself and throws an invalid
+        # foreign key constraint
         for pk in [3, 4]:
             PartCategory.objects.get(pk=pk).set_starred(self.user, True)
 
@@ -537,8 +537,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 parent=loc,
             )
 
-        PartCategory.objects.rebuild()
-
         with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-part-category-tree'), expected_code=200)
 
@@ -588,7 +586,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         sub4 = PartCategory.objects.create(name='sub4', parent=sub3)
         sub5 = PartCategory.objects.create(name='sub5', parent=sub2)
         Part.objects.create(name='test', category=sub4)
-        PartCategory.objects.rebuild()
 
         # This query will trigger an internal server error if annotation results are not limited to 1
         url = reverse('api-part-list')
@@ -1057,9 +1054,6 @@ class PartAPITest(PartAPITestBase):
 
         Uses the 'chair template' part (pk=10000)
         """
-        # Rebuild the MPTT structure before running these tests
-        Part.objects.rebuild()
-
         url = reverse('api-part-list')
 
         response = self.get(url, {'variant_of': 10000}, expected_code=200)
@@ -1105,7 +1099,6 @@ class PartAPITest(PartAPITestBase):
     def test_variant_stock(self):
         """Unit tests for the 'variant_stock' annotation, which provides a stock count for *variant* parts."""
         # Ensure the MPTT structure is in a known state before running tests
-        Part.objects.rebuild()
 
         # Initially, there are no "chairs" in stock,
         # so each 'chair' template should report variant_stock=0
@@ -2021,9 +2014,6 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         """Create test data as part of setup routine."""
         super().setUpTestData()
 
-        # Ensure the part "variant" tree is correctly structured
-        Part.objects.rebuild()
-
         # Add a new part
         cls.part = Part.objects.create(
             name='Banana',
@@ -2379,9 +2369,6 @@ class BomItemTest(InvenTreeAPITestCase):
         """Set up the test case."""
         super().setUp()
 
-        # Rebuild part tree so BOM items validate correctly
-        Part.objects.rebuild()
-
     def test_bom_list(self):
         """Tests for the BomItem list endpoint."""
         # How many BOM items currently exist in the database?
@@ -2569,8 +2556,6 @@ class BomItemTest(InvenTreeAPITestCase):
 
             variant.save()
 
-            Part.objects.rebuild()
-
             # Create some stock items for this new part
             for _ in range(ii):
                 StockItem.objects.create(part=variant, location=loc, quantity=100)
@@ -2700,8 +2685,6 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_bom_variant_stock(self):
         """Test for 'available_variant_stock' annotation."""
-        Part.objects.rebuild()
-
         # BOM item we are interested in
         bom_item = BomItem.objects.get(pk=1)
 
@@ -3079,11 +3062,6 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
     ]
 
     roles = ['part.change', 'part_category.change']
-
-    def setUp(self):
-        """Setup unit tets."""
-        super().setUp()
-        Part.objects.rebuild()
 
     def metatester(self, apikey, model):
         """Generic tester."""
