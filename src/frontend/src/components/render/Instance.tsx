@@ -7,8 +7,11 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
-import type { ModelRendererDict } from '@lib/types/Rendering';
-import type { InstanceRenderInterface } from '@lib/types/Rendering';
+import type {
+  ModelRendererDict,
+  RenderInstanceProps
+} from '@lib/types/Rendering';
+export type { InstanceRenderInterface } from '@lib/types/Rendering';
 import { useApi } from '../../contexts/ApiContext';
 import { shortenString } from '../../functions/tables';
 import { Thumbnail } from '../images/Thumbnail';
@@ -52,7 +55,7 @@ import { RenderGroup, RenderOwner, RenderUser } from './User';
 /**
  * Lookup table for rendering a model instance
  */
-const RendererLookup: ModelRendererDict = {
+export const RendererLookup: ModelRendererDict = {
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
   [ModelType.buildline]: RenderBuildLine,
@@ -87,10 +90,6 @@ const RendererLookup: ModelRendererDict = {
   [ModelType.selectionlist]: RenderSelectionList,
   [ModelType.error]: RenderError
 };
-
-export type RenderInstanceProps = {
-  model: ModelType | undefined;
-} & InstanceRenderInterface;
 
 /**
  * Render an instance of a database model, depending on the provided data

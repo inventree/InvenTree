@@ -18,3 +18,7 @@ export type ModelRendererDict = EnumDictionary<
   ModelType,
   (props: Readonly<InstanceRenderInterface>) => React.ReactNode
 >;
+
+export type RenderInstanceProps = {
+  model: ModelType | undefined;
+} & InstanceRenderInterface;
