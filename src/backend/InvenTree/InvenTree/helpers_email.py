@@ -14,8 +14,10 @@ from common.models import Priority, issue_mail
 logger = structlog.get_logger('inventree')
 
 
-def is_email_configured():
+def is_email_configured() -> bool:
     """Check if email backend is configured.
+
+    Fails on tests nominally, if no bypassed via settings.TESTING_BYPASS_MAILCHECK.
 
     NOTE: This does not check if the configuration is valid!
     """
@@ -23,7 +25,7 @@ def is_email_configured():
     testing = settings.TESTING
 
     if InvenTree.ready.isInTestMode():
-        return False
+        return settings.TESTING_BYPASS_MAILCHECK
 
     if InvenTree.ready.isImportingData():
         return False
