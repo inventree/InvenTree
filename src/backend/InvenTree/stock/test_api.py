@@ -882,9 +882,15 @@ class StockItemListTest(StockAPITestCase):
                 # Part name should match
                 self.assertEqual(row['Part.Name'], item.part.name)
 
+        parts = Part.objects.get(pk=25).get_descendants(include_self=True)
+        self.assertEqual(parts.count(), 1)
+
+        items = StockItem.objects.filter(part__in=parts)
+        self.assertEqual(items.count(), 4)
+
         # Export stock items with a specific part
         with self.export_data(self.list_url, {'part': 25}) as data_file:
-            self.process_csv(data_file, required_rows=17)
+            self.process_csv(data_file, required_rows=items.count())
 
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
