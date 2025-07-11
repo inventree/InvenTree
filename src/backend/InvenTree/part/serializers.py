@@ -677,7 +677,6 @@ class PartSerializer(
             'revision_count',
             'salable',
             'starred',
-            'thumbnails',
             'testable',
             'trackable',
             'units',
@@ -989,7 +988,7 @@ class PartSerializer(
     images = serializers.SerializerMethodField()
 
     # thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    thumbnails = serializers.SerializerMethodField()
+    # thumbnails = serializers.SerializerMethodField()
 
     starred = serializers.SerializerMethodField()
 

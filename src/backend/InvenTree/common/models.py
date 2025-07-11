@@ -1847,7 +1847,7 @@ def rename_attachment(instance, filename: str):
     )
 
 
-# TODO:
+# TODO: reza
 UPLOAD_IMAGE_DIR = 'upload_images'
 
 
@@ -1877,6 +1877,16 @@ class UploadedImage(models.Model):
         delete_orphans=False,
         verbose_name=_('Image'),
     )
+
+    def save(self, *args, **kwargs):
+        """Override save to ensure only one primary image per model_id and model_type."""
+        if self.primary:
+            # Set all other images with same model_id and model_type to non-primary
+            UploadedImage.objects.filter(
+                model_id=self.model_id, model_type=self.model_type, primary=True
+            ).exclude(pk=self.pk).update(primary=False)
+
+        super().save(*args, **kwargs)
 
     def get_image_url(self):
         """Return the URL of the image for this part."""
@@ -1915,7 +1925,9 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     class ModelChoices(RenderChoices):
         """Model choices for attachments."""
 
-        # choice_fnc = common.validators.attachment_model_options
+        choice_fnc = lambda: common.validators.get_model_options(
+            InvenTree.models.InvenTreeAttachmentMixin
+        )
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.

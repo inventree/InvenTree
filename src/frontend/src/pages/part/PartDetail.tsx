@@ -47,8 +47,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ImageThumbnails } from '../../components/details/ImageThumbnails';
+import { DetailsImageCarousel } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
@@ -156,6 +155,7 @@ export default function PartDetail() {
     }
 
     const data = { ...part };
+    const hasImage: boolean = part.images.length !== 0;
 
     data.required =
       (partRequirements?.required_for_build_orders ??
@@ -480,36 +480,25 @@ export default function PartDetail() {
 
     return part ? (
       <ItemDetailsGrid>
-        {/* TODO: For add multiple image you have to change here  */}
         <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.part}
-            imageActions={{
-              selectExisting: true,
-              downloadImage: true,
-              uploadFile: true,
-              deleteFile: true
-            }}
-            src={part.image}
-            apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-            refresh={refreshInstance}
-            pk={part.pk}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={data} />
-            <ImageThumbnails
+          <Grid.Col pos='relative' span={{ base: 12, sm: 3 }}>
+            <DetailsImageCarousel
+              images={part.images}
               appRole={UserRoles.part}
               imageActions={{
                 selectExisting: true,
-                downloadImage: true,
+                downloadImage: hasImage,
                 uploadFile: true,
-                deleteFile: true
+                deleteFile: hasImage
               }}
-              src={part.image}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+              model_id={part.pk}
               refresh={refreshInstance}
-              pk={part.pk}
             />
+          </Grid.Col>
+
+          <Grid.Col span={{ base: 12, sm: 5 }}>
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
         <DetailsTable fields={tr} item={data} />

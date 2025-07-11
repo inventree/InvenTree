@@ -22,7 +22,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeAttachmentMixin
+from InvenTree.models import InvenTreeAttachmentMixin, InvenTreeImageUploadMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -592,12 +592,29 @@ class UploadedImageSerializer(serializers.ModelSerializer):
         """Serializer metaclass."""
 
         model = common_models.UploadedImage
-        fields = ['id', 'primary', 'image', 'thumbnail']
+        fields = ['pk', 'primary', 'image', 'thumbnail', 'model_type', 'model_id']
+
+    def __init__(self, *args, **kwargs):
+        """Override the model_type field to provide dynamic choices."""
+        super().__init__(*args, **kwargs)
+
+        if len(self.fields['model_type'].choices) == 0:
+            self.fields['model_type'].choices = common.validators.get_model_options(
+                InvenTreeImageUploadMixin
+            )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
     )
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'),
+        choices=common.validators.get_model_options(InvenTreeImageUploadMixin),
+        required=True,
+        allow_blank=False,
+        allow_null=False,
+    )
 
 
 class AttachmentSerializer(InvenTreeModelSerializer):

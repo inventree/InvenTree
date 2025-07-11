@@ -783,6 +783,22 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
+class UploadImageList(ListCreateAPI):
+    """Detail API endpoint for UploadedImage objects."""
+
+    queryset = common.models.UploadedImage.objects.all()
+    serializer_class = common.serializers.UploadedImageSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class UploadImageDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for UploadedImage objects."""
+
+    queryset = common.models.UploadedImage.objects.all()
+    serializer_class = common.serializers.UploadedImageSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
 class IconList(ListAPI):
     """List view for available icon packages."""
@@ -1030,6 +1046,18 @@ common_api_urls = [
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    path(
+        'upload-image/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path('', UploadImageDetail.as_view(), name='api-uploadImage-detail')
+                ]),
+            ),
+            path('', UploadImageList.as_view(), name='api-uploadImage-list'),
         ]),
     ),
     path(

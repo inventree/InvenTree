@@ -23,6 +23,7 @@ export type RowAction = {
   color?: string;
   icon?: ReactNode;
   onClick?: (event: any) => void;
+  menuIcon?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
 };
