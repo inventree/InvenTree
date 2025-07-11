@@ -811,12 +811,6 @@ class TestMPTT(TestCase):
 
     fixtures = ['location']
 
-    @classmethod
-    def setUpTestData(cls):
-        """Setup for all tests."""
-        super().setUpTestData()
-        StockLocation.objects.rebuild()
-
     def test_self_as_parent(self):
         """Test that we cannot set self as parent."""
         loc = StockLocation.objects.get(pk=4)
