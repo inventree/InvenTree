@@ -594,13 +594,13 @@ class StockItemListTest(StockAPITestCase):
 
     def test_filter_by_part(self):
         """Filter StockItem by Part reference."""
+        # 4 stock items associated with part 25
         response = self.get_stock(part=25)
+        self.assertEqual(len(response), 4)
 
-        self.assertEqual(len(response), 17)
-
+        # 3 stock items associated with part 10004
         response = self.get_stock(part=10004)
-
-        self.assertEqual(len(response), 12)
+        self.assertEqual(len(response), 3)
 
     def test_filter_by_ipn(self):
         """Filter StockItem by IPN reference."""
@@ -1038,9 +1038,9 @@ class StockItemListTest(StockAPITestCase):
 
         # With full data
         response = self.post(url, {'part': 1, 'quantity': 1})
-        self.assertEqual(response.data['serial_number'], '1001')
+        self.assertEqual(response.data['serial_number'], '1')
         response = self.post(url, {'part': 1, 'quantity': 3})
-        self.assertEqual(response.data['serial_number'], '1001,1002,1003')
+        self.assertEqual(response.data['serial_number'], '1,2,3')
 
         # Wrong quantities
         response = self.post(url, {'part': 1, 'quantity': 'abc'}, expected_code=400)
