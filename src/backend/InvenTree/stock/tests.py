@@ -50,9 +50,6 @@ class StockTestBase(InvenTreeTestCase):
         cls.drawer2 = StockLocation.objects.get(name='Drawer_2')
         cls.drawer3 = StockLocation.objects.get(name='Drawer_3')
 
-        # Ensure the MPTT objects are correctly rebuild
-        StockItem.objects.rebuild()
-
 
 class StockTest(StockTestBase):
     """Tests to ensure that the stock location tree functions correctly."""
@@ -1110,8 +1107,6 @@ class StockTreeTest(StockTestBase):
 
     def test_stock_split(self):
         """Test that stock splitting works correctly."""
-        StockItem.objects.rebuild()
-
         part = Part.objects.create(name='My part', description='My part description')
         location = StockLocation.objects.create(name='Test Location')
 
@@ -1163,8 +1158,6 @@ class StockTreeTest(StockTestBase):
 
     def test_tree_rebuild(self):
         """Test that tree rebuild works correctly."""
-        StockItem.objects.rebuild()
-
         part = Part.objects.create(name='My part', description='My part description')
         location = StockLocation.objects.create(name='Test Location')
 
@@ -1235,8 +1228,6 @@ class StockTreeTest(StockTestBase):
 
     def test_serialize(self):
         """Test that StockItem serialization maintains tree structure."""
-        StockItem.objects.rebuild()
-
         part = Part.objects.create(
             name='My part', description='My part description', trackable=True
         )
@@ -1372,8 +1363,6 @@ class TestResultTest(StockTestBase):
         # Create an example stock item by copying one from the database (because we are lazy)
 
         from plugin.registry import registry
-
-        StockItem.objects.rebuild()
 
         item = StockItem.objects.get(pk=522)
 

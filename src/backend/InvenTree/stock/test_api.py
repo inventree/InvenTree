@@ -450,8 +450,6 @@ class StockLocationTest(StockAPITestCase):
                 name=f'Location {idx}', description=f'Test location {idx}', parent=loc
             )
 
-        StockLocation.objects.rebuild()
-
         with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-location-tree'), expected_code=200)
 
