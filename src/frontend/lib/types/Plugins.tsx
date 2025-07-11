@@ -6,6 +6,7 @@ import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
 import type { ApiFormModalProps, BulkEditApiFormModalProps } from './Forms';
 import type { UseModalReturn } from './Modals';
+import type { ModelRendererDict } from './Rendering';
 import type { SettingsStateProps } from './Settings';
 import type { UserStateProps } from './User';
 
@@ -45,6 +46,7 @@ export type InvenTreeFormsContext = {
  * @param locale - The current locale string (e.g. 'en' / 'de')
  * @param model - The model type associated with the rendered component (if applicable)
  * @param modelInformation - A dictionary of available model information
+ * @param modelRenderers - A dictionary of model renderers for inline rendering of model instances
  * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
  * @param instance - The model instance data (if available)
  * @param reloadContent - A function which can be called to reload the plugin content
@@ -59,6 +61,7 @@ export type InvenTreePluginContext = {
   userSettings: SettingsStateProps;
   globalSettings: SettingsStateProps;
   modelInformation: ModelDict;
+  modelRenderers: ModelRendererDict;
   host: string;
   locale: string;
   navigate: NavigateFunction;
