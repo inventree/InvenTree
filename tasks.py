@@ -481,13 +481,18 @@ def plugins(c, uv=False):
     help={
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
+        'path': 'Specify path to locate requirements file (leave blank for default path)',
     }
 )
 @state_logger('TASK02')
-def install(c, uv=False, skip_plugins=False):
+def install(c, uv=False, skip_plugins=False, path=None):
     """Installs required python packages."""
     # Ensure path is relative to *this* directory
-    INSTALL_FILE = local_dir().joinpath('src/backend/requirements.txt')
+    INSTALL_FILE = (
+        Path(path).resolve()
+        if path and Path(path).exists()
+        else local_dir().joinpath('src/backend/requirements.txt')
+    )
 
     info(f"Installing required python packages from '{INSTALL_FILE}'")
 
@@ -763,6 +768,7 @@ def showmigrations(c, app=''):
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
         'uv': 'Use UV (experimental package manager)',
+        'path': 'Specify path to locate requirements file (leave blank for default path)',
     },
 )
 @state_logger('TASK03')
@@ -773,6 +779,7 @@ def update(
     no_frontend: bool = False,
     skip_static: bool = False,
     uv: bool = False,
+    path: Optional[str] = None,
 ):
     """Update InvenTree installation.
 
@@ -791,7 +798,7 @@ def update(
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
-    install(c, uv=uv)
+    install(c, uv=uv, path=path)
 
     if not skip_backup:
         backup(c)
