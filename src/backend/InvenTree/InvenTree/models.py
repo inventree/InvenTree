@@ -124,7 +124,7 @@ class PluginValidationMixin(DiffMixin):
         self.run_plugin_validation()
         super().save(*args, **kwargs)
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         """Run plugin validation on model delete.
 
         Allows plugins to prevent model instances from being deleted.
@@ -144,7 +144,7 @@ class PluginValidationMixin(DiffMixin):
                 log_error('validate_model_deletion', plugin=plugin.slug)
                 continue
 
-        super().delete()
+        super().delete(*args, **kwargs)
 
 
 class MetadataMixin(models.Model):
@@ -554,10 +554,10 @@ class InvenTreeTree(MPTTModel):
 
         order_insertion_by = ['name']
 
-    def delete(self, delete_children: bool = False, delete_items: bool = False):
+    def delete(self, *args, **kwargs):
         """Handle the deletion of a tree node.
 
-        Arguments:
+        kwargs:
             delete_children: If True, delete all child nodes (otherwise, point to the parent of this node)
             delete_items: If True, delete all items associated with this node (otherwise, point to the parent of this node)
 
@@ -566,6 +566,9 @@ class InvenTreeTree(MPTTModel):
             2. Delete this node
             3. Rebuild the model tree
         """
+        delete_children = kwargs.pop('delete_children', False)
+        delete_items = kwargs.pop('delete_items', False)
+
         tree_id = self.tree_id
 
         # Ensure that we have the latest version of the database object
@@ -583,7 +586,7 @@ class InvenTreeTree(MPTTModel):
         )
 
         # 2. Delete *this* node
-        super().delete()
+        super().delete(*args, **kwargs)
 
         # 3. Update the tree structure
         if tree_id:
@@ -980,7 +983,7 @@ class InvenTreeNotesMixin(models.Model):
 
         abstract = True
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         """Custom delete method for InvenTreeNotesMixin.
 
         - Before deleting the object, check if there are any uploaded images associated with it.
@@ -1002,7 +1005,7 @@ class InvenTreeNotesMixin(models.Model):
 
             images.delete()
 
-        super().delete()
+        super().delete(*args, **kwargs)
 
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')

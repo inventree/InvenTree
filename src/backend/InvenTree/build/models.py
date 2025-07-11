@@ -73,6 +73,7 @@ class BuildReportContext(report.mixins.BaseReportContext):
 
 
 class Build(
+    InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -81,7 +82,6 @@ class Build(
     StateTransitionMixin,
     StatusCodeMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.

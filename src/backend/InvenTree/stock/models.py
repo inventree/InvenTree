@@ -135,11 +135,11 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 
 class StockLocation(
+    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
@@ -412,6 +412,7 @@ class StockItemReportContext(report.mixins.BaseReportContext):
 
 
 class StockItem(
+    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -419,7 +420,6 @@ class StockItem(
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """A StockItem object represents a quantity of physical instances of a part.

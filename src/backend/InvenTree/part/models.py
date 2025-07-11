@@ -70,9 +70,9 @@ logger = structlog.get_logger('inventree')
 
 
 class PartCategory(
-    InvenTree.models.PathStringMixin,
-    InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PathStringMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """PartCategory provides hierarchical organization of Part objects.
@@ -405,12 +405,12 @@ class PartReportContext(report.mixins.BaseReportContext):
 
 @cleanup.ignore
 class Part(
+    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
