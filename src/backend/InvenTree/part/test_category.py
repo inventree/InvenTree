@@ -23,8 +23,8 @@ class CategoryTest(TestCase):
         super().setUpTestData()
 
         cls.electronics = PartCategory.objects.get(name='Electronics')
-        cls.mechanical = PartCategory.objects.get(name='Mechanical')
         cls.resistors = PartCategory.objects.get(name='Resistors')
+        cls.mechanical = PartCategory.objects.get(name='Mechanical')
         cls.capacitors = PartCategory.objects.get(name='Capacitors')
         cls.fasteners = PartCategory.objects.get(name='Fasteners')
         cls.ic = PartCategory.objects.get(name='IC')
@@ -66,6 +66,7 @@ class CategoryTest(TestCase):
     def test_path_string(self):
         """Test that the category path string works correctly."""
         # Note that due to data migrations, these fields need to be saved first
+
         self.resistors.save()
         self.transceivers.save()
 
@@ -88,6 +89,9 @@ class CategoryTest(TestCase):
         # Move to a new parent location
         subcat.parent = self.resistors
         subcat.save()
+
+        # subcat.refresh_from_db()
+
         self.assertEqual(subcat.pathstring, 'Electronics/Resistors/Subcategory')
         self.assertEqual(len(subcat.path), 3)
 

@@ -475,13 +475,13 @@ class InvenTreeAttachmentMixin:
     - attachments: Return a queryset containing all attachments for this model
     """
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
 
         Before deleting the model instance, delete any associated attachments.
         """
         self.attachments.all().delete()
-        super().delete()
+        super().delete(*args, **kwargs)
 
     @property
     def attachments(self):
@@ -587,23 +587,7 @@ class InvenTreeTree(MPTTModel):
 
         # 3. Update the tree structure
         if tree_id:
-            try:
-                self.__class__.objects.partial_rebuild(tree_id)
-            except Exception as e:
-                # This is a critical error, explicitly report to sentry
-                InvenTree.sentry.report_exception(e)
-
-                InvenTree.exceptions.log_error(
-                    f'{self.__class__.__name__}.partial_rebuild'
-                )
-                logger.exception(
-                    'Failed to rebuild tree for %s <%s>: %s',
-                    self.__class__.__name__,
-                    self.pk,
-                    e,
-                )
-                # If the partial rebuild fails, rebuild the entire tree
-                self.__class__.objects.rebuild()
+            self.partial_rebuild(tree_id)
         else:
             self.__class__.objects.rebuild()
 
@@ -679,11 +663,53 @@ class InvenTreeTree(MPTTModel):
 
     def save(self, *args, **kwargs):
         """Custom save method for InvenTreeTree abstract model."""
+        db_instance = None
+
+        if self.pk:
+            try:
+                db_instance = self.get_db_instance()
+            except self.__class__.DoesNotExist:
+                # If the instance does not exist, we cannot get the db instance
+                db_instance = None
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
             # Provide better error for parent selection
             raise ValidationError({self.NODE_PARENT_KEY: _('Invalid choice')})
+
+        if db_instance:
+            trees = set()
+
+            # If the tree_id or parent has changed, we need to rebuild the tree
+            if db_instance.parent != self.parent:
+                trees.add(db_instance.tree_id)
+            if db_instance.tree_id != self.tree_id:
+                trees.add(self.tree_id)
+                trees.add(db_instance.tree_id)
+
+            for tree_id in trees:
+                self.partial_rebuild(tree_id)
+
+    def partial_rebuild(self, tree_id: int) -> bool:
+        """Perform a partial rebuild of the tree structure.
+
+        If a failure occurs, log the error and return False.
+        """
+        try:
+            self.__class__.objects.partial_rebuild(tree_id)
+            return True
+        except Exception as e:
+            # This is a critical error, explicitly report to sentry
+            InvenTree.sentry.report_exception(e)
+
+            InvenTree.exceptions.log_error(f'{self.__class__.__name__}.partial_rebuild')
+            logger.exception(
+                'Failed to rebuild tree for %s <%s>: %s',
+                self.__class__.__name__,
+                self.pk,
+                e,
+            )
+            return False
 
     def delete_items(self, cascade: bool = False):
         """Delete any 'items' which exist under this node in the tree.
@@ -804,7 +830,8 @@ class PathStringMixin(models.Model):
         # Rebuild upper first, to ensure the lower nodes are updated correctly
         super().save(*args, **kwargs)
 
-        pathstring = self.construct_pathstring()
+        # Ensure that the pathstring is correctly constructed
+        pathstring = self.construct_pathstring(refresh=True)
 
         if pathstring != old_pathstring:
             kwargs.pop('force_insert', None)
@@ -861,8 +888,16 @@ class PathStringMixin(models.Model):
         if len(nodes_to_update) > 0:
             self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
 
-    def construct_pathstring(self):
-        """Construct the pathstring for this tree node."""
+    def construct_pathstring(self, refresh: bool = False) -> str:
+        """Construct the pathstring for this tree node.
+
+        Arguments:
+            refresh: If True, force a refresh of the model instance
+        """
+        if refresh:
+            # Refresh the model instance from the database
+            self.refresh_from_db()
+
         return InvenTree.helpers.constructPathString([
             getattr(item, self.PATH_FIELD, item.pk) for item in self.path
         ])
