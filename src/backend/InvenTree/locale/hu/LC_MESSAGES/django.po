@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-09 01:39+0000\n"
-"PO-Revision-Date: 2025-07-09 01:42\n"
+"POT-Creation-Date: 2025-07-09 11:47+0000\n"
+"PO-Revision-Date: 2025-07-11 12:37\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -569,9 +569,9 @@ msgstr "Változatokkal együtt"
 msgid "Part"
 msgstr "Alkatrész"
 
-#: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
-#: stock/api.py:833
+#: build/api.py:107 build/api.py:110 part/api.py:1335 part/api.py:1642
+#: part/models.py:1080 part/models.py:3630 part/models.py:4211
+#: part/serializers.py:1340 stock/api.py:833
 msgid "Category"
 msgstr "Kategória"
 
@@ -598,7 +598,7 @@ msgstr "Ez előtt létrehozva"
 
 #: build/api.py:208
 msgid "Created after"
-msgstr ""
+msgstr "Létrehozva ez után"
 
 #: build/api.py:212
 msgid "Has start date"
@@ -1307,7 +1307,7 @@ msgstr "Alkatrészjegyzék Alkatrész Név"
 
 #: build/serializers.py:1253 build/serializers.py:1409
 msgid "Build"
-msgstr ""
+msgstr "Gyártás"
 
 #: build/serializers.py:1261 company/models.py:695 order/api.py:306
 #: order/api.py:311 order/api.py:526 order/serializers.py:596
@@ -1468,7 +1468,7 @@ msgstr "A projektért felelős felhasználó vagy csoport"
 
 #: common/models.py:732 common/models.py:1229 common/models.py:1267
 msgid "Settings key"
-msgstr ""
+msgstr "Beállítási kulcs"
 
 #: common/models.py:736
 msgid "Settings value"
@@ -1867,7 +1867,7 @@ msgstr ""
 
 #: common/models.py:2207
 msgid "Source Plugin"
-msgstr ""
+msgstr "Forrás plugin"
 
 #: common/models.py:2208
 msgid "Plugin which provides the selection list"
@@ -2004,27 +2004,27 @@ msgstr ""
 
 #: common/models.py:2513
 msgid "Sent"
-msgstr ""
+msgstr "Elküldve"
 
 #: common/models.py:2514
 msgid "Failed"
-msgstr ""
+msgstr "Megbukott"
 
 #: common/models.py:2517
 msgid "Delivered"
-msgstr ""
+msgstr "Kiszállítva"
 
 #: common/models.py:2525
 msgid "Confirmed"
-msgstr ""
+msgstr "Megerősítve"
 
 #: common/models.py:2531
 msgid "Inbound"
-msgstr ""
+msgstr "Bejövő"
 
 #: common/models.py:2532
 msgid "Outbound"
-msgstr ""
+msgstr "Kimenő"
 
 #: common/models.py:2537
 msgid "No Reply"
@@ -2260,7 +2260,7 @@ msgstr ""
 
 #: common/setting/system.py:193
 msgid "Instance ID"
-msgstr ""
+msgstr "Példány azonosító"
 
 #: common/setting/system.py:194
 msgid "Unique identifier for this InvenTree instance"
@@ -3673,7 +3673,7 @@ msgstr "Cég"
 
 #: company/api.py:316
 msgid "Has Stock"
-msgstr ""
+msgstr "Van készleten"
 
 #: company/models.py:119
 msgid "Companies"
@@ -4061,7 +4061,7 @@ msgstr ""
 
 #: generic/states/serializers.py:40
 msgid "Values"
-msgstr ""
+msgstr "Értékek"
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
@@ -4500,7 +4500,7 @@ msgstr "Link külső weboldalra"
 
 #: order/models.py:458
 msgid "Start date"
-msgstr ""
+msgstr "Kezdés dátuma"
 
 #: order/models.py:459
 msgid "Scheduled start date for this order"
@@ -5312,7 +5312,7 @@ msgstr "Összeállított Alkatrész ellenőrizhető"
 msgid "Component part is testable"
 msgstr "Összetevő alkatrész ellenőrizhető"
 
-#: part/api.py:1639
+#: part/api.py:1653
 msgid "Uses"
 msgstr "Használ"
 
