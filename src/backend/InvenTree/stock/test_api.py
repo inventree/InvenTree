@@ -73,11 +73,11 @@ class StockLocationTest(StockAPITestCase):
             ({}, 8, 'no parameters'),
             ({'parent': 1, 'cascade': False}, 2, 'Filter by parent, no cascading'),
             ({'parent': 1, 'cascade': True}, 2, 'Filter by parent, cascading'),
-            ({'cascade': True, 'depth': 0}, 7, 'Cascade with no parent, depth=0'),
+            ({'cascade': True, 'depth': 0}, 3, 'Cascade with no parent, depth=0'),
             ({'cascade': False, 'depth': 10}, 3, 'Cascade with no parent, depth=10'),
             (
                 {'parent': 1, 'cascade': False, 'depth': 0},
-                1,
+                0,
                 'Dont cascade with depth=0 and parent',
             ),
             (
