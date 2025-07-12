@@ -570,6 +570,7 @@ class InvenTreeTree(MPTTModel):
         delete_items = kwargs.pop('delete_items', False)
 
         tree_id = self.tree_id
+        parent = getattr(self, self.NODE_PARENT_KEY, None)
 
         # Ensure that we have the latest version of the database object
         try:
@@ -580,6 +581,19 @@ class InvenTreeTree(MPTTModel):
                 'Object %s of type %s no longer exists', str(self), str(self.__class__)
             )
 
+        # When deleting a top level node with multiple children,
+        # we need to assign a new tree_id to each child node
+        # otherwise they will all have the same tree_id (which is not allowed)
+        lower_trees = []
+
+        if not parent:  # No parent, which means this is a top-level node
+            for child in self.get_children():
+                # Store a flattened list of node IDs for each of the lower trees
+                nodes = child.get_descendants(include_self=True).values_list(
+                    'pk', flat=True
+                )
+                lower_trees.append(nodes)
+
         # 1. Update nodes and items under the current node
         self.handle_tree_delete(
             delete_children=delete_children, delete_items=delete_items
@@ -588,10 +602,35 @@ class InvenTreeTree(MPTTModel):
         # 2. Delete *this* node
         super().delete(*args, **kwargs)
 
-        # 3. Update the tree structure
+        # A set of tree_id values which need to be rebuilt
+        trees = set()
+
         if tree_id:
-            self.partial_rebuild(tree_id)
-        else:
+            # If this node had a tree_id, we need to rebuild that tree
+            trees.add(tree_id)
+
+        # Did we delete a top-level node?
+        next_tree_id = self.getNextTreeID()
+
+        # If there is only one sub-tree, it can retain the same tree_id value
+        for tree in lower_trees[1:]:
+            # Bulk update the tree_id for all lower nodes
+            lower_nodes = self.__class__.objects.filter(pk__in=tree)
+            lower_nodes.update(tree_id=next_tree_id)
+            trees.add(next_tree_id)
+            next_tree_id += 1
+
+        # 3. Rebuild the model tree(s) as required
+        #  - If any partial rebuilds fail, we will rebuild the entire tree
+
+        result = True
+
+        for tree in trees:
+            if not self.partial_rebuild(tree):
+                result = False
+
+        if not result:
+            # Rebuild the entire tree (expensive!!!)
             self.__class__.objects.rebuild()
 
     def handle_tree_delete(self, delete_children=False, delete_items=False):
@@ -671,6 +710,11 @@ class InvenTreeTree(MPTTModel):
         """Custom save method for InvenTreeTree abstract model."""
         db_instance = None
 
+        parent = getattr(self, self.NODE_PARENT_KEY, None)
+
+        if parent:
+            self.tree_id = parent.tree_id
+
         if self.pk:
             try:
                 db_instance = self.get_db_instance()
@@ -683,9 +727,9 @@ class InvenTreeTree(MPTTModel):
             # Provide better error for parent selection
             raise ValidationError({self.NODE_PARENT_KEY: _('Invalid choice')})
 
-        if db_instance:
-            trees = set()
+        trees = set()
 
+        if db_instance:
             # If the tree_id or parent has changed, we need to rebuild the tree
             if getattr(db_instance, self.NODE_PARENT_KEY) != getattr(
                 self, self.NODE_PARENT_KEY
@@ -861,6 +905,15 @@ class PathStringMixin(models.Model):
         - Before deleting the object, update the pathstring for any child nodes.
         - Then, delete the object.
         """
+        # Ensure that we have the latest version of the database object
+        try:
+            self.refresh_from_db()
+        except self.__class__.DoesNotExist:
+            # If the object no longer exists, raise a ValidationError
+            raise ValidationError(
+                'Object %s of type %s no longer exists', str(self), str(self.__class__)
+            )
+
         # Store the node ID values for lower nodes, before we delete this one
         lower_nodes = list(
             self.get_descendants(include_self=False).values_list('pk', flat=True)

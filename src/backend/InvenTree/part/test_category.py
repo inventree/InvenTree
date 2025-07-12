@@ -221,6 +221,43 @@ class CategoryTest(TestCase):
         w = Part.objects.get(name='Widget')
         self.assertIsNone(w.get_default_location())
 
+    def test_root_delete(self):
+        """Test that deleting a root category works correctly."""
+        Part.objects.all().delete()
+        PartCategory.objects.all().delete()
+
+        # Create a new root category
+        root = PartCategory.objects.create(name='Root Category', description='Root')
+
+        # Create a child category
+        for i in range(10):
+            PartCategory.objects.create(
+                name=f'Child Category {i}', description='Child', parent=root
+            )
+
+        root.refresh_from_db()
+
+        self.assertEqual(root.get_descendants(include_self=False).count(), 10)
+        self.assertEqual(PartCategory.objects.count(), 11)
+
+        # There is only a single tree_id value
+        tree_ids = PartCategory.objects.values_list('tree_id', flat=True).distinct()
+        tree_ids = set(tree_ids)
+        self.assertEqual(len(tree_ids), 1)
+
+        # Delete the root category
+        root.delete()
+
+        # All child categories are now "root" categories
+        for cat in PartCategory.objects.all():
+            self.assertIsNone(cat.parent)
+            self.assertEqual(cat.level, 0)
+
+        # 10 unique tree_id values should now exist
+        tree_ids = PartCategory.objects.values_list('tree_id', flat=True).distinct()
+        tree_ids = set(tree_ids)
+        self.assertEqual(len(tree_ids), 10)
+
     def test_category_tree(self):
         """Unit tests for the part category tree structure (MPTT).
 
@@ -311,9 +348,8 @@ class CategoryTest(TestCase):
         for loc in [B1, B2, C31, C32, C33]:
             # These should now all be "top level" categories
             loc.refresh_from_db()
-
-            self.assertEqual(loc.level, 0)
             self.assertEqual(loc.parent, None)
+            self.assertEqual(loc.level, 0)
 
             # Pathstring should be the same as the name
             self.assertEqual(loc.pathstring, loc.name)
@@ -321,6 +357,7 @@ class CategoryTest(TestCase):
             # Test pathstring for direct children
             for child in loc.get_children():
                 self.assertEqual(child.pathstring, f'{loc.name}/{child.name}')
+                self.assertEqual(child.level, 1)
 
         # Check descendants for B1
         descendants = B1.get_descendants()
