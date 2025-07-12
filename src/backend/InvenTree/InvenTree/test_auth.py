@@ -182,7 +182,10 @@ class TestAuth(InvenTreeAPITestCase):
         self.post(self.reg_url, self.email_args(), expected_code=403)
 
         # Enable registration - now it should work
-        with self.settings(EMAIL_HOST='localhost') as _, EmailSettingsContext() as _:
+        with (
+            self.settings(EMAIL_HOST='localhost', TESTING_BYPASS_MAILCHECK=True) as _,
+            EmailSettingsContext() as _,
+        ):
             resp = self.post(self.reg_url, self.email_args(), expected_code=200)
             self.assertEqual(resp.json()['data']['user']['email'], self.test_email)
 
@@ -213,6 +216,9 @@ class TestAuth(InvenTreeAPITestCase):
         self.assertIn('The provided email domain is not approved.', str(resp.json()))
 
         # Right format should work
-        with self.settings(EMAIL_HOST='localhost') as _, EmailSettingsContext() as _:
+        with (
+            self.settings(EMAIL_HOST='localhost', TESTING_BYPASS_MAILCHECK=True) as _,
+            EmailSettingsContext() as _,
+        ):
             resp = self.post(self.reg_url, self.email_args(), expected_code=200)
             self.assertEqual(resp.json()['data']['user']['email'], self.test_email)
