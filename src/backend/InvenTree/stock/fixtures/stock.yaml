@@ -8,12 +8,12 @@
     location: 3
     batch: 'B123'
     quantity: 4000
-    level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
     purchase_price: 123
     purchase_price_currency: AUD
+    tree_id: 20
+    level: 0
+    lft: 1
+    rght: 2
 
 # 5,000 screws in the bathroom
 - model: stock.stockitem
@@ -22,10 +22,10 @@
     part: 1
     location: 2
     quantity: 5000
+    tree_id: 21
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # Capacitor C_22N_0805 in 'Office'
 - model: stock.stockitem
@@ -34,10 +34,10 @@
     part: 5
     location: 4
     quantity: 666
+    tree_id: 16
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # 1234 2K2 resistors in 'Drawer_1'
 - model: stock.stockitem
@@ -46,10 +46,10 @@
     part: 3
     location: 5
     quantity: 1234
+    tree_id: 22
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # Some widgets in drawer 3
 - model: stock.stockitem
@@ -60,10 +60,10 @@
     location: 7
     quantity: 10
     delete_on_deplete: False
+    tree_id: 28
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 101
@@ -72,10 +72,10 @@
     batch: "B2345"
     location: 7
     quantity: 5
+    tree_id: 27
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 102
@@ -84,10 +84,10 @@
     batch: 'BCDE'
     location: 7
     quantity: 0
+    tree_id: 26
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 105
@@ -97,10 +97,10 @@
     quantity: 1
     serial: 1000
     serial_int: 1000
+    tree_id: 29
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # Stock items for template / variant parts
 - model: stock.stockitem
@@ -110,10 +110,10 @@
     location: 7
     quantity: 5
     batch: "BBAAA"
+    tree_id: 2
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 501
@@ -123,10 +123,10 @@
     quantity: 1
     serial: 1
     serial_int: 1
+    tree_id: 3
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 502
@@ -136,10 +136,10 @@
     quantity: 1
     serial: 2
     serial_int: 2
+    tree_id: 4
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 503
@@ -149,10 +149,10 @@
     quantity: 1
     serial: 3
     serial_int: 3
+    tree_id: 5
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 504
@@ -162,10 +162,10 @@
     quantity: 1
     serial: 4
     serial_int: 4
+    tree_id: 6
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 505
@@ -175,10 +175,10 @@
     quantity: 1
     serial: 5
     serial_int: 5
+    tree_id: 1
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 510
@@ -188,10 +188,10 @@
     quantity: 1
     serial: 10
     serial_int: 10
+    tree_id: 24
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 511
@@ -201,10 +201,10 @@
     quantity: 1
     serial: 11
     serial_int: 11
+    tree_id: 23
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 512
@@ -214,10 +214,10 @@
     quantity: 1
     serial: 12
     serial_int: 12
+    tree_id: 25
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 520
@@ -227,12 +227,12 @@
     quantity: 1
     serial: 20
     serial_int: 20
-    level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
     expiry_date: "1990-10-10"
     barcode_hash: 9e5ae7fc20568ed4814c10967bba8b65
+    tree_id: 18
+    level: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 521
@@ -242,12 +242,12 @@
     quantity: 1
     serial: 21
     serial_int: 21
-    level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
     status: 60
     barcode_hash: 1be0dfa925825c5c6c79301449e50c2d
+    tree_id: 17
+    level: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 522
@@ -257,12 +257,12 @@
     quantity: 1
     serial: 22
     serial_int: 22
-    level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
     expiry_date: "1990-10-10"
     status: 70
+    tree_id: 19
+    level: 0
+    lft: 1
+    rght: 2
 
 # Multiple stock items for "Bob" (PK 100)
 - model: stock.stockitem
@@ -271,10 +271,10 @@
     part: 100
     location: 1
     quantity: 10
+    tree_id: 9
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1001
@@ -282,10 +282,10 @@
     part: 100
     location: 1
     quantity: 11
+    tree_id: 14
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1002
@@ -293,10 +293,10 @@
     part: 100
     location: 1
     quantity: 12
+    tree_id: 8
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1003
@@ -304,10 +304,10 @@
     part: 100
     location: 1
     quantity: 13
+    tree_id: 15
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1004
@@ -315,10 +315,10 @@
     part: 100
     location: 1
     quantity: 14
+    tree_id: 7
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1005
@@ -326,10 +326,10 @@
     part: 100
     location: 1
     quantity: 15
+    tree_id: 13
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1006
@@ -337,10 +337,10 @@
     part: 100
     location: 1
     quantity: 16
+    tree_id: 12
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1007
@@ -348,10 +348,10 @@
     part: 100
     location: 7
     quantity: 17
+    tree_id: 11
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: stock.stockitem
   pk: 1008
@@ -359,7 +359,7 @@
     part: 100
     location: 7
     quantity: 18
+    tree_id: 10
     level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2

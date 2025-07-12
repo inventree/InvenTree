@@ -29,8 +29,6 @@ class BomItemTest(TestCase):
         """Create initial data."""
         super().setUp()
 
-        Part.objects.rebuild()
-
         self.bob = Part.objects.get(id=100)
         self.orphan = Part.objects.get(name='Orphan')
         self.r1 = Part.objects.get(name='R_2K2_0805')

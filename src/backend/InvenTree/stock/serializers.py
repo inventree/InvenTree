@@ -788,7 +788,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
             item.serializeStock(
                 data['quantity'],
                 serials,
-                user,
+                user=user,
                 notes=data.get('notes', ''),
                 location=data['destination'],
             )

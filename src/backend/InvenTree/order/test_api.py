@@ -1919,6 +1919,11 @@ class SalesOrderDownloadTest(OrderTest):
 class SalesOrderAllocateTest(OrderTest):
     """Unit tests for allocating stock items against a SalesOrder."""
 
+    @classmethod
+    def setUpTestData(cls):
+        """Init routine for this unit test class."""
+        super().setUpTestData()
+
     def setUp(self):
         """Init routines for this unit testing class."""
         super().setUp()
@@ -2008,7 +2013,10 @@ class SalesOrderAllocateTest(OrderTest):
         data = {'items': [], 'shipment': self.shipment.pk}
 
         for line in self.order.lines.all():
-            stock_item = line.part.stock_items.last()
+            for stock_item in line.part.stock_items.all():
+                # Find a non-serialized stock item to allocate
+                if not stock_item.serialized:
+                    break
 
             # Fully-allocate each line
             data['items'].append({
@@ -2040,11 +2048,22 @@ class SalesOrderAllocateTest(OrderTest):
         for line in filter(check_template, self.order.lines.all()):
             stock_item = None
 
+            stock_item = None
+
             # Allocate a matching variant
             parts = Part.objects.filter(salable=True).filter(variant_of=line.part.pk)
             for part in parts:
                 stock_item = part.stock_items.last()
-                break
+
+                for item in part.stock_items.all():
+                    if item.serialized:
+                        continue
+
+                    stock_item = item
+                    break
+
+                if stock_item is not None:
+                    break
 
             # Fully-allocate each line
             data['items'].append({
