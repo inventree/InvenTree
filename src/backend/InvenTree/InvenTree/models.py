@@ -589,8 +589,10 @@ class InvenTreeTree(MPTTModel):
         if not parent:  # No parent, which means this is a top-level node
             for child in self.get_children():
                 # Store a flattened list of node IDs for each of the lower trees
-                nodes = child.get_descendants(include_self=True).values_list(
-                    'pk', flat=True
+                nodes = list(
+                    child.get_descendants(include_self=True)
+                    .values_list('pk', flat=True)
+                    .distinct()
                 )
                 lower_trees.append(nodes)
 
