@@ -625,9 +625,10 @@ class InvenTreeTree(MPTTModel):
 
         result = True
 
-        for tree in trees:
-            if not self.partial_rebuild(tree):
-                result = False
+        for tree_id in trees:
+            if tree_id:
+                if not self.partial_rebuild(tree_id):
+                    result = False
 
         if not result:
             # Rebuild the entire tree (expensive!!!)
@@ -740,7 +741,8 @@ class InvenTreeTree(MPTTModel):
                 trees.add(db_instance.tree_id)
 
             for tree_id in trees:
-                self.partial_rebuild(tree_id)
+                if tree_id:
+                    self.partial_rebuild(tree_id)
 
     def partial_rebuild(self, tree_id: int) -> bool:
         """Perform a partial rebuild of the tree structure.
