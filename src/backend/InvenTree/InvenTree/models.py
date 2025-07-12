@@ -712,7 +712,7 @@ class InvenTreeTree(MPTTModel):
 
         parent = getattr(self, self.NODE_PARENT_KEY, None)
 
-        if parent:
+        if parent and not self.tree_id:
             self.tree_id = parent.tree_id
 
         if self.pk:

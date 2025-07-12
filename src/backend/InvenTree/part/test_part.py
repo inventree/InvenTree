@@ -402,7 +402,6 @@ class PartTest(TestCase):
         )
 
         with self.assertRaises(ValidationError) as exc:
-            print('rev a:', rev_a.revision_of, part.revision_of)
             rev_a.revision_of = part
             rev_a.save()
 
