@@ -536,28 +536,32 @@ jobs:
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
+          invoke migrate --check
+          invoke wait
 
       - name: 0.13.5 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
+          invoke migrate --check
+          invoke wait
 
       - name: 0.16.0 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
+          invoke migrate --check
+          invoke wait
 
       - name: 0.17.0 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
+          invoke migrate --check
+          invoke wait
 
   web_ui:
     name: Tests - Web UI
