@@ -111,12 +111,28 @@ export default function RemoteComponent({
         `${t`Invalid source or function name`} - ${source} /${func}`
       );
     }
-  }, [componentRef, rootElement, source, defaultFunctionName, context]);
+  }, [
+    componentRef.current,
+    rootElement.current,
+    source,
+    defaultFunctionName,
+    context
+  ]);
 
   // Reload the plugin content dynamically
   useEffect(() => {
     reloadPluginContent();
-  }, [func, context, rootElement.current]);
+  }, [
+    func,
+    rootElement.current,
+    context.id,
+    context.model,
+    context.instance,
+    context.user,
+    context.colorScheme,
+    context.locale,
+    context.context
+  ]);
 
   return (
     <Boundary label={identifierString(`RemoteComponent-${func}`)}>
