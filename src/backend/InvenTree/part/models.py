@@ -30,9 +30,8 @@ from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import TreeForeignKey
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
@@ -70,7 +69,12 @@ from stock import models as StockModels
 logger = structlog.get_logger('inventree')
 
 
-class PartCategory(InvenTree.models.InvenTreeTree):
+class PartCategory(
+    InvenTree.models.PluginValidationMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PathStringMixin,
+    InvenTree.models.InvenTreeTree,
+):
     """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
@@ -401,13 +405,13 @@ class PartReportContext(report.mixins.BaseReportContext):
 
 @cleanup.ignore
 class Part(
+    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
-    MPTTModel,
+    InvenTree.models.InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
@@ -446,6 +450,8 @@ class Part(
         responsible_owner: Owner (either user or group) which is responsible for this part (optional)
         last_stocktake: Date at which last stocktake was performed for this Part
     """
+
+    NODE_PARENT_KEY = 'variant_of'
 
     objects = PartManager()
 
@@ -550,10 +556,7 @@ class Part(
 
         self.full_clean()
 
-        try:
-            super().save(*args, **kwargs)
-        except InvalidMove:
-            raise ValidationError({'variant_of': _('Invalid choice for parent part')})
+        super().save(*args, **kwargs)
 
         if _new:
             # Only run if the check was not run previously (due to not existing in the database)

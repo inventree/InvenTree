@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-09 01:39+0000\n"
-"PO-Revision-Date: 2025-07-09 01:42\n"
+"POT-Creation-Date: 2025-07-12 23:21+0000\n"
+"PO-Revision-Date: 2025-07-12 23:24\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -57,23 +57,23 @@ msgstr "Geen items die overeenkomen met de opgegeven criteria"
 msgid "User does not have permission to view this model"
 msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "E-mailadres (opnieuw)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "E-mailadres bevestiging"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Er moet hetzelfde e-mailadres ingevoerd worden."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:127 InvenTree/auth_overrides.py:134
 msgid "The provided primary email address is not valid."
 msgstr "Het opgegeven primaire e-mailadres is ongeldig."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:140
 msgid "The provided email domain is not approved."
 msgstr "Het ingevoerde e-maildomein is niet goedgekeurd."
 
@@ -569,9 +569,9 @@ msgstr "Inclusief varianten"
 msgid "Part"
 msgstr "Onderdeel"
 
-#: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
-#: stock/api.py:833
+#: build/api.py:107 build/api.py:110 part/api.py:1335 part/api.py:1642
+#: part/models.py:1080 part/models.py:3630 part/models.py:4211
+#: part/serializers.py:1340 stock/api.py:833
 msgid "Category"
 msgstr "Categorie"
 
@@ -5312,7 +5312,7 @@ msgstr "Assemblage deel is testbaar"
 msgid "Component part is testable"
 msgstr "Component onderdeel is testbaar"
 
-#: part/api.py:1639
+#: part/api.py:1653
 msgid "Uses"
 msgstr "Gebruik"
 
