@@ -7,7 +7,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0021_remove_supplierpart_manufacturer_name'),
+        ('common', '0004_inventreesetting'),
+        ('company', '0023_auto_20200808_0715'),
         ('stock', '0044_auto_20200528_1036'),
     ]
 

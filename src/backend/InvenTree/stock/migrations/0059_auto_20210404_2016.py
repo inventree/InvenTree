@@ -13,7 +13,6 @@ import mptt.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0005_owner_model'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('stock', '0058_stockitem_packaging'),
     ]
