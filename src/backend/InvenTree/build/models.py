@@ -14,8 +14,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from mptt.exceptions import InvalidMove
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import TreeForeignKey
 from rest_framework import serializers
 
 import generic.states
@@ -74,16 +73,16 @@ class BuildReportContext(report.mixins.BaseReportContext):
 
 
 class Build(
+    InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
-    MPTTModel,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeTree,
 ):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
@@ -116,6 +115,11 @@ class Build(
 
         verbose_name = _('Build Order')
         verbose_name_plural = _('Build Orders')
+
+    class MPTTMeta:
+        """MPTT options for the BuildOrder model."""
+
+        order_insertion_by = ['reference']
 
     OVERDUE_FILTER = (
         Q(status__in=BuildStatusGroups.ACTIVE_CODES)
@@ -183,10 +187,7 @@ class Build(
             if not self.destination:
                 self.destination = self.part.get_default_location()
 
-        try:
-            super().save(*args, **kwargs)
-        except InvalidMove:
-            raise ValidationError({'parent': _('Invalid choice for parent build')})
+        super().save(*args, **kwargs)
 
     def clean(self):
         """Validate the BuildOrder model."""
