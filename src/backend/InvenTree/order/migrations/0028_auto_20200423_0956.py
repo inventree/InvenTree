@@ -11,7 +11,6 @@ from order.status_codes import PurchaseOrderStatus
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stock', '0031_auto_20200422_0209'),
         ('order', '0027_auto_20200422_0236'),
     ]
 

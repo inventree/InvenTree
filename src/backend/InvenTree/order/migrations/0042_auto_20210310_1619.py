@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0005_owner_model'),
         ('order', '0041_auto_20210114_1728'),
     ]
 

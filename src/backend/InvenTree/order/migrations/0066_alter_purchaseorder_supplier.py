@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0042_supplierpricebreak_updated'),
         ('order', '0065_alter_purchaseorderlineitem_part'),
     ]
 
