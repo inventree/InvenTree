@@ -223,8 +223,10 @@ class CategoryTest(TestCase):
 
     def test_root_delete(self):
         """Test that deleting a root category works correctly."""
-        Part.objects.all().delete()
-        PartCategory.objects.all().delete()
+        # Clear out the existing categories
+        # Note: Cannot call bulk delete here, as it will not trigger MPTT updates
+        for p in PartCategory.objects.all():
+            p.delete()
 
         # Create a new root category
         root = PartCategory.objects.create(name='Root Category', description='Root')
