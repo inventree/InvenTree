@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-09 01:39+0000\n"
-"PO-Revision-Date: 2025-07-09 01:42\n"
+"POT-Creation-Date: 2025-07-12 23:21+0000\n"
+"PO-Revision-Date: 2025-07-12 23:24\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -57,23 +57,23 @@ msgstr "Żaden element nie spełnia podanych kryteriów"
 msgid "User does not have permission to view this model"
 msgstr "Użytkownik nie ma uprawnień do przeglądania tego modelu"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "Adres email (ponownie)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "Potwierdzenie adresu email"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Należy ponownie wpisać ten sam adres e-mail."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:127 InvenTree/auth_overrides.py:134
 msgid "The provided primary email address is not valid."
 msgstr "Podany podstawowy adres e-mail jest nieprawidłowy."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:140
 msgid "The provided email domain is not approved."
 msgstr "Podany e-mail domeny nie został zatwierdzony."
 
@@ -569,9 +569,9 @@ msgstr "Obejmuje warianty"
 msgid "Part"
 msgstr "Komponent"
 
-#: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
-#: stock/api.py:833
+#: build/api.py:107 build/api.py:110 part/api.py:1335 part/api.py:1642
+#: part/models.py:1080 part/models.py:3630 part/models.py:4211
+#: part/serializers.py:1340 stock/api.py:833
 msgid "Category"
 msgstr "Kategoria"
 
@@ -5311,7 +5311,7 @@ msgstr ""
 msgid "Component part is testable"
 msgstr ""
 
-#: part/api.py:1639
+#: part/api.py:1653
 msgid "Uses"
 msgstr ""
 
