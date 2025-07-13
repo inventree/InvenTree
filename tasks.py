@@ -733,7 +733,7 @@ def restore(
 
 @task(post=[rebuild_models, rebuild_thumbnails])
 @state_logger('TASK05')
-def migrate(c):
+def migrate(c, check: bool = False):
     """Performs database migrations.
 
     This is a critical step if the database schema have been altered!
@@ -745,6 +745,9 @@ def migrate(c):
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
     manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
+
+    if check:
+        manage(c, 'migrate --check')
 
     success('InvenTree database migrations completed')
 
