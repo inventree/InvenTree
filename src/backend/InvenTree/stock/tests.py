@@ -1366,7 +1366,10 @@ class TestResultTest(StockTestBase):
 
         item = StockItem.objects.get(pk=522)
 
+        # Let's duplicate this item
         item.pk = None
+        item.parent = None
+        item.tree_id = None
         item.serial = None
         item.quantity = 50
 
