@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-09 01:39+0000\n"
-"PO-Revision-Date: 2025-07-09 01:42\n"
+"POT-Creation-Date: 2025-07-12 23:21+0000\n"
+"PO-Revision-Date: 2025-07-12 23:24\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -57,23 +57,23 @@ msgstr "Nessun elemento corrisponde ai criteri forniti"
 msgid "User does not have permission to view this model"
 msgstr "L'utente non ha i permessi per vedere questo modello"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "Email (ancora)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "Conferma indirizzo email"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "È necessario digitare la stessa e-mail ogni volta."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:127 InvenTree/auth_overrides.py:134
 msgid "The provided primary email address is not valid."
 msgstr "L'indirizzo email principale fornito non è valido."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:140
 msgid "The provided email domain is not approved."
 msgstr "L'indirizzo di posta elettronica fornito non è approvato."
 
@@ -569,9 +569,9 @@ msgstr "Includi Varianti"
 msgid "Part"
 msgstr "Articolo"
 
-#: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
-#: stock/api.py:833
+#: build/api.py:107 build/api.py:110 part/api.py:1335 part/api.py:1642
+#: part/models.py:1080 part/models.py:3630 part/models.py:4211
+#: part/serializers.py:1340 stock/api.py:833
 msgid "Category"
 msgstr "Categoria"
 
@@ -944,7 +944,7 @@ msgstr "La quantità non può essere maggiore della quantità in uscita"
 
 #: build/models.py:1183
 msgid "Build output has not passed all required tests"
-msgstr ""
+msgstr "La produzione non ha superati tutti i test richiesti"
 
 #: build/models.py:1186 build/serializers.py:584
 #, python-brace-format
@@ -3577,19 +3577,19 @@ msgstr "Mostra la pagina corrente nel Breadcrumb"
 
 #: common/setting/user.py:229
 msgid "Show full stock location in tables"
-msgstr ""
+msgstr "Mostra tutte lo posizioni del magazzino nelle tabelle"
 
 #: common/setting/user.py:231
 msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
-msgstr ""
+msgstr "Disabilitato: Mostra il percorso completo al passaggio del mouse. Abilitato: Mostra il percorso completo come testo."
 
 #: common/setting/user.py:237
 msgid "Show full part categories in tables"
-msgstr ""
+msgstr "Mostra tutte le categorie degli articoli nelle tabelle"
 
 #: common/setting/user.py:239
 msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
-msgstr ""
+msgstr "Disabilitato: Mostra il percorso completo delle categorie al passaggio del mouse. Abilitato: Mostra il percorso completo delle categorie come testo."
 
 #: common/setting/user.py:245
 msgid "Receive error reports"
@@ -3900,11 +3900,11 @@ msgstr "Unità parametri"
 
 #: company/models.py:750
 msgid "Pack units must be compatible with the base part units"
-msgstr ""
+msgstr "Le unità del pacchetto devono essere compatibili con le unità dell'articolo base"
 
 #: company/models.py:757
 msgid "Pack units must be greater than zero"
-msgstr ""
+msgstr "Le unità del pacchetto devono essere maggiori di zero"
 
 #: company/models.py:771
 msgid "Linked manufacturer part must reference the same base part"
@@ -5311,7 +5311,7 @@ msgstr "L'articolo assemblato è provabile"
 msgid "Component part is testable"
 msgstr "Il componente è provabile"
 
-#: part/api.py:1639
+#: part/api.py:1653
 msgid "Uses"
 msgstr "Utilizzi"
 
