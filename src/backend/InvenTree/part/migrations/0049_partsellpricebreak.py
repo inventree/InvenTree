@@ -10,6 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('common', '0007_colortheme'),
+        ('common', '0004_inventreesetting'),
         ('part', '0048_auto_20200902_1404'),
     ]
 

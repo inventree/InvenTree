@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0009_auto_20231020_2356'),
         ('part', '0114_alter_part_minimum_stock'),
     ]
 

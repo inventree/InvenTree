@@ -15,7 +15,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('stock', '0058_stockitem_packaging'),
         ('part', '0063_bomitem_inherited'),
     ]
 

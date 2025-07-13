@@ -6,6 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('taggit', '0005_auto_20220424_2025'),
         ('part', '0102_auto_20230314_0112'),
     ]
 

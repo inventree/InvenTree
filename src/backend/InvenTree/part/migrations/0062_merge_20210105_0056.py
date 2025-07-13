@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('part', '0061_auto_20210104_2331'),
         ('part', '0061_auto_20210103_2313'),
+        ('stock', '0058_stockitem_packaging'),
     ]
 
     operations = [

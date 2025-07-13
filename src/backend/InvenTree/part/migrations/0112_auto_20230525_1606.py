@@ -73,6 +73,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('part', '0111_auto_20230521_1350'),
+        ('users', '0009_auto_20231020_2356'),
     ]
 
     operations = [

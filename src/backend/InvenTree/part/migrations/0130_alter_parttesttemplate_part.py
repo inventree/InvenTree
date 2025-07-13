@@ -7,6 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0032_selectionlist_selectionlistentry_and_more'),
         ('part', '0129_auto_20240815_0214'),
     ]
 
