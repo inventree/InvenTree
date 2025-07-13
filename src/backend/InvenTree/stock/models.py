@@ -609,16 +609,18 @@ class StockItem(
 
         part = data['part']
 
-        next_tree_id = StockItem.getNextTreeID()
-        tree_id = kwargs.pop('tree_id', next_tree_id)
-
         parent = kwargs.pop('parent', None) or data.get('parent')
+        tree_id = kwargs.pop('tree_id', StockItem.getNextTreeID())
 
-        data['tree_id'] = tree_id if parent else next_tree_id
-        data['parent'] = parent
-        data['level'] = 0
-        data['lft'] = 0
-        data['rght'] = 0
+        if parent:
+            # Override with parent's tree_id if provided
+            tree_id = parent.tree_id
+
+        # Pre-calculate MPTT fields
+        data['parent'] = parent if parent else None
+        data['level'] = parent.level + 1 if parent else 0
+        data['lft'] = 0 if parent else 1
+        data['rght'] = 0 if parent else 2
 
         # Force single quantity for each item
         data['quantity'] = 1
@@ -627,6 +629,13 @@ class StockItem(
             data['serial'] = serial
             data['serial_int'] = StockItem.convert_serial_to_int(serial)
 
+            data['tree_id'] = tree_id
+
+            if not parent:
+                # No parent, this is a top-level item, so increment the tree_id
+                # This is because each new item is a "top-level" node in the StockItem tree
+                tree_id += 1
+
             # Construct a new StockItem from the provided dict
             items.append(StockItem(**data))
 
@@ -634,7 +643,12 @@ class StockItem(
         StockItem.objects.bulk_create(items)
 
         # We will need to rebuild the stock item tree manually, due to the bulk_create operation
-        stock.tasks.rebuild_stock_item_tree(tree_id)
+        if parent and parent.tree_id:
+            # Rebuild the tree structure for this StockItem tree
+            logger.info(
+                'Rebuilding StockItem tree structure for tree_id: %s', parent.tree_id
+            )
+            stock.tasks.rebuild_stock_item_tree(parent.tree_id)
 
         # Return the newly created StockItem objects
         return StockItem.objects.filter(part=part, serial__in=serials)
