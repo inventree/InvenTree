@@ -887,7 +887,9 @@ class VariantTest(StockTestBase):
         item.save()
 
         # Attempt to create the same serial number but for a variant (should fail!)
+        # Reset the primary key and tree_id values
         item.pk = None
+        item.tree_id = None
         item.part = Part.objects.get(pk=10004)
 
         with self.assertRaises(ValidationError):
