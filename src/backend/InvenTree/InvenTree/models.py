@@ -4,7 +4,6 @@ from datetime import datetime
 from string import Formatter
 
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
@@ -806,26 +805,6 @@ class InvenTreeTree(MPTTModel):
     def has_children(self) -> bool:
         """True if there are any children under this item."""
         return self.getUniqueChildren(include_self=False).count() > 0
-
-    def getAcceptableParents(self) -> list:
-        """Returns a list of acceptable parent items within this model Acceptable parents are ones which are not underneath this item.
-
-        Setting the parent of an item to its own child results in recursion.
-        """
-        contents = ContentType.objects.get_for_model(type(self))
-
-        available = contents.get_all_objects_for_this_type()
-
-        # List of child IDs
-        children = self.getUniqueChildren()
-
-        acceptable = [None]
-
-        for a in available:
-            if a.id not in children:
-                acceptable.append(a)
-
-        return acceptable
 
     @classmethod
     def getNextTreeID(cls) -> int:
