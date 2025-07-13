@@ -11,15 +11,21 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
@@ -35,15 +41,14 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -88,7 +93,7 @@ export function BomTable({
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const part = record.sub_part_detail;
           const extra = [];
 
@@ -146,7 +151,7 @@ export function BomTable({
       {
         accessor: 'substitutes',
         defaultVisible: false,
-        render: (row) => {
+        render: (row: any) => {
           const substitutes = row.substitutes ?? [];
 
           return substitutes.length > 0 ? (
@@ -204,7 +209,7 @@ export function BomTable({
       {
         accessor: 'available_stock',
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const extra: ReactNode[] = [];
 
           const available_stock: number = availableStockQuantity(record);
@@ -369,7 +374,8 @@ export function BomTable({
         name: 'has_pricing',
         label: t`Has Pricing`,
         description: t`Show items with pricing`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, [partId, params]);
 

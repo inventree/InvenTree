@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 365
+INVENTREE_API_VERSION = 367
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -9,6 +9,12 @@ INVENTREE_API_TEXT = """
 v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)
     - Remove NotificationSetting model (and associated endpoints)
+
+v367 -> 2025-07-10 : https://github.com/inventree/InvenTree/pull/10001
+    - Adds OAuth2 scopes for importer sessions
+
+v366 -> 2025-07-09 : https://github.com/inventree/InvenTree/pull/9987
+    - Adds "category" filter to BomItem API endpoint
 
 v365 -> 2025-07-09 : https://github.com/inventree/InvenTree/pull/9984
     - Allow filtering of DataOutput API by "user" field

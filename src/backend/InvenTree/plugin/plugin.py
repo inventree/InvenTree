@@ -489,16 +489,34 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     # endregion
 
-    def plugin_static_file(self, *args):
-        """Construct a path to a static file within the plugin directory."""
+    def plugin_static_file(self, *args) -> str:
+        """Construct a path to a static file within the plugin directory.
+
+        - This will return a URL can be used to access the static file
+        - The path is constructed using the STATIC_URL setting and the plugin slug
+        - Note: If the plugin is selected for "development" mode, the path will point to a vite server URL
+
+        """
         import os
 
         from django.conf import settings
 
-        url = os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
+        if (
+            settings.DEBUG
+            and settings.PLUGIN_DEV_HOST
+            and settings.PLUGIN_DEV_SLUG
+            and self.SLUG == settings.PLUGIN_DEV_SLUG
+        ):
+            # If the plugin is selected for development mode, use the development host
+            pathname = '/'.join(list(args))
+            url = f'{settings.PLUGIN_DEV_HOST}/src/{pathname}'
+            url = url.replace('.js', '.tsx')
+        else:
+            # Otherwise, construct the URL using the STATIC_URL setting
+            url = os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
 
-        if not url.startswith('/'):
-            url = '/' + url
+            if not url.startswith('/'):
+                url = '/' + url
 
         return url
 
