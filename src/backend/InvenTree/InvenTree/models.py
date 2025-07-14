@@ -741,17 +741,22 @@ class InvenTreeTree(MPTTModel):
 
         trees = set()
 
+        parent = getattr(self, self.NODE_PARENT_KEY, None)
+
         if db_instance:
             # If the tree_id or parent has changed, we need to rebuild the tree
-            if getattr(db_instance, self.NODE_PARENT_KEY) != getattr(
-                self, self.NODE_PARENT_KEY
-            ):
+            if getattr(db_instance, self.NODE_PARENT_KEY) != parent:
                 trees.add(db_instance.tree_id)
             if db_instance.tree_id != self.tree_id:
                 trees.add(self.tree_id)
                 trees.add(db_instance.tree_id)
-        elif getattr(self, self.NODE_PARENT_KEY):
+        elif parent:
             # New instance, so we need to rebuild the tree (if it has a parent)
+            trees.add(self.tree_id)
+
+        if parent and parent.tree_id != self.tree_id:
+            # If the parent tree_id is different, we need to rebuild the tree
+            trees.add(parent.tree_id)
             trees.add(self.tree_id)
 
         for tree_id in trees:
