@@ -659,7 +659,8 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
         # Create the build output(s)
         outputs = serializer.save()
 
-        response = stock.serializers.StockItemSerializer(outputs, many=True)
+        queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
+        response = stock.serializers.StockItemSerializer(queryset, many=True)
 
         # Return the created outputs
         return Response(response.data, status=status.HTTP_201_CREATED)
