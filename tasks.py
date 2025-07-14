@@ -1212,6 +1212,7 @@ def test_translations(c):
 
 @task(
     help={
+        'check': 'Run sanity check on the django install (default = False)',
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
@@ -1223,6 +1224,7 @@ def test_translations(c):
 )
 def test(
     c,
+    check=False,
     disable_pty=False,
     runtest='',
     migrations=False,
@@ -1242,7 +1244,8 @@ def test(
     will run tests in the company/test_api.py file.
     """
     # Run sanity check on the django install
-    manage(c, 'check')
+    if check:
+        manage(c, 'check')
 
     if translations:
         try:
