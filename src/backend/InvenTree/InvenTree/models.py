@@ -750,7 +750,7 @@ class InvenTreeTree(MPTTModel):
             if db_instance.tree_id != self.tree_id:
                 trees.add(self.tree_id)
                 trees.add(db_instance.tree_id)
-        elif self.parent:
+        elif getattr(self, self.NODE_PARENT_KEY):
             # New instance, so we need to rebuild the tree (if it has a parent)
             trees.add(self.tree_id)
 
