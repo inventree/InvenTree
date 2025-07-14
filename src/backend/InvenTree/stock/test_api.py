@@ -1398,7 +1398,11 @@ class StockItemTest(StockAPITestCase):
 
         response = self.post(
             self.list_url,
-            data={'part': trackable_part.pk, 'quantity': 10, 'serial_numbers': '1-10'},
+            data={
+                'part': trackable_part.pk,
+                'quantity': 100,
+                'serial_numbers': '1-100',
+            },
             expected_code=201,
         )
 
