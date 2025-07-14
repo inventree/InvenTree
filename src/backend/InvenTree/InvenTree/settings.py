@@ -814,7 +814,7 @@ inventree_tags = {
 }
 
 # sentry.io integration for error reporting
-SENTRY_ENABLED = get_boolean_setting(
+SENTRY_ENABLED = not TESTING and get_boolean_setting(
     'INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False
 )
 
