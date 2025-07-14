@@ -1151,8 +1151,11 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
                 StockItemTracking.objects.bulk_create(tracking)
 
+                # Annotate the stock items with part information
+                queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
+
                 response = StockSerializers.StockItemSerializer(
-                    items, many=True, context=self.get_serializer_context()
+                    queryset, many=True, context=self.get_serializer_context()
                 )
 
                 response_data = response.data
