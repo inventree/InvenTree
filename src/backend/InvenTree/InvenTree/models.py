@@ -754,11 +754,6 @@ class InvenTreeTree(MPTTModel):
             # New instance, so we need to rebuild the tree (if it has a parent)
             trees.add(self.tree_id)
 
-        if parent and parent.tree_id != self.tree_id:
-            # If the parent tree_id is different, we need to rebuild the tree
-            trees.add(parent.tree_id)
-            trees.add(self.tree_id)
-
         for tree_id in trees:
             if tree_id:
                 self.partial_rebuild(tree_id)
