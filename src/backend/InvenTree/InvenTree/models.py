@@ -714,10 +714,15 @@ class InvenTreeTree(MPTTModel):
 
         parent = getattr(self, self.NODE_PARENT_KEY, None)
 
+        self.level = self.level or 0
+        self.lft = self.lft or 1
+        self.rght = self.rght or 2
+
         if not self.tree_id:
             if parent:
                 # If we have a parent, use the parent's tree_id
                 self.tree_id = parent.tree_id
+                self.level = parent.level + 1
             else:
                 # Otherwise, we need to generate a new tree_id
                 self.tree_id = self.getNextTreeID()
@@ -745,8 +750,8 @@ class InvenTreeTree(MPTTModel):
             if db_instance.tree_id != self.tree_id:
                 trees.add(self.tree_id)
                 trees.add(db_instance.tree_id)
-        else:
-            # New instance, so we need to rebuild the tree
+        elif self.parent:
+            # New instance, so we need to rebuild the tree (if it has a parent)
             trees.add(self.tree_id)
 
         for tree_id in trees:
