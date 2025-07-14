@@ -696,7 +696,10 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
     def validate_quantity(self, quantity):
         """Validate that the quantity value is correct."""
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
 
         if quantity < 0:
             raise ValidationError(_('Quantity must be greater than zero'))
@@ -736,7 +739,10 @@ class SerializeStockItemSerializer(serializers.Serializer):
         """Check that the supplied serial numbers are valid."""
         data = super().validate(data)
 
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
 
         if not item.part.trackable:
             raise ValidationError(_('Serial numbers cannot be assigned to this part'))
@@ -771,7 +777,11 @@ class SerializeStockItemSerializer(serializers.Serializer):
         Returns:
             A list of StockItem objects that were created as a result of the serialization.
         """
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
+
         request = self.context.get('request')
         user = request.user if request else None
 
@@ -905,7 +915,10 @@ class UninstallStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """Uninstall stock item."""
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
 
         data = self.validated_data
         request = self.context['request']
@@ -1035,7 +1048,11 @@ class ReturnStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to return the item into stock."""
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
+
         request = self.context['request']
 
         data = self.validated_data
