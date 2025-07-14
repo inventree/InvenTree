@@ -39,7 +39,7 @@ export default function PendingTasksTable({
       {
         accessor: 'lock',
         title: t`Created`,
-        sortable: true,
+        sortable: false,
         switchable: false
       },
       {
@@ -97,6 +97,7 @@ export default function PendingTasksTable({
         afterBulkDelete: onRecordsUpdated,
         enableBulkDelete: user.isStaff(),
         enableSelection: true,
+        enableSearch: false,
         tableActions: tableActions
       }}
     />
