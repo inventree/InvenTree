@@ -47,6 +47,12 @@ def isRunningBackup():
 
 def isGeneratingSchema():
     """Return true if schema generation is being executed."""
+    if isInServerThread() or isInWorkerThread():
+        return False
+
+    if isInTestMode():
+        return False
+
     if 'schema' in sys.argv:
         return True
 
