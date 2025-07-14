@@ -744,12 +744,14 @@ export default function StockDetail() {
       quantity: stockitem.quantity,
       destination: stockitem.location ?? stockitem.part_detail?.default_location
     },
-    onFormSuccess: () => {
-      const partId = stockitem.part;
-      refreshInstancePromise().catch(() => {
-        // Part may have been deleted - redirect to the part detail page
-        navigate(getDetailUrl(ModelType.part, partId));
-      });
+    onFormSuccess: (response: any) => {
+      if (response.length >= stockitem.quantity) {
+        // Entire item was serialized
+        // Navigate to the first result
+        navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
+      } else {
+        refreshInstance();
+      }
     },
     successMessage: t`Stock item serialized`
   });

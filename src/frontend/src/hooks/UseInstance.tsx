@@ -66,6 +66,15 @@ export function useInstance<T = any>({
       JSON.stringify(pathParams),
       disabled
     ],
+    retry: (failureCount, error: any) => {
+      // If it's a 404, don't retry
+      if (error.response?.status == 404) {
+        return false;
+      }
+
+      // Otherwise, retry up to 3 times
+      return failureCount < 3;
+    },
     queryFn: async () => {
       if (disabled) {
         return defaultValue;
