@@ -166,6 +166,7 @@ class BuildTest(BuildAPITest):
         # We shall complete 4 of these outputs
         outputs = self.build.incomplete_outputs.all()
 
+        # TODO: (2025-07-15) Try to optimize this API query to reduce DB hits
         self.post(
             self.url,
             {
@@ -174,7 +175,7 @@ class BuildTest(BuildAPITest):
                 'status': StockStatus.ATTENTION.value,
             },
             expected_code=201,
-            max_query_count=600,  # TODO: Try to optimize this
+            max_query_count=400,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -976,7 +977,7 @@ class BuildOverallocationTest(BuildAPITest):
             self.url,
             {'accept_overallocated': 'accept'},
             expected_code=201,
-            max_query_count=1000,  # TODO: Come back and refactor this
+            max_query_count=375,
         )
 
         self.build.refresh_from_db()
@@ -995,7 +996,7 @@ class BuildOverallocationTest(BuildAPITest):
             self.url,
             {'accept_overallocated': 'trim'},
             expected_code=201,
-            max_query_count=1000,  # TODO: Come back and refactor this
+            max_query_count=375,
         )
 
         # Note: Large number of queries is due to pricing recalculation for each stock item
