@@ -168,7 +168,9 @@ export const createPluginSettingsState = ({
           });
         })
         .catch((_error) => {
-          console.error(`Error fetching plugin settings for plugin ${plugin}`);
+          console.error(
+            `ERR: Could not fetch plugin settings for plugin ${plugin}`
+          );
           success = false;
           set({
             loaded: false,
@@ -188,7 +190,6 @@ export const createPluginSettingsState = ({
   }));
 
   useEffect(() => {
-    console.log('fetching plugin settings for', plugin);
     store.getState().fetchSettings();
   }, [plugin]);
 
