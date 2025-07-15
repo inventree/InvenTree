@@ -110,6 +110,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.assertIn('list may not be empty', str(response.data['items']))
 
         # Plugin is not a label plugin
+        registry.set_plugin_state('digikeyplugin', True)
         no_valid_plg = registry.get_plugin('digikeyplugin').plugin_config()
 
         response = self.post(
