@@ -104,7 +104,7 @@ class MetaMixin(models.Model):
     )
 
 
-class UpdatedUserMixin(MetaMixin):
+class UpdatedUserMixin(models.Model):
     """A mixin which stores additional information about the user who created or last modified the object."""
 
     class Meta:
@@ -117,7 +117,16 @@ class UpdatedUserMixin(MetaMixin):
         if updated_by := kwargs.pop('updated_by', None):
             self.updated_by = updated_by
 
+        self.updated = timezone.now()
+
         super().save(*args, **kwargs)
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last update'),
+        default=None,
+        null=True,
+    )
 
     updated_by = models.ForeignKey(
         User,
