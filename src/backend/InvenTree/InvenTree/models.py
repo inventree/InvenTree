@@ -714,10 +714,6 @@ class InvenTreeTree(MPTTModel):
 
         parent = getattr(self, self.NODE_PARENT_KEY, None)
 
-        self.level = self.level or 0
-        self.lft = self.lft or 1
-        self.rght = self.rght or 2
-
         if not self.tree_id:
             if parent:
                 # If we have a parent, use the parent's tree_id
@@ -757,6 +753,10 @@ class InvenTreeTree(MPTTModel):
         for tree_id in trees:
             if tree_id:
                 self.partial_rebuild(tree_id)
+
+        if len(trees) > 0:
+            # A tree update was performed, so we need to refresh the instance
+            self.refresh_from_db()
 
     def partial_rebuild(self, tree_id: int) -> bool:
         """Perform a partial rebuild of the tree structure.
