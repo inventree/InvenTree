@@ -1328,18 +1328,26 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     def __init__(self, *args, **kwargs):
         """Determine which extra details fields should be included."""
         part_detail = kwargs.pop('part_detail', True)
+        bom_item_detail = kwargs.pop('bom_item_detail', True)
         build_detail = kwargs.pop('build_detail', True)
+        allocations = kwargs.pop('allocations', True)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
+        if not bom_item_detail:
+            self.fields.pop('bom_item_detail', None)
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
         if not build_detail:
             self.fields.pop('build_detail', None)
+
+        if not allocations:
+            self.fields.pop('allocations', None)
 
     # Build info fields
     build_reference = serializers.CharField(
