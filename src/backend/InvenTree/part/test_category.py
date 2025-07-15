@@ -267,7 +267,13 @@ class CategoryTest(TestCase):
         and the correct ancestor tree is observed.
         """
         # Clear out any existing parts
-        Part.objects.all().delete()
+        for p in Part.objects.all():
+            if p.active:
+                p.refresh_from_db()
+                p.active = False
+                p.save()
+
+            p.delete()
 
         # First, create a structured tree of part categories
         A = PartCategory.objects.create(name='A', description='Top level category')

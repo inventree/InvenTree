@@ -73,19 +73,12 @@ def register_event(event, *args, **kwargs):
         registry.check_reload()
 
         with transaction.atomic():
-            for slug, plugin in registry.plugins.items():
-                if not plugin.mixin_enabled(PluginMixinEnum.EVENTS):
-                    continue
-
-                # Only allow event registering for 'active' plugins
-                if not plugin.is_active():
-                    continue
-
+            for plugin in registry.with_mixin(PluginMixinEnum.EVENTS, active=True):
                 # Let the plugin decide if it wants to process this event
                 if not plugin.wants_process_event(event):
                     continue
 
-                logger.debug("Registering callback for plugin '%s'", slug)
+                logger.debug("Registering callback for plugin '%s'", plugin.slug)
 
                 # This task *must* be processed by the background worker,
                 # unless we are running CI tests
@@ -94,7 +87,7 @@ def register_event(event, *args, **kwargs):
 
                 # Offload a separate task for each plugin
                 offload_task(
-                    process_event, slug, event, *args, group='plugin', **kwargs
+                    process_event, plugin.slug, event, *args, group='plugin', **kwargs
                 )
 
 
