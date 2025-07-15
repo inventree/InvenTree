@@ -104,6 +104,42 @@ class MetaMixin(models.Model):
     )
 
 
+class UpdatedUserMixin(models.Model):
+    """A mixin which stores additional information about the user who created or last modified the object."""
+
+    class Meta:
+        """Meta options for MetaUserMixin."""
+
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """Extract the user object from kwargs, if provided."""
+        if updated_by := kwargs.pop('updated_by', None):
+            self.updated_by = updated_by
+
+        self.updated = InvenTree.helpers.current_time()
+
+        super().save(*args, **kwargs)
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last update'),
+        default=None,
+        blank=True,
+        null=True,
+    )
+
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='%(class)s_updated',
+        verbose_name=_('Update By'),
+        help_text=_('User who last updated this object'),
+    )
+
+
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 

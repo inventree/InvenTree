@@ -410,7 +410,13 @@ class PartParameterSerializer(
             'template_detail',
             'data',
             'data_numeric',
+            'note',
+            'updated',
+            'updated_by',
+            'updated_by_detail',
         ]
+
+        read_only_fields = ['updated', 'updated_by']
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for the serializer.
@@ -431,12 +437,26 @@ class PartParameterSerializer(
         if not template_detail:
             self.fields.pop('template_detail', None)
 
+    def save(self):
+        """Save the PartParameter instance."""
+        instance = super().save()
+
+        if request := self.context.get('request', None):
+            # If the request is provided, update the 'updated_by' field
+            instance.updated_by = request.user
+            instance.save()
+
+        return instance
+
     part_detail = PartBriefSerializer(
         source='part', many=False, read_only=True, allow_null=True
     )
+
     template_detail = PartParameterTemplateSerializer(
         source='template', many=False, read_only=True, allow_null=True
     )
+
+    updated_by_detail = UserSerializer(source='updated_by', many=False, read_only=True)
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -1134,9 +1154,8 @@ class PartSerializer(
                     part=instance, quantity=quantity, location=location
                 )
 
-                request = self.context.get('request', None)
-                user = request.user if request else None
-                stockitem.save(user=user)
+                if request := self.context.get('request', None):
+                    stockitem.save(user=request.user)
 
         # Create initial supplier information
         if initial_supplier:
@@ -1302,7 +1321,7 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         # Add in user information automatically
         request = self.context.get('request')
         data['user'] = request.user if request else None
-        super().save()
+        return super().save()
 
 
 class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializer):

@@ -1,6 +1,7 @@
 """Various unit tests for Part Parameters."""
 
 import django.core.exceptions as django_exceptions
+from django.contrib.auth.models import User
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
@@ -19,7 +20,7 @@ from .models import (
 class TestParams(TestCase):
     """Unit test class for testing the PartParameter model."""
 
-    fixtures = ['location', 'category', 'part', 'params']
+    fixtures = ['location', 'category', 'part', 'params', 'users']
 
     def test_str(self):
         """Test the str representation of the PartParameterTemplate model."""
@@ -31,6 +32,18 @@ class TestParams(TestCase):
 
         c1 = PartCategoryParameterTemplate.objects.get(pk=1)
         self.assertEqual(str(c1), 'Mechanical | Length | 2.8')
+
+    def test_updated(self):
+        """Test that the 'updated' field is correctly set."""
+        p1 = PartParameter.objects.get(pk=1)
+        self.assertIsNone(p1.updated)
+        self.assertIsNone(p1.updated_by)
+
+        user = User.objects.get(username='sam')
+        p1.save(updated_by=user)
+
+        self.assertIsNotNone(p1.updated)
+        self.assertEqual(p1.updated_by, user)
 
     def test_validate(self):
         """Test validation for part templates."""

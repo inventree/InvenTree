@@ -3976,13 +3976,19 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(InvenTree.models.InvenTreeMetadataModel):
+class PartParameter(
+    common.models.UpdatedUserMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
         part: Reference to a single Part object
         template: Reference to a single PartParameterTemplate object
         data: The data (value) of the Parameter [string]
+        data_numeric: Numeric value of the parameter (if applicable) [float]
+        note: Optional note field for the parameter [string]
+        updated: Timestamp of when the parameter was last updated [datetime]
+        updated_by: Reference to the User who last updated the parameter [User]
     """
 
     class Meta:
@@ -4122,6 +4128,13 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     )
 
     data_numeric = models.FloatField(default=None, null=True, blank=True)
+
+    note = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Note'),
+        help_text=_('Optional note field'),
+    )
 
     @property
     def units(self):

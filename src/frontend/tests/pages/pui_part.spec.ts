@@ -419,6 +419,8 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByLabel('choice-field-data').click();
   await page.getByRole('option', { name: 'Green' }).click();
 
+  await page.getByLabel('text-field-note').fill('A custom note field');
+
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
   await page.getByText('Is this part polarized?').click();
