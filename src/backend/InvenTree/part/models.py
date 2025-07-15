@@ -4133,7 +4133,7 @@ class PartParameter(
         max_length=500,
         blank=True,
         verbose_name=_('Note'),
-        help_text=_('Optional note fueld'),
+        help_text=_('Optional note field'),
     )
 
     @property

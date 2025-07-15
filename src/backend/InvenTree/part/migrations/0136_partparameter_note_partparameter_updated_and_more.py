@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name="note",
             field=models.CharField(
                 blank=True,
-                help_text="Optional note fueld",
+                help_text="Optional note field",
                 max_length=500,
                 verbose_name="Note",
             ),
