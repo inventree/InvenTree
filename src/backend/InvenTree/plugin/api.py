@@ -11,7 +11,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -333,19 +332,19 @@ def check_plugin(
 
     # Check that the 'plugin' specified is valid
     try:
-        plugin_cgf = PluginConfig.objects.filter(**filters).first()
+        plugin_cfg = PluginConfig.objects.filter(**filters).first()
     except PluginConfig.DoesNotExist:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
 
-    if plugin_cgf is None:
+    if plugin_cfg is None:
         # This only occurs if the plugin mechanism broke
         raise NotFound(detail=f"Plugin '{ref}' not installed")  # pragma: no cover
 
     # Check that the plugin is activated
-    if not plugin_cgf.active:
+    if not plugin_cfg.active:
         raise NotFound(detail=f"Plugin '{ref}' is not active")
 
-    plugin = plugin_cgf.plugin
+    plugin = plugin_cfg.plugin
 
     if not plugin:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
@@ -419,9 +418,9 @@ class PluginUserSettingList(APIView):
     - GET: return all user settings for a plugin config
     """
 
-    # Allow any logged in user to read this endpoint
-    # Note that the returned settings are user-specific
-    permission_classes = [IsAuthenticated]
+    queryset = PluginUserSetting.objects.all()
+    serializer_class = PluginSerializers.PluginUserSettingSerializer
+    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
 
     @extend_schema(
         responses={200: PluginSerializers.PluginUserSettingSerializer(many=True)}
