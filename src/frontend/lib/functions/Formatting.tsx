@@ -70,7 +70,7 @@ export function formatCurrencyValue(
   try {
     const formatter = new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: options.currency ?? 'USD',
+      currency: options.currency || 'USD',
       maximumFractionDigits: Math.max(minDigits, maxDigits),
       minimumFractionDigits: Math.min(minDigits, maxDigits)
     });
