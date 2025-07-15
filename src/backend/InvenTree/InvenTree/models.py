@@ -568,9 +568,6 @@ class InvenTreeTree(MPTTModel):
         delete_children = kwargs.pop('delete_children', False)
         delete_items = kwargs.pop('delete_items', False)
 
-        tree_id = self.tree_id
-        parent = getattr(self, self.NODE_PARENT_KEY, None)
-
         # Ensure that we have the latest version of the database object
         try:
             self.refresh_from_db()
@@ -579,6 +576,9 @@ class InvenTreeTree(MPTTModel):
             raise ValidationError(
                 'Object %s of type %s no longer exists', str(self), str(self.__class__)
             )
+
+        tree_id = self.tree_id
+        parent = getattr(self, self.NODE_PARENT_KEY, None)
 
         # When deleting a top level node with multiple children,
         # we need to assign a new tree_id to each child node

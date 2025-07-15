@@ -582,9 +582,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         """Test that we can read the 'info-view' endpoint."""
         url = reverse('api-inventree-info')
 
-        QUERY_LIMIT = 300
-
-        response = self.get(url, max_query_count=QUERY_LIMIT)
+        response = self.get(url, max_query_count=275, expected_code=200)
 
         data = response.json()
         self.assertIn('server', data)
@@ -594,19 +592,15 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertEqual('InvenTree', data['server'])
 
         # Test with token
-        token = self.get(url=reverse('api-token'), max_query_count=QUERY_LIMIT).data[
-            'token'
-        ]
+        token = self.get(url=reverse('api-token'), max_query_count=275).data['token']
         self.client.logout()
 
         # Anon
-        response = self.get(url, max_query_count=QUERY_LIMIT)
+        response = self.get(url, max_query_count=275)
         self.assertEqual(response.json()['database'], None)
 
         # Staff
         response = self.get(
-            url,
-            headers={'Authorization': f'Token {token}'},
-            max_query_count=QUERY_LIMIT,
+            url, headers={'Authorization': f'Token {token}'}, max_query_count=275
         )
         self.assertGreater(len(response.json()['database']), 4)
