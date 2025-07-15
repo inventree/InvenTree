@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 367
+INVENTREE_API_VERSION = 368
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v368 -> 2025-07-15 : https://github.com/inventree/InvenTree/pull/10023
+    - Adds "note", "updated", "updated_by" fields to the PartParameter API endpoints
 
 v367 -> 2025-07-10 : https://github.com/inventree/InvenTree/pull/10001
     - Adds OAuth2 scopes for importer sessions
