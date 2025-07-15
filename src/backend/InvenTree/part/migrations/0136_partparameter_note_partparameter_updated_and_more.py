@@ -38,12 +38,12 @@ class Migration(migrations.Migration):
             name="updated_by",
             field=models.ForeignKey(
                 blank=True,
-                help_text="User who created this object",
+                help_text="User who last updated this object",
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="%(class)s_updated",
                 to=settings.AUTH_USER_MODEL,
-                verbose_name="Created By",
+                verbose_name="Updated By",
             ),
         ),
     ]

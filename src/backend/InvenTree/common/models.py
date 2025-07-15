@@ -125,8 +125,8 @@ class UpdatedUserMixin(MetaMixin):
         null=True,
         blank=True,
         related_name='%(class)s_updated',
-        verbose_name=_('Created By'),
-        help_text=_('User who created this object'),
+        verbose_name=_('Update By'),
+        help_text=_('User who last updated this object'),
     )
 
 
