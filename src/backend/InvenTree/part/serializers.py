@@ -416,6 +416,8 @@ class PartParameterSerializer(
             'updated_by_detail',
         ]
 
+        read_only_fields = ['updated', 'updated_by']
+
     def __init__(self, *args, **kwargs):
         """Custom initialization method for the serializer.
 

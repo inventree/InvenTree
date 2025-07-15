@@ -117,7 +117,7 @@ class UpdatedUserMixin(models.Model):
         if updated_by := kwargs.pop('updated_by', None):
             self.updated_by = updated_by
 
-        self.updated = timezone.now()
+        self.updated = InvenTree.helpers.current_time()
 
         super().save(*args, **kwargs)
 
@@ -125,6 +125,7 @@ class UpdatedUserMixin(models.Model):
         verbose_name=_('Updated'),
         help_text=_('Timestamp of last update'),
         default=None,
+        blank=True,
         null=True,
     )
 
