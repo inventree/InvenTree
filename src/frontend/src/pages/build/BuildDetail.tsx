@@ -430,6 +430,7 @@ export default function BuildDetail() {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
         icon: <IconListCheck />,
+        hidden: (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
         content: (
           <StockItemTable
             allowAdd={false}
