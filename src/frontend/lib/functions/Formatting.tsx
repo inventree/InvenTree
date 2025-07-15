@@ -22,13 +22,19 @@ export function formatDecimal(
     return value;
   }
 
-  const formatter = new Intl.NumberFormat(locale, {
-    style: 'decimal',
-    maximumFractionDigits: options.digits ?? 6,
-    minimumFractionDigits: options.minDigits ?? 0
-  });
+  try {
+    const formatter = new Intl.NumberFormat(locale, {
+      style: 'decimal',
+      maximumFractionDigits: options.digits ?? 6,
+      minimumFractionDigits: options.minDigits ?? 0
+    });
 
-  return formatter.format(value);
+    return formatter.format(value);
+  } catch (e) {
+    console.error('Error formatting decimal:', e);
+    // Return the unformatted value if formatting fails
+    return value;
+  }
 }
 
 /*
@@ -61,14 +67,20 @@ export function formatCurrencyValue(
   const minDigits = options.minDigits ?? 0;
   const maxDigits = options.digits ?? 6;
 
-  const formatter = new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: options.currency,
-    maximumFractionDigits: Math.max(minDigits, maxDigits),
-    minimumFractionDigits: Math.min(minDigits, maxDigits)
-  });
+  try {
+    const formatter = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: options.currency ?? 'USD',
+      maximumFractionDigits: Math.max(minDigits, maxDigits),
+      minimumFractionDigits: Math.min(minDigits, maxDigits)
+    });
 
-  return formatter.format(value);
+    return formatter.format(value);
+  } catch (e) {
+    console.error('Error formatting currency:', e);
+    // Return the unformatted value if formatting fails
+    return value;
+  }
 }
 
 /*
