@@ -1014,7 +1014,8 @@ class Build(
                 },
             )
 
-            outputs = [output]
+            # Ensure we return a QuerySet object here, too
+            outputs = stock.models.StockItem.objects.filter(pk=output.pk)
 
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION.value

@@ -199,6 +199,8 @@ class BuildTreeTest(InvenTreeTestCase):
 
         # Test the tree structure for each node
         for idx, child in enumerate(builds):
+            child.refresh_from_db()
+
             # Check parent-child relationships
             expected_parent = builds[idx - 1] if idx > 0 else None
             self.assertEqual(child.parent, expected_parent)
@@ -278,11 +280,15 @@ class BuildTreeTest(InvenTreeTestCase):
                 self.assertEqual(grandchild.tree_id, self.build.tree_id)
                 self.assertEqual(grandchild.level, 2)
 
+            child.refresh_from_db()
+
             self.assertEqual(child.get_children().count(), 3)
             self.assertEqual(child.get_descendants(include_self=False).count(), 3)
 
             self.assertEqual(child.level, 1)
             self.assertEqual(child.tree_id, self.build.tree_id)
+
+        self.build.refresh_from_db()
 
         # Basic tests
         self.assertEqual(Build.objects.count(), 13)

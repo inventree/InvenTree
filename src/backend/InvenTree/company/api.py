@@ -60,7 +60,7 @@ class CompanyList(DataExportViewMixin, ListCreateAPI):
         'active',
     ]
 
-    search_fields = ['name', 'description', 'website']
+    search_fields = ['name', 'description', 'website', 'tax_id']
 
     ordering_fields = ['active', 'name', 'parts_supplied', 'parts_manufactured']
 

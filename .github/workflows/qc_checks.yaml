@@ -341,7 +341,7 @@ jobs:
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke dev.test --coverage --translations
+        run: invoke dev.test --check --coverage --translations
       - name: Upload raw coverage to artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
@@ -400,7 +400,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --translations
+        run: invoke dev.test --check --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -448,7 +448,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --translations
+        run: invoke dev.test --check --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -490,7 +490,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --migrations --report --coverage --translations
+        run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         if: always()

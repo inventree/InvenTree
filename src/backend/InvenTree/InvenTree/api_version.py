@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 367
+INVENTREE_API_VERSION = 368
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -9,6 +9,10 @@ INVENTREE_API_TEXT = """
 v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)
     - Remove NotificationSetting model (and associated endpoints)
+
+v368 -> 2025-07-11 : https://github.com/inventree/InvenTree/pull/9673
+    - Adds 'tax_id' to company model
+    - Adds 'tax_id' to search fields in the 'CompanyList' API endpoint
 
 v367 -> 2025-07-10 : https://github.com/inventree/InvenTree/pull/10001
     - Adds OAuth2 scopes for importer sessions
