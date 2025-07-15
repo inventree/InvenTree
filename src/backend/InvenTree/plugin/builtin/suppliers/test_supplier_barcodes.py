@@ -15,15 +15,16 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
     SCAN_URL = reverse('api-barcode-scan')
 
-    def setUp(self):
-        """Ensure the digikey plugin is enabled."""
-        super().setUp()
-        registry.set_plugin_state('digikeyplugin', True)
-
     @classmethod
     def setUpTestData(cls):
         """Create supplier parts for barcodes."""
         super().setUpTestData()
+
+        # Enable the plugins
+        registry.set_plugin_state('digikeyplugin', True)
+        registry.set_plugin_state('mouserplugin', True)
+        registry.set_plugin_state('lcscplugin', True)
+        registry.set_plugin_state('tmeplugin', True)
 
         part = Part.objects.create(name='Test Part', description='Test Part')
 
