@@ -410,6 +410,10 @@ class PartParameterSerializer(
             'template_detail',
             'data',
             'data_numeric',
+            'note',
+            'updated',
+            'updated_by',
+            'updated_by_detail',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -434,9 +438,12 @@ class PartParameterSerializer(
     part_detail = PartBriefSerializer(
         source='part', many=False, read_only=True, allow_null=True
     )
+
     template_detail = PartParameterTemplateSerializer(
         source='template', many=False, read_only=True, allow_null=True
     )
+
+    updated_by_detail = UserSerializer(source='updated_by', many=False, read_only=True)
 
 
 class DuplicatePartSerializer(serializers.Serializer):

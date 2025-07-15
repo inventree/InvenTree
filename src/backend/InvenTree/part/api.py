@@ -1392,7 +1392,7 @@ class PartParameterAPIMixin:
     def get_queryset(self, *args, **kwargs):
         """Override get_queryset method to prefetch related fields."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related('part', 'template')
+        queryset = queryset.prefetch_related('part', 'template', 'updated_by')
         return queryset
 
     def get_serializer(self, *args, **kwargs):
