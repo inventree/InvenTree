@@ -482,6 +482,7 @@ export default function SalesOrderLineItemTable({
             partId={record.part}
             allowEdit={false}
             modelTarget={ModelType.stockitem}
+            modelField={'item'}
             isSubTable
           />
         );
