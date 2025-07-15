@@ -417,7 +417,8 @@ export default function BuildDetail() {
         icon: <IconList />,
         hidden:
           build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED,
+          build.status == buildStatus.CANCELLED ||
+          (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
         content: (
           <BuildAllocationsPanel
             build={build}
