@@ -137,7 +137,7 @@ export const createPluginSettingsState = ({
     lookup: {},
     loaded: false,
     isError: false,
-    endpoint: ApiEndpoints.plugin_setting_list,
+    endpoint: endpoint,
     pathParams,
     fetchSettings: async () => {
       let success = true;
