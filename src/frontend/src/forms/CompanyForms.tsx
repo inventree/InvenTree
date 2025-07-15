@@ -125,6 +125,7 @@ export function companyFields(): ApiFormFieldSet {
     email: {
       icon: <IconAt />
     },
+    tax_id: {},
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {},

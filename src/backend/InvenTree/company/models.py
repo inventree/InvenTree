@@ -106,6 +106,7 @@ class Company(
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
         currency_code: Specifies the default currency for the company
+        tax_id: Tax ID for the company
     """
 
     class Meta:
@@ -222,6 +223,13 @@ class Company(
         default=currency_code_default,
         help_text=_('Default currency used for this company'),
         validators=[InvenTree.validators.validate_currency_code],
+    )
+
+    tax_id = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_('Tax ID'),
+        help_text=_('Company Tax ID'),
     )
 
     @property

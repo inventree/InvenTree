@@ -27,14 +27,13 @@ export function formatCurrency(
 
   // Extract default digit formatting
   options.digits =
-    options?.digits ?? Number(global_settings.PRICING_DECIMAL_PLACES) ?? 6;
+    options?.digits || (Number(global_settings.PRICING_DECIMAL_PLACES) ?? 6);
   options.minDigits =
-    options?.minDigits ??
-    Number(global_settings.PRICING_DECIMAL_PLACES_MIN) ??
-    0;
+    options?.minDigits ||
+    (Number(global_settings.PRICING_DECIMAL_PLACES_MIN) ?? 0);
 
   options.currency =
-    options?.currency ?? (global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD');
+    options?.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 
   return formatCurrencyValue(value, options);
 }

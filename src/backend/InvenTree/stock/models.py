@@ -811,7 +811,7 @@ class StockItem(
         super().save(*args, **kwargs)
 
         # If user information is provided, and no existing note exists, create one!
-        if user and self.tracking_info.count() == 0:
+        if user and add_note and self.tracking_info.count() == 0:
             tracking_info = {'status': self.status}
 
             self.add_tracking_entry(
