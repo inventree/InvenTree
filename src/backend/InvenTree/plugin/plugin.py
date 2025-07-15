@@ -131,14 +131,15 @@ class MetaBase:
 
     def is_active(self):
         """Return True if this plugin is currently active."""
-        # Builtin plugins are always considered "active"
-        if self.is_builtin:
+        # Mandatory plugins are always considered "active"
+        if self.is_builtin and self.is_mandatory:
             return True
 
         config = self.plugin_config()
 
         if config:
             return config.active
+
         return False  # pragma: no cover
 
 
@@ -366,6 +367,13 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def is_builtin(self) -> bool:
         """Is this plugin is builtin."""
         return self.check_is_builtin()
+
+    @property
+    def is_mandatory(self) -> bool:
+        """Is this plugin mandatory (always forced to be active)."""
+        from plugin.registry import registry
+
+        return self.slug in registry.MANDATORY_PLUGINS
 
     @classmethod
     def check_package_path(cls):
