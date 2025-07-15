@@ -437,6 +437,17 @@ class PartParameterSerializer(
         if not template_detail:
             self.fields.pop('template_detail', None)
 
+    def save(self):
+        """Save the PartParameter instance."""
+        instance = super().save()
+
+        if request := self.context.get('request', None):
+            # If the request is provided, update the 'updated_by' field
+            instance.updated_by = request.user
+            instance.save()
+
+        return instance
+
     part_detail = PartBriefSerializer(
         source='part', many=False, read_only=True, allow_null=True
     )

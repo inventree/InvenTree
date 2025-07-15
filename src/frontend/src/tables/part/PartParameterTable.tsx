@@ -133,7 +133,7 @@ export function PartParameterTable({
           return record.updated_by_detail ? (
             <RenderUser instance={record.updated_by_detail} />
           ) : (
-            <Text>{t`Unknown`}</Text>
+            '-'
           );
         }
       }

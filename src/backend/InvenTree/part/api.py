@@ -1395,6 +1395,13 @@ class PartParameterAPIMixin:
         queryset = queryset.prefetch_related('part', 'template', 'updated_by')
         return queryset
 
+    def get_serializer_context(self):
+        """Pass the 'request' object through to the serializer context."""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
+
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this API endpoint.
 
