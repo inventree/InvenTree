@@ -560,7 +560,6 @@ export default function BuildLineTable({
         in_production &&
         !consumable &&
         user.hasChangeRole(UserRoles.build) &&
-        record.allocated < record.quantity &&
         record.trackable == hasOutput;
 
       // Can de-allocate
