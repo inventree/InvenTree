@@ -219,36 +219,6 @@ class PluginsRegistry:
 
         return plugin_func(*args, **kwargs)
 
-    def active_plugin_keys(self) -> list:
-        """Return a list of all active plugin keys.
-
-        This is used to pre-cache the active plugin keys,
-        to reduce the number of database queries when checking plugin.is_active()
-        """
-        from plugin.models import PluginConfig
-
-        try:
-            # Pre-cache the plugin config objects, to prevent multiple database queries for plugin.is_active()
-            keys = list(
-                PluginConfig.objects.filter(active=True)
-                .values_list('key', flat=True)
-                .distinct()
-            )
-        except Exception:
-            # Database may not yet be ready
-            keys = []
-
-        return keys
-
-    def active_plugins(self) -> list:
-        """Return a list of all active plugins."""
-        # Check if the registry needs to be reloaded
-        self.check_reload()
-
-        keys = self.active_plugin_keys()
-
-        return [plg for plg in self.plugins.values() if plg.is_active(active_keys=keys)]
-
     # region registry functions
     def with_mixin(
         self, mixin: str, active: bool = True, builtin: Optional[bool] = None
@@ -267,13 +237,11 @@ class PluginsRegistry:
 
         result = []
 
-        keys = self.active_plugin_keys()
-
         for plugin in self.plugins.values():
             if plugin.mixin_enabled(mixin):
                 if active is not None:
                     # Filter by 'active' status of plugin
-                    if active != plugin.is_active(active_keys=keys):
+                    if active != plugin.is_active():
                         continue
 
                 if builtin is not None:
@@ -914,14 +882,12 @@ class PluginsRegistry:
 
         data = md5()
 
-        keys = self.active_plugin_keys()
-
         # Hash for all loaded plugins
         for slug, plug in self.plugins.items():
             data.update(str(slug).encode())
             data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())
-            data.update(str(plug.is_active(active_keys=keys)).encode())
+            data.update(str(plug.is_active()).encode())
 
         for k in self.plugin_settings_keys():
             try:
