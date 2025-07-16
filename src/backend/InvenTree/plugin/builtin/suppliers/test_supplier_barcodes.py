@@ -113,15 +113,14 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
     def test_old_mouser_barcode(self):
         """Test old mouser barcode with messed up header."""
-        plugin = registry.get_plugin('mouserplugin')
-        plugin.activate(False)
+        registry.set_plugin_state('mouserplugin', False)
 
         # Initial scan should fail - plugin not enabled
         self.post(
             self.SCAN_URL, data={'barcode': MOUSER_BARCODE_OLD}, expected_code=400
         )
 
-        plugin.activate()
+        registry.set_plugin_state('mouserplugin', True)
 
         result = self.post(
             self.SCAN_URL, data={'barcode': MOUSER_BARCODE_OLD}, expected_code=200
