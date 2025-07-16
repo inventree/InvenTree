@@ -3,7 +3,7 @@ import { useHotkeys } from '@mantine/hooks';
 
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { shortenString } from '../../functions/tables';
-import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';

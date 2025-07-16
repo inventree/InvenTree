@@ -5,12 +5,15 @@ import { useCallback, useState } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../App';
+import { useModalState } from '../states/ModalState';
 
 export type GeneratorProps = {
   endpoint: ApiEndpoints;
   key: string;
   initialQuery?: Record<string, any>;
   onGenerate?: (value: any) => void;
+  isEnabled?: () => boolean;
+  modalId?: string;
 };
 
 export type GeneratorState = {
@@ -25,6 +28,8 @@ export type GeneratorState = {
  * Each update calls a new query to the API, and the result is stored in the state.
  */
 export function useGenerator(props: GeneratorProps): GeneratorState {
+  const modalState = useModalState();
+
   // Track the result
   const [result, setResult] = useState<any>(null);
 
@@ -33,6 +38,24 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
 
   // Prevent rapid updates
   const [debouncedQuery] = useDebouncedValue<Record<string, any>>(query, 100);
+
+  // Callback to determine if the function is enabled
+  const isEnabled = useCallback(() => {
+    if (props.isEnabled?.() == false) {
+      return false;
+    }
+
+    if (props.modalId && !modalState.isModalOpen(props.modalId)) {
+      return false;
+    }
+
+    return true;
+  }, [
+    modalState.isModalOpen,
+    modalState.openModals,
+    props.isEnabled,
+    props.modalId
+  ]);
 
   // Callback to update the generator query
   const update = useCallback(
@@ -56,16 +79,30 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
       'generator',
       props.key,
       props.endpoint,
+      props.modalId,
       props.initialQuery,
+      modalState.openModals,
       debouncedQuery
     ],
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    throwOnError: (error: any) => {
+      console.error(
+        `Error generating ${props.key} @ ${props.endpoint}:`,
+        error
+      );
+      return false;
+    },
     queryFn: async () => {
       const generatorQuery = {
-        ...debouncedQuery,
-        ...(props.initialQuery ?? {})
+        ...(props.initialQuery ?? {}),
+        ...debouncedQuery
       };
+
+      if (!isEnabled()) {
+        setResult(null);
+        return null;
+      }
 
       return api
         .post(apiUrl(props.endpoint), generatorQuery)
@@ -76,12 +113,6 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
           props.onGenerate?.(value);
 
           return response;
-        })
-        .catch((error) => {
-          console.error(
-            `Error generating ${props.key} @ ${props.endpoint}:`,
-            error
-          );
         });
     }
   });
@@ -96,31 +127,43 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
 // Generate a batch code with provided data
 export function useBatchCodeGenerator({
   initialQuery,
-  onGenerate
+  onGenerate,
+  isEnabled,
+  modalId
 }: {
   initialQuery?: Record<string, any>;
   onGenerate?: (value: any) => void;
+  isEnabled?: () => boolean;
+  modalId?: string;
 }): GeneratorState {
   return useGenerator({
     endpoint: ApiEndpoints.generate_batch_code,
     key: 'batch_code',
     initialQuery: initialQuery,
-    onGenerate: onGenerate
+    onGenerate: onGenerate,
+    isEnabled: isEnabled,
+    modalId: modalId
   });
 }
 
 // Generate a serial number with provided data
 export function useSerialNumberGenerator({
   initialQuery,
-  onGenerate
+  onGenerate,
+  isEnabled,
+  modalId
 }: {
   initialQuery?: Record<string, any>;
   onGenerate?: (value: any) => void;
+  isEnabled?: () => boolean;
+  modalId?: string;
 }): GeneratorState {
   return useGenerator({
     endpoint: ApiEndpoints.generate_serial_number,
     key: 'serial_number',
     initialQuery: initialQuery,
-    onGenerate: onGenerate
+    onGenerate: onGenerate,
+    isEnabled: isEnabled,
+    modalId: modalId
   });
 }

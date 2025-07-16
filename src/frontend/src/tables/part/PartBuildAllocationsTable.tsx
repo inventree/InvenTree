@@ -4,21 +4,22 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DescriptionColumn,
+  PartColumn,
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowViewAction } from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { BuildLineSubTable } from '../build/BuildLineTable';
 
@@ -40,6 +41,7 @@ export default function PartBuildAllocationsTable({
         accessor: 'build',
         title: t`Build Order`,
         sortable: true,
+        switchable: false,
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
@@ -50,6 +52,11 @@ export default function PartBuildAllocationsTable({
           </Group>
         )
       },
+      {
+        accessor: 'part',
+        title: t`Assembly`,
+        render: (record: any) => <PartColumn part={record.part_detail} />
+      },
       DescriptionColumn({
         accessor: 'build_detail.title'
       }),
@@ -59,11 +66,13 @@ export default function PartBuildAllocationsTable({
       StatusColumn({
         accessor: 'build_detail.status',
         model: ModelType.build,
-        title: t`Order Status`
+        title: t`Order Status`,
+        switchable: false
       }),
       {
         accessor: 'allocated',
         sortable: true,
+        switchable: false,
         title: t`Required Stock`,
         render: (record: any) => (
           <ProgressBar
@@ -118,7 +127,7 @@ export default function PartBuildAllocationsTable({
           build_detail: true,
           order_outstanding: true
         },
-        enableColumnSwitching: false,
+        enableColumnSwitching: true,
         enableSearch: false,
         rowActions: rowActions,
         rowExpansion: rowExpansion

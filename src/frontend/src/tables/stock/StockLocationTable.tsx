@@ -2,11 +2,13 @@ import { t } from '@lingui/core/macro';
 import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
@@ -19,10 +21,8 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * Stock location table
@@ -85,10 +85,12 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         sortable: true
       },
       BooleanColumn({
-        accessor: 'structural'
+        accessor: 'structural',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'external'
+        accessor: 'external',
+        defaultVisible: false
       }),
       {
         accessor: 'location_type',

@@ -108,6 +108,7 @@ Configuration of pricing data and currency support:
 {{ globalsetting("CURRENCY_UPDATE_INTERVAL") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
+{{ globalsetting("PRICING_AUTO_UPDATE") }}
 {{ globalsetting("PRICING_UPDATE_DAYS") }}
 
 #### Part Pricing
@@ -239,6 +240,7 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
 {{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}
+{{ globalsetting("ENABLE_PLUGINS_MAILS") }}
 
 ### Project Codes
 

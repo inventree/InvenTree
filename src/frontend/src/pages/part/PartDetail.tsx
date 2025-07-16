@@ -11,7 +11,6 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
-  IconCalendarStats,
   IconClipboardList,
   IconCurrencyDollar,
   IconInfoCircle,
@@ -73,21 +72,19 @@ import { formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
-  useCountStockItem,
-  useFindSerialNumberForm,
-  useTransferStockItem
+  useFindSerialNumberForm
 } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
@@ -102,7 +99,6 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
-import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
 import PartSupplierDetail from './PartSupplierDetail';
 
@@ -132,8 +128,7 @@ export default function PartDetail() {
   const {
     instance: part,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.part_list,
     pk: id,
@@ -143,6 +138,14 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: id,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
@@ -151,8 +154,23 @@ export default function PartDetail() {
     const data = { ...part };
 
     data.required =
-      (data?.required_for_build_orders ?? 0) +
-      (data?.required_for_sales_orders ?? 0);
+      (partRequirements?.required_for_build_orders ??
+        part?.required_for_build_orders ??
+        0) +
+      (partRequirements?.required_for_sales_orders ??
+        part?.required_for_sales_orders ??
+        0);
+
+    data.allocated =
+      (partRequirements?.allocated_to_build_orders ??
+        part?.allocated_to_build_orders ??
+        0) +
+      (partRequirements?.allocated_to_sales_orders ??
+        part?.allocated_to_sales_orders ??
+        0);
+
+    // Extract requirements data
+    data.can_build = partRequirements?.can_build ?? 0;
 
     // Provide latest serial number info
     if (!!serials.latest) {
@@ -249,44 +267,45 @@ export default function PartDetail() {
     // Top right - stock availability information
     const tr: DetailsField[] = [
       {
-        type: 'string',
+        type: 'number',
         name: 'total_in_stock',
-        unit: true,
+        unit: part.units,
         label: t`In Stock`
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'unallocated_stock',
-        unit: true,
+        unit: part.units,
         label: t`Available Stock`,
         hidden: part.total_in_stock == part.unallocated_stock
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'variant_stock',
-        unit: true,
+        unit: part.units,
         label: t`Variant Stock`,
         hidden: !part.variant_stock,
         icon: 'stock'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'minimum_stock',
-        unit: true,
+        unit: part.units,
         label: t`Minimum Stock`,
         hidden: part.minimum_stock <= 0
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'ordering',
         label: t`On order`,
-        unit: true,
+        unit: part.units,
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'required',
         label: t`Required for Orders`,
+        unit: part.units,
         hidden: part.required <= 0,
         icon: 'stocktake'
       },
@@ -315,19 +334,19 @@ export default function PartDetail() {
             part.allocated_to_sales_orders <= 0)
       },
       {
-        type: 'string',
-        name: 'can_build',
-        unit: true,
-        label: t`Can Build`,
-        hidden: true // TODO: Expose "can_build" to the API
-      },
-      {
         type: 'progressbar',
         name: 'building',
         label: t`In Production`,
         progress: part.building,
         total: part.scheduled_to_build,
         hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
+      },
+      {
+        type: 'number',
+        name: 'can_build',
+        unit: part.units,
+        label: t`Can Build`,
+        hidden: !part.assembly || partRequirementsQuery.isFetching
       }
     ];
 
@@ -488,7 +507,9 @@ export default function PartDetail() {
     id,
     serials,
     instanceQuery.isFetching,
-    instanceQuery.data
+    instanceQuery.data,
+    partRequirementsQuery.isFetching,
+    partRequirements
   ]);
 
   // Part data panels (recalculate when part data changes)
@@ -627,13 +648,6 @@ export default function PartDetail() {
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
       {
-        name: 'scheduling',
-        label: t`Scheduling`,
-        icon: <IconCalendarStats />,
-        content: part ? <PartSchedulingDetail part={part} /> : <Skeleton />,
-        hidden: !userSettings.isSet('DISPLAY_SCHEDULE_TAB')
-      },
-      {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
@@ -706,8 +720,7 @@ export default function PartDetail() {
             default:
               break;
           }
-        })
-        .catch(() => {});
+        });
 
       return revisions;
     }
@@ -884,7 +897,7 @@ export default function PartDetail() {
     )
   });
 
-  const stockActionProps: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       pk: part.pk,
       model: ModelType.part,
@@ -895,8 +908,11 @@ export default function PartDetail() {
     };
   }, [part]);
 
-  const countStockItems = useCountStockItem(stockActionProps);
-  const transferStockItems = useTransferStockItem(stockActionProps);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    enabled: true
+  });
 
   const orderPartsWizard = OrderPartsWizard({
     parts: [part]
@@ -932,28 +948,7 @@ export default function PartDetail() {
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
         actions={[
-          {
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            name: t`Count Stock`,
-            tooltip: t`Count part stock`,
-            hidden: !user.hasChangeRole(UserRoles.stock),
-            onClick: () => {
-              part.pk && countStockItems.open();
-            }
-          },
-          {
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
-            name: t`Transfer Stock`,
-            tooltip: t`Transfer part stock`,
-            hidden: !user.hasChangeRole(UserRoles.stock),
-            onClick: () => {
-              part.pk && transferStockItems.open();
-            }
-          },
+          ...stockAdjustActions.menuActions,
           {
             name: t`Order`,
             tooltip: t`Order Stock`,
@@ -994,7 +989,7 @@ export default function PartDetail() {
         ]}
       />
     ];
-  }, [id, part, user]);
+  }, [id, part, user, stockAdjustActions.menuActions]);
 
   const enableRevisionSelection: boolean = useMemo(() => {
     return (
@@ -1005,16 +1000,13 @@ export default function PartDetail() {
 
   return (
     <>
-      {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
-      {findBySerialNumber.modal}
+      {duplicatePart.modal}
       {orderPartsWizard.wizard}
-      <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
-        requiredRole={UserRoles.part}
-      >
+      {findBySerialNumber.modal}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
+      <InstanceDetail query={instanceQuery} requiredRole={UserRoles.part}>
         <Stack gap='xs'>
           {user.hasViewRole(UserRoles.part_category) && (
             <NavigationTree
@@ -1096,8 +1088,6 @@ export default function PartDetail() {
             model={ModelType.part}
             id={part.pk}
           />
-          {transferStockItems.modal}
-          {countStockItems.modal}
         </Stack>
       </InstanceDetail>
     </>

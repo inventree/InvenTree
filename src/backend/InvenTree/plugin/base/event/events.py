@@ -6,16 +6,20 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 
 import structlog
+from opentelemetry import trace
 
 import InvenTree.exceptions
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
+from plugin import PluginMixinEnum
 from plugin.registry import registry
 
+tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
 
 
+@tracer.start_as_current_span('trigger_event')
 def trigger_event(event: str, *args, **kwargs) -> None:
     """Trigger an event with optional arguments.
 
@@ -54,6 +58,7 @@ def trigger_event(event: str, *args, **kwargs) -> None:
     offload_task(register_event, event, *args, group='plugin', **kwargs)
 
 
+@tracer.start_as_current_span('register_event')
 def register_event(event, *args, **kwargs):
     """Register the event with any interested plugins.
 
@@ -68,19 +73,12 @@ def register_event(event, *args, **kwargs):
         registry.check_reload()
 
         with transaction.atomic():
-            for slug, plugin in registry.plugins.items():
-                if not plugin.mixin_enabled('events'):
-                    continue
-
-                # Only allow event registering for 'active' plugins
-                if not plugin.is_active():
-                    continue
-
+            for plugin in registry.with_mixin(PluginMixinEnum.EVENTS, active=True):
                 # Let the plugin decide if it wants to process this event
                 if not plugin.wants_process_event(event):
                     continue
 
-                logger.debug("Registering callback for plugin '%s'", slug)
+                logger.debug("Registering callback for plugin '%s'", plugin.slug)
 
                 # This task *must* be processed by the background worker,
                 # unless we are running CI tests
@@ -89,20 +87,21 @@ def register_event(event, *args, **kwargs):
 
                 # Offload a separate task for each plugin
                 offload_task(
-                    process_event, slug, event, *args, group='plugin', **kwargs
+                    process_event, plugin.slug, event, *args, group='plugin', **kwargs
                 )
 
 
+@tracer.start_as_current_span('process_event')
 def process_event(plugin_slug, event, *args, **kwargs):
     """Respond to a triggered event.
 
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if plugin is None:  # pragma: no cover
-        logger.error("Could not find matching plugin for '%s'", plugin_slug)
+        logger.error("Could not find matching active plugin for '%s'", plugin_slug)
         return
 
     logger.debug("Plugin '%s' is processing triggered event '%s'", plugin_slug, event)

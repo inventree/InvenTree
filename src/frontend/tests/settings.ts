@@ -14,7 +14,7 @@ export const setSettingState = async ({
   setting: string;
   value: any;
 }) => {
-  const url = `${apiUrl}/settings/global/${setting}/`;
+  const url = new URL(`settings/global/${setting}/`, apiUrl).toString();
 
   const response = await request.patch(url, {
     data: {
@@ -38,7 +38,7 @@ export const setPluginState = async ({
   plugin: string;
   state: boolean;
 }) => {
-  const url = `${apiUrl}/plugins/${plugin}/activate/`;
+  const url = new URL(`plugins/${plugin}/activate/`, apiUrl).toString();
 
   const response = await request.patch(url, {
     data: {

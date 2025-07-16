@@ -124,10 +124,10 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty --translations
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --check --disable-pty --translations
       - name: Run Migration Tests
         run: |
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --migrations --translations
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --check --migrations --translations
       - name: Clean up test folder
         run: |
           rm -rf InvenTree/_testfolder
@@ -136,10 +136,10 @@ jobs:
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # pin@v3.6.0
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
-        uses: docker/setup-buildx-action@18ce135bb5112fa8ce4ed6c17ab05699d7f3a5e0 # pin@v3.11.0
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # pin@v3.11.1
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@3454372f43399081ed03b604cb2d021dabca52bb # pin@v3.8.2
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # pin@v3.9.1
       - name: Check if Dockerhub login is required
         id: docker_login
         run: |
@@ -175,7 +175,7 @@ jobs:
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: depot/build-push-action@636daae76684e38c301daa0c5eca1c095b24e780 # pin@v1
+        uses: depot/build-push-action@2583627a84956d07561420dcc1d0eb1f2af3fac0 # pin@v1
         with:
           project: jczzbjkk68
           context: .

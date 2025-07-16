@@ -2,12 +2,18 @@ import { t } from '@lingui/core/macro';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import {
@@ -22,9 +28,9 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DateColumn,
+  DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
@@ -33,7 +39,6 @@ import {
 } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
@@ -111,10 +116,9 @@ export default function ReturnOrderLineItemTable({
         accessor: 'part_detail.IPN',
         sortable: false
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'item_detail.serial',
         title: t`Quantity`,

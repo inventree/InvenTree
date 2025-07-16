@@ -15,7 +15,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -42,7 +42,7 @@ from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import (
     LocationBriefSerializer,
-    StockItemSerializerBrief,
+    StockItemSerializer,
     StockStatusCustomSerializer,
 )
 from stock.status_codes import StockStatus
@@ -421,7 +421,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         request = self.context.get('request')
         build = self.get_build()
 
-        build.create_build_output(
+        return build.create_build_output(
             data['quantity'],
             serials=self.serials,
             batch=data.get('batch_code', ''),
@@ -1227,8 +1227,15 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
 
-    stock_item_detail = StockItemSerializerBrief(
-        source='stock_item', read_only=True, allow_null=True, label=_('Stock Item')
+    stock_item_detail = StockItemSerializer(
+        source='stock_item',
+        read_only=True,
+        allow_null=True,
+        label=_('Stock Item'),
+        part_detail=False,
+        location_detail=False,
+        supplier_part_detail=False,
+        path_detail=False,
     )
 
     location = serializers.PrimaryKeyRelatedField(
@@ -1323,18 +1330,26 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     def __init__(self, *args, **kwargs):
         """Determine which extra details fields should be included."""
         part_detail = kwargs.pop('part_detail', True)
+        bom_item_detail = kwargs.pop('bom_item_detail', True)
         build_detail = kwargs.pop('build_detail', True)
+        allocations = kwargs.pop('allocations', True)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
+        if not bom_item_detail:
+            self.fields.pop('bom_item_detail', None)
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
         if not build_detail:
             self.fields.pop('build_detail', None)
+
+        if not allocations:
+            self.fields.pop('allocations', None)
 
     # Build info fields
     build_reference = serializers.CharField(
@@ -1569,10 +1584,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Calculate 'available_stock' based on previously annotated fields
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1606,10 +1625,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Calculate 'available_substitute_stock' field
         queryset = queryset.annotate(
-            available_substitute_stock=ExpressionWrapper(
-                F('substitute_stock')
-                - F('substitute_build_allocations')
-                - F('substitute_sales_allocations'),
+            available_substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('substitute_stock')
+                    - F('substitute_build_allocations')
+                    - F('substitute_sales_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1632,10 +1655,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=FloatField(),
+                ),
+                0,
                 output_field=FloatField(),
             )
         )

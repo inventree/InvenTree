@@ -12,13 +12,19 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  RowDeleteAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
@@ -33,15 +39,13 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
+  BooleanColumn,
+  DescriptionColumn,
+  LocationColumn,
+  PartColumn
+} from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -323,11 +327,9 @@ export default function BuildLineTable({
         sortable: false,
         title: t`IPN`
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false,
-        title: t`Description`
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'bom_item_detail.reference',
         ordering: 'reference',
@@ -337,33 +339,39 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
         ordering: 'optional',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.allow_variants',
         ordering: 'allow_variants',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.inherited',
         ordering: 'inherited',
         title: t`Gets Inherited`,
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
         ordering: 'trackable',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       {
         accessor: 'bom_item_detail.quantity',
         sortable: true,
         title: t`Unit Quantity`,
+        defaultVisible: false,
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
@@ -386,6 +394,7 @@ export default function BuildLineTable({
         accessor: 'quantity',
         title: t`Required Quantity`,
         sortable: true,
+        defaultVisible: false,
         switchable: false,
         render: (record: any) => {
           // If a build output is specified, use the provided quantity
@@ -452,7 +461,10 @@ export default function BuildLineTable({
     ];
   }, [hasOutput, isActive, table, output]);
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'new-build-order'
+  });
 
   const [initialData, setInitialData] = useState<any>({});
 
@@ -464,6 +476,7 @@ export default function BuildLineTable({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
     fields: buildOrderFields,
+    modalId: 'new-build-order',
     initialData: initialData,
     follow: true,
     modelType: ModelType.build
@@ -616,10 +629,7 @@ export default function BuildLineTable({
         part.purchaseable;
 
       const canBuild =
-        in_production &&
-        !consumable &&
-        user.hasAddRole(UserRoles.build) &&
-        part.assembly;
+        !consumable && user.hasAddRole(UserRoles.build) && part.assembly;
 
       return [
         {

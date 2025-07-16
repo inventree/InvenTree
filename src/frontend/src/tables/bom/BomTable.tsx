@@ -11,15 +11,21 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
@@ -35,15 +41,14 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -88,7 +93,7 @@ export function BomTable({
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const part = record.sub_part_detail;
           const extra = [];
 
@@ -145,7 +150,8 @@ export function BomTable({
       },
       {
         accessor: 'substitutes',
-        render: (row) => {
+        defaultVisible: false,
+        render: (row: any) => {
           const substitutes = row.substitutes ?? [];
 
           return substitutes.length > 0 ? (
@@ -162,21 +168,24 @@ export function BomTable({
         }
       },
       BooleanColumn({
-        accessor: 'optional'
+        accessor: 'optional',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'consumable'
+        accessor: 'consumable',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'allow_variants'
+        accessor: 'allow_variants',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'inherited'
-        // TODO: Custom renderer for this column
-        // TODO: See bom.js for existing implementation
+        accessor: 'inherited',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'validated'
+        accessor: 'validated',
+        defaultVisible: false
       }),
       {
         accessor: 'price_range',
@@ -184,6 +193,7 @@ export function BomTable({
         ordering: 'pricing_max',
         sortable: true,
         switchable: true,
+        defaultVisible: false,
         render: (record: any) =>
           formatPriceRange(record.pricing_min, record.pricing_max)
       },
@@ -199,7 +209,7 @@ export function BomTable({
       {
         accessor: 'available_stock',
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const extra: ReactNode[] = [];
 
           const available_stock: number = availableStockQuantity(record);
@@ -364,7 +374,8 @@ export function BomTable({
         name: 'has_pricing',
         label: t`Has Pricing`,
         description: t`Show items with pricing`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, [partId, params]);
 
@@ -423,7 +434,7 @@ export function BomTable({
 
   const editSubstitues = useEditBomSubstitutesForm({
     bomItemId: selectedBomItem.pk,
-    substitutes: selectedBomItem?.substitutes ?? [],
+    bomItem: selectedBomItem,
     onClose: () => {
       table.refreshTable();
     }
@@ -496,7 +507,9 @@ export function BomTable({
             record.validated ||
             !user.hasChangeRole(UserRoles.part),
           icon: <IconCircleCheck />,
-          onClick: () => validateBomItem(record)
+          onClick: () => {
+            validateBomItem(record);
+          }
         },
         RowEditAction({
           hidden: partLocked || !user.hasChangeRole(UserRoles.part),

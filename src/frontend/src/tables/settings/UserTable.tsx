@@ -1,14 +1,27 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import {
+  IconInfoCircle,
+  IconKey,
+  IconLock,
+  IconLockOpen,
+  IconUserCircle
+} from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
@@ -23,16 +36,15 @@ import {
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import type { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {
@@ -60,8 +72,7 @@ export function UserDrawer({
     instanceQuery: { isFetching, error }
   } = useInstance<UserDetailI>({
     endpoint: ApiEndpoints.user_list,
-    pk: id,
-    throwError: true
+    pk: id
   });
 
   const currentUserPk = useUserState(useShallow((s) => s.user?.pk));
@@ -298,7 +309,44 @@ export function UserTable({
             setSelectedUser(record.pk);
             deleteUser.open();
           }
-        })
+        }),
+        {
+          icon: <IconUserCircle />,
+          title: t`Open Profile`,
+          onClick: () => {
+            navigate(getDetailUrl(ModelType.user, record.pk));
+          }
+        },
+        {
+          icon: <IconKey />,
+          title: t`Change Password`,
+          color: 'blue',
+          onClick: () => {
+            setSelectedUser(record.pk);
+            setPassword.open();
+          },
+          hidden: !user.isSuperuser()
+        },
+        {
+          icon: <IconLock />,
+          title: t`Lock user`,
+          color: 'blue',
+          onClick: () => {
+            setUserActiveState(record.pk, false);
+            table.refreshTable();
+          },
+          hidden: !record.is_active
+        },
+        {
+          icon: <IconLockOpen />,
+          title: t`Unlock user`,
+          color: 'blue',
+          onClick: () => {
+            setUserActiveState(record.pk, true);
+            table.refreshTable();
+          },
+          hidden: record.is_active
+        }
       ];
     },
     [user]
@@ -325,6 +373,18 @@ export function UserTable({
     },
     table: table,
     successMessage: t`Added user`
+  });
+
+  const setPassword = useApiFormModal({
+    url: ApiEndpoints.user_set_password,
+    method: 'PUT',
+    pk: selectedUser,
+    title: t`Set Password`,
+    fields: {
+      password: { field_type: 'password' },
+      override_warning: {}
+    },
+    successMessage: t`Password updated`
   });
 
   const tableActions = useMemo(() => {
@@ -371,6 +431,7 @@ export function UserTable({
 
   return (
     <>
+      {editable && setPassword.modal}
       {editable && newUser.modal}
       {editable && deleteUser.modal}
       {editable && (
@@ -404,4 +465,22 @@ export function UserTable({
       />
     </>
   );
+}
+
+async function setUserActiveState(userId: number, active: boolean) {
+  try {
+    await api.patch(apiUrl(ApiEndpoints.user_list, userId), {
+      is_active: active
+    });
+    showNotification({
+      title: t`User updated`,
+      message: t`User updated successfully`,
+      color: 'green'
+    });
+  } catch (error) {
+    showApiErrorMessage({
+      error: error,
+      title: t`Error updating user`
+    });
+  }
 }

@@ -640,7 +640,7 @@ def translate(c, ignore_static=False, no_frontend=False):
     manage(c, 'compilemessages')
 
     if not no_frontend and node_available():
-        frontend_compile(c)
+        frontend_compile(c, extract=True)
 
     # Update static files
     if not ignore_static:
@@ -949,7 +949,7 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True)
+        delete_data(c, force=True, migrate=True)
 
     info(f"Importing database records from '{target}'")
 
@@ -1018,13 +1018,21 @@ def import_records(
     info('Data import completed')
 
 
-@task
-def delete_data(c, force=False):
+@task(
+    help={
+        'force': 'Force deletion of all data without confirmation',
+        'migrate': 'Run migrations before deleting data (default = False)',
+    }
+)
+def delete_data(c, force: bool = False, migrate: bool = False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
     """
     info('Deleting all data from InvenTree database...')
+
+    if migrate:
+        manage(c, 'migrate --run-syncdb')
 
     if force:
         manage(c, 'flush --noinput')
@@ -1204,32 +1212,28 @@ def test_translations(c):
 
 @task(
     help={
+        'check': 'Run sanity check on the django install (default = False)',
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
+        'translations': 'Compile translations before running tests',
+        'keepdb': 'Keep the test database after running tests (default = False)',
     }
 )
 def test(
     c,
+    check=False,
     disable_pty=False,
     runtest='',
     migrations=False,
     report=False,
     coverage=False,
     translations=False,
+    keepdb=False,
 ):
     """Run unit-tests for InvenTree codebase.
-
-    Args:
-        c: Command line context.
-        disable_pty (bool): Disable PTY (default = False)
-        runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
-        migrations (bool): Run migration unit tests (default = False)
-        report (bool): Display a report of slow tests (default = False)
-        coverage (bool): Run code coverage analysis (requires coverage package) (default = False)
-        translations (bool): Compile translations before running tests (default = False)
 
     To run only certain test, use the argument --runtest.
     This can filter all the way down to:
@@ -1240,7 +1244,8 @@ def test(
     will run tests in the company/test_api.py file.
     """
     # Run sanity check on the django install
-    manage(c, 'check')
+    if check:
+        manage(c, 'check')
 
     if translations:
         try:
@@ -1263,6 +1268,9 @@ def test(
 
     if report:
         cmd += ' --slowreport'
+
+    if keepdb:
+        cmd += ' --keepdb'
 
     if migrations:
         cmd += ' --tag migration_test'
@@ -1517,17 +1525,18 @@ def frontend_check(c):
     print(node_available())
 
 
-@task
+@task(help={'extract': 'Extract translation strings. Default: False'})
 @state_logger('TASK06')
-def frontend_compile(c):
+def frontend_compile(c, extract: bool = False):
     """Generate react frontend.
 
-    Args:
+    Arguments:
         c: Context variable
+        extract (bool): Whether to extract translations from source code. Defaults to False.
     """
     info('Compiling frontend code...')
     frontend_install(c)
-    frontend_trans(c, extract=False)
+    frontend_trans(c, extract=extract)
     frontend_build(c)
     success('Frontend compilation complete')
 
@@ -1851,6 +1860,12 @@ def clear_generated(c):
     run(c, 'find src -name "messages.mo" -exec rm -f {} +')
 
 
+@task(pre=[wait])
+def monitor(c):
+    """Monitor the worker performance."""
+    manage(c, 'qmonitor', pty=True)
+
+
 # endregion tasks
 
 # Collection sorting
@@ -1901,6 +1916,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    monitor,
     build_docs,
 )
 

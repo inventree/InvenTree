@@ -25,7 +25,7 @@ import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { useServerApiState } from '../../../states/ApiState';
+import { useServerApiState } from '../../../states/ServerApiState';
 import { useUserState } from '../../../states/UserState';
 
 /**
@@ -138,6 +138,7 @@ export default function SystemSettings() {
                 'PART_BOM_USE_INTERNAL_PRICE',
                 'PRICING_DECIMAL_PLACES_MIN',
                 'PRICING_DECIMAL_PLACES',
+                'PRICING_AUTO_UPDATE',
                 'PRICING_UPDATE_DAYS'
               ]}
             />

@@ -18,7 +18,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
@@ -30,9 +30,8 @@ from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import TreeForeignKey
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
@@ -70,7 +69,12 @@ from stock import models as StockModels
 logger = structlog.get_logger('inventree')
 
 
-class PartCategory(InvenTree.models.InvenTreeTree):
+class PartCategory(
+    InvenTree.models.PluginValidationMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PathStringMixin,
+    InvenTree.models.InvenTreeTree,
+):
     """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
@@ -368,7 +372,7 @@ class PartManager(TreeManager):
 
 
 class PartReportContext(report.mixins.BaseReportContext):
-    """Context for the part model.
+    """Report context for the Part model.
 
     Attributes:
         bom_items: Query set of all BomItem objects associated with the Part
@@ -401,13 +405,13 @@ class PartReportContext(report.mixins.BaseReportContext):
 
 @cleanup.ignore
 class Part(
+    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
-    MPTTModel,
+    InvenTree.models.InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
@@ -446,6 +450,8 @@ class Part(
         responsible_owner: Owner (either user or group) which is responsible for this part (optional)
         last_stocktake: Date at which last stocktake was performed for this Part
     """
+
+    NODE_PARENT_KEY = 'variant_of'
 
     objects = PartManager()
 
@@ -550,10 +556,7 @@ class Part(
 
         self.full_clean()
 
-        try:
-            super().save(*args, **kwargs)
-        except InvalidMove:
-            raise ValidationError({'variant_of': _('Invalid choice for parent part')})
+        super().save(*args, **kwargs)
 
         if _new:
             # Only run if the check was not run previously (due to not existing in the database)
@@ -1530,8 +1533,12 @@ class Part(
 
         # Calculate the 'available stock' based on previous annotations
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock') - F('so_allocations') - F('bo_allocations'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock') - F('so_allocations') - F('bo_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1549,10 +1556,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            substitute_stock=ExpressionWrapper(
-                F('sub_total_stock')
-                - F('sub_so_allocations')
-                - F('sub_bo_allocations'),
+            substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('sub_total_stock')
+                    - F('sub_so_allocations')
+                    - F('sub_bo_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1573,10 +1584,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            variant_stock=ExpressionWrapper(
-                F('var_total_stock')
-                - F('var_bo_allocations')
-                - F('var_so_allocations'),
+            variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('var_total_stock')
+                    - F('var_bo_allocations')
+                    - F('var_so_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -2021,7 +2036,7 @@ class Part(
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False):
+    def schedule_pricing_update(self, create: bool = False, force: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -2031,7 +2046,13 @@ class Part(
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
+            force: If True, force the pricing to be updated even auto pricing is disabled
         """
+        if not force and not get_global_setting(
+            'PRICING_AUTO_UPDATE', backup_value=True
+        ):
+            return
+
         try:
             self.refresh_from_db()
         except Part.DoesNotExist:
@@ -2693,7 +2714,11 @@ class PartPricing(common.models.MetaMixin):
         return result
 
     def schedule_for_update(self, counter: int = 0):
-        """Schedule this pricing to be updated."""
+        """Schedule this pricing to be updated.
+
+        Arguments:
+            counter: Recursion counter (used to prevent infinite recursion)
+        """
         import InvenTree.ready
 
         # If importing data, skip pricing update
@@ -3951,13 +3976,19 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(InvenTree.models.InvenTreeMetadataModel):
+class PartParameter(
+    common.models.UpdatedUserMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
         part: Reference to a single Part object
         template: Reference to a single PartParameterTemplate object
         data: The data (value) of the Parameter [string]
+        data_numeric: Numeric value of the parameter (if applicable) [float]
+        note: Optional note field for the parameter [string]
+        updated: Timestamp of when the parameter was last updated [datetime]
+        updated_by: Reference to the User who last updated the parameter [User]
     """
 
     class Meta:
@@ -4097,6 +4128,13 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     )
 
     data_numeric = models.FloatField(default=None, null=True, blank=True)
+
+    note = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Note'),
+        help_text=_('Optional note field'),
+    )
 
     @property
     def units(self):

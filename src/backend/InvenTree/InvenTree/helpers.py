@@ -154,7 +154,7 @@ def generateTestKey(test_name: str) -> str:
     return key
 
 
-def constructPathString(path, max_chars=250):
+def constructPathString(path: list[str], max_chars: int = 250) -> str:
     """Construct a 'path string' for the given path.
 
     Arguments:

@@ -1,9 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { selectionListFields } from '../../forms/selectionListFields';
 import {
@@ -13,10 +19,8 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of selectionlist items
@@ -32,10 +36,9 @@ export default function SelectionListTable() {
         accessor: 'name',
         sortable: true
       },
-      {
-        accessor: 'description',
+      DescriptionColumn({
         sortable: true
-      },
+      }),
       BooleanColumn({
         accessor: 'active'
       }),

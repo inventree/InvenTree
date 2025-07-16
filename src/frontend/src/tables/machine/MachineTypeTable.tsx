@@ -20,13 +20,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { InfoItem } from '../../components/items/InfoItem';
 import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
 export interface MachineTypeI {
@@ -70,10 +71,7 @@ function MachineTypeDrawer({
         accessor: 'name',
         title: t`Name`
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin driver`
@@ -340,10 +338,7 @@ export function MachineTypeListTable({
         accessor: 'name',
         title: t`Name`
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin type`

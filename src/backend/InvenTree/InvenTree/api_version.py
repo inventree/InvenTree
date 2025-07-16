@@ -1,15 +1,84 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 350
+INVENTREE_API_VERSION = 370
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-
 INVENTREE_API_TEXT = """
-v350 - 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
+v370 - 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
+
+v369 -> 2025-07-15 : https://github.com/inventree/InvenTree/pull/10023
+    - Adds "note", "updated", "updated_by" fields to the PartParameter API endpoints
+
+v368 -> 2025-07-11 : https://github.com/inventree/InvenTree/pull/9673
+    - Adds 'tax_id' to company model
+    - Adds 'tax_id' to search fields in the 'CompanyList' API endpoint
+
+v367 -> 2025-07-10 : https://github.com/inventree/InvenTree/pull/10001
+    - Adds OAuth2 scopes for importer sessions
+
+v366 -> 2025-07-09 : https://github.com/inventree/InvenTree/pull/9987
+    - Adds "category" filter to BomItem API endpoint
+
+v365 -> 2025-07-09 : https://github.com/inventree/InvenTree/pull/9984
+    - Allow filtering of DataOutput API by "user" field
+    - Allow individual deletion of DataOutput objects via the API
+
+v364 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9962
+    - Fix permissions for the DataImportSession API endpoints
+
+v363 -> 2025-07-04 : https://github.com/inventree/InvenTree/pull/9954
+    - Adds "user_detail" field to the ApiToken serializer
+
+v362 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9939
+    - Allow filtering of BuildItem API by "location" of StockItem
+    - Allow filtering of SalesOrderAllocation API by "location" of StockItem
+
+v361 -> 2025-07-03 : https://github.com/inventree/InvenTree/pull/9944
+    - Enable SalesOrderAllocation list to be filtered by part IPN value
+    - Enable SalesOrderAllocation list to be ordered by part MPN value
+
+v360 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9937
+    - Provide more detailed StockItem information in the BuildItem serializer
+    - Provide more detailed StockItem information in the SalesOrderAllocation serializer
+
+v359 -> 2025-07-01 : https://github.com/inventree/InvenTree/pull/9909
+    - Fixes annotated types for various part fields
+
+v358 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9857
+    - Provide list of generated stock items against "StockItemSerialize" API endpoint
+    - Provide list of generated stock items against "StockList" API endpoint
+    - Provide list of generated stock items against "BuildOutputCreate" API endpoint
+
+v357 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9856
+    - Adds "units" field to PluginSetting API endpoints
+
+v356 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9817
+    - Enable generation of reports against the Company model type
+
+v355 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/9811
+    - Removes legacy "PartScheduling" API endpoints
+
+v354 -> 2025-06-09 : https://github.com/inventree/InvenTree/pull/9532
+    - Adds "merge" field to the ReportTemplate model
+
+v353 -> 2025-06-19 : https://github.com/inventree/InvenTree/pull/9608
+    - Adds email endpoints
+
+v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
+    - Make PurchaseOrderLineItem link to BuildOrder reference nullable
+    - Add valid fields to ordering field descriptions
+
+v351 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9602
+    - Adds passwort reset API endpoint for admin users
+
+v350 -> 2025-06-17 : https://github.com/inventree/InvenTree/pull/9798
+    - Adds "can_build" field to the part requirements API endpoint
+    - Remove "allocated" and "required" fields from the part requirements API endpoint
+    - Add detailed serializer to the part requirements API endpoint
 
 v349 -> 2025-06-13 : https://github.com/inventree/InvenTree/pull/9574
     - Remove the 'create_child_builds' flag from the BuildOrder creation API endpoint
@@ -28,7 +97,7 @@ v345 -> 2025-06-07 : https://github.com/inventree/InvenTree/pull/9745
     - Adds barcode information to SalesOrderShipment API endpoint
 
 v344 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9714
-    - Updates alauth version and adds device trust as a factor
+    - Updates allauth version and adds device trust as a factor
 
 v343 -> 2025-06-02 : https://github.com/inventree/InvenTree/pull/9717
     - Add ISO currency codes to the description text for currency options

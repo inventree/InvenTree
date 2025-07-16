@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Badge, type MantineColor, Skeleton } from '@mantine/core';
 
-import { isTrue } from '../../functions/conversion';
+import { isTrue } from '../functions/Conversion';
 
 export function PassFailButton({
   value,

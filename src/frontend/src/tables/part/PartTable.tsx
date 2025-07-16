@@ -3,11 +3,14 @@ import { Group, Text } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -21,10 +24,14 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
+import {
+  CategoryColumn,
+  DefaultLocationColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -53,16 +60,12 @@ function partTableColumns(): TableColumn[] {
       sortable: true
     },
     DescriptionColumn({}),
-    {
-      accessor: 'category',
-      sortable: true,
-      render: (record: any) => record.category_detail?.pathstring
-    },
-    {
-      accessor: 'default_location',
-      sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring
-    },
+    CategoryColumn({
+      accessor: 'category_detail'
+    }),
+    DefaultLocationColumn({
+      accessor: 'default_location_detail'
+    }),
     {
       accessor: 'total_in_stock',
       sortable: true,
@@ -167,6 +170,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },

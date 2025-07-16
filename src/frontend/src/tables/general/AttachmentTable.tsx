@@ -12,14 +12,20 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { ActionButton } from '../../components/buttons/ActionButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { ProgressBar } from '../../components/items/ProgressBar';
 import { useApi } from '../../contexts/ApiContext';
 import { formatFileSize } from '../../defaults/formatters';
 import {
@@ -29,9 +35,7 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Define set of columns to display for the attachment table

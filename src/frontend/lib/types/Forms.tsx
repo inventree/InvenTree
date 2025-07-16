@@ -72,6 +72,7 @@ export type ApiFormFieldType = {
     | 'email'
     | 'url'
     | 'string'
+    | 'password'
     | 'icon'
     | 'boolean'
     | 'date'
@@ -174,6 +175,7 @@ export interface ApiFormProps {
  */
 export interface ApiFormModalProps extends ApiFormProps {
   title: string;
+  modalId?: string;
   cancelText?: string;
   cancelColor?: string;
   onClose?: () => void;

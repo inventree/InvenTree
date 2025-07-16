@@ -254,19 +254,14 @@ export function ApiForm({
       props.pathParams
     ],
     queryFn: async () => {
-      return await api
-        .get(url)
-        .then((response: any) => {
-          // Process API response
-          const fetchedData: any = processFields(fields, response.data);
+      return await api.get(url).then((response: any) => {
+        // Process API response
+        const fetchedData: any = processFields(fields, response.data);
 
-          // Update form values, but only for the fields specified for this form
-          form.reset(fetchedData);
-          return fetchedData;
-        })
-        .catch(() => {
-          return {};
-        });
+        // Update form values, but only for the fields specified for this form
+        form.reset(fetchedData);
+        return fetchedData;
+      });
     }
   });
 

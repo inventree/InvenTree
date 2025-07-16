@@ -3,18 +3,25 @@ import { Text } from '@mantine/core';
 import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
-import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderInstance } from '../../components/render/Instance';
-import { RenderStockLocation } from '../../components/render/Stock';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -28,23 +35,17 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   CurrencyColumn,
+  DescriptionColumn,
   LinkColumn,
+  LocationColumn,
   NoteColumn,
   PartColumn,
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /*
@@ -143,15 +144,15 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         ordering: 'IPN'
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       ReferenceColumn({}),
       {
         accessor: 'build_order',
         title: t`Build Order`,
         sortable: true,
+        defaultVisible: false,
         render: (record: any) => {
           if (record.build_order_detail) {
             return (
@@ -219,7 +220,8 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'supplier_part_detail.packaging',
         sortable: false,
-        title: t`Packaging`
+        title: t`Packaging`,
+        defaultVisible: false
       },
       {
         accessor: 'supplier_part_detail.pack_quantity',
@@ -236,13 +238,15 @@ export function PurchaseOrderLineItemTable({
       LinkColumn({
         accessor: 'supplier_part_detail.link',
         title: t`Supplier Link`,
-        sortable: false
+        sortable: false,
+        defaultVisible: false
       }),
       {
         accessor: 'mpn',
         ordering: 'MPN',
         title: t`Manufacturer Code`,
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       CurrencyColumn({
         accessor: 'purchase_price',
@@ -254,15 +258,11 @@ export function PurchaseOrderLineItemTable({
         title: t`Total Price`
       }),
       TargetDateColumn({}),
-      {
-        accessor: 'destination',
-        title: t`Destination`,
+      LocationColumn({
+        accessor: 'destination_detail',
         sortable: false,
-        render: (record: any) =>
-          record.destination
-            ? RenderStockLocation({ instance: record.destination_detail })
-            : '-'
-      },
+        title: t`Destination`
+      }),
       NoteColumn({}),
       LinkColumn({})
     ];

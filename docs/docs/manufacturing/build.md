@@ -119,13 +119,32 @@ The *Build Details* panel provides an overview of the Build Order:
 
 {{ image ("build/build_panel_details.png", title="Build Details") }}
 
-### Line Items
+### Required Parts
 
-The *Line Items* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
+The *Required Parts* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
 
 {{ image("build/build_panel_line_items.png", title="Line Items") }}
 
 The allocation table (as shown above) provides an interface to allocate required stock, and also shows the stock allocation progress for each line item in the build.
+
+### Allocated Stock
+
+The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
+
+{{ image("build/allocated_stock_table.png", title="Allocated Stock Table") }}
+
+!!! info "No BOM"
+	If the part being built does not have a BOM, then the *Allocated Stock* tab will not be displayed.
+
+### Consumed Stock
+
+The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
+
+- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
+- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
+
+!!! info "No BOM"
+	If the part being built does not have a BOM, then the *Consumed Stock* tab will not be displayed.
 
 ### Incomplete Outputs
 
@@ -143,19 +162,6 @@ The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./o
 ### Completed Outputs
 
 This panel displays all the completed build outputs (stock items) which have been created by this build order:
-
-### Allocated Stock
-
-The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
-
-{{ image("build/allocated_stock_table.png", title="Allocated Stock Table") }}
-
-### Consumed Stock
-
-The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
-
-- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
-- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
 
 ### Child Builds
 
