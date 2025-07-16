@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
-  IconCircleCheck,
+  IconCircleDashedCheck,
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
@@ -643,7 +643,7 @@ export default function BuildLineTable({
           }
         },
         {
-          icon: <IconCircleCheck />,
+          icon: <IconCircleDashedCheck />,
           title: t`Consume Stock`,
           color: 'green',
           hidden: !canConsume,
@@ -762,6 +762,18 @@ export default function BuildLineTable({
         onClick={() => {
           setSelectedLine(null);
           deallocateStock.open();
+        }}
+      />,
+      <ActionButton
+        key='consume-stock'
+        icon={<IconCircleDashedCheck />}
+        tooltip={t`Consume Stock`}
+        hidden={!visible || hasOutput}
+        disabled={!table.hasSelectedRecords}
+        color='green'
+        onClick={() => {
+          setSelectedRows(table.selectedRecords);
+          consumeLines.open();
         }}
       />
     ];

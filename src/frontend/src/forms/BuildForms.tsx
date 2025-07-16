@@ -770,12 +770,18 @@ function BuildConsumeLineRow({
   props: TableFieldRowProps;
   record: any;
 }) {
+  const allocated: number = record.allocatedQuantity ?? record.allocated;
+  const required: number = record.requiredQuantity ?? record.required;
+  const remaining: number = Math.max(0, required - record.consumed);
+
   return (
     <Table.Tr key='table-row-${record.pk}'>
       <Table.Td>
         <PartColumn part={record.part_detail} />
       </Table.Td>
-      <Table.Td>{record.quantity}</Table.Td>
+      <Table.Td>
+        <ProgressBar value={allocated} maximum={remaining} progressLabel />
+      </Table.Td>
       <Table.Td>
         <ProgressBar
           value={record.consumed}

@@ -13,7 +13,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { ActionButton } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { IconCircleCheck, IconCircleDashedCheck } from '@tabler/icons-react';
+import { IconCircleDashedCheck } from '@tabler/icons-react';
 import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
 import type { StockOperationProps } from '../../forms/StockForms';
 import {
@@ -196,6 +196,7 @@ export default function BuildAllocatedStockTable({
     buildId: buildId ?? 0,
     allocatedItems: selectedItems,
     onFormSuccess: () => {
+      table.clearSelectedRecords();
       table.refreshTable();
     }
   });
@@ -269,7 +270,7 @@ export default function BuildAllocatedStockTable({
       stockAdjustActions.dropdown,
       <ActionButton
         key='consume-stock'
-        icon={<IconCircleCheck />}
+        icon={<IconCircleDashedCheck />}
         tooltip={t`Consume Stock`}
         hidden={!user.hasChangeRole(UserRoles.build)}
         disabled={table.selectedRecords.length == 0}
