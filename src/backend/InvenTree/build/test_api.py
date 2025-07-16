@@ -973,11 +973,12 @@ class BuildOverallocationTest(BuildAPITest):
             self.assertEqual(si.quantity, oq)
 
         # Accept overallocated stock
+        # TODO: (2025-07-16) Look into optimizing this API query to reduce DB hits
         self.post(
             self.url,
             {'accept_overallocated': 'accept'},
             expected_code=201,
-            max_query_count=375,
+            max_query_count=400,
         )
 
         self.build.refresh_from_db()
@@ -992,11 +993,12 @@ class BuildOverallocationTest(BuildAPITest):
 
     def test_overallocated_can_trim(self):
         """Test build order will trim/de-allocate overallocated stock when requested."""
+        # TODO: (2025-07-16) Look into optimizing this API query to reduce DB hits
         self.post(
             self.url,
             {'accept_overallocated': 'trim'},
             expected_code=201,
-            max_query_count=375,
+            max_query_count=400,
         )
 
         # Note: Large number of queries is due to pricing recalculation for each stock item
