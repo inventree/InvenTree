@@ -724,11 +724,11 @@ export function useConsumeBuildItemsForm({
         field_type: 'table',
         value: [],
         headers: [
-          t`Part`,
-          t`Stock Item`,
-          t`Location`,
-          t`Allocated`,
-          t`Quantity`
+          { title: t`Part` },
+          { title: t`Stock Item` },
+          { title: t`Location` },
+          { title: t`Allocated` },
+          { title: t`Quantity` }
         ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record = allocatedItems.find(
@@ -807,7 +807,11 @@ export function useConsumeBuildLinesForm({
       lines: {
         field_type: 'table',
         value: [],
-        headers: [t`Part`, t`Allocated`, t`Consumed`],
+        headers: [
+          { title: t`Part` },
+          { title: t`Allocated` },
+          { title: t`Consumed` }
+        ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record = buildLines.find(
             (item) => item.pk == row.item.build_line
