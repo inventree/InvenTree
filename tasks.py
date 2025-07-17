@@ -296,6 +296,7 @@ def content_excludes(
         'exchange.rate',
         'exchange.exchangebackend',
         'common.dataoutput',
+        'common.newsfeedentry',
         'common.notificationentry',
         'common.notificationmessage',
         'importer.dataimportsession',

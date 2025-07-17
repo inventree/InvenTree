@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 369
+INVENTREE_API_VERSION = 370
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -9,6 +9,11 @@ INVENTREE_API_TEXT = """
 v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)
     - Remove NotificationSetting model (and associated endpoints)
+
+v370 -> 2025-07-17 : https://github.com/inventree/InvenTree/pull/10036
+    - Adds optional "assembly_detail" information to BuildLine API endpoint
+    - Adds "include_variants" filter to SalesOrderLineItem API endpoint
+    - Improves the "PartRequirements" API endpoint to include variant aggregations
 
 v369 -> 2025-07-15 : https://github.com/inventree/InvenTree/pull/10023
     - Adds "note", "updated", "updated_by" fields to the PartParameter API endpoints

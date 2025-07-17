@@ -249,6 +249,15 @@ export function HasProjectCodeFilter(): TableFilter {
   };
 }
 
+export function IncludeVariantsFilter(): TableFilter {
+  return {
+    name: 'include_variants',
+    type: 'boolean',
+    label: t`Include Variants`,
+    description: t`Include results for part variants`
+  };
+}
+
 export function OrderStatusFilter({
   model
 }: { model: ModelType }): TableFilter {

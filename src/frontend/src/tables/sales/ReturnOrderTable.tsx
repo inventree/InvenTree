@@ -34,6 +34,7 @@ import {
   CreatedBeforeFilter,
   CreatedByFilter,
   HasProjectCodeFilter,
+  IncludeVariantsFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
@@ -93,12 +94,7 @@ export function ReturnOrderTable({
     ];
 
     if (!!partId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
+      filters.push(IncludeVariantsFilter());
     }
 
     return filters;

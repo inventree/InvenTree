@@ -10,6 +10,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
@@ -19,6 +20,7 @@ import {
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { IncludeVariantsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { BuildLineSubTable } from '../build/BuildLineTable';
@@ -53,9 +55,25 @@ export default function PartBuildAllocationsTable({
         )
       },
       {
-        accessor: 'part',
+        accessor: 'assembly_detail',
         title: t`Assembly`,
+        switchable: false,
+        render: (record: any) => <PartColumn part={record.assembly_detail} />
+      },
+      {
+        accessor: 'assembly_detail.IPN',
+        title: t`Assembly IPN`
+      },
+      {
+        accessor: 'part_detail',
+        title: t`Part`,
+        defaultVisible: false,
         render: (record: any) => <PartColumn part={record.part_detail} />
+      },
+      {
+        accessor: 'part_detail.IPN',
+        defaultVisible: false,
+        title: t`Part IPN`
       },
       DescriptionColumn({
         accessor: 'build_detail.title'
@@ -114,6 +132,10 @@ export default function PartBuildAllocationsTable({
     };
   }, [table.isRowExpanded]);
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [IncludeVariantsFilter()];
+  }, []);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiEndpoints.build_line_list)}
@@ -124,13 +146,16 @@ export default function PartBuildAllocationsTable({
         params: {
           part: partId,
           consumable: false,
+          part_detail: true,
+          assembly_detail: true,
           build_detail: true,
           order_outstanding: true
         },
         enableColumnSwitching: true,
         enableSearch: false,
         rowActions: rowActions,
-        rowExpansion: rowExpansion
+        rowExpansion: rowExpansion,
+        tableFilters: tableFilters
       }}
     />
   );

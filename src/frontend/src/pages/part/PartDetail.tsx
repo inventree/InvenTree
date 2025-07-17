@@ -153,6 +153,16 @@ export default function PartDetail() {
 
     const data = { ...part };
 
+    const fetching =
+      partRequirementsQuery.isFetching || instanceQuery.isFetching;
+
+    // Copy part requirements data into the main part data
+    data.total_in_stock =
+      partRequirements?.total_stock ?? part?.total_in_stock ?? 0;
+    data.unallocated =
+      partRequirements?.unallocated_stock ?? part?.unallocated_stock ?? 0;
+    data.ordering = partRequirements?.ordering ?? part?.ordering ?? 0;
+
     data.required =
       (partRequirements?.required_for_build_orders ??
         part?.required_for_build_orders ??
@@ -273,26 +283,12 @@ export default function PartDetail() {
         label: t`In Stock`
       },
       {
-        type: 'number',
+        type: 'progressbar',
         name: 'unallocated_stock',
-        unit: part.units,
+        total: data.total_in_stock,
+        progress: data.unallocated,
         label: t`Available Stock`,
-        hidden: part.total_in_stock == part.unallocated_stock
-      },
-      {
-        type: 'number',
-        name: 'variant_stock',
-        unit: part.units,
-        label: t`Variant Stock`,
-        hidden: !part.variant_stock,
-        icon: 'stock'
-      },
-      {
-        type: 'number',
-        name: 'minimum_stock',
-        unit: part.units,
-        label: t`Minimum Stock`,
-        hidden: part.minimum_stock <= 0
+        hidden: data.total_in_stock == data.unallocated
       },
       {
         type: 'number',
@@ -306,47 +302,56 @@ export default function PartDetail() {
         name: 'required',
         label: t`Required for Orders`,
         unit: part.units,
-        hidden: part.required <= 0,
+        hidden: data.required <= 0,
         icon: 'stocktake'
       },
       {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
-        icon: 'tick_off',
-        total: part.required_for_build_orders,
-        progress: part.allocated_to_build_orders,
+        icon: 'manufacturers',
+        total: partRequirements.required_for_build_orders,
+        progress: partRequirements.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
         hidden:
-          !part.component ||
-          (part.required_for_build_orders <= 0 &&
-            part.allocated_to_build_orders <= 0)
+          fetching ||
+          (partRequirements.required_for_build_orders <= 0 &&
+            partRequirements.allocated_to_build_orders <= 0)
       },
       {
         type: 'progressbar',
-        icon: 'tick_off',
+        icon: 'sales_orders',
         name: 'allocated_to_sales_orders',
-        total: part.required_for_sales_orders,
-        progress: part.allocated_to_sales_orders,
+        total: partRequirements.required_for_sales_orders,
+        progress: partRequirements.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
         hidden:
-          !part.salable ||
-          (part.required_for_sales_orders <= 0 &&
-            part.allocated_to_sales_orders <= 0)
+          fetching ||
+          (partRequirements.required_for_sales_orders <= 0 &&
+            partRequirements.allocated_to_sales_orders <= 0)
       },
       {
         type: 'progressbar',
         name: 'building',
         label: t`In Production`,
-        progress: part.building,
-        total: part.scheduled_to_build,
-        hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
+        progress: partRequirements.building,
+        total: partRequirements.scheduled_to_build,
+        hidden:
+          fetching ||
+          (!partRequirements.building && !partRequirements.scheduled_to_build)
       },
       {
         type: 'number',
         name: 'can_build',
         unit: part.units,
         label: t`Can Build`,
-        hidden: !part.assembly || partRequirementsQuery.isFetching
+        hidden: !part.assembly || fetching
+      },
+      {
+        type: 'number',
+        name: 'minimum_stock',
+        unit: part.units,
+        label: t`Minimum Stock`,
+        hidden: part.minimum_stock <= 0
       }
     ];
 
@@ -768,30 +773,37 @@ export default function PartDetail() {
   }, [part]);
 
   const badges: ReactNode[] = useMemo(() => {
-    if (instanceQuery.isFetching) {
+    if (partRequirementsQuery.isFetching) {
       return [];
     }
 
     const required =
-      part.required_for_build_orders + part.required_for_sales_orders;
+      partRequirements.required_for_build_orders +
+      partRequirements.required_for_sales_orders;
 
     return [
       <DetailsBadge
-        label={`${t`In Stock`}: ${part.total_in_stock}`}
-        color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
-        visible={part.total_in_stock > 0}
+        label={`${t`In Stock`}: ${partRequirements.total_stock}`}
+        color={
+          partRequirements.total_stock >= part.minimum_stock
+            ? 'green'
+            : 'orange'
+        }
+        visible={partRequirements.total_stock > 0}
         key='in_stock'
       />,
       <DetailsBadge
-        label={`${t`Available`}: ${part.unallocated_stock}`}
+        label={`${t`Available`}: ${partRequirements.unallocated_stock}`}
         color='yellow'
         key='available_stock'
-        visible={part.unallocated_stock != part.total_in_stock}
+        visible={
+          partRequirements.unallocated_stock != partRequirements.total_stock
+        }
       />,
       <DetailsBadge
         label={t`No Stock`}
         color='orange'
-        visible={part.total_in_stock == 0}
+        visible={partRequirements.total_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
@@ -801,15 +813,15 @@ export default function PartDetail() {
         key='required'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${part.ordering}`}
+        label={`${t`On Order`}: ${partRequirements.ordering}`}
         color='blue'
-        visible={part.ordering > 0}
+        visible={partRequirements.ordering > 0}
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${part.building}`}
+        label={`${t`In Production`}: ${partRequirements.building}`}
         color='blue'
-        visible={part.building > 0}
+        visible={partRequirements.building > 0}
         key='in_production'
       />,
       <DetailsBadge
@@ -819,7 +831,7 @@ export default function PartDetail() {
         key='inactive'
       />
     ];
-  }, [part, instanceQuery.isFetching]);
+  }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
   const partFields = usePartFields({ create: false });
 

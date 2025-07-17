@@ -32,7 +32,7 @@ import {
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
-import { UserFilter } from '../Filter';
+import { IncludeVariantsFilter, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -142,11 +142,7 @@ export function PartParameterTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
-      {
-        name: 'include_variants',
-        label: t`Include Variants`,
-        type: 'boolean'
-      },
+      IncludeVariantsFilter(),
       UserFilter({
         name: 'updated_by',
         label: t`Updated By`,
