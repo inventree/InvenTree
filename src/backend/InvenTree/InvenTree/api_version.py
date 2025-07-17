@@ -10,6 +10,11 @@ v370 -> 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
 
+v370 -> 2025-07-17 : https://github.com/inventree/InvenTree/pull/10036
+    - Adds optional "assembly_detail" information to BuildLine API endpoint
+    - Adds "include_variants" filter to SalesOrderLineItem API endpoint
+    - Improves the "PartRequirements" API endpoint to include variant aggregations
+
 v369 -> 2025-07-15 : https://github.com/inventree/InvenTree/pull/10023
     - Adds "note", "updated", "updated_by" fields to the PartParameter API endpoints
 
