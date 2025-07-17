@@ -1,4 +1,4 @@
-import { Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
+import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 
 import { Fragment, type ReactNode, useMemo } from 'react';
@@ -98,13 +98,13 @@ export function PageDetail({
             wrap='nowrap'
             align='flex-start'
           >
-            <SimpleGrid
-              cols={{
-                base: 1,
-                md: 2
-              }}
+            <Group
+              justify='space-between'
+              wrap='nowrap'
+              align='flex-start'
+              style={{ flexGrow: 1 }}
             >
-              <Group justify='left' wrap='nowrap'>
+              <Group justify='start' wrap='nowrap' align='flex-start'>
                 {imageUrl && (
                   <ApiImage
                     src={imageUrl}
@@ -126,13 +126,14 @@ export function PageDetail({
                 </Stack>
               </Group>
               {badges && (
-                <Group justify='center' gap='xs' align='flex-start'>
+                <Group justify='flex-end' gap='xs' align='center'>
                   {badges?.map((badge, idx) => (
                     <Fragment key={idx}>{badge}</Fragment>
                   ))}
+                  <Space w='md' />
                 </Group>
               )}
-            </SimpleGrid>
+            </Group>
             {actions && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
                 {actions.map((action, idx) => (
