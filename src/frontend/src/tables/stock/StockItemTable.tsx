@@ -32,6 +32,7 @@ import {
 import {
   BatchFilter,
   HasBatchCodeFilter,
+  IncludeVariantsFilter,
   IsSerializedFilter,
   SerialFilter,
   SerialGTEFilter,
@@ -356,11 +357,7 @@ function stockItemTableFilters({
       label: t`In Production`,
       description: t`Show items which are in production`
     },
-    {
-      name: 'include_variants',
-      label: t`Include Variants`,
-      description: t`Include stock items for variant parts`
-    },
+    IncludeVariantsFilter(),
     {
       name: 'consumed',
       label: t`Consumed`,

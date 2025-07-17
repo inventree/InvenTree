@@ -533,6 +533,7 @@ class BuildLineEndpoint:
             params = self.request.query_params
 
             kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
+            kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
             kwargs['part_detail'] = str2bool(params.get('part_detail', True))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
             kwargs['allocations'] = str2bool(params.get('allocations', True))

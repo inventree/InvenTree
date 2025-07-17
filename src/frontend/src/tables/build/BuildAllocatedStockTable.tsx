@@ -26,7 +26,7 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StockLocationFilter } from '../Filter';
+import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -66,12 +66,7 @@ export default function BuildAllocatedStockTable({
     ];
 
     if (!!partId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
+      filters.push(IncludeVariantsFilter());
     }
 
     filters.push(StockLocationFilter());

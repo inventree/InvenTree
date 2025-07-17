@@ -10,14 +10,17 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
+  PartColumn,
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { IncludeVariantsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
@@ -36,6 +39,7 @@ export default function PartSalesAllocationsTable({
       {
         accessor: 'order',
         title: t`Sales Order`,
+        switchable: false,
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
@@ -49,6 +53,15 @@ export default function PartSalesAllocationsTable({
       DescriptionColumn({
         accessor: 'order_detail.description'
       }),
+      {
+        accessor: 'part_detail',
+        title: t`Part`,
+        render: (record: any) => <PartColumn part={record.part_detail} />
+      },
+      {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`
+      },
       ProjectCodeColumn({
         accessor: 'order_detail.project_code_detail'
       }),
@@ -59,7 +72,8 @@ export default function PartSalesAllocationsTable({
       }),
       {
         accessor: 'allocated',
-        title: t`Required Stock`,
+        title: t`Allocated Stock`,
+        switchable: false,
         render: (record: any) => (
           <ProgressBar
             progressLabel
@@ -85,6 +99,10 @@ export default function PartSalesAllocationsTable({
     },
     [user]
   );
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [IncludeVariantsFilter()];
+  }, []);
 
   // Control row expansion
   const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
@@ -117,11 +135,13 @@ export default function PartSalesAllocationsTable({
         minHeight: 200,
         params: {
           part: partId,
+          part_detail: true,
           order_detail: true,
           order_outstanding: true
         },
+        tableFilters: tableFilters,
         enableSearch: false,
-        enableColumnSwitching: false,
+        enableColumnSwitching: true,
         rowExpansion: rowExpansion,
         rowActions: rowActions
       }}
