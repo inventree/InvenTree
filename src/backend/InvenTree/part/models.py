@@ -1330,29 +1330,54 @@ class Part(
 
         return max(total, 0)
 
-    def requiring_build_orders(self):
-        """Return list of outstanding build orders which require this part."""
+    def requiring_build_orders(self, include_variants: bool = True):
+        """Return list of outstanding build orders which require this part.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
         # List parts that this part is required for
+
+        if include_variants:
+            # If we are including variants, get all parts in the variant tree
+            parts = list(self.get_descendants(include_self=True))
+        else:
+            parts = [self]
+
+        used_in_parts = set()
+
+        for part in parts:
+            # Get all assemblies which use this part
+            used_in_parts.update(part.get_used_in())
 
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
-            part__in=self.get_used_in(), status__in=BuildStatusGroups.ACTIVE_CODES
+            part__in=list(used_in_parts), status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         return builds
 
-    def required_build_order_quantity(self):
-        """Return the quantity of this part required for active build orders."""
+    def required_build_order_quantity(self, include_variants: bool = True):
+        """Return the quantity of this part required for active build orders.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
         # List active build orders which reference this part
-        builds = self.requiring_build_orders()
+        builds = self.requiring_build_orders(include_variants=include_variants)
 
         quantity = 0
+
+        if include_variants:
+            matching_parts = list(self.get_descendants(include_self=True))
+        else:
+            matching_parts = [self]
 
         for build in builds:
             bom_item = None
 
             # List the bom lines required to make the build (including inherited ones!)
-            bom_items = build.part.get_bom_items().filter(sub_part=self)
+            bom_items = build.part.get_bom_items().filter(sub_part__in=matching_parts)
 
             # Match BOM item to build
             for bom_item in bom_items:
@@ -1362,13 +1387,22 @@ class Part(
 
         return quantity
 
-    def requiring_sales_orders(self):
-        """Return a list of sales orders which require this part."""
+    def requiring_sales_orders(self, include_variants: bool = True):
+        """Return a list of sales orders which require this part.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
         orders = set()
+
+        if include_variants:
+            parts = list(self.get_descendants(include_self=True))
+        else:
+            parts = [self]
 
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatusGroups.OPEN, part=self
+            order__status__in=SalesOrderStatusGroups.OPEN, part__in=parts
         )
 
         for line in open_lines:
@@ -1376,11 +1410,20 @@ class Part(
 
         return orders
 
-    def required_sales_order_quantity(self):
-        """Return the quantity of this part required for active sales orders."""
+    def required_sales_order_quantity(self, include_variants: bool = True):
+        """Return the quantity of this part required for active sales orders.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
+        if include_variants:
+            parts = list(self.get_descendants(include_self=True))
+        else:
+            parts = [self]
+
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatusGroups.OPEN, part=self
+            order__status__in=SalesOrderStatusGroups.OPEN, part__in=parts
         )
 
         quantity = 0
@@ -1392,11 +1435,11 @@ class Part(
 
         return quantity
 
-    def required_order_quantity(self):
+    def required_order_quantity(self, include_variants: bool = True):
         """Return total required to fulfil orders."""
-        return (
-            self.required_build_order_quantity() + self.required_sales_order_quantity()
-        )
+        return self.required_build_order_quantity(
+            include_variants=include_variants
+        ) + self.required_sales_order_quantity(include_variants=include_variants)
 
     @property
     def quantity_to_order(self):
@@ -1626,13 +1669,25 @@ class Part(
         return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
-    def quantity_being_built(self):
+    def quantity_being_built(self, include_variants: bool = True):
         """Return the current number of parts currently being built.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
 
         Note: This is the total quantity of Build orders, *not* the number of build outputs.
               In this fashion, it is the "projected" quantity of builds
         """
-        builds = self.active_builds
+        builds = BuildModels.Build.objects.filter(
+            status__in=BuildStatusGroups.ACTIVE_CODES
+        )
+
+        if include_variants:
+            # If we are including variants, get all parts in the variant tree
+            builds = builds.filter(part__in=self.get_descendants(include_self=True))
+        else:
+            # Only look at this part
+            builds = builds.filter(part=self)
 
         quantity = 0
 
@@ -1643,16 +1698,26 @@ class Part(
         return quantity
 
     @property
-    def quantity_in_production(self):
+    def quantity_in_production(self, include_variants: bool = True):
         """Quantity of this part currently actively in production.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
 
         Note: This may return a different value to `quantity_being_built`
         """
         quantity = 0
 
-        items = self.stock_items.filter(
+        items = StockModels.StockItem.objects.filter(
             is_building=True, build__status__in=BuildStatusGroups.ACTIVE_CODES
         )
+
+        if include_variants:
+            # If we are including variants, get all parts in the variant tree
+            items = items.filter(part__in=self.get_descendants(include_self=True))
+        else:
+            # Only look at this part
+            items = items.filter(part=self)
 
         for item in items:
             # The remaining items in the build
