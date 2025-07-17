@@ -285,6 +285,7 @@ export default function BuildOutputTable({
     title: t`Add Build Output`,
     modalId: 'add-build-output',
     fields: buildOutputFields,
+    successMessage: t`Build output created`,
     timeout: 10000,
     initialData: {
       batch_code: build.batch,

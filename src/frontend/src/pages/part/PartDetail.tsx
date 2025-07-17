@@ -292,21 +292,6 @@ export default function PartDetail() {
       },
       {
         type: 'number',
-        name: 'variant_stock',
-        unit: part.units,
-        label: t`Variant Stock`,
-        hidden: !part.variant_stock,
-        icon: 'stock'
-      },
-      {
-        type: 'number',
-        name: 'minimum_stock',
-        unit: part.units,
-        label: t`Minimum Stock`,
-        hidden: part.minimum_stock <= 0
-      },
-      {
-        type: 'number',
         name: 'ordering',
         label: t`On order`,
         unit: part.units,
@@ -360,6 +345,13 @@ export default function PartDetail() {
         unit: part.units,
         label: t`Can Build`,
         hidden: !part.assembly || fetching
+      },
+      {
+        type: 'number',
+        name: 'minimum_stock',
+        unit: part.units,
+        label: t`Minimum Stock`,
+        hidden: part.minimum_stock <= 0
       }
     ];
 
