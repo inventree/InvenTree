@@ -497,9 +497,9 @@ django-oauth-toolkit==3.0.1 \
     --hash=sha256:3ef00b062a284f2031b0732b32dc899e3bbf0eac221bbb1cffcb50b8932e55ed \
     --hash=sha256:7200e4a9fb229b145a6d808cbf0423b6d69a87f68557437733eec3c0cf71db02
     # via -r src/backend/requirements.in
-django-otp==1.6.1 \
-    --hash=sha256:68dafa008921fd418382492d81b717636d8cc1364e24e8f9222b72264adf3c5d \
-    --hash=sha256:a632e126c9e6ffc5f961a1e0c2452ee0d7ed589073141a729f33915957177916
+django-otp==1.3.0 \
+    --hash=sha256:5277731bc05b6cdbf96aa84ac46018e30ed5fb248086053b0146f925de059060 \
+    --hash=sha256:8f4156a3c14ce2aaa31379385eadf388925cd50fc4b5d20a3b944f454c98ff7c
     # via -r src/backend/requirements.in
 django-picklefield==3.3 \
     --hash=sha256:4e76dd20f2e95ffdaf18d641226ccecc169ff0473b0d6bec746f3ab97c26b8cb \
