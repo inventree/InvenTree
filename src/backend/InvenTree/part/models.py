@@ -1373,11 +1373,19 @@ class Part(
         else:
             matching_parts = [self]
 
-        for build in builds:
-            bom_item = None
+        # Cache the BOM items that we query
+        # Keep a dict of part ID to BOM items
+        cached_bom_items: dict = {}
 
-            # List the bom lines required to make the build (including inherited ones!)
-            bom_items = build.part.get_bom_items().filter(sub_part__in=matching_parts)
+        for build in builds:
+            if build.part.pk not in cached_bom_items:
+                # Get the BOM items for this part
+                bom_items = build.part.get_bom_items().filter(
+                    sub_part__in=matching_parts
+                )
+                cached_bom_items[build.part.pk] = bom_items
+            else:
+                bom_items = cached_bom_items[build.part.pk]
 
             # Match BOM item to build
             for bom_item in bom_items:
@@ -1888,7 +1896,7 @@ class Part(
             self.get_bom_item_filter(include_inherited=include_inherited)
         )
 
-        return queryset.prefetch_related('sub_part')
+        return queryset.prefetch_related('part', 'sub_part')
 
     def get_installed_part_options(
         self, include_inherited: bool = True, include_variants: bool = True
