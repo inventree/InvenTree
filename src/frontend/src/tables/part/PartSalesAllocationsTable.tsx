@@ -10,6 +10,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
@@ -19,6 +20,7 @@ import {
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { IncludeVariantsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
@@ -98,6 +100,10 @@ export default function PartSalesAllocationsTable({
     [user]
   );
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [IncludeVariantsFilter()];
+  }, []);
+
   // Control row expansion
   const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
     return {
@@ -132,6 +138,7 @@ export default function PartSalesAllocationsTable({
           order_detail: true,
           order_outstanding: true
         },
+        tableFilters: tableFilters,
         enableSearch: false,
         enableColumnSwitching: true,
         rowExpansion: rowExpansion,
