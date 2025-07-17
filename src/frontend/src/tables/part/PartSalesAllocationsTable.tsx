@@ -135,6 +135,7 @@ export default function PartSalesAllocationsTable({
         minHeight: 200,
         params: {
           part: partId,
+          part_detail: true,
           order_detail: true,
           order_outstanding: true
         },
