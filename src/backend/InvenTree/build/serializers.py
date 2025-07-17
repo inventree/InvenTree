@@ -1319,6 +1319,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_category_name',
             # Extra detail (related field) serializers
             'bom_item_detail',
+            'assembly_detail',
             'part_detail',
             'build_detail',
         ]
@@ -1328,6 +1329,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     def __init__(self, *args, **kwargs):
         """Determine which extra details fields should be included."""
         part_detail = kwargs.pop('part_detail', True)
+        assembly_detail = kwargs.pop('assembly_detail', True)
         bom_item_detail = kwargs.pop('bom_item_detail', True)
         build_detail = kwargs.pop('build_detail', True)
         allocations = kwargs.pop('allocations', True)
@@ -1348,6 +1350,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         if not allocations:
             self.fields.pop('allocations', None)
+
+        if not assembly_detail:
+            self.fields.pop('assembly_detail', None)
 
     # Build info fields
     build_reference = serializers.CharField(
@@ -1404,6 +1409,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         substitutes=False,
         sub_part_detail=False,
         part_detail=False,
+    )
+
+    assembly_detail = part_serializers.PartBriefSerializer(
+        label=_('Assembly'),
+        source='bom_item.part',
+        many=False,
+        read_only=True,
+        pricing=False,
     )
 
     part_detail = part_serializers.PartBriefSerializer(
