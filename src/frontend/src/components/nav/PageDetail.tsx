@@ -14,7 +14,6 @@ interface PageDetailInterface {
   icon?: ReactNode;
   subtitle?: string;
   imageUrl?: string;
-  detail?: ReactNode;
   badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
   lastCrumb?: Breadcrumb[];
@@ -34,7 +33,6 @@ export function PageDetail({
   title,
   icon,
   subtitle,
-  detail,
   badges,
   imageUrl,
   breadcrumbs,
@@ -74,20 +72,6 @@ export function PageDetail({
     [subtitle]
   );
 
-  const maxCols = useMemo(() => {
-    let cols = 1;
-
-    if (!!detail) {
-      cols++;
-    }
-
-    if (!!badges) {
-      cols++;
-    }
-
-    return cols;
-  }, [detail, badges]);
-
   // breadcrumb caching
   const computedBreadcrumbs = useMemo(() => {
     if (userSettings.isSet('ENABLE_LAST_BREADCRUMB', false)) {
@@ -117,8 +101,7 @@ export function PageDetail({
             <SimpleGrid
               cols={{
                 base: 1,
-                md: Math.min(2, maxCols),
-                lg: Math.min(3, maxCols)
+                md: 2
               }}
             >
               <Group justify='left' wrap='nowrap'>
@@ -142,7 +125,6 @@ export function PageDetail({
                   )}
                 </Stack>
               </Group>
-              {detail && <div>{detail}</div>}
               {badges && (
                 <Group justify='center' gap='xs' align='flex-start'>
                   {badges?.map((badge, idx) => (
