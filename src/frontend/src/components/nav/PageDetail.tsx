@@ -144,12 +144,7 @@ export function PageDetail({
               </Group>
               {detail && <div>{detail}</div>}
               {badges && (
-                <Group
-                  justify='center'
-                  gap='xs'
-                  align='flex-start'
-                  wrap='nowrap'
-                >
+                <Group justify='center' gap='xs' align='flex-start'>
                   {badges?.map((badge, idx) => (
                     <Fragment key={idx}>{badge}</Fragment>
                   ))}
