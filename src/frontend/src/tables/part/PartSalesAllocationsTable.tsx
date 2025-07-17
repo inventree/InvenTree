@@ -15,6 +15,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
+  PartColumn,
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -36,6 +37,7 @@ export default function PartSalesAllocationsTable({
       {
         accessor: 'order',
         title: t`Sales Order`,
+        switchable: false,
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
@@ -49,6 +51,15 @@ export default function PartSalesAllocationsTable({
       DescriptionColumn({
         accessor: 'order_detail.description'
       }),
+      {
+        accessor: 'part_detail',
+        title: t`Part`,
+        render: (record: any) => <PartColumn part={record.part_detail} />
+      },
+      {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`
+      },
       ProjectCodeColumn({
         accessor: 'order_detail.project_code_detail'
       }),
@@ -60,6 +71,7 @@ export default function PartSalesAllocationsTable({
       {
         accessor: 'allocated',
         title: t`Required Stock`,
+        switchable: false,
         render: (record: any) => (
           <ProgressBar
             progressLabel
@@ -121,7 +133,7 @@ export default function PartSalesAllocationsTable({
           order_outstanding: true
         },
         enableSearch: false,
-        enableColumnSwitching: false,
+        enableColumnSwitching: true,
         rowExpansion: rowExpansion,
         rowActions: rowActions
       }}
