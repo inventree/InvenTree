@@ -62,6 +62,7 @@ export function Header() {
   const { isLoggedIn } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
 
   const navbar_message = useMemo(() => {
     return server.customize?.navbar_message;
@@ -107,8 +108,22 @@ export function Header() {
     else closeNavDrawer();
   }, [navigationOpen]);
 
+  const headerStyle: any = useMemo(() => {
+    const sticky: boolean = userSettings.isSet('STICKY_HEADER', true);
+
+    if (sticky) {
+      return {
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000
+      };
+    } else {
+      return {};
+    }
+  }, [userSettings]);
+
   return (
-    <div className={classes.layoutHeader}>
+    <div className={classes.layoutHeader} style={headerStyle}>
       <SearchDrawer opened={searchDrawerOpened} onClose={closeSearchDrawer} />
       <NavigationDrawer opened={navDrawerOpened} close={closeNavDrawer} />
       <NotificationDrawer
