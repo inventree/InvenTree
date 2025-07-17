@@ -72,7 +72,7 @@ export default function PartSalesAllocationsTable({
       }),
       {
         accessor: 'allocated',
-        title: t`Required Stock`,
+        title: t`Allocated Stock`,
         switchable: false,
         render: (record: any) => (
           <ProgressBar
