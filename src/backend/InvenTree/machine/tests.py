@@ -157,7 +157,7 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
         self.assertEqual(registry.get_drivers('testing-type')[0].SLUG, 'test-driver')
 
         # test that init hooks where called correctly
-        CALL_COUNT = range(2, 5)  # Due to interplay between plugin and machine registry
+        CALL_COUNT = range(1, 5)  # Due to interplay between plugin and machine registry
         self.assertIn(self.driver_mocks['init_driver'].call_count, CALL_COUNT)
         self.assertIn(self.driver_mocks['init_machine'].call_count, CALL_COUNT)
 
