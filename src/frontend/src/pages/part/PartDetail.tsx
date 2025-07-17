@@ -153,6 +153,9 @@ export default function PartDetail() {
 
     const data = { ...part };
 
+    const fetching =
+      partRequirementsQuery.isFetching || instanceQuery.isFetching;
+
     // Copy part requirements data into the main part data
     data.total_in_stock =
       partRequirements?.total_stock ?? part?.total_in_stock ?? 0;
@@ -280,11 +283,12 @@ export default function PartDetail() {
         label: t`In Stock`
       },
       {
-        type: 'number',
+        type: 'progressbar',
         name: 'unallocated_stock',
-        unit: part.units,
+        total: data.total_in_stock,
+        progress: data.unallocated,
         label: t`Available Stock`,
-        hidden: part.total_in_stock == part.unallocated_stock
+        hidden: data.total_in_stock == data.unallocated
       },
       {
         type: 'number',
@@ -324,8 +328,9 @@ export default function PartDetail() {
         progress: partRequirements.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
         hidden:
-          partRequirements.required_for_build_orders <= 0 &&
-          partRequirements.allocated_to_build_orders <= 0
+          fetching ||
+          (partRequirements.required_for_build_orders <= 0 &&
+            partRequirements.allocated_to_build_orders <= 0)
       },
       {
         type: 'progressbar',
@@ -335,8 +340,9 @@ export default function PartDetail() {
         progress: partRequirements.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
         hidden:
-          partRequirements.required_for_sales_orders <= 0 &&
-          partRequirements.allocated_to_sales_orders <= 0
+          fetching ||
+          (partRequirements.required_for_sales_orders <= 0 &&
+            partRequirements.allocated_to_sales_orders <= 0)
       },
       {
         type: 'progressbar',
@@ -345,14 +351,15 @@ export default function PartDetail() {
         progress: partRequirements.building,
         total: partRequirements.scheduled_to_build,
         hidden:
-          !partRequirements.building && !partRequirements.scheduled_to_build
+          fetching ||
+          (!partRequirements.building && !partRequirements.scheduled_to_build)
       },
       {
         type: 'number',
         name: 'can_build',
         unit: part.units,
         label: t`Can Build`,
-        hidden: !part.assembly || partRequirementsQuery.isFetching
+        hidden: !part.assembly || fetching
       }
     ];
 
