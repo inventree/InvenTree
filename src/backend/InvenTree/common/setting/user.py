@@ -173,12 +173,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'PART_SHOW_QUANTITY_IN_FORMS': {
-        'name': _('Show Quantity in Forms'),
-        'description': _('Display available part quantity in some forms'),
-        'default': True,
-        'validator': bool,
-    },
     'FORMS_CLOSE_USING_ESCAPE': {
         'name': _('Escape Key Closes Forms'),
         'description': _('Use the escape key to close modal forms'),
