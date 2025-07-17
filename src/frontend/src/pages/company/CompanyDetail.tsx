@@ -150,11 +150,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
           <DetailsImage
             appRole={UserRoles.purchase_order}
             apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-            src={company.image}
+            src={company.image.image}
             pk={company.pk}
             refresh={refreshInstance}
-            imageActions={{
-              uploadFile: true,
+            EditImageActions={{
+              replaceFile: true,
               downloadImage: true,
               deleteFile: true
             }}

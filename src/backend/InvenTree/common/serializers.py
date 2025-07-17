@@ -11,7 +11,7 @@ from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
@@ -592,7 +592,16 @@ class UploadedImageSerializer(serializers.ModelSerializer):
         """Serializer metaclass."""
 
         model = common_models.UploadedImage
-        fields = ['pk', 'primary', 'image', 'thumbnail', 'model_type', 'model_id']
+        fields = [
+            'pk',
+            'primary',
+            'image',
+            'thumbnail',
+            'model_type',
+            'existing_image',
+            'model_id',
+        ]
+        read_only_fields = ['pk', 'thumbnail']
 
     def __init__(self, *args, **kwargs):
         """Override the model_type field to provide dynamic choices."""
@@ -615,6 +624,63 @@ class UploadedImageSerializer(serializers.ModelSerializer):
         allow_blank=False,
         allow_null=False,
     )
+
+    # Allow selection of an existing image file
+    existing_image = serializers.IntegerField(
+        label=_('Existing Image Id'),
+        help_text=_('Image ID of an existing uploaded image'),
+        write_only=True,
+        required=False,
+    )
+
+    def save(self, **kwargs):
+        """Override the save method.
+
+        Handles the existing_image field.
+        If this is the first image for (model_type, model_id), marks it as primary.
+        """
+        data = self.validated_data
+        existing_image_pk = data.pop('existing_image', None)
+
+        instance = super().save(**kwargs)
+
+        #  if an existing image was referenced, copy its file over
+        if existing_image_pk:
+            existing = common_models.UploadedImage.objects.get(pk=existing_image_pk)
+            instance.image = existing.image
+            instance.save()
+
+        # automatically mark as primary if this is the *only* image
+        qs = common_models.UploadedImage.objects.filter(
+            model_type=instance.model_type, model_id=instance.model_id
+        )
+        if qs.count() == 1 and not instance.primary:
+            instance.primary = True
+            instance.save()
+
+        return instance
+
+    def validate_existing_image(self, img):
+        """Validate the existing_image field."""
+        if img is None:
+            return img
+
+        try:
+            common_models.UploadedImage.objects.get(pk=img)
+        except common_models.UploadedImage.DoesNotExist:
+            raise ValidationError(
+                _('No UploadedImage found with id={id}').format(id=img)
+            )
+
+        return img
+
+
+class UploadedImageThumbSerializer(serializers.Serializer):
+    """Serializer for a thumbnail of an uploaded image."""
+
+    image = serializers.URLField(read_only=True)
+    count = serializers.IntegerField()
+    pk = serializers.IntegerField()
 
 
 class AttachmentSerializer(InvenTreeModelSerializer):

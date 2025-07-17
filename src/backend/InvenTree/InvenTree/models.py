@@ -912,7 +912,7 @@ class InvenTreeImageUploadMixin(models.Model):
         """Custom delete method for InvenTreeImageUploadMixin.
 
         - Before deleting the object, check if there are any uploaded images associated with it.
-        - If so, delete the notes first
+        - If so, delete the images first
         """
         from common.models import UploadedImage
 

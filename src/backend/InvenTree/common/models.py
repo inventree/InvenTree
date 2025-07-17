@@ -1880,13 +1880,35 @@ class UploadedImage(models.Model):
 
     def save(self, *args, **kwargs):
         """Override save to ensure only one primary image per model_id and model_type."""
-        if self.primary:
-            # Set all other images with same model_id and model_type to non-primary
-            UploadedImage.objects.filter(
-                model_id=self.model_id, model_type=self.model_type, primary=True
-            ).exclude(pk=self.pk).update(primary=False)
+        with transaction.atomic():
+            if self.primary:
+                # Set all other images with same model_id and model_type to non-primary
+                UploadedImage.objects.filter(
+                    model_id=self.model_id, model_type=self.model_type, primary=True
+                ).exclude(pk=self.pk).update(primary=False)
 
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Override delete so that if this image was primary, the remaining image with the highest id becomes primary."""
+        with transaction.atomic():
+            # Delete the instance
+            super().delete(*args, **kwargs)
+
+            # If it was primary, promote the next candidate
+            if self.primary:
+                next_img = (
+                    UploadedImage.objects.filter(
+                        model_type=self.model_type, model_id=self.model_id
+                    )
+                    .order_by('-id')
+                    .first()
+                )
+
+                if next_img:
+                    # Mark it as primary
+                    next_img.primary = True
+                    next_img.save()
 
     def get_image_url(self):
         """Return the URL of the image for this part."""

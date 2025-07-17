@@ -479,6 +479,7 @@ class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreat
     ordering = 'test_name'
 
 
+# TODO: We don't need to this view after implement part image in UploadImage Table
 class PartThumbs(ListAPI):
     """API endpoint for retrieving information on available Part thumbnails."""
 

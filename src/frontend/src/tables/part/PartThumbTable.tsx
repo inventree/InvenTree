@@ -21,6 +21,7 @@ import { Suspense, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { ModelType } from '@lib/index';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -30,7 +31,7 @@ import { Thumbnail } from '../../components/images/Thumbnail';
  */
 export type ThumbTableProps = {
   pk: string;
-  setImage: (image: string) => void;
+  onSuccess: (image: string) => void;
 };
 
 /**
@@ -39,15 +40,16 @@ export type ThumbTableProps = {
 type ImageElement = {
   image: string;
   count: number;
+  pk: number;
 };
 
 /**
  * Input props for each thumbnail in the table
  */
 type ThumbProps = {
-  selected: string | null;
+  selected: number | null;
   element: ImageElement;
-  selectImage: React.Dispatch<React.SetStateAction<string | null>>;
+  selectImage: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
 /**
@@ -65,7 +67,7 @@ function PartThumbComponent({
 
   let color = '';
 
-  if (selected === element?.image) {
+  if (selected === element?.pk) {
     color = selectedColor;
   } else if (hovered) {
     color = hoverColor;
@@ -81,7 +83,7 @@ function PartThumbComponent({
       style={{ backgroundColor: color }}
       p='sm'
       ref={ref}
-      onClick={() => selectImage(element.image)}
+      onClick={() => selectImage(element.pk)}
     >
       <Stack justify='space-between'>
         <AspectRatio ratio={1}>
@@ -99,33 +101,42 @@ function PartThumbComponent({
  * Changes a part's image to the supplied URL and updates the DOM accordingly
  */
 async function setNewImage(
-  image: string | null,
-  pk: string,
-  setImage: (image: string) => void
+  onSuccess: (image: string) => void,
+  image_id: number | null,
+  pk: string
 ) {
   // No need to do anything if no image is selected
-  if (image === null) {
+  if (image_id === null) {
     return;
   }
 
-  const response = await api.patch(apiUrl(ApiEndpoints.part_list, pk), {
-    existing_image: image
-  });
-
-  // Update image component and close modal if update was successful
-  if (response.data.image.includes(image)) {
-    setImage(response.data.image);
-    modals.closeAll();
-  }
+  await api
+    .post(apiUrl(ApiEndpoints.upload_image_list), {
+      existing_image: image_id,
+      model_type: ModelType.part,
+      model_id: pk
+    })
+    .then((response) => {
+      // Update the image in the parent component
+      modals.closeAll();
+      onSuccess(response.data.image);
+      return response;
+    })
+    .catch((error) => {
+      // Handle error
+      console.error('Error setting new image:', error);
+      modals.closeAll();
+      return error.response;
+    });
 }
 
 /**
  * Renders a "table" of thumbnails
  */
-export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
+export function PartThumbTable({ pk, onSuccess }: Readonly<ThumbTableProps>) {
   const limit = 24;
 
-  const [thumbImage, setThumbImage] = useState<string | null>(null);
+  const [thumbImage, setThumbImage] = useState<number | null>(null);
   const [filterInput, setFilterInput] = useState<string>('');
 
   const [page, setPage] = useState<number>(1);
@@ -136,12 +147,12 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
 
   // Fetch thumbnails from API
   const thumbQuery = useQuery({
-    queryKey: [ApiEndpoints.part_thumbs_list, page, searchText],
+    queryKey: [ApiEndpoints.upload_image_thumbs_list, page, searchText],
     queryFn: async () => {
       const offset = Math.max(0, page - 1) * limit;
 
       return api
-        .get(apiUrl(ApiEndpoints.part_thumbs_list), {
+        .get(apiUrl(ApiEndpoints.upload_image_thumbs_list), {
           params: {
             offset: offset,
             limit: limit,
@@ -219,7 +230,7 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
           </Group>
           <Button
             disabled={!thumbImage}
-            onClick={() => setNewImage(thumbImage, pk, setImage)}
+            onClick={() => setNewImage(onSuccess, thumbImage, pk)}
           >
             <Trans>Select</Trans>
           </Button>

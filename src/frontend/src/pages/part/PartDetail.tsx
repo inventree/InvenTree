@@ -47,7 +47,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImageCarousel } from '../../components/details/DetailsImage';
+import { MultipleDetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
@@ -482,14 +482,16 @@ export default function PartDetail() {
       <ItemDetailsGrid>
         <Grid grow>
           <Grid.Col pos='relative' span={{ base: 12, sm: 3 }}>
-            <DetailsImageCarousel
+            <MultipleDetailsImage
               images={part.images}
               appRole={UserRoles.part}
-              imageActions={{
+              addImageActions={{
                 selectExisting: true,
-                downloadImage: hasImage,
-                uploadFile: true,
-                deleteFile: hasImage
+                uploadNewFile: true
+              }}
+              editImageActions={{
+                deleteFile: hasImage,
+                setAsPrimary: hasImage
               }}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
               model_id={part.pk}

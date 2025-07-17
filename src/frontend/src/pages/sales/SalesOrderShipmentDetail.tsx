@@ -182,10 +182,8 @@ export default function SalesOrderShipmentDetail() {
               apiPath={ApiEndpoints.company_list}
               src={customer?.image}
               pk={customer?.pk}
-              imageActions={{
-                selectExisting: false,
+              EditImageActions={{
                 downloadImage: false,
-                uploadFile: false,
                 deleteFile: false
               }}
             />

@@ -431,7 +431,8 @@ export default function StockDetail() {
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
             src={
-              stockitem.part_detail?.image ?? stockitem?.part_detail?.thumbnail
+              stockitem.part_detail?.image.image ??
+              stockitem?.part_detail?.image.thumbnail
             }
             pk={stockitem.part}
           />
