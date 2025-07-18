@@ -100,7 +100,9 @@ export function PurchaseOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn({}),
+      ReferenceColumn({
+        switchable: false
+      }),
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
