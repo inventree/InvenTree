@@ -1690,6 +1690,7 @@ class BomItemSerializer(
             'inherited',
             'optional',
             'consumable',
+            'round_up_multiple',
             'note',
             'pk',
             'part_detail',
@@ -1747,6 +1748,10 @@ class BomItemSerializer(
             self.fields.pop('pricing_updated', None)
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
+
+    round_up_multiple = InvenTree.serializers.InvenTreeDecimalField(
+        required=False, allow_null=True
+    )
 
     def validate_quantity(self, quantity):
         """Perform validation for the BomItem quantity field."""
