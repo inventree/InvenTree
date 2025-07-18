@@ -114,8 +114,7 @@ export function Header() {
     if (sticky) {
       return {
         position: 'sticky',
-        top: 0,
-        zIndex: 1000
+        top: 0
       };
     } else {
       return {};
