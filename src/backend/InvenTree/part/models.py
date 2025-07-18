@@ -15,7 +15,11 @@ from typing import Optional, cast
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator, MinValueValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
+)
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce, Greatest
@@ -4331,6 +4335,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
+        setup_quantity: Extra required quantity for a build, to account for setup losses
+        attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
@@ -4505,6 +4511,26 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         validators=[validators.validate_overage],
         verbose_name=_('Overage'),
         help_text=_('Estimated build wastage quantity (absolute or percentage)'),
+    )
+
+    setup_quantity = models.DecimalField(
+        default=0,
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Setup Quantity'),
+        help_text=_('Extra required quantity for a build, to account for setup losses'),
+    )
+
+    attrition = models.DecimalField(
+        default=0,
+        max_digits=6,
+        decimal_places=3,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        verbose_name=_('Attrition'),
+        help_text=_(
+            'Estimated attrition for a build, expressed as a percentage (0-100)'
+        ),
     )
 
     rounding_multiple = models.DecimalField(
