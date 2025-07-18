@@ -113,6 +113,37 @@ class BomItemTest(TestCase):
 
         self.assertEqual(n, 3150)
 
+    def test_round_up(self):
+        """Test the 'round_up_multiple' attribute."""
+        item = BomItem.objects.get(pk=4)
+
+        # Default is null
+        self.assertIsNone(item.round_up_multiple)
+        self.assertEqual(item.get_required_quantity(1), 3)  # 3 x 1 = 3
+        self.assertEqual(item.get_required_quantity(10), 30)  # 3 x 10 = 30
+        self.assertEqual(item.get_required_quantity(25), 75)  # 3 x 25 = 75
+
+        # Set a round-up multiple
+        item.round_up_multiple = 17
+        item.save()
+
+        # Now the required quantity should be rounded up to the nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(1), 17
+        )  # 3 x 1 = 3, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(2), 17
+        )  # 3 x 2 = 6, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(5), 17
+        )  # 3 x 5 = 15, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(10), 34
+        )  # 3 x 10 = 30, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(100), 306
+        )  # 3 x 100 = 300, rounded up to nearest multiple of 17
+
     def test_item_hash(self):
         """Test BOM item hash encoding."""
         item = BomItem.objects.get(part=100, sub_part=50)
