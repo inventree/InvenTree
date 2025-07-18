@@ -4509,6 +4509,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
     round_up_multiple = models.DecimalField(
         null=True,
+        blank=True,
         default=None,
         max_digits=15,
         decimal_places=5,

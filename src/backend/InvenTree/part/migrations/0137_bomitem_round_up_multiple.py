@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 help_text="Round up required quantity to nearest multiple",
                 max_digits=15,
                 null=True,
+                blank=True,
                 validators=[django.core.validators.MinValueValidator(0)],
                 verbose_name="Round Up Multiple",
             ),
