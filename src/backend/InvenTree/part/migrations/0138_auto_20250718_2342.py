@@ -30,9 +30,11 @@ def convert_overage(apps, schema_editor):
 
         if overage.endswith('%'):
             try:
-                item.attrition = Decimal(overage[:-1])
-                item.attrition = max(0, item.setup_quantity)  # Ensure it's not negative
-                item.attrition = min(100, item.setup_quantity)  # Cap at 100%
+                attrition = Decimal(overage[:-1])
+                attrition = max(0, attrition)  # Ensure it's not negative
+                attrition = min(100, attrition)  # Cap at 100%
+                
+                item.attrition = attrition
                 item.setup_quantity = Decimal(0)
                 item.save()
             except Exception as e:
@@ -42,8 +44,10 @@ def convert_overage(apps, schema_editor):
         else:
             # If not a percentage, treat it as a decimal number
             try:
-                item.setup_quantity = Decimal(overage)
-                item.setup_quantity = max(0, item.setup_quantity)  # Ensure it's not negative
+                setup_quantity = Decimal(overage)
+                setup_quantity = max(0, setup_quantity)  # Ensure it's not negative
+                
+                item.setup_quantity = setup_quantity
                 item.attrition = Decimal(0)
                 item.save()
             except Exception as e:
