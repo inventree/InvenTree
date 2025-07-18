@@ -187,6 +187,45 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('2022-04-29').waitFor();
 });
 
+test('Parts - Requirements', async ({ browser }) => {
+  // Navigate to the "Widget Assembly" part detail page
+  // This part has multiple "variants"
+  // We expect that the template page includes variant requirements
+  const page = await doCachedLogin(browser, { url: 'part/77/details' });
+
+  // Check top-level badges
+  await page.getByText('In Stock: 209').waitFor();
+  await page.getByText('Available: 204').waitFor();
+  await page.getByText('Required: 275').waitFor();
+  await page.getByText('In Production: 24').waitFor();
+
+  // Check requirements details
+  await page.getByText('204 / 209').waitFor(); // Available stock
+  await page.getByText('0 / 100').waitFor(); // Allocated to build orders
+  await page.getByText('5 / 175').waitFor(); // Allocated to sales orders
+  await page.getByText('24 / 214').waitFor(); // In production
+
+  // Let's check out the "variants" for this part, too
+  await navigate(page, 'part/81/details'); // WID-REV-A
+  await page.getByText('WID-REV-A', { exact: true }).first().waitFor();
+  await page.getByText('In Stock: 165').waitFor();
+  await page.getByText('Required: 75').waitFor();
+
+  await navigate(page, 'part/903/details'); // WID-REV-B
+  await page.getByText('WID-REV-B', { exact: true }).first().waitFor();
+
+  await page.getByText('In Stock: 44').waitFor();
+  await page.getByText('Available: 39').waitFor();
+  await page.getByText('Required: 100').waitFor();
+  await page.getByText('In Production: 10').waitFor();
+
+  await page.getByText('39 / 44').waitFor(); // Available stock
+  await page.getByText('5 / 100').waitFor(); // Allocated to sales orders
+  await page.getByText('10 / 125').waitFor(); // In production
+
+  await page.waitForTimeout(2500);
+});
+
 test('Parts - Allocations', async ({ browser }) => {
   // Let's look at the allocations for a single stock item
   const page = await doCachedLogin(browser, { url: 'stock/item/324/' });

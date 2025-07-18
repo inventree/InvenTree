@@ -3,7 +3,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
-import { showNotification } from '@mantine/notifications';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
 import type { JSX } from 'react';
 import { useApi } from '../../contexts/ApiContext';
@@ -31,8 +31,10 @@ export default function StarredToggleButton({
         { starred: !starred }
       )
       .then(() => {
+        hideNotification('subscription-update');
         showNotification({
-          title: 'Subscription updated',
+          title: t`Subscription Updated`,
+          id: 'subscription-update',
           message: `Subscription ${starred ? 'removed' : 'added'}`,
           autoClose: 5000,
           color: 'blue'

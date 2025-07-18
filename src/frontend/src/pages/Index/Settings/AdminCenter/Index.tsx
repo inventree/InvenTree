@@ -302,7 +302,6 @@ export default function AdminCenter() {
             panels={adminCenterPanels}
             groups={grouping}
             collapsible={true}
-            markCustomPanels={true}
             model='admincenter'
             id={null}
           />

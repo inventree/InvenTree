@@ -11,7 +11,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import { IncludeVariantsFilter, StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -133,12 +133,7 @@ export default function PartPurchaseOrdersTable({
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
       },
-      {
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      }
+      IncludeVariantsFilter()
     ];
   }, []);
 

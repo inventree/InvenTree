@@ -33,6 +33,7 @@ import {
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasProjectCodeFilter,
+  IncludeVariantsFilter,
   IssuedByFilter,
   MaxDateFilter,
   MinDateFilter,
@@ -190,12 +191,7 @@ export function BuildOrderTable({
 
     // If we are filtering on a specific part, we can include the "include variants" filter
     if (!!partId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
+      filters.push(IncludeVariantsFilter());
     }
 
     return filters;

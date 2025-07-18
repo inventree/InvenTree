@@ -71,7 +71,6 @@ export type PanelProps = {
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
-  markCustomPanels?: boolean;
 };
 
 function BasePanelGroup({
@@ -84,8 +83,7 @@ function BasePanelGroup({
   instance,
   model,
   id,
-  collapsible = true,
-  markCustomPanels = false
+  collapsible = true
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -157,7 +155,7 @@ function BasePanelGroup({
     if (pluginPanels.length > 0) {
       _grouped_panels.push({
         id: 'plugins',
-        label: markCustomPanels ? t`Plugin Provided` : '',
+        label: t`Plugin Provided`,
         panels: pluginPanels
       });
     }
