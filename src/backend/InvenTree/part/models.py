@@ -4579,6 +4579,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             self.part.pk,
             self.sub_part.pk,
             normalize(self.quantity),
+            self.overage,
+            self.round_up_multiple,
             self.reference,
             self.optional,
             self.inherited,
@@ -4708,6 +4710,17 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         overage_quantity = self.get_overage_quantity(base_quantity)
 
         required = float(base_quantity) + float(overage_quantity)
+
+        # We now have the total requirement
+        # If a "round_up_multiple" is specified, then round up to the nearest multiple
+        if self.round_up_multiple and self.round_up_multiple > 0:
+            try:
+                round_up = Decimal(self.round_up_multiple)
+                value = Decimal(required)
+                value = math.ceil(value / round_up) * round_up
+                required = float(value)
+            except InvalidOperation:
+                log_error('bom_item.get_required_quantity')
 
         return required
 
