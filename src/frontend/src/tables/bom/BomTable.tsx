@@ -149,6 +149,24 @@ export function BomTable({
         }
       },
       {
+        accessor: 'overage',
+        defaultVisible: false
+      },
+      {
+        accessor: 'round_up_multiple',
+        defaultVisible: false,
+        sortable: false,
+        render: (record: any) => {
+          const multiple: number | null = record.round_up_multiple;
+
+          if (multiple == null) {
+            return '-';
+          } else {
+            return formatDecimal(multiple);
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
         defaultVisible: false,
         render: (row: any) => {
