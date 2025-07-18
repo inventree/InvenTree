@@ -30,7 +30,7 @@ export function bomItemFields(): ApiFormFieldSet {
     quantity: {},
     reference: {},
     overage: {},
-    round_up_multiple: {},
+    rounding_multiple: {},
     allow_variants: {},
     inherited: {},
     consumable: {},

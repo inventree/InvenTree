@@ -115,17 +115,17 @@ class BomItemTest(TestCase):
         self.assertEqual(n, 3150)
 
     def test_round_up(self):
-        """Test the 'round_up_multiple' attribute."""
+        """Test the 'rounding_multiple' attribute."""
         item = BomItem.objects.get(pk=4)
 
         # Default is null
-        self.assertIsNone(item.round_up_multiple)
+        self.assertIsNone(item.rounding_multiple)
         self.assertEqual(item.get_required_quantity(1), 3)  # 3 x 1 = 3
         self.assertEqual(item.get_required_quantity(10), 30)  # 3 x 10 = 30
         self.assertEqual(item.get_required_quantity(25), 75)  # 3 x 25 = 75
 
         # Set a round-up multiple
-        item.round_up_multiple = 17
+        item.rounding_multiple = 17
         item.save()
 
         # Now the required quantity should be rounded up to the nearest multiple of 17

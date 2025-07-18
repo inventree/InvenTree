@@ -4331,7 +4331,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
-        round_up_multiple: Rounding quantity when calculating the required quantity for a build
+        rounding_multiple: Rounding quantity when calculating the required quantity for a build
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         inherited: This BomItem can be inherited by the BOMs of variant parts
@@ -4507,15 +4507,17 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         help_text=_('Estimated build wastage quantity (absolute or percentage)'),
     )
 
-    round_up_multiple = models.DecimalField(
+    rounding_multiple = models.DecimalField(
         null=True,
         blank=True,
         default=None,
         max_digits=15,
         decimal_places=5,
         validators=[MinValueValidator(0)],
-        verbose_name=_('Round Up Multiple'),
-        help_text=_('Round up required quantity to nearest multiple'),
+        verbose_name=_('Rounding Multiple'),
+        help_text=_(
+            'Round up required production quantity to nearest multiple of this value'
+        ),
     )
 
     reference = models.CharField(
@@ -4580,7 +4582,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             self.sub_part.pk,
             normalize(self.quantity),
             self.overage,
-            self.round_up_multiple,
+            self.rounding_multiple,
             self.reference,
             self.optional,
             self.inherited,
@@ -4712,10 +4714,10 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         required = float(base_quantity) + float(overage_quantity)
 
         # We now have the total requirement
-        # If a "round_up_multiple" is specified, then round up to the nearest multiple
-        if self.round_up_multiple and self.round_up_multiple > 0:
+        # If a "rounding_multiple" is specified, then round up to the nearest multiple
+        if self.rounding_multiple and self.rounding_multiple > 0:
             try:
-                round_up = Decimal(self.round_up_multiple)
+                round_up = Decimal(self.rounding_multiple)
                 value = Decimal(required)
                 value = math.ceil(value / round_up) * round_up
                 required = float(value)

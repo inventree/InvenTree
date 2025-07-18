@@ -1690,7 +1690,7 @@ class BomItemSerializer(
             'inherited',
             'optional',
             'consumable',
-            'round_up_multiple',
+            'rounding_multiple',
             'note',
             'pk',
             'part_detail',
@@ -1749,7 +1749,7 @@ class BomItemSerializer(
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
-    round_up_multiple = InvenTree.serializers.InvenTreeDecimalField(
+    rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
     )
 

@@ -157,7 +157,7 @@ export function BomTable({
         defaultVisible: false
       },
       {
-        accessor: 'round_up_multiple',
+        accessor: 'rounding_multiple',
         defaultVisible: false,
         sortable: false,
         render: (record: any) => {
