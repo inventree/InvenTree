@@ -4331,6 +4331,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
+        round_up_multiple: Rounding quantity when calculating the required quantity for a build
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         inherited: This BomItem can be inherited by the BOMs of variant parts
@@ -4504,6 +4505,16 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         validators=[validators.validate_overage],
         verbose_name=_('Overage'),
         help_text=_('Estimated build wastage quantity (absolute or percentage)'),
+    )
+
+    round_up_multiple = models.DecimalField(
+        null=True,
+        default=None,
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Round Up Multiple'),
+        help_text=_('Round up required quantity to nearest multiple'),
     )
 
     reference = models.CharField(
