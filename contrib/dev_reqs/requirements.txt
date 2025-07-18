@@ -102,10 +102,10 @@ idna==3.10 \
     --hash=sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9 \
     --hash=sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3
     # via requests
-jc==1.25.4 \
-    --hash=sha256:1e4f45d2e5b72cf9d300b0d9df0578c0d3b553843e3ad37a525d93bb0e94aca1 \
-    --hash=sha256:a32eaf029c56b582dadae48895f20784d0f84f2fa28a8e2b32f377a8bffa8b39
-    # via -r contrib/dev_reqs/requirements.in
+jc==1.25.5 \
+    --hash=sha256:a2ec1e7bcadeb977f278b36a1619d85ea9070ab2b81aba74b7ee2c36470c3f8f \
+    --hash=sha256:f8ac0e4bc427b0ee8a3bdb07a254cc9df6b6036cd440f6c425e2e519cdbda78a
+    # via -r requirements.in
 pygments==2.19.1 \
     --hash=sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f \
     --hash=sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c
@@ -164,11 +164,11 @@ pyyaml==6.0.2 \
     --hash=sha256:efdca5630322a10774e8e98e1af481aad470dd62c3170801852d752aa7a783ba \
     --hash=sha256:f753120cb8181e736c57ef7636e83f31b9c0d1722c516f7e86cf15b7aa57ff12 \
     --hash=sha256:ff3824dc5261f50c9b0dfb3be22b4567a6f938ccce4587b38952d85fd9e9afe4
-    # via -r contrib/dev_reqs/requirements.in
+    # via -r requirements.in
 requests==2.32.4 \
     --hash=sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c \
     --hash=sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422
-    # via -r contrib/dev_reqs/requirements.in
+    # via -r requirements.in
 ruamel-yaml==0.18.12 \
     --hash=sha256:5a38fd5ce39d223bebb9e3a6779e86b9427a03fb0bf9f270060f8b149cffe5e2 \
     --hash=sha256:790ba4c48b6a6e6b12b532a7308779eb12d2aaab3a80fdb8389216f28ea2b287
