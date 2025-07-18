@@ -17,9 +17,10 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Property | Description |
 | --- | --- |
 | Part | A reference to another *Part* object which is required to build this assembly |
-| Quantity | The quantity of *Part* required for the assembly |
 | Reference | Optional reference field to describe the BOM Line Item, e.g. part designator |
-| Overage | Estimated losses for a build. Can be expressed as absolute values (e.g. 1, 7, etc) or as a percentage (e.g. 2%) |
+| Quantity | The quantity of *Part* required for the assembly |
+| Overage | Estimated attrition losses for a production run. Can be expressed as absolute values (e.g. 1, 7, etc) or as a percentage (e.g. 2%) |
+| Rounding Multiple | A value which indicates that the required quantity should be rounded up to the nearest multiple of this value. |
 | Consumable | A boolean field which indicates whether this BOM Line Item is *consumable* |
 | Inherited | A boolean field which indicates whether this BOM Line Item will be "inherited" by BOMs for parts which are a variant (or sub-variant) of the part for which this BOM is defined. |
 | Optional | A boolean field which indicates if this BOM Line Item is "optional" |
@@ -111,3 +112,71 @@ Select a part in the list and click on "Add Substitute" button to confirm.
 ## Multi Level BOMs
 
 Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
+
+## Required Quantity Calculation
+
+When a new [Build Order](./build.md) is created, the required production quantity of each component part is calculated based on the BOM line items defined for the assembly being built. To calculate the required production quantity of a component part, the following considerations are made:
+
+### Base Quantity
+
+The base quantity of a BOM line item is defined by the `Quantity` field of the BOM line item. This is the number of parts which are required to build one assembly. This value is multiplied by the number of assemblies which are being built to determine the total quantity of parts required.
+
+```
+Required Quantity = Base Quantity * Number of Assemblies
+```
+
+### Overage
+
+The `Overage` field of a BOM line item is used to account for expected losses during the production process. This can be expressed as an absolute value (e.g. 1, 7, etc) or as a percentage (e.g. 2%).
+
+If the `Overage` field is expressed as a percentage, it is applied to the calculated `Required Quantity` value, to calculate the expected component attrition.
+
+```
+Required Quantity = Required Quantity * (1 + Overage Percentage)
+```
+
+If the `Overage` field is expressed as an absolute value, it is added to the calculated `Required Quantity` value.
+
+```
+Required Quantity = Required Quantity + Overage Absolute Value
+```
+
+### Rounding Multiple
+
+The `Rounding Multiple` field of a BOM line item is used to round the calculated `Required Quantity` value to the nearest multiple of the specified value. This is useful for ensuring that the required quantity is a whole number, or to meet specific packaging requirements.
+
+```
+Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
+```
+
+### Example Calculation
+
+Consider a BOM line item with the following properties:
+
+- Base Quantity: 3
+- Overage: 2% (0.02)
+- Rounding Multiple: 25
+
+If we are building 100 assemblies, the required quantity would be calculated as follows:
+
+```
+Required Quantity = Base Quantity * Number of Assemblies
+                  = 3 * 100
+                  = 300
+
+Overage Value = Required Quantity * Overage Percentage
+              = 300 * 0.02
+              = 6
+
+Required Quantity = Required Quantity + Overage Value
+                  = 300 + 6
+                  = 306
+
+Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
+                  = ceil(306 / 25) * 25
+                  = 13 * 25
+                  = 325
+
+```
+
+So the final required production quantity of the component part would be `325`.
