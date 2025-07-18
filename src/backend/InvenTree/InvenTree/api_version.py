@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 370
+INVENTREE_API_VERSION = 371
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v371 -> 2025-07-18 : https://github.com/inventree/InvenTree/pull/10042
+    - Adds "round_up_multiple" field to BomItem API endpoints
 
 v370 -> 2025-07-17 : https://github.com/inventree/InvenTree/pull/10036
     - Adds optional "assembly_detail" information to BuildLine API endpoint
