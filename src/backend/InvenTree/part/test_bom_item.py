@@ -6,6 +6,7 @@ import django.core.exceptions as django_exceptions
 from django.db import transaction
 from django.test import TestCase
 
+import build.models
 import stock.models
 
 from .models import BomItem, BomItemSubstitute, Part
@@ -143,6 +144,20 @@ class BomItemTest(TestCase):
         self.assertEqual(
             item.get_required_quantity(100), 306
         )  # 3 x 100 = 300, rounded up to nearest multiple of 17
+
+        # Next, let's create a new Build order
+        bo = build.models.Build.objects.create(
+            part=item.part, quantity=21, reference='BO-9999', title='Test Build Order'
+        )
+
+        # Build line items have been auto created
+        lines = bo.build_lines.all().filter(bom_item=item)
+        self.assertEqual(lines.count(), 1)
+        line = lines.first()
+
+        self.assertEqual(
+            line.quantity, 68
+        )  # 3 x 21 = 63, rounded up to nearest multiple of 17
 
     def test_item_hash(self):
         """Test BOM item hash encoding."""
@@ -378,4 +393,4 @@ class BomItemTest(TestCase):
         bom_item.save()
 
         # Delete the new BOM item
-        bom_item.delete()
+        (bom_item.delete(),)
