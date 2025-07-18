@@ -140,10 +140,14 @@ export function BomTable({
           const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify='space-between' grow>
-              <Text>{quantity}</Text>
-              {record.overage && <Text size='xs'>+{record.overage}</Text>}
-              {units && <Text size='xs'>{units}</Text>}
+            <Group justify='space-between'>
+              <Group>
+                <Text>{quantity}</Text>
+                {record.overage && (
+                  <Text size='xs'>{`(+${record.overage})`}</Text>
+                )}
+              </Group>
+              {units && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
         }
@@ -157,12 +161,18 @@ export function BomTable({
         defaultVisible: false,
         sortable: false,
         render: (record: any) => {
+          const units = record.sub_part_detail?.units;
           const multiple: number | null = record.round_up_multiple;
 
           if (multiple == null) {
             return '-';
           } else {
-            return formatDecimal(multiple);
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text>{formatDecimal(multiple)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
           }
         }
       },
