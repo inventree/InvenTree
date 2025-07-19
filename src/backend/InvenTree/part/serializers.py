@@ -1750,6 +1750,10 @@ class BomItemSerializer(
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
+    setup_quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
+
+    attrition = InvenTree.serializers.InvenTreeDecimalField(required=False)
+
     rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
     )

@@ -143,8 +143,11 @@ export function BomTable({
             <Group justify='space-between'>
               <Group>
                 <Text>{quantity}</Text>
-                {record.overage && (
-                  <Text size='xs'>{`(+${record.overage})`}</Text>
+                {record.setup_quantity && record.setup_quantity > 0 && (
+                  <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+                )}
+                {record.attrition && record.attrition > 0 && (
+                  <Text size='xs'>{`(+${record.attrition}%)`}</Text>
                 )}
               </Group>
               {units && <Text size='xs'>[{units}]</Text>}
@@ -153,8 +156,36 @@ export function BomTable({
         }
       },
       {
-        accessor: 'overage',
-        defaultVisible: false
+        accessor: 'setup_quantity',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const setup_quantity = record.setup_quantity;
+          const units = record.sub_part_detail?.units;
+          if (setup_quantity == null || setup_quantity === 0) {
+            return '-';
+          } else {
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text size='xs'>{formatDecimal(setup_quantity)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
+          }
+        }
+      },
+      {
+        accessor: 'attrition',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const attrition = record.attrition;
+          if (attrition == null || attrition === 0) {
+            return '-';
+          } else {
+            return <Text size='xs'>{`${formatDecimal(attrition)}%`}</Text>;
+          }
+        }
       },
       {
         accessor: 'rounding_multiple',
