@@ -8,16 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
-from django.db.models import (
-    Case,
-    ExpressionWrapper,
-    F,
-    FloatField,
-    IntegerField,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import ExpressionWrapper, F, Q
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -844,9 +835,6 @@ class PartSerializer(
                 output_field=models.DecimalField(),
             )
         )
-
-        # TODO: This could do with some refactoring
-        # TODO: Note that BomItemSerializer and BuildLineSerializer have very similar code
 
         queryset = queryset.annotate(
             ordering=part_filters.annotate_on_order_quantity(),
@@ -1900,33 +1888,6 @@ class BomItemSerializer(
             building=part_filters.annotate_in_production_quantity(ref)
         )
 
-        # Calculate "total stock" for the referenced sub_part
-        # Calculate the "build_order_allocations" for the sub_part
-        # Note that these fields are only aliased, not annotated
-        queryset = queryset.alias(
-            total_stock=part_filters.annotate_total_stock(reference=ref),
-            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
-                reference=ref
-            ),
-            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
-                reference=ref
-            ),
-        )
-
-        # Calculate 'available_stock' based on previously annotated fields
-        queryset = queryset.annotate(
-            available_stock=Greatest(
-                ExpressionWrapper(
-                    F('total_stock')
-                    - F('allocated_to_sales_orders')
-                    - F('allocated_to_build_orders'),
-                    output_field=models.DecimalField(),
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
-        )
-
         # Calculate 'external_stock'
         queryset = queryset.annotate(
             external_stock=part_filters.annotate_total_stock(
@@ -1934,84 +1895,8 @@ class BomItemSerializer(
             )
         )
 
-        ref = 'substitutes__part__'
-
-        # Extract similar information for any 'substitute' parts
-        queryset = queryset.alias(
-            substitute_stock=part_filters.annotate_total_stock(reference=ref),
-            substitute_build_allocations=part_filters.annotate_build_order_allocations(
-                reference=ref
-            ),
-            substitute_sales_allocations=part_filters.annotate_sales_order_allocations(
-                reference=ref
-            ),
-        )
-
-        # Calculate 'available_substitute_stock' field
-        queryset = queryset.annotate(
-            available_substitute_stock=Greatest(
-                ExpressionWrapper(
-                    F('substitute_stock')
-                    - F('substitute_build_allocations')
-                    - F('substitute_sales_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
-        )
-
-        # Annotate the queryset with 'available variant stock' information
-        variant_stock_query = part_filters.variant_stock_query(reference='sub_part__')
-
-        queryset = queryset.alias(
-            variant_stock_total=part_filters.annotate_variant_quantity(
-                variant_stock_query, reference='quantity'
-            ),
-            variant_bo_allocations=part_filters.annotate_variant_quantity(
-                variant_stock_query, reference='sales_order_allocations__quantity'
-            ),
-            variant_so_allocations=part_filters.annotate_variant_quantity(
-                variant_stock_query, reference='allocations__quantity'
-            ),
-        )
-
-        queryset = queryset.annotate(
-            available_variant_stock=Greatest(
-                ExpressionWrapper(
-                    F('variant_stock_total')
-                    - F('variant_bo_allocations')
-                    - F('variant_so_allocations'),
-                    output_field=FloatField(),
-                ),
-                0,
-                output_field=FloatField(),
-            )
-        )
-
-        # Annotate the "can_build" quantity
-        queryset = queryset.alias(
-            total_stock=ExpressionWrapper(
-                F('available_variant_stock')
-                + F('available_substitute_stock')
-                + F('available_stock'),
-                output_field=FloatField(),
-            )
-        ).annotate(
-            can_build=Greatest(
-                ExpressionWrapper(
-                    Case(
-                        When(Q(quantity=0), then=Value(0)),
-                        default=(F('total_stock') - F('setup_quantity'))
-                        / (F('quantity') * (1.0 + F('attrition') / 100.0)),
-                        output_field=FloatField(),
-                    ),
-                    output_field=FloatField(),
-                ),
-                Decimal(0),
-                output_field=IntegerField(),
-            )
-        )
+        # Annotate available stock and "can_build" quantities
+        queryset = part_filters.annotate_bom_item_can_build(queryset)
 
         return queryset
 

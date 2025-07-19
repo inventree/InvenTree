@@ -21,8 +21,8 @@ from django.core.validators import (
     MinValueValidator,
 )
 from django.db import models, transaction
-from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
-from django.db.models.functions import Coalesce, Greatest
+from django.db.models import F, Q, QuerySet, Sum, UniqueConstraint
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
@@ -1562,118 +1562,28 @@ class Part(
         if not self.has_bom:
             return 0
 
-        total = None
-
         # Prefetch related tables, to reduce query expense
         queryset = self.get_bom_items()
 
         # Ignore 'consumable' BOM items for this calculation
         queryset = queryset.filter(consumable=False)
 
-        queryset = queryset.prefetch_related(
-            'sub_part__stock_items',
-            'sub_part__stock_items__allocations',
-            'sub_part__stock_items__sales_order_allocations',
-            'substitutes',
-            'substitutes__part__stock_items',
-        )
+        # Annotate the queryset with the 'can_build' quantity
+        queryset = part.filters.annotate_bom_item_can_build(queryset)
 
-        # Annotate the 'available stock' for each part in the BOM
-        ref = 'sub_part__'
-        queryset = queryset.alias(
-            total_stock=part.filters.annotate_total_stock(reference=ref),
-            so_allocations=part.filters.annotate_sales_order_allocations(reference=ref),
-            bo_allocations=part.filters.annotate_build_order_allocations(reference=ref),
-        )
+        can_build_quantity = None
 
-        # Calculate the 'available stock' based on previous annotations
-        queryset = queryset.annotate(
-            available_stock=Greatest(
-                ExpressionWrapper(
-                    F('total_stock') - F('so_allocations') - F('bo_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                0,
-                output_field=models.DecimalField(),
-            )
-        )
+        for value in queryset.values_list('can_build', flat=True):
+            if can_build_quantity is None:
+                can_build_quantity = value
+            else:
+                can_build_quantity = min(can_build_quantity, value)
 
-        # Extract similar information for any 'substitute' parts
-        ref = 'substitutes__part__'
-        queryset = queryset.alias(
-            sub_total_stock=part.filters.annotate_total_stock(reference=ref),
-            sub_so_allocations=part.filters.annotate_sales_order_allocations(
-                reference=ref
-            ),
-            sub_bo_allocations=part.filters.annotate_build_order_allocations(
-                reference=ref
-            ),
-        )
+        if can_build_quantity is None:
+            # No BOM items, or no items which can be built
+            return 0
 
-        queryset = queryset.annotate(
-            substitute_stock=Greatest(
-                ExpressionWrapper(
-                    F('sub_total_stock')
-                    - F('sub_so_allocations')
-                    - F('sub_bo_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                0,
-                output_field=models.DecimalField(),
-            )
-        )
-
-        # TODO: Refactor this...
-
-        # Extract similar information for any 'variant' parts
-        variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
-
-        queryset = queryset.alias(
-            var_total_stock=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='quantity'
-            ),
-            var_bo_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='allocations__quantity'
-            ),
-            var_so_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='sales_order_allocations__quantity'
-            ),
-        )
-
-        queryset = queryset.annotate(
-            variant_stock=Greatest(
-                ExpressionWrapper(
-                    F('var_total_stock')
-                    - F('var_bo_allocations')
-                    - F('var_so_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                0,
-                output_field=models.DecimalField(),
-            )
-        )
-
-        for item in queryset.all():
-            if item.quantity <= 0:
-                # Ignore zero-quantity items
-                continue
-
-            # Iterate through each item in the queryset, work out the limiting quantity
-            quantity = item.available_stock + item.substitute_stock
-
-            if item.allow_variants:
-                quantity += item.variant_stock
-
-            # Calculate how many of this item can be built
-            n = item.can_build_quantity(quantity)
-
-            if total is None or n < total:
-                total = n
-
-        if total is None:
-            total = 0
-
-        return int(max(total, 0))
+        return int(max(can_build_quantity, 0))
 
     @property
     def active_builds(self):

@@ -30,6 +30,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Cast, Coalesce, Greatest
+from django.db.models.query import QuerySet
 
 from sql_util.utils import SubquerySum
 
@@ -359,6 +360,144 @@ def annotate_sub_categories():
         0,
         output_field=IntegerField(),
     )
+
+
+def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> QuerySet:
+    """Annotate the 'can_build' quantity for each BomItem in a queryset.
+
+    Arguments:
+        queryset: A queryset of BomItem objects
+        reference: Reference to the BomItem from the current queryset (default = '')
+
+    To do this we need to also annotate some other fields which are used in the calculation:
+
+    - total_in_stock: Total stock quantity for the part (may include variant stock)
+    - available_stock: Total available stock quantity for the part
+    - variant_stock: Total stock quantity for any variant parts
+    - substitute_stock: Total stock quantity for any substitute parts
+
+    And then finally, annotate the 'can_build' quantity for each BomItem:
+    """
+    # Pre-fetch the required related fields
+    queryset = queryset.prefetch_related(
+        f'{reference}sub_part',
+        f'{reference}sub_part__stock_items',
+        f'{reference}sub_part__stock_items__allocations',
+        f'{reference}sub_part__stock_items__sales_order_allocations',
+        f'{reference}substitutes',
+        f'{reference}substitutes__part__stock_items',
+    )
+
+    # Queryset reference to the linked sub_part instance
+    sub_part_ref = f'{reference}sub_part__'
+
+    # Apply some aliased annotations to the queryset
+    queryset = queryset.annotate(
+        # Total stock quantity (just for the sub_part itself)
+        total_stock=annotate_total_stock(sub_part_ref),
+        # Total allocated to sales orders
+        allocated_to_sales_orders=annotate_sales_order_allocations(sub_part_ref),
+        # Total allocated to build orders
+        allocated_to_build_orders=annotate_build_order_allocations(sub_part_ref),
+    )
+
+    # Annotate the "available" stock, based on the total stock and allocations
+    queryset = queryset.annotate(
+        available_stock=Greatest(
+            ExpressionWrapper(
+                F('total_stock')
+                - F('allocated_to_sales_orders')
+                - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            ),
+            Decimal(0),
+            output_field=models.DecimalField(),
+        )
+    )
+
+    # Annotate the total stock for any variant parts
+    vq = variant_stock_query(reference=sub_part_ref)
+
+    queryset = queryset.alias(
+        variant_stock_total=annotate_variant_quantity(vq, reference='quantity'),
+        variant_bo_allocations=annotate_variant_quantity(
+            vq, reference='sales_order_allocations__quantity'
+        ),
+        variant_so_allocations=annotate_variant_quantity(
+            vq, reference='allocations__quantity'
+        ),
+    )
+
+    # Annotate total variant stock
+    queryset = queryset.annotate(
+        available_variant_stock=Greatest(
+            ExpressionWrapper(
+                F('variant_stock_total')
+                - F('variant_bo_allocations')
+                - F('variant_so_allocations'),
+                output_field=FloatField(),
+            ),
+            0,
+            output_field=FloatField(),
+        )
+    )
+
+    # Account for substitute parts
+    substitute_ref = f'{reference}substitutes__part__'
+
+    # Extract similar information for any 'substitute' parts
+    queryset = queryset.alias(
+        substitute_stock=annotate_total_stock(reference=substitute_ref),
+        substitute_build_allocations=annotate_build_order_allocations(
+            reference=substitute_ref
+        ),
+        substitute_sales_allocations=annotate_sales_order_allocations(
+            reference=substitute_ref
+        ),
+    )
+
+    # Calculate 'available_substitute_stock' field
+    queryset = queryset.annotate(
+        available_substitute_stock=Greatest(
+            ExpressionWrapper(
+                F('substitute_stock')
+                - F('substitute_build_allocations')
+                - F('substitute_sales_allocations'),
+                output_field=models.DecimalField(),
+            ),
+            Decimal(0),
+            output_field=models.DecimalField(),
+        )
+    )
+
+    # Now we can annotate the total "available" stock for the BomItem
+    queryset = queryset.alias(
+        total_stock=ExpressionWrapper(
+            F('available_variant_stock')
+            + F('available_substitute_stock')
+            + F('available_stock'),
+            output_field=FloatField(),
+        )
+    )
+
+    # And finally, we can annotate the 'can_build' quantity for each BomItem
+    queryset = queryset.annotate(
+        can_build=Greatest(
+            ExpressionWrapper(
+                Case(
+                    When(Q(quantity=0), then=Value(0)),
+                    default=(F('total_stock') - F('setup_quantity'))
+                    / (F('quantity') * (1.0 + F('attrition') / 100.0)),
+                    output_field=FloatField(),
+                ),
+                output_field=FloatField(),
+            ),
+            Decimal(0),
+            output_field=IntegerField(),
+        )
+    )
+
+    return queryset
 
 
 """A list of valid operators for filtering part parameters."""
