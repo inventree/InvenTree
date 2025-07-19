@@ -1681,14 +1681,12 @@ class BomMixin:
         """
         # Do we wish to include extra detail?
         try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', None))
-        except AttributeError:
-            pass
+            params = self.request.query_params
 
-        try:
-            kwargs['sub_part_detail'] = str2bool(
-                self.request.GET.get('sub_part_detail', None)
-            )
+            kwargs['can_build'] = str2bool(params.get('can_build', True))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
+
         except AttributeError:
             pass
 

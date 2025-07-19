@@ -1623,6 +1623,8 @@ class Part(
             )
         )
 
+        # TODO: Refactor this...
+
         # Extract similar information for any 'variant' parts
         variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
 
@@ -1663,7 +1665,7 @@ class Part(
                 quantity += item.variant_stock
 
             # Calculate how many of this item can be built
-            n = item.can_build(quantity)
+            n = item.can_build_quantity(quantity)
 
             if total is None or n < total:
                 total = n
@@ -4677,7 +4679,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         except Part.DoesNotExist:
             raise ValidationError({'sub_part': _('Sub part must be specified')})
 
-    def can_build(self, available_stock: float) -> int:
+    def can_build_quantity(self, available_stock: float) -> int:
         """Calculate the number of assemblies that can be built with the available stock.
 
         Arguments:
