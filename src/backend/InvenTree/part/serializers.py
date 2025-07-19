@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
-from django.db.models import ExpressionWrapper, F, FloatField, Q
+from django.db.models import Case, ExpressionWrapper, F, FloatField, Q, Value, When
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -1985,8 +1985,18 @@ class BomItemSerializer(
                 output_field=FloatField(),
             )
         ).annotate(
-            can_build=ExpressionWrapper(
-                F('total_stock') / F('quantity'), output_field=FloatField()
+            can_build=Greatest(
+                ExpressionWrapper(
+                    Case(
+                        When(Q(quantity=0), then=Value(0)),
+                        default=(F('total_stock') - F('setup_quantity'))
+                        / (F('quantity') * (1.0 + F('attrition') / 100.0)),
+                        output_field=FloatField(),
+                    ),
+                    output_field=FloatField(),
+                ),
+                Decimal(0),
+                output_field=FloatField(),
             )
         )
 
