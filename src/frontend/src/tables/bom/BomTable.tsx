@@ -141,7 +141,7 @@ export function BomTable({
 
           return (
             <Group justify='space-between'>
-              <Group>
+              <Group gap='xs'>
                 <Text>{quantity}</Text>
                 {record.setup_quantity && record.setup_quantity > 0 && (
                   <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
