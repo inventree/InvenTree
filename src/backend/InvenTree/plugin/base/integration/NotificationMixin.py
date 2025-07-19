@@ -52,3 +52,4 @@ class NotificationMixin:
             bool: True if the notification was sent successfully, False otherwise.
         """
         # The default implementation does nothing
+        return False
