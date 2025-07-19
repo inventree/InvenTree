@@ -1729,6 +1729,9 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     ordering_fields = [
         'can_build',
         'quantity',
+        'setup_quantity',
+        'attrition',
+        'rounding_multiple',
         'sub_part',
         'available_stock',
         'allow_variants',
