@@ -493,7 +493,7 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
                 output_field=FloatField(),
             ),
             Decimal(0),
-            output_field=IntegerField(),
+            output_field=FloatField(),
         )
     )
 

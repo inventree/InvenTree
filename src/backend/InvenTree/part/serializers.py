@@ -1236,7 +1236,7 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         source='available_stock', read_only=True, label=_('Available Stock')
     )
 
-    can_build = serializers.IntegerField(read_only=True, label=_('Can Build'))
+    can_build = serializers.FloatField(read_only=True, label=_('Can Build'))
 
     ordering = serializers.FloatField(
         source='on_order', read_only=True, label=_('On Order')
