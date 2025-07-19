@@ -4697,7 +4697,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         return int(available_stock / n)
 
     def get_required_quantity(self, build_quantity: float) -> float:
-        """Calculate the required part quantity, based on the supplied build_quantity. Includes overage estimate in the returned value.
+        """Calculate the required part quantity, based on the supplied build_quantity.
 
         Arguments:
             build_quantity: Number of assemblies to build
