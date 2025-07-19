@@ -136,6 +136,9 @@ If a non-zero attrition percentage is specified, it is applied to the calculated
 Required Quantity = Required Quantity * (1 + Overage Percentage)
 ```
 
+!!! info "Optional"
+    The attrition percentage is optional. If not specified, it defaults to 0%.
+
 ### Setup Quantity
 
 The `Setup Quantity` field of a BOM line item is used to account for fixed losses during the production process. This is an additional quantity of the part which is required to ensure that the production run can be completed successfully. This value is added to the calculated `Required Quantity`.
@@ -144,6 +147,9 @@ The `Setup Quantity` field of a BOM line item is used to account for fixed losse
 Required Quantity = Required Quantity + Setup Quantity
 ```
 
+!!! info "Optional"
+    The setup quantity is optional. If not specified, it defaults to 0.
+
 ### Rounding Multiple
 
 The `Rounding Multiple` field of a BOM line item is used to round the calculated `Required Quantity` value to the nearest multiple of the specified value. This is useful for ensuring that the required quantity is a whole number, or to meet specific packaging requirements.
@@ -151,6 +157,9 @@ The `Rounding Multiple` field of a BOM line item is used to round the calculated
 ```
 Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
 ```
+
+!!! info "Optional"
+    The rounding multiple is optional. If not specified, no rounding is applied to the calculated production quantity.
 
 ### Example Calculation
 
@@ -188,3 +197,6 @@ Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multi
 ```
 
 So the final required production quantity of the component part would be `325`.
+
+!!! info "Calculation"
+    The required quantity calculation is performed automatically when a new [Build Order](./build.md) is created.
