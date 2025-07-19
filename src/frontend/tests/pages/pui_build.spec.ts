@@ -272,29 +272,29 @@ test('Build Order - Allocation', async ({ browser }) => {
       name: 'Red Widget',
       ipn: 'widget.red',
       available: '123',
-      required: '3',
-      allocated: '3'
+      required: '45',
+      allocated: '15'
     },
     {
       name: 'Blue Widget',
       ipn: 'widget.blue',
-      available: '39',
-      required: '5',
-      allocated: '5'
+      available: '129',
+      required: '75',
+      allocated: '11'
     },
     {
       name: 'Pink Widget',
       ipn: 'widget.pink',
-      available: '4',
-      required: '4',
-      allocated: '0'
+      available: '54',
+      required: '60',
+      allocated: '17'
     },
     {
       name: 'Green Widget',
       ipn: 'widget.green',
       available: '245',
-      required: '6',
-      allocated: '6'
+      required: '90',
+      allocated: '14'
     }
   ];
 
@@ -425,4 +425,34 @@ test('Build Order - External', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'PO0017' }).waitFor();
   await page.getByRole('cell', { name: 'PO0018' }).waitFor();
+});
+
+test('Build Order - BOM Quantity', async ({ browser }) => {
+  // Validate required build order quantities (based on BOM values)
+
+  const page = await doCachedLogin(browser, { url: 'part/81/bom' });
+
+  // Expected quantity values for the BOM items
+  await page.getByText('15(+50)').waitFor();
+  await page.getByText('10(+100)').waitFor();
+
+  await loadTab(page, 'Part Details');
+
+  // Expected "can build" value: 13
+  const canBuild = await page
+    .getByRole('cell', { name: 'Can Build' })
+    .locator('div');
+  const row = await getRowFromCell(canBuild);
+  await row.getByText('13').waitFor();
+
+  await loadTab(page, 'Build Orders');
+  await page.getByRole('cell', { name: 'BO0016' }).click();
+
+  await loadTab(page, 'Required Parts');
+
+  const line = await page
+    .getByRole('cell', { name: 'Thumbnail R_10K_0805_1%' })
+    .locator('div');
+  const row2 = await getRowFromCell(line);
+  await row2.getByText('1175').waitFor();
 });
