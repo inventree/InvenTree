@@ -177,11 +177,11 @@ Required Quantity = Base Quantity * Number of Assemblies
                   = 3 * 100
                   = 300
 
-Overage Value = Required Quantity * Overage Percentage
-              = 300 * 0.02
-              = 6
+Attrition Value = Required Quantity * Attrition Percentage
+                = 300 * 0.02
+                = 6
 
-Required Quantity = Required Quantity + Overage Value
+Required Quantity = Required Quantity + Attrition Value
                   = 300 + 6
                   = 306
 
