@@ -389,4 +389,4 @@ class BomItemTest(TestCase):
         bom_item.save()
 
         # Delete the new BOM item
-        (bom_item.delete(),)
+        bom_item.delete()
