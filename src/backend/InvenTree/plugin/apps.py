@@ -22,6 +22,10 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         """The ready method is extended to initialize plugins."""
+        self.reload_plugin_registry()
+
+    def reload_plugin_registry(self):
+        """Reload the plugin registry."""
         if not isInMainThread() and not isInWorkerThread():
             return
 

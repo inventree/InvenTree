@@ -11,7 +11,7 @@
 {% endblock title %}
 
 {% block body %}
-<tr colspan='100%' style='height: 2rem; text-align: center;'>{% trans "The following parts are low on required stock" %}</tr>
+<tr colspan='3' style='height: 2rem; text-align: center;'>{% trans "The following parts are low on required stock" %}</tr>
 
 <tr style="height: 3rem; border-bottom: 1px solid">
     <th>{% trans "Part" %}</th>
@@ -25,9 +25,9 @@
         <a href='{{ line.link }}'>{{ line.part.full_name }}</a>{% if line.part.description %} - <em>{{ line.part.description }}</em>{% endif %}
     </td>
     <td style="text-align: center;">
-        {% decimal line.required %}
+        {% decimal line.required %} {% if part.units %} [{{ part.units }}]{% endif %}
     </td>
-    <td style="text-align: center;">{% decimal line.available %}</td>
+    <td style="text-align: center;">{% decimal line.available %} {% if part.units %} [{{ part.units }}]{% endif %}</td>
 </tr>
 
 {% endfor %}

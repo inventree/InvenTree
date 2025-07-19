@@ -115,11 +115,10 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         # Plugin is not a label plugin
         registry.set_plugin_state('digikeyplugin', True)
-        no_valid_plg = registry.get_plugin('digikeyplugin').plugin_config()
 
         response = self.post(
             url,
-            {'template': template.pk, 'plugin': no_valid_plg.key, 'items': [1, 2, 3]},
+            {'template': template.pk, 'plugin': 'digikeyplugin', 'items': [1, 2, 3]},
             expected_code=400,
         )
 
