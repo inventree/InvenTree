@@ -912,7 +912,7 @@ class Part(
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
         if not get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
-            # Serial numbers are unique acros part trees
+            # Serial numbers are unique across part trees
             stock = stock.filter(part__tree_id=self.tree_id)
 
         # There are no matching StockItem objects (skip further tests)
@@ -1927,7 +1927,7 @@ class Part(
     ):
         """Return a BomItem queryset which returns all BomItem instances which refer to *this* part.
 
-        As the BOM allocation logic is somewhat complicted, there are some considerations:
+        As the BOM allocation logic is somewhat complicated, there are some considerations:
 
         A) This part may be directly specified in a BomItem instance
         B) This part may be a *variant* of a part which is directly specified in a BomItem instance
@@ -4334,7 +4334,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         optional: Boolean field describing if this BomItem is optional
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
-        overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         setup_quantity: Extra required quantity for a build, to account for setup losses
         attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
@@ -4505,14 +4504,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         help_text=_('This BOM item is consumable (it is not tracked in build orders)'),
     )
 
-    overage = models.CharField(
-        max_length=24,
-        blank=True,
-        validators=[validators.validate_overage],
-        verbose_name=_('Overage'),
-        help_text=_('Estimated build wastage quantity (absolute or percentage)'),
-    )
-
     setup_quantity = models.DecimalField(
         default=0,
         max_digits=15,
@@ -4607,7 +4598,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             self.part.pk,
             self.sub_part.pk,
             normalize(self.quantity),
-            self.overage,
+            self.setup_quantity,
+            self.attrition,
             self.rounding_multiple,
             self.reference,
             self.optional,
@@ -4684,57 +4676,23 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         except Part.DoesNotExist:
             raise ValidationError({'sub_part': _('Sub part must be specified')})
 
-    def get_overage_quantity(self, quantity):
-        """Calculate overage quantity."""
-        # Most of the time overage string will be empty
-        if len(self.overage) == 0:
-            return 0
-
-        overage = str(self.overage).strip()
-
-        # Is the overage a numerical value?
-        try:
-            ovg = float(overage)
-
-            ovg = max(ovg, 0)
-
-            return ovg
-        except ValueError:
-            pass
-
-        # Is the overage a percentage?
-        if overage.endswith('%'):
-            overage = overage[:-1].strip()
-
-            try:
-                percent = float(overage) / 100.0
-                percent = min(percent, 1)
-                percent = max(percent, 0)
-
-                # Must be represented as a decimal
-                percent = Decimal(percent)
-
-                return float(percent * quantity)
-
-            except ValueError:
-                pass
-
-        # Default = No overage
-        return 0
-
     def get_required_quantity(self, build_quantity):
-        """Calculate the required part quantity, based on the supplier build_quantity. Includes overage estimate in the returned value.
+        """Calculate the required part quantity, based on the supplied build_quantity. Includes overage estimate in the returned value.
 
         Args:
-            build_quantity: Number of parts to build
+            build_quantity: Number of assemblies to build
 
         Returns:
-            Quantity required for this build (including overage)
+            Production quantity required for this component
         """
         # Base quantity requirement
         base_quantity = self.quantity * build_quantity
 
         # Overage requirement
+        raise NotImplementedError('Need to take setup_quantity into account')
+
+        raise NotImplementedError('Need to take attrition into account')
+
         overage_quantity = self.get_overage_quantity(base_quantity)
 
         required = float(base_quantity) + float(overage_quantity)
@@ -4757,23 +4715,23 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """Return the price-range for this BOM item."""
         # get internal price setting
         use_internal = get_global_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        prange = self.sub_part.get_price_range(
+        p_range = self.sub_part.get_price_range(
             self.quantity, internal=use_internal and internal
         )
 
-        if prange is None:
-            return prange
+        if p_range is None:
+            return p_range
 
-        pmin, pmax = prange
+        p_min, p_max = p_range
 
-        if pmin == pmax:
-            return decimal2money(pmin)
+        if p_min == p_max:
+            return decimal2money(p_min)
 
         # Convert to better string representation
-        pmin = decimal2money(pmin)
-        pmax = decimal2money(pmax)
+        p_min = decimal2money(p_min)
+        p_max = decimal2money(p_max)
 
-        return f'{pmin} to {pmax}'
+        return f'{p_min} to {p_max}'
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
