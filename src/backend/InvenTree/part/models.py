@@ -4676,26 +4676,34 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         except Part.DoesNotExist:
             raise ValidationError({'sub_part': _('Sub part must be specified')})
 
-    def get_required_quantity(self, build_quantity):
+    def get_required_quantity(self, build_quantity: float) -> float:
         """Calculate the required part quantity, based on the supplied build_quantity. Includes overage estimate in the returned value.
 
-        Args:
+        Arguments:
             build_quantity: Number of assemblies to build
 
         Returns:
             Production quantity required for this component
         """
         # Base quantity requirement
-        base_quantity = self.quantity * build_quantity
+        required = self.quantity * build_quantity
 
-        # Overage requirement
-        raise NotImplementedError('Need to take setup_quantity into account')
+        # Account for attrition
+        if self.attrition > 0:
+            try:
+                # Convert attrition percentage to decimal
+                attrition = Decimal(self.attrition) / Decimal(100)
+                required *= 1 + attrition
+            except Exception:
+                log_error('bom_item.get_required_quantity')
 
-        raise NotImplementedError('Need to take attrition into account')
-
-        overage_quantity = self.get_overage_quantity(base_quantity)
-
-        required = float(base_quantity) + float(overage_quantity)
+        # Account for setup quantity
+        if self.setup_quantity > 0:
+            try:
+                setup_quantity = Decimal(self.setup_quantity)
+                required += setup_quantity
+            except Exception:
+                log_error('bom_item.get_required_quantity')
 
         # We now have the total requirement
         # If a "rounding_multiple" is specified, then round up to the nearest multiple

@@ -79,32 +79,12 @@ class BomItemTest(TestCase):
         # But with an integer quantity, should be fine
         BomItem.objects.create(part=self.bob, sub_part=p, quantity=21)
 
-    def test_overage(self):
-        """Test that BOM line overages are calculated correctly."""
+    def test_attrition(self):
+        """Test that BOM line attrition values are calculated correctly."""
         item = BomItem.objects.get(part=100, sub_part=50)
 
-        q = 300
-
-        item.quantity = q
-
-        # Test empty overage
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 0)
-
-        # Test improper overage
-        item.overage = 'asf234?'
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 0)
-
-        # Test absolute overage
-        item.overage = '3'
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 3)
-
-        # Test percentage-based overage
-        item.overage = '5.0 % '
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 15)
+        item.quantity = 300
+        item.attrition = 5  # 5% attrition
 
         # Calculate total required quantity
         # Quantity = 300 (+ 5%)
