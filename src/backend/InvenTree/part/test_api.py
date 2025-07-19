@@ -2755,6 +2755,49 @@ class BomItemTest(InvenTreeAPITestCase):
                 self.assertEqual(str(row['Assembly']), '100')
                 self.assertEqual(str(row['BOM Level']), '1')
 
+    def test_can_build(self):
+        """Test that the 'can_build' annotation works as expected."""
+        # Create an assembly part
+        assembly = Part.objects.create(
+            name='Assembly Part',
+            description='A part which can be built',
+            assembly=True,
+            component=False,
+        )
+
+        component = Part.objects.create(
+            name='Component Part',
+            description='A component part',
+            assembly=False,
+            component=True,
+        )
+
+        # Create a BOM item for the assembly
+        bom_item = BomItem.objects.create(
+            part=assembly,
+            sub_part=component,
+            quantity=10,
+            setup_quantity=26,
+            attrition=3,
+            rounding_multiple=15,
+        )
+
+        # Create some stock items for the component part
+        StockItem.objects.create(part=component, quantity=5000)
+
+        # expected "can build" quantity
+        N = bom_item.get_required_quantity(1)
+        self.assertEqual(N, 45)
+
+        # Fetch from API
+        response = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            expected_code=200,
+        )
+
+        can_build = response.data['can_build']
+        self.assertEqual(can_build, 482)
+
 
 class PartAttachmentTest(InvenTreeAPITestCase):
     """Unit tests for the PartAttachment API endpoint."""
