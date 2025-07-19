@@ -1662,7 +1662,8 @@ class Part(
             if item.allow_variants:
                 quantity += item.variant_stock
 
-            n = int(quantity / item.quantity)
+            # Calculate how many of this item can be built
+            n = item.can_build(quantity)
 
             if total is None or n < total:
                 total = n
@@ -1670,7 +1671,7 @@ class Part(
         if total is None:
             total = 0
 
-        return max(total, 0)
+        return int(max(total, 0))
 
     @property
     def active_builds(self):
@@ -4675,6 +4676,25 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
                 raise ValidationError({'sub_part': _('Sub part must be specified')})
         except Part.DoesNotExist:
             raise ValidationError({'sub_part': _('Sub part must be specified')})
+
+    def can_build(self, available_stock: float) -> int:
+        """Calculate the number of assemblies that can be built with the available stock.
+
+        Arguments:
+            available_stock: The amount of stock available for this BOM item
+
+        Returns:
+            The number of assemblies that can be built with the available stock.
+            Returns 0 if the available stock is insufficient.
+        """
+        # Account for setup quantity
+        available_stock = Decimal(max(0, available_stock - self.setup_quantity))
+        n = Decimal(self.quantity) * (1 + (Decimal(self.attrition) / 100))
+
+        if n <= 0:
+            return 0.0
+
+        return int(available_stock / n)
 
     def get_required_quantity(self, build_quantity: float) -> float:
         """Calculate the required part quantity, based on the supplied build_quantity. Includes overage estimate in the returned value.

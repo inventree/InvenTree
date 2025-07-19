@@ -8,7 +8,16 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
-from django.db.models import Case, ExpressionWrapper, F, FloatField, Q, Value, When
+from django.db.models import (
+    Case,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    IntegerField,
+    Q,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -1239,7 +1248,7 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         source='available_stock', read_only=True, label=_('Available Stock')
     )
 
-    can_build = serializers.FloatField(read_only=True, label=_('Can Build'))
+    can_build = serializers.IntegerField(read_only=True, label=_('Can Build'))
 
     ordering = serializers.FloatField(
         source='on_order', read_only=True, label=_('On Order')
@@ -1996,7 +2005,7 @@ class BomItemSerializer(
                     output_field=FloatField(),
                 ),
                 Decimal(0),
-                output_field=FloatField(),
+                output_field=IntegerField(),
             )
         )
 
