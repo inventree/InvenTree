@@ -187,7 +187,7 @@ def check_build_stock(build):
         'link': InvenTree.helpers_model.construct_absolute_url(
             build.get_absolute_url()
         ),
-        'message': _(f'Build order {build} requires additional stock'),
+        'message': _("Build order {build} requires additional stock").format(build=build),
         'template': {'html': 'email/build_order_required_stock.html', 'subject': name},
     }
 
