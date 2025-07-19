@@ -25,14 +25,12 @@ def get_model_options(mixin_class):
     ]
 
 
-def attachment_model_class_from_label(label: str):
-    """Return the model class for the given label."""
-    import InvenTree.models
-
+def get_model_class_from_label(label: str, mixin_class):
+    """Returns the model class matching the given label from a set of models inheriting a specific mixin."""
     if not label:
         raise ValidationError(_('No attachment model type provided'))
 
-    for model in get_model_types(InvenTree.models.InvenTreeAttachmentMixin):
+    for model in get_model_types(mixin_class):
         if model.__name__.lower() == label.lower():
             return model
 

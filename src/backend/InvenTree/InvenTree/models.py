@@ -900,6 +900,9 @@ class InvenTreeNotesMixin(models.Model):
 class InvenTreeImageUploadMixin(models.Model):
     """A mixin class for adding images functionality to a model class."""
 
+    # Only a single image allowed
+    single_image: bool = False
+
     class Meta:
         """Metaclass options for this mixin.
 
@@ -936,6 +939,10 @@ class InvenTreeImageUploadMixin(models.Model):
     def images(self):
         """Return a queryset containing all images for this model."""
         return self.images_for_model().filter(model_id=self.pk)
+
+    def get_images(self):
+        """Return a queryset containing all images for this model."""
+        return self.images
 
     def images_for_model(self):
         """Return all images for this model class."""

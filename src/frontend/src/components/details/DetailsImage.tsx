@@ -53,12 +53,12 @@ export type DetailImageProps = {
   appRole?: UserRoles;
   primary?: boolean;
   src: string;
-  apiPath: string;
   refresh?: () => void;
   AddImageActions?: AddImageButtonProps;
   EditImageActions?: EditImageButtonProps;
   pk: string;
   image_id?: string;
+  model_type?: ModelType.part | ModelType.company;
 };
 
 /**
@@ -76,13 +76,13 @@ export type AddImageButtonProps = {
  * Actions for edit image in Detail Images.
  * If true, the button type will be visible
  * @param {boolean} downloadImage - Allows downloading image from a remote URL
- * @param {boolean} replaceFile - PART ONLY. Allows replacing the current image with a new file
+ * @param {boolean} uploadFile - PART ONLY. Allows replacing the current image with a new file
  * @param {boolean} deleteFile - Allows deleting the current image
  * @param {boolean} setAsPrimary - PART ONLY. Allows setting the current image as primary image
  */
 export type EditImageButtonProps = {
   downloadImage?: boolean;
-  replaceFile?: boolean;
+  uploadFile?: boolean;
   deleteFile?: boolean;
   setAsPrimary?: boolean;
 };
@@ -99,10 +99,12 @@ const backup_image = '/static/img/blank_image.png';
  */
 function UploadModal({
   setImage,
-  model_id
+  model_id,
+  model_type
 }: Readonly<{
   setImage: (image: string) => void;
   model_id: string;
+  model_type: string;
 }>) {
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
@@ -169,7 +171,7 @@ function UploadModal({
     uploading = true;
     const formData = new FormData();
     formData.append('image', file, file.name);
-    formData.append('model_type', ModelType.part);
+    formData.append('model_type', model_type);
     formData.append('model_id', model_id);
 
     const url = apiUrl(ApiEndpoints.upload_image_list);
@@ -279,6 +281,7 @@ function ImageActionButtons({
   addActions = {},
   editActions = {},
   pk,
+  model_type,
   setAndRefresh,
   setAsPrimary,
   downloadImage,
@@ -287,12 +290,16 @@ function ImageActionButtons({
   addActions?: AddImageButtonProps;
   editActions?: EditImageButtonProps;
   pk: string;
+  model_type?: string;
   setAndRefresh: (image: string) => void;
   setAsPrimary: () => void;
   downloadImage: () => void;
   deleteUploadImage: any;
 }>) {
   const globalSettings = useGlobalSettingsState();
+  const hasImage: boolean = Boolean(
+    editActions?.downloadImage || editActions?.deleteFile
+  );
 
   const editImageActions: ActionDropdownItem[] = [
     {
@@ -305,12 +312,26 @@ function ImageActionButtons({
       hidden: !editActions?.setAsPrimary
     },
     {
-      name: 'Replace image',
-      onClick: (event: any) => {
-        cancelEvent(event);
+      name: hasImage ? 'Replace image' : 'Upload image',
+      onClick: (e) => {
+        cancelEvent(e);
+        modals.open({
+          title: (
+            <StylishText size='xl'>
+              {hasImage ? t`Replace Image` : t`Upload Image`}
+            </StylishText>
+          ),
+          children: (
+            <UploadModal
+              model_id={pk!}
+              model_type={String(model_type)}
+              setImage={setAndRefresh}
+            />
+          )
+        });
       },
-      icon: <InvenTreeIcon icon='complete' />,
-      hidden: !editActions?.replaceFile
+      icon: <InvenTreeIcon icon='upload' />,
+      hidden: !editActions?.uploadFile
     },
     {
       name: 'Download image',
@@ -342,7 +363,13 @@ function ImageActionButtons({
         cancelEvent(event);
         modals.open({
           title: <StylishText size='xl'>{t`Upload Image`}</StylishText>,
-          children: <UploadModal model_id={pk!} setImage={setAndRefresh} />
+          children: (
+            <UploadModal
+              model_type={String(model_type)}
+              model_id={pk!}
+              setImage={setAndRefresh}
+            />
+          )
         });
       },
       icon: <InvenTreeIcon icon='upload' />,
@@ -429,8 +456,9 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   const permissions = useUserState();
 
+  // TODO: fix url
   const downloadImage = useEditApiFormModal({
-    url: props.apiPath,
+    url: '',
     title: t`Download Image`,
     fields: {
       remote_image: {}
@@ -457,8 +485,6 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   const setAsPrimary = () => {
     const url = apiUrl(ApiEndpoints.upload_image_list, props.image_id);
 
-    props.refresh?.();
-
     api
       .patch(url, { primary: true })
       .then((response) => {
@@ -476,12 +502,15 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
           field: 'image'
         });
       });
+
+    props.refresh?.();
   };
 
   const hasOverlay: boolean = useMemo(() => {
     return (
       props.AddImageActions?.selectExisting ||
       props.EditImageActions?.deleteFile ||
+      props.EditImageActions?.uploadFile ||
       false
     );
   }, [props.AddImageActions]);
@@ -527,6 +556,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
                     addActions={props.AddImageActions}
                     editActions={props.EditImageActions}
                     pk={props.pk}
+                    model_type={props.model_type}
                     downloadImage={downloadImage.open}
                     setAndRefresh={setAndRefresh}
                     setAsPrimary={setAsPrimary}
@@ -553,7 +583,7 @@ interface DetailsImageCarouselProps {
   editImageActions?: DetailImageProps['EditImageActions'];
   apiPath: string;
   model_id: string;
-  refresh: () => void;
+  refresh?: () => void;
 }
 
 /**
@@ -601,10 +631,10 @@ export function MultipleDetailsImage(
             AddImageActions={props.addImageActions}
             EditImageActions={props.editImageActions}
             src={imgObj.image}
-            apiPath={props.apiPath}
             image_id={imgObj.pk}
             pk={props.model_id}
             primary={imgObj.primary}
+            model_type={ModelType.part}
             refresh={props.refresh}
           />
         </Carousel.Slide>

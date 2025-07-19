@@ -901,7 +901,10 @@ export default function PartDetail() {
     preFormContent: (
       <Alert color='red' title={t`Deleting this part cannot be reversed`}>
         <Stack gap='xs'>
-          <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
+          <Thumbnail
+            src={part?.image?.thumbnail ?? part?.image?.image}
+            text={part.full_name}
+          />
         </Stack>
       </Alert>
     )
@@ -1061,7 +1064,7 @@ export default function PartDetail() {
               ) : undefined
             }
             subtitle={part.description}
-            imageUrl={part.image}
+            imageUrl={part?.image?.image}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)

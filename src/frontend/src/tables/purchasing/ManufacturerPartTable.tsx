@@ -47,7 +47,7 @@ export function ManufacturerPartTable({
 
           return (
             <Thumbnail
-              src={manufacturer?.thumbnail ?? manufacturer.image}
+              src={manufacturer?.thumbnail ?? manufacturer?.image.image}
               text={manufacturer.name}
             />
           );

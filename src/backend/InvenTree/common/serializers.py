@@ -660,6 +660,23 @@ class UploadedImageSerializer(serializers.ModelSerializer):
 
         return instance
 
+    def create(self, validated_data):
+        """Creates an image, deleting any existing images if the target model is set to single image only."""
+        model_type = validated_data.get('model_type', None)
+        model_id = validated_data.get('model_id', None)
+
+        target_model_class: InvenTreeImageUploadMixin = (
+            common.validators.get_model_class_from_label(
+                model_type, InvenTreeImageUploadMixin
+            )
+        )
+        if target_model_class.single_image:
+            common_models.UploadedImage.objects.filter(
+                model_type=model_type, model_id=model_id
+            ).delete()
+
+        return super().create(validated_data)
+
     def validate_existing_image(self, img):
         """Validate the existing_image field."""
         if img is None:
@@ -751,8 +768,8 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user
 
-        target_model_class = common.validators.attachment_model_class_from_label(
-            model_type
+        target_model_class = common.validators.get_model_class_from_label(
+            model_type, InvenTreeAttachmentMixin
         )
 
         if not issubclass(target_model_class, InvenTreeAttachmentMixin):

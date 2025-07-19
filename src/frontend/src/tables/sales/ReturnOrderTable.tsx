@@ -116,7 +116,7 @@ export function ReturnOrderTable({
 
           return (
             <Thumbnail
-              src={customer?.image}
+              src={customer?.image?.image}
               alt={customer.name}
               text={customer.name}
             />

@@ -42,7 +42,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
             <Thumbnail
               src={
                 record?.supplier_detail?.thumbnail ??
-                record?.supplier_detail?.image
+                record?.supplier_detail?.image?.image
               }
               alt={record?.supplier_detail?.name}
               size={24}

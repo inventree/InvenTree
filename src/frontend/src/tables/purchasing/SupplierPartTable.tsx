@@ -58,7 +58,7 @@ export function SupplierPartTable({
 
           return supplier?.pk ? (
             <Thumbnail
-              src={supplier?.thumbnail ?? supplier.image}
+              src={supplier?.image?.thumbnail ?? supplier?.image?.image}
               text={supplier.name}
             />
           ) : (
@@ -81,7 +81,7 @@ export function SupplierPartTable({
 
           return manufacturer?.pk ? (
             <Thumbnail
-              src={manufacturer?.thumbnail ?? manufacturer.image}
+              src={manufacturer?.image?.thumbnail ?? manufacturer?.image.image}
               text={manufacturer.name}
             />
           ) : (

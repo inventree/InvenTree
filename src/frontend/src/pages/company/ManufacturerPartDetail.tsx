@@ -11,7 +11,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
@@ -136,11 +135,7 @@ export default function ManufacturerPartDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.part}
-            src={manufacturerPart?.part_detail?.image}
-            apiPath={apiUrl(
-              ApiEndpoints.part_list,
-              manufacturerPart?.part_detail?.pk
-            )}
+            src={manufacturerPart?.part_detail?.image?.image}
             pk={manufacturerPart?.part_detail?.pk}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>

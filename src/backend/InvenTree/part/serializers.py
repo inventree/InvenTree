@@ -333,8 +333,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'revision',
             'full_name',
             'description',
-            'image',
-            'thumbnail',
+            'images',
             'active',
             'locked',
             'assembly',
@@ -366,10 +365,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    image = InvenTree.serializers.InvenTreeImageSerializerField(
-        read_only=True, allow_null=True
+    images = common_serializers.UploadedImageSerializer(
+        source='get_images', many=True, read_only=True, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     IPN = serializers.CharField(
         required=False,

@@ -111,7 +111,7 @@ export function PurchaseOrderTable({
 
           return (
             <Thumbnail
-              src={supplier?.image}
+              src={supplier?.image?.image}
               alt={supplier.name}
               text={supplier.name}
             />

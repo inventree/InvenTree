@@ -48,7 +48,7 @@ export function CompanyTable({
           return (
             <Group gap='xs' wrap='nowrap'>
               <Thumbnail
-                src={record.thumbnail ?? record.image ?? ''}
+                src={record?.image?.thumbnail ?? record?.image?.image ?? ''}
                 alt={record.name}
                 size={24}
               />

@@ -179,8 +179,7 @@ export default function SalesOrderShipmentDetail() {
           <Grid grow>
             <DetailsImage
               appRole={UserRoles.sales_order}
-              apiPath={ApiEndpoints.company_list}
-              src={customer?.image}
+              src={customer?.image?.image}
               pk={customer?.pk}
               EditImageActions={{
                 downloadImage: false,
@@ -365,7 +364,7 @@ export default function SalesOrderShipmentDetail() {
               }
             ]}
             badges={shipmentBadges}
-            imageUrl={customer?.image}
+            imageUrl={customer?.image?.image}
             editAction={editShipment.open}
             editEnabled={user.hasChangePermission(ModelType.salesordershipment)}
             actions={shipmentActions}
