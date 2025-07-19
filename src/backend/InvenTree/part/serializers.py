@@ -1731,6 +1731,7 @@ class BomItemSerializer(
         - part_detail and sub_part_detail serializers are only included if requested.
         - This saves a bunch of database requests
         """
+        can_build = kwargs.pop('can_build', True)
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
@@ -1746,6 +1747,9 @@ class BomItemSerializer(
 
         if not sub_part_detail:
             self.fields.pop('sub_part_detail', None)
+
+        if not can_build:
+            self.fields.pop('can_build')
 
         if not substitutes:
             self.fields.pop('substitutes', None)

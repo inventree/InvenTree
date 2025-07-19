@@ -1409,6 +1409,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         substitutes=False,
         sub_part_detail=False,
         part_detail=False,
+        can_build=False,
     )
 
     assembly_detail = part_serializers.PartBriefSerializer(
