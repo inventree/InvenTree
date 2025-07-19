@@ -4601,7 +4601,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         # Account for setup quantity
         available_stock = Decimal(max(0, available_stock - self.setup_quantity))
-        n = Decimal(self.quantity) * (1 + (Decimal(self.attrition) / 100))
+        quantity_decimal = Decimal(self.quantity)
+        attrition_decimal = Decimal(self.attrition) / 100
+        n = quantity_decimal * (1 + attrition_decimal)
 
         if n <= 0:
             return 0.0
