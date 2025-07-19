@@ -107,6 +107,7 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
             )
             return True
 
+        # No recipients found, so we cannot send the email
         return False
 
 
