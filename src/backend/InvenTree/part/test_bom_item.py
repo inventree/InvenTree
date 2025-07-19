@@ -108,7 +108,7 @@ class BomItemTest(TestCase):
 
         # Now the required quantity should include the setup quantity
         self.assertEqual(item.get_required_quantity(1), 8)  # 3 + 5 = 8
-        self.assertEqual(item.get_required_quantity(10), 35)  # 30 + 35
+        self.assertEqual(item.get_required_quantity(10), 35)  # 30 + 5 = 35
 
     def test_round_up(self):
         """Test the 'rounding_multiple' attribute."""
