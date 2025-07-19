@@ -133,7 +133,7 @@ The `Attrition` field of a BOM line item is used to account for expected losses 
 If a non-zero attrition percentage is specified, it is applied to the calculated `Required Quantity` value.
 
 ```
-Required Quantity = Required Quantity * (1 + Overage Percentage)
+Required Quantity = Required Quantity * (1 + Attrition Percentage)
 ```
 
 !!! info "Optional"
