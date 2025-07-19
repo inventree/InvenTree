@@ -2796,7 +2796,7 @@ class BomItemTest(InvenTreeAPITestCase):
         )
 
         can_build = response.data['can_build']
-        self.assertEqual(can_build, 482)
+        self.assertAlmostEqual(can_build, 482.9, places=1)
 
 
 class PartAttachmentTest(InvenTreeAPITestCase):
