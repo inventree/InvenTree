@@ -19,7 +19,8 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Part | A reference to another *Part* object which is required to build this assembly |
 | Reference | Optional reference field to describe the BOM Line Item, e.g. part designator |
 | Quantity | The quantity of *Part* required for the assembly |
-| Overage | Estimated attrition losses for a production run. Can be expressed as absolute values (e.g. 1, 7, etc) or as a percentage (e.g. 2%) |
+| Attrition | Estimated attrition losses for a production run. Expressed as a percentage of the base quantity (e.g. 2%) |
+| Setup Quantity | An additional quantity of the part which is required to account for fixed setup losses during the production process. This is added to the base quantity of the BOM line item |
 | Rounding Multiple | A value which indicates that the required quantity should be rounded up to the nearest multiple of this value. |
 | Consumable | A boolean field which indicates whether this BOM Line Item is *consumable* |
 | Inherited | A boolean field which indicates whether this BOM Line Item will be "inherited" by BOMs for parts which are a variant (or sub-variant) of the part for which this BOM is defined. |
@@ -97,7 +98,7 @@ The `Create BOM Item` form will be displayed:
 
 {{ image("build/bom_add_item.png", "Create BOM Item Form") }}
 
-Fill-out the `Quantity` (required), `Reference`, `Overage` and `Note` (optional) fields then click on <span class="badge inventree confirm">Submit</span> to add the BOM item to this part's BOM.
+Fill-out the required fields then click on <span class="badge inventree confirm">Submit</span> to add the BOM item to this part's BOM.
 
 ### Add Substitute for BOM Item
 
@@ -125,20 +126,22 @@ The base quantity of a BOM line item is defined by the `Quantity` field of the B
 Required Quantity = Base Quantity * Number of Assemblies
 ```
 
-### Overage
+### Attrition
 
-The `Overage` field of a BOM line item is used to account for expected losses during the production process. This can be expressed as an absolute value (e.g. 1, 7, etc) or as a percentage (e.g. 2%).
+The `Attrition` field of a BOM line item is used to account for expected losses during the production process. This is expressed as a percentage of the `Base Quantity` (e.g. 2%).
 
-If the `Overage` field is expressed as a percentage, it is applied to the calculated `Required Quantity` value, to calculate the expected component attrition.
+If a non-zero attrition percentage is specified, it is applied to the calculated `Required Quantity` value.
 
 ```
 Required Quantity = Required Quantity * (1 + Overage Percentage)
 ```
 
-If the `Overage` field is expressed as an absolute value, it is added to the calculated `Required Quantity` value.
+### Setup Quantity
+
+The `Setup Quantity` field of a BOM line item is used to account for fixed losses during the production process. This is an additional quantity of the part which is required to ensure that the production run can be completed successfully. This value is added to the calculated `Required Quantity`.
 
 ```
-Required Quantity = Required Quantity + Overage Absolute Value
+Required Quantity = Required Quantity + Setup Quantity
 ```
 
 ### Rounding Multiple
@@ -154,7 +157,8 @@ Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multi
 Consider a BOM line item with the following properties:
 
 - Base Quantity: 3
-- Overage: 2% (0.02)
+- Attrition: 2% (0.02)
+- Setup Quantity: 10
 - Rounding Multiple: 25
 
 If we are building 100 assemblies, the required quantity would be calculated as follows:
@@ -172,8 +176,12 @@ Required Quantity = Required Quantity + Overage Value
                   = 300 + 6
                   = 306
 
+Required Quantity = Required Quantity + Setup Quantity
+                  = 306 + 10
+                  = 316
+
 Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
-                  = ceil(306 / 25) * 25
+                  = ceil(316 / 25) * 25
                   = 13 * 25
                   = 325
 
