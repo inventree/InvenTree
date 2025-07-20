@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -14,7 +15,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
@@ -24,7 +25,6 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -113,8 +113,7 @@ export default function ParametricPartTable({
             category: categoryId
           }
         })
-        .then((response) => response.data)
-        .catch((_error) => []);
+        .then((response) => response.data);
     },
     refetchOnMount: true
   });
@@ -290,7 +289,7 @@ export default function ParametricPartTable({
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
-    const data = categoryParameters.data ?? [];
+    const data = categoryParameters?.data || [];
 
     return data.map((template: any) => {
       let title = template.name;
@@ -368,15 +367,19 @@ export default function ParametricPartTable({
     const partColumns: TableColumn[] = [
       {
         accessor: 'name',
+        title: t`Part`,
         sortable: true,
         switchable: false,
         noWrap: true,
         render: (record: any) => PartColumn({ part: record })
       },
-      DescriptionColumn({}),
+      DescriptionColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'IPN',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'total_in_stock',

@@ -5,8 +5,8 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
+import { identifierString } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
-import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
@@ -155,7 +155,7 @@ export function TableField({
       </Table.Thead>
 
       <Table.Tbody>
-        {value.length > 0 ? (
+        {(value?.length ?? 0) > 0 ? (
           value.map((item: any, idx: number) => {
             return (
               <TableFieldRow

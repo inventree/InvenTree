@@ -4,8 +4,8 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
+import { isTrue } from '@lib/functions/Conversion';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
@@ -152,6 +152,18 @@ export function ApiFormField({
             }}
           />
         );
+      case 'password':
+        return (
+          <TextField
+            definition={{ ...reducedDefinition, type: 'password' }}
+            controller={controller}
+            fieldName={fieldName}
+            onChange={onChange}
+            onKeyDown={(value) => {
+              onKeyDown?.(value);
+            }}
+          />
+        );
       case 'icon':
         return (
           <IconField definition={fieldDefinition} controller={controller} />
@@ -167,7 +179,7 @@ export function ApiFormField({
             radius='lg'
             size='sm'
             error={definition.error ?? error?.message}
-            onChange={(event) => onChange(event.currentTarget.checked)}
+            onChange={(event: any) => onChange(event.currentTarget.checked)}
           />
         );
       case 'date':
@@ -205,6 +217,7 @@ export function ApiFormField({
         return (
           <FileInput
             {...reducedDefinition}
+            aria-label={`file-field-${fieldName}`}
             id={fieldId}
             ref={field.ref}
             radius='sm'

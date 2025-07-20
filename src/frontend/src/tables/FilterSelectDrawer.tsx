@@ -9,6 +9,7 @@ import {
   Group,
   Paper,
   Select,
+  Space,
   Stack,
   Text,
   TextInput,
@@ -145,6 +146,7 @@ function FilterElement({
           data={valueOptions}
           searchable={filterProps.type == 'choice'}
           label={t`Value`}
+          withScrollArea={false}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}
           maxDropdownHeight={800}
@@ -251,14 +253,13 @@ function FilterAddGroup({
 
   return (
     <Stack gap='xs'>
-      <Divider />
       <Select
         data={filterOptions}
         searchable={true}
         placeholder={t`Select filter`}
         label={t`Filter`}
         onChange={(value: string | null) => setSelectedFilter(value)}
-        maxDropdownHeight={800}
+        maxDropdownHeight={400}
       />
       {selectedFilter && filterProps && (
         <FilterElement
@@ -310,12 +311,13 @@ export function FilterSelectDrawer({
       }}
       title={<StylishText size='lg'>{title ?? t`Table Filters`}</StylishText>}
     >
+      <Divider />
+      <Space h='sm' />
       <Stack gap='xs'>
         {hasFilters &&
           filterSet.activeFilters?.map((f) => (
             <FilterItem key={f.name} flt={f} filterSet={filterSet} />
           ))}
-        {hasFilters && <Divider />}
         {addFilter && (
           <Stack gap='xs'>
             <FilterAddGroup

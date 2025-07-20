@@ -179,10 +179,6 @@ export function RelatedModelField({
           setData(values);
           dataRef.current = values;
           return response;
-        })
-        .catch((error) => {
-          setData([]);
-          return error;
         });
     }
   });

@@ -15,15 +15,16 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
     SCAN_URL = reverse('api-barcode-scan')
 
-    def setUp(self):
-        """Ensure the digikey plugin is enabled."""
-        super().setUp()
-        registry.set_plugin_state('digikeyplugin', True)
-
     @classmethod
     def setUpTestData(cls):
         """Create supplier parts for barcodes."""
         super().setUpTestData()
+
+        # Enable the plugins
+        registry.set_plugin_state('digikeyplugin', True)
+        registry.set_plugin_state('mouserplugin', True)
+        registry.set_plugin_state('lcscplugin', True)
+        registry.set_plugin_state('tmeplugin', True)
 
         part = Part.objects.create(name='Test Part', description='Test Part')
 
@@ -59,9 +60,11 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         # Assign supplier information to the plugins
         # Add supplier information to each custom plugin
+        registry.set_plugin_state('digikeyplugin', True)
         digikey_plugin = registry.get_plugin('digikeyplugin')
         digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
 
+        registry.set_plugin_state('mouserplugin', True)
         mouser_plugin = registry.get_plugin('mouserplugin')
         mouser_plugin.set_setting('SUPPLIER_ID', mouser_supplier.pk)
 
@@ -70,7 +73,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         result = self.post(
             self.SCAN_URL, data={'barcode': DIGIKEY_BARCODE}, expected_code=200
         )
-        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(result.data['plugin'], 'DigiKeyBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -84,7 +87,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': DIGIKEY_BARCODE_2}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(result.data['plugin'], 'DigiKeyBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -125,7 +128,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': LCSC_BARCODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'LCSCPlugin')
+        self.assertEqual(result.data['plugin'], 'LCSCBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -139,7 +142,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': TME_QRCODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -152,7 +155,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': TME_DATAMATRIX_CODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -223,9 +226,11 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             self.purchase_order2.add_line_item(supplier_part, 5, destination=self.loc_2)
 
         # Add supplier information to each custom plugin
+        registry.set_plugin_state('digikeyplugin', True)
         digikey_plugin = registry.get_plugin('digikeyplugin')
         digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
 
+        registry.set_plugin_state('mouserplugin', True)
         mouser_plugin = registry.get_plugin('mouserplugin')
         mouser_plugin.set_setting('SUPPLIER_ID', mouser.pk)
 
@@ -271,7 +276,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(response.data['plugin'], 'DigiKeyBarcodePlugin')
         self.assertIn('action_required', response.data)
         item = response.data['lineitem']
         self.assertEqual(item['quantity'], 10.0)

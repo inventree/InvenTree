@@ -162,6 +162,12 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
+class SystemSetId:
+    """Shared system settings identifiers."""
+
+    GLOBAL_WARNING = '_GLOBAL_WARNING'
+
+
 SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'SERVER_RESTART_REQUIRED': {
         'name': _('Restart required'),
@@ -175,6 +181,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+    },
+    SystemSetId.GLOBAL_WARNING: {
+        'name': _('Active warning codes'),
+        'description': _('A dict of active warning codes'),
+        'validator': json.loads,
+        'default': '{}',
+        'hidden': True,
     },
     'INVENTREE_INSTANCE_ID': {
         'name': _('Instance ID'),
@@ -575,12 +588,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PRICING_AUTO_UPDATE': {
+        'name': _('Auto Update Pricing'),
+        'description': _(
+            'Automatically update part pricing when internal data changes'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     'PRICING_UPDATE_DAYS': {
         'name': _('Pricing Rebuild Interval'),
         'description': _('Number of days before part pricing is automatically updated'),
         'units': _('days'),
         'default': 30,
-        'validator': [int, MinValueValidator(10)],
+        'validator': [int, MinValueValidator(0)],
     },
     'PART_INTERNAL_PRICE': {
         'name': _('Internal Prices'),
@@ -1019,6 +1040,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'ENABLE_PLUGINS_INTERFACE': {
         'name': _('Enable interface integration'),
         'description': _('Enable plugins to integrate into the user interface'),
+        'default': False,
+        'validator': bool,
+        'after_save': reload_plugin_registry,
+    },
+    'ENABLE_PLUGINS_MAILS': {
+        'name': _('Enable mail integration'),
+        'description': _('Enable plugins to process outgoing/incoming mails'),
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,

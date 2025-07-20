@@ -11,8 +11,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-import InvenTree.exceptions
-import InvenTree.helpers
 import InvenTree.permissions
 import report.helpers
 import report.models
@@ -22,6 +20,7 @@ from common.serializers import DataOutputSerializer
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from plugin import PluginMixinEnum
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 
 
@@ -121,7 +120,7 @@ class LabelPrint(GenericAPIView):
             error = _('Plugin not found')
         elif not plugin.is_active():
             error = _('Plugin is not active')
-        elif not plugin.mixin_enabled('labels'):
+        elif not plugin.mixin_enabled(PluginMixinEnum.LABELS):
             error = _('Plugin does not support label printing')
 
         if error:

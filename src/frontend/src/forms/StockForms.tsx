@@ -22,12 +22,12 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
@@ -56,7 +56,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
 /**
@@ -65,10 +65,12 @@ import { StatusFilterOptions } from '../tables/Filter';
 export function useStockFields({
   partId,
   stockItem,
+  modalId,
   create = false
 }: {
   partId?: number;
   stockItem?: any;
+  modalId: string;
   create: boolean;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
@@ -81,21 +83,23 @@ export function useStockFields({
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
 
   const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
     initialQuery: {
-      part: partInstance?.pk || partId
+      part: partId
     }
   });
 
   const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
     initialQuery: {
-      part: partInstance?.pk || partId
+      part: partId
     }
   });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        value: partInstance.pk,
+        value: partId || partInstance?.pk,
         disabled: !create,
         filters: {
           active: create ? true : undefined
@@ -103,6 +107,14 @@ export function useStockFields({
         onValueChange: (value, record) => {
           // Update the tracked part instance
           setPartInstance(record);
+
+          serialGenerator.update({
+            part: value
+          });
+
+          batchGenerator.update({
+            part: value
+          });
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
@@ -235,11 +247,15 @@ export function useStockFields({
  * Launch a form to create a new StockItem instance
  */
 export function useCreateStockItem() {
-  const fields = useStockFields({ create: true });
+  const fields = useStockFields({
+    create: true,
+    modalId: 'create-stock-item'
+  });
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     fields: fields,
+    modalId: 'create-stock-item',
     title: t`Add Stock Item`
   });
 }
@@ -318,12 +334,16 @@ export function useStockItemInstallFields({
  */
 export function useStockItemSerializeFields({
   partId,
-  trackable
+  trackable,
+  modalId
 }: {
   partId: number;
   trackable: boolean;
-}) {
+  modalId: string;
+}): ApiFormFieldSet {
   const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
+    isEnabled: () => trackable,
     initialQuery: {
       part: partId
     }
@@ -915,7 +935,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
-      default: items[0]?.part_detail.default_location,
+      default: items[0]?.part_detail?.default_location,
       filters: {
         structural: false
       }
@@ -1018,7 +1038,7 @@ type apiModalFunc = (props: ApiFormModalProps) => {
   modal: JSX.Element;
 };
 
-function stockOperationModal({
+function useStockOperationModal({
   items,
   pk,
   model,
@@ -1061,26 +1081,27 @@ function stockOperationModal({
     return query_params;
   }, [baseParams, filters, model, pk]);
 
+  const [opened, setOpened] = useState<boolean>(false);
+
   const { data } = useQuery({
-    queryKey: ['stockitems', model, pk, items, params],
+    queryKey: ['stockitems', opened, model, pk, items, params],
     queryFn: async () => {
       if (items) {
+        // If a list of items is provided, use that directly
         return Array.isArray(items) ? items : [items];
       }
+
+      if (!pk || !opened) {
+        return [];
+      }
+
       const url = apiUrl(ApiEndpoints.stock_item_list);
 
       return api
         .get(url, {
           params: params
         })
-        .then((response) => {
-          if (response.status === 200) {
-            return response.data;
-          }
-        })
-        .catch(() => {
-          return null;
-        });
+        .then((response) => response.data ?? []);
     }
   });
 
@@ -1095,7 +1116,9 @@ function stockOperationModal({
     title: title,
     size: '80%',
     successMessage: successMessage,
-    onFormSuccess: () => refresh()
+    onFormSuccess: () => refresh(),
+    onClose: () => setOpened(false),
+    onOpen: () => setOpened(true)
   });
 }
 
@@ -1108,7 +1131,7 @@ export type StockOperationProps = {
 };
 
 export function useAddStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
@@ -1118,7 +1141,7 @@ export function useAddStockItem(props: StockOperationProps) {
 }
 
 export function useRemoveStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
@@ -1128,7 +1151,7 @@ export function useRemoveStockItem(props: StockOperationProps) {
 }
 
 export function useTransferStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
@@ -1138,7 +1161,7 @@ export function useTransferStockItem(props: StockOperationProps) {
 }
 
 export function useCountStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
@@ -1148,7 +1171,7 @@ export function useCountStockItem(props: StockOperationProps) {
 }
 
 export function useChangeStockStatus(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
@@ -1158,7 +1181,7 @@ export function useChangeStockStatus(props: StockOperationProps) {
 }
 
 export function useMergeStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
@@ -1182,7 +1205,7 @@ export function useAssignStockItem(props: StockOperationProps) {
     return props.items?.filter((item) => item?.part_detail?.salable);
   }, [props.items]);
 
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     items: items,
     fieldGenerator: stockAssignFields,
@@ -1193,7 +1216,7 @@ export function useAssignStockItem(props: StockOperationProps) {
 }
 
 export function useDeleteStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockDeleteFields,
     endpoint: ApiEndpoints.stock_item_list,
@@ -1343,7 +1366,7 @@ export function useFindSerialNumberForm({
       }
     },
     checkClose: (data, form) => {
-      if (data.length == 0) {
+      if (!data || data?.length == 0) {
         form.setError('serial', { message: t`No matching items` });
         return false;
       }

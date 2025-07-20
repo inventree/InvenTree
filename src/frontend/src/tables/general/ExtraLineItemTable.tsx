@@ -1,9 +1,16 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
@@ -14,24 +21,19 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { LinkColumn, NoteColumn } from '../ColumnRenderers';
+import { DescriptionColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
 
 export default function ExtraLineItemTable({
   endpoint,
   orderId,
+  orderDetailRefresh,
   currency,
   role
 }: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
+  orderDetailRefresh: () => void;
   currency: string;
   role: UserRoles;
 }>) {
@@ -44,9 +46,7 @@ export default function ExtraLineItemTable({
         accessor: 'reference',
         switchable: false
       },
-      {
-        accessor: 'description'
-      },
+      DescriptionColumn({}),
       {
         accessor: 'quantity',
         switchable: false
@@ -89,6 +89,7 @@ export default function ExtraLineItemTable({
       ...initialData,
       price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -97,6 +98,7 @@ export default function ExtraLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: extraLineItemFields(),
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -104,6 +106,7 @@ export default function ExtraLineItemTable({
     url: endpoint,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 

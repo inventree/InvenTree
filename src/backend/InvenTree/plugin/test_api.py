@@ -1,6 +1,6 @@
 """Tests for general API tests for the plugin app."""
 
-from django.conf import settings
+from django.test import override_settings
 from django.urls import reverse
 
 from rest_framework.exceptions import NotFound
@@ -91,9 +91,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         )
 
         # install disabled
-        settings.PLUGINS_INSTALL_DISABLED = True
-        self.post(url, {}, expected_code=400)
-        settings.PLUGINS_INSTALL_DISABLED = False
+        with self.settings(PLUGINS_INSTALL_DISABLED=True):
+            self.post(url, {}, expected_code=400)
 
     def test_plugin_activate(self):
         """Test the plugin activate."""
@@ -150,6 +149,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             str(response.data['detail']),
         )
 
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
     def test_admin_action(self):
         """Test the PluginConfig action commands."""
         url = reverse('admin:plugin_pluginconfig_changelist')
@@ -168,6 +170,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Select Plugin Configuration to change')
 
         # deactivate plugin - deactivate again -> nothing will happen but the nothing 'changed' function is triggered
         response = self.client.post(
@@ -180,6 +183,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Select Plugin Configuration to change')
 
         # activate plugin
         response = self.client.post(
@@ -192,6 +196,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Select Plugin Configuration to change')
 
         # save to deactivate a plugin
         response = self.client.post(
@@ -200,6 +205,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, '(not active) | Change Plugin Configuration | Django site admin'
+        )
 
     def test_model(self):
         """Test the PluginConfig model."""

@@ -1,6 +1,5 @@
 """Tests for middleware functions."""
 
-from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
 
@@ -81,9 +80,63 @@ class MiddlewareTests(InvenTreeTestCase):
             log_error('testpath')
 
         # Test setup without ignored errors
-        settings.IGNORED_ERRORS = []
-        try:
-            raise Http404
-        except Http404:
-            log_error('testpath')
-        check(1)
+        with self.settings(IGNORED_ERRORS=[]):
+            try:
+                raise Http404
+            except Http404:
+                log_error('testpath')
+            check(1)
+
+    def test_site_url_checks(self):
+        """Test that the site URL check is correctly working."""
+        # correctly set
+        with self.settings(
+            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+        ):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, 'INVE-E7')
+            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+
+        # wrongly set site URL
+        with self.settings(SITE_URL='https://example.com'):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 500)
+            self.assertContains(
+                response,
+                'INVE-E7: The used path `http://testserver` does not match',
+                status_code=500,
+            )
+            self.assertNotContains(
+                response, 'window.INVENTREE_SETTINGS', status_code=500
+            )
+
+        # wrongly set but in debug -> is ignored
+        with self.settings(SITE_URL='https://example.com', DEBUG=True):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, 'INVE-E7')
+            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+
+        # wrongly set cors
+        with self.settings(
+            SITE_URL='http://testserver',
+            CORS_ORIGIN_ALLOW_ALL=False,
+            CSRF_TRUSTED_ORIGINS=['https://example.com'],
+        ):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 500)
+            self.assertContains(
+                response, 'is not in the TRUSTED_ORIGINS', status_code=500
+            )
+            self.assertNotContains(
+                response, 'window.INVENTREE_SETTINGS', status_code=500
+            )
+
+        with self.settings(
+            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://*.testserver']
+        ):
+            response = self.client.get(reverse('web'))
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, 'INVE-E7')
+            self.assertContains(response, 'window.INVENTREE_SETTINGS')

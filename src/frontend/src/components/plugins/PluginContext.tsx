@@ -7,9 +7,10 @@ import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import {
   INVENTREE_MANTINE_VERSION,
   INVENTREE_PLUGIN_VERSION,
@@ -22,6 +23,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -48,6 +50,8 @@ export const useInvenTreeContext = () => {
       navigate: navigate,
       globalSettings: globalSettings,
       userSettings: userSettings,
+      modelInformation: ModelInformationDict,
+      renderInstance: RenderInstance,
       theme: theme,
       colorScheme: colorScheme,
       forms: {

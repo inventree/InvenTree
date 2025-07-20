@@ -23,6 +23,7 @@ import build.models
 import common.models
 import common.settings
 import company.models
+import stock.models as stock_models
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
@@ -893,9 +894,39 @@ class SalesOrderLineItemFilter(LineItemFilter):
         queryset=models.SalesOrder.objects.all(), field_name='order', label=_('Order')
     )
 
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
     part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), field_name='part', label=_('Part')
+        queryset=Part.objects.all(),
+        field_name='part',
+        label=_('Part'),
+        method='filter_part',
     )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter SalesOrderLineItem by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        # Construct a queryset of parts to filter by
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        return queryset.filter(part__in=parts)
 
     allocated = rest_filters.BooleanFilter(
         label=_('Allocated'), method='filter_allocated'
@@ -1178,6 +1209,20 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
             return queryset.exclude(shipment=None)
         return queryset.filter(shipment=None)
 
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Location'))
+    )
+    def filter_location(self, queryset, name, location):
+        """Filter by the location of the allocated StockItem."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(item__location__in=locations)
+
 
 class SalesOrderAllocationMixin:
     """Mixin class for SalesOrderAllocation endpoints."""
@@ -1217,6 +1262,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, BulkUpdateMixin, ListA
         'quantity',
         'part',
         'serial',
+        'IPN',
         'batch',
         'location',
         'order',
@@ -1224,6 +1270,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, BulkUpdateMixin, ListA
     ]
 
     ordering_field_aliases = {
+        'IPN': 'item__part__IPN',
         'part': 'item__part__name',
         'serial': ['item__serial_int', 'item__serial'],
         'batch': 'item__batch',
@@ -1232,7 +1279,12 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, BulkUpdateMixin, ListA
         'shipment_date': 'shipment__shipment_date',
     }
 
-    search_fields = {'item__part__name', 'item__serial', 'item__batch'}
+    search_fields = {
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+        'item__batch',
+    }
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this endpoint.

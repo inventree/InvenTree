@@ -1,9 +1,9 @@
 import { Badge, Center, type MantineSize } from '@mantine/core';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { resolveItem } from '@lib/functions/Conversion';
 import { statusColorMap } from '../../defaults/backendMappings';
-import { resolveItem } from '../../functions/conversion';
-import { useGlobalStatusState } from '../../states/StatusState';
+import { useGlobalStatusState } from '../../states/GlobalStatusState';
 
 export interface StatusCodeInterface {
   key: number;
@@ -129,6 +129,29 @@ export function getStatusCodeName(
     }
   }
 
+  return null;
+}
+
+/*
+ * Return the human-readable label for a status code
+ */
+export function getStatusCodeLabel(
+  type: ModelType | string,
+  key: string | number
+): string | null {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return null;
+  }
+
+  for (const name in statusCodes.values) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
+
+    if (entry.key == key) {
+      return entry.label;
+    }
+  }
   return null;
 }
 

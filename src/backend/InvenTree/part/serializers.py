@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -98,10 +98,6 @@ class CategorySerializer(
         if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
-    def get_starred(self, category) -> bool:
-        """Return True if the category is directly "starred" by the current user."""
-        return category in self.context.get('starred_categories', [])
-
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
@@ -136,6 +132,10 @@ class CategorySerializer(
     level = serializers.IntegerField(read_only=True)
 
     starred = serializers.SerializerMethodField()
+
+    def get_starred(self, category) -> bool:
+        """Return True if the category is directly "starred" by the current user."""
+        return category in self.context.get('starred_categories', [])
 
     path = serializers.ListField(
         child=serializers.DictField(),
@@ -251,39 +251,6 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
         help_text=_('Purchase currency of this stock item')
     )
-
-
-class PartSchedulingSerializer(serializers.Serializer):
-    """Serializer class for a PartScheduling entry."""
-
-    class Meta:
-        """Metaclass options for this serializer."""
-
-        fields = [
-            'date',
-            'quantity',
-            'speculative_quantity',
-            'title',
-            'label',
-            'model',
-            'model_id',
-        ]
-
-    date = serializers.DateField(label=_('Date'), required=True, allow_null=True)
-
-    quantity = serializers.FloatField(label=_('Quantity'), required=True)
-
-    speculative_quantity = serializers.FloatField(
-        label=_('Speculative Quantity'), required=False
-    )
-
-    title = serializers.CharField(label=_('Title'), required=True)
-
-    label = serializers.CharField(label=_('Label'), required=True)
-
-    model = serializers.CharField(label=_('Model'), required=True)
-
-    model_id = serializers.IntegerField(label=_('Model ID'), required=True)
 
 
 class PartThumbSerializer(serializers.Serializer):
@@ -443,7 +410,13 @@ class PartParameterSerializer(
             'template_detail',
             'data',
             'data_numeric',
+            'note',
+            'updated',
+            'updated_by',
+            'updated_by_detail',
         ]
+
+        read_only_fields = ['updated', 'updated_by']
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for the serializer.
@@ -464,12 +437,26 @@ class PartParameterSerializer(
         if not template_detail:
             self.fields.pop('template_detail', None)
 
+    def save(self):
+        """Save the PartParameter instance."""
+        instance = super().save()
+
+        if request := self.context.get('request', None):
+            # If the request is provided, update the 'updated_by' field
+            instance.updated_by = request.user
+            instance.save()
+
+        return instance
+
     part_detail = PartBriefSerializer(
         source='part', many=False, read_only=True, allow_null=True
     )
+
     template_detail = PartParameterTemplateSerializer(
         source='template', many=False, read_only=True, allow_null=True
     )
+
+    updated_by_detail = UserSerializer(source='updated_by', many=False, read_only=True)
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -876,10 +863,14 @@ class PartSerializer(
         # Annotate with the total 'available stock' quantity
         # This is the current stock, minus any allocations
         queryset = queryset.annotate(
-            unallocated_stock=ExpressionWrapper(
-                F('total_in_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            unallocated_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_in_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                Decimal(0),
                 output_field=models.DecimalField(),
             )
         )
@@ -1163,9 +1154,8 @@ class PartSerializer(
                     part=instance, quantity=quantity, location=location
                 )
 
-                request = self.context.get('request', None)
-                user = request.user if request else None
-                stockitem.save(user=user)
+                if request := self.context.get('request', None):
+                    stockitem.save(user=request.user)
 
         # Create initial supplier information
         if initial_supplier:
@@ -1223,6 +1213,73 @@ class PartSerializer(
         return self.instance
 
 
+class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for Part requirements."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Part
+        fields = [
+            'total_stock',
+            'unallocated_stock',
+            'can_build',
+            'ordering',
+            'building',
+            'scheduled_to_build',
+            'required_for_build_orders',
+            'allocated_to_build_orders',
+            'required_for_sales_orders',
+            'allocated_to_sales_orders',
+        ]
+
+    total_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
+
+    unallocated_stock = serializers.FloatField(
+        source='available_stock', read_only=True, label=_('Available Stock')
+    )
+
+    can_build = serializers.FloatField(read_only=True, label=_('Can Build'))
+
+    ordering = serializers.FloatField(
+        source='on_order', read_only=True, label=_('On Order')
+    )
+
+    building = serializers.FloatField(
+        read_only=True, label=_('In Production'), source='quantity_in_production'
+    )
+
+    scheduled_to_build = serializers.IntegerField(
+        read_only=True, label=_('Scheduled to Build'), source='quantity_being_built'
+    )
+
+    required_for_build_orders = serializers.FloatField(
+        source='required_build_order_quantity',
+        read_only=True,
+        label=_('Required for Build Orders'),
+    )
+
+    allocated_to_build_orders = serializers.FloatField(
+        read_only=True,
+        label=_('Allocated to Build Orders'),
+        source='build_order_allocation_count',
+    )
+
+    required_for_sales_orders = serializers.FloatField(
+        source='required_sales_order_quantity',
+        read_only=True,
+        label=_('Required for Sales Orders'),
+    )
+
+    allocated_to_sales_orders = serializers.SerializerMethodField(
+        read_only=True, label=_('Allocated to Sales Orders')
+    )
+
+    def get_allocated_to_sales_orders(self, part) -> float:
+        """Return the allocated sales order quantity."""
+        return part.sales_order_allocation_count(include_variants=True, pending=True)
+
+
 class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for the PartStocktake model."""
 
@@ -1264,7 +1321,7 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         # Add in user information automatically
         request = self.context.get('request')
         data['user'] = request.user if request else None
-        super().save()
+        return super().save()
 
 
 class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -1555,9 +1612,12 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Called when the serializer is saved."""
         super().save()
 
-        # Update part pricing
-        pricing = self.instance
-        pricing.update_pricing()
+        data = self.validated_data
+
+        if data.get('update', False):
+            # Update part pricing
+            pricing = self.instance
+            pricing.update_pricing()
 
 
 class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -1832,10 +1892,14 @@ class BomItemSerializer(
 
         # Calculate 'available_stock' based on previously annotated fields
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                Decimal(0),
                 output_field=models.DecimalField(),
             )
         )
@@ -1862,10 +1926,14 @@ class BomItemSerializer(
 
         # Calculate 'available_substitute_stock' field
         queryset = queryset.annotate(
-            available_substitute_stock=ExpressionWrapper(
-                F('substitute_stock')
-                - F('substitute_build_allocations')
-                - F('substitute_sales_allocations'),
+            available_substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('substitute_stock')
+                    - F('substitute_build_allocations')
+                    - F('substitute_sales_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                Decimal(0),
                 output_field=models.DecimalField(),
             )
         )
@@ -1886,10 +1954,14 @@ class BomItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=FloatField(),
+                ),
+                0,
                 output_field=FloatField(),
             )
         )

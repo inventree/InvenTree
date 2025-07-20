@@ -8,7 +8,8 @@ import {
   Stack,
   Tabs,
   Text,
-  Tooltip
+  Tooltip,
+  UnstyledButton
 } from '@mantine/core';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -31,11 +32,13 @@ import {
 } from 'react-router-dom';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
+import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
-import { identifierString } from '../../functions/conversion';
+import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { vars } from '../../theme';
@@ -68,7 +71,6 @@ export type PanelProps = {
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
-  markCustomPanels?: boolean;
 };
 
 function BasePanelGroup({
@@ -81,8 +83,7 @@ function BasePanelGroup({
   instance,
   model,
   id,
-  collapsible = true,
-  markCustomPanels = false
+  collapsible = true
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -154,7 +155,7 @@ function BasePanelGroup({
     if (pluginPanels.length > 0) {
       _grouped_panels.push({
         id: 'plugins',
-        label: markCustomPanels ? t`Plugin Provided` : '',
+        label: t`Plugin Provided`,
         panels: pluginPanels
       });
     }
@@ -170,9 +171,9 @@ function BasePanelGroup({
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
-      if (event && (event?.ctrlKey || event?.shiftKey)) {
+      cancelEvent(event);
+      if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
-        cancelEvent(event);
         navigateToLink(url, navigate, event);
       } else {
         navigate(`../${targetPanel}`);
@@ -218,13 +219,16 @@ function BasePanelGroup({
             {groupedPanels.map((group) => (
               <Box key={`group-${group.id}`} w={'100%'}>
                 <Text
-                  fs={'italic'}
-                  ml={'1rem'}
+                  hidden={!group.label || !expanded}
                   c={vars.colors.primaryColors[7]}
                   key={`group-label-${group.id}`}
+                  style={{
+                    paddingLeft: '10px'
+                  }}
                 >
                   {group.label}
                 </Text>
+                {group.label && <Divider c={vars.colors.primaryColors[7]} />}
                 {group.panels?.map(
                   (panel) =>
                     !panel.hidden && (
@@ -249,29 +253,42 @@ function BasePanelGroup({
                             handlePanelChange(panel.name, event)
                           }
                         >
-                          {expanded && panel.label}
+                          <UnstyledButton
+                            component={'a'}
+                            href={generateUrl(
+                              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                            )}
+                          >
+                            {expanded && panel.label}
+                          </UnstyledButton>
                         </Tabs.Tab>
                       </Tooltip>
                     )
                 )}
               </Box>
             ))}
+            {collapsible && <Divider />}
             {collapsible && (
               <Group wrap='nowrap' gap='xs'>
-                <ActionIcon
-                  style={{
-                    paddingLeft: '10px'
-                  }}
-                  onClick={() => setExpanded(!expanded)}
-                  variant='transparent'
-                  size='md'
+                <Tooltip
+                  position='right'
+                  label={expanded ? t`Collapse panels` : t`Expand panels`}
                 >
-                  {expanded ? (
-                    <IconLayoutSidebarLeftCollapse opacity={0.5} />
-                  ) : (
-                    <IconLayoutSidebarRightCollapse opacity={0.5} />
-                  )}
-                </ActionIcon>
+                  <ActionIcon
+                    style={{
+                      paddingLeft: '10px'
+                    }}
+                    onClick={() => setExpanded(!expanded)}
+                    variant='transparent'
+                    size='lg'
+                  >
+                    {expanded ? (
+                      <IconLayoutSidebarLeftCollapse opacity={0.75} />
+                    ) : (
+                      <IconLayoutSidebarRightCollapse opacity={0.75} />
+                    )}
+                  </ActionIcon>
+                </Tooltip>
                 {pluginPanelSet.isLoading && <Loader size='xs' />}
               </Group>
             )}

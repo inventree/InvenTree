@@ -297,7 +297,7 @@ class Order(
     """
 
     REQUIRE_RESPONSIBLE_SETTING = None
-    LOCK_SETTING = None
+    UNLOCK_SETTING = None
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -334,14 +334,19 @@ class Order(
     def check_locked(self, db: bool = False) -> bool:
         """Check if this order is 'locked'.
 
+        A locked order cannot be modified after it has been completed.
+
         Args:
             db: If True, check with the database. If False, check the instance (default False).
         """
-        return (
-            self.LOCK_SETTING
-            and get_global_setting(self.LOCK_SETTING)
-            and self.check_complete(db)
-        )
+        if not self.check_complete(db=db):
+            # If the order is not complete, it is not locked
+            return False
+
+        if self.UNLOCK_SETTING:
+            return get_global_setting(self.UNLOCK_SETTING, backup_value=False) is False
+
+        return False
 
     def check_complete(self, db: bool = False) -> bool:
         """Check if this order is 'complete'.
@@ -532,7 +537,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = PurchaseOrderStatus
-    LOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -1124,7 +1129,7 @@ class SalesOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = SalesOrderStatus
-    LOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -2425,7 +2430,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = ReturnOrderStatus
-    LOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""

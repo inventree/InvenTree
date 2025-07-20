@@ -163,7 +163,7 @@ class ReportConfig(AppConfig):
                 )
                 logger.info("Creating new label template: '%s'", template['name'])
             except Exception:
-                InvenTree.exceptions.log_error('create_default_labels')
+                InvenTree.exceptions.log_error('create_default_labels', scope='init')
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -225,6 +225,13 @@ class ReportConfig(AppConfig):
                 'model_type': 'stockitem',
             },
             {
+                'file': 'inventree_stock_report_merge.html',
+                'name': 'InvenTree Default Stock Report Merge',
+                'description': 'Sample stock item report merge',
+                'model_type': 'stockitem',
+                'merge': True,
+            },
+            {
                 'file': 'inventree_stock_location_report.html',
                 'name': 'InvenTree Stock Location Report',
                 'description': 'Sample stock location report',
@@ -255,4 +262,4 @@ class ReportConfig(AppConfig):
                 )
                 logger.info("Created new report template: '%s'", template['name'])
             except Exception:
-                InvenTree.exceptions.log_error('create_default_reports')
+                InvenTree.exceptions.log_error('create_default_reports', scope='init')

@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Alert, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconChecklist,
+  IconCircleCheck,
   IconClipboardCheck,
   IconClipboardList,
   IconInfoCircle,
@@ -19,6 +20,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -51,7 +53,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
@@ -60,6 +62,60 @@ import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+
+function NoItems() {
+  return (
+    <Alert color='blue' icon={<IconInfoCircle />} title={t`No Required Items`}>
+      <Stack gap='xs'>
+        <Text>{t`This build order does not have any required items.`}</Text>
+        <Text>{t`The assembled part may not have a Bill of Materials (BOM) defined, or the BOM is empty.`}</Text>
+      </Stack>
+    </Alert>
+  );
+}
+
+/**
+ * Panel to display the lines of a build order
+ */
+function BuildLinesPanel({
+  build,
+  isLoading,
+  hasItems
+}: Readonly<{
+  build: any;
+  isLoading: boolean;
+  hasItems: boolean;
+}>) {
+  if (isLoading || !build.pk) {
+    return <Skeleton w={'100%'} h={400} animate />;
+  }
+
+  if (!hasItems) {
+    return <NoItems />;
+  }
+
+  return <BuildLineTable build={build} />;
+}
+
+function BuildAllocationsPanel({
+  build,
+  isLoading,
+  hasItems
+}: Readonly<{
+  build: any;
+  isLoading: boolean;
+  hasItems: boolean;
+}>) {
+  if (isLoading || !build.pk) {
+    return <Skeleton w={'100%'} h={400} animate />;
+  }
+
+  if (!hasItems) {
+    return <NoItems />;
+  }
+
+  return <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />;
+}
 
 /**
  * Detail page for a single Build Order
@@ -70,13 +126,29 @@ export default function BuildDetail() {
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
 
+  // Fetch the number of BOM items associated with the build order
+  const { instance: buildLineData, instanceQuery: buildLineQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.build_line_list,
+      params: {
+        build: id,
+        allocations: false,
+        part_detail: false,
+        build_detail: false,
+        bom_item_detail: false,
+        limit: 1
+      },
+      disabled: !id,
+      hasPrimaryKey: false,
+      defaultValue: {}
+    });
+
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const {
     instance: build,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
@@ -86,10 +158,23 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: build?.part,
+      hasPrimaryKey: true,
+      defaultValue: {}
+    });
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
     }
+
+    const data = {
+      ...build,
+      can_build: partRequirements?.can_build ?? 0
+    };
 
     const tl: DetailsField[] = [
       {
@@ -173,9 +258,16 @@ export default function BuildDetail() {
 
     const tr: DetailsField[] = [
       {
-        type: 'text',
+        type: 'number',
         name: 'quantity',
         label: t`Build Quantity`
+      },
+      {
+        type: 'number',
+        name: 'can_build',
+        unit: build.part_detail?.units,
+        label: t`Can Build`,
+        hidden: partRequirementsQuery.isFetching
       },
       {
         type: 'progressbar',
@@ -290,15 +382,20 @@ export default function BuildDetail() {
             pk={build.part}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={build} />
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={build} />
-        <DetailsTable fields={bl} item={build} />
-        <DetailsTable fields={br} item={build} />
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [build, instanceQuery]);
+  }, [
+    build,
+    instanceQuery,
+    partRequirements,
+    partRequirementsQuery.isFetching
+  ]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -310,9 +407,15 @@ export default function BuildDetail() {
       },
       {
         name: 'line-items',
-        label: t`Required Stock`,
+        label: t`Required Parts`,
         icon: <IconListNumbers />,
-        content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
+        content: (
+          <BuildLinesPanel
+            build={build}
+            isLoading={buildLineQuery.isFetching || buildLineQuery.isLoading}
+            hasItems={buildLineData?.count > 0}
+          />
+        )
       },
       {
         name: 'allocated-stock',
@@ -320,17 +423,21 @@ export default function BuildDetail() {
         icon: <IconList />,
         hidden:
           build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED,
-        content: build.pk ? (
-          <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
-        ) : (
-          <Skeleton />
+          build.status == buildStatus.CANCELLED ||
+          (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
+        content: (
+          <BuildAllocationsPanel
+            build={build}
+            isLoading={buildLineQuery.isFetching || buildLineQuery.isLoading}
+            hasItems={buildLineData?.count > 0}
+          />
         )
       },
       {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
         icon: <IconListCheck />,
+        hidden: (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
         content: (
           <StockItemTable
             allowAdd={false}
@@ -414,15 +521,28 @@ export default function BuildDetail() {
         model_id: build.pk
       })
     ];
-  }, [build, id, user, buildStatus, globalSettings]);
+  }, [
+    build,
+    id,
+    user,
+    buildStatus,
+    globalSettings,
+    buildLineQuery.isFetching,
+    buildLineQuery.isLoading,
+    buildLineData
+  ]);
 
-  const buildOrderFields = useBuildOrderFields({ create: false });
+  const editBuildOrderFields = useBuildOrderFields({
+    create: false,
+    modalId: 'edit-build-order'
+  });
 
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
     title: t`Edit Build Order`,
-    fields: buildOrderFields,
+    modalId: 'edit-build-order',
+    fields: editBuildOrderFields,
     onFormSuccess: refreshInstance
   });
 
@@ -435,10 +555,16 @@ export default function BuildDetail() {
     return data;
   }, [build]);
 
+  const duplicateBuildOrderFields = useBuildOrderFields({
+    create: false,
+    modalId: 'duplicate-build-order'
+  });
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
-    fields: buildOrderFields,
+    modalId: 'duplicate-build-order',
+    fields: duplicateBuildOrderFields,
     initialData: duplicateBuildOrderInitialData,
     follow: true,
     modelType: ModelType.build
@@ -472,17 +598,33 @@ export default function BuildDetail() {
     successMessage: t`Order issued`
   });
 
+  const completeOrderFields: ApiFormFieldSet = useMemo(() => {
+    const hasBom = (buildLineData?.count ?? 0) > 0;
+
+    return {
+      accept_overallocated: {
+        hidden: !hasBom
+      },
+      accept_unallocated: {
+        hidden: !hasBom
+      },
+      accept_incomplete: {}
+    };
+  }, [buildLineData.count]);
+
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
     title: t`Complete Build Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as complete`,
+    preFormContent: (
+      <Alert
+        color='green'
+        icon={<IconCircleCheck />}
+        title={t`Mark this order as complete`}
+      />
+    ),
     successMessage: t`Order completed`,
-    fields: {
-      accept_overallocated: {},
-      accept_unallocated: {},
-      accept_incomplete: {}
-    }
+    fields: completeOrderFields
   });
 
   const buildActions = useMemo(() => {
@@ -586,15 +728,11 @@ export default function BuildDetail() {
       {holdOrder.modal}
       {issueOrder.modal}
       {completeOrder.modal}
-      <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
-        requiredRole={UserRoles.build}
-      >
+      <InstanceDetail query={instanceQuery} requiredRole={UserRoles.build}>
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Build Order`}: ${build.reference}`}
-            subtitle={build.title}
+            subtitle={`${build.quantity} x ${build.part_detail?.full_name}`}
             badges={buildBadges}
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}

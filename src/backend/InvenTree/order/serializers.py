@@ -14,7 +14,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -650,7 +650,7 @@ class PurchaseOrderLineItemSerializer(
     )
 
     build_order_detail = build.serializers.BuildSerializer(
-        source='build_order', read_only=True, many=False
+        source='build_order', read_only=True, allow_null=True, many=False
     )
 
     merge_items = serializers.BooleanField(
@@ -1206,10 +1206,14 @@ class SalesOrderLineItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1233,10 +1237,14 @@ class SalesOrderLineItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1423,8 +1431,14 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(
         source='item.part', many=False, read_only=True, allow_null=True
     )
-    item_detail = stock.serializers.StockItemSerializerBrief(
-        source='item', many=False, read_only=True, allow_null=True
+    item_detail = stock.serializers.StockItemSerializer(
+        source='item',
+        many=False,
+        read_only=True,
+        allow_null=True,
+        part_detail=False,
+        location_detail=False,
+        supplier_part_detail=False,
     )
     location_detail = stock.serializers.LocationBriefSerializer(
         source='item.location', many=False, read_only=True, allow_null=True

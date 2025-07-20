@@ -1,8 +1,6 @@
 """Provides a JSON API for the Part app."""
 
-import functools
 import re
-from datetime import datetime
 
 from django.db.models import Count, F, Q
 from django.urls import include, path
@@ -17,10 +15,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import InvenTree.permissions
-import order.models
 import part.filters
-from build.models import Build, BuildItem
-from build.status_codes import BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
@@ -43,7 +38,6 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.serializers import EmptySerializer
-from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -547,205 +541,6 @@ class PartThumbsUpdate(RetrieveUpdateAPI):
     filter_backends = [DjangoFilterBackend]
 
 
-class PartScheduling(RetrieveAPI):
-    """API endpoint for delivering "scheduling" information about a given part via the API.
-
-    Returns a chronologically ordered list about future "scheduled" events,
-    concerning stock levels for the part:
-
-    - Purchase Orders (incoming stock)
-    - Sales Orders (outgoing stock)
-    - Build Orders (incoming completed stock)
-    - Build Orders (outgoing allocated stock)
-    """
-
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.PartSchedulingSerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        """Return scheduling information for the referenced Part instance."""
-        part = self.get_object()
-
-        schedule = []
-
-        def add_schedule_entry(
-            date: datetime,
-            quantity: float,
-            title: str,
-            instance,
-            speculative_quantity: float = 0,
-        ):
-            """Add a new entry to the schedule list.
-
-            Args:
-                date (datetime): The date of the scheduled event.
-                quantity (float): The quantity of stock to be added or removed.
-                title (str): The title of the scheduled event.
-                instance (Model): The associated model instance (e.g., SalesOrder object).
-                speculative_quantity (float, optional): A speculative quantity to be added or removed. Defaults to 0.
-            """
-            schedule.append({
-                'date': date,
-                'quantity': quantity,
-                'speculative_quantity': speculative_quantity,
-                'title': title,
-                'label': str(instance.reference),
-                'model': instance.__class__.__name__.lower(),
-                'model_id': instance.pk,
-            })
-
-        # Add purchase order (incoming stock) information
-        po_lines = order.models.PurchaseOrderLineItem.objects.filter(
-            part__part=part, order__status__in=PurchaseOrderStatusGroups.OPEN
-        )
-
-        for line in po_lines:
-            target_date = line.target_date or line.order.target_date
-
-            line_quantity = max(line.quantity - line.received, 0)
-
-            # Multiply by the pack quantity of the SupplierPart
-            quantity = line.part.base_quantity(line_quantity)
-
-            add_schedule_entry(
-                target_date, quantity, _('Incoming Purchase Order'), line.order
-            )
-
-        # Add sales order (outgoing stock) information
-        so_lines = order.models.SalesOrderLineItem.objects.filter(
-            part=part, order__status__in=SalesOrderStatusGroups.OPEN
-        )
-
-        for line in so_lines:
-            target_date = line.target_date or line.order.target_date
-
-            quantity = max(line.quantity - line.shipped, 0)
-
-            add_schedule_entry(
-                target_date, -quantity, _('Outgoing Sales Order'), line.order
-            )
-
-        # Add build orders (incoming stock) information
-        build_orders = Build.objects.filter(
-            part=part, status__in=BuildStatusGroups.ACTIVE_CODES
-        )
-
-        for build in build_orders:
-            quantity = max(build.quantity - build.completed, 0)
-
-            add_schedule_entry(
-                build.target_date, quantity, _('Stock produced by Build Order'), build
-            )
-
-        """
-        Add build order allocation (outgoing stock) information.
-
-        Here we need some careful consideration:
-
-        - 'Tracked' stock items are removed from stock when the individual Build Output is completed
-        - 'Untracked' stock items are removed from stock when the Build Order is completed
-
-        The 'simplest' approach here is to look at existing BuildItem allocations which reference this part,
-        and "schedule" them for removal at the time of build order completion.
-
-        This assumes that the user is responsible for correctly allocating parts.
-
-        However, it has the added benefit of side-stepping the various BOM substitution options,
-        and just looking at what stock items the user has actually allocated against the Build.
-        """
-
-        # Grab a list of BomItem objects that this part might be used in
-        bom_items = BomItem.objects.filter(part.get_used_in_bom_item_filter())
-
-        # Track all outstanding build orders
-        seen_builds = set()
-
-        for bom_item in bom_items:
-            # Find a list of active builds for this BomItem
-
-            if bom_item.inherited:
-                # An "inherited" BOM item filters down to variant parts also
-                children = bom_item.part.get_descendants(include_self=True)
-                builds = Build.objects.filter(
-                    status__in=BuildStatusGroups.ACTIVE_CODES, part__in=children
-                )
-            else:
-                builds = Build.objects.filter(
-                    status__in=BuildStatusGroups.ACTIVE_CODES, part=bom_item.part
-                )
-
-            for build in builds:
-                # Ensure we don't double-count any builds
-                if build in seen_builds:
-                    continue
-
-                seen_builds.add(build)
-
-                if bom_item.sub_part.trackable:
-                    # Trackable parts are allocated against the outputs
-                    required_quantity = build.remaining * bom_item.quantity
-                else:
-                    # Non-trackable parts are allocated against the build itself
-                    required_quantity = build.quantity * bom_item.quantity
-
-                # Grab all allocations against the specified BomItem
-                allocations = BuildItem.objects.filter(
-                    build_line__bom_item=bom_item, build_line__build=build
-                )
-
-                # Total allocated for *this* part
-                part_allocated_quantity = 0
-
-                # Total allocated for *any* part
-                total_allocated_quantity = 0
-
-                for allocation in allocations:
-                    total_allocated_quantity += allocation.quantity
-
-                    if allocation.stock_item.part == part:
-                        part_allocated_quantity += allocation.quantity
-
-                speculative_quantity = 0
-
-                # Consider the case where the build order is *not* fully allocated
-                if required_quantity > total_allocated_quantity:
-                    speculative_quantity = -1 * (
-                        required_quantity - total_allocated_quantity
-                    )
-
-                add_schedule_entry(
-                    build.target_date,
-                    -part_allocated_quantity,
-                    _('Stock required for Build Order'),
-                    build,
-                    speculative_quantity=speculative_quantity,
-                )
-
-        def compare(entry_1, entry_2):
-            """Comparison function for sorting entries by date.
-
-            Account for the fact that either date might be None
-            """
-            date_1 = entry_1['date']
-            date_2 = entry_2['date']
-
-            if date_1 is None:
-                return -1
-            elif date_2 is None:
-                return 1
-
-            return -1 if date_1 < date_2 else 1
-
-        # Sort by incrementing date values
-        schedules = sorted(schedule, key=functools.cmp_to_key(compare))
-
-        serializers = part_serializers.PartSchedulingSerializer(
-            schedules, many=True, context={'request': request}
-        )
-
-        return Response(serializers.data)
-
-
 class PartRequirements(RetrieveAPI):
     """API endpoint detailing 'requirements' information for a particular part.
 
@@ -754,38 +549,13 @@ class PartRequirements(RetrieveAPI):
     - Sales Orders
     - Build Orders
     - Total requirements
+    - How many of this part can be assembled with available stock
 
     As this data is somewhat complex to calculate, is it not included in the default API
     """
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        """Construct a response detailing Part requirements."""
-        part = self.get_object()
-
-        data = {
-            'available_stock': part.available_stock,
-            'on_order': part.on_order,
-            'required_build_order_quantity': part.required_build_order_quantity(),
-            'allocated_build_order_quantity': part.build_order_allocation_count(),
-            'required_sales_order_quantity': part.required_sales_order_quantity(),
-            'allocated_sales_order_quantity': part.sales_order_allocation_count(
-                pending=True
-            ),
-        }
-
-        data['allocated'] = (
-            data['allocated_build_order_quantity']
-            + data['allocated_sales_order_quantity']
-        )
-        data['required'] = (
-            data['required_build_order_quantity']
-            + data['required_sales_order_quantity']
-        )
-
-        return Response(data)
+    serializer_class = part_serializers.PartRequirementsSerializer
 
 
 class PartPricingDetail(RetrieveUpdateAPI):
@@ -946,8 +716,8 @@ class PartFilter(rest_filters.FilterSet):
     def filter_has_ipn(self, queryset, name, value):
         """Filter by whether the Part has an IPN (internal part number) or not."""
         if str2bool(value):
-            return queryset.exclude(IPN='')
-        return queryset.filter(IPN='')
+            return queryset.exclude(IPN='').exclude(IPN=None)
+        return queryset.filter(Q(IPN='') | Q(IPN=None)).distinct()
 
     # Regex filter for name
     name_regex = rest_filters.CharFilter(
@@ -1622,8 +1392,15 @@ class PartParameterAPIMixin:
     def get_queryset(self, *args, **kwargs):
         """Override get_queryset method to prefetch related fields."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related('part', 'template')
+        queryset = queryset.prefetch_related('part', 'template', 'updated_by')
         return queryset
+
+    def get_serializer_context(self):
+        """Pass the 'request' object through to the serializer context."""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this API endpoint.
@@ -1650,7 +1427,7 @@ class PartParameterFilter(rest_filters.FilterSet):
         """Metaclass options for the filterset."""
 
         model = PartParameter
-        fields = ['template']
+        fields = ['template', 'updated_by']
 
     part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(), method='filter_part'
@@ -1683,7 +1460,7 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['name', 'data', 'part', 'template']
+    ordering_fields = ['name', 'data', 'part', 'template', 'updated', 'updated_by']
 
     ordering_field_aliases = {
         'name': 'template__name',
@@ -1861,9 +1638,23 @@ class BomFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter the queryset based on the specified part."""
         return queryset.filter(part.get_bom_item_filter())
+
+    category = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        method='filter_category',
+        label=_('Category'),
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_category(self, queryset, name, category):
+        """Filter the queryset based on the specified PartCategory."""
+        cats = category.get_descendants(include_self=True)
+
+        return queryset.filter(sub_part__category__in=cats)
 
     uses = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(), method='filter_uses', label=_('Uses')
@@ -2235,8 +2026,6 @@ part_api_urls = [
                 PartSerialNumberDetail.as_view(),
                 name='api-part-serial-number-detail',
             ),
-            # Endpoint for future scheduling information
-            path('scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
             path(
                 'requirements/',
                 PartRequirements.as_view(),

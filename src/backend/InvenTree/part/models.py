@@ -18,7 +18,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
@@ -30,9 +30,8 @@ from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import TreeForeignKey
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
@@ -70,7 +69,12 @@ from stock import models as StockModels
 logger = structlog.get_logger('inventree')
 
 
-class PartCategory(InvenTree.models.InvenTreeTree):
+class PartCategory(
+    InvenTree.models.PluginValidationMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PathStringMixin,
+    InvenTree.models.InvenTreeTree,
+):
     """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
@@ -368,7 +372,7 @@ class PartManager(TreeManager):
 
 
 class PartReportContext(report.mixins.BaseReportContext):
-    """Context for the part model.
+    """Report context for the Part model.
 
     Attributes:
         bom_items: Query set of all BomItem objects associated with the Part
@@ -401,13 +405,13 @@ class PartReportContext(report.mixins.BaseReportContext):
 
 @cleanup.ignore
 class Part(
+    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
-    MPTTModel,
+    InvenTree.models.InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
@@ -446,6 +450,8 @@ class Part(
         responsible_owner: Owner (either user or group) which is responsible for this part (optional)
         last_stocktake: Date at which last stocktake was performed for this Part
     """
+
+    NODE_PARENT_KEY = 'variant_of'
 
     objects = PartManager()
 
@@ -550,10 +556,7 @@ class Part(
 
         self.full_clean()
 
-        try:
-            super().save(*args, **kwargs)
-        except InvalidMove:
-            raise ValidationError({'variant_of': _('Invalid choice for parent part')})
+        super().save(*args, **kwargs)
 
         if _new:
             # Only run if the check was not run previously (due to not existing in the database)
@@ -1327,29 +1330,62 @@ class Part(
 
         return max(total, 0)
 
-    def requiring_build_orders(self):
-        """Return list of outstanding build orders which require this part."""
+    def requiring_build_orders(self, include_variants: bool = True):
+        """Return list of outstanding build orders which require this part.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
         # List parts that this part is required for
+
+        if include_variants:
+            # If we are including variants, get all parts in the variant tree
+            parts = list(self.get_descendants(include_self=True))
+        else:
+            parts = [self]
+
+        used_in_parts = set()
+
+        for part in parts:
+            # Get all assemblies which use this part
+            used_in_parts.update(part.get_used_in())
 
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
-            part__in=self.get_used_in(), status__in=BuildStatusGroups.ACTIVE_CODES
+            part__in=list(used_in_parts), status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         return builds
 
-    def required_build_order_quantity(self):
-        """Return the quantity of this part required for active build orders."""
+    def required_build_order_quantity(self, include_variants: bool = True):
+        """Return the quantity of this part required for active build orders.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
         # List active build orders which reference this part
-        builds = self.requiring_build_orders()
+        builds = self.requiring_build_orders(include_variants=include_variants)
 
         quantity = 0
 
-        for build in builds:
-            bom_item = None
+        if include_variants:
+            matching_parts = list(self.get_descendants(include_self=True))
+        else:
+            matching_parts = [self]
 
-            # List the bom lines required to make the build (including inherited ones!)
-            bom_items = build.part.get_bom_items().filter(sub_part=self)
+        # Cache the BOM items that we query
+        # Keep a dict of part ID to BOM items
+        cached_bom_items: dict = {}
+
+        for build in builds:
+            if build.part.pk not in cached_bom_items:
+                # Get the BOM items for this part
+                bom_items = build.part.get_bom_items().filter(
+                    sub_part__in=matching_parts
+                )
+                cached_bom_items[build.part.pk] = bom_items
+            else:
+                bom_items = cached_bom_items[build.part.pk]
 
             # Match BOM item to build
             for bom_item in bom_items:
@@ -1359,13 +1395,22 @@ class Part(
 
         return quantity
 
-    def requiring_sales_orders(self):
-        """Return a list of sales orders which require this part."""
+    def requiring_sales_orders(self, include_variants: bool = True):
+        """Return a list of sales orders which require this part.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
         orders = set()
+
+        if include_variants:
+            parts = list(self.get_descendants(include_self=True))
+        else:
+            parts = [self]
 
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatusGroups.OPEN, part=self
+            order__status__in=SalesOrderStatusGroups.OPEN, part__in=parts
         )
 
         for line in open_lines:
@@ -1373,11 +1418,20 @@ class Part(
 
         return orders
 
-    def required_sales_order_quantity(self):
-        """Return the quantity of this part required for active sales orders."""
+    def required_sales_order_quantity(self, include_variants: bool = True):
+        """Return the quantity of this part required for active sales orders.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
+        """
+        if include_variants:
+            parts = list(self.get_descendants(include_self=True))
+        else:
+            parts = [self]
+
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatusGroups.OPEN, part=self
+            order__status__in=SalesOrderStatusGroups.OPEN, part__in=parts
         )
 
         quantity = 0
@@ -1389,11 +1443,11 @@ class Part(
 
         return quantity
 
-    def required_order_quantity(self):
+    def required_order_quantity(self, include_variants: bool = True):
         """Return total required to fulfil orders."""
-        return (
-            self.required_build_order_quantity() + self.required_sales_order_quantity()
-        )
+        return self.required_build_order_quantity(
+            include_variants=include_variants
+        ) + self.required_sales_order_quantity(include_variants=include_variants)
 
     @property
     def quantity_to_order(self):
@@ -1530,8 +1584,12 @@ class Part(
 
         # Calculate the 'available stock' based on previous annotations
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock') - F('so_allocations') - F('bo_allocations'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock') - F('so_allocations') - F('bo_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1549,10 +1607,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            substitute_stock=ExpressionWrapper(
-                F('sub_total_stock')
-                - F('sub_so_allocations')
-                - F('sub_bo_allocations'),
+            substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('sub_total_stock')
+                    - F('sub_so_allocations')
+                    - F('sub_bo_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1573,10 +1635,14 @@ class Part(
         )
 
         queryset = queryset.annotate(
-            variant_stock=ExpressionWrapper(
-                F('var_total_stock')
-                - F('var_bo_allocations')
-                - F('var_so_allocations'),
+            variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('var_total_stock')
+                    - F('var_bo_allocations')
+                    - F('var_so_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1611,13 +1677,25 @@ class Part(
         return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
-    def quantity_being_built(self):
+    def quantity_being_built(self, include_variants: bool = True):
         """Return the current number of parts currently being built.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
 
         Note: This is the total quantity of Build orders, *not* the number of build outputs.
               In this fashion, it is the "projected" quantity of builds
         """
-        builds = self.active_builds
+        builds = BuildModels.Build.objects.filter(
+            status__in=BuildStatusGroups.ACTIVE_CODES
+        )
+
+        if include_variants:
+            # If we are including variants, get all parts in the variant tree
+            builds = builds.filter(part__in=self.get_descendants(include_self=True))
+        else:
+            # Only look at this part
+            builds = builds.filter(part=self)
 
         quantity = 0
 
@@ -1628,16 +1706,26 @@ class Part(
         return quantity
 
     @property
-    def quantity_in_production(self):
+    def quantity_in_production(self, include_variants: bool = True):
         """Quantity of this part currently actively in production.
+
+        Arguments:
+            include_variants: If True, include variants of this part in the calculation
 
         Note: This may return a different value to `quantity_being_built`
         """
         quantity = 0
 
-        items = self.stock_items.filter(
+        items = StockModels.StockItem.objects.filter(
             is_building=True, build__status__in=BuildStatusGroups.ACTIVE_CODES
         )
+
+        if include_variants:
+            # If we are including variants, get all parts in the variant tree
+            items = items.filter(part__in=self.get_descendants(include_self=True))
+        else:
+            # Only look at this part
+            items = items.filter(part=self)
 
         for item in items:
             # The remaining items in the build
@@ -1808,7 +1896,7 @@ class Part(
             self.get_bom_item_filter(include_inherited=include_inherited)
         )
 
-        return queryset.prefetch_related('sub_part')
+        return queryset.prefetch_related('part', 'sub_part')
 
     def get_installed_part_options(
         self, include_inherited: bool = True, include_variants: bool = True
@@ -2021,7 +2109,7 @@ class Part(
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False):
+    def schedule_pricing_update(self, create: bool = False, force: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -2031,7 +2119,13 @@ class Part(
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
+            force: If True, force the pricing to be updated even auto pricing is disabled
         """
+        if not force and not get_global_setting(
+            'PRICING_AUTO_UPDATE', backup_value=True
+        ):
+            return
+
         try:
             self.refresh_from_db()
         except Part.DoesNotExist:
@@ -2693,7 +2787,11 @@ class PartPricing(common.models.MetaMixin):
         return result
 
     def schedule_for_update(self, counter: int = 0):
-        """Schedule this pricing to be updated."""
+        """Schedule this pricing to be updated.
+
+        Arguments:
+            counter: Recursion counter (used to prevent infinite recursion)
+        """
         import InvenTree.ready
 
         # If importing data, skip pricing update
@@ -3951,13 +4049,19 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(InvenTree.models.InvenTreeMetadataModel):
+class PartParameter(
+    common.models.UpdatedUserMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
         part: Reference to a single Part object
         template: Reference to a single PartParameterTemplate object
         data: The data (value) of the Parameter [string]
+        data_numeric: Numeric value of the parameter (if applicable) [float]
+        note: Optional note field for the parameter [string]
+        updated: Timestamp of when the parameter was last updated [datetime]
+        updated_by: Reference to the User who last updated the parameter [User]
     """
 
     class Meta:
@@ -4097,6 +4201,13 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     )
 
     data_numeric = models.FloatField(default=None, null=True, blank=True)
+
+    note = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Note'),
+        help_text=_('Optional note field'),
+    )
 
     @property
     def units(self):

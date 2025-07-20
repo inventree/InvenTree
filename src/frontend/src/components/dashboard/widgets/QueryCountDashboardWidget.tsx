@@ -1,7 +1,7 @@
-import { ActionIcon, Group, Loader } from '@mantine/core';
-import { IconExternalLink } from '@tabler/icons-react';
+import { ActionIcon, Anchor, Group, Loader } from '@mantine/core';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
@@ -9,6 +9,7 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
+import { useDocumentVisibility } from '@mantine/hooks';
 import { useApi } from '../../../contexts/ApiContext';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useUserState } from '../../../states/UserState';
@@ -32,14 +33,20 @@ function QueryCountWidget({
   const api = useApi();
   const user = useUserState();
   const navigate = useNavigate();
+  const visibility = useDocumentVisibility();
 
   const modelProperties = ModelInformationDict[modelType];
 
   const query = useQuery({
-    queryKey: ['dashboard-query-count', modelType, params],
-    enabled: user.hasViewPermission(modelType),
+    queryKey: ['dashboard-query-count', modelType, params, visibility],
+    enabled: user.hasViewPermission(modelType) && visibility === 'visible',
     refetchOnMount: true,
+    refetchInterval: 10 * 60 * 1000, // 10 minute refetch interval
     queryFn: () => {
+      if (visibility !== 'visible') {
+        return null;
+      }
+
       return api
         .get(apiUrl(modelProperties.api_endpoint), {
           params: {
@@ -47,13 +54,16 @@ function QueryCountWidget({
             limit: 1
           }
         })
-        .then((res) => res.data)
-        .catch(() => {});
+        .then((res) => res.data);
     }
   });
 
   const onFollowLink = useCallback(
     (event: any) => {
+      if (!query.isFetched) {
+        return;
+      }
+
       if (modelProperties.url_overview) {
         let url = modelProperties.url_overview;
 
@@ -67,36 +77,43 @@ function QueryCountWidget({
         navigateToLink(url, navigate, event);
       }
     },
-    [modelProperties, params]
+    [query.isFetched, modelProperties, params]
   );
 
+  const result: ReactNode = useMemo(() => {
+    if (query.isFetching) {
+      return <Loader size='xs' />;
+    } else if (query.isError) {
+      return (
+        <ActionIcon color='red' variant='transparent' size='lg'>
+          <IconExclamationCircle />
+        </ActionIcon>
+      );
+    } else {
+      return <StylishText size='xl'>{query.data?.count ?? '-'}</StylishText>;
+    }
+  }, [query.isFetching, query.isError, query.data]);
+
   return (
-    <Group
-      gap='xs'
-      wrap='nowrap'
-      justify='space-between'
-      align='center'
-      style={{ height: '100%' }}
-    >
-      <Group gap='xs'>
-        <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-        <StylishText size='md'>{title}</StylishText>
-      </Group>
-      <Group gap='xs' wrap='nowrap' justify='space-apart'>
-        <Group gap='xs' wrap='nowrap' justify='right'>
-          {query.isFetching ? (
-            <Loader size='sm' />
-          ) : (
-            <StylishText size='md'>{query.data?.count ?? '-'}</StylishText>
-          )}
-          {modelProperties?.url_overview && (
-            <ActionIcon size='sm' variant='transparent' onClick={onFollowLink}>
-              <IconExternalLink />
-            </ActionIcon>
-          )}
+    <Anchor href='#' onClick={onFollowLink}>
+      <Group
+        gap='xs'
+        wrap='nowrap'
+        justify='space-between'
+        align='center'
+        style={{ height: '100%' }}
+      >
+        <Group gap='xs'>
+          <InvenTreeIcon icon={icon ?? modelProperties.icon} />
+          <StylishText size='md'>{title}</StylishText>
+        </Group>
+        <Group gap='xs' wrap='nowrap' justify='space-apart'>
+          <Group gap='xs' wrap='nowrap' justify='right'>
+            {result}
+          </Group>
         </Group>
       </Group>
-    </Group>
+    </Anchor>
   );
 }
 

@@ -2,14 +2,19 @@ import { t } from '@lingui/core/macro';
 import { Anchor, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
 import {
   useCreateApiFormModal,
@@ -18,9 +23,8 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
+import { CompanyColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function calculateSupplierPartUnitPrice(record: any) {
   const pack_quantity = record?.part_detail?.pack_quantity_native ?? 1;
@@ -36,21 +40,9 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
       title: t`Supplier`,
       sortable: true,
       switchable: true,
-      render: (record: any) => {
-        return (
-          <Group gap='xs' wrap='nowrap'>
-            <Thumbnail
-              src={
-                record?.supplier_detail?.thumbnail ??
-                record?.supplier_detail?.image
-              }
-              alt={record?.supplier_detail?.name}
-              size={24}
-            />
-            <Text>{record.supplier_detail?.name}</Text>
-          </Group>
-        );
-      }
+      render: (record: any) => (
+        <CompanyColumn company={record.supplier_detail} />
+      )
     },
     {
       accessor: 'part_detail.SKU',

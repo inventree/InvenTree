@@ -57,11 +57,18 @@ export function RenderStockItem(
   const { instance } = props;
   let quantity_string = '';
 
+  const allocated: number = Math.max(0, instance?.allocated ?? 0);
+
   if (instance?.serial !== null && instance?.serial !== undefined) {
     quantity_string += `${t`Serial Number`}: ${instance.serial}`;
+  } else if (allocated > 0) {
+    const available: number = Math.max(0, instance.quantity - allocated);
+    quantity_string = `${t`Available`}: ${available} / ${instance.quantity}`;
   } else if (instance?.quantity) {
     quantity_string = `${t`Quantity`}: ${instance.quantity}`;
   }
+
+  console.log('item:', instance);
 
   let batch_string = '';
 

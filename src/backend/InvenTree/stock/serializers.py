@@ -307,41 +307,6 @@ class StockItemTestResultSerializer(
         return data
 
 
-class StockItemSerializerBrief(
-    InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.InvenTreeModelSerializer,
-):
-    """Brief serializers for a StockItem."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItem
-        fields = [
-            'part',
-            'part_name',
-            'pk',
-            'location',
-            'quantity',
-            'serial',
-            'batch',
-            'supplier_part',
-            'barcode_hash',
-        ]
-
-        read_only_fields = ['barcode_hash']
-
-    part_name = serializers.CharField(source='part.full_name', read_only=True)
-
-    quantity = InvenTreeDecimalField()
-
-    def validate_serial(self, value):
-        """Make sure serial is not to big."""
-        if abs(InvenTree.helpers.extract_int(value)) > 0x7FFFFFFF:
-            raise serializers.ValidationError(_('Serial number is too large'))
-        return value
-
-
 @register_importer()
 class StockItemSerializer(
     DataImportExportSerializerMixin,
@@ -521,7 +486,17 @@ class StockItemSerializer(
         """Custom update method to pass the user information through to the instance."""
         instance._user = self.context['user']
 
-        return super().update(instance, validated_data)
+        status_custom_key = validated_data.pop('status_custom_key', None)
+        status = validated_data.pop('status', None)
+
+        instance = super().update(instance, validated_data=validated_data)
+
+        if status_code := status_custom_key or status:
+            if not instance.compare_status(status_code):
+                instance.set_status(status_code)
+                instance.save()
+
+        return instance
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -604,7 +579,7 @@ class StockItemSerializer(
         queryset = queryset.annotate(installed_items=SubqueryCount('installed_parts'))
 
         # Annotate with the total number of "child items" (split stock items)
-        queryset = queryset.annotate(child_items=stock.filters.annotate_child_items())
+        queryset = queryset.annotate(child_items=SubqueryCount('children'))
 
         return queryset
 
@@ -721,7 +696,10 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
     def validate_quantity(self, quantity):
         """Validate that the quantity value is correct."""
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
 
         if quantity < 0:
             raise ValidationError(_('Quantity must be greater than zero'))
@@ -761,7 +739,10 @@ class SerializeStockItemSerializer(serializers.Serializer):
         """Check that the supplied serial numbers are valid."""
         data = super().validate(data)
 
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
 
         if not item.part.trackable:
             raise ValidationError(_('Serial numbers cannot be assigned to this part'))
@@ -790,9 +771,17 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
-        """Serialize stock item."""
-        item = self.context['item']
+    def save(self) -> list[StockItem]:
+        """Serialize the provided StockItem.
+
+        Returns:
+            A list of StockItem objects that were created as a result of the serialization.
+        """
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
+
         request = self.context.get('request')
         user = request.user if request else None
 
@@ -805,12 +794,15 @@ class SerializeStockItemSerializer(serializers.Serializer):
             part=item.part,
         )
 
-        item.serializeStock(
-            data['quantity'],
-            serials,
-            user,
-            notes=data.get('notes', ''),
-            location=data['destination'],
+        return (
+            item.serializeStock(
+                data['quantity'],
+                serials,
+                user=user,
+                notes=data.get('notes', ''),
+                location=data['destination'],
+            )
+            or []
         )
 
 
@@ -923,7 +915,10 @@ class UninstallStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """Uninstall stock item."""
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
 
         data = self.validated_data
         request = self.context['request']
@@ -1053,7 +1048,11 @@ class ReturnStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to return the item into stock."""
-        item = self.context['item']
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
+
         request = self.context['request']
 
         data = self.validated_data
@@ -1116,7 +1115,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         note = data.get('note', '')
 
-        items_to_update = []
         transaction_notes = []
 
         deltas = {'status': status}
@@ -1128,12 +1126,11 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         for item in items:
             # Ignore items which are already in the desired status
-            if item.status == status:
+            if item.compare_status(status):
                 continue
 
-            item.updated = now
-            item.status = status
-            items_to_update.append(item)
+            item.set_status(status)
+            item.save(add_note=False)
 
             # Create a new transaction note for each item
             transaction_notes.append(
@@ -1147,10 +1144,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
                 )
             )
 
-        # Update status
-        StockItem.objects.bulk_update(items_to_update, ['status', 'updated'])
-
-        # Create entries
+        # Create tracking entries
         StockItemTracking.objects.bulk_create(transaction_notes)
 
 
@@ -1324,7 +1318,7 @@ class StockTrackingSerializer(
 
     label = serializers.CharField(read_only=True)
 
-    item_detail = StockItemSerializerBrief(
+    item_detail = StockItemSerializer(
         source='item', many=False, read_only=True, allow_null=True
     )
 

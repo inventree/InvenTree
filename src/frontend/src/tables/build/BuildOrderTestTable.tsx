@@ -4,20 +4,20 @@ import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
+import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { PassFailButton } from '../../components/buttons/YesNoButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { LocationColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -33,7 +33,6 @@ export default function BuildOrderTestTable({
   partId: number;
 }>) {
   const table = useTable('build-tests');
-  const user = useUserState();
   const api = useApi();
 
   // Fetch the test templates required for this build order
@@ -53,8 +52,7 @@ export default function BuildOrderTestTable({
             required: true
           }
         })
-        .then((res) => res.data)
-        .catch((err) => []);
+        .then((res) => res.data);
     }
   });
 
@@ -112,10 +110,11 @@ export default function BuildOrderTestTable({
                 <Badge color='lightblue' variant='filled'>{t`No Result`}</Badge>
                 <Tooltip label={t`Add Test Result`}>
                   <ActionIcon
-                    size='xs'
+                    size='lg'
                     color='green'
                     variant='transparent'
-                    onClick={() => {
+                    onClick={(event: any) => {
+                      cancelEvent(event);
                       setSelectedOutput(record.pk);
                       setSelectedTemplate(template.pk);
                       createTestResult.open();

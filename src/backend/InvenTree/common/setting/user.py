@@ -173,12 +173,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'PART_SHOW_QUANTITY_IN_FORMS': {
-        'name': _('Show Quantity in Forms'),
-        'description': _('Display available part quantity in some forms'),
-        'default': True,
-        'validator': bool,
-    },
     'FORMS_CLOSE_USING_ESCAPE': {
         'name': _('Escape Key Closes Forms'),
         'description': _('Use the escape key to close modal forms'),
@@ -211,12 +205,6 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
     },
-    'DISPLAY_SCHEDULE_TAB': {
-        'name': _('Part Scheduling'),
-        'description': _('Display part scheduling information'),
-        'default': True,
-        'validator': bool,
-    },
     'DISPLAY_STOCKTAKE_TAB': {
         'name': _('Part Stocktake'),
         'description': _(
@@ -228,6 +216,22 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),
         'description': _('Show the current page in breadcrumbs'),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_FULL_LOCATION_IN_TABLES': {
+        'name': _('Show full stock location in tables'),
+        'description': _(
+            'Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text.'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_FULL_CATEGORY_IN_TABLES': {
+        'name': _('Show full part categories in tables'),
+        'description': _(
+            'Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text.'
+        ),
         'default': False,
         'validator': bool,
     },

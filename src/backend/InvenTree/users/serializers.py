@@ -134,46 +134,6 @@ def generate_roles_dict(roles) -> dict:
     return role_dict
 
 
-class ApiTokenSerializer(InvenTreeModelSerializer):
-    """Serializer for the ApiToken model."""
-
-    in_use = serializers.SerializerMethodField(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), required=False
-    )
-
-    def get_in_use(self, token: ApiToken) -> bool:
-        """Return True if the token is currently used to call the endpoint."""
-        from InvenTree.middleware import get_token_from_request
-
-        request = self.context.get('request')
-        rq_token = get_token_from_request(request)
-        return token.key == rq_token
-
-    class Meta:
-        """Meta options for ApiTokenSerializer."""
-
-        model = ApiToken
-        fields = [
-            'created',
-            'expiry',
-            'id',
-            'last_seen',
-            'name',
-            'token',
-            'active',
-            'revoked',
-            'user',
-            'in_use',
-        ]
-
-    def validate(self, data):
-        """Validate the data for the serializer."""
-        if 'user' not in data:
-            data['user'] = self.context['request'].user
-        return super().validate(data)
-
-
 class GetAuthTokenSerializer(serializers.Serializer):
     """Serializer for the GetAuthToken API endpoint."""
 
@@ -246,6 +206,49 @@ class UserSerializer(InvenTreeModelSerializer):
     email = serializers.EmailField(
         label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
     )
+
+
+class ApiTokenSerializer(InvenTreeModelSerializer):
+    """Serializer for the ApiToken model."""
+
+    in_use = serializers.SerializerMethodField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), required=False
+    )
+
+    def get_in_use(self, token: ApiToken) -> bool:
+        """Return True if the token is currently used to call the endpoint."""
+        from InvenTree.middleware import get_token_from_request
+
+        request = self.context.get('request')
+        rq_token = get_token_from_request(request)
+        return token.key == rq_token
+
+    class Meta:
+        """Meta options for ApiTokenSerializer."""
+
+        model = ApiToken
+        fields = [
+            'created',
+            'expiry',
+            'id',
+            'last_seen',
+            'name',
+            'token',
+            'active',
+            'revoked',
+            'user',
+            'user_detail',
+            'in_use',
+        ]
+
+    def validate(self, data):
+        """Validate the data for the serializer."""
+        if 'user' not in data:
+            data['user'] = self.context['request'].user
+        return super().validate(data)
+
+    user_detail = UserSerializer(source='user', read_only=True)
 
 
 class GroupSerializer(InvenTreeModelSerializer):
@@ -358,6 +361,30 @@ class ExtendedUserSerializer(UserSerializer):
             instance.groups.set(groups)
 
         return instance
+
+
+class UserSetPasswordSerializer(serializers.Serializer):
+    """Serializer for setting a password for a user."""
+
+    class Meta:
+        """Meta options for UserSetPasswordSerializer."""
+
+        model = User
+        fields = ['password', 'override_warning']
+
+    password = serializers.CharField(
+        label=_('Password'),
+        help_text=_('Password for the user'),
+        write_only=True,
+        required=True,
+        style={'input_type': 'password'},
+    )
+    override_warning = serializers.BooleanField(
+        label=_('Override warning'),
+        help_text=_('Override the warning about password rules'),
+        write_only=True,
+        required=False,
+    )
 
 
 class MeUserSerializer(ExtendedUserSerializer):
