@@ -272,29 +272,29 @@ test('Build Order - Allocation', async ({ browser }) => {
       name: 'Red Widget',
       ipn: 'widget.red',
       available: '123',
-      required: '45',
-      allocated: '15'
+      required: '3',
+      allocated: '3'
     },
     {
       name: 'Blue Widget',
       ipn: 'widget.blue',
-      available: '129',
-      required: '75',
-      allocated: '11'
+      available: '39',
+      required: '5',
+      allocated: '5'
     },
     {
       name: 'Pink Widget',
       ipn: 'widget.pink',
-      available: '54',
-      required: '60',
-      allocated: '17'
+      available: '4',
+      required: '4',
+      allocated: '0'
     },
     {
       name: 'Green Widget',
       ipn: 'widget.green',
       available: '245',
-      required: '90',
-      allocated: '14'
+      required: '6',
+      allocated: '6'
     }
   ];
 
@@ -313,7 +313,7 @@ test('Build Order - Allocation', async ({ browser }) => {
 
   // Check for expected buttons on Red Widget
   const redWidget = await page.getByRole('cell', { name: 'Red Widget' });
-  const redRow = await redWidget.locator('xpath=ancestor::tr').first();
+  const redRow = await getRowFromCell(redWidget);
 
   await redRow.getByLabel(/row-action-menu-/i).click();
   await page
