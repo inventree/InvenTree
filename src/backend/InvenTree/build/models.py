@@ -1556,7 +1556,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     When a new Build is created, the BuildLine objects are created automatically.
     - A BuildLine entry is created for each BOM item associated with the part
-    - The quantity is set to the quantity required to build the part (including overage)
+    - The quantity is set to the quantity required to build the part
     - BuildItem objects are associated with a particular BuildLine
 
     Once a build has been created, BuildLines can (optionally) be removed from the Build
