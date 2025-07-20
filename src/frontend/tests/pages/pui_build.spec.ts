@@ -234,6 +234,8 @@ test('Build Order - Allocation', async ({ browser }) => {
   await page.getByText('Reel Storage').waitFor();
   await page.getByText('R_10K_0805_1%').first().click();
 
+  await page.reload();
+
   // The capacitor stock should be fully allocated
   const cell = await page.getByRole('cell', { name: /C_1uF_0805/ });
   const row = await getRowFromCell(cell);
@@ -278,7 +280,7 @@ test('Build Order - Allocation', async ({ browser }) => {
     {
       name: 'Blue Widget',
       ipn: 'widget.blue',
-      available: '39',
+      available: '129',
       required: '5',
       allocated: '5'
     },
