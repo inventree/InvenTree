@@ -1,7 +1,6 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django<5.0                              # Django package
 blessed                                 # CLI for Q Monitor
-coreapi                                 # API documentation for djangorestframework
 cryptography>=44.0.0                    # Core cryptographic functionality
 django-anymail[amazon_ses,postal]       # Email backend for various providers
 django-allauth[mfa,socialaccount,saml,openid]   # SSO for external providers via OpenID
