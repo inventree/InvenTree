@@ -9,9 +9,8 @@ from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
+from django.template import Template
 from django.utils.translation import gettext_lazy as _
-
-from jinja2 import Template
 
 import build.validators
 import common.currency
