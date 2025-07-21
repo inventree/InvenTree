@@ -518,45 +518,6 @@ class Part(
 
         super().delete()
 
-    # def save(self, *args, **kwargs):
-    #     """Overrides the save function for the Part model.
-
-    #     If the part image has been updated, then check if the "old" (previous) image is still used by another part.
-    #     If not, it is considered "orphaned" and will be deleted.
-    #     """
-    #     _new = False
-    #     if self.pk:
-    #         try:
-    #             previous = Part.objects.get(pk=self.pk)
-
-    #             # Image has been changed
-    #             if previous.image is not None and self.image != previous.image:
-    #                 # Are there any (other) parts which reference the image?
-    #                 n_refs = (
-    #                     Part.objects.filter(image=previous.image)
-    #                     .exclude(pk=self.pk)
-    #                     .count()
-    #                 )
-
-    #                 if n_refs == 0:
-    #                     logger.info("Deleting unused image file '%s'", previous.image)
-    #                     previous.image.delete(save=False)
-    #         except Part.DoesNotExist:
-    #             pass
-    #     else:
-    #         _new = True
-
-    #     self.full_clean()
-
-    #     try:
-    #         super().save(*args, **kwargs)
-    #     except InvalidMove:
-    #         raise ValidationError({'variant_of': _('Invalid choice for parent part')})
-
-    #     if _new:
-    #         # Only run if the check was not run previously (due to not existing in the database)
-    #         self.ensure_trackable()
-
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)."""
         return f'{self.full_name} - {self.description}'
@@ -1100,15 +1061,6 @@ class Part(
         help_text=_('Link to external URL'),
         max_length=2000,
     )
-
-    # image = StdImageField(
-    #     upload_to=rename_part_image,
-    #     null=True,
-    #     blank=True,
-    #     variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-    #     delete_orphans=False,
-    #     verbose_name=_('Image'),
-    # )
 
     default_location = TreeForeignKey(
         'stock.StockLocation',

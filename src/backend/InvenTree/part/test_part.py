@@ -256,6 +256,7 @@ class PartTest(TestCase):
         self.assertIsNone(orphan.category)
         self.assertEqual(orphan.category_path, '')
 
+    # TODO: Update test (reza)
     def test_rename_img(self):
         """Test that an image can be renamed."""
         img = rename_part_image(self.r1, 'hello.png')

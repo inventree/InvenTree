@@ -1312,6 +1312,7 @@ def setup_test(
         info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
+    # TODO: The test dataset loader needs to be updated to handle the `UploadImage` model and include sample images.
     # Get test data
     info('Cloning demo dataset ...')
     run(

@@ -25,6 +25,7 @@ import { ModelType } from '@lib/index';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { showApiErrorMessage } from '../../functions/notifications';
 
 /**
  * Input props to table
@@ -40,16 +41,15 @@ export type ThumbTableProps = {
 type ImageElement = {
   image: string;
   count: number;
-  pk: number;
 };
 
 /**
  * Input props for each thumbnail in the table
  */
 type ThumbProps = {
-  selected: number | null;
+  selected: string | null;
   element: ImageElement;
-  selectImage: React.Dispatch<React.SetStateAction<number | null>>;
+  selectImage: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 /**
@@ -67,7 +67,7 @@ function PartThumbComponent({
 
   let color = '';
 
-  if (selected === element?.pk) {
+  if (selected === element.image) {
     color = selectedColor;
   } else if (hovered) {
     color = hoverColor;
@@ -83,7 +83,7 @@ function PartThumbComponent({
       style={{ backgroundColor: color }}
       p='sm'
       ref={ref}
-      onClick={() => selectImage(element.pk)}
+      onClick={() => selectImage(element.image)}
     >
       <Stack justify='space-between'>
         <AspectRatio ratio={1}>
@@ -102,19 +102,19 @@ function PartThumbComponent({
  */
 async function setNewImage(
   onSuccess: (image: string) => void,
-  image_id: number | null,
-  pk: string
+  image_url: string | null,
+  model_id: string
 ) {
   // No need to do anything if no image is selected
-  if (image_id === null) {
+  if (image_url === null) {
     return;
   }
 
   await api
     .post(apiUrl(ApiEndpoints.upload_image_list), {
-      existing_image: image_id,
+      existing_image: image_url,
       model_type: ModelType.part,
-      model_id: pk
+      model_id: model_id
     })
     .then((response) => {
       // Update the image in the parent component
@@ -125,6 +125,11 @@ async function setNewImage(
     .catch((error) => {
       // Handle error
       console.error('Error setting new image:', error);
+      showApiErrorMessage({
+        error: error,
+        title: t`Set Image Error`,
+        field: 'image'
+      });
       modals.closeAll();
       return error.response;
     });
@@ -136,7 +141,7 @@ async function setNewImage(
 export function PartThumbTable({ pk, onSuccess }: Readonly<ThumbTableProps>) {
   const limit = 24;
 
-  const [thumbImage, setThumbImage] = useState<number | null>(null);
+  const [thumbImage, setThumbImage] = useState<string | null>(null);
   const [filterInput, setFilterInput] = useState<string>('');
 
   const [page, setPage] = useState<number>(1);
@@ -156,7 +161,8 @@ export function PartThumbTable({ pk, onSuccess }: Readonly<ThumbTableProps>) {
           params: {
             offset: offset,
             limit: limit,
-            search: searchText
+            search: searchText,
+            model_type: ModelType.part
           }
         })
         .then((response) => {

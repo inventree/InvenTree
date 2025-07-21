@@ -5,7 +5,7 @@ import json
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db.models import Count, Min, Q
+from django.db.models import Count, Q
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -801,9 +801,11 @@ class UploadImageThumbs(ListAPI):
     serializer_class = common.serializers.UploadedImageThumbSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
-    filter_backends = [InvenTreeSearchFilter]
+    filter_backends = [rest_filters.DjangoFilterBackend, InvenTreeSearchFilter]
 
-    search_fields = ['model_type', 'model_id']
+    filterset_fields = ['model_type', 'model_id']
+
+    search_fields = ['model_type', 'image']
 
     def list(self, request, *args, **kwargs):
         """Serialize the available UploadedImage entries for Parts.
@@ -813,14 +815,7 @@ class UploadImageThumbs(ListAPI):
         qs = self.filter_queryset(self.get_queryset())
 
         # Aggregate by image file, counting how many parts use each image
-        agg = (
-            qs.values('image')  # group by image path
-            .annotate(
-                count=Count('pk'),  # how many rows share this image
-                pk=Min('pk'),  # grab one PK for later lookup
-            )
-            .order_by('-count')
-        )
+        agg = qs.values('image').annotate(count=Count('pk')).order_by('-count')
 
         page = self.paginate_queryset(agg)
         if page is not None:

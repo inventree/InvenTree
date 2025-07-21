@@ -621,7 +621,6 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class PartSerializer(
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for complete detail information of a part.
@@ -654,7 +653,6 @@ class PartSerializer(
             'description',
             'full_name',
             'images',
-            'remote_image',
             'IPN',
             'is_template',
             'keywords',
@@ -742,9 +740,9 @@ class PartSerializer(
         if not create:
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
-                # Fields required for certain operations, but are not part of the model
-                if f == 'remote_image':
-                    continue
+                # # Fields required for certain operations, but are not part of the model
+                # if f == 'remote_image':
+                #     continue
                 self.fields.pop(f, None)
 
         if not pricing:
@@ -1030,30 +1028,6 @@ class PartSerializer(
         help_text=_('Copy parameter templates from selected part category'),
     )
 
-    # # Allow selection of an existing part image file
-    # existing_image = serializers.CharField(
-    #     label=_('Existing Image'),
-    #     help_text=_('Filename of an existing part image'),
-    #     write_only=True,
-    #     required=False,
-    #     allow_blank=False,
-    # )
-
-    # def validate_existing_image(self, img):
-    #     """Validate the selected image file."""
-    #     if not img:
-    #         return img
-
-    #     img = img.split(os.path.sep)[-1]
-
-    #     # Ensure that the file actually exists
-    #     img_path = os.path.join(part_helpers.get_part_image_directory(), img)
-
-    #     if not os.path.exists(img_path) or not os.path.isfile(img_path):
-    #         raise ValidationError(_('Image file does not exist'))
-
-    #     return img
-
     @transaction.atomic
     def create(self, validated_data):
         """Custom method for creating a new Part instance using this serializer."""
@@ -1163,15 +1137,6 @@ class PartSerializer(
         super().save()
 
         part = self.instance
-        # data = self.validated_data
-
-        # existing_image = data.pop('existing_image', None)
-
-        # if existing_image:
-        #     img_path = os.path.join(part_helpers.PART_IMAGE_DIR, existing_image)
-
-        #     part.image = img_path
-        #     part.save()
 
         # Check if an image was downloaded from a remote URL
         remote_img = getattr(self, 'remote_image_file', None)

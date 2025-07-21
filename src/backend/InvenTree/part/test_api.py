@@ -39,6 +39,7 @@ from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 
 
+# TODO: Update test (reza)
 class PartImageTestMixin:
     """Mixin for testing part images."""
 

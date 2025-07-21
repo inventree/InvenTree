@@ -1,5 +1,7 @@
 """JSON serializers for common components."""
 
+import os
+
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, OuterRef, Subquery
 from django.urls import reverse
@@ -14,6 +16,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from taggit.serializers import TagListSerializerField
 
+import common.helpers as common_helper
 import common.models as common_models
 import common.validators
 import generic.states.custom
@@ -585,7 +588,9 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-class UploadedImageSerializer(serializers.ModelSerializer):
+class UploadedImageSerializer(
+    InvenTreeModelSerializer, InvenTree.serializers.RemoteImageMixin
+):
     """Serializer class for the UploadedImage model."""
 
     class Meta:
@@ -598,6 +603,7 @@ class UploadedImageSerializer(serializers.ModelSerializer):
             'image',
             'thumbnail',
             'model_type',
+            'remote_image',
             'existing_image',
             'model_id',
         ]
@@ -626,28 +632,29 @@ class UploadedImageSerializer(serializers.ModelSerializer):
     )
 
     # Allow selection of an existing image file
-    existing_image = serializers.IntegerField(
-        label=_('Existing Image Id'),
-        help_text=_('Image ID of an existing uploaded image'),
+    existing_image = serializers.CharField(
+        label=_('Existing Image'),
+        help_text=_('Filename of an existing part image'),
         write_only=True,
         required=False,
+        allow_blank=False,
     )
 
-    def save(self, **kwargs):
+    def save(self):
         """Override the save method.
 
         Handles the existing_image field.
         If this is the first image for (model_type, model_id), marks it as primary.
         """
+        instance = super().save()
         data = self.validated_data
-        existing_image_pk = data.pop('existing_image', None)
 
-        instance = super().save(**kwargs)
+        existing_image = data.pop('existing_image', None)
 
-        #  if an existing image was referenced, copy its file over
-        if existing_image_pk:
-            existing = common_models.UploadedImage.objects.get(pk=existing_image_pk)
-            instance.image = existing.image
+        if existing_image:
+            img_path = os.path.join(common_helper.UPLOAD_IMAGE_DIR, existing_image)
+
+            instance.image = img_path
             instance.save()
 
         # automatically mark as primary if this is the *only* image
@@ -678,18 +685,27 @@ class UploadedImageSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def validate_existing_image(self, img):
-        """Validate the existing_image field."""
-        if img is None:
+        """Validate the selected image file."""
+        if not img:
             return img
 
-        try:
-            common_models.UploadedImage.objects.get(pk=img)
-        except common_models.UploadedImage.DoesNotExist:
-            raise ValidationError(
-                _('No UploadedImage found with id={id}').format(id=img)
-            )
+        img = img.split(os.path.sep)[-1]
+
+        # Ensure that the file actually exists
+        img_path = os.path.join(common_helper.get_part_image_directory(), img)
+
+        if not os.path.exists(img_path) or not os.path.isfile(img_path):
+            raise ValidationError(_('Image file does not exist'))
 
         return img
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new Part instance."""
+        fields = super().skip_create_fields()
+
+        fields += ['existing_image']
+
+        return fields
 
 
 class UploadedImageThumbSerializer(serializers.Serializer):
@@ -697,7 +713,6 @@ class UploadedImageThumbSerializer(serializers.Serializer):
 
     image = serializers.URLField(read_only=True)
     count = serializers.IntegerField()
-    pk = serializers.IntegerField()
 
 
 class AttachmentSerializer(InvenTreeModelSerializer):

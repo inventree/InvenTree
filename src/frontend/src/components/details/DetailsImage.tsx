@@ -32,8 +32,8 @@ import { api } from '../../App';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
-  useDeleteApiFormModal,
-  useEditApiFormModal
+  useCreateApiFormModal,
+  useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
@@ -297,9 +297,7 @@ function ImageActionButtons({
   deleteUploadImage: any;
 }>) {
   const globalSettings = useGlobalSettingsState();
-  const hasImage: boolean = Boolean(
-    editActions?.downloadImage || editActions?.deleteFile
-  );
+  const hasImage: boolean = Boolean(editActions?.deleteFile);
 
   const editImageActions: ActionDropdownItem[] = [
     {
@@ -334,7 +332,7 @@ function ImageActionButtons({
       hidden: !editActions?.uploadFile
     },
     {
-      name: 'Download image',
+      name: 'Download remote image',
       onClick: (event: any) => {
         cancelEvent(event);
         downloadImage();
@@ -456,9 +454,10 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   const permissions = useUserState();
 
-  // TODO: fix url
-  const downloadImage = useEditApiFormModal({
-    url: '',
+  const url = apiUrl(ApiEndpoints.upload_image_list, props.image_id);
+
+  const downloadImage = useCreateApiFormModal({
+    url: url,
     title: t`Download Image`,
     fields: {
       remote_image: {}

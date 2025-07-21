@@ -155,7 +155,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             refresh={refreshInstance}
             EditImageActions={{
               uploadFile: true,
-              downloadImage: company?.image?.image,
+              downloadImage: true,
               deleteFile: company?.image?.image
             }}
           />
