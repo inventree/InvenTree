@@ -2,12 +2,13 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
@@ -21,7 +22,6 @@ import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DateColumn,
   DescriptionColumn,
@@ -32,6 +32,7 @@ import {
 import {
   BatchFilter,
   HasBatchCodeFilter,
+  IncludeVariantsFilter,
   IsSerializedFilter,
   SerialFilter,
   SerialGTEFilter,
@@ -356,11 +357,7 @@ function stockItemTableFilters({
       label: t`In Production`,
       description: t`Show items which are in production`
     },
-    {
-      name: 'include_variants',
-      label: t`Include Variants`,
-      description: t`Include stock items for variant parts`
-    },
+    IncludeVariantsFilter(),
     {
       name: 'consumed',
       label: t`Consumed`,

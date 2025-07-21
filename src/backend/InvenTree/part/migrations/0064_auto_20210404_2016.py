@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='bomitem',
             name='overage',
-            field=models.CharField(blank=True, help_text='Estimated build wastage quantity (absolute or percentage)', max_length=24, validators=[InvenTree.validators.validate_overage], verbose_name='Overage'),
+            field=models.CharField(blank=True, help_text='Estimated build wastage quantity (absolute or percentage)', max_length=24, validators=[], verbose_name='Overage'),
         ),
         migrations.AlterField(
             model_name='bomitem',

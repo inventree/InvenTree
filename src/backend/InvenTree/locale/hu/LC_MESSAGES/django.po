@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-09 01:39+0000\n"
-"PO-Revision-Date: 2025-07-09 01:42\n"
+"POT-Creation-Date: 2025-07-12 23:21+0000\n"
+"PO-Revision-Date: 2025-07-12 23:24\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -57,23 +57,23 @@ msgstr ""
 msgid "User does not have permission to view this model"
 msgstr "Nincs jogosultságod az adatok megtekintéséhez"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "Email (újra)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "Email cím megerősítés"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Mindig ugyanazt az email címet kell beírni."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:127 InvenTree/auth_overrides.py:134
 msgid "The provided primary email address is not valid."
 msgstr "A megadott elsődleges email cím nem valós."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:140
 msgid "The provided email domain is not approved."
 msgstr "A megadott email domain nincs jóváhagyva."
 
@@ -460,7 +460,7 @@ msgstr "Létező vonalkód"
 
 #: InvenTree/models.py:1097
 msgid "Task Failure"
-msgstr ""
+msgstr "Feladat hiba"
 
 #: InvenTree/models.py:1098
 #, python-brace-format
@@ -569,9 +569,9 @@ msgstr "Változatokkal együtt"
 msgid "Part"
 msgstr "Alkatrész"
 
-#: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
-#: stock/api.py:833
+#: build/api.py:107 build/api.py:110 part/api.py:1335 part/api.py:1642
+#: part/models.py:1080 part/models.py:3630 part/models.py:4211
+#: part/serializers.py:1340 stock/api.py:833
 msgid "Category"
 msgstr "Kategória"
 
@@ -598,7 +598,7 @@ msgstr "Ez előtt létrehozva"
 
 #: build/api.py:208
 msgid "Created after"
-msgstr ""
+msgstr "Létrehozva ez után"
 
 #: build/api.py:212
 msgid "Has start date"
@@ -782,7 +782,7 @@ msgstr "Válassz helyet ahonnan készletet vegyünk el ehhez a gyártáshoz (hag
 
 #: build/models.py:299
 msgid "External Build"
-msgstr ""
+msgstr "Külső gyártás"
 
 #: build/models.py:300
 msgid "This build order is fulfilled externally"
@@ -1307,7 +1307,7 @@ msgstr "Alkatrészjegyzék Alkatrész Név"
 
 #: build/serializers.py:1253 build/serializers.py:1409
 msgid "Build"
-msgstr ""
+msgstr "Gyártás"
 
 #: build/serializers.py:1261 company/models.py:695 order/api.py:306
 #: order/api.py:311 order/api.py:526 order/serializers.py:596
@@ -1468,7 +1468,7 @@ msgstr "A projektért felelős felhasználó vagy csoport"
 
 #: common/models.py:732 common/models.py:1229 common/models.py:1267
 msgid "Settings key"
-msgstr ""
+msgstr "Beállítási kulcs"
 
 #: common/models.py:736
 msgid "Settings value"
@@ -1867,7 +1867,7 @@ msgstr ""
 
 #: common/models.py:2207
 msgid "Source Plugin"
-msgstr ""
+msgstr "Forrás plugin"
 
 #: common/models.py:2208
 msgid "Plugin which provides the selection list"
@@ -1988,51 +1988,51 @@ msgstr ""
 
 #: common/models.py:2457
 msgid "An error occurred"
-msgstr ""
+msgstr "Hiba történt"
 
 #: common/models.py:2503
 msgid "Email Message"
-msgstr ""
+msgstr "E-mail üzenet"
 
 #: common/models.py:2504
 msgid "Email Messages"
-msgstr ""
+msgstr "E-mail üzenetek"
 
 #: common/models.py:2511
 msgid "Announced"
-msgstr ""
+msgstr "Bejelentve"
 
 #: common/models.py:2513
 msgid "Sent"
-msgstr ""
+msgstr "Elküldve"
 
 #: common/models.py:2514
 msgid "Failed"
-msgstr ""
+msgstr "Megbukott"
 
 #: common/models.py:2517
 msgid "Delivered"
-msgstr ""
+msgstr "Kiszállítva"
 
 #: common/models.py:2525
 msgid "Confirmed"
-msgstr ""
+msgstr "Megerősítve"
 
 #: common/models.py:2531
 msgid "Inbound"
-msgstr ""
+msgstr "Bejövő"
 
 #: common/models.py:2532
 msgid "Outbound"
-msgstr ""
+msgstr "Kimenő"
 
 #: common/models.py:2537
 msgid "No Reply"
-msgstr ""
+msgstr "Nincs válasz"
 
 #: common/models.py:2538
 msgid "Track Delivery"
-msgstr ""
+msgstr "Kiszállítás követése"
 
 #: common/models.py:2539
 msgid "Track Read"
@@ -2044,7 +2044,7 @@ msgstr ""
 
 #: common/models.py:2543 common/models.py:2638
 msgid "Global ID"
-msgstr ""
+msgstr "Globális ID"
 
 #: common/models.py:2556
 msgid "Identifier for this message (might be supplied by external system)"
@@ -2068,15 +2068,15 @@ msgstr ""
 
 #: common/models.py:2591
 msgid "Prioriy"
-msgstr ""
+msgstr "Prioritás"
 
 #: common/models.py:2625
 msgid "Email Thread"
-msgstr ""
+msgstr "Email szál"
 
 #: common/models.py:2626
 msgid "Email Threads"
-msgstr ""
+msgstr "Email szálak"
 
 #: common/models.py:2632 generic/states/serializers.py:16 plugin/models.py:45
 #: users/models.py:119
@@ -2147,7 +2147,7 @@ msgstr ""
 
 #: common/serializers.py:134
 msgid "Override"
-msgstr ""
+msgstr "Felülbírálás"
 
 #: common/serializers.py:473
 msgid "Is Running"
@@ -2260,7 +2260,7 @@ msgstr ""
 
 #: common/setting/system.py:193
 msgid "Instance ID"
-msgstr ""
+msgstr "Példány azonosító"
 
 #: common/setting/system.py:194
 msgid "Unique identifier for this InvenTree instance"
@@ -2735,7 +2735,7 @@ msgstr "Csak az aktív alkatrészváltozatok használata az árazásban"
 
 #: common/setting/system.py:592
 msgid "Auto Update Pricing"
-msgstr ""
+msgstr "Árazás automatikus frissítése"
 
 #: common/setting/system.py:594
 msgid "Automatically update part pricing when internal data changes"
@@ -3050,7 +3050,7 @@ msgstr "Beszérzési rendelések szerkesztésének engedélyezése kiküldés va
 
 #: common/setting/system.py:873
 msgid "Convert Currency"
-msgstr ""
+msgstr "Jelenlegi pénznem"
 
 #: common/setting/system.py:874
 msgid "Convert item value to base currency when receiving stock"
@@ -3250,7 +3250,7 @@ msgstr ""
 
 #: common/setting/system.py:1048
 msgid "Enable mail integration"
-msgstr ""
+msgstr "Email integráció engedélyezése"
 
 #: common/setting/system.py:1049
 msgid "Enable plugins to process outgoing/incoming mails"
@@ -3258,7 +3258,7 @@ msgstr ""
 
 #: common/setting/system.py:1055
 msgid "Enable project codes"
-msgstr ""
+msgstr "Projektszámok engedélyezése"
 
 #: common/setting/system.py:1056
 msgid "Enable project codes for tracking projects"
@@ -3306,7 +3306,7 @@ msgstr "Felhasználói név helyett a felhasználók teljes neve jelenik meg"
 
 #: common/setting/system.py:1100
 msgid "Display User Profiles"
-msgstr ""
+msgstr "Felhasználói profilok megjelenítése"
 
 #: common/setting/system.py:1101
 msgid "Display Users Profiles on their profile page"
@@ -3514,7 +3514,7 @@ msgstr "A keresések csak teljes szóra egyező találatokat adjanak"
 
 #: common/setting/user.py:169
 msgid "Search Notes"
-msgstr ""
+msgstr "Megjegyzések keresése"
 
 #: common/setting/user.py:171
 msgid "Search queries return results for matches from the item's notes"
@@ -3546,11 +3546,11 @@ msgstr "A menü pozíciója mindig rögzítve a lap tetején"
 
 #: common/setting/user.py:195
 msgid "Navigation Icons"
-msgstr ""
+msgstr "Navigációs ikonok"
 
 #: common/setting/user.py:196
 msgid "Display icons in the navigation bar"
-msgstr ""
+msgstr "Ikonok megjelenítése a navigációs sávon"
 
 #: common/setting/user.py:201
 msgid "Date Format"
@@ -3673,7 +3673,7 @@ msgstr "Cég"
 
 #: company/api.py:316
 msgid "Has Stock"
-msgstr ""
+msgstr "Van készleten"
 
 #: company/models.py:119
 msgid "Companies"
@@ -4057,11 +4057,11 @@ msgstr "Egyedi"
 
 #: generic/states/serializers.py:37
 msgid "Class"
-msgstr ""
+msgstr "Osztály"
 
 #: generic/states/serializers.py:40
 msgid "Values"
-msgstr ""
+msgstr "Értékek"
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
@@ -4361,11 +4361,11 @@ msgstr "Készítette"
 
 #: order/api.py:182
 msgid "Created Before"
-msgstr ""
+msgstr "Ez előtt létrehozva"
 
 #: order/api.py:186
 msgid "Created After"
-msgstr ""
+msgstr "Létrehozva ez után"
 
 #: order/api.py:190
 msgid "Has Start Date"
@@ -4500,7 +4500,7 @@ msgstr "Link külső weboldalra"
 
 #: order/models.py:458
 msgid "Start date"
-msgstr ""
+msgstr "Kezdés dátuma"
 
 #: order/models.py:459
 msgid "Scheduled start date for this order"
@@ -5312,7 +5312,7 @@ msgstr "Összeállított Alkatrész ellenőrizhető"
 msgid "Component part is testable"
 msgstr "Összetevő alkatrész ellenőrizhető"
 
-#: part/api.py:1639
+#: part/api.py:1653
 msgid "Uses"
 msgstr "Használ"
 
@@ -6174,11 +6174,11 @@ msgstr "Megjegyzések másolása az eredeti alkatrészről"
 
 #: part/serializers.py:496
 msgid "Copy Tests"
-msgstr ""
+msgstr "Teszt másolása"
 
 #: part/serializers.py:497
 msgid "Copy test templates from original part"
-msgstr ""
+msgstr "Teszt sablonok másolása az eredeti alkatrészről"
 
 #: part/serializers.py:515
 msgid "Initial Stock Quantity"
@@ -6524,32 +6524,32 @@ msgstr ""
 
 #: part/tasks.py:86
 msgid "No expiry date"
-msgstr ""
+msgstr "Nincs lejárati dátuma"
 
 #: part/tasks.py:93
 msgid "Expired {abs(days_diff)} days ago"
-msgstr ""
+msgstr "{abs(days_diff)} napja lejárt"
 
 #: part/tasks.py:96
 msgid "Expires today"
-msgstr ""
+msgstr "Ma jár le"
 
 #: part/tasks.py:99
 #, python-brace-format
 msgid "{days_until_expiry} days"
-msgstr ""
+msgstr "{days_until_expiry} nap"
 
 #: plugin/api.py:78
 msgid "Builtin"
-msgstr ""
+msgstr "Beépülő"
 
 #: plugin/api.py:92
 msgid "Mandatory"
-msgstr ""
+msgstr "Kötelező"
 
 #: plugin/api.py:103
 msgid "Sample"
-msgstr ""
+msgstr "Minta"
 
 #: plugin/api.py:117 plugin/models.py:159
 msgid "Installed"
@@ -6903,7 +6903,7 @@ msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:17
 msgid "Levels"
-msgstr ""
+msgstr "Szintek"
 
 #: plugin/builtin/exporter/bom_exporter.py:18
 msgid "Number of levels to export"
@@ -6912,7 +6912,7 @@ msgstr ""
 #: plugin/builtin/exporter/bom_exporter.py:23
 #: plugin/builtin/exporter/part_parameter_exporter.py:17
 msgid "Stock Data"
-msgstr ""
+msgstr "Készlet adatok"
 
 #: plugin/builtin/exporter/bom_exporter.py:23
 #: plugin/builtin/exporter/part_parameter_exporter.py:17
@@ -6922,7 +6922,7 @@ msgstr ""
 #: plugin/builtin/exporter/bom_exporter.py:27
 #: plugin/builtin/exporter/part_parameter_exporter.py:21
 msgid "Pricing Data"
-msgstr ""
+msgstr "Árazási adatok"
 
 #: plugin/builtin/exporter/bom_exporter.py:27
 #: plugin/builtin/exporter/part_parameter_exporter.py:21
@@ -6947,7 +6947,7 @@ msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:42
 msgid "Substitute Data"
-msgstr ""
+msgstr "Helyettesítő adatok"
 
 #: plugin/builtin/exporter/bom_exporter.py:43
 msgid "Include substitute part data"
@@ -6971,7 +6971,7 @@ msgstr ""
 
 #: plugin/builtin/exporter/bom_exporter.py:96
 msgid "BOM Level"
-msgstr ""
+msgstr "Alkatrészjegyzék szint"
 
 #: plugin/builtin/exporter/bom_exporter.py:102
 #, python-brace-format
@@ -6981,22 +6981,22 @@ msgstr ""
 #: plugin/builtin/exporter/bom_exporter.py:108
 #, python-brace-format
 msgid "Supplier {n}"
-msgstr ""
+msgstr "Beszállító {n}"
 
 #: plugin/builtin/exporter/bom_exporter.py:109
 #, python-brace-format
 msgid "Supplier {n} SKU"
-msgstr ""
+msgstr "Beszállítói {n} raktári cikkszám"
 
 #: plugin/builtin/exporter/bom_exporter.py:110
 #, python-brace-format
 msgid "Supplier {n} MPN"
-msgstr ""
+msgstr "Beszállítói {n} gyártói cikkszám"
 
 #: plugin/builtin/exporter/bom_exporter.py:116
 #, python-brace-format
 msgid "Manufacturer {n}"
-msgstr ""
+msgstr "Gyártó {n}"
 
 #: plugin/builtin/exporter/bom_exporter.py:117
 #, python-brace-format
@@ -7005,7 +7005,7 @@ msgstr ""
 
 #: plugin/builtin/exporter/inventree_exporter.py:14
 msgid "InvenTree Generic Exporter"
-msgstr ""
+msgstr "InvenTree általános exportáló"
 
 #: plugin/builtin/exporter/inventree_exporter.py:15
 msgid "Provides support for exporting data from InvenTree"
@@ -7075,7 +7075,7 @@ msgstr ""
 
 #: plugin/builtin/integration/part_notifications.py:31
 msgid "Send notifications"
-msgstr ""
+msgstr "Értesítések küldése"
 
 #: plugin/builtin/integration/part_notifications.py:32
 msgid "Send notifications for part changes to subscribed users"
@@ -7154,7 +7154,7 @@ msgstr "Fekvő módban nyomtatás"
 
 #: plugin/builtin/labels/label_sheet.py:55
 msgid "Page Margin"
-msgstr ""
+msgstr "Oldalmargó"
 
 #: plugin/builtin/labels/label_sheet.py:56
 msgid "Margin around the page in mm"
@@ -7311,7 +7311,7 @@ msgstr "Beépített plugin"
 
 #: plugin/models.py:184
 msgid "Mandatory Plugin"
-msgstr ""
+msgstr "Kötelező plugin"
 
 #: plugin/models.py:189
 msgid "Package Plugin"
@@ -7450,7 +7450,7 @@ msgstr ""
 
 #: plugin/serializers.py:86
 msgid "Source File"
-msgstr ""
+msgstr "Forrás fájl"
 
 #: plugin/serializers.py:87
 msgid "Path to the source file for admin integration"
@@ -7638,7 +7638,7 @@ msgstr "Jelentés fekvő nézetben"
 
 #: report/models.py:393
 msgid "Merge"
-msgstr ""
+msgstr "Összevonás"
 
 #: report/models.py:394
 msgid "Render a single report against selected items"
@@ -8559,7 +8559,7 @@ msgstr "Készlet tranzakció megjegyzései"
 
 #: stock/serializers.py:1808
 msgid "Next Serial Number"
-msgstr ""
+msgstr "Következő sorozatszám"
 
 #: stock/serializers.py:1814
 msgid "Previous Serial Number"
@@ -8760,7 +8760,7 @@ msgstr "Törődést igénylő függőben levő adatbázis migrációk találhat�
 
 #: templates/config_error.html:6 templates/config_error.html:10
 msgid "Configuration Error"
-msgstr ""
+msgstr "Konfigurációs hiba"
 
 #: templates/config_error.html:11
 #, python-format
@@ -8933,27 +8933,27 @@ msgstr "Jogosultság tételek törléséhez"
 
 #: users/models.py:501
 msgid "Bot"
-msgstr ""
+msgstr "Robot"
 
 #: users/models.py:502
 msgid "Internal"
-msgstr ""
+msgstr "Belső"
 
 #: users/models.py:504
 msgid "Guest"
-msgstr ""
+msgstr "Vendég"
 
 #: users/models.py:513
 msgid "Language"
-msgstr ""
+msgstr "Nyelv"
 
 #: users/models.py:514
 msgid "Preferred language for the user"
-msgstr ""
+msgstr "Felhasználó által preferált nyelv"
 
 #: users/models.py:519
 msgid "Theme"
-msgstr ""
+msgstr "Téma"
 
 #: users/models.py:520
 msgid "Settings for the web UI as JSON - do not edit manually!"
@@ -8961,7 +8961,7 @@ msgstr ""
 
 #: users/models.py:525
 msgid "Widgets"
-msgstr ""
+msgstr "Widgetek"
 
 #: users/models.py:527
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
@@ -8969,7 +8969,7 @@ msgstr ""
 
 #: users/models.py:534
 msgid "Display Name"
-msgstr ""
+msgstr "Megjelenítendő név"
 
 #: users/models.py:535
 msgid "Chosen display name for the user"
@@ -8977,7 +8977,7 @@ msgstr ""
 
 #: users/models.py:541
 msgid "Position"
-msgstr ""
+msgstr "Pozíció"
 
 #: users/models.py:542
 msgid "Main job title or position"
@@ -9001,7 +9001,7 @@ msgstr ""
 
 #: users/models.py:574
 msgid "User Type"
-msgstr ""
+msgstr "Felhasználó típusa"
 
 #: users/models.py:575
 msgid "Which type of user is this?"
@@ -9009,7 +9009,7 @@ msgstr ""
 
 #: users/models.py:581
 msgid "Organisation"
-msgstr ""
+msgstr "Szervezet"
 
 #: users/models.py:582
 msgid "Users primary organisation/affiliation"
@@ -9017,7 +9017,7 @@ msgstr ""
 
 #: users/models.py:590
 msgid "Primary Group"
-msgstr ""
+msgstr "Elsődleges csoport"
 
 #: users/models.py:591
 msgid "Primary group for the user"
@@ -9093,15 +9093,15 @@ msgstr ""
 
 #: users/serializers.py:376
 msgid "Password"
-msgstr ""
+msgstr "Jelszó"
 
 #: users/serializers.py:377
 msgid "Password for the user"
-msgstr ""
+msgstr "Felhasználó jelszava"
 
 #: users/serializers.py:383
 msgid "Override warning"
-msgstr ""
+msgstr "Figyelmezetés felülbírálása"
 
 #: users/serializers.py:384
 msgid "Override the warning about password rules"

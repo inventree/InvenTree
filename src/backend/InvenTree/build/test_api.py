@@ -166,6 +166,7 @@ class BuildTest(BuildAPITest):
         # We shall complete 4 of these outputs
         outputs = self.build.incomplete_outputs.all()
 
+        # TODO: (2025-07-15) Try to optimize this API query to reduce DB hits
         self.post(
             self.url,
             {
@@ -174,7 +175,7 @@ class BuildTest(BuildAPITest):
                 'status': StockStatus.ATTENTION.value,
             },
             expected_code=201,
-            max_query_count=600,  # TODO: Try to optimize this
+            max_query_count=400,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -976,7 +977,7 @@ class BuildOverallocationTest(BuildAPITest):
             self.url,
             {'accept_overallocated': 'accept'},
             expected_code=201,
-            max_query_count=1000,  # TODO: Come back and refactor this
+            max_query_count=375,
         )
 
         self.build.refresh_from_db()
@@ -995,7 +996,7 @@ class BuildOverallocationTest(BuildAPITest):
             self.url,
             {'accept_overallocated': 'trim'},
             expected_code=201,
-            max_query_count=1000,  # TODO: Come back and refactor this
+            max_query_count=375,
         )
 
         # Note: Large number of queries is due to pricing recalculation for each stock item
@@ -1079,7 +1080,6 @@ class BuildListTest(BuildAPITest):
         for ii, sub_build in enumerate(Build.objects.filter(parent=parent)):
             for i in range(3):
                 x = ii * 10 + i + 50
-
                 Build.objects.create(
                     part=part,
                     reference=f'BO-{x}',
@@ -1091,7 +1091,22 @@ class BuildListTest(BuildAPITest):
         # 20 new builds should have been created!
         self.assertEqual(Build.objects.count(), (n + 20))
 
-        Build.objects.rebuild()
+        parent.refresh_from_db()
+
+        # There should be 5 sub-builds
+        self.assertEqual(parent.get_children().count(), 5)
+
+        # Check tree structure for direct children
+        for sub_build in parent.get_children():
+            self.assertEqual(sub_build.parent, parent)
+            self.assertLess(sub_build.rght, parent.rght)
+            self.assertGreater(sub_build.lft, parent.lft)
+            self.assertEqual(sub_build.level, parent.level + 1)
+            self.assertEqual(sub_build.tree_id, parent.tree_id)
+            self.assertEqual(sub_build.get_children().count(), 3)
+
+        # And a total of 20 descendants
+        self.assertEqual(parent.get_descendants().count(), 20)
 
         # Search by parent
         response = self.get(self.url, data={'parent': parent.pk})

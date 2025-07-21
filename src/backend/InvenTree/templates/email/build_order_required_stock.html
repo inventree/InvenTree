@@ -25,9 +25,9 @@
         <a href='{{ line.link }}'>{{ line.part.full_name }}</a>{% if line.part.description %} - <em>{{ line.part.description }}</em>{% endif %}
     </td>
     <td style="text-align: center;">
-        {% decimal line.required %} {% include "part/part_units.html" with part=line.part %}
+        {% decimal line.required %}
     </td>
-    <td style="text-align: center;">{% decimal line.available %}  {% include "part/part_units.html" with part=line.part %}</td>
+    <td style="text-align: center;">{% decimal line.available %}</td>
 </tr>
 
 {% endfor %}

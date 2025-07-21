@@ -11,13 +11,21 @@ import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
@@ -31,7 +39,6 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
@@ -39,13 +46,6 @@ import {
   PartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -392,14 +392,48 @@ export default function BuildLineTable({
         defaultVisible: false,
         switchable: false,
         render: (record: any) => {
+          // Include information about the BOM item (if available)
+          const extra: any[] = [];
+
+          if (record?.bom_item_detail?.setup_quantity) {
+            extra.push(
+              <Text key='setup-quantity' size='sm'>
+                {t`Setup Quantity`}: {record.bom_item_detail.setup_quantity}
+              </Text>
+            );
+          }
+
+          if (record?.bom_item_detail?.attrition) {
+            extra.push(
+              <Text key='attrition' size='sm'>
+                {t`Attrition`}: {record.bom_item_detail.attrition}%
+              </Text>
+            );
+          }
+
+          if (record?.bom_item_detail?.rounding_multiple) {
+            extra.push(
+              <Text key='rounding-multiple' size='sm'>
+                {t`Rounding Multiple`}:{' '}
+                {record.bom_item_detail.rounding_multiple}
+              </Text>
+            );
+          }
+
           // If a build output is specified, use the provided quantity
           return (
-            <Group justify='space-between' wrap='nowrap'>
-              <Text>{record.requiredQuantity}</Text>
-              {record?.part_detail?.units && (
-                <Text size='xs'>[{record.part_detail.units}]</Text>
-              )}
-            </Group>
+            <TableHoverCard
+              title={t`BOM Information`}
+              extra={extra}
+              value={
+                <Group justify='space-between' wrap='nowrap'>
+                  <Text>{record.requiredQuantity}</Text>
+                  {record?.part_detail?.units && (
+                    <Text size='xs'>[{record.part_detail.units}]</Text>
+                  )}
+                </Group>
+              }
+            />
           );
         }
       },
@@ -560,7 +594,6 @@ export default function BuildLineTable({
         in_production &&
         !consumable &&
         user.hasChangeRole(UserRoles.build) &&
-        record.allocated < record.quantity &&
         record.trackable == hasOutput;
 
       // Can de-allocate

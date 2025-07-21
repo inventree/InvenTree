@@ -1,90 +1,41 @@
 import dayjs from 'dayjs';
 
 import {
+  type FormatCurrencyOptionsInterface,
+  formatCurrencyValue
+} from '@lib/functions/Formatting';
+import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../states/SettingsStates';
 
-interface FormatDecmimalOptionsInterface {
-  digits?: number;
-  minDigits?: number;
-  locale?: string;
-}
+export { formatDecimal, formatFileSize } from '@lib/functions/Formatting';
 
-interface FormatCurrencyOptionsInterface {
-  digits?: number;
-  minDigits?: number;
-  currency?: string;
-  locale?: string;
-  multiplier?: number;
-}
-
-export function formatDecimal(
-  value: number | null | undefined,
-  options: FormatDecmimalOptionsInterface = {}
-) {
-  const locale = options.locale || navigator.language || 'en-US';
-
-  if (value === null || value === undefined) {
-    return value;
-  }
-
-  const formatter = new Intl.NumberFormat(locale, {
-    style: 'decimal',
-    maximumFractionDigits: options.digits ?? 6,
-    minimumFractionDigits: options.minDigits ?? 0
-  });
-
-  return formatter.format(value);
-}
-
-/*
- * format currency (money) value based on current settings
- *
- * Options:
- * - currency: Currency code (uses default value if none provided)
- * - locale: Locale specified (uses default value if none provided)
- * - digits: Maximum number of significant digits (default = 10)
+/**
+ * Format currency value, automatically localized based on user settings.
  */
 export function formatCurrency(
   value: number | string | null | undefined,
-  options: FormatCurrencyOptionsInterface = {}
+  options: FormatCurrencyOptionsInterface = {
+    digits: 6,
+    minDigits: 0,
+    currency: 'USD',
+    multiplier: 1
+  }
 ) {
-  if (value == null || value == undefined) {
-    return null;
-  }
-
-  value = Number.parseFloat(value.toString());
-
-  if (Number.isNaN(value) || !Number.isFinite(value)) {
-    return null;
-  }
-
-  value *= options.multiplier ?? 1;
-
   const global_settings = useGlobalSettingsState.getState().lookup;
 
-  let maxDigits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
-  maxDigits = Number(maxDigits);
-  let minDigits =
-    options.minDigits || global_settings.PRICING_DECIMAL_PLACES_MIN || 0;
-  minDigits = Number(minDigits);
+  // Extract default digit formatting
+  options.digits =
+    options?.digits || (Number(global_settings.PRICING_DECIMAL_PLACES) ?? 6);
+  options.minDigits =
+    options?.minDigits ||
+    (Number(global_settings.PRICING_DECIMAL_PLACES_MIN) ?? 0);
 
-  // Extract default currency information
-  const currency =
-    options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
+  options.currency =
+    options?.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 
-  // Extract locale information
-  const locale = options.locale || navigator.language || 'en-US';
-
-  const formatter = new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currency,
-    maximumFractionDigits: Math.max(minDigits, maxDigits),
-    minimumFractionDigits: Math.min(minDigits, maxDigits)
-  });
-
-  return formatter.format(value);
+  return formatCurrencyValue(value, options);
 }
 
 /*
@@ -118,22 +69,6 @@ export function formatPriceRange(
     maxValue,
     options
   )}`;
-}
-
-/*
- * Format a file size (in bytes) into a human-readable format
- */
-export function formatFileSize(size: number) {
-  const suffixes: string[] = ['B', 'KB', 'MB', 'GB'];
-
-  let idx = 0;
-
-  while (size > 1024 && idx < suffixes.length) {
-    size /= 1024;
-    idx++;
-  }
-
-  return `${size.toFixed(2)} ${suffixes[idx]}`;
 }
 
 interface FormatDateOptionsInterface {

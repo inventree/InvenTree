@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-09 01:39+0000\n"
-"PO-Revision-Date: 2025-07-09 01:42\n"
+"POT-Creation-Date: 2025-07-12 23:21+0000\n"
+"PO-Revision-Date: 2025-07-12 23:24\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -57,23 +57,23 @@ msgstr "Sağlanan ölçüte uygun bir eşleşme yok"
 msgid "User does not have permission to view this model"
 msgstr "Kullanıcının bu modeli görüntüleme izni yok"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "E-posta (tekrar)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "E-posta adresi onayı"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Her seferind eaynı e-posta adresini yazmalısınız."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:127 InvenTree/auth_overrides.py:134
 msgid "The provided primary email address is not valid."
 msgstr "Sağlanan e-posta adresi geçerli değil."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:140
 msgid "The provided email domain is not approved."
 msgstr "Sağlanan e-posta alanı onaylanmadı."
 
@@ -569,9 +569,9 @@ msgstr "Varyantları Dahil Et"
 msgid "Part"
 msgstr "Parça"
 
-#: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
-#: stock/api.py:833
+#: build/api.py:107 build/api.py:110 part/api.py:1335 part/api.py:1642
+#: part/models.py:1080 part/models.py:3630 part/models.py:4211
+#: part/serializers.py:1340 stock/api.py:833
 msgid "Category"
 msgstr "Kategori"
 
@@ -944,7 +944,7 @@ msgstr "Miktar çıktı miktarından büyük olamaz"
 
 #: build/models.py:1183
 msgid "Build output has not passed all required tests"
-msgstr ""
+msgstr "Stok kalemi tüm gerekli testleri geçmedi"
 
 #: build/models.py:1186 build/serializers.py:584
 #, python-brace-format
@@ -1605,7 +1605,7 @@ msgstr "Bu mesajdaki iş bitirildi mi?"
 
 #: common/models.py:1675
 msgid "Id"
-msgstr ""
+msgstr "Kimlik"
 
 #: common/models.py:1677
 msgid "Title"
@@ -1660,7 +1660,7 @@ msgstr ""
 
 #: common/models.py:1743
 msgid "Custom Unit"
-msgstr ""
+msgstr "Özel Birim"
 
 #: common/models.py:1761
 msgid "Unit symbol must be unique"
@@ -1672,7 +1672,7 @@ msgstr ""
 
 #: common/models.py:1795
 msgid "Unit name"
-msgstr ""
+msgstr "Birim adı"
 
 #: common/models.py:1802
 msgid "Symbol"
@@ -1705,7 +1705,7 @@ msgstr "Bozuk dış bağlantı"
 
 #: common/models.py:1923
 msgid "Model type"
-msgstr ""
+msgstr "Model türü"
 
 #: common/models.py:1924
 msgid "Target model type for image"
@@ -1725,7 +1725,7 @@ msgstr ""
 
 #: common/models.py:1965
 msgid "Upload date"
-msgstr ""
+msgstr "Yükleme tarihi"
 
 #: common/models.py:1966
 msgid "Date the file was uploaded"
@@ -1733,11 +1733,11 @@ msgstr ""
 
 #: common/models.py:1970
 msgid "File size"
-msgstr ""
+msgstr "Dosya Boyutu"
 
 #: common/models.py:1970
 msgid "File size in bytes"
-msgstr ""
+msgstr "Bayt cinsinden dosya boyutu"
 
 #: common/models.py:2008 common/serializers.py:659
 msgid "Invalid model type specified for attachment"
@@ -1782,7 +1782,7 @@ msgstr ""
 
 #: common/models.py:2063 common/models.py:2292 generic/states/serializers.py:22
 msgid "Label"
-msgstr ""
+msgstr "Etiket"
 
 #: common/models.py:2064
 msgid "Label that will be displayed in the frontend"
@@ -5311,7 +5311,7 @@ msgstr ""
 msgid "Component part is testable"
 msgstr ""
 
-#: part/api.py:1639
+#: part/api.py:1653
 msgid "Uses"
 msgstr ""
 

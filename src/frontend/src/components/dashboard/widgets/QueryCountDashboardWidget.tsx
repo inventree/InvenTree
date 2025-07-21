@@ -140,6 +140,7 @@ export default function QueryCountDashboardWidget({
     title: title,
     description: description,
     enabled: enabled,
+    modelType: modelType,
     minWidth: 2,
     minHeight: 1,
     render: () => (

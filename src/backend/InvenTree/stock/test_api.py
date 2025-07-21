@@ -73,11 +73,11 @@ class StockLocationTest(StockAPITestCase):
             ({}, 8, 'no parameters'),
             ({'parent': 1, 'cascade': False}, 2, 'Filter by parent, no cascading'),
             ({'parent': 1, 'cascade': True}, 2, 'Filter by parent, cascading'),
-            ({'cascade': True, 'depth': 0}, 7, 'Cascade with no parent, depth=0'),
+            ({'cascade': True, 'depth': 0}, 3, 'Cascade with no parent, depth=0'),
             ({'cascade': False, 'depth': 10}, 3, 'Cascade with no parent, depth=10'),
             (
                 {'parent': 1, 'cascade': False, 'depth': 0},
-                1,
+                0,
                 'Dont cascade with depth=0 and parent',
             ),
             (
@@ -450,8 +450,6 @@ class StockLocationTest(StockAPITestCase):
                 name=f'Location {idx}', description=f'Test location {idx}', parent=loc
             )
 
-        StockLocation.objects.rebuild()
-
         with self.assertNumQueriesLessThan(15):
             response = self.get(reverse('api-location-tree'), expected_code=200)
 
@@ -596,13 +594,13 @@ class StockItemListTest(StockAPITestCase):
 
     def test_filter_by_part(self):
         """Filter StockItem by Part reference."""
+        # 4 stock items associated with part 25
         response = self.get_stock(part=25)
+        self.assertEqual(len(response), 4)
 
-        self.assertEqual(len(response), 17)
-
+        # 3 stock items associated with part 10004
         response = self.get_stock(part=10004)
-
-        self.assertEqual(len(response), 12)
+        self.assertEqual(len(response), 3)
 
     def test_filter_by_ipn(self):
         """Filter StockItem by IPN reference."""
@@ -884,9 +882,15 @@ class StockItemListTest(StockAPITestCase):
                 # Part name should match
                 self.assertEqual(row['Part.Name'], item.part.name)
 
+        parts = Part.objects.get(pk=25).get_descendants(include_self=True)
+        self.assertEqual(parts.count(), 1)
+
+        items = StockItem.objects.filter(part__in=parts)
+        self.assertEqual(items.count(), 4)
+
         # Export stock items with a specific part
         with self.export_data(self.list_url, {'part': 25}) as data_file:
-            self.process_csv(data_file, required_rows=17)
+            self.process_csv(data_file, required_rows=items.count())
 
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
@@ -1034,9 +1038,9 @@ class StockItemListTest(StockAPITestCase):
 
         # With full data
         response = self.post(url, {'part': 1, 'quantity': 1})
-        self.assertEqual(response.data['serial_number'], '1001')
+        self.assertEqual(response.data['serial_number'], '1')
         response = self.post(url, {'part': 1, 'quantity': 3})
-        self.assertEqual(response.data['serial_number'], '1001,1002,1003')
+        self.assertEqual(response.data['serial_number'], '1,2,3')
 
         # Wrong quantities
         response = self.post(url, {'part': 1, 'quantity': 'abc'}, expected_code=400)

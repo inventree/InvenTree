@@ -9,6 +9,7 @@ import {
   Group,
   Paper,
   Select,
+  Space,
   Stack,
   Text,
   TextInput,
@@ -252,7 +253,6 @@ function FilterAddGroup({
 
   return (
     <Stack gap='xs'>
-      <Divider />
       <Select
         data={filterOptions}
         searchable={true}
@@ -311,12 +311,13 @@ export function FilterSelectDrawer({
       }}
       title={<StylishText size='lg'>{title ?? t`Table Filters`}</StylishText>}
     >
+      <Divider />
+      <Space h='sm' />
       <Stack gap='xs'>
         {hasFilters &&
           filterSet.activeFilters?.map((f) => (
             <FilterItem key={f.name} flt={f} filterSet={filterSet} />
           ))}
-        {hasFilters && <Divider />}
         {addFilter && (
           <Stack gap='xs'>
             <FilterAddGroup
