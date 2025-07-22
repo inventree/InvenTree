@@ -237,7 +237,7 @@ class PluginsRegistry:
         # Update the registry hash value
         self.update_plugin_hash()
 
-    @registry_entrypoint(default_value=None)
+    @registry_entrypoint()
     def call_plugin_function(self, slug: str, func: str, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
@@ -266,7 +266,7 @@ class PluginsRegistry:
 
     # region registry functions
 
-    @registry_entrypoint()
+    @registry_entrypoint(default_value=[])
     def with_mixin(
         self, mixin: str, active: bool = True, builtin: Optional[bool] = None
     ) -> list[InvenTreePlugin]:
