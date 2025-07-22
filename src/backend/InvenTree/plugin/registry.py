@@ -4,6 +4,7 @@
 - Manages setup and teardown of plugin class instances
 """
 
+import functools
 import importlib
 import importlib.util
 import os
@@ -41,6 +42,36 @@ from .helpers import (
 from .plugin import InvenTreePlugin
 
 logger = structlog.get_logger('inventree')
+
+
+def registry_entrypoint(default_value=None):
+    """Function decorator for registry entrypoints methods.
+
+    - Ensure that the registry is ready before calling the method.
+    - Check if the registry needs to be reloaded.
+    """
+
+    def decorator(method):
+        """Decorator to ensure registry is ready before calling the method."""
+
+        @functools.wraps(method)
+        def wrapper(self, *args, **kwargs):
+            """Wrapper function to ensure registry is ready."""
+            if not self.is_ready:
+                logger.warning(
+                    "Plugin registry is not ready - cannot call method '%s'",
+                    method.__name__,
+                )
+                return default_value
+
+            # Check if the registry needs to be reloaded
+            self.check_reload()
+
+            return method(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
 
 
 class PluginsRegistry:
@@ -125,6 +156,7 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
+    @registry_entrypoint()
     def get_plugin(
         self, slug: str, active: bool = True, with_mixin: Optional[str] = None
     ) -> InvenTreePlugin:
@@ -138,13 +170,6 @@ class PluginsRegistry:
         Returns:
             InvenTreePlugin or None: The plugin instance if found, otherwise None.
         """
-        if not self.is_ready:
-            logger.warning('registry.get_plugin: Plugin registry is not ready')
-            return None
-
-        # Check if the registry needs to be reloaded
-        self.check_reload()
-
         if slug not in self.plugins:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return None
@@ -193,6 +218,7 @@ class PluginsRegistry:
 
         return cfg
 
+    @registry_entrypoint()
     def set_plugin_state(self, slug: str, state: bool):
         """Set the state(active/inactive) of a plugin.
 
@@ -200,13 +226,6 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
-        if not self.is_ready:
-            logger.warning('registry.set_plugin_state: Plugin registry is not ready')
-            return
-
-        # Check if the registry needs to be reloaded
-        self.check_reload()
-
         if slug not in self.plugins_full:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
@@ -218,6 +237,7 @@ class PluginsRegistry:
         # Update the registry hash value
         self.update_plugin_hash()
 
+    @registry_entrypoint(default_value=None)
     def call_plugin_function(self, slug: str, func: str, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
@@ -226,15 +246,6 @@ class PluginsRegistry:
 
         Instead, any error messages are returned to the worker.
         """
-        if not self.is_ready:
-            logger.warning(
-                'registry.call_plugin_function: Plugin registry is not ready'
-            )
-            return None
-
-        # Check if the registry needs to be reloaded
-        self.check_reload()
-
         raise_error = kwargs.pop('raise_error', True)
 
         plugin = self.get_plugin(slug)
@@ -254,6 +265,8 @@ class PluginsRegistry:
         return plugin_func(*args, **kwargs)
 
     # region registry functions
+
+    @registry_entrypoint()
     def with_mixin(
         self, mixin: str, active: bool = True, builtin: Optional[bool] = None
     ) -> list[InvenTreePlugin]:
@@ -264,13 +277,6 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
-        if not self.is_ready:
-            logger.warning('registry.with_mixin: Plugin registry is not ready')
-            return []
-
-        # Check if the registry needs to be loaded
-        self.check_reload()
-
         mixin = str(mixin).lower().strip()
 
         result = []
