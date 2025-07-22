@@ -68,6 +68,8 @@ class PluginsRegistry:
         'parameter-exporter',
     ]
 
+    ready: bool = False  # Marks if the registry is ready to be used
+
     def __init__(self) -> None:
         """Initialize registry.
 
@@ -81,6 +83,8 @@ class PluginsRegistry:
         self.plugins_full: dict[
             str, InvenTreePlugin
         ] = {}  # List of all plugin instances
+
+        self.ready = False  # Marks if the registry is ready to be used
 
         # Keep an internal hash of the plugin registry state
         self.registry_hash = None
@@ -323,6 +327,10 @@ class PluginsRegistry:
             clear_errors (bool, optional): Clear any previous loading errors. Defaults to False.
             _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
+        if not self.is_ready:
+            logger.warning('Plugin registry is not ready - cannot reload plugins')
+            return
+
         # Do not reload when currently loading
         if self.is_loading:
             logger.debug('Skipping reload - plugin registry is currently loading')
