@@ -4591,6 +4591,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
             # Normalize decimal values to ensure consistent representation
             # These values are only included if they are non-zero
+            # This is to provide some backwards compatibility from before these fields were addede
             if value is not None and field in [
                 'quantity',
                 'attrition',
@@ -4602,7 +4603,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
                     if not value or value <= 0:
                         continue
-                except:
+                except Exception:
                     pass
 
             # Update the hash with the string representation of the value
