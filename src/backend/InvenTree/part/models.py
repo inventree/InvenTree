@@ -453,6 +453,12 @@ class Part(
         creation_user: User who added this part to the database
         responsible_owner: Owner (either user or group) which is responsible for this part (optional)
         last_stocktake: Date at which last stocktake was performed for this Part
+
+    BOM (Bill of Materials) related attributes:
+        bom_checksum: Checksum for the BOM of this part
+        bom_validated: Boolean field indicating if the BOM is valid (checksum matches)
+        bom_checked_by: User who last checked the BOM for this part
+        bom_checked_date: Date when the BOM was last checked
     """
 
     NODE_PARENT_KEY = 'variant_of'
@@ -1265,6 +1271,12 @@ class Part(
         help_text=_('Is this a virtual part, such as a software product or license?'),
     )
 
+    bom_validated = models.BooleanField(
+        default=False,
+        verbose_name=_('BOM Validated'),
+        help_text=_('Is the BOM for this part valid?'),
+    )
+
     bom_checksum = models.CharField(
         max_length=128,
         blank=True,
@@ -1949,9 +1961,21 @@ class Part(
 
         return str(result_hash.digest())
 
-    def is_bom_valid(self):
-        """Check if the BOM is 'valid' - if the calculated checksum matches the stored value."""
-        return self.get_bom_hash() == self.bom_checksum or not self.has_bom
+    def is_bom_valid(self) -> bool:
+        """Check if the BOM is 'valid'.
+
+        To be "valid", the part must:
+        - Have a stored "bom_checksum" value
+        - The stored "bom_checksum" must match the calculated checksum.
+
+        Returns:
+            bool: True if the BOM is valid, False otherwise
+        """
+        if not self.bom_checksum or not self.bom_checked_date:
+            # If there is no BOM checksum, then the BOM is not valid
+            return False
+
+        return self.get_bom_hash() == self.bom_checksum
 
     @transaction.atomic
     def validate_bom(self, user):
@@ -1966,11 +1990,34 @@ class Part(
         for item in bom_items:
             item.validate_hash()
 
+        self.bom_validated = True
         self.bom_checksum = self.get_bom_hash()
         self.bom_checked_by = user
         self.bom_checked_date = InvenTree.helpers.current_date()
 
         self.save()
+
+    def check_bom_validity(self, save: bool = True) -> bool:
+        """Check the validity of the BOM for this part.
+
+        - Checks if the stored BOM checksum matches the calculated checksum
+        - If they do not match, the BOM is not valid!
+        - Update the local
+
+        Arguments:
+            save: If True, save the BOM validity status to the database
+
+        Returns:
+            bool: True if the BOM is valid, False otherwise
+        """
+        valid = self.is_bom_valid()
+
+        if save and valid != self.bom_validated:
+            # If the BOM validity status has changed, save it
+            self.bom_validated = valid
+            self.save()
+
+        return valid
 
     @transaction.atomic
     def clear_bom(self):
@@ -4252,6 +4299,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
+        validated: Boolean field indicating if this BOM item is valid (checksum matches)
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
