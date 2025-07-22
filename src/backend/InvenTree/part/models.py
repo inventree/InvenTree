@@ -4377,7 +4377,10 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """Enforce 'clean' operation when saving a BomItem instance."""
         self.clean()
 
-        self.check_part_lock(self.part)
+        check_lock = kwargs.pop('check_lock', True)
+
+        if check_lock:
+            self.check_part_lock(self.part)
 
         db_instance = self.get_db_instance()
 
@@ -4385,7 +4388,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         deltas = self.get_field_deltas()
 
         if 'part' in deltas and (old_part := deltas['part'].get('old', None)):
-            self.check_part_lock(old_part)
+            if check_lock:
+                self.check_part_lock(old_part)
 
         # Update the 'validated' field based on checksum calculation
         self.validated = self.is_line_valid
@@ -4582,6 +4586,18 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             if value is None:
                 value = ''
 
+            # Normalize decimal values to ensure consistent representation
+            if value is not None and field in [
+                'quantity',
+                'attrition',
+                'setup_quantity',
+                'rounding_multiple',
+            ]:
+                try:
+                    value = normalize(value)
+                except:
+                    pass
+
             # Update the hash with the string representation of the value
             result_hash.update(str(value).encode())
 
@@ -4598,7 +4614,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         else:
             self.checksum = ''
 
-        self.save()
+        # Save the BOM item (bypass lock check)
+        self.save(check_lock=False)
 
     @property
     def is_line_valid(self):
