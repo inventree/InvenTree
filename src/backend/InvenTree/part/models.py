@@ -1958,7 +1958,7 @@ class Part(
         result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
-        bom_items = self.get_bom_items().all().prefetch_related('sub_part')
+        bom_items = self.get_bom_items().all().prefetch_related('part', 'sub_part')
 
         for item in bom_items:
             result_hash.update(str(item.get_item_hash()).encode())
@@ -1982,8 +1982,12 @@ class Part(
         return self.get_bom_hash() == self.bom_checksum
 
     @transaction.atomic
-    def validate_bom(self, user):
+    def validate_bom(self, user, valid: bool = True):
         """Validate the BOM (mark the BOM as validated by the given User.
+
+        Arguments:
+            user: User who is validating the BOM
+            valid: If True, mark the BOM as valid (default=True)
 
         - Calculates and stores the hash for the BOM
         - Saves the current date and the checking user
@@ -1994,8 +1998,8 @@ class Part(
         for item in bom_items:
             item.validate_hash()
 
-        self.bom_validated = True
-        self.bom_checksum = self.get_bom_hash()
+        self.bom_validated = valid
+        self.bom_checksum = self.get_bom_hash() if valid else ''
         self.bom_checked_by = user
         self.bom_checked_date = InvenTree.helpers.current_date()
 
