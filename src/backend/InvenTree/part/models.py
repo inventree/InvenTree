@@ -4333,20 +4333,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return assemblies
 
-    def update_assembly_checksums(self):
-        """Update the checksums for all assemblies which use this BomItem.
-
-        This is called when the BOM item is saved, to ensure that the checksums
-        for all assemblies are up-to-date.
-        """
-        assemblies = self.get_assemblies()
-
-        for assembly in assemblies:
-            # Offload task to update the checksum for this assembly
-            InvenTree.tasks.offload_task(
-                part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
-            )
-
     def get_valid_parts_for_allocation(
         self, allow_variants=True, allow_substitutes=True
     ):
@@ -4414,6 +4400,14 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         self.check_part_lock(self.part)
 
+        db_instance = self.get_db_instance()
+
+        assemblies = set()
+
+        if db_instance:
+            # Find all assemblies which use this BomItem *before* we save
+            assemblies.update(db_instance.get_assemblies())
+
         # Check if the part was changed
         deltas = self.get_field_deltas()
 
@@ -4425,8 +4419,14 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         super().save(*args, **kwargs)
 
-        # Offload task to recalculate the BOM checksum for any assemblies
-        self.update_assembly_checksums()
+        # Update with any *new* assemblies which use this BomItem
+        assemblies.update(self.get_assemblies())
+
+        for assembly in assemblies:
+            # Offload task to update the checksum for this assembly
+            InvenTree.tasks.offload_task(
+                part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
+            )
 
     def check_part_lock(self, assembly):
         """When editing or deleting a BOM item, check if the assembly is locked.
