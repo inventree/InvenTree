@@ -202,6 +202,12 @@ function partTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'bom_valid',
+      label: t`BOM Valid`,
+      description: t`Filter by parts with a valid BOM`,
+      type: 'boolean'
+    },
+    {
       name: 'cascade',
       label: t`Include Subcategories`,
       description: t`Include parts in subcategories`,

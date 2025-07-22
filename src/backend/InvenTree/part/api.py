@@ -862,7 +862,9 @@ class PartFilter(rest_filters.FilterSet):
         label='Default Location', queryset=StockLocation.objects.all()
     )
 
-    bom_valid = rest_filters.BooleanFilter(label=_('BOM Valid'), field='bom_validated')
+    bom_valid = rest_filters.BooleanFilter(
+        label=_('BOM Valid'), field_name='bom_validated'
+    )
 
     starred = rest_filters.BooleanFilter(label='Starred', method='filter_starred')
 
