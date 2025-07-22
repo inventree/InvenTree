@@ -11,15 +11,21 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
@@ -35,15 +41,14 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -88,7 +93,7 @@ export function BomTable({
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const part = record.sub_part_detail;
           const extra = [];
 
@@ -135,18 +140,77 @@ export function BomTable({
           const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify='space-between' grow>
-              <Text>{quantity}</Text>
-              {record.overage && <Text size='xs'>+{record.overage}</Text>}
-              {units && <Text size='xs'>{units}</Text>}
+            <Group justify='space-between'>
+              <Group gap='xs'>
+                <Text>{quantity}</Text>
+                {record.setup_quantity && record.setup_quantity > 0 && (
+                  <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+                )}
+                {record.attrition && record.attrition > 0 && (
+                  <Text size='xs'>{`(+${record.attrition}%)`}</Text>
+                )}
+              </Group>
+              {units && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
         }
       },
       {
+        accessor: 'setup_quantity',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const setup_quantity = record.setup_quantity;
+          const units = record.sub_part_detail?.units;
+          if (setup_quantity == null || setup_quantity === 0) {
+            return '-';
+          } else {
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text size='xs'>{formatDecimal(setup_quantity)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
+          }
+        }
+      },
+      {
+        accessor: 'attrition',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const attrition = record.attrition;
+          if (attrition == null || attrition === 0) {
+            return '-';
+          } else {
+            return <Text size='xs'>{`${formatDecimal(attrition)}%`}</Text>;
+          }
+        }
+      },
+      {
+        accessor: 'rounding_multiple',
+        defaultVisible: false,
+        sortable: false,
+        render: (record: any) => {
+          const units = record.sub_part_detail?.units;
+          const multiple: number | null = record.round_up_multiple;
+
+          if (multiple == null) {
+            return '-';
+          } else {
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text>{formatDecimal(multiple)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
         defaultVisible: false,
-        render: (row) => {
+        render: (row: any) => {
           const substitutes = row.substitutes ?? [];
 
           return substitutes.length > 0 ? (
@@ -204,7 +268,7 @@ export function BomTable({
       {
         accessor: 'available_stock',
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const extra: ReactNode[] = [];
 
           const available_stock: number = availableStockQuantity(record);
@@ -369,7 +433,8 @@ export function BomTable({
         name: 'has_pricing',
         label: t`Has Pricing`,
         description: t`Show items with pricing`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, [partId, params]);
 

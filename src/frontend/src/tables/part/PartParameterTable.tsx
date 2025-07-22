@@ -3,12 +3,20 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import { RenderUser } from '../../components/render/User';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
 import {
@@ -18,10 +26,14 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DateColumn,
+  DescriptionColumn,
+  NoteColumn,
+  PartColumn
+} from '../ColumnRenderers';
+import { IncludeVariantsFilter, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -104,9 +116,40 @@ export function PartParameterTable({
         accessor: 'template_detail.units',
         ordering: 'units',
         sortable: true
+      },
+      NoteColumn({}),
+      DateColumn({
+        accessor: 'updated',
+        title: t`Last Updated`,
+        sortable: true,
+        switchable: true
+      }),
+      {
+        accessor: 'updated_by',
+        title: t`Updated By`,
+        sortable: true,
+        switchable: true,
+        render: (record: any) => {
+          return record.updated_by_detail ? (
+            <RenderUser instance={record.updated_by_detail} />
+          ) : (
+            '-'
+          );
+        }
       }
     ];
   }, [partId]);
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      IncludeVariantsFilter(),
+      UserFilter({
+        name: 'updated_by',
+        label: t`Updated By`,
+        description: t`Filter by user who last updated the parameter`
+      })
+    ];
+  }, []);
 
   const partParameterFields: ApiFormFieldSet = usePartParameterFields({});
 
@@ -207,13 +250,7 @@ export function PartParameterTable({
             rowActions: rowActions,
             enableDownload: true,
             tableActions: tableActions,
-            tableFilters: [
-              {
-                name: 'include_variants',
-                label: t`Include Variants`,
-                type: 'boolean'
-              }
-            ],
+            tableFilters: tableFilters,
             params: {
               part: partId,
               template_detail: true,

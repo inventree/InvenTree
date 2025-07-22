@@ -1,9 +1,9 @@
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { IconTestPipe } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { DateColumn } from '../ColumnRenderers';

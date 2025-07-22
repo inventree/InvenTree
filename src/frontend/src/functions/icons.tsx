@@ -87,6 +87,7 @@ import {
   IconStack2,
   IconStatusChange,
   IconTag,
+  IconTax,
   IconTestPipe,
   IconTool,
   IconTools,
@@ -181,6 +182,7 @@ const icons: InvenTreeIconType = {
   admin: IconUserBolt,
   system: IconSettings,
   license: IconLicense,
+  tax_id: IconTax,
 
   // Part Icons
   active: IconCheck,

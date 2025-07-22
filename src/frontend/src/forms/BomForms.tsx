@@ -29,12 +29,14 @@ export function bomItemFields(): ApiFormFieldSet {
     },
     quantity: {},
     reference: {},
-    overage: {},
-    note: {},
+    setup_quantity: {},
+    attrition: {},
+    rounding_multiple: {},
     allow_variants: {},
     inherited: {},
     consumable: {},
-    optional: {}
+    optional: {},
+    note: {}
   };
 }
 

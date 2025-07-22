@@ -532,8 +532,11 @@ class BuildLineEndpoint:
         try:
             params = self.request.query_params
 
+            kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
+            kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
             kwargs['part_detail'] = str2bool(params.get('part_detail', True))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+            kwargs['allocations'] = str2bool(params.get('allocations', True))
         except AttributeError:
             pass
 
@@ -660,7 +663,8 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
         # Create the build output(s)
         outputs = serializer.save()
 
-        response = stock.serializers.StockItemSerializer(outputs, many=True)
+        queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
+        response = stock.serializers.StockItemSerializer(queryset, many=True)
 
         # Return the created outputs
         return Response(response.data, status=status.HTTP_201_CREATED)

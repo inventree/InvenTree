@@ -53,7 +53,6 @@ export default function UserSettings() {
               'STICKY_HEADER',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
-              'PART_SHOW_QUANTITY_IN_FORMS',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',
               'SHOW_FULL_LOCATION_IN_TABLES',

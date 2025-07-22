@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-06 00:16+0000\n"
-"PO-Revision-Date: 2025-07-06 00:19\n"
+"POT-Creation-Date: 2025-07-12 23:21+0000\n"
+"PO-Revision-Date: 2025-07-12 23:24\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -57,23 +57,23 @@ msgstr "Нет элементов, соответствующих заданны
 msgid "User does not have permission to view this model"
 msgstr "У пользователя недостаточно прав для просмотра этой модели!"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "Email (еще раз)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "Подтверждение адреса электронной почты"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Вы должны вводить один и тот же адрес электронной почты."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:127 InvenTree/auth_overrides.py:134
 msgid "The provided primary email address is not valid."
 msgstr "Указанный основной адрес электронной почты неверен."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:140
 msgid "The provided email domain is not approved."
 msgstr "Указанный домен электронной почты не утверждён."
 
@@ -112,7 +112,7 @@ msgstr ""
 #: build/serializers.py:566 company/models.py:867 order/models.py:1626
 #: part/models.py:3438
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:2730 stock/models.py:2854 stock/serializers.py:731
+#: stock/models.py:2759 stock/models.py:2883 stock/serializers.py:731
 #: stock/serializers.py:900 stock/serializers.py:1030 stock/serializers.py:1082
 #: stock/serializers.py:1396 stock/serializers.py:1485
 #: stock/serializers.py:1661
@@ -412,7 +412,7 @@ msgstr "Неверный выбор"
 #: common/models.py:2053 common/models.py:2178 common/serializers.py:510
 #: company/models.py:626 generic/states/serializers.py:20 machine/models.py:24
 #: part/models.py:1039 part/models.py:3912 plugin/models.py:53
-#: report/models.py:216 stock/models.py:83
+#: report/models.py:216 stock/models.py:85
 msgid "Name"
 msgstr "Название"
 
@@ -422,11 +422,11 @@ msgstr "Название"
 #: part/models.py:1062 part/models.py:3927 report/models.py:222
 #: report/models.py:806 report/models.py:832
 #: report/templates/report/inventree_build_order_report.html:117
-#: stock/models.py:89
+#: stock/models.py:91
 msgid "Description"
 msgstr "Описание"
 
-#: InvenTree/models.py:754 stock/models.py:90
+#: InvenTree/models.py:754 stock/models.py:92
 msgid "Description (optional)"
 msgstr "Описание (необязательно)"
 
@@ -569,9 +569,9 @@ msgstr ""
 msgid "Part"
 msgstr "Деталь"
 
-#: build/api.py:107 build/api.py:110 part/api.py:1335 part/models.py:1080
-#: part/models.py:3630 part/models.py:4211 part/serializers.py:1340
-#: stock/api.py:833
+#: build/api.py:107 build/api.py:110 part/api.py:1335 part/api.py:1642
+#: part/models.py:1080 part/models.py:3630 part/models.py:4211
+#: part/serializers.py:1340 stock/api.py:833
 msgid "Category"
 msgstr "Категория"
 
@@ -821,7 +821,7 @@ msgid "Build status code"
 msgstr "Код статуса заказа на производство"
 
 #: build/models.py:341 build/serializers.py:345 order/serializers.py:792
-#: stock/models.py:1030 stock/serializers.py:84 stock/serializers.py:1628
+#: stock/models.py:1060 stock/serializers.py:84 stock/serializers.py:1628
 msgid "Batch Code"
 msgstr "Код партии"
 
@@ -876,12 +876,12 @@ msgstr "Ответственный"
 msgid "User or group responsible for this build order"
 msgstr "Пользователь, ответственный за этот заказ на производство"
 
-#: build/models.py:402 stock/models.py:1023
+#: build/models.py:402 stock/models.py:1053
 msgid "External Link"
 msgstr "Внешняя ссылка"
 
 #: build/models.py:404 common/models.py:1941 part/models.py:1114
-#: stock/models.py:1025
+#: stock/models.py:1055
 msgid "Link to external URL"
 msgstr "Ссылка на внешний URL"
 
@@ -919,43 +919,47 @@ msgstr "Заказ на производство был завершен"
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "Для отслеживаемых деталей должны быть указаны серийные номера"
 
-#: build/models.py:1024 build/models.py:1109
+#: build/models.py:1028 build/models.py:1113
 msgid "No build output specified"
 msgstr "Продукция не указана"
 
-#: build/models.py:1027
+#: build/models.py:1031
 msgid "Build output is already completed"
 msgstr "Продукция уже произведена"
 
-#: build/models.py:1030
+#: build/models.py:1034
 msgid "Build output does not match Build Order"
 msgstr "Продукция не совпадает с заказом на производство"
 
-#: build/models.py:1112 build/serializers.py:272 build/serializers.py:321
+#: build/models.py:1116 build/serializers.py:272 build/serializers.py:321
 #: build/serializers.py:941 order/models.py:710 order/serializers.py:604
-#: order/serializers.py:787 part/serializers.py:1735 stock/models.py:870
-#: stock/models.py:1755 stock/serializers.py:702
+#: order/serializers.py:787 part/serializers.py:1735 stock/models.py:900
+#: stock/models.py:1785 stock/serializers.py:702
 msgid "Quantity must be greater than zero"
 msgstr "Количество должно быть больше нуля"
 
-#: build/models.py:1116 build/serializers.py:276
+#: build/models.py:1120 build/serializers.py:276
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Количество не может быть больше количества продукции"
 
-#: build/models.py:1181 build/serializers.py:584
+#: build/models.py:1183
+msgid "Build output has not passed all required tests"
+msgstr ""
+
+#: build/models.py:1186 build/serializers.py:584
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Сборка {serial} не прошла все необходимые тесты"
 
-#: build/models.py:1567
+#: build/models.py:1573
 msgid "Build Order Line Item"
 msgstr "Номер позиции для производства"
 
-#: build/models.py:1591
+#: build/models.py:1597
 msgid "Build object"
 msgstr "Объект производства"
 
-#: build/models.py:1603 build/models.py:1862 build/serializers.py:260
+#: build/models.py:1609 build/models.py:1868 build/serializers.py:260
 #: build/serializers.py:306 build/serializers.py:1385 common/models.py:1297
 #: order/models.py:1602 order/models.py:2376 order/serializers.py:1692
 #: order/serializers.py:2153 part/models.py:3425 part/models.py:4396
@@ -976,56 +980,56 @@ msgstr "Объект производства"
 msgid "Quantity"
 msgstr "Количество"
 
-#: build/models.py:1604
+#: build/models.py:1610
 msgid "Required quantity for build order"
 msgstr "Требуемое количество для заказа на производство"
 
-#: build/models.py:1688
+#: build/models.py:1694
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Элемент производства должен указать продукцию, как главную деталь помеченную как отслеживаемая"
 
-#: build/models.py:1699
+#: build/models.py:1705
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Резервируемое количество ({q}) не должно превышать доступное количество на складе ({a})"
 
-#: build/models.py:1720 order/models.py:2325
+#: build/models.py:1726 order/models.py:2325
 msgid "Stock item is over-allocated"
 msgstr "Складская позиция перераспределена"
 
-#: build/models.py:1725 order/models.py:2328
+#: build/models.py:1731 order/models.py:2328
 msgid "Allocation quantity must be greater than zero"
 msgstr "Резервируемое количество должно быть больше нуля"
 
-#: build/models.py:1731
+#: build/models.py:1737
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Количество должно быть 1 для сериализованных запасов"
 
-#: build/models.py:1791
+#: build/models.py:1797
 msgid "Selected stock item does not match BOM line"
 msgstr "Выбранная складская позиция не соответствует позиции в BOM"
 
-#: build/models.py:1852 build/serializers.py:924 build/serializers.py:1234
+#: build/models.py:1858 build/serializers.py:924 build/serializers.py:1234
 #: order/serializers.py:1529 order/serializers.py:1550
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
-#: stock/models.py:452 stock/serializers.py:101 stock/serializers.py:807
+#: stock/models.py:454 stock/serializers.py:101 stock/serializers.py:807
 #: stock/serializers.py:1334 stock/serializers.py:1446
 msgid "Stock Item"
 msgstr "Складская позиция"
 
-#: build/models.py:1853
+#: build/models.py:1859
 msgid "Source stock item"
 msgstr "Исходная складская позиция"
 
-#: build/models.py:1863
+#: build/models.py:1869
 msgid "Stock quantity to allocate to build"
 msgstr "Количество на складе для производства"
 
-#: build/models.py:1872
+#: build/models.py:1878
 msgid "Install into"
 msgstr "Установить в"
 
-#: build/models.py:1873
+#: build/models.py:1879
 msgid "Destination stock item"
 msgstr "Целевая складская позиция"
 
@@ -1095,7 +1099,7 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Автоматически зарезервировать необходимые элементы с соответствующими серийными номерами"
 
 #: build/serializers.py:409 order/serializers.py:901 stock/api.py:1101
-#: stock/models.py:1778
+#: stock/models.py:1808
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Следующие серийные номера уже существуют или недействительны"
 
@@ -1306,7 +1310,7 @@ msgstr ""
 
 #: build/serializers.py:1261 company/models.py:695 order/api.py:306
 #: order/api.py:311 order/api.py:526 order/serializers.py:596
-#: stock/models.py:966 stock/serializers.py:606
+#: stock/models.py:996 stock/serializers.py:606
 msgid "Supplier Part"
 msgstr "Деталь поставщика"
 
@@ -1686,7 +1690,7 @@ msgstr "Определение"
 msgid "Unit definition"
 msgstr "Определение единицы измерения"
 
-#: common/models.py:1868 common/models.py:1931 stock/models.py:2849
+#: common/models.py:1868 common/models.py:1931 stock/models.py:2878
 #: stock/serializers.py:258
 msgid "Attachment"
 msgstr "Вложения"
@@ -1764,7 +1768,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Логическое состояние, соответствующее пользовательскому состоянию в бизнес-логике"
 
 #: common/models.py:2047 common/models.py:2286 company/models.py:633
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2841
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:2870
 msgid "Value"
 msgstr "Значение"
 
@@ -1973,7 +1977,7 @@ msgid "Response data from the barcode scan"
 msgstr ""
 
 #: common/models.py:2374 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2835
+#: stock/models.py:2864
 msgid "Result"
 msgstr "Результат"
 
@@ -3572,18 +3576,34 @@ msgid "Show the current page in breadcrumbs"
 msgstr ""
 
 #: common/setting/user.py:229
+msgid "Show full stock location in tables"
+msgstr ""
+
+#: common/setting/user.py:231
+msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
+msgstr ""
+
+#: common/setting/user.py:237
+msgid "Show full part categories in tables"
+msgstr ""
+
+#: common/setting/user.py:239
+msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
+msgstr ""
+
+#: common/setting/user.py:245
 msgid "Receive error reports"
 msgstr ""
 
-#: common/setting/user.py:230
+#: common/setting/user.py:246
 msgid "Receive notifications for system errors"
 msgstr ""
 
-#: common/setting/user.py:235
+#: common/setting/user.py:251
 msgid "Last used printing machines"
 msgstr ""
 
-#: common/setting/user.py:236
+#: common/setting/user.py:252
 msgid "Save the last used printing machines for a user"
 msgstr ""
 
@@ -3828,7 +3848,7 @@ msgstr "Ссылка на адресную информацию (внешняя)
 msgid "Manufacturer Part"
 msgstr "Производитель детали"
 
-#: company/models.py:520 company/models.py:810 stock/models.py:955
+#: company/models.py:520 company/models.py:810 stock/models.py:985
 #: stock/serializers.py:445
 msgid "Base Part"
 msgstr "Базовая деталь"
@@ -3941,7 +3961,7 @@ msgstr "базовая стоимость"
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
-#: company/models.py:883 order/serializers.py:818 stock/models.py:986
+#: company/models.py:883 order/serializers.py:818 stock/models.py:1016
 #: stock/serializers.py:1643
 msgid "Packaging"
 msgstr "Упаковка"
@@ -4563,8 +4583,8 @@ msgstr ""
 msgid "Quantity must be a positive number"
 msgstr ""
 
-#: order/models.py:1199 order/models.py:2503 stock/models.py:1008
-#: stock/models.py:1009 stock/serializers.py:1382
+#: order/models.py:1199 order/models.py:2503 stock/models.py:1038
+#: stock/models.py:1039 stock/serializers.py:1382
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
@@ -4682,7 +4702,7 @@ msgstr "Получено"
 msgid "Number of items received"
 msgstr ""
 
-#: order/models.py:1792 stock/models.py:1131 stock/serializers.py:654
+#: order/models.py:1792 stock/models.py:1161 stock/serializers.py:654
 msgid "Purchase Price"
 msgstr "Закупочная цена"
 
@@ -5031,7 +5051,7 @@ msgstr "Выберите место назначения для полученн
 msgid "Enter batch code for incoming stock items"
 msgstr "Введите код партии для поступающих складских позиций"
 
-#: order/serializers.py:800 stock/models.py:1090
+#: order/serializers.py:800 stock/models.py:1120
 #: templates/email/stale_stock_notification.html:22 users/models.py:143
 msgid "Expiry Date"
 msgstr "Истекает"
@@ -5291,7 +5311,7 @@ msgstr "Сборная деталь тестируется"
 msgid "Component part is testable"
 msgstr "Компонент тестируется"
 
-#: part/api.py:1639
+#: part/api.py:1653
 msgid "Uses"
 msgstr ""
 
@@ -5312,7 +5332,7 @@ msgstr "Место хранения по умолчанию"
 msgid "Default location for parts in this category"
 msgstr "Место хранения по умолчанию для деталей этой категории"
 
-#: part/models.py:115 stock/models.py:212
+#: part/models.py:115 stock/models.py:214
 msgid "Structural"
 msgstr "Структура"
 
@@ -5328,12 +5348,12 @@ msgstr "Ключевые слова по умолчанию"
 msgid "Default keywords for parts in this category"
 msgstr "Ключевые слова по умолчанию для деталей этой категории"
 
-#: part/models.py:134 stock/models.py:96 stock/models.py:194
+#: part/models.py:134 stock/models.py:98 stock/models.py:196
 msgid "Icon"
 msgstr "Значок"
 
 #: part/models.py:135 part/serializers.py:151 part/serializers.py:170
-#: stock/models.py:195
+#: stock/models.py:197
 msgid "Icon (optional)"
 msgstr "Значок (необязательно)"
 
@@ -6031,7 +6051,7 @@ msgstr "Позиция спецификации наследуется разн�
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Эту позицию можно заменять деталями, которые находятся на складе"
 
-#: part/models.py:4542 stock/models.py:855
+#: part/models.py:4542 stock/models.py:885
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Для отслеживаемых деталей количество должно быть целым числом"
 
@@ -7773,7 +7793,7 @@ msgstr "Всего"
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
 #: report/templates/report/inventree_stock_report_merge.html:88
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:1013
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:1043
 #: stock/serializers.py:163 templates/email/stale_stock_notification.html:21
 msgid "Serial Number"
 msgstr "Серийный номер"
@@ -7967,313 +7987,318 @@ msgstr ""
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Не нужно указывать серийные номера для неотслеживаемых деталей"
 
-#: stock/models.py:70
+#: stock/models.py:72
 msgid "Stock Location type"
 msgstr ""
 
-#: stock/models.py:71
+#: stock/models.py:73
 msgid "Stock Location types"
 msgstr ""
 
-#: stock/models.py:97
+#: stock/models.py:99
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "Значок по умолчанию для мест хранения с невыбранным значком (необязательно)"
 
-#: stock/models.py:155 stock/models.py:975
+#: stock/models.py:157 stock/models.py:1005
 msgid "Stock Location"
 msgstr "Место хранения"
 
-#: stock/models.py:156 users/ruleset.py:31
+#: stock/models.py:158 users/ruleset.py:31
 msgid "Stock Locations"
 msgstr "Места хранения"
 
-#: stock/models.py:205 stock/models.py:1140
+#: stock/models.py:207 stock/models.py:1170
 msgid "Owner"
 msgstr "Владелец"
 
-#: stock/models.py:206 stock/models.py:1141
+#: stock/models.py:208 stock/models.py:1171
 msgid "Select Owner"
 msgstr "Выберите владельца"
 
-#: stock/models.py:214
+#: stock/models.py:216
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Складские позиции не могут находиться в структурных местах хранения, но могут находиться в дочерних местах хранения."
 
-#: stock/models.py:221 users/models.py:503
+#: stock/models.py:223 users/models.py:503
 msgid "External"
 msgstr "Внешний"
 
-#: stock/models.py:222
+#: stock/models.py:224
 msgid "This is an external stock location"
 msgstr "Это сторонний склад"
 
-#: stock/models.py:228
+#: stock/models.py:230
 msgid "Location type"
 msgstr "Тип места хранения"
 
-#: stock/models.py:232
+#: stock/models.py:234
 msgid "Stock location type of this location"
 msgstr "Тип места хранения данного склада"
 
-#: stock/models.py:304
+#: stock/models.py:306
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr "Вы не можете сделать это место хранение структурным, потому, что некоторые складские позиции уже находятся в нем!"
 
-#: stock/models.py:562
+#: stock/models.py:587
+#, python-brace-format
+msgid "{field} does not exist"
+msgstr ""
+
+#: stock/models.py:600
 msgid "Part must be specified"
 msgstr ""
 
-#: stock/models.py:834
+#: stock/models.py:864
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "Складские позиции не могут находиться в структурных местах хранения!"
 
-#: stock/models.py:861 stock/serializers.py:481
+#: stock/models.py:891 stock/serializers.py:481
 msgid "Stock item cannot be created for virtual parts"
 msgstr "Складская позиция не может быть создана для виртуальных деталей"
 
-#: stock/models.py:878
+#: stock/models.py:908
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr ""
 
-#: stock/models.py:888 stock/models.py:901
+#: stock/models.py:918 stock/models.py:931
 msgid "Quantity must be 1 for item with a serial number"
 msgstr ""
 
-#: stock/models.py:891
+#: stock/models.py:921
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr ""
 
-#: stock/models.py:913
+#: stock/models.py:943
 msgid "Item cannot belong to itself"
 msgstr ""
 
-#: stock/models.py:918
+#: stock/models.py:948
 msgid "Item must have a build reference if is_building=True"
 msgstr "Элемент должен иметь ссылку на производство, если is_building=True"
 
-#: stock/models.py:931
+#: stock/models.py:961
 msgid "Build reference does not point to the same part object"
 msgstr "Ссылка на производство не указывает на тот же элемент"
 
-#: stock/models.py:945
+#: stock/models.py:975
 msgid "Parent Stock Item"
 msgstr "Складская позиция"
 
-#: stock/models.py:957
+#: stock/models.py:987
 msgid "Base part"
 msgstr "Базовая деталь"
 
-#: stock/models.py:967
+#: stock/models.py:997
 msgid "Select a matching supplier part for this stock item"
 msgstr "Выберите соответствующего поставщика детали для этой складской позиции"
 
-#: stock/models.py:979
+#: stock/models.py:1009
 msgid "Where is this stock item located?"
 msgstr "Где находится эта складская позиция?"
 
-#: stock/models.py:987 stock/serializers.py:1644
+#: stock/models.py:1017 stock/serializers.py:1644
 msgid "Packaging this stock item is stored in"
 msgstr "Упаковка этой складской позиции хранится в"
 
-#: stock/models.py:993
+#: stock/models.py:1023
 msgid "Installed In"
 msgstr "Установлено в"
 
-#: stock/models.py:998
+#: stock/models.py:1028
 msgid "Is this item installed in another item?"
 msgstr ""
 
-#: stock/models.py:1017
+#: stock/models.py:1047
 msgid "Serial number for this item"
 msgstr ""
 
-#: stock/models.py:1034 stock/serializers.py:1629
+#: stock/models.py:1064 stock/serializers.py:1629
 msgid "Batch code for this stock item"
 msgstr "Код партии для этой складской позиции"
 
-#: stock/models.py:1039
+#: stock/models.py:1069
 msgid "Stock Quantity"
 msgstr "Количество на складе"
 
-#: stock/models.py:1049
+#: stock/models.py:1079
 msgid "Source Build"
 msgstr "Исходное производство"
 
-#: stock/models.py:1052
+#: stock/models.py:1082
 msgid "Build for this stock item"
 msgstr "Производства для этой складской позиции"
 
-#: stock/models.py:1059
+#: stock/models.py:1089
 msgid "Consumed By"
 msgstr "Поглощен"
 
-#: stock/models.py:1062
+#: stock/models.py:1092
 msgid "Build order which consumed this stock item"
 msgstr "Заказ на производство, который поглотил эту складскую позицию"
 
-#: stock/models.py:1071
+#: stock/models.py:1101
 msgid "Source Purchase Order"
 msgstr ""
 
-#: stock/models.py:1075
+#: stock/models.py:1105
 msgid "Purchase order for this stock item"
 msgstr "Заказ на закупку для этой складской позиции"
 
-#: stock/models.py:1081
+#: stock/models.py:1111
 msgid "Destination Sales Order"
 msgstr ""
 
-#: stock/models.py:1092
+#: stock/models.py:1122
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "Дата истечения срока годности для складской позиции. Остатки будут считаться просроченными после этой даты"
 
-#: stock/models.py:1110
+#: stock/models.py:1140
 msgid "Delete on deplete"
 msgstr "Удалить при обнулении"
 
-#: stock/models.py:1111
+#: stock/models.py:1141
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "Удалить эту складскую позицию при обнулении складского запаса"
 
-#: stock/models.py:1132
+#: stock/models.py:1162
 msgid "Single unit purchase price at time of purchase"
 msgstr ""
 
-#: stock/models.py:1163
+#: stock/models.py:1193
 msgid "Converted to part"
 msgstr ""
 
-#: stock/models.py:1746
+#: stock/models.py:1776
 msgid "Part is not set as trackable"
 msgstr "Деталь не является отслеживаемой"
 
-#: stock/models.py:1752
+#: stock/models.py:1782
 msgid "Quantity must be integer"
 msgstr ""
 
-#: stock/models.py:1760
+#: stock/models.py:1790
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr ""
 
-#: stock/models.py:1766
+#: stock/models.py:1796
 msgid "Serial numbers must be provided as a list"
 msgstr ""
 
-#: stock/models.py:1771
+#: stock/models.py:1801
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:1890 stock/models.py:2799
+#: stock/models.py:1919 stock/models.py:2828
 msgid "Test template does not exist"
 msgstr ""
 
-#: stock/models.py:1908
+#: stock/models.py:1937
 msgid "Stock item has been assigned to a sales order"
 msgstr "Складская позиция была назначена заказу на продажу"
 
-#: stock/models.py:1912
+#: stock/models.py:1941
 msgid "Stock item is installed in another item"
 msgstr "Складская позиция установлена в другую деталь"
 
-#: stock/models.py:1915
+#: stock/models.py:1944
 msgid "Stock item contains other items"
 msgstr "Складская позиция содержит другие детали"
 
-#: stock/models.py:1918
+#: stock/models.py:1947
 msgid "Stock item has been assigned to a customer"
 msgstr "Складская позиция была назначена покупателю"
 
-#: stock/models.py:1921 stock/models.py:2095
+#: stock/models.py:1950 stock/models.py:2124
 msgid "Stock item is currently in production"
 msgstr "Складская позиция в производстве"
 
-#: stock/models.py:1924
+#: stock/models.py:1953
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1931 stock/serializers.py:1522
+#: stock/models.py:1960 stock/serializers.py:1522
 msgid "Duplicate stock items"
 msgstr ""
 
-#: stock/models.py:1935
+#: stock/models.py:1964
 msgid "Stock items must refer to the same part"
 msgstr "Складские позиции должны ссылаться на одну и ту же деталь"
 
-#: stock/models.py:1943
+#: stock/models.py:1972
 msgid "Stock items must refer to the same supplier part"
 msgstr "Складские позиции должны ссылаться на одну и ту же деталь поставщика"
 
-#: stock/models.py:1948
+#: stock/models.py:1977
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:2218
+#: stock/models.py:2247
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:2700
+#: stock/models.py:2729
 msgid "Stock Item Tracking"
 msgstr ""
 
-#: stock/models.py:2731
+#: stock/models.py:2760
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2771
+#: stock/models.py:2800
 msgid "Stock Item Test Result"
 msgstr ""
 
-#: stock/models.py:2802
+#: stock/models.py:2831
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2806
+#: stock/models.py:2835
 msgid "Attachment must be uploaded for this test"
 msgstr "Для этого теста требуется загрузить вложения"
 
-#: stock/models.py:2811
+#: stock/models.py:2840
 msgid "Invalid value for this test"
 msgstr ""
 
-#: stock/models.py:2835
+#: stock/models.py:2864
 msgid "Test result"
 msgstr "Результат тестирования"
 
-#: stock/models.py:2842
+#: stock/models.py:2871
 msgid "Test output value"
 msgstr "Результат выполнения теста"
 
-#: stock/models.py:2850 stock/serializers.py:259
+#: stock/models.py:2879 stock/serializers.py:259
 msgid "Test result attachment"
 msgstr "Вложение с результатом теста"
 
-#: stock/models.py:2854
+#: stock/models.py:2883
 msgid "Test notes"
 msgstr "Заметки о тестировании"
 
-#: stock/models.py:2862
+#: stock/models.py:2891
 msgid "Test station"
 msgstr "Испытательное оборудование"
 
-#: stock/models.py:2863
+#: stock/models.py:2892
 msgid "The identifier of the test station where the test was performed"
 msgstr "Идентификатор испытательного оборудования, на котором выполнялось тестирование"
 
-#: stock/models.py:2869
+#: stock/models.py:2898
 msgid "Started"
 msgstr "Запущен"
 
-#: stock/models.py:2870
+#: stock/models.py:2899
 msgid "The timestamp of the test start"
 msgstr "Время начала тестирования"
 
-#: stock/models.py:2876
+#: stock/models.py:2905
 msgid "Finished"
 msgstr "Завершён"
 
-#: stock/models.py:2877
+#: stock/models.py:2906
 msgid "The timestamp of the test finish"
 msgstr "Время окончания тестирования"
 

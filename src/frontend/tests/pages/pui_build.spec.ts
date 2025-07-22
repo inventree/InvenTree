@@ -109,7 +109,9 @@ test('Build Order - Calendar', async ({ browser }) => {
   await page.getByLabel('calendar-select-filters').click();
   await page.getByRole('button', { name: 'Add Filter' }).click();
   await page.getByPlaceholder('Select filter').fill('category');
-  await page.getByRole('option', { name: 'Category', exact: true }).click();
+  await page
+    .getByRole('option', { name: 'Part Category', exact: true })
+    .click();
   await page.getByLabel('related-field-filter-category').click();
   await page.getByText('Part category, level 1').waitFor();
 
@@ -232,6 +234,8 @@ test('Build Order - Allocation', async ({ browser }) => {
   await page.getByText('Reel Storage').waitFor();
   await page.getByText('R_10K_0805_1%').first().click();
 
+  await page.reload();
+
   // The capacitor stock should be fully allocated
   const cell = await page.getByRole('cell', { name: /C_1uF_0805/ });
   const row = await getRowFromCell(cell);
@@ -276,7 +280,7 @@ test('Build Order - Allocation', async ({ browser }) => {
     {
       name: 'Blue Widget',
       ipn: 'widget.blue',
-      available: '39',
+      available: '129',
       required: '5',
       allocated: '5'
     },
@@ -311,7 +315,7 @@ test('Build Order - Allocation', async ({ browser }) => {
 
   // Check for expected buttons on Red Widget
   const redWidget = await page.getByRole('cell', { name: 'Red Widget' });
-  const redRow = await redWidget.locator('xpath=ancestor::tr').first();
+  const redRow = await getRowFromCell(redWidget);
 
   await redRow.getByLabel(/row-action-menu-/i).click();
   await page
@@ -423,4 +427,34 @@ test('Build Order - External', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'PO0017' }).waitFor();
   await page.getByRole('cell', { name: 'PO0018' }).waitFor();
+});
+
+test('Build Order - BOM Quantity', async ({ browser }) => {
+  // Validate required build order quantities (based on BOM values)
+
+  const page = await doCachedLogin(browser, { url: 'part/81/bom' });
+
+  // Expected quantity values for the BOM items
+  await page.getByText('15(+50)').waitFor();
+  await page.getByText('10(+100)').waitFor();
+
+  await loadTab(page, 'Part Details');
+
+  // Expected "can build" value: 13
+  const canBuild = await page
+    .getByRole('cell', { name: 'Can Build' })
+    .locator('div');
+  const row = await getRowFromCell(canBuild);
+  await row.getByText('13').waitFor();
+
+  await loadTab(page, 'Build Orders');
+  await page.getByRole('cell', { name: 'BO0016' }).click();
+
+  await loadTab(page, 'Required Parts');
+
+  const line = await page
+    .getByRole('cell', { name: 'Thumbnail R_10K_0805_1%' })
+    .locator('div');
+  const row2 = await getRowFromCell(line);
+  await row2.getByText('1175').waitFor();
 });

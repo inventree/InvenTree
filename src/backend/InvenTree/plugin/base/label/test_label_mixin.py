@@ -52,7 +52,11 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         # But, it is not 'active'
         plugins = registry.with_mixin(PluginMixinEnum.LABELS, active=True)
-        self.assertEqual(len(plugins), 3)
+
+        self.assertEqual(len(plugins), 2)
+        slugs = [p.slug for p in plugins]
+        self.assertIn('inventreelabel', slugs)
+        self.assertIn('inventreelabelmachine', slugs)
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
@@ -110,6 +114,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.assertIn('list may not be empty', str(response.data['items']))
 
         # Plugin is not a label plugin
+        registry.set_plugin_state('digikeyplugin', True)
         no_valid_plg = registry.get_plugin('digikeyplugin').plugin_config()
 
         response = self.post(

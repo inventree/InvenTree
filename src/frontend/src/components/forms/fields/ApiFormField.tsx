@@ -4,8 +4,8 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
+import { isTrue } from '@lib/functions/Conversion';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
@@ -99,8 +99,12 @@ export function ApiFormField({
   );
 
   // Coerce the value to a numerical value
-  const numericalValue: number | '' = useMemo(() => {
-    let val: number | '' = 0;
+  const numericalValue: number | null = useMemo(() => {
+    let val: number | null = 0;
+
+    if (value == null) {
+      return null;
+    }
 
     switch (definition.field_type) {
       case 'integer':
@@ -116,7 +120,7 @@ export function ApiFormField({
     }
 
     if (Number.isNaN(val) || !Number.isFinite(val)) {
-      val = '';
+      val = null;
     }
 
     return val;
@@ -198,10 +202,16 @@ export function ApiFormField({
             ref={field.ref}
             id={fieldId}
             aria-label={`number-field-${field.name}`}
-            value={numericalValue}
+            value={numericalValue === null ? '' : numericalValue}
             error={definition.error ?? error?.message}
             decimalScale={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number | string | null) => onChange(value)}
+            onChange={(value: number | string | null) => {
+              if (value != null && value.toString().trim() === '') {
+                onChange(null);
+              } else {
+                onChange(value);
+              }
+            }}
             step={1}
           />
         );

@@ -250,7 +250,8 @@ export function usePartParameterFields({
           // Coerce boolean value into a string (required by backend)
           return value.toString();
         }
-      }
+      },
+      note: {}
     };
   }, [editTemplate, fieldType, choices]);
 }

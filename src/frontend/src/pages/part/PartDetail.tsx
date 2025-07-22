@@ -103,6 +103,47 @@ import PartStocktakeDetail from './PartStocktakeDetail';
 import PartSupplierDetail from './PartSupplierDetail';
 
 /**
+ * Render a part revision selector component
+ */
+function RevisionSelector({
+  part,
+  options
+}: {
+  part: any;
+  options: any[];
+}) {
+  const navigate = useNavigate();
+
+  return (
+    <Select
+      id='part-revision-select'
+      aria-label='part-revision-select'
+      options={options}
+      value={{
+        value: part.pk,
+        label: part.full_name,
+        part: part
+      }}
+      isSearchable={false}
+      formatOptionLabel={(option: any) =>
+        RenderPart({
+          instance: option.part,
+          showSecondary: false
+        })
+      }
+      onChange={(value: any) => {
+        navigate(getDetailUrl(ModelType.part, value.value));
+      }}
+      styles={{
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+        menu: (base: any) => ({ ...base, zIndex: 9999 }),
+        menuList: (base: any) => ({ ...base, zIndex: 9999 })
+      }}
+    />
+  );
+}
+
+/**
  * Detail view for a single Part instance
  */
 export default function PartDetail() {
@@ -146,12 +187,111 @@ export default function PartDetail() {
       refetchOnMount: true
     });
 
+  // Fetch information on part revision
+  const partRevisionQuery = useQuery({
+    refetchOnMount: true,
+    queryKey: [
+      'part_revisions',
+      part.pk,
+      part.revision_of,
+      part.revision_count
+    ],
+    queryFn: async () => {
+      if (!part.revision_of && !part.revision_count) {
+        return [];
+      }
+
+      const revisions = [];
+
+      // First, fetch information for the top-level part
+      if (part.revision_of) {
+        await api
+          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
+          .then((response) => {
+            revisions.push(response.data);
+          });
+      } else {
+        revisions.push(part);
+      }
+
+      const url = apiUrl(ApiEndpoints.part_list);
+
+      await api
+        .get(url, {
+          params: {
+            revision_of: part.revision_of || part.pk
+          }
+        })
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              response.data.forEach((r: any) => {
+                revisions.push(r);
+              });
+              break;
+            default:
+              break;
+          }
+        });
+
+      return revisions;
+    }
+  });
+
+  const partRevisionOptions: any[] = useMemo(() => {
+    if (partRevisionQuery.isFetching || !partRevisionQuery.data) {
+      return [];
+    }
+
+    if (!part.revision_of && !part.revision_count) {
+      return [];
+    }
+
+    const options: any[] = partRevisionQuery.data.map((revision: any) => {
+      return {
+        value: revision.pk,
+        label: revision.full_name,
+        part: revision
+      };
+    });
+
+    // Add this part if not already available
+    if (!options.find((o) => o.value == part.pk)) {
+      options.push({
+        value: part.pk,
+        label: part.full_name,
+        part: part
+      });
+    }
+
+    return options.sort((a, b) => {
+      return `${a.part.revision}`.localeCompare(b.part.revision);
+    });
+  }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
+
+  const enableRevisionSelection: boolean = useMemo(() => {
+    return (
+      partRevisionOptions.length > 0 &&
+      globalSettings.isSet('PART_ENABLE_REVISION')
+    );
+  }, [partRevisionOptions, globalSettings]);
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
     }
 
     const data = { ...part };
+
+    const fetching =
+      partRequirementsQuery.isFetching || instanceQuery.isFetching;
+
+    // Copy part requirements data into the main part data
+    data.total_in_stock =
+      partRequirements?.total_stock ?? part?.total_in_stock ?? 0;
+    data.unallocated =
+      partRequirements?.unallocated_stock ?? part?.unallocated_stock ?? 0;
+    data.ordering = partRequirements?.ordering ?? part?.ordering ?? 0;
 
     data.required =
       (partRequirements?.required_for_build_orders ??
@@ -273,26 +413,12 @@ export default function PartDetail() {
         label: t`In Stock`
       },
       {
-        type: 'number',
+        type: 'progressbar',
         name: 'unallocated_stock',
-        unit: part.units,
+        total: data.total_in_stock,
+        progress: data.unallocated,
         label: t`Available Stock`,
-        hidden: part.total_in_stock == part.unallocated_stock
-      },
-      {
-        type: 'number',
-        name: 'variant_stock',
-        unit: part.units,
-        label: t`Variant Stock`,
-        hidden: !part.variant_stock,
-        icon: 'stock'
-      },
-      {
-        type: 'number',
-        name: 'minimum_stock',
-        unit: part.units,
-        label: t`Minimum Stock`,
-        hidden: part.minimum_stock <= 0
+        hidden: data.total_in_stock == data.unallocated
       },
       {
         type: 'number',
@@ -306,47 +432,56 @@ export default function PartDetail() {
         name: 'required',
         label: t`Required for Orders`,
         unit: part.units,
-        hidden: part.required <= 0,
+        hidden: data.required <= 0,
         icon: 'stocktake'
       },
       {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
-        icon: 'tick_off',
-        total: part.required_for_build_orders,
-        progress: part.allocated_to_build_orders,
+        icon: 'manufacturers',
+        total: partRequirements.required_for_build_orders,
+        progress: partRequirements.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
         hidden:
-          !part.component ||
-          (part.required_for_build_orders <= 0 &&
-            part.allocated_to_build_orders <= 0)
+          fetching ||
+          (partRequirements.required_for_build_orders <= 0 &&
+            partRequirements.allocated_to_build_orders <= 0)
       },
       {
         type: 'progressbar',
-        icon: 'tick_off',
+        icon: 'sales_orders',
         name: 'allocated_to_sales_orders',
-        total: part.required_for_sales_orders,
-        progress: part.allocated_to_sales_orders,
+        total: partRequirements.required_for_sales_orders,
+        progress: partRequirements.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
         hidden:
-          !part.salable ||
-          (part.required_for_sales_orders <= 0 &&
-            part.allocated_to_sales_orders <= 0)
+          fetching ||
+          (partRequirements.required_for_sales_orders <= 0 &&
+            partRequirements.allocated_to_sales_orders <= 0)
       },
       {
         type: 'progressbar',
         name: 'building',
         label: t`In Production`,
-        progress: part.building,
-        total: part.scheduled_to_build,
-        hidden: !part.assembly || (!part.building && !part.scheduled_to_build)
+        progress: partRequirements.building,
+        total: partRequirements.scheduled_to_build,
+        hidden:
+          fetching ||
+          (!partRequirements.building && !partRequirements.scheduled_to_build)
       },
       {
         type: 'number',
         name: 'can_build',
         unit: part.units,
         label: t`Can Build`,
-        hidden: !part.assembly || partRequirementsQuery.isFetching
+        hidden: !part.assembly || fetching
+      },
+      {
+        type: 'number',
+        name: 'minimum_stock',
+        unit: part.units,
+        label: t`Minimum Stock`,
+        hidden: part.minimum_stock <= 0
       }
     ];
 
@@ -476,24 +611,32 @@ export default function PartDetail() {
 
     return part ? (
       <ItemDetailsGrid>
-        <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.part}
-            imageActions={{
-              selectExisting: true,
-              downloadImage: true,
-              uploadFile: true,
-              deleteFile: true
-            }}
-            src={part.image}
-            apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-            refresh={refreshInstance}
-            pk={part.pk}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={data} />
-          </Grid.Col>
-        </Grid>
+        <Stack gap='xs'>
+          <Grid grow>
+            <DetailsImage
+              appRole={UserRoles.part}
+              imageActions={{
+                selectExisting: true,
+                downloadImage: true,
+                uploadFile: true,
+                deleteFile: true
+              }}
+              src={part.image}
+              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+              refresh={refreshInstance}
+              pk={part.pk}
+            />
+            <Grid.Col span={{ base: 12, sm: 8 }}>
+              <DetailsTable fields={tl} item={data} />
+            </Grid.Col>
+          </Grid>
+          {enableRevisionSelection && (
+            <Stack gap='xs'>
+              <Text>{t`Select Part Revision`}</Text>
+              <RevisionSelector part={part} options={partRevisionOptions} />
+            </Stack>
+          )}
+        </Stack>
         <DetailsTable fields={tr} item={data} />
         <DetailsTable fields={bl} item={data} />
         <DetailsTable fields={br} item={data} />
@@ -508,6 +651,8 @@ export default function PartDetail() {
     serials,
     instanceQuery.isFetching,
     instanceQuery.data,
+    enableRevisionSelection,
+    partRevisionOptions,
     partRequirementsQuery.isFetching,
     partRequirements
   ]);
@@ -675,88 +820,6 @@ export default function PartDetail() {
     ];
   }, [id, part, user, globalSettings, userSettings, detailsPanel]);
 
-  // Fetch information on part revision
-  const partRevisionQuery = useQuery({
-    refetchOnMount: true,
-    queryKey: [
-      'part_revisions',
-      part.pk,
-      part.revision_of,
-      part.revision_count
-    ],
-    queryFn: async () => {
-      if (!part.revision_of && !part.revision_count) {
-        return [];
-      }
-
-      const revisions = [];
-
-      // First, fetch information for the top-level part
-      if (part.revision_of) {
-        await api
-          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
-          .then((response) => {
-            revisions.push(response.data);
-          });
-      } else {
-        revisions.push(part);
-      }
-
-      const url = apiUrl(ApiEndpoints.part_list);
-
-      await api
-        .get(url, {
-          params: {
-            revision_of: part.revision_of || part.pk
-          }
-        })
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              response.data.forEach((r: any) => {
-                revisions.push(r);
-              });
-              break;
-            default:
-              break;
-          }
-        });
-
-      return revisions;
-    }
-  });
-
-  const partRevisionOptions: any[] = useMemo(() => {
-    if (partRevisionQuery.isFetching || !partRevisionQuery.data) {
-      return [];
-    }
-
-    if (!part.revision_of && !part.revision_count) {
-      return [];
-    }
-
-    const options: any[] = partRevisionQuery.data.map((revision: any) => {
-      return {
-        value: revision.pk,
-        label: revision.full_name,
-        part: revision
-      };
-    });
-
-    // Add this part if not already available
-    if (!options.find((o) => o.value == part.pk)) {
-      options.push({
-        value: part.pk,
-        label: part.full_name,
-        part: part
-      });
-    }
-
-    return options.sort((a, b) => {
-      return `${a.part.revision}`.localeCompare(b.part.revision);
-    });
-  }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
-
   const breadcrumbs = useMemo(() => {
     return [
       { name: t`Parts`, url: '/part' },
@@ -768,30 +831,37 @@ export default function PartDetail() {
   }, [part]);
 
   const badges: ReactNode[] = useMemo(() => {
-    if (instanceQuery.isFetching) {
+    if (partRequirementsQuery.isFetching) {
       return [];
     }
 
     const required =
-      part.required_for_build_orders + part.required_for_sales_orders;
+      partRequirements.required_for_build_orders +
+      partRequirements.required_for_sales_orders;
 
     return [
       <DetailsBadge
-        label={`${t`In Stock`}: ${part.total_in_stock}`}
-        color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
-        visible={part.total_in_stock > 0}
+        label={`${t`In Stock`}: ${partRequirements.total_stock}`}
+        color={
+          partRequirements.total_stock >= part.minimum_stock
+            ? 'green'
+            : 'orange'
+        }
+        visible={partRequirements.total_stock > 0}
         key='in_stock'
       />,
       <DetailsBadge
-        label={`${t`Available`}: ${part.unallocated_stock}`}
+        label={`${t`Available`}: ${partRequirements.unallocated_stock}`}
         color='yellow'
         key='available_stock'
-        visible={part.unallocated_stock != part.total_in_stock}
+        visible={
+          partRequirements.unallocated_stock != partRequirements.total_stock
+        }
       />,
       <DetailsBadge
         label={t`No Stock`}
         color='orange'
-        visible={part.total_in_stock == 0}
+        visible={partRequirements.total_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
@@ -801,15 +871,15 @@ export default function PartDetail() {
         key='required'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${part.ordering}`}
+        label={`${t`On Order`}: ${partRequirements.ordering}`}
         color='blue'
-        visible={part.ordering > 0}
+        visible={partRequirements.ordering > 0}
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${part.building}`}
+        label={`${t`In Production`}: ${partRequirements.building}`}
         color='blue'
-        visible={part.building > 0}
+        visible={partRequirements.building > 0}
         key='in_production'
       />,
       <DetailsBadge
@@ -819,7 +889,7 @@ export default function PartDetail() {
         key='inactive'
       />
     ];
-  }, [part, instanceQuery.isFetching]);
+  }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
   const partFields = usePartFields({ create: false });
 
@@ -991,13 +1061,6 @@ export default function PartDetail() {
     ];
   }, [id, part, user, stockAdjustActions.menuActions]);
 
-  const enableRevisionSelection: boolean = useMemo(() => {
-    return (
-      partRevisionOptions.length > 0 &&
-      globalSettings.isSet('PART_ENABLE_REVISION')
-    );
-  }, [partRevisionOptions, globalSettings]);
-
   return (
     <>
       {editPart.modal}
@@ -1047,38 +1110,6 @@ export default function PartDetail() {
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
-            detail={
-              enableRevisionSelection ? (
-                <Stack gap='xs'>
-                  <Text>{t`Select Part Revision`}</Text>
-                  <Select
-                    id='part-revision-select'
-                    aria-label='part-revision-select'
-                    options={partRevisionOptions}
-                    value={{
-                      value: part.pk,
-                      label: part.full_name,
-                      part: part
-                    }}
-                    isSearchable={false}
-                    formatOptionLabel={(option: any) =>
-                      RenderPart({
-                        instance: option.part,
-                        showSecondary: false
-                      })
-                    }
-                    onChange={(value: any) => {
-                      navigate(getDetailUrl(ModelType.part, value.value));
-                    }}
-                    styles={{
-                      menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
-                      menu: (base: any) => ({ ...base, zIndex: 9999 }),
-                      menuList: (base: any) => ({ ...base, zIndex: 9999 })
-                    }}
-                  />
-                </Stack>
-              ) : null
-            }
           />
           <PanelGroup
             pageKey='part'
