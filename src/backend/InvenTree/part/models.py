@@ -567,9 +567,6 @@ class Part(
 
         self.full_clean()
 
-        # Update BOM validity flag
-        self.check_bom_validity(save=False)
-
         super().save(*args, **kwargs)
 
         if _new:
@@ -2006,30 +2003,6 @@ class Part(
         self.bom_checked_date = InvenTree.helpers.current_date()
 
         self.save()
-
-    def check_bom_validity(self, save: bool = True) -> bool:
-        """Check the validity of the BOM for this part.
-
-        - Checks if the stored BOM checksum matches the calculated checksum
-        - If they do not match, the BOM is not valid!
-        - Update the local
-
-        Arguments:
-            save: If True, save the BOM validity status to the database
-
-        Returns:
-            bool: True if the BOM is valid, False otherwise
-        """
-        valid = self.is_bom_valid()
-
-        if valid != self.bom_validated:
-            self.bom_validated = valid
-
-            if save:
-                # Save the BOM validity status if requested
-                self.save()
-
-        return valid
 
     @transaction.atomic
     def clear_bom(self):

@@ -428,4 +428,8 @@ def recalculate_bom_checksum(part_id: int):
         )
         return
 
-    part.check_bom_validity(save=True)
+    valid = part.is_bom_valid()
+
+    if valid != part.bom_validated:
+        part.bom_validated = valid
+        part.save()
