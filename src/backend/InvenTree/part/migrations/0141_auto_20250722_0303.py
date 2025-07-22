@@ -53,7 +53,7 @@ def cache_bom_valid(apps, schema_editor):
             if not part.bom_checked_date:
                 continue
 
-            parts_to_update.add(item.part)
+            parts_to_update.add(part)
 
     if len(parts_to_update) > 0:
         print(f"\nScheduling {len(parts_to_update)} parts to update BOM validity.")
