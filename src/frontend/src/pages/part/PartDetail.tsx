@@ -703,8 +703,8 @@ export default function PartDetail() {
       return <Loader size='sm' />;
     }
 
-    let icon: ReactNode = <IconExclamationCircle />;
-    let color: MantineColor = 'red';
+    let icon: ReactNode;
+    let color: MantineColor;
     let title = '';
     let description = '';
 
