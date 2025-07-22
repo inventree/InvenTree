@@ -369,7 +369,7 @@ class PluginsRegistry:
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
 
         except Exception as e:
-            logger.exception('Expected error during plugin reload: %s', e)
+            logger.exception('Unexpected error during plugin reload: %s', e)
             log_error('reload_plugins', scope='plugins')
 
         finally:
