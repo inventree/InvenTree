@@ -4762,8 +4762,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         return f'{p_min} to {p_max}'
 
 
-@receiver(post_save, sender=BomItem, dispatch_uid='post_save_bom_item')
-def post_save_bom_item(sender, instance, created, **kwargs):
+@receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
+def update_bom_build_lines(sender, instance, created, **kwargs):
     """Update existing build orders when a BomItem is created or edited."""
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         import build.tasks
