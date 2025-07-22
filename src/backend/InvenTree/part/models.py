@@ -50,7 +50,6 @@ import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
 import part.settings as part_settings
-import part.tasks as part_tasks
 import report.mixins
 import users.models
 from build import models as BuildModels
@@ -4362,6 +4361,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
     def delete(self):
         """Check if this item can be deleted."""
+        import part.tasks as part_tasks
+
         self.check_part_lock(self.part)
 
         assemblies = self.get_assemblies()
@@ -4375,6 +4376,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance."""
+        import part.tasks as part_tasks
+
         self.clean()
 
         check_lock = kwargs.pop('check_lock', True)
