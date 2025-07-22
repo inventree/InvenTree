@@ -1,9 +1,13 @@
 import { t } from '@lingui/core/macro';
 import {
+  ActionIcon,
   Alert,
   Center,
   Grid,
+  Group,
+  HoverCard,
   Loader,
+  type MantineColor,
   Skeleton,
   Stack,
   Text
@@ -11,11 +15,14 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
+  IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
+  IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
   IconList,
+  IconListCheck,
   IconListTree,
   IconLock,
   IconPackages,
@@ -38,6 +45,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { ActionButton } from '@lib/index';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -66,6 +74,7 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
+import { RenderUser } from '../../components/render/User';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -75,6 +84,7 @@ import {
   useFindSerialNumberForm
 } from '../../forms/StockForms';
 import {
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -178,6 +188,14 @@ export default function PartDetail() {
     },
     refetchOnMount: true
   });
+
+  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.bom_validate,
+      pk: id,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
 
   const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
     useInstance({
@@ -657,6 +675,97 @@ export default function PartDetail() {
     partRequirements
   ]);
 
+  const validateBom = useApiFormModal({
+    url: ApiEndpoints.bom_validate,
+    method: 'PUT',
+    fields: {
+      valid: {
+        hidden: true,
+        value: true
+      }
+    },
+    title: t`Validate BOM`,
+    pk: id,
+    preFormContent: (
+      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
+        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
+      </Alert>
+    ),
+    successMessage: t`BOM validated`,
+    onFormSuccess: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
+  // Display information about the "validation" state of the BOM for this assembly
+  const bomValidIcon: ReactNode = useMemo(() => {
+    if (bomInformationQuery.isFetching) {
+      return <Loader size='sm' />;
+    }
+
+    let icon: ReactNode = <IconExclamationCircle />;
+    let color: MantineColor = 'red';
+    let title = '';
+    let description = '';
+
+    if (bomInformation?.bom_validated) {
+      color = 'green';
+      icon = <IconListCheck />;
+      title = t`BOM Validated`;
+      description = t`The Bill of Materials for this part has been validated`;
+    } else if (bomInformation?.bom_checked_date) {
+      color = 'yellow';
+      icon = <IconExclamationCircle />;
+      title = t`BOM Not Validated`;
+      description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
+    } else {
+      color = 'red';
+      icon = <IconExclamationCircle />;
+      title = t`BOM Not Validated`;
+      description = t`The Bill of Materials for this part has not yet been validated`;
+    }
+
+    return (
+      <Group gap='xs' justify='flex-end'>
+        {!bomInformation.bom_validated && (
+          <ActionButton
+            icon={<IconCircleCheck />}
+            color='green'
+            tooltip={t`Validate BOM`}
+            onClick={validateBom.open}
+          />
+        )}
+        <HoverCard position='bottom-end'>
+          <HoverCard.Target>
+            <ActionIcon color={color} variant='transparent'>
+              {icon}
+            </ActionIcon>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <Alert color={color} icon={icon} title={title}>
+              <Stack gap='xs'>
+                <Text>{description}</Text>
+                {bomInformation?.bom_checked_date && (
+                  <Text>
+                    {t`Validated On`}: {bomInformation.bom_checked_date}
+                  </Text>
+                )}
+                {bomInformation?.bom_checked_by_detail && (
+                  <Group gap='xs'>
+                    <Text>{t`Validated By`}: </Text>
+                    <RenderUser
+                      instance={bomInformation.bom_checked_by_detail}
+                    />
+                  </Group>
+                )}
+              </Stack>
+            </Alert>
+          </HoverCard.Dropdown>
+        </HoverCard>
+      </Group>
+    );
+  }, [bomInformation, bomInformationQuery.isFetching]);
+
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
     return [
@@ -712,6 +821,7 @@ export default function PartDetail() {
       {
         name: 'bom',
         label: t`Bill of Materials`,
+        controls: bomValidIcon,
         icon: <IconListTree />,
         hidden: !part.assembly,
         content: part?.pk ? (
@@ -818,7 +928,15 @@ export default function PartDetail() {
         model_id: part?.pk
       })
     ];
-  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
+  }, [
+    id,
+    part,
+    user,
+    bomValidIcon,
+    globalSettings,
+    userSettings,
+    detailsPanel
+  ]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -1065,6 +1183,7 @@ export default function PartDetail() {
     <>
       {editPart.modal}
       {deletePart.modal}
+      {validateBom.modal}
       {duplicatePart.modal}
       {orderPartsWizard.wizard}
       {findBySerialNumber.modal}
