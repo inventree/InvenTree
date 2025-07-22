@@ -50,6 +50,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
 import part.settings as part_settings
+import part.tasks as part_tasks
 import report.mixins
 import users.models
 from build import models as BuildModels
@@ -565,6 +566,9 @@ class Part(
             _new = True
 
         self.full_clean()
+
+        # Update BOM validity flag
+        self.check_bom_validity(save=False)
 
         super().save(*args, **kwargs)
 
@@ -2012,10 +2016,12 @@ class Part(
         """
         valid = self.is_bom_valid()
 
-        if save and valid != self.bom_validated:
-            # If the BOM validity status has changed, save it
+        if valid != self.bom_validated:
             self.bom_validated = valid
-            self.save()
+
+            if save:
+                # Save the BOM validity status if requested
+                self.save()
 
         return valid
 
@@ -4327,6 +4333,20 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return assemblies
 
+    def update_assembly_checksums(self):
+        """Update the checksums for all assemblies which use this BomItem.
+
+        This is called when the BOM item is saved, to ensure that the checksums
+        for all assemblies are up-to-date.
+        """
+        assemblies = self.get_assemblies()
+
+        for assembly in assemblies:
+            # Offload task to update the checksum for this assembly
+            InvenTree.tasks.offload_task(
+                part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
+            )
+
     def get_valid_parts_for_allocation(
         self, allow_variants=True, allow_substitutes=True
     ):
@@ -4378,7 +4398,15 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     def delete(self):
         """Check if this item can be deleted."""
         self.check_part_lock(self.part)
+
+        assemblies = self.get_assemblies()
         super().delete()
+
+        for assembly in assemblies:
+            # Offload task to update the checksum for this assembly
+            InvenTree.tasks.offload_task(
+                part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
+            )
 
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance."""
@@ -4396,6 +4424,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         self.validated = self.is_line_valid
 
         super().save(*args, **kwargs)
+
+        # Offload task to recalculate the BOM checksum for any assemblies
+        self.update_assembly_checksums()
 
     def check_part_lock(self, assembly):
         """When editing or deleting a BOM item, check if the assembly is locked.
@@ -4724,8 +4755,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         return f'{p_min} to {p_max}'
 
 
-@receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
-def update_bom_build_lines(sender, instance, created, **kwargs):
+@receiver(post_save, sender=BomItem, dispatch_uid='post_save_bom_item')
+def post_save_bom_item(sender, instance, created, **kwargs):
     """Update existing build orders when a BomItem is created or edited."""
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         import build.tasks

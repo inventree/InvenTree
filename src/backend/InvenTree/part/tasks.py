@@ -398,3 +398,21 @@ def rebuild_supplier_parts(part_id):
 
     if n > 0:
         logger.info("Rebuilt %s supplier parts for part '%s'", n, prt.name)
+
+
+@tracer.start_as_current_span('recalculate_bom_checksum')
+def recalculate_bom_checksum(part_id: int):
+    """Recalculate the BOM checksum for all assemblies which include the specified Part.
+
+    Arguments:
+        part_id: The ID of the part for which to recalculate the BOM checksum.
+    """
+    try:
+        part = part_models.Part.objects.get(pk=part_id)
+    except part_models.Part.DoesNotExist:
+        logger.warning(
+            'recalculate_bom_checksum: Part with ID %s does not exist', part_id
+        )
+        return
+
+    part.check_bom_validity(save=True)
