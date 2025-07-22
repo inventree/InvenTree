@@ -33,8 +33,17 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       modelType: ModelType.partcategory,
       params: { starred: true }
     }),
+    QueryCountDashboardWidget({
+      label: 'invalid-bom',
+      title: t`Invalid BOMs`,
+      description: t`Assemblies requiring bill of materials validation`,
+      modelType: ModelType.part,
+      params: {
+        assembly: true,
+        bom_valid: false
+      }
+    }),
     // TODO: 'latest parts'
-    // TODO: 'BOM waiting validation'
     // TODO: 'recently updated stock'
     QueryCountDashboardWidget({
       title: t`Low Stock`,
