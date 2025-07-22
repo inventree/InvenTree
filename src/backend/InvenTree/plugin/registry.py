@@ -104,6 +104,17 @@ class PluginsRegistry:
 
         self.installed_apps = []  # Holds all added plugin_paths
 
+    def set_ready(self):
+        """Set the registry as ready to be used.
+
+        This method should only be called once per application start,
+        after all apps have been loaded and the registry is fully initialized.
+        """
+        self.ready = True
+
+        # Perform initial plugin discovery
+        self.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
     @property
     def is_ready(self) -> bool:
         """Return True if the plugin registry is ready to be used."""

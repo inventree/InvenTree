@@ -47,13 +47,8 @@ class PluginAppConfig(AppConfig):
 
                 # Mark the registry as ready
                 # This ensures that other apps cannot access the registry before it is fully initialized
-                registry.ready = True
-                logger.info('Plugin registry is ready')
-
-                # Perform a full reload of the plugin registry
-                registry.reload_plugins(
-                    full_reload=True, force_reload=True, collect=True
-                )
+                logger.info('Plugin registry is ready - performing initial load')
+                registry.set_ready()
 
                 # drop out of maintenance
                 # makes sure we did not have an error in reloading and maintenance is still active
