@@ -411,8 +411,8 @@ def rebuild_supplier_parts(part_id: int):
         logger.info("Rebuilt %s supplier parts for part '%s'", n, prt.name)
 
 
-@tracer.start_as_current_span('recalculate_bom_checksum')
-def recalculate_bom_checksum(part_id: int):
+@tracer.start_as_current_span('check_bom_valid')
+def check_bom_valid(part_id: int):
     """Recalculate the BOM checksum for all assemblies which include the specified Part.
 
     Arguments:

@@ -4370,7 +4370,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         for assembly in assemblies:
             # Offload task to update the checksum for this assembly
             InvenTree.tasks.offload_task(
-                part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
+                part_tasks.check_bom_valid, assembly.pk, group='part'
             )
 
     def save(self, *args, **kwargs):
@@ -4406,7 +4406,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             for assembly in assemblies:
                 # Offload task to update the checksum for this assembly
                 InvenTree.tasks.offload_task(
-                    part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
+                    part_tasks.check_bom_valid, assembly.pk, group='part'
                 )
 
     def check_part_lock(self, assembly):
