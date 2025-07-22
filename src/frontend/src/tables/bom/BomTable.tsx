@@ -1,9 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
+import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconExclamationCircle,
   IconFileArrowLeft,
   IconLock,
   IconSwitch3
@@ -104,17 +105,26 @@ export function BomTable({
 
           return (
             part && (
-              <TableHoverCard
-                value={
-                  <Thumbnail
-                    src={part.thumbnail || part.image}
-                    alt={part.description}
-                    text={part.full_name}
-                  />
-                }
-                extra={extra}
-                title={t`Part Information`}
-              />
+              <Group gap='xs' justify='space-between' wrap='nowrap'>
+                <TableHoverCard
+                  value={
+                    <Thumbnail
+                      src={part.thumbnail || part.image}
+                      alt={part.description}
+                      text={part.full_name}
+                    />
+                  }
+                  extra={extra}
+                  title={t`Part Information`}
+                />
+                {!record.validated && (
+                  <Tooltip label={t`This BOM item has not been validated`}>
+                    <ActionIcon color='red' variant='transparent' size='sm'>
+                      <IconExclamationCircle />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </Group>
             )
           );
         }
