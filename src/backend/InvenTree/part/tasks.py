@@ -421,9 +421,7 @@ def check_bom_valid(part_id: int):
     try:
         part = Part.objects.get(pk=part_id)
     except Part.DoesNotExist:
-        logger.warning(
-            'recalculate_bom_checksum: Part with ID %s does not exist', part_id
-        )
+        logger.warning('check_bom_valid: Part with ID %s does not exist', part_id)
         return
 
     valid = part.is_bom_valid()
