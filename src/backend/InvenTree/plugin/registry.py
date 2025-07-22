@@ -138,6 +138,10 @@ class PluginsRegistry:
         Returns:
             InvenTreePlugin or None: The plugin instance if found, otherwise None.
         """
+        if not self.is_ready:
+            logger.warning('registry.get_plugin: Plugin registry is not ready')
+            return None
+
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -196,6 +200,10 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
+        if not self.is_ready:
+            logger.warning('registry.set_plugin_state: Plugin registry is not ready')
+            return
+
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -218,6 +226,12 @@ class PluginsRegistry:
 
         Instead, any error messages are returned to the worker.
         """
+        if not self.is_ready:
+            logger.warning(
+                'registry.call_plugin_function: Plugin registry is not ready'
+            )
+            return None
+
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -250,6 +264,10 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
+        if not self.is_ready:
+            logger.warning('registry.with_mixin: Plugin registry is not ready')
+            return []
+
         # Check if the registry needs to be loaded
         self.check_reload()
 
@@ -929,6 +947,10 @@ class PluginsRegistry:
 
         Returns True if the registry has changed and was reloaded.
         """
+        if not self.is_ready:
+            logger.warning('registry.check_reload: Plugin registry is not ready')
+            return False
+
         if settings.TESTING and not settings.PLUGIN_TESTING_RELOAD:
             # Skip if running during unit testing
             return False
