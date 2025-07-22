@@ -12,11 +12,11 @@ from opentelemetry import trace
 import common.currency
 import common.notifications
 import InvenTree.helpers_model
-import InvenTree.tasks
 from common.settings import get_global_setting
 from InvenTree.tasks import (
     ScheduledTask,
     check_daily_holdoff,
+    offload_task,
     record_task_success,
     scheduled_task,
 )
@@ -147,7 +147,7 @@ def notify_low_stock_if_required(part_id: int):
 
     for p in parts:
         if p.is_part_low_on_stock():
-            InvenTree.tasks.offload_task(notify_low_stock, p, group='notification')
+            offload_task(notify_low_stock, p, group='notification')
 
 
 @tracer.start_as_current_span('check_stale_stock')
@@ -207,9 +207,7 @@ def check_stale_stock():
     # Send one consolidated notification per user
     for user, items in user_stale_items.items():
         try:
-            InvenTree.tasks.offload_task(
-                notify_stale_stock, user, items, group='notification'
-            )
+            offload_task(notify_stale_stock, user, items, group='notification')
         except Exception as e:
             logger.error(
                 'Error scheduling stale stock notification for user %s: %s',
