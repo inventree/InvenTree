@@ -39,8 +39,9 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       description: t`Assemblies requiring bill of materials validation`,
       modelType: ModelType.part,
       params: {
-        assembly: true,
-        bom_valid: false
+        active: true, // Only show active parts
+        assembly: true, // Only show parts which are assemblies
+        bom_valid: false // Only show parts with invalid BOMs
       }
     }),
     // TODO: 'latest parts'
