@@ -1,7 +1,6 @@
 """DRF data serializers for Part app."""
 
 import io
-import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
@@ -22,13 +21,13 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
+import common.serializers as common_serializers
 import common.settings
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status
 import part.filters as part_filters
-import part.helpers as part_helpers
 import part.stocktake
 import part.tasks
 import stock.models
@@ -334,8 +333,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'revision',
             'full_name',
             'description',
-            'image',
-            'thumbnail',
+            'images',
             'active',
             'locked',
             'assembly',
@@ -367,10 +365,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    image = InvenTree.serializers.InvenTreeImageSerializerField(
-        read_only=True, allow_null=True
+    images = common_serializers.UploadedImageSerializer(
+        source='get_images', many=True, read_only=True, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     IPN = serializers.CharField(
         required=False,
@@ -644,7 +641,6 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class PartSerializer(
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for complete detail information of a part.
@@ -676,9 +672,7 @@ class PartSerializer(
             'default_supplier',
             'description',
             'full_name',
-            'image',
-            'remote_image',
-            'existing_image',
+            'images',
             'IPN',
             'is_template',
             'keywords',
@@ -696,7 +690,6 @@ class PartSerializer(
             'revision_count',
             'salable',
             'starred',
-            'thumbnail',
             'testable',
             'trackable',
             'units',
@@ -767,9 +760,9 @@ class PartSerializer(
         if not create:
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
-                # Fields required for certain operations, but are not part of the model
-                if f in ['remote_image', 'existing_image']:
-                    continue
+                # # Fields required for certain operations, but are not part of the model
+                # if f == 'remote_image':
+                #     continue
                 self.fields.pop(f, None)
 
         if not pricing:
@@ -790,7 +783,6 @@ class PartSerializer(
             'initial_stock',
             'initial_supplier',
             'copy_category_parameters',
-            'existing_image',
         ]
 
         return fields
@@ -889,6 +881,13 @@ class PartSerializer(
     def get_starred(self, part) -> bool:
         """Return "true" if the part is starred by the current user."""
         return part in self.starred_parts
+
+    def get_images(self, obj):
+        """Return the images associated with this Part instance."""
+        images = obj.images
+        return common_serializers.UploadedImageSerializer(
+            images, many=True, context=self.context
+        ).data
 
     # Extra detail for the category
     category_detail = CategorySerializer(
@@ -999,10 +998,8 @@ class PartSerializer(
         required=False, label=_('Minimum Stock'), default=0
     )
 
-    image = InvenTree.serializers.InvenTreeImageSerializerField(
-        required=False, allow_null=True
-    )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    images = serializers.SerializerMethodField()
+
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
@@ -1052,30 +1049,6 @@ class PartSerializer(
         help_text=_('Copy parameter templates from selected part category'),
     )
 
-    # Allow selection of an existing part image file
-    existing_image = serializers.CharField(
-        label=_('Existing Image'),
-        help_text=_('Filename of an existing part image'),
-        write_only=True,
-        required=False,
-        allow_blank=False,
-    )
-
-    def validate_existing_image(self, img):
-        """Validate the selected image file."""
-        if not img:
-            return img
-
-        img = img.split(os.path.sep)[-1]
-
-        # Ensure that the file actually exists
-        img_path = os.path.join(part_helpers.get_part_image_directory(), img)
-
-        if not os.path.exists(img_path) or not os.path.isfile(img_path):
-            raise ValidationError(_('Image file does not exist'))
-
-        return img
-
     @transaction.atomic
     def create(self, validated_data):
         """Custom method for creating a new Part instance using this serializer."""
@@ -1102,9 +1075,9 @@ class PartSerializer(
                 instance.notes = original.notes
                 instance.save()
 
-            if duplicate.get('copy_image', False):
-                instance.image = original.image
-                instance.save()
+            # if duplicate.get('copy_image', False):
+            #     instance.image = original.image
+            #     instance.save()
 
             if duplicate.get('copy_parameters', False):
                 instance.copy_parameters_from(original)
@@ -1184,15 +1157,6 @@ class PartSerializer(
         super().save()
 
         part = self.instance
-        data = self.validated_data
-
-        existing_image = data.pop('existing_image', None)
-
-        if existing_image:
-            img_path = os.path.join(part_helpers.PART_IMAGE_DIR, existing_image)
-
-            part.image = img_path
-            part.save()
 
         # Check if an image was downloaded from a remote URL
         remote_img = getattr(self, 'remote_image_file', None)

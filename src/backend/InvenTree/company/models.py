@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy as __
 
 from moneyed import CURRENCIES
-from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.currency
@@ -78,6 +77,7 @@ class CompanyReportContext(report.mixins.BaseReportContext):
 
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeImageUploadMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeMetadataModel,
@@ -99,7 +99,6 @@ class Company(
         phone: contact phone number
         email: contact email address
         link: Secondary URL e.g. for link to internal Wiki page
-        image: Company image / logo
         notes: Extra notes about the company
         active: boolean value, is this company active
         is_customer: boolean value, is this company a customer
@@ -108,6 +107,9 @@ class Company(
         currency_code: Specifies the default currency for the company
         tax_id: Tax ID for the company
     """
+
+    # Each company has only an image
+    single_image: bool = True
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -185,15 +187,6 @@ class Company(
         max_length=2000,
     )
 
-    image = StdImageField(
-        upload_to=rename_company_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=True,
-        verbose_name=_('Image'),
-    )
-
     active = models.BooleanField(
         default=True, verbose_name=_('Active'), help_text=_('Is this company active?')
     )
@@ -269,11 +262,11 @@ class Company(
         """Get the web URL for the detail view for this Company."""
         return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
 
-    def get_image_url(self):
-        """Return the URL of the image for this company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.url)
-        return InvenTree.helpers.getBlankImage()
+    # def get_image_url(self):
+    #     """Return the URL of the image for this company."""
+    #     if self.image:
+    #         return InvenTree.helpers.getMediaUrl(self.image.url)
+    #     return InvenTree.helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """Return the URL for the thumbnail image for this Company."""

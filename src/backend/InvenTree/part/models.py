@@ -36,7 +36,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
-from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.currency
@@ -411,6 +410,7 @@ class PartReportContext(report.mixins.BaseReportContext):
 class Part(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeImageUploadMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -433,7 +433,6 @@ class Part(
         revision: Part revision
         is_template: If True, this part is a 'template' part
         link: Link to an external page with more information about this part (e.g. internal Wiki)
-        image: Image of this part
         default_location: Where the item is normally stored (may be null)
         default_supplier: The default SupplierPart which should be used to procure and stock this part
         default_expiry: The default expiry duration for any StockItem instances of this part
@@ -529,42 +528,6 @@ class Part(
                 )
 
         super().delete()
-
-    def save(self, *args, **kwargs):
-        """Overrides the save function for the Part model.
-
-        If the part image has been updated, then check if the "old" (previous) image is still used by another part.
-        If not, it is considered "orphaned" and will be deleted.
-        """
-        _new = False
-        if self.pk:
-            try:
-                previous = Part.objects.get(pk=self.pk)
-
-                # Image has been changed
-                if previous.image is not None and self.image != previous.image:
-                    # Are there any (other) parts which reference the image?
-                    n_refs = (
-                        Part.objects.filter(image=previous.image)
-                        .exclude(pk=self.pk)
-                        .count()
-                    )
-
-                    if n_refs == 0:
-                        logger.info("Deleting unused image file '%s'", previous.image)
-                        previous.image.delete(save=False)
-            except Part.DoesNotExist:
-                pass
-        else:
-            _new = True
-
-        self.full_clean()
-
-        super().save(*args, **kwargs)
-
-        if _new:
-            # Only run if the check was not run previously (due to not existing in the database)
-            self.ensure_trackable()
 
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)."""
@@ -940,18 +903,6 @@ class Part(
         """Return the web URL for viewing this part."""
         return helpers.pui_url(f'/part/{self.id}')
 
-    def get_image_url(self):
-        """Return the URL of the image for this part."""
-        if self.image:
-            return helpers.getMediaUrl(self.image.url)
-        return helpers.getBlankImage()
-
-    def get_thumbnail_url(self) -> str:
-        """Return the URL of the image thumbnail for this part."""
-        if self.image:
-            return helpers.getMediaUrl(self.image.thumbnail.url)
-        return helpers.getBlankThumbnail()
-
     def validate_unique(self, exclude=None):
         """Validate that this Part instance is 'unique'.
 
@@ -1120,15 +1071,6 @@ class Part(
         verbose_name=_('Link'),
         help_text=_('Link to external URL'),
         max_length=2000,
-    )
-
-    image = StdImageField(
-        upload_to=rename_part_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=False,
-        verbose_name=_('Image'),
     )
 
     default_location = TreeForeignKey(

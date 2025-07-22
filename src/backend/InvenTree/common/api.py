@@ -5,7 +5,7 @@ import json
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -35,7 +35,7 @@ from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER, InvenTreeSearchFilter
 from InvenTree.helpers import inheritors
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
@@ -46,6 +46,7 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
+from InvenTree.models import InvenTreeAttachmentMixin
 from InvenTree.permissions import (
     AllowAnyOrReadScope,
     GlobalSettingsPermissions,
@@ -751,13 +752,15 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
         - Extract all model types from the provided queryset
         - Ensure that the user has correct 'delete' permissions for each model
         """
-        from common.validators import attachment_model_class_from_label
+        from common.validators import get_model_class_from_label
         from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
         for model_type in model_types:
-            if model_class := attachment_model_class_from_label(model_type):
+            if model_class := get_model_class_from_label(
+                model_type, InvenTreeAttachmentMixin
+            ):
                 if not check_user_permission(request.user, model_class, 'delete'):
                     raise ValidationError(
                         _('User does not have permission to delete these attachments')
@@ -781,6 +784,54 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+
+class UploadImageList(ListCreateAPI):
+    """Detail API endpoint for UploadedImage objects."""
+
+    queryset = common.models.UploadedImage.objects.all()
+    serializer_class = common.serializers.UploadedImageSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class UploadImageThumbs(ListAPI):
+    """List API endpoint for UploadedImage thumbnails."""
+
+    queryset = common.models.UploadedImage.objects.all()
+    serializer_class = common.serializers.UploadedImageThumbSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    filter_backends = [rest_filters.DjangoFilterBackend, InvenTreeSearchFilter]
+
+    filterset_fields = ['model_type', 'model_id']
+
+    search_fields = ['model_type', 'image']
+
+    def list(self, request, *args, **kwargs):
+        """Serialize the available UploadedImage entries for Parts.
+
+        - Images may be used for multiple parts!
+        """
+        qs = self.filter_queryset(self.get_queryset())
+
+        # Aggregate by image file, counting how many parts use each image
+        agg = qs.values('image').annotate(count=Count('pk')).order_by('-count')
+
+        page = self.paginate_queryset(agg)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(agg, many=True)
+        return Response(serializer.data)
+
+
+class UploadImageDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for UploadedImage objects."""
+
+    queryset = common.models.UploadedImage.objects.all()
+    serializer_class = common.serializers.UploadedImageSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
@@ -1031,6 +1082,23 @@ common_api_urls = [
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    path(
+        'upload-image/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path('', UploadImageDetail.as_view(), name='api-uploadImage-detail')
+                ]),
+            ),
+            path(
+                'thumbs/',
+                UploadImageThumbs.as_view(),
+                name='api-uploadImageThumbs-list',
+            ),
+            path('', UploadImageList.as_view(), name='api-uploadImage-list'),
         ]),
     ),
     path(

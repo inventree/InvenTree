@@ -34,10 +34,18 @@ export function PartColumn({
   part: any;
   full_name?: boolean;
 }) {
+  const get_image_src = () => {
+    // Get primary image source
+    const primary_image = part?.images?.find(
+      (img: any) => img.primary === true
+    );
+    return primary_image?.thumbnail ?? primary_image?.image;
+  };
+
   return part ? (
     <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
-        src={part?.thumbnail ?? part?.image}
+        src={get_image_src()}
         text={full_name ? part?.full_name : part?.name}
         hover
       />

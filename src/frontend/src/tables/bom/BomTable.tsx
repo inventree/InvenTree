@@ -108,7 +108,7 @@ export function BomTable({
               <TableHoverCard
                 value={
                   <Thumbnail
-                    src={part.thumbnail || part.image}
+                    src={part?.image.thumbnail || part?.image.image}
                     alt={part.description}
                     text={part.full_name}
                   />

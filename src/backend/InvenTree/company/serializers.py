@@ -9,6 +9,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
+import common.serializers as common_serializers
 import company.filters
 import part.filters
 import part.serializers as part_serializers
@@ -18,7 +19,6 @@ from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
-    InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
@@ -50,15 +50,26 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'name',
             'description',
             'image',
-            'thumbnail',
+            # 'thumbnail',
             'currency',
             'tax_id',
         ]
         read_only_fields = ['currency']
 
-    image = InvenTreeImageSerializerField(read_only=True)
+    # image = InvenTreeImageSerializerField(read_only=True)
+    image = serializers.SerializerMethodField()
 
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    def get_image(self, obj):
+        """Return the image associated with this Company instance."""
+        if obj.images:
+            image = obj.images.first()
+        else:
+            return None
+        return common_serializers.UploadedImageSerializer(
+            image, context=self.context
+        ).data
+
+    # thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
 @register_importer()
@@ -117,7 +128,7 @@ class CompanySerializer(
 
     export_exclude_fields = ['primary_address']
 
-    import_exclude_fields = ['image']
+    # import_exclude_fields = ['image']
 
     class Meta:
         """Metaclass options."""
@@ -173,7 +184,18 @@ class CompanySerializer(
 
     primary_address = AddressSerializer(allow_null=True, read_only=True)
 
-    image = InvenTreeImageSerializerField(required=False, allow_null=True)
+    # image = InvenTreeImageSerializerField(read_only=True)
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        """Return the image associated with this Company instance."""
+        if obj.images:
+            image = obj.images.first()
+        else:
+            return None
+        return common_serializers.UploadedImageSerializer(
+            image, context=self.context
+        ).data
 
     email = serializers.EmailField(
         required=False, default='', allow_blank=True, allow_null=True

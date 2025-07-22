@@ -1,5 +1,7 @@
 """JSON serializers for common components."""
 
+import os
+
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, OuterRef, Subquery
 from django.urls import reverse
@@ -11,16 +13,19 @@ from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from taggit.serializers import TagListSerializerField
 
+import common.helpers as common_helper
 import common.models as common_models
 import common.validators
 import generic.states.custom
+import InvenTree.serializers
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.models import InvenTreeAttachmentMixin, InvenTreeImageUploadMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -583,6 +588,133 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
+class UploadedImageSerializer(
+    InvenTreeModelSerializer, InvenTree.serializers.RemoteImageMixin
+):
+    """Serializer class for the UploadedImage model."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = common_models.UploadedImage
+        fields = [
+            'pk',
+            'primary',
+            'image',
+            'thumbnail',
+            'model_type',
+            'remote_image',
+            'existing_image',
+            'model_id',
+        ]
+        read_only_fields = ['pk', 'thumbnail']
+
+    def __init__(self, *args, **kwargs):
+        """Override the model_type field to provide dynamic choices."""
+        super().__init__(*args, **kwargs)
+
+        if len(self.fields['model_type'].choices) == 0:
+            self.fields['model_type'].choices = common.validators.get_model_options(
+                InvenTreeImageUploadMixin
+            )
+
+    image = InvenTree.serializers.InvenTreeImageSerializerField(
+        required=False, allow_null=True
+    )
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'),
+        choices=common.validators.get_model_options(InvenTreeImageUploadMixin),
+        required=True,
+        allow_blank=False,
+        allow_null=False,
+    )
+
+    # Allow selection of an existing image file
+    existing_image = serializers.CharField(
+        label=_('Existing Image'),
+        help_text=_('Filename of an existing part image'),
+        write_only=True,
+        required=False,
+        allow_blank=False,
+    )
+
+    def save(self):
+        """Override the save method.
+
+        Handles the existing_image field.
+        If this is the first image for (model_type, model_id), marks it as primary.
+        """
+        instance = super().save()
+        data = self.validated_data
+
+        existing_image = data.pop('existing_image', None)
+
+        if existing_image:
+            img_path = os.path.join(common_helper.UPLOAD_IMAGE_DIR, existing_image)
+
+            instance.image = img_path
+            instance.save()
+
+        # automatically mark as primary if this is the *only* image
+        qs = common_models.UploadedImage.objects.filter(
+            model_type=instance.model_type, model_id=instance.model_id
+        )
+        if qs.count() == 1 and not instance.primary:
+            instance.primary = True
+            instance.save()
+
+        return instance
+
+    def create(self, validated_data):
+        """Creates an image, deleting any existing images if the target model is set to single image only."""
+        model_type = validated_data.get('model_type', None)
+        model_id = validated_data.get('model_id', None)
+
+        target_model_class: InvenTreeImageUploadMixin = (
+            common.validators.get_model_class_from_label(
+                model_type, InvenTreeImageUploadMixin
+            )
+        )
+        if target_model_class.single_image:
+            common_models.UploadedImage.objects.filter(
+                model_type=model_type, model_id=model_id
+            ).delete()
+
+        return super().create(validated_data)
+
+    def validate_existing_image(self, img):
+        """Validate the selected image file."""
+        if not img:
+            return img
+
+        img = img.split(os.path.sep)[-1]
+
+        # Ensure that the file actually exists
+        img_path = os.path.join(common_helper.get_part_image_directory(), img)
+
+        if not os.path.exists(img_path) or not os.path.isfile(img_path):
+            raise ValidationError(_('Image file does not exist'))
+
+        return img
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new Part instance."""
+        fields = super().skip_create_fields()
+
+        fields += ['existing_image']
+
+        return fields
+
+
+class UploadedImageThumbSerializer(serializers.Serializer):
+    """Serializer for a thumbnail of an uploaded image."""
+
+    image = serializers.URLField(read_only=True)
+    count = serializers.IntegerField()
+
+
 class AttachmentSerializer(InvenTreeModelSerializer):
     """Serializer class for the Attachment model."""
 
@@ -612,9 +744,9 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if len(self.fields['model_type'].choices) == 0:
-            self.fields[
-                'model_type'
-            ].choices = common.validators.attachment_model_options()
+            self.fields['model_type'].choices = common.validators.get_model_options(
+                InvenTreeAttachmentMixin
+            )
 
     tags = TagListSerializerField(required=False)
 
@@ -632,7 +764,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     # Note: The choices are overridden at run-time on class initialization
     model_type = serializers.ChoiceField(
         label=_('Model Type'),
-        choices=common.validators.attachment_model_options(),
+        choices=common.validators.get_model_options(InvenTreeAttachmentMixin),
         required=True,
         allow_blank=False,
         allow_null=False,
@@ -651,8 +783,8 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user
 
-        target_model_class = common.validators.attachment_model_class_from_label(
-            model_type
+        target_model_class = common.validators.get_model_class_from_label(
+            model_type, InvenTreeAttachmentMixin
         )
 
         if not issubclass(target_model_class, InvenTreeAttachmentMixin):

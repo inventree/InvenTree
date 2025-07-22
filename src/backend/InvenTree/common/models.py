@@ -44,6 +44,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
 from rest_framework.exceptions import PermissionDenied
+from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.validators
@@ -58,6 +59,7 @@ from common.settings import global_setting_overrides
 from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
+from InvenTree import helpers
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.tracing import TRACE_PROC, TRACE_PROV
@@ -1882,6 +1884,82 @@ def rename_attachment(instance, filename: str):
     )
 
 
+# TODO: reza
+UPLOAD_IMAGE_DIR = 'upload_images'
+
+
+class UploadedImage(models.Model):
+    """Class which represents an uploaded image for Part and Company.
+
+    Attributes:
+        primary: Is image primary
+        image: The uploaded file
+    """
+
+    model_type = models.CharField(
+        max_length=100,
+        validators=[common.validators.validate_upload_image_model_type],
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for image'),
+    )
+
+    model_id = models.PositiveIntegerField()
+
+    primary = models.BooleanField(default=False)
+    image = StdImageField(
+        upload_to=UPLOAD_IMAGE_DIR,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+        delete_orphans=False,
+        verbose_name=_('Image'),
+    )
+
+    def save(self, *args, **kwargs):
+        """Override save to ensure only one primary image per model_id and model_type."""
+        with transaction.atomic():
+            if self.primary:
+                # Set all other images with same model_id and model_type to non-primary
+                UploadedImage.objects.filter(
+                    model_id=self.model_id, model_type=self.model_type, primary=True
+                ).exclude(pk=self.pk).update(primary=False)
+
+            super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Override delete so that if this image was primary, the remaining image with the highest id becomes primary."""
+        with transaction.atomic():
+            # Delete the instance
+            super().delete(*args, **kwargs)
+
+            # If it was primary, promote the next candidate
+            if self.primary:
+                next_img = (
+                    UploadedImage.objects.filter(
+                        model_type=self.model_type, model_id=self.model_id
+                    )
+                    .order_by('-id')
+                    .first()
+                )
+
+                if next_img:
+                    # Mark it as primary
+                    next_img.primary = True
+                    next_img.save()
+
+    def get_image_url(self):
+        """Return the URL of the image for this part."""
+        if self.image:
+            return helpers.getMediaUrl(self.image.url)
+        return helpers.getBlankImage()
+
+    def get_thumbnail_url(self) -> str:
+        """Return the URL of the image thumbnail for this part."""
+        if self.image:
+            return helpers.getMediaUrl(self.image.thumbnail.url)
+        return helpers.getBlankThumbnail()
+
+
 class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """Class which represents an uploaded file attachment.
 
@@ -1906,7 +1984,9 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     class ModelChoices(RenderChoices):
         """Model choices for attachments."""
 
-        choice_fnc = common.validators.attachment_model_options
+        choice_fnc = lambda: common.validators.get_model_options(
+            InvenTree.models.InvenTreeAttachmentMixin
+        )
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
@@ -2036,8 +2116,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         """Check if the user has the required permission for this attachment."""
         from InvenTree.models import InvenTreeAttachmentMixin
 
-        model_class = common.validators.attachment_model_class_from_label(
-            self.model_type
+        model_class = common.validators.get_model_class_from_label(
+            self.model_type, InvenTreeAttachmentMixin
         )
 
         if not issubclass(model_class, InvenTreeAttachmentMixin):
