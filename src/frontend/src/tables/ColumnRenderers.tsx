@@ -80,7 +80,7 @@ export function CompanyColumn({
   return company ? (
     <Group gap='xs' wrap='nowrap'>
       <Thumbnail
-        src={company.thumbnail ?? company.image ?? ''}
+        src={company?.image?.thumbnail ?? company?.image?.image ?? ''}
         alt={company.name}
         size={24}
         hover

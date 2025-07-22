@@ -19,7 +19,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
+import { MultipleDetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
@@ -213,14 +213,14 @@ export default function SupplierPartDetail() {
         icon: 'calendar'
       }
     ];
-
     return (
       <ItemDetailsGrid>
         <Grid grow>
-          <DetailsImage
+          <MultipleDetailsImage
             appRole={UserRoles.part}
-            src={supplierPart?.part_detail?.image?.image}
-            pk={supplierPart?.part_detail?.pk}
+            apiPath={ApiEndpoints.part_list}
+            images={supplierPart?.part_detail?.images}
+            model_id={supplierPart?.part_detail?.pk}
           />
           <Grid.Col span={8}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
