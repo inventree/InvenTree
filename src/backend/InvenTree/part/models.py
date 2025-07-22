@@ -1993,10 +1993,12 @@ class Part(
         - Saves the current date and the checking user
         """
         # Validate each line item, ignoring inherited ones
-        bom_items = self.get_bom_items(include_inherited=False)
+        bom_items = self.get_bom_items(include_inherited=False).prefetch_related(
+            'part', 'sub_part'
+        )
 
         for item in bom_items:
-            item.validate_hash()
+            item.validate_hash(valid=valid)
 
         self.bom_validated = valid
         self.bom_checksum = self.get_bom_hash() if valid else ''
@@ -4406,12 +4408,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         db_instance = self.get_db_instance()
 
-        assemblies = set()
-
-        if db_instance:
-            # Find all assemblies which use this BomItem *before* we save
-            assemblies.update(db_instance.get_assemblies())
-
         # Check if the part was changed
         deltas = self.get_field_deltas()
 
@@ -4423,14 +4419,22 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         super().save(*args, **kwargs)
 
-        # Update with any *new* assemblies which use this BomItem
-        assemblies.update(self.get_assemblies())
+        # Do we need to recalculate the BOM hash for assemblies?
+        if not db_instance or any(f in deltas for f in self.hash_fields()):
+            # If this is a new BomItem, or if any of the fields used to calculate the hash have changed,
+            # then we need to recalculate the BOM checksum for all assemblies which use this BomItem
 
-        for assembly in assemblies:
-            # Offload task to update the checksum for this assembly
-            InvenTree.tasks.offload_task(
-                part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
-            )
+            assemblies = set()
+
+            if db_instance:
+                # Find all assemblies which use this BomItem *after* we save
+                assemblies.update(db_instance.get_assemblies())
+
+            for assembly in assemblies:
+                # Offload task to update the checksum for this assembly
+                InvenTree.tasks.offload_task(
+                    part_tasks.recalculate_bom_checksum, assembly.pk, group='part'
+                )
 
     def check_part_lock(self, assembly):
         """When editing or deleting a BOM item, check if the assembly is locked.
@@ -4573,39 +4577,40 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         help_text=_('Stock items for variant parts can be used for this BOM item'),
     )
 
-    def get_item_hash(self):
-        """Calculate the checksum hash of this BOM line item.
+    def hash_fields(self) -> list[str]:
+        """Return a list of fields to be used for hashing this BOM item.
 
-        The hash is calculated from the following fields:
-        - part.pk
-        - sub_part.pk
-        - quantity
-        - reference
-        - optional
-        - inherited
-        - consumable
-        - allow_variants
+        These fields are used to calculate the checksum hash of this BOM item.
         """
+        return [
+            'part_id',
+            'sub_part_id',
+            'quantity',
+            'setup_quantity',
+            'attrition',
+            'rounding_multiple',
+            'reference',
+            'optional',
+            'inherited',
+            'consumable',
+            'allow_variants',
+        ]
+
+    def get_item_hash(self) -> str:
+        """Calculate the checksum hash of this BOM line item."""
         # Seed the hash with the ID of this BOM item
         result_hash = hashlib.md5(b'')
 
-        # The following components are used to calculate the checksum
-        components = [
-            self.part.pk,
-            self.sub_part.pk,
-            normalize(self.quantity),
-            self.setup_quantity,
-            self.attrition,
-            self.rounding_multiple,
-            self.reference,
-            self.optional,
-            self.inherited,
-            self.consumable,
-            self.allow_variants,
-        ]
+        for field in self.hash_fields():
+            # Get the value of the field
+            value = getattr(self, field, None)
 
-        for component in components:
-            result_hash.update(str(component).encode())
+            # If the value is None, use an empty string
+            if value is None:
+                value = ''
+
+            # Update the hash with the string representation of the value
+            result_hash.update(str(value).encode())
 
         return str(result_hash.digest())
 

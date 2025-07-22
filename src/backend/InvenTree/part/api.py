@@ -631,7 +631,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
         serializer = self.get_serializer(part, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        valid = serializer.validated_data.get('valid', True)
+        valid = str2bool(serializer.validated_data.get('valid', False))
 
         part.validate_bom(request.user, valid=valid)
 

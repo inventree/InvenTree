@@ -1237,7 +1237,8 @@ class PartBomValidateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     valid = serializers.BooleanField(
         write_only=True,
-        default=True,
+        default=False,
+        required=False,
         label=_('Valid'),
         help_text=_('Validate entire Bill of Materials'),
     )
