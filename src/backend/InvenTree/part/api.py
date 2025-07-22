@@ -862,24 +862,7 @@ class PartFilter(rest_filters.FilterSet):
         label='Default Location', queryset=StockLocation.objects.all()
     )
 
-    bom_valid = rest_filters.BooleanFilter(
-        label=_('BOM Valid'), method='filter_bom_valid'
-    )
-
-    def filter_bom_valid(self, queryset, name, value):
-        """Filter by whether the BOM for the part is valid or not."""
-        # Limit queryset to active assemblies
-        queryset = queryset.filter(active=True, assembly=True).distinct()
-
-        # Iterate through the queryset
-        # TODO: We should cache BOM checksums to make this process more efficient
-        pks = []
-
-        for item in queryset:
-            if item.is_bom_valid() == value:
-                pks.append(item.pk)
-
-        return queryset.filter(pk__in=pks)
+    bom_valid = rest_filters.BooleanFilter(label=_('BOM Valid'), field='bom_validated')
 
     starred = rest_filters.BooleanFilter(label='Starred', method='filter_starred')
 
