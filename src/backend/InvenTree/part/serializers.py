@@ -1210,6 +1210,44 @@ class PartSerializer(
         return self.instance
 
 
+class PartBomValidateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for Part BOM information."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Part
+        fields = [
+            'pk',
+            'bom_validated',
+            'bom_checksum',
+            'bom_checked_by',
+            'bom_checked_by_detail',
+            'bom_checked_date',
+            'valid',
+        ]
+
+        read_only_fields = [
+            'bom_validated',
+            'bom_checksum',
+            'bom_checked_by',
+            'bom_checked_by_detail',
+            'bom_checked_date',
+        ]
+
+    valid = serializers.BooleanField(
+        write_only=True,
+        default=False,
+        required=False,
+        label=_('Valid'),
+        help_text=_('Validate entire Bill of Materials'),
+    )
+
+    bom_checked_by_detail = UserSerializer(
+        source='bom_checked_by', many=False, read_only=True, allow_null=True
+    )
+
+
 class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for Part requirements."""
 

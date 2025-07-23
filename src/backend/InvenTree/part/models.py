@@ -453,6 +453,12 @@ class Part(
         creation_user: User who added this part to the database
         responsible_owner: Owner (either user or group) which is responsible for this part (optional)
         last_stocktake: Date at which last stocktake was performed for this Part
+
+    BOM (Bill of Materials) related attributes:
+        bom_checksum: Checksum for the BOM of this part
+        bom_validated: Boolean field indicating if the BOM is valid (checksum matches)
+        bom_checked_by: User who last checked the BOM for this part
+        bom_checked_date: Date when the BOM was last checked
     """
 
     NODE_PARENT_KEY = 'variant_of'
@@ -1265,6 +1271,12 @@ class Part(
         help_text=_('Is this a virtual part, such as a software product or license?'),
     )
 
+    bom_validated = models.BooleanField(
+        default=False,
+        verbose_name=_('BOM Validated'),
+        help_text=_('Is the BOM for this part valid?'),
+    )
+
     bom_checksum = models.CharField(
         max_length=128,
         blank=True,
@@ -1942,31 +1954,50 @@ class Part(
         result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
-        bom_items = self.get_bom_items().all().prefetch_related('sub_part')
+        bom_items = self.get_bom_items().all().prefetch_related('part', 'sub_part')
 
         for item in bom_items:
             result_hash.update(str(item.get_item_hash()).encode())
 
         return str(result_hash.digest())
 
-    def is_bom_valid(self):
-        """Check if the BOM is 'valid' - if the calculated checksum matches the stored value."""
-        return self.get_bom_hash() == self.bom_checksum or not self.has_bom
+    def is_bom_valid(self) -> bool:
+        """Check if the BOM is 'valid'.
+
+        To be "valid", the part must:
+        - Have a stored "bom_checksum" value
+        - The stored "bom_checksum" must match the calculated checksum.
+
+        Returns:
+            bool: True if the BOM is valid, False otherwise
+        """
+        if not self.bom_checksum or not self.bom_checked_date:
+            # If there is no BOM checksum, then the BOM is not valid
+            return False
+
+        return self.get_bom_hash() == self.bom_checksum
 
     @transaction.atomic
-    def validate_bom(self, user):
+    def validate_bom(self, user, valid: bool = True):
         """Validate the BOM (mark the BOM as validated by the given User.
+
+        Arguments:
+            user: User who is validating the BOM
+            valid: If True, mark the BOM as valid (default=True)
 
         - Calculates and stores the hash for the BOM
         - Saves the current date and the checking user
         """
         # Validate each line item, ignoring inherited ones
-        bom_items = self.get_bom_items(include_inherited=False)
+        bom_items = self.get_bom_items(include_inherited=False).prefetch_related(
+            'part', 'sub_part'
+        )
 
         for item in bom_items:
-            item.validate_hash()
+            item.validate_hash(valid=valid)
 
-        self.bom_checksum = self.get_bom_hash()
+        self.bom_validated = valid
+        self.bom_checksum = self.get_bom_hash() if valid else ''
         self.bom_checked_by = user
         self.bom_checked_date = InvenTree.helpers.current_date()
 
@@ -4252,6 +4283,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
+        validated: Boolean field indicating if this BOM item is valid (checksum matches)
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
@@ -4329,25 +4361,60 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
     def delete(self):
         """Check if this item can be deleted."""
+        import part.tasks as part_tasks
+
         self.check_part_lock(self.part)
+
+        assemblies = self.get_assemblies()
         super().delete()
+
+        for assembly in assemblies:
+            # Offload task to update the checksum for this assembly
+            InvenTree.tasks.offload_task(
+                part_tasks.check_bom_valid, assembly.pk, group='part'
+            )
 
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance."""
+        import part.tasks as part_tasks
+
         self.clean()
 
-        self.check_part_lock(self.part)
+        check_lock = kwargs.pop('check_lock', True)
+
+        if check_lock:
+            self.check_part_lock(self.part)
+
+        db_instance = self.get_db_instance()
 
         # Check if the part was changed
         deltas = self.get_field_deltas()
 
         if 'part' in deltas and (old_part := deltas['part'].get('old', None)):
-            self.check_part_lock(old_part)
+            if check_lock:
+                self.check_part_lock(old_part)
 
         # Update the 'validated' field based on checksum calculation
         self.validated = self.is_line_valid
 
         super().save(*args, **kwargs)
+
+        # Do we need to recalculate the BOM hash for assemblies?
+        if not db_instance or any(f in deltas for f in self.hash_fields()):
+            # If this is a new BomItem, or if any of the fields used to calculate the hash have changed,
+            # then we need to recalculate the BOM checksum for all assemblies which use this BomItem
+
+            assemblies = set()
+
+            if db_instance:
+                # Find all assemblies which use this BomItem *after* we save
+                assemblies.update(db_instance.get_assemblies())
+
+            for assembly in assemblies:
+                # Offload task to update the checksum for this assembly
+                InvenTree.tasks.offload_task(
+                    part_tasks.check_bom_valid, assembly.pk, group='part'
+                )
 
     def check_part_lock(self, assembly):
         """When editing or deleting a BOM item, check if the assembly is locked.
@@ -4490,39 +4557,57 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         help_text=_('Stock items for variant parts can be used for this BOM item'),
     )
 
-    def get_item_hash(self):
-        """Calculate the checksum hash of this BOM line item.
+    def hash_fields(self) -> list[str]:
+        """Return a list of fields to be used for hashing this BOM item.
 
-        The hash is calculated from the following fields:
-        - part.pk
-        - sub_part.pk
-        - quantity
-        - reference
-        - optional
-        - inherited
-        - consumable
-        - allow_variants
+        These fields are used to calculate the checksum hash of this BOM item.
         """
+        return [
+            'part_id',
+            'sub_part_id',
+            'quantity',
+            'setup_quantity',
+            'attrition',
+            'rounding_multiple',
+            'reference',
+            'optional',
+            'inherited',
+            'consumable',
+            'allow_variants',
+        ]
+
+    def get_item_hash(self) -> str:
+        """Calculate the checksum hash of this BOM line item."""
         # Seed the hash with the ID of this BOM item
         result_hash = hashlib.md5(b'')
 
-        # The following components are used to calculate the checksum
-        components = [
-            self.part.pk,
-            self.sub_part.pk,
-            normalize(self.quantity),
-            self.setup_quantity,
-            self.attrition,
-            self.rounding_multiple,
-            self.reference,
-            self.optional,
-            self.inherited,
-            self.consumable,
-            self.allow_variants,
-        ]
+        for field in self.hash_fields():
+            # Get the value of the field
+            value = getattr(self, field, None)
 
-        for component in components:
-            result_hash.update(str(component).encode())
+            # If the value is None, use an empty string
+            if value is None:
+                value = ''
+
+            # Normalize decimal values to ensure consistent representation
+            # These values are only included if they are non-zero
+            # This is to provide some backwards compatibility from before these fields were addede
+            if value is not None and field in [
+                'quantity',
+                'attrition',
+                'setup_quantity',
+                'rounding_multiple',
+            ]:
+                try:
+                    value = normalize(value)
+
+                    if not value or value <= 0:
+                        continue
+                except Exception:
+                    pass
+
+            # Update the hash with the string representation of the value
+            result_hash.update(str(value).encode())
 
         return str(result_hash.digest())
 
@@ -4537,7 +4622,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         else:
             self.checksum = ''
 
-        self.save()
+        # Save the BOM item (bypass lock check)
+        self.save(check_lock=False)
 
     @property
     def is_line_valid(self):

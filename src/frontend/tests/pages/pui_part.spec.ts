@@ -4,7 +4,8 @@ import {
   clickOnRowMenu,
   getRowFromCell,
   loadTab,
-  navigate
+  navigate,
+  setTableChoiceFilter
 } from '../helpers';
 import { doCachedLogin } from '../login';
 
@@ -81,10 +82,32 @@ test('Parts - Supplier Parts', async ({ browser }) => {
 });
 
 test('Parts - BOM', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/87/bom' });
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
 
+  // Display all active assemblies with validated BOMs
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'assembly', 'Yes');
+  await setTableChoiceFilter(page, 'active', 'Yes');
+  await setTableChoiceFilter(page, 'BOM Valid', 'Yes');
+
+  await page.getByText('1 - 12 / 12').waitFor();
+
+  // Navigate to BOM for a particular assembly
+  await navigate(page, 'part/87/bom');
   await loadTab(page, 'Bill of Materials');
-  await page.waitForLoadState('networkidle');
+
+  // Mouse-hover to display BOM validation info for this assembly
+  await page.getByRole('button', { name: 'bom-validation-info' }).hover();
+  await page
+    .getByText('The Bill of Materials for this part has been validated')
+    .waitFor();
+  await page.getByText('Validated On: 2025-07-23').waitFor();
+  await page.getByText('Robert Shuruncle').waitFor();
+
+  // Move the mouse away
+  await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
   const cell = await page.getByRole('cell', {
     name: 'Small plastic enclosure, black',

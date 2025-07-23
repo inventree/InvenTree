@@ -911,20 +911,89 @@ class PartAPITest(PartAPITestBase):
         """Test the 'bom_valid' Part API filter."""
         url = reverse('api-part-list')
 
-        n = Part.objects.filter(active=True, assembly=True).count()
+        # Create a new assembly
+        assembly = Part.objects.create(
+            name='Test Assembly',
+            description='A test assembly with a valid BOM',
+            category=PartCategory.objects.first(),
+            assembly=True,
+            active=True,
+        )
+
+        sub_part = Part.objects.create(
+            name='Sub Part',
+            description='A sub part for the assembly',
+            category=PartCategory.objects.first(),
+            component=True,
+            assembly=False,
+            active=True,
+        )
+
+        assembly.refresh_from_db()
+        sub_part.refresh_from_db()
+
+        # Link the sub part to the assembly via a BOM
+        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=10)
+
+        filters = {'active': True, 'assembly': True, 'bom_valid': True}
 
         # Initially, there are no parts with a valid BOM
-        response = self.get(url, {'bom_valid': False}, expected_code=200)
-        n1 = len(response.data)
+        response = self.get(url, filters)
 
-        for item in response.data:
-            self.assertTrue(item['assembly'])
-            self.assertTrue(item['active'])
+        self.assertEqual(len(response.data), 0)
 
-        response = self.get(url, {'bom_valid': True}, expected_code=200)
-        n2 = len(response.data)
+        # Validate the BOM assembly
+        assembly.validate_bom(self.user)
 
-        self.assertEqual(n1 + n2, n)
+        response = self.get(url, filters)
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], assembly.pk)
+
+        # Adjust the 'quantity' of the BOM item to make it invalid
+        bom_item.quantity = 15
+        bom_item.save()
+
+        response = self.get(url, filters)
+        self.assertEqual(len(response.data), 0)
+
+        # Adjust it back again - should be valid again
+        bom_item.quantity = 10
+        bom_item.save()
+
+        response = self.get(url, filters)
+        self.assertEqual(len(response.data), 1)
+
+        # Test the BOM validation API endpoint
+        bom_url = reverse('api-part-bom-validate', kwargs={'pk': assembly.pk})
+        data = self.get(bom_url, expected_code=200).data
+
+        self.assertEqual(data['bom_validated'], True)
+        self.assertEqual(data['bom_checked_by'], self.user.pk)
+        self.assertEqual(data['bom_checked_by_detail']['username'], self.user.username)
+        self.assertIsNotNone(data['bom_checked_date'])
+
+        # Now, let's try to validate and invalidate the assembly BOM via the API
+        bom_item.quantity = 99
+        bom_item.save()
+
+        data = self.get(bom_url, expected_code=200).data
+        self.assertEqual(data['bom_validated'], False)
+
+        self.patch(bom_url, {'valid': True}, expected_code=200)
+        data = self.get(bom_url, expected_code=200).data
+        self.assertEqual(data['bom_validated'], True)
+
+        assembly.refresh_from_db()
+        self.assertTrue(assembly.bom_validated)
+
+        # And, we can also invalidate the BOM via the API
+        self.patch(bom_url, {'valid': False}, expected_code=200)
+        data = self.get(bom_url, expected_code=200).data
+        self.assertEqual(data['bom_validated'], False)
+
+        assembly.refresh_from_db()
+        self.assertFalse(assembly.bom_validated)
 
     def test_filter_by_starred(self):
         """Test by 'starred' filter."""
