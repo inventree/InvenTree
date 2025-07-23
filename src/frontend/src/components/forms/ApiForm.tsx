@@ -374,7 +374,7 @@ export function ApiForm({
       }
 
       // Ensure any boolean values are actually boolean
-      if (field_type == 'boolean') {
+      if (field_type === 'boolean') {
         value = isTrue(value) || false;
       }
 
