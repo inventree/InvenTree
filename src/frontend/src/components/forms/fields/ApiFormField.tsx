@@ -72,6 +72,7 @@ export function ApiFormField({
   const reducedDefinition = useMemo(() => {
     return {
       ...fieldDefinition,
+      autoFill: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
