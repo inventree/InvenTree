@@ -80,6 +80,78 @@ test('Settings - User theme', async ({ browser }) => {
   await page.getByLabel('#228be6').click();
 });
 
+test('Settings - User', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/user/'
+  });
+
+  await loadTab(page, 'Account');
+  await page.getByText('Account Details').waitFor();
+  await page.getByText('Profile Details').waitFor();
+
+  await loadTab(page, 'Security');
+  await page.getByRole('button', { name: 'Single Sign On' }).waitFor();
+  await page.getByRole('button', { name: 'Access Tokens' }).waitFor();
+
+  await loadTab(page, 'Display Options');
+  await page
+    .getByText('The navbar position is fixed to the top of the screen')
+    .waitFor();
+  await page.getByText('Escape Key Closes Forms').waitFor();
+
+  await loadTab(page, 'Search');
+  await page.getByText('Whole Word Search').waitFor();
+  await page.getByText('Hide Unavailable Stock Items').waitFor();
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+
+  await loadTab(page, 'Reporting');
+  await page.getByText('Inline report display').waitFor();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+});
+
+test('Settings - Global', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'settings/system/'
+  });
+
+  await loadTab(page, 'Server');
+  await loadTab(page, 'Authentication');
+  await loadTab(page, 'Barcodes');
+  await loadTab(page, 'Pricing');
+  await loadTab(page, 'Parts');
+  await loadTab(page, 'Stock');
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByText(
+      'The settings below are specific to each available notification method'
+    )
+    .waitFor();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByText('The settings below are specific to each available plugin')
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Barcodes Provides' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree PDF label printer' })
+    .waitFor();
+});
+
 test('Settings - Admin', async ({ browser }) => {
   // Note here we login with admin access
   const page = await doCachedLogin(browser, {
