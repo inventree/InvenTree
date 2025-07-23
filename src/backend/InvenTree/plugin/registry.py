@@ -44,7 +44,7 @@ from .plugin import InvenTreePlugin
 logger = structlog.get_logger('inventree')
 
 
-def registry_entrypoint(check_reload: bool = True, default_value=None) -> Any:
+def registry_entrypoint(check_reload: bool = True, default_value: Any = None) -> Any:
     """Function decorator for registry entrypoints methods.
 
     - Ensure that the registry is ready before calling the method.
