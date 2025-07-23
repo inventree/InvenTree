@@ -65,7 +65,7 @@ import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import {
   type StockOperationProps,
   useFindSerialNumberForm,
@@ -941,13 +941,13 @@ export default function StockDetail() {
           />,
           <DetailsBadge
             color='blue'
-            label={`${t`Quantity`}: ${stockitem.quantity}`}
+            label={`${t`Quantity`}: ${formatDecimal(stockitem.quantity)}`}
             visible={!stockitem.serial}
             key='quantity'
           />,
           <DetailsBadge
             color='yellow'
-            label={`${t`Available`}: ${available}`}
+            label={`${t`Available`}: ${formatDecimal(available)}`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
