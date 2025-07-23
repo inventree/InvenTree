@@ -32,19 +32,7 @@ class PluginAppConfig(AppConfig):
         else:
             logger.info('Loading InvenTree plugins')
 
-            if not registry.is_loading:
-                # this is the first startup
-                try:
-                    from common.models import InvenTreeSetting
-
-                    if InvenTreeSetting.get_setting(
-                        'PLUGIN_ON_STARTUP', create=False, cache=False
-                    ):
-                        # make sure all plugins are installed
-                        registry.install_plugin_file()
-                except Exception:  # pragma: no cover
-                    pass
-
+            if not registry.is_ready:
                 # Mark the registry as ready
                 # This ensures that other apps cannot access the registry before it is fully initialized
                 logger.info('Plugin registry is ready - performing initial load')
