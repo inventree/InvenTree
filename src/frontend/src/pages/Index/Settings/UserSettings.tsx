@@ -1,9 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Skeleton, Stack } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
   IconFileAnalytics,
+  IconInfoCircle,
   IconLock,
   IconPlugConnected,
   IconSearch,
@@ -101,7 +102,15 @@ export default function UserSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <UserSettingList keys={['NOTIFICATION_ERROR_REPORT']} />
+        content: (
+          <Stack gap='x'>
+            <UserSettingList keys={['NOTIFICATION_ERROR_REPORT']} />
+            <Alert color='blue' icon={<IconInfoCircle />}>
+              <Text>{t`The settings below are specific to each available notification method`}</Text>
+            </Alert>
+            <UserPluginSettings mixin='settings,notifications' />
+          </Stack>
+        )
       },
       {
         name: 'reporting',
@@ -117,7 +126,14 @@ export default function UserSettings() {
         name: 'plugins',
         label: t`Plugin Settings`,
         icon: <IconPlugConnected />,
-        content: <UserPluginSettings />
+        content: (
+          <Stack gap='xs'>
+            <Alert color='blue' icon={<IconInfoCircle />}>
+              <Text>{t`User specific plugin settings`}</Text>
+            </Alert>
+            <UserPluginSettings />
+          </Stack>
+        )
       }
     ];
   }, []);

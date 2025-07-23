@@ -1,8 +1,6 @@
 import { ApiEndpoints } from '@lib/index';
 import type { SettingsStateProps } from '@lib/types/Settings';
-import { t } from '@lingui/core/macro';
-import { Accordion, Alert, Group, Stack, Text } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { Accordion, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { PluginUserSettingList } from '../../../components/settings/SettingList';
 import { useInstance } from '../../../hooks/UseInstance';
@@ -46,7 +44,11 @@ function PluginUserSetting({
   );
 }
 
-export default function UserPluginSettings() {
+export default function UserPluginSettings({
+  mixin = 'settings'
+}: {
+  mixin?: string;
+}) {
   // All *active* plugins which require settings
   const activePlugins = useInstance({
     endpoint: ApiEndpoints.plugin_list,
@@ -60,9 +62,6 @@ export default function UserPluginSettings() {
 
   return (
     <Stack gap='xs'>
-      <Alert color='blue' icon={<IconInfoCircle />}>
-        <Text>{t`User specific plugin settings`}</Text>
-      </Alert>
       <Accordion multiple>
         {activePlugins.instance?.map((plugin: any) => {
           return (
