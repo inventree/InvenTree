@@ -2,7 +2,7 @@ import { isTrue } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { Switch } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 export function BooleanField({
@@ -24,13 +24,6 @@ export function BooleanField({
   } = controller;
 
   const { value } = field;
-
-  // Ensure that "undefined" value maps to "false"
-  useEffect(() => {
-    if (definition.value === undefined) {
-      onChange(definition.default ?? false);
-    }
-  }, [value, onChange]);
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {

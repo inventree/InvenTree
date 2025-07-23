@@ -22,6 +22,7 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { isTrue } from '@lib/functions/Conversion';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormFieldSet,
@@ -370,6 +371,11 @@ export function ApiForm({
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
+      }
+
+      // Ensure any boolean values are actually boolean
+      if (field_type == 'boolean') {
+        value = isTrue(value) || false;
       }
 
       // Stringify any JSON objects
