@@ -100,7 +100,7 @@ class PluginsRegistry:
         'parameter-exporter',
     ]
 
-    ready: bool = False  # Marks if the registry is ready to be used
+    ready: bool
 
     def __init__(self) -> None:
         """Initialize registry.
