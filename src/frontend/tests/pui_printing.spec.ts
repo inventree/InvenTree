@@ -32,13 +32,12 @@ test('Label Printing', async ({ browser }) => {
 
   // Select label template
   await page.getByLabel('related-field-template').click();
-  await page.getByText('InvenTree Stock Item Label (').click();
-
-  await page.waitForTimeout(100);
+  await page
+    .getByRole('option', { name: 'InvenTree Stock Item Label' })
+    .click();
 
   await page.getByLabel('related-field-plugin').click();
-
-  await page.getByText('InvenTreeLabel', { exact: true }).click();
+  await page.getByRole('option', { name: 'InvenTreeLabel provides' }).click();
 
   // Submit the print form (second time should result in success)
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
@@ -71,9 +70,7 @@ test('Report Printing', async ({ browser }) => {
 
   // Select template
   await page.getByLabel('related-field-template').click();
-  await page.getByText('InvenTree Purchase Order').click();
-
-  await page.waitForTimeout(100);
+  await page.getByRole('option', { name: 'InvenTree Purchase Order' }).click();
 
   // Submit the print form (should result in success)
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
