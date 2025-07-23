@@ -252,7 +252,7 @@ export function usePartParameterFields({
           let v: string = value.toString().trim();
 
           if (fieldType === 'boolean') {
-            if (v.toLowerCase() != 'true') {
+            if (v.toLowerCase() !== 'true') {
               v = 'false';
             }
           }
