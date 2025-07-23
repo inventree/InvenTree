@@ -1,13 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Skeleton, Stack, Text } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
-  IconInfoCircle,
   IconPackages,
+  IconPlugConnected,
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
@@ -16,7 +16,7 @@ import {
   IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { lazy, useMemo } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
@@ -25,8 +25,13 @@ import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { Loadable } from '../../../functions/loading';
 import { useServerApiState } from '../../../states/ServerApiState';
 import { useUserState } from '../../../states/UserState';
+
+const PluginSettingsGroup = Loadable(
+  lazy(() => import('./PluginSettingsGroup'))
+);
 
 /**
  * System settings page
@@ -112,17 +117,7 @@ export default function SystemSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: (
-          <Stack>
-            <Alert
-              color='teal'
-              title={t`This panel is a placeholder.`}
-              icon={<IconInfoCircle />}
-            >
-              <Text c='gray'>This panel has not yet been implemented</Text>
-            </Alert>
-          </Stack>
-        )
+        content: <PluginSettingsGroup mixin='notification' global={true} />
       },
       {
         name: 'pricing',
@@ -305,6 +300,12 @@ export default function SystemSettings() {
             ]}
           />
         )
+      },
+      {
+        name: 'plugins',
+        label: t`Plugin Settings`,
+        icon: <IconPlugConnected />,
+        content: <PluginSettingsGroup global={true} />
       }
     ];
   }, []);

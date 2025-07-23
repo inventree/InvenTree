@@ -205,8 +205,12 @@ export function GlobalSettingList({ keys }: Readonly<{ keys: string[] }>) {
 }
 
 export function PluginSettingList({
-  pluginKey
-}: Readonly<{ pluginKey: string }>) {
+  pluginKey,
+  onLoaded
+}: Readonly<{
+  pluginKey: string;
+  onLoaded: (settings: SettingsStateProps) => void;
+}>) {
   const pluginSettingsStore = useRef(
     createPluginSettingsState({
       plugin: pluginKey,
@@ -215,7 +219,7 @@ export function PluginSettingList({
   ).current;
   const pluginSettings = useStore(pluginSettingsStore);
 
-  return <SettingList settingsState={pluginSettings} />;
+  return <SettingList settingsState={pluginSettings} onLoaded={onLoaded} />;
 }
 
 export function PluginUserSettingList({

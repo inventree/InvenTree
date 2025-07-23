@@ -1,15 +1,22 @@
 import { ApiEndpoints } from '@lib/index';
 import type { SettingsStateProps } from '@lib/types/Settings';
-import { Accordion, Group, Stack, Text } from '@mantine/core';
-import { useCallback, useState } from 'react';
-import { PluginUserSettingList } from '../../../components/settings/SettingList';
+import { t } from '@lingui/core/macro';
+import { Accordion, Alert, Group, Stack, Text } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  PluginSettingList,
+  PluginUserSettingList
+} from '../../../components/settings/SettingList';
 import { useInstance } from '../../../hooks/UseInstance';
 
-function PluginUserSetting({
+function PluginSettingGroupItem({
+  global,
   pluginKey,
   pluginName,
   pluginDescription
 }: {
+  global: boolean;
   pluginKey: string;
   pluginName: string;
   pluginDescription?: string;
@@ -38,23 +45,45 @@ function PluginUserSetting({
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
-        <PluginUserSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
+        {global ? (
+          <PluginSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
+        ) : (
+          <PluginUserSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
+        )}
       </Accordion.Panel>
     </Accordion.Item>
   );
 }
 
-export default function UserPluginSettings({
-  mixin = 'settings'
+/**
+ * Displays an accordion of user-specific plugin settings
+ * - Each element in the accordion corresponds to a plugin
+ * - Each plugin can have multiple settings
+ * - If a plugin has no settings, it will not be displayed
+ */
+export default function PluginSettingsGroup({
+  mixin,
+  global
 }: {
+  global: boolean;
   mixin?: string;
 }) {
+  const mixins: string = useMemo(() => {
+    const mixinList: string[] = ['settings'];
+
+    if (mixin) {
+      mixinList.push(mixin);
+    }
+
+    return mixinList.join(',');
+  }, [mixin]);
+
   // All *active* plugins which require settings
   const activePlugins = useInstance({
     endpoint: ApiEndpoints.plugin_list,
     params: {
       active: true,
-      mixin: 'settings'
+      mixin: mixins
     },
     hasPrimaryKey: false,
     defaultValue: []
@@ -62,10 +91,14 @@ export default function UserPluginSettings({
 
   return (
     <Stack gap='xs'>
+      <Alert color='blue' icon={<IconInfoCircle />}>
+        <Text>{t`The settings below are specific to each available plugin`}</Text>
+      </Alert>
       <Accordion multiple>
         {activePlugins.instance?.map((plugin: any) => {
           return (
-            <PluginUserSetting
+            <PluginSettingGroupItem
+              global={global}
               key={plugin.key}
               pluginKey={plugin.key}
               pluginName={plugin.meta?.human_name ?? plugin.name}
