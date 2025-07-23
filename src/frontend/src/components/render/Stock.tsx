@@ -68,8 +68,6 @@ export function RenderStockItem(
     quantity_string = `${t`Quantity`}: ${instance.quantity}`;
   }
 
-  console.log('item:', instance);
-
   let batch_string = '';
 
   if (!!instance.batch) {
