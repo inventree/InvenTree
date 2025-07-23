@@ -2,7 +2,7 @@ import { expect, test } from './baseFixtures.js';
 import { apiUrl } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
-import { setSettingState } from './settings.js';
+import { setPluginState, setSettingState } from './settings.js';
 
 /**
  * Adjust language and color settings
@@ -119,11 +119,19 @@ test('Settings - User', async ({ browser }) => {
     .waitFor();
 });
 
-test('Settings - Global', async ({ browser }) => {
+test('Settings - Global', async ({ browser, request }) => {
   const page = await doCachedLogin(browser, {
     username: 'steven',
     password: 'wizardstaff',
     url: 'settings/system/'
+  });
+
+  // Ensure the "slack" notification plugin is enabled
+  // This is to ensure it is visible in the "notification" settings tab
+  await setPluginState({
+    request,
+    plugin: 'inventree-slack-notification',
+    state: true
   });
 
   await loadTab(page, 'Server');
@@ -140,6 +148,14 @@ test('Settings - Global', async ({ browser }) => {
     )
     .waitFor();
 
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
+    .click();
+  await page.getByText('Slack incoming webhook url').waitFor();
+  await page
+    .getByText('URL that is used to send messages to a slack channel')
+    .waitFor();
+
   await loadTab(page, 'Plugin Settings');
   await page
     .getByText('The settings below are specific to each available plugin')
@@ -149,6 +165,9 @@ test('Settings - Global', async ({ browser }) => {
     .waitFor();
   await page
     .getByRole('button', { name: 'InvenTree PDF label printer' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
     .waitFor();
 });
 
