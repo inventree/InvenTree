@@ -155,6 +155,11 @@ class PluginsRegistry:
         self.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     @property
+    def is_ready(self) -> bool:
+        """Return True if the plugin registry is ready to be used."""
+        return self.ready
+
+    @property
     def is_loading(self) -> bool:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
