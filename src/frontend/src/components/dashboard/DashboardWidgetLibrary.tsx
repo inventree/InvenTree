@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 
 import { ModelType } from '@lib/enums/ModelType';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 import type { DashboardWidgetProps } from './DashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
@@ -14,9 +15,10 @@ import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
  * @returns A list of built-in dashboard widgets which display the number of results for a particular query
  */
 export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
+  const user = useUserState.getState();
   const globalSettings = useGlobalSettingsState.getState();
 
-  return [
+  const widgets: DashboardWidgetProps[] = [
     QueryCountDashboardWidget({
       label: 'sub-prt',
       title: t`Subscribed Parts`,
@@ -149,6 +151,15 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       params: { assigned_to_me: true, outstanding: true }
     })
   ];
+
+  // Filter widgets based on user permissions (if a modelType is defined)
+  return widgets.filter((widget: DashboardWidgetProps) => {
+    if (widget.modelType) {
+      return user.hasViewPermission(widget.modelType);
+    } else {
+      return true;
+    }
+  });
 }
 
 export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {

@@ -207,15 +207,17 @@ test('Stock - Serialize', async ({ browser }) => {
   await page.getByLabel('text-field-serial_numbers').fill('200-250');
 
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page
-    .getByText('Group range 200-250 exceeds allowed quantity')
+    .getByText('Number of unique serial numbers (51) must match quantity (100)')
     .waitFor();
 
   await page.getByLabel('text-field-serial_numbers').fill('1, 2, 3');
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page
-    .getByText('Number of unique serial numbers (3) must match quantity (10)')
+    .getByText('Number of unique serial numbers (3) must match quantity (100)')
     .waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();

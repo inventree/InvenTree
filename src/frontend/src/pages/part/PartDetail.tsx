@@ -68,7 +68,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
-import { formatPriceRange } from '../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
@@ -841,7 +841,7 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={`${t`In Stock`}: ${partRequirements.total_stock}`}
+        label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
         color={
           partRequirements.total_stock >= part.minimum_stock
             ? 'green'
@@ -851,7 +851,7 @@ export default function PartDetail() {
         key='in_stock'
       />,
       <DetailsBadge
-        label={`${t`Available`}: ${partRequirements.unallocated_stock}`}
+        label={`${t`Available`}: ${formatDecimal(partRequirements.unallocated_stock)}`}
         color='yellow'
         key='available_stock'
         visible={
@@ -865,19 +865,19 @@ export default function PartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
-        label={`${t`Required`}: ${required}`}
+        label={`${t`Required`}: ${formatDecimal(required)}`}
         color='grape'
         visible={required > 0}
         key='required'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${partRequirements.ordering}`}
+        label={`${t`On Order`}: ${formatDecimal(partRequirements.ordering)}`}
         color='blue'
         visible={partRequirements.ordering > 0}
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${partRequirements.building}`}
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
         color='blue'
         visible={partRequirements.building > 0}
         key='in_production'
