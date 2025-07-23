@@ -103,7 +103,13 @@ export default function UserSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <PluginSettingsGroup mixin='notification' global={false} />
+        content: (
+          <PluginSettingsGroup
+            mixin='notification'
+            global={false}
+            message={t`The settings below are specific to each available notification method`}
+          />
+        )
       },
       {
         name: 'reporting',

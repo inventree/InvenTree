@@ -117,7 +117,13 @@ export default function SystemSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <PluginSettingsGroup mixin='notification' global={true} />
+        content: (
+          <PluginSettingsGroup
+            mixin='notification'
+            global={true}
+            message={t`The settings below are specific to each available notification method`}
+          />
+        )
       },
       {
         name: 'pricing',

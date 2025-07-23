@@ -63,9 +63,11 @@ function PluginSettingGroupItem({
  */
 export default function PluginSettingsGroup({
   mixin,
+  message,
   global
 }: {
   global: boolean;
+  message?: string;
   mixin?: string;
 }) {
   const mixins: string = useMemo(() => {
@@ -92,7 +94,10 @@ export default function PluginSettingsGroup({
   return (
     <Stack gap='xs'>
       <Alert color='blue' icon={<IconInfoCircle />}>
-        <Text>{t`The settings below are specific to each available plugin`}</Text>
+        <Text>
+          {message ??
+            t`The settings below are specific to each available plugin`}
+        </Text>
       </Alert>
       <Accordion multiple>
         {activePlugins.instance?.map((plugin: any) => {
