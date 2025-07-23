@@ -376,10 +376,6 @@ class PluginsRegistry:
             clear_errors (bool, optional): Clear any previous loading errors. Defaults to False.
             _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
-        if not self.is_ready:
-            logger.warning('Plugin registry is not ready - cannot reload plugins')
-            return
-
         # Do not reload when currently loading
         if self.is_loading:
             logger.debug('Skipping reload - plugin registry is currently loading')
@@ -963,10 +959,6 @@ class PluginsRegistry:
 
         Returns True if the registry has changed and was reloaded.
         """
-        if not self.is_ready:
-            logger.warning('registry.check_reload: Plugin registry is not ready')
-            return False
-
         if settings.TESTING and not settings.PLUGIN_TESTING_RELOAD:
             # Skip if running during unit testing
             return False
