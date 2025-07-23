@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 371
+INVENTREE_API_VERSION = 372
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -9,6 +9,9 @@ INVENTREE_API_TEXT = """
 v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)
     - Remove NotificationSetting model (and associated endpoints)
+
+v372 -> 2025-07-19 : https://github.com/inventree/InvenTree/pull/10056
+    - Adds BOM validation information to the Part API
 
 v371 -> 2025-07-18 : https://github.com/inventree/InvenTree/pull/10042
     - Adds "setup_quantity" and "attrition" fields to BomItem API endpoints
