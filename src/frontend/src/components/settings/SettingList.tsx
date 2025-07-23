@@ -209,7 +209,7 @@ export function PluginSettingList({
   onLoaded
 }: Readonly<{
   pluginKey: string;
-  onLoaded: (settings: SettingsStateProps) => void;
+  onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
   const pluginSettingsStore = useRef(
     createPluginSettingsState({
