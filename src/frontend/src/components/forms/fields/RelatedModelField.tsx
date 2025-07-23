@@ -104,6 +104,7 @@ export function RelatedModelField({
   }, [
     definition.autoFill,
     definition.api_url,
+    definition.filters,
     definition.pk_field,
     field.value
   ]);
