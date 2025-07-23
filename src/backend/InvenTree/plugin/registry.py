@@ -44,7 +44,7 @@ from .plugin import InvenTreePlugin
 logger = structlog.get_logger('inventree')
 
 
-def registry_entrypoint(default_value=None):
+def registry_entrypoint(check_reload: bool = True, default_value=None) -> Any:
     """Function decorator for registry entrypoints methods.
 
     - Ensure that the registry is ready before calling the method.
@@ -57,7 +57,7 @@ def registry_entrypoint(default_value=None):
         @functools.wraps(method)
         def wrapper(self, *args, **kwargs):
             """Wrapper function to ensure registry is ready."""
-            if not self.is_ready:
+            if not self.ready:
                 logger.warning(
                     "Plugin registry is not ready - cannot call method '%s'",
                     method.__name__,
@@ -65,7 +65,8 @@ def registry_entrypoint(default_value=None):
                 return default_value
 
             # Check if the registry needs to be reloaded
-            self.check_reload()
+            if check_reload:
+                self.check_reload()
 
             return method(self, *args, **kwargs)
 
@@ -152,11 +153,6 @@ class PluginsRegistry:
 
         # Perform initial plugin discovery
         self.reload_plugins(full_reload=True, force_reload=True, collect=True)
-
-    @property
-    def is_ready(self) -> bool:
-        """Return True if the plugin registry is ready to be used."""
-        return self.ready
 
     @property
     def is_loading(self) -> bool:
@@ -355,6 +351,7 @@ class PluginsRegistry:
 
         logger.info('Finished unloading plugins')
 
+    @registry_entrypoint(check_reload=False)
     def reload_plugins(
         self,
         full_reload: bool = False,
@@ -374,10 +371,6 @@ class PluginsRegistry:
             clear_errors (bool, optional): Clear any previous loading errors. Defaults to False.
             _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
-        if not self.is_ready:
-            logger.warning('Plugin registry is not ready - cannot reload plugins')
-            return
-
         # Do not reload when currently loading
         if self.is_loading:
             logger.debug('Skipping reload - plugin registry is currently loading')
@@ -955,15 +948,12 @@ class PluginsRegistry:
 
         return str(data.hexdigest())
 
+    @registry_entrypoint(default_value=False, check_reload=False)
     def check_reload(self):
         """Determine if the registry needs to be reloaded.
 
         Returns True if the registry has changed and was reloaded.
         """
-        if not self.is_ready:
-            logger.warning('registry.check_reload: Plugin registry is not ready')
-            return False
-
         if settings.TESTING and not settings.PLUGIN_TESTING_RELOAD:
             # Skip if running during unit testing
             return False
