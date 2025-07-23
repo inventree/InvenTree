@@ -141,7 +141,14 @@ class PluginsRegistry:
         This method should only be called once per application start,
         after all apps have been loaded and the registry is fully initialized.
         """
+        from common.models import InvenTreeSetting
+
         self.ready = True
+
+        # Install plugins from file (if required)
+        if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False, cache=False):
+            # make sure all plugins are installed
+            registry.install_plugin_file()
 
         # Perform initial plugin discovery
         self.reload_plugins(full_reload=True, force_reload=True, collect=True)
