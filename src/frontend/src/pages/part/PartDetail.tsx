@@ -737,22 +737,26 @@ export default function PartDetail() {
         )}
         <HoverCard position='bottom-end'>
           <HoverCard.Target>
-            <ActionIcon color={color} variant='transparent'>
+            <ActionIcon
+              color={color}
+              variant='transparent'
+              aria-label='bom-validation-info'
+            >
               {icon}
             </ActionIcon>
           </HoverCard.Target>
           <HoverCard.Dropdown>
             <Alert color={color} icon={icon} title={title}>
               <Stack gap='xs'>
-                <Text>{description}</Text>
+                <Text size='sm'>{description}</Text>
                 {bomInformation?.bom_checked_date && (
-                  <Text>
+                  <Text size='sm'>
                     {t`Validated On`}: {bomInformation.bom_checked_date}
                   </Text>
                 )}
                 {bomInformation?.bom_checked_by_detail && (
                   <Group gap='xs'>
-                    <Text>{t`Validated By`}: </Text>
+                    <Text size='sm'>{t`Validated By`}: </Text>
                     <RenderUser
                       instance={bomInformation.bom_checked_by_detail}
                     />
