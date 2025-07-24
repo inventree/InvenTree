@@ -2,6 +2,37 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.4.0 - July 2025
+
+Externalize React, Lingui and Mantine libraries in the plugin library build step to avoid version conflicts. This ensures that the components provided as part of the @inventreedb/ui package *does not bundle* the React and Mantine libraries, but instead expects them to be provided by the InvenTree server.
+
+This change fixes issues with version mismatches between the InvenTree server and the plugin, allowing plugins to utilize the common components provided by the InvenTree UI components library without conflicts.
+
+*Note: Without this change, the components introduced in `0.3.0` would not work correctly, as they are pre-compiled with a different React instance.*
+
+### New Functions
+
+Adds the following functions to the API:
+
+- `initPlugin`: Initializes the plugin with the provided context
+
+### New UI Components
+
+- `AddItemButton`: A common button component used throughout the InvenTree UI
+
+### New Types
+
+Exposes a number of new internal types related to the API forms interface:
+
+- ApiFormFieldChoice
+- ApiFormFieldHeader
+- ApiFormFieldType
+- ApiFormFieldSet
+- ApiFormProps
+- ApiFormModalProps
+- BulkEditApiFormModalProps
+
+
 ## 0.3.0 - July 2025
 
 Introduces new types and functions to enhance the InvenTree UI components API.
