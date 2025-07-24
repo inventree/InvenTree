@@ -92,7 +92,6 @@ const IMAGE_DIMENSION = 256;
 // Image to display if instance has no image
 const backup_image = '/static/img/blank_image.png';
 
-// TODO: change model_id and pk name (reza)
 /**
  * Modal used for uploading a new image
  */
@@ -338,7 +337,7 @@ function ImageActionButtons({
       },
       icon: <InvenTreeIcon icon='download' />,
       hidden:
-        !editActions?.downloadImage &&
+        !editActions?.downloadImage ||
         !globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL')
     },
 
@@ -453,15 +452,16 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   const permissions = useUserState();
 
-  const url = apiUrl(ApiEndpoints.upload_image_list, props.image_id);
-
   const downloadImage = useCreateApiFormModal({
-    url: url,
+    url: apiUrl(ApiEndpoints.upload_image_list),
     title: t`Download Image`,
     fields: {
-      remote_image: {}
+      remote_image: {},
+      model_id: { hidden: true, value: props.pk },
+      model_type: { hidden: true, value: props.model_type }
     },
     timeout: 10000,
+    submitText: t`Download`,
     successMessage: t`Image downloaded successfully`,
     onFormSuccess: (response: any) => {
       if (response.image) {
@@ -473,10 +473,11 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   // Modal used for removing/deleting the current image
   const deleteUploadImage = useDeleteApiFormModal({
     url: ApiEndpoints.upload_image_list,
+    ignorePermissionCheck: true,
     pk: props.image_id,
     title: t`Delete Image`,
     onFormSuccess: () => {
-      props.refresh?.();
+      setAndRefresh(backup_image);
     }
   });
 

@@ -1884,7 +1884,6 @@ def rename_attachment(instance, filename: str):
     )
 
 
-# TODO: reza
 UPLOAD_IMAGE_DIR = 'upload_images'
 
 

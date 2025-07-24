@@ -1,8 +1,5 @@
 """JSON serializers for Company app."""
 
-import io
-
-from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -208,27 +205,6 @@ class CompanySerializer(
     currency = InvenTreeCurrencySerializer(
         help_text=_('Default currency used for this supplier'), required=True
     )
-
-    def save(self):
-        """Save the Company instance."""
-        super().save()
-
-        company = self.instance
-
-        # Check if an image was downloaded from a remote URL
-        remote_img = getattr(self, 'remote_image_file', None)
-
-        if remote_img and company:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
-
-            # Construct a simplified name for the image
-            filename = f'company_{company.pk}_image.{fmt.lower()}'
-
-            company.image.save(filename, ContentFile(buffer.getvalue()))
-
-        return self.instance
 
 
 @register_importer()

@@ -1,8 +1,10 @@
 """JSON serializers for common components."""
 
+import io
 import os
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.files.base import ContentFile
 from django.db.models import Count, OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -589,7 +591,7 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
 
 
 class UploadedImageSerializer(
-    InvenTreeModelSerializer, InvenTree.serializers.RemoteImageMixin
+    InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
 ):
     """Serializer class for the UploadedImage model."""
 
@@ -656,6 +658,19 @@ class UploadedImageSerializer(
 
             instance.image = img_path
             instance.save()
+
+        # Check if an image was downloaded from a remote URL
+        remote_img = getattr(self, 'remote_image_file', None)
+
+        if remote_img and instance:
+            fmt = remote_img.format or 'PNG'
+            buffer = io.BytesIO()
+            remote_img.save(buffer, format=fmt)
+
+            # Construct a simplified name for the image
+            filename = f'part_{instance.pk}_image.{fmt.lower()}'
+
+            instance.image.save(filename, ContentFile(buffer.getvalue()))
 
         # automatically mark as primary if this is the *only* image
         qs = common_models.UploadedImage.objects.filter(
