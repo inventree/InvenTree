@@ -15,6 +15,16 @@ export { UserRoles, UserPermissions } from './enums/Roles';
 export type { InvenTreePluginContext } from './types/Plugins';
 export type { RowAction, RowViewProps } from './types/Tables';
 
+export type {
+  ApiFormFieldChoice,
+  ApiFormFieldHeader,
+  ApiFormFieldType,
+  ApiFormFieldSet,
+  ApiFormProps,
+  ApiFormModalProps,
+  BulkEditApiFormModalProps
+} from './types/Forms';
+
 // Common utility functions
 export { apiUrl } from './functions/Api';
 export {
