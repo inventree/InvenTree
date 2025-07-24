@@ -39,6 +39,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from anymail.signals import inbound, tracking
+from django_cleanup import cleanup
 from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
@@ -1887,6 +1888,7 @@ def rename_attachment(instance, filename: str):
 UPLOAD_IMAGE_DIR = 'upload_images'
 
 
+@cleanup.ignore
 class UploadedImage(models.Model):
     """Class which represents an uploaded image for Part and Company.
 
