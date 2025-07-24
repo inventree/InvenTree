@@ -16,6 +16,10 @@ Adds the following functions to the API:
 
 - `initPlugin`: Initializes the plugin with the provided context
 
+### New UI Components
+
+- `AddItemButton`: A common button component used throughout the InvenTree UI
+
 ### New Types
 
 Exposes a number of new internal types related to the API forms interface:

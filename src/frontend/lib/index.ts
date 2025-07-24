@@ -44,7 +44,11 @@ export {
 } from './functions/Formatting';
 
 // Common UI components
-export { ActionButton } from './components/ActionButton';
+export {
+  ActionButton,
+  type ActionButtonProps
+} from './components/ActionButton';
+export { AddItemButton } from './components/AddItemButton';
 export { ButtonMenu } from './components/ButtonMenu';
 export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
