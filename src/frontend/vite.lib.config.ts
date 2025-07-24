@@ -35,6 +35,8 @@ export default defineConfig((cfg) =>
             globals: {
               react: 'React',
               'react-dom': 'ReactDOM',
+              '@lingui/core': 'LinguiCore',
+              '@lingui/react': 'LinguiReact',
               '@mantine/core': 'MantineCore',
               '@mantine/notifications': 'MantineNotifications'
             }
@@ -42,6 +44,8 @@ export default defineConfig((cfg) =>
           external: [
             'react',
             'react-dom',
+            '@lingui/core',
+            '@lingui/react',
             '@mantine/core',
             '@mantine/notifications'
           ]
@@ -65,6 +69,8 @@ export default defineConfig((cfg) =>
           react: 'React',
           'react-dom': 'ReactDOM',
           ReactDom: 'ReactDOM',
+          '@lingui/core': 'LinguiCore',
+          '@lingui/react': 'LinguiReact',
           '@mantine/core': 'MantineCore',
           '@mantine/notifications': 'MantineNotifications'
         })

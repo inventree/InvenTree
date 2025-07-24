@@ -32,7 +32,10 @@ export {
   getDetailUrl,
   navigateToLink
 } from './functions/Navigation';
-export { checkPluginVersion } from './functions/Plugins';
+export {
+  checkPluginVersion,
+  initPlugin
+} from './functions/Plugins';
 
 export {
   formatCurrencyValue,
