@@ -49,7 +49,10 @@ class UploadImageAdmin(admin.ModelAdmin):
 
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
-    list_display = ('model_type', 'model_id', 'image')
+    list_display = ('model_type', 'model_id', 'image', 'primary')
+
+    search_fields = ('image',)
+    list_filter = ('model_type',)
 
 
 @admin.register(common.models.DataOutput)
