@@ -5,6 +5,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -95,13 +96,24 @@ export default function PartParameterTemplateTable() {
     )
   });
 
-  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
+  const [selectedTemplate, setSelectedTemplate] = useState<any | undefined>(
     undefined
   );
 
+  const duplicateTemplate = useCreateApiFormModal({
+    url: ApiEndpoints.part_parameter_template_list,
+    title: t`Duplicate Parameter Template`,
+    table: table,
+    fields: useMemo(
+      () => ({ ...partParameterTemplateFields }),
+      [partParameterTemplateFields]
+    ),
+    initialData: selectedTemplate
+  });
+
   const editTemplate = useEditApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
-    pk: selectedTemplate,
+    pk: selectedTemplate?.pk,
     title: t`Edit Parameter Template`,
     table: table,
     fields: useMemo(
@@ -112,7 +124,7 @@ export default function PartParameterTemplateTable() {
 
   const deleteTemplate = useDeleteApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
-    pk: selectedTemplate,
+    pk: selectedTemplate?.pk,
     title: t`Delete Parameter Template`,
     table: table
   });
@@ -124,14 +136,21 @@ export default function PartParameterTemplateTable() {
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
-            setSelectedTemplate(record.pk);
+            setSelectedTemplate(record);
             editTemplate.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.part),
+          onClick: () => {
+            setSelectedTemplate(record);
+            duplicateTemplate.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            setSelectedTemplate(record.pk);
+            setSelectedTemplate(record);
             deleteTemplate.open();
           }
         })
@@ -155,6 +174,7 @@ export default function PartParameterTemplateTable() {
     <>
       {newTemplate.modal}
       {editTemplate.modal}
+      {duplicateTemplate.modal}
       {deleteTemplate.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_parameter_template_list)}
