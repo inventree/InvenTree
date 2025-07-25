@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 372
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v370 -> 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
+    - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
 
 v372 -> 2025-07-19 : https://github.com/inventree/InvenTree/pull/10056
     - Adds BOM validation information to the Part API
