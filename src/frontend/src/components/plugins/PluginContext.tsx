@@ -17,6 +17,7 @@ import {
   INVENTREE_REACT_VERSION,
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
+import { i18n } from '@lingui/core';
 import {
   useBulkEditApiFormModal,
   useCreateApiFormModal,
@@ -44,6 +45,7 @@ export const useInvenTreeContext = () => {
       },
       user: user,
       host: host,
+      i18n: i18n,
       locale: locale,
       api: api,
       queryClient: queryClient,

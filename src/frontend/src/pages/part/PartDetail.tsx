@@ -154,6 +154,118 @@ function RevisionSelector({
 }
 
 /**
+ * A hover-over component which displays information about the BOM validation for a given part
+ */
+function BomValidationInformation({
+  partId
+}: {
+  partId: number;
+}) {
+  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.bom_validate,
+      pk: partId,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
+
+  const validateBom = useApiFormModal({
+    url: ApiEndpoints.bom_validate,
+    method: 'PUT',
+    fields: {
+      valid: {
+        hidden: true,
+        value: true
+      }
+    },
+    title: t`Validate BOM`,
+    pk: partId,
+    preFormContent: (
+      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
+        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
+      </Alert>
+    ),
+    successMessage: t`BOM validated`,
+    onFormSuccess: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
+  if (bomInformationQuery.isFetching) {
+    return <Loader size='sm' />;
+  }
+
+  let icon: ReactNode;
+  let color: MantineColor;
+  let title = '';
+  let description = '';
+
+  if (bomInformation?.bom_validated) {
+    color = 'green';
+    icon = <IconListCheck />;
+    title = t`BOM Validated`;
+    description = t`The Bill of Materials for this part has been validated`;
+  } else if (bomInformation?.bom_checked_date) {
+    color = 'yellow';
+    icon = <IconExclamationCircle />;
+    title = t`BOM Not Validated`;
+    description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
+  } else {
+    color = 'red';
+    icon = <IconExclamationCircle />;
+    title = t`BOM Not Validated`;
+    description = t`The Bill of Materials for this part has not yet been validated`;
+  }
+
+  return (
+    <>
+      {validateBom.modal}
+      <Group gap='xs' justify='flex-end'>
+        {!bomInformation.bom_validated && (
+          <ActionButton
+            icon={<IconCircleCheck />}
+            color='green'
+            tooltip={t`Validate BOM`}
+            onClick={validateBom.open}
+          />
+        )}
+        <HoverCard position='bottom-end'>
+          <HoverCard.Target>
+            <ActionIcon
+              color={color}
+              variant='transparent'
+              aria-label='bom-validation-info'
+            >
+              {icon}
+            </ActionIcon>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <Alert color={color} icon={icon} title={title}>
+              <Stack gap='xs'>
+                <Text size='sm'>{description}</Text>
+                {bomInformation?.bom_checked_date && (
+                  <Text size='sm'>
+                    {t`Validated On`}: {bomInformation.bom_checked_date}
+                  </Text>
+                )}
+                {bomInformation?.bom_checked_by_detail && (
+                  <Group gap='xs'>
+                    <Text size='sm'>{t`Validated By`}: </Text>
+                    <RenderUser
+                      instance={bomInformation.bom_checked_by_detail}
+                    />
+                  </Group>
+                )}
+              </Stack>
+            </Alert>
+          </HoverCard.Dropdown>
+        </HoverCard>
+      </Group>
+    </>
+  );
+}
+
+/**
  * Detail view for a single Part instance
  */
 export default function PartDetail() {
@@ -188,14 +300,6 @@ export default function PartDetail() {
     },
     refetchOnMount: true
   });
-
-  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
-    useInstance({
-      endpoint: ApiEndpoints.bom_validate,
-      pk: id,
-      hasPrimaryKey: true,
-      refetchOnMount: true
-    });
 
   const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
     useInstance({
@@ -675,101 +779,6 @@ export default function PartDetail() {
     partRequirements
   ]);
 
-  const validateBom = useApiFormModal({
-    url: ApiEndpoints.bom_validate,
-    method: 'PUT',
-    fields: {
-      valid: {
-        hidden: true,
-        value: true
-      }
-    },
-    title: t`Validate BOM`,
-    pk: id,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
-        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
-      </Alert>
-    ),
-    successMessage: t`BOM validated`,
-    onFormSuccess: () => {
-      bomInformationQuery.refetch();
-    }
-  });
-
-  // Display information about the "validation" state of the BOM for this assembly
-  const bomValidIcon: ReactNode = useMemo(() => {
-    if (bomInformationQuery.isFetching) {
-      return <Loader size='sm' />;
-    }
-
-    let icon: ReactNode;
-    let color: MantineColor;
-    let title = '';
-    let description = '';
-
-    if (bomInformation?.bom_validated) {
-      color = 'green';
-      icon = <IconListCheck />;
-      title = t`BOM Validated`;
-      description = t`The Bill of Materials for this part has been validated`;
-    } else if (bomInformation?.bom_checked_date) {
-      color = 'yellow';
-      icon = <IconExclamationCircle />;
-      title = t`BOM Not Validated`;
-      description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
-    } else {
-      color = 'red';
-      icon = <IconExclamationCircle />;
-      title = t`BOM Not Validated`;
-      description = t`The Bill of Materials for this part has not yet been validated`;
-    }
-
-    return (
-      <Group gap='xs' justify='flex-end'>
-        {!bomInformation.bom_validated && (
-          <ActionButton
-            icon={<IconCircleCheck />}
-            color='green'
-            tooltip={t`Validate BOM`}
-            onClick={validateBom.open}
-          />
-        )}
-        <HoverCard position='bottom-end'>
-          <HoverCard.Target>
-            <ActionIcon
-              color={color}
-              variant='transparent'
-              aria-label='bom-validation-info'
-            >
-              {icon}
-            </ActionIcon>
-          </HoverCard.Target>
-          <HoverCard.Dropdown>
-            <Alert color={color} icon={icon} title={title}>
-              <Stack gap='xs'>
-                <Text size='sm'>{description}</Text>
-                {bomInformation?.bom_checked_date && (
-                  <Text size='sm'>
-                    {t`Validated On`}: {bomInformation.bom_checked_date}
-                  </Text>
-                )}
-                {bomInformation?.bom_checked_by_detail && (
-                  <Group gap='xs'>
-                    <Text size='sm'>{t`Validated By`}: </Text>
-                    <RenderUser
-                      instance={bomInformation.bom_checked_by_detail}
-                    />
-                  </Group>
-                )}
-              </Stack>
-            </Alert>
-          </HoverCard.Dropdown>
-        </HoverCard>
-      </Group>
-    );
-  }, [bomInformation, bomInformationQuery.isFetching]);
-
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
     return [
@@ -825,7 +834,7 @@ export default function PartDetail() {
       {
         name: 'bom',
         label: t`Bill of Materials`,
-        controls: bomValidIcon,
+        controls: <BomValidationInformation partId={part.pk ?? -1} />,
         icon: <IconListTree />,
         hidden: !part.assembly,
         content: part?.pk ? (
@@ -921,7 +930,7 @@ export default function PartDetail() {
         name: 'related_parts',
         label: t`Related Parts`,
         icon: <IconLayersLinked />,
-        content: <RelatedPartTable partId={part.pk ?? -1} />
+        content: <RelatedPartTable partId={part.pk} />
       },
       AttachmentPanel({
         model_type: ModelType.part,
@@ -932,15 +941,7 @@ export default function PartDetail() {
         model_id: part?.pk
       })
     ];
-  }, [
-    id,
-    part,
-    user,
-    bomValidIcon,
-    globalSettings,
-    userSettings,
-    detailsPanel
-  ]);
+  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -1187,7 +1188,6 @@ export default function PartDetail() {
     <>
       {editPart.modal}
       {deletePart.modal}
-      {validateBom.modal}
       {duplicatePart.modal}
       {orderPartsWizard.wizard}
       {findBySerialNumber.modal}

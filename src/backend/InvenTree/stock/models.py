@@ -650,8 +650,17 @@ class StockItem(
             )
             stock.tasks.rebuild_stock_item_tree(parent.tree_id)
 
+        # Fetch the new StockItem objects from the database
+        items = StockItem.objects.filter(part=part, serial__in=serials)
+
+        # Trigger a 'created' event for the new items
+        # Note that instead of a single event for each item,
+        # we trigger a single event for all items created
+        stock_ids = list(items.values_list('id', flat=True).distinct())
+        trigger_event(StockEvents.ITEMS_CREATED, ids=stock_ids)
+
         # Return the newly created StockItem objects
-        return StockItem.objects.filter(part=part, serial__in=serials)
+        return items
 
     @staticmethod
     def convert_serial_to_int(serial: str) -> int:
