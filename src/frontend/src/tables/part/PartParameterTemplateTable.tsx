@@ -96,7 +96,9 @@ export default function PartParameterTemplateTable() {
     )
   });
 
-  const [selectedTemplate, setSelectedTemplate] = useState<any | undefined>(undefined);
+  const [selectedTemplate, setSelectedTemplate] = useState<any | undefined>(
+    undefined
+  );
 
   const duplicateTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
