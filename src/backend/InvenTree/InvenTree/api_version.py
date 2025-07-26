@@ -1,12 +1,12 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 372
+INVENTREE_API_VERSION = 373
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
+v373 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
     - Adds PluginUserSetting model (and associated endpoints)
     - Remove NotificationSetting model (and associated endpoints)
 
