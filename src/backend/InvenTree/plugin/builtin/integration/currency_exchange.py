@@ -102,6 +102,7 @@ class ExchangeRateHostPlugin(
         rates = {}
 
         for symbol in symbols:
+            # The API returns rates in the format 'USDAUD', where 'USD' is the base currency, and 'AUD' (e.g.) is the target currency.
             if rate := data.get(f'{base_currency}{symbol}', None):
                 rates[symbol] = rate
 
