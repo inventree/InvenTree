@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-23 12:19+0000\n"
-"PO-Revision-Date: 2025-07-23 12:22\n"
+"POT-Creation-Date: 2025-07-26 03:07+0000\n"
+"PO-Revision-Date: 2025-07-26 03:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -404,8 +404,8 @@ msgstr "Referenční číslo je příliš velké"
 msgid "Invalid choice"
 msgstr "Neplatný výběr"
 
-#: InvenTree/models.py:849 common/models.py:1403 common/models.py:1830
-#: common/models.py:2089 common/models.py:2214 common/serializers.py:510
+#: InvenTree/models.py:849 common/models.py:1411 common/models.py:1838
+#: common/models.py:2097 common/models.py:2222 common/serializers.py:510
 #: company/models.py:634 generic/states/serializers.py:20 machine/models.py:24
 #: part/models.py:1052 part/models.py:3936 plugin/models.py:53
 #: report/models.py:216 stock/models.py:85
@@ -413,7 +413,7 @@ msgid "Name"
 msgstr "Název"
 
 #: InvenTree/models.py:855 build/models.py:251 common/models.py:170
-#: common/models.py:2221 common/models.py:2334 company/models.py:562
+#: common/models.py:2229 common/models.py:2342 company/models.py:562
 #: company/models.py:866 order/models.py:435 order/models.py:1662
 #: part/models.py:1075 part/models.py:3951 report/models.py:222
 #: report/models.py:806 report/models.py:832
@@ -426,7 +426,7 @@ msgstr "Popis"
 msgid "Description (optional)"
 msgstr "Popis (volitelně)"
 
-#: InvenTree/models.py:871 common/models.py:2387
+#: InvenTree/models.py:871 common/models.py:2395
 msgid "Path"
 msgstr "Cesta"
 
@@ -458,20 +458,20 @@ msgstr "Jedinečný hash dat čárového kódu"
 msgid "Existing barcode found"
 msgstr "Nalezen existující čárový kód"
 
-#: InvenTree/models.py:1257
+#: InvenTree/models.py:1258
 msgid "Task Failure"
 msgstr "Selhání úlohy"
 
-#: InvenTree/models.py:1258
+#: InvenTree/models.py:1259
 #, python-brace-format
 msgid "Background worker task '{f}' failed after {n} attempts"
 msgstr "Úloha na pozadí '{f}' se ani po {n} pokusech nezdařila"
 
-#: InvenTree/models.py:1285
+#: InvenTree/models.py:1286
 msgid "Server Error"
 msgstr "Chyba serveru"
 
-#: InvenTree/models.py:1286
+#: InvenTree/models.py:1287
 msgid "An error has been logged by the server."
 msgstr "Server zaznamenal chybu."
 
@@ -506,6 +506,14 @@ msgstr "Stahování obrázků ze vzdálené URL není povoleno"
 #: InvenTree/serializers.py:529
 msgid "Failed to download image from remote URL"
 msgstr "Nepodařilo se stáhnout obrázek ze vzdálené adresy URL"
+
+#: InvenTree/tasks.py:547
+msgid "Update Available"
+msgstr ""
+
+#: InvenTree/tasks.py:548
+msgid "An update for InvenTree is available"
+msgstr ""
 
 #: InvenTree/validators.py:28
 msgid "Invalid physical unit"
@@ -865,7 +873,7 @@ msgstr "Uživatel nebo skupina odpovědná za tento výrobní příkaz"
 msgid "External Link"
 msgstr "Externí odkaz"
 
-#: build/models.py:405 common/models.py:1977 part/models.py:1127
+#: build/models.py:405 common/models.py:1985 part/models.py:1127
 #: stock/models.py:1088
 msgid "Link to external URL"
 msgstr "Odkaz na externí URL"
@@ -887,7 +895,7 @@ msgstr "Kód projektu"
 msgid "Project code for this build order"
 msgstr "Kód projektu pro tento výrobní příkaz"
 
-#: build/models.py:695 build/models.py:818
+#: build/models.py:695 build/models.py:823
 msgid "Failed to offload task to complete build allocations"
 msgstr "Nepodařilo se uvolnit úlohu pro dokončení přidělení sestavy"
 
@@ -900,52 +908,52 @@ msgstr "Výrobní příkaz {build} byl dokončen"
 msgid "A build order has been completed"
 msgstr "Výrobní příkaz byl dokončen"
 
-#: build/models.py:899 build/serializers.py:393
+#: build/models.py:904 build/serializers.py:393
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "U sledovatelných dílů musí být uvedena sériová čísla"
 
-#: build/models.py:1030 build/models.py:1115
+#: build/models.py:1035 build/models.py:1120
 msgid "No build output specified"
 msgstr "Nebyl specifikováno žádný výstup sestavení"
 
-#: build/models.py:1033
+#: build/models.py:1038
 msgid "Build output is already completed"
 msgstr "Výstup sestavení je již dokončen"
 
-#: build/models.py:1036
+#: build/models.py:1041
 msgid "Build output does not match Build Order"
 msgstr "Výstup neodpovídá výrobnímu příkazu"
 
-#: build/models.py:1118 build/serializers.py:272 build/serializers.py:321
+#: build/models.py:1123 build/serializers.py:272 build/serializers.py:321
 #: build/serializers.py:941 order/models.py:710 order/serializers.py:604
 #: order/serializers.py:787 part/serializers.py:1803 stock/models.py:933
 #: stock/models.py:1818 stock/serializers.py:705
 msgid "Quantity must be greater than zero"
 msgstr "Množství musí být vyšší než nula"
 
-#: build/models.py:1122 build/serializers.py:276
+#: build/models.py:1127 build/serializers.py:276
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Množství nemůže být větší než výstupní množství"
 
-#: build/models.py:1185
+#: build/models.py:1190
 msgid "Build output has not passed all required tests"
 msgstr ""
 
-#: build/models.py:1188 build/serializers.py:584
+#: build/models.py:1193 build/serializers.py:584
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Výstup sestavy {serial} neprošel všemi požadavky"
 
-#: build/models.py:1575
+#: build/models.py:1573
 msgid "Build Order Line Item"
 msgstr "Řádková položka výrobního příkazu"
 
-#: build/models.py:1599
+#: build/models.py:1597
 msgid "Build object"
 msgstr "Vytvořit objekt"
 
-#: build/models.py:1611 build/models.py:1870 build/serializers.py:260
-#: build/serializers.py:306 build/serializers.py:1398 common/models.py:1333
+#: build/models.py:1609 build/models.py:1868 build/serializers.py:260
+#: build/serializers.py:306 build/serializers.py:1398 common/models.py:1341
 #: order/models.py:1602 order/models.py:2376 order/serializers.py:1692
 #: order/serializers.py:2153 part/models.py:3449 part/models.py:4471
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -965,36 +973,36 @@ msgstr "Vytvořit objekt"
 msgid "Quantity"
 msgstr "Množství"
 
-#: build/models.py:1612
+#: build/models.py:1610
 msgid "Required quantity for build order"
 msgstr "Vyžadované množství pro výrobní příkaz"
 
-#: build/models.py:1696
+#: build/models.py:1694
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Položka sestavení musí specifikovat výstup sestavení, protože hlavní díl je označen jako sledovatelný"
 
-#: build/models.py:1707
+#: build/models.py:1705
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Zabrané množství ({q}) nesmí překročit dostupné skladové množství ({a})"
 
-#: build/models.py:1728 order/models.py:2325
+#: build/models.py:1726 order/models.py:2325
 msgid "Stock item is over-allocated"
 msgstr "Skladová položka je nadměrně zabrána"
 
-#: build/models.py:1733 order/models.py:2328
+#: build/models.py:1731 order/models.py:2328
 msgid "Allocation quantity must be greater than zero"
 msgstr "Zabrané množství musí být větší než nula"
 
-#: build/models.py:1739
+#: build/models.py:1737
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Množství musí být 1 pro zřetězený sklad"
 
-#: build/models.py:1799
+#: build/models.py:1797
 msgid "Selected stock item does not match BOM line"
 msgstr "Vybraná skladová položka neodpovídá řádku kusovníku"
 
-#: build/models.py:1860 build/serializers.py:924 build/serializers.py:1234
+#: build/models.py:1858 build/serializers.py:924 build/serializers.py:1234
 #: order/serializers.py:1529 order/serializers.py:1550
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
 #: stock/models.py:457 stock/serializers.py:101 stock/serializers.py:817
@@ -1002,19 +1010,19 @@ msgstr "Vybraná skladová položka neodpovídá řádku kusovníku"
 msgid "Stock Item"
 msgstr "Skladové položky"
 
-#: build/models.py:1861
+#: build/models.py:1859
 msgid "Source stock item"
 msgstr "Zdrojová skladová položka"
 
-#: build/models.py:1871
+#: build/models.py:1869
 msgid "Stock quantity to allocate to build"
 msgstr "Skladové množství pro sestavení"
 
-#: build/models.py:1880
+#: build/models.py:1878
 msgid "Install into"
 msgstr "Instalovat do"
 
-#: build/models.py:1881
+#: build/models.py:1879
 msgid "Destination stock item"
 msgstr "Cílová skladová položka"
 
@@ -1385,32 +1393,37 @@ msgstr "Zrušeno"
 msgid "Complete"
 msgstr "Hotovo"
 
-#: build/tasks.py:199
+#: build/tasks.py:180
 msgid "Stock required for build order"
 msgstr "Zásoby potřebné pro výrobní příkaz"
 
-#: build/tasks.py:221
+#: build/tasks.py:190
+#, python-brace-format
+msgid "Build order {build} requires additional stock"
+msgstr ""
+
+#: build/tasks.py:214
 msgid "Overdue Build Order"
 msgstr "Opožděný výrobní příkaz"
 
-#: build/tasks.py:226
+#: build/tasks.py:219
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "Objednávka sestavy {bo} je nyní opožděná"
 
-#: common/api.py:712
+#: common/api.py:680
 msgid "Is Link"
 msgstr "Je odkaz"
 
-#: common/api.py:720
+#: common/api.py:688
 msgid "Is File"
 msgstr "Je soubor"
 
-#: common/api.py:763
+#: common/api.py:731
 msgid "User does not have permission to delete these attachments"
 msgstr "Uživatel nemá oprávnění k odstranění těchto příloh"
 
-#: common/api.py:780
+#: common/api.py:748
 msgid "User does not have permission to delete this attachment"
 msgstr "Uživatel nemá oprávnění k odstranění této přílohy"
 
@@ -1430,7 +1443,7 @@ msgstr "Nejsou uvedeny žádné platné kódy měn"
 msgid "No plugin"
 msgstr "Žádný plugin"
 
-#: common/models.py:100 common/models.py:125 common/models.py:2692
+#: common/models.py:100 common/models.py:125 common/models.py:2700
 msgid "Updated"
 msgstr "Aktualizováno"
 
@@ -1458,41 +1471,41 @@ msgstr "Popis projektu"
 msgid "User or group responsible for this project"
 msgstr "Uživatel nebo skupina odpovědná za tento projekt"
 
-#: common/models.py:768 common/models.py:1265 common/models.py:1303
+#: common/models.py:776 common/models.py:1273 common/models.py:1311
 msgid "Settings key"
 msgstr "Tlačítko nastavení"
 
-#: common/models.py:772
+#: common/models.py:780
 msgid "Settings value"
 msgstr "Hodnota nastavení"
 
-#: common/models.py:827
+#: common/models.py:835
 msgid "Chosen value is not a valid option"
 msgstr "Zvolená hodnota není platnou možností"
 
-#: common/models.py:843
+#: common/models.py:851
 msgid "Value must be a boolean value"
 msgstr "Hodnota musí být logická hodnota"
 
-#: common/models.py:851
+#: common/models.py:859
 msgid "Value must be an integer value"
 msgstr "Hodnota musí být celé číslo"
 
-#: common/models.py:859
+#: common/models.py:867
 msgid "Value must be a valid number"
 msgstr "Hodnota musí být platné číslo"
 
-#: common/models.py:884
+#: common/models.py:892
 msgid "Value does not pass validation checks"
 msgstr "Hodnota neprošla kontrolou platnosti"
 
-#: common/models.py:906
+#: common/models.py:914
 msgid "Key string must be unique"
 msgstr "Klíčový text musí být jedinečný"
 
-#: common/models.py:1311 common/models.py:1312 common/models.py:1416
-#: common/models.py:1417 common/models.py:1662 common/models.py:1663
-#: common/models.py:1993 common/models.py:1994 common/models.py:2375
+#: common/models.py:1319 common/models.py:1320 common/models.py:1424
+#: common/models.py:1425 common/models.py:1670 common/models.py:1671
+#: common/models.py:2001 common/models.py:2002 common/models.py:2383
 #: importer/models.py:97 part/models.py:3472 part/models.py:3559
 #: part/models.py:3633 part/models.py:3661 plugin/models.py:322
 #: plugin/models.py:323 report/templates/report/inventree_test_report.html:105
@@ -1500,111 +1513,111 @@ msgstr "Klíčový text musí být jedinečný"
 msgid "User"
 msgstr "Uživatel"
 
-#: common/models.py:1334
+#: common/models.py:1342
 msgid "Price break quantity"
 msgstr "Množství cenové slevy"
 
-#: common/models.py:1341 company/serializers.py:569 order/models.py:1679
+#: common/models.py:1349 company/serializers.py:569 order/models.py:1679
 #: order/models.py:2822
 msgid "Price"
 msgstr "Cena"
 
-#: common/models.py:1342
+#: common/models.py:1350
 msgid "Unit price at specified quantity"
 msgstr "Jednotková cena při stanoveném množství"
 
-#: common/models.py:1393 common/models.py:1578
+#: common/models.py:1401 common/models.py:1586
 msgid "Endpoint"
 msgstr "Koncový bod"
 
-#: common/models.py:1394
+#: common/models.py:1402
 msgid "Endpoint at which this webhook is received"
 msgstr "Koncový bod, ve kterém je tento webhook přijímán"
 
-#: common/models.py:1404
+#: common/models.py:1412
 msgid "Name for this webhook"
 msgstr "Název tohoto webhooku"
 
-#: common/models.py:1408 common/models.py:2234 common/models.py:2341
+#: common/models.py:1416 common/models.py:2242 common/models.py:2349
 #: company/models.py:198 company/models.py:840 machine/models.py:39
 #: part/models.py:1259 plugin/models.py:68 stock/api.py:608 users/models.py:201
 #: users/models.py:560 users/serializers.py:336
 msgid "Active"
 msgstr "Aktivní"
 
-#: common/models.py:1408
+#: common/models.py:1416
 msgid "Is this webhook active"
 msgstr "Je tento webhook aktivní"
 
-#: common/models.py:1424 users/models.py:178
+#: common/models.py:1432 users/models.py:178
 msgid "Token"
 msgstr "Token"
 
-#: common/models.py:1425
+#: common/models.py:1433
 msgid "Token for access"
 msgstr "Token pro přístup"
 
-#: common/models.py:1433
+#: common/models.py:1441
 msgid "Secret"
 msgstr "Tajný klíč"
 
-#: common/models.py:1434
+#: common/models.py:1442
 msgid "Shared secret for HMAC"
 msgstr "Sdílený tajný klíč pro HMAC"
 
-#: common/models.py:1542 common/models.py:2590
+#: common/models.py:1550 common/models.py:2598
 msgid "Message ID"
 msgstr "ID zprávy"
 
-#: common/models.py:1543 common/models.py:2580
+#: common/models.py:1551 common/models.py:2588
 msgid "Unique identifier for this message"
 msgstr "Unikátní identifikátor pro tuto zprávu"
 
-#: common/models.py:1551
+#: common/models.py:1559
 msgid "Host"
 msgstr "Hostitel"
 
-#: common/models.py:1552
+#: common/models.py:1560
 msgid "Host from which this message was received"
 msgstr "Hostitel, od kterého byla tato zpráva přijata"
 
-#: common/models.py:1560
+#: common/models.py:1568
 msgid "Header"
 msgstr "Záhlaví"
 
-#: common/models.py:1561
+#: common/models.py:1569
 msgid "Header of this message"
 msgstr "Záhlaví této zprávy"
 
-#: common/models.py:1568
+#: common/models.py:1576
 msgid "Body"
 msgstr "Tělo"
 
-#: common/models.py:1569
+#: common/models.py:1577
 msgid "Body of this message"
 msgstr "Tělo zprávy"
 
-#: common/models.py:1579
+#: common/models.py:1587
 msgid "Endpoint on which this message was received"
 msgstr "Koncový bod, na kterém byla zpráva přijata"
 
-#: common/models.py:1584
+#: common/models.py:1592
 msgid "Worked on"
 msgstr "Pracoval na"
 
-#: common/models.py:1585
+#: common/models.py:1593
 msgid "Was the work on this message finished?"
 msgstr "Byla práce na této zprávě dokončena?"
 
-#: common/models.py:1711
+#: common/models.py:1719
 msgid "Id"
 msgstr "ID"
 
-#: common/models.py:1713
+#: common/models.py:1721
 msgid "Title"
 msgstr "Název"
 
-#: common/models.py:1715 common/models.py:1976 company/models.py:183
+#: common/models.py:1723 common/models.py:1984 company/models.py:183
 #: company/models.py:486 company/models.py:553 company/models.py:857
 #: order/models.py:450 order/models.py:1632 order/models.py:2144
 #: part/models.py:1126
@@ -1612,525 +1625,521 @@ msgstr "Název"
 msgid "Link"
 msgstr "Odkaz"
 
-#: common/models.py:1717
+#: common/models.py:1725
 msgid "Published"
 msgstr "Zveřejněno"
 
-#: common/models.py:1719
+#: common/models.py:1727
 msgid "Author"
 msgstr "Autor"
 
-#: common/models.py:1721
+#: common/models.py:1729
 msgid "Summary"
 msgstr "Souhrn"
 
-#: common/models.py:1724 common/models.py:2557
+#: common/models.py:1732 common/models.py:2565
 msgid "Read"
 msgstr "Přečteno"
 
-#: common/models.py:1724
+#: common/models.py:1732
 msgid "Was this news item read?"
 msgstr "Byla tato novinka přečtena?"
 
-#: common/models.py:1741 company/models.py:194 part/models.py:1137
+#: common/models.py:1749 company/models.py:194 part/models.py:1137
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:35
 msgid "Image"
 msgstr "Obrazek"
 
-#: common/models.py:1741
+#: common/models.py:1749
 msgid "Image file"
 msgstr "Soubor obrázku"
 
-#: common/models.py:1753
+#: common/models.py:1761
 msgid "Target model type for this image"
 msgstr "Cílový typ modelu pro tento obrázek"
 
-#: common/models.py:1757
+#: common/models.py:1765
 msgid "Target model ID for this image"
 msgstr "Cílové ID modelu pro tento obrázek"
 
-#: common/models.py:1779
+#: common/models.py:1787
 msgid "Custom Unit"
 msgstr "Vlastní jednotka"
 
-#: common/models.py:1797
+#: common/models.py:1805
 msgid "Unit symbol must be unique"
 msgstr "Symbol jednotky musí být unikátní"
 
-#: common/models.py:1812
+#: common/models.py:1820
 msgid "Unit name must be a valid identifier"
 msgstr "Název jednotky musí být platný identifikátor"
 
-#: common/models.py:1831
+#: common/models.py:1839
 msgid "Unit name"
 msgstr "Název jednotky"
 
-#: common/models.py:1838
+#: common/models.py:1846
 msgid "Symbol"
 msgstr "Symbol"
 
-#: common/models.py:1839
+#: common/models.py:1847
 msgid "Optional unit symbol"
 msgstr "Volitelný symbol jednotky"
 
-#: common/models.py:1845
+#: common/models.py:1853
 msgid "Definition"
 msgstr "Definice"
 
-#: common/models.py:1846
+#: common/models.py:1854
 msgid "Unit definition"
 msgstr "Definice jednotky"
 
-#: common/models.py:1904 common/models.py:1967 stock/models.py:2903
+#: common/models.py:1912 common/models.py:1975 stock/models.py:2903
 #: stock/serializers.py:258
 msgid "Attachment"
 msgstr "Příloha"
 
-#: common/models.py:1921
+#: common/models.py:1929
 msgid "Missing file"
 msgstr "Chybějící soubor"
 
-#: common/models.py:1922
+#: common/models.py:1930
 msgid "Missing external link"
 msgstr "Chybějící externí odkaz"
 
-#: common/models.py:1959
+#: common/models.py:1967
 msgid "Model type"
 msgstr ""
 
-#: common/models.py:1960
+#: common/models.py:1968
 msgid "Target model type for image"
 msgstr ""
 
-#: common/models.py:1968
+#: common/models.py:1976
 msgid "Select file to attach"
 msgstr "Vyberte soubor k přiložení"
 
-#: common/models.py:1984
+#: common/models.py:1992
 msgid "Comment"
 msgstr "Komentář"
 
-#: common/models.py:1985
+#: common/models.py:1993
 msgid "Attachment comment"
 msgstr "Komentář přílohy"
 
-#: common/models.py:2001
+#: common/models.py:2009
 msgid "Upload date"
 msgstr "Datum nahrání"
 
-#: common/models.py:2002
+#: common/models.py:2010
 msgid "Date the file was uploaded"
 msgstr "Datum, kdy byl soubor nahrán"
 
-#: common/models.py:2006
+#: common/models.py:2014
 msgid "File size"
 msgstr "Velikost souboru"
 
-#: common/models.py:2006
+#: common/models.py:2014
 msgid "File size in bytes"
 msgstr "Velikost souboru v bytech"
 
-#: common/models.py:2044 common/serializers.py:659
+#: common/models.py:2052 common/serializers.py:659
 msgid "Invalid model type specified for attachment"
 msgstr "Uveden neplatný typ modelu pro přílohu"
 
-#: common/models.py:2065
+#: common/models.py:2073
 msgid "Custom State"
 msgstr "Vlastní stav"
 
-#: common/models.py:2066
+#: common/models.py:2074
 msgid "Custom States"
 msgstr "Vlastní stavy"
 
-#: common/models.py:2071
+#: common/models.py:2079
 msgid "Reference Status Set"
 msgstr "Nastavení referenčního stavu"
 
-#: common/models.py:2072
+#: common/models.py:2080
 msgid "Status set that is extended with this custom state"
 msgstr ""
 
-#: common/models.py:2076 generic/states/serializers.py:18
+#: common/models.py:2084 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "Logický klíč"
 
-#: common/models.py:2078
+#: common/models.py:2086
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr ""
 
-#: common/models.py:2083 common/models.py:2322 company/models.py:641
+#: common/models.py:2091 common/models.py:2330 company/models.py:641
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:2895
 msgid "Value"
 msgstr "Hodnota"
 
-#: common/models.py:2084
+#: common/models.py:2092
 msgid "Numerical value that will be saved in the models database"
 msgstr ""
 
-#: common/models.py:2090
+#: common/models.py:2098
 msgid "Name of the state"
 msgstr "Název stavu"
 
-#: common/models.py:2099 common/models.py:2328 generic/states/serializers.py:22
+#: common/models.py:2107 common/models.py:2336 generic/states/serializers.py:22
 msgid "Label"
 msgstr "Popisek"
 
-#: common/models.py:2100
+#: common/models.py:2108
 msgid "Label that will be displayed in the frontend"
 msgstr "Štítek, který bude zobrazen na webu"
 
-#: common/models.py:2107 generic/states/serializers.py:24
+#: common/models.py:2115 generic/states/serializers.py:24
 msgid "Color"
 msgstr "Barva"
 
-#: common/models.py:2108
+#: common/models.py:2116
 msgid "Color that will be displayed in the frontend"
 msgstr "Barva, která bude zobrazena ve frontendu"
 
-#: common/models.py:2116
+#: common/models.py:2124
 msgid "Model"
 msgstr "Model"
 
-#: common/models.py:2117
+#: common/models.py:2125
 msgid "Model this state is associated with"
 msgstr "Model, ke kterému je tento stav přiřazen"
 
-#: common/models.py:2132
+#: common/models.py:2140
 msgid "Model must be selected"
 msgstr "Musí být vybrán model"
 
-#: common/models.py:2135
+#: common/models.py:2143
 msgid "Key must be selected"
 msgstr "Musí být vybrán klíč"
 
-#: common/models.py:2138
+#: common/models.py:2146
 msgid "Logical key must be selected"
 msgstr "Musí být vybrán logický klíč"
 
-#: common/models.py:2142
+#: common/models.py:2150
 msgid "Key must be different from logical key"
 msgstr "Klíč se musí lišit od logického klíče"
 
-#: common/models.py:2149
+#: common/models.py:2157
 msgid "Valid reference status class must be provided"
 msgstr ""
 
-#: common/models.py:2155
+#: common/models.py:2163
 msgid "Key must be different from the logical keys of the reference status"
 msgstr ""
 
-#: common/models.py:2162
+#: common/models.py:2170
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr ""
 
-#: common/models.py:2169
+#: common/models.py:2177
 msgid "Name must be different from the names of the reference status"
 msgstr "Název se musí lišit od názvů referenčního statusu"
 
-#: common/models.py:2209 common/models.py:2316 part/models.py:3975
+#: common/models.py:2217 common/models.py:2324 part/models.py:3975
 msgid "Selection List"
 msgstr "Výběrové pole"
 
-#: common/models.py:2210
+#: common/models.py:2218
 msgid "Selection Lists"
 msgstr "Výběrová pole"
 
-#: common/models.py:2215
+#: common/models.py:2223
 msgid "Name of the selection list"
 msgstr "Název výběrového pole"
 
-#: common/models.py:2222
+#: common/models.py:2230
 msgid "Description of the selection list"
 msgstr "Popis výběrového pole"
 
-#: common/models.py:2228 part/models.py:1264
+#: common/models.py:2236 part/models.py:1264
 msgid "Locked"
 msgstr "Uzamčeno"
 
-#: common/models.py:2229
+#: common/models.py:2237
 msgid "Is this selection list locked?"
 msgstr "Je tento seznam výběrů uzamčen?"
 
-#: common/models.py:2235
+#: common/models.py:2243
 msgid "Can this selection list be used?"
 msgstr "Může být tento seznam výběru použit?"
 
-#: common/models.py:2243
+#: common/models.py:2251
 msgid "Source Plugin"
 msgstr "Zdrojový plugin"
 
-#: common/models.py:2244
+#: common/models.py:2252
 msgid "Plugin which provides the selection list"
 msgstr "Plugin, který poskytuje seznam výběru"
 
-#: common/models.py:2249
+#: common/models.py:2257
 msgid "Source String"
 msgstr "Zdrojový řetězec"
 
-#: common/models.py:2250
+#: common/models.py:2258
 msgid "Optional string identifying the source used for this list"
 msgstr "Volitelný řetězec identifikující zdroj použitý pro tento seznam"
 
-#: common/models.py:2259
+#: common/models.py:2267
 msgid "Default Entry"
 msgstr "Výchozí položka"
 
-#: common/models.py:2260
+#: common/models.py:2268
 msgid "Default entry for this selection list"
 msgstr "Výchozí položka pro tento seznam výběru"
 
-#: common/models.py:2265 common/models.py:2687
+#: common/models.py:2273 common/models.py:2695
 msgid "Created"
 msgstr "Vytvořeno"
 
-#: common/models.py:2266
+#: common/models.py:2274
 msgid "Date and time that the selection list was created"
 msgstr "Datum a čas vytvoření výběrového seznamu"
 
-#: common/models.py:2271
+#: common/models.py:2279
 msgid "Last Updated"
 msgstr "Poslední aktualizace"
 
-#: common/models.py:2272
+#: common/models.py:2280
 msgid "Date and time that the selection list was last updated"
 msgstr "Datum a čas poslední aktualizace výběrového seznamu"
 
-#: common/models.py:2306
+#: common/models.py:2314
 msgid "Selection List Entry"
 msgstr "Položka seznamu výběrů"
 
-#: common/models.py:2307
+#: common/models.py:2315
 msgid "Selection List Entries"
 msgstr "Položky seznamu výběrů"
 
-#: common/models.py:2317
+#: common/models.py:2325
 msgid "Selection list to which this entry belongs"
 msgstr "Seznam výběru, do kterého tato položka patří"
 
-#: common/models.py:2323
+#: common/models.py:2331
 msgid "Value of the selection list entry"
 msgstr ""
 
-#: common/models.py:2329
+#: common/models.py:2337
 msgid "Label for the selection list entry"
 msgstr ""
 
-#: common/models.py:2335
+#: common/models.py:2343
 msgid "Description of the selection list entry"
 msgstr ""
 
-#: common/models.py:2342
+#: common/models.py:2350
 msgid "Is this selection list entry active?"
 msgstr ""
 
-#: common/models.py:2360
+#: common/models.py:2368
 msgid "Barcode Scan"
 msgstr ""
 
-#: common/models.py:2364 importer/models.py:523 part/models.py:4146
+#: common/models.py:2372 importer/models.py:523 part/models.py:4146
 msgid "Data"
 msgstr "Data"
 
-#: common/models.py:2365
+#: common/models.py:2373
 msgid "Barcode data"
 msgstr "Data čárového kódu"
 
-#: common/models.py:2376
+#: common/models.py:2384
 msgid "User who scanned the barcode"
 msgstr "Uživatel, který naskenoval čárový kód"
 
-#: common/models.py:2381 importer/models.py:66
+#: common/models.py:2389 importer/models.py:66
 msgid "Timestamp"
 msgstr ""
 
-#: common/models.py:2382
+#: common/models.py:2390
 msgid "Date and time of the barcode scan"
 msgstr "Datum a čas skenování čárového kódu"
 
-#: common/models.py:2388
+#: common/models.py:2396
 msgid "URL endpoint which processed the barcode"
 msgstr ""
 
-#: common/models.py:2395 order/models.py:1669 plugin/serializers.py:93
+#: common/models.py:2403 order/models.py:1669 plugin/serializers.py:93
 msgid "Context"
 msgstr "Kontext"
 
-#: common/models.py:2396
+#: common/models.py:2404
 msgid "Context data for the barcode scan"
 msgstr ""
 
-#: common/models.py:2403
+#: common/models.py:2411
 msgid "Response"
 msgstr ""
 
-#: common/models.py:2404
+#: common/models.py:2412
 msgid "Response data from the barcode scan"
 msgstr ""
 
-#: common/models.py:2410 report/templates/report/inventree_test_report.html:103
+#: common/models.py:2418 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:2889
 msgid "Result"
 msgstr "Výsledek"
 
-#: common/models.py:2411
+#: common/models.py:2419
 msgid "Was the barcode scan successful?"
 msgstr "Bylo skenování čárového kódu úspěšné?"
 
-#: common/models.py:2493
+#: common/models.py:2501
 msgid "An error occurred"
 msgstr ""
 
-#: common/models.py:2539
+#: common/models.py:2547
 msgid "Email Message"
 msgstr ""
 
-#: common/models.py:2540
+#: common/models.py:2548
 msgid "Email Messages"
 msgstr ""
 
-#: common/models.py:2547
+#: common/models.py:2555
 msgid "Announced"
 msgstr ""
 
-#: common/models.py:2549
+#: common/models.py:2557
 msgid "Sent"
 msgstr ""
 
-#: common/models.py:2550
+#: common/models.py:2558
 msgid "Failed"
 msgstr ""
 
-#: common/models.py:2553
+#: common/models.py:2561
 msgid "Delivered"
 msgstr ""
 
-#: common/models.py:2561
+#: common/models.py:2569
 msgid "Confirmed"
 msgstr ""
 
-#: common/models.py:2567
+#: common/models.py:2575
 msgid "Inbound"
 msgstr ""
 
-#: common/models.py:2568
+#: common/models.py:2576
 msgid "Outbound"
 msgstr ""
 
-#: common/models.py:2573
+#: common/models.py:2581
 msgid "No Reply"
 msgstr ""
 
-#: common/models.py:2574
+#: common/models.py:2582
 msgid "Track Delivery"
 msgstr ""
 
-#: common/models.py:2575
+#: common/models.py:2583
 msgid "Track Read"
 msgstr ""
 
-#: common/models.py:2576
+#: common/models.py:2584
 msgid "Track Click"
 msgstr ""
 
-#: common/models.py:2579 common/models.py:2674
+#: common/models.py:2587 common/models.py:2682
 msgid "Global ID"
 msgstr ""
 
-#: common/models.py:2592
+#: common/models.py:2600
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr ""
 
-#: common/models.py:2599
+#: common/models.py:2607
 msgid "Thread ID"
 msgstr ""
 
-#: common/models.py:2601
+#: common/models.py:2609
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr ""
 
-#: common/models.py:2610
+#: common/models.py:2618
 msgid "Thread"
 msgstr ""
 
-#: common/models.py:2611
+#: common/models.py:2619
 msgid "Linked thread for this message"
 msgstr ""
 
-#: common/models.py:2627
+#: common/models.py:2635
 msgid "Prioriy"
 msgstr ""
 
-#: common/models.py:2661
+#: common/models.py:2669
 msgid "Email Thread"
 msgstr ""
 
-#: common/models.py:2662
+#: common/models.py:2670
 msgid "Email Threads"
 msgstr ""
 
-#: common/models.py:2668 generic/states/serializers.py:16 plugin/models.py:45
+#: common/models.py:2676 generic/states/serializers.py:16 plugin/models.py:45
 #: users/models.py:119
 msgid "Key"
 msgstr "Klíč"
 
-#: common/models.py:2671
+#: common/models.py:2679
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr ""
 
-#: common/models.py:2675
+#: common/models.py:2683
 msgid "Unique identifier for this thread"
 msgstr ""
 
-#: common/models.py:2682
+#: common/models.py:2690
 msgid "Started Internal"
 msgstr ""
 
-#: common/models.py:2683
+#: common/models.py:2691
 msgid "Was this thread started internally?"
 msgstr ""
 
-#: common/models.py:2688
+#: common/models.py:2696
 msgid "Date and time that the thread was created"
 msgstr ""
 
-#: common/models.py:2693
+#: common/models.py:2701
 msgid "Date and time that the thread was last updated"
 msgstr ""
 
-#: common/notifications.py:332
+#: common/notifications.py:143
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr "Nový {verbose_name}"
 
-#: common/notifications.py:334
+#: common/notifications.py:145
 msgid "A new order has been created and assigned to you"
 msgstr "Byla vytvořena nová objednávka a přiřazena k vám"
 
-#: common/notifications.py:340
+#: common/notifications.py:151
 #, python-brace-format
 msgid "{verbose_name} canceled"
 msgstr "{verbose_name} zrušeno"
 
-#: common/notifications.py:342
+#: common/notifications.py:153
 msgid "A order that is assigned to you was canceled"
 msgstr "Objednávka, která je vám přidělena, byla zrušena"
 
-#: common/notifications.py:348 common/notifications.py:355 order/api.py:577
+#: common/notifications.py:159 common/notifications.py:166 order/api.py:577
 msgid "Items Received"
 msgstr "Přijaté položky"
 
-#: common/notifications.py:350
+#: common/notifications.py:161
 msgid "Items have been received against a purchase order"
 msgstr ""
 
-#: common/notifications.py:357
+#: common/notifications.py:168
 msgid "Items have been received against a return order"
-msgstr ""
-
-#: common/notifications.py:505
-msgid "Error raised by plugin"
 msgstr ""
 
 #: common/serializers.py:132
@@ -6756,7 +6765,7 @@ msgstr ""
 msgid "Quantity to allocate"
 msgstr ""
 
-#: plugin/base/label/label.py:39
+#: plugin/base/label/label.py:41
 msgid "Label printing failed"
 msgstr ""
 
@@ -6822,7 +6831,9 @@ msgstr ""
 #: plugin/builtin/exporter/bom_exporter.py:61
 #: plugin/builtin/exporter/inventree_exporter.py:17
 #: plugin/builtin/exporter/part_parameter_exporter.py:36
-#: plugin/builtin/integration/core_notifications.py:33
+#: plugin/builtin/integration/core_notifications.py:25
+#: plugin/builtin/integration/core_notifications.py:64
+#: plugin/builtin/integration/core_notifications.py:120
 #: plugin/builtin/integration/currency_exchange.py:21
 #: plugin/builtin/integration/part_notifications.py:25
 #: plugin/builtin/labels/inventree_label.py:26
@@ -7031,41 +7042,47 @@ msgstr ""
 msgid "Exporter for part parameter data"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:32
-msgid "InvenTree Notifications"
+#: plugin/builtin/integration/core_notifications.py:23
+msgid "InvenTree UI Notifications"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:34
-msgid "Integrated outgoing notification methods"
+#: plugin/builtin/integration/core_notifications.py:26
+msgid "Integrated UI notification methods"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:39
-#: plugin/builtin/integration/core_notifications.py:78
-msgid "Enable email notifications"
-msgstr "Povolit e-mailová oznámení"
-
-#: plugin/builtin/integration/core_notifications.py:40
-#: plugin/builtin/integration/core_notifications.py:79
-msgid "Allow sending of emails for event notifications"
+#: plugin/builtin/integration/core_notifications.py:62
+msgid "InvenTree Email Notifications"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:45
-msgid "Enable slack notifications"
+#: plugin/builtin/integration/core_notifications.py:65
+msgid "Integrated email notification methods"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:47
-msgid "Allow sending of slack channel messages for event notifications"
+#: plugin/builtin/integration/core_notifications.py:70
+msgid "Allow email notifications"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:53
+#: plugin/builtin/integration/core_notifications.py:71
+msgid "Allow email notifications to be sent to this user"
+msgstr ""
+
+#: plugin/builtin/integration/core_notifications.py:118
+msgid "InvenTree Slack Notifications"
+msgstr ""
+
+#: plugin/builtin/integration/core_notifications.py:121
+msgid "Integrated Slack notification methods"
+msgstr ""
+
+#: plugin/builtin/integration/core_notifications.py:126
 msgid "Slack incoming webhook url"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:54
+#: plugin/builtin/integration/core_notifications.py:127
 msgid "URL that is used to send messages to a slack channel"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:164
+#: plugin/builtin/integration/core_notifications.py:157
 msgid "Open link"
 msgstr "Otevřít odkaz"
 
@@ -7329,15 +7346,11 @@ msgstr ""
 msgid "Package Plugin"
 msgstr ""
 
-#: plugin/models.py:268
+#: plugin/models.py:268 plugin/models.py:314
 msgid "Plugin"
 msgstr "Plugin"
 
-#: plugin/models.py:315
-msgid "Method"
-msgstr ""
-
-#: plugin/plugin.py:310
+#: plugin/plugin.py:311
 msgid "No author found"
 msgstr ""
 
@@ -7357,34 +7370,58 @@ msgid "Plugin requires at most version {v}"
 msgstr "Plugin vyžaduje nanejvýš verzi {v}"
 
 #: plugin/samples/integration/sample.py:52
-msgid "Enable PO"
+msgid "User Setting 1"
 msgstr ""
 
 #: plugin/samples/integration/sample.py:53
-msgid "Enable PO functionality in InvenTree interface"
+msgid "A user setting that can be changed by the user"
+msgstr ""
+
+#: plugin/samples/integration/sample.py:57
+msgid "User Setting 2"
 msgstr ""
 
 #: plugin/samples/integration/sample.py:58
-msgid "API Key"
-msgstr "API klíč"
-
-#: plugin/samples/integration/sample.py:59
-msgid "Key required for accessing external API"
+msgid "Another user setting"
 msgstr ""
 
 #: plugin/samples/integration/sample.py:63
-msgid "Numerical"
+msgid "User Setting 3"
 msgstr ""
 
 #: plugin/samples/integration/sample.py:64
+msgid "A user setting with choices"
+msgstr ""
+
+#: plugin/samples/integration/sample.py:72
+msgid "Enable PO"
+msgstr ""
+
+#: plugin/samples/integration/sample.py:73
+msgid "Enable PO functionality in InvenTree interface"
+msgstr ""
+
+#: plugin/samples/integration/sample.py:78
+msgid "API Key"
+msgstr "API klíč"
+
+#: plugin/samples/integration/sample.py:79
+msgid "Key required for accessing external API"
+msgstr ""
+
+#: plugin/samples/integration/sample.py:83
+msgid "Numerical"
+msgstr ""
+
+#: plugin/samples/integration/sample.py:84
 msgid "A numerical setting"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:70
+#: plugin/samples/integration/sample.py:90
 msgid "Choice Setting"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:71
+#: plugin/samples/integration/sample.py:91
 msgid "A setting with multiple choices"
 msgstr ""
 
@@ -7547,6 +7584,10 @@ msgstr ""
 #: plugin/serializers.py:255
 msgid "Delete the plugin configuration from the database"
 msgstr "Odstranit konfiguraci pluginu z databáze"
+
+#: plugin/serializers.py:286
+msgid "The user for which this setting applies"
+msgstr ""
 
 #: report/api.py:43 report/serializers.py:103 report/serializers.py:153
 msgid "Items"
