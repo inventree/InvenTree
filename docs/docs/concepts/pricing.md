@@ -54,11 +54,15 @@ The exchange rate data is provided by a [currency plugin](../plugins/mixins/curr
 
 InvenTree includes a default currency plugin which fetches exchange rate data from the [frankfurter](https://frankfurter.dev/) API, which is an open source currency API made freely available.
 
-However, the user can configure a custom currency plugin to fetch exchange rate data from a different source. If a different currency exchange backend is needed, or a custom implementation is desired, the currency exchange framework can be extended [via plugins](../plugins/mixins/currency.md). Plugins which implement custom currency exchange frameworks can be easily integrated into the InvenTree framework.
+Additionally, a plugin which fetches exchange rate data from [exchangerate.host](https://exchangerate.host/) is also available. This plugin requires an API key, which can be obtained from the exchangerate.host website.
+
+If requireed, the user can configure a custom currency plugin to fetch exchange rate data from a different source. If a different currency exchange backend is needed, or a custom implementation is desired, the currency exchange framework can be extended [via plugins](../plugins/mixins/currency.md). Plugins which implement custom currency exchange frameworks can be easily integrated into the InvenTree framework.
 
 ### Exchange Rate Updates
 
 Currency exchange rates are updated periodically, using the configured currency plugin. The update frequency can be configured in the InvenTree settings.
+
+A currency exchange update can be triggered manually from the InvenTree settings page.
 
 ## Pricing Settings
 
