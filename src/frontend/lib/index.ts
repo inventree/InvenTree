@@ -15,6 +15,16 @@ export { UserRoles, UserPermissions } from './enums/Roles';
 export type { InvenTreePluginContext } from './types/Plugins';
 export type { RowAction, RowViewProps } from './types/Tables';
 
+export type {
+  ApiFormFieldChoice,
+  ApiFormFieldHeader,
+  ApiFormFieldType,
+  ApiFormFieldSet,
+  ApiFormProps,
+  ApiFormModalProps,
+  BulkEditApiFormModalProps
+} from './types/Forms';
+
 // Common utility functions
 export { apiUrl } from './functions/Api';
 export {
@@ -22,7 +32,10 @@ export {
   getDetailUrl,
   navigateToLink
 } from './functions/Navigation';
-export { checkPluginVersion } from './functions/Plugins';
+export {
+  checkPluginVersion,
+  initPlugin
+} from './functions/Plugins';
 
 export {
   formatCurrencyValue,
@@ -31,7 +44,11 @@ export {
 } from './functions/Formatting';
 
 // Common UI components
-export { ActionButton } from './components/ActionButton';
+export {
+  ActionButton,
+  type ActionButtonProps
+} from './components/ActionButton';
+export { AddItemButton } from './components/AddItemButton';
 export { ButtonMenu } from './components/ButtonMenu';
 export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';

@@ -22,6 +22,7 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { isTrue } from '@lib/functions/Conversion';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormFieldSet,
@@ -372,6 +373,11 @@ export function ApiForm({
         hasFiles = true;
       }
 
+      // Ensure any boolean values are actually boolean
+      if (field_type === 'boolean') {
+        value = isTrue(value) || false;
+      }
+
       // Stringify any JSON objects
       if (typeof value === 'object') {
         switch (field_type) {
@@ -558,7 +564,14 @@ export function ApiForm({
         <LoadingOverlay visible={isLoading} zIndex={1010} />
 
         {/* Attempt at making fixed footer with scroll area */}
-        <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
+        <Paper
+          mah={'65vh'}
+          style={{
+            overflowY: 'auto',
+            paddingRight: '15px',
+            paddingLeft: '5px'
+          }}
+        >
           <div>
             {/* Form Fields */}
             <Stack gap='sm'>

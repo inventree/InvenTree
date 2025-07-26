@@ -1,9 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
+import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconExclamationCircle,
   IconFileArrowLeft,
   IconLock,
   IconSwitch3
@@ -12,6 +13,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -25,7 +27,6 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
@@ -34,7 +35,6 @@ import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { bomItemFields, useEditBomSubstitutesForm } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
-  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -105,17 +105,26 @@ export function BomTable({
 
           return (
             part && (
-              <TableHoverCard
-                value={
-                  <Thumbnail
-                    src={part.thumbnail || part.image}
-                    alt={part.description}
-                    text={part.full_name}
-                  />
-                }
-                extra={extra}
-                title={t`Part Information`}
-              />
+              <Group gap='xs' justify='space-between' wrap='nowrap'>
+                <TableHoverCard
+                  value={
+                    <Thumbnail
+                      src={part.thumbnail || part.image}
+                      alt={part.description}
+                      text={part.full_name}
+                    />
+                  }
+                  extra={extra}
+                  title={t`Part Information`}
+                />
+                {!record.validated && (
+                  <Tooltip label={t`This BOM item has not been validated`}>
+                    <ActionIcon color='red' variant='transparent' size='sm'>
+                      <IconExclamationCircle />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </Group>
             )
           );
         }
@@ -499,26 +508,6 @@ export function BomTable({
     }
   });
 
-  const validateBom = useApiFormModal({
-    url: ApiEndpoints.bom_validate,
-    method: 'PUT',
-    fields: {
-      valid: {
-        hidden: true,
-        value: true
-      }
-    },
-    title: t`Validate BOM`,
-    pk: partId,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
-        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
-      </Alert>
-    ),
-    successMessage: t`BOM validated`,
-    onFormSuccess: () => table.refreshTable()
-  });
-
   const validateBomItem = useCallback((record: any) => {
     const url = apiUrl(ApiEndpoints.bom_item_validate, record.pk);
 
@@ -608,13 +597,6 @@ export function BomTable({
         icon={<IconFileArrowLeft />}
         onClick={() => importBomItem.open()}
       />,
-      <ActionButton
-        key='validate-bom'
-        hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
-        tooltip={t`Validate BOM`}
-        icon={<IconCircleCheck />}
-        onClick={() => validateBom.open()}
-      />,
       <AddItemButton
         key='add-bom-item'
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
@@ -629,7 +611,6 @@ export function BomTable({
       {importBomItem.modal}
       {newBomItem.modal}
       {editBomItem.modal}
-      {validateBom.modal}
       {deleteBomItem.modal}
       {editSubstitues.modal}
       <Stack gap='xs'>

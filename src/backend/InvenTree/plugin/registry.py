@@ -4,6 +4,7 @@
 - Manages setup and teardown of plugin class instances
 """
 
+import functools
 import importlib
 import importlib.util
 import os
@@ -43,6 +44,37 @@ from .plugin import InvenTreePlugin
 logger = structlog.get_logger('inventree')
 
 
+def registry_entrypoint(check_reload: bool = True, default_value: Any = None) -> Any:
+    """Function decorator for registry entrypoints methods.
+
+    - Ensure that the registry is ready before calling the method.
+    - Check if the registry needs to be reloaded.
+    """
+
+    def decorator(method):
+        """Decorator to ensure registry is ready before calling the method."""
+
+        @functools.wraps(method)
+        def wrapper(self, *args, **kwargs):
+            """Wrapper function to ensure registry is ready."""
+            if not self.ready:
+                logger.warning(
+                    "Plugin registry is not ready - cannot call method '%s'",
+                    method.__name__,
+                )
+                return default_value
+
+            # Check if the registry needs to be reloaded
+            if check_reload:
+                self.check_reload()
+
+            return method(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 class PluginsRegistry:
     """The PluginsRegistry class."""
 
@@ -60,13 +92,15 @@ class PluginsRegistry:
         'inventreebarcode',
         'bom-exporter',
         'inventree-exporter',
-        'inventreecorenotificationsplugin',
+        'inventree-ui-notification',
+        'inventree-email-notification',
         'inventreecurrencyexchange',
-        'inventreecorenotificationsplugin',
         'inventreelabel',
         'inventreelabelmachine',
         'parameter-exporter',
     ]
+
+    ready: bool
 
     def __init__(self) -> None:
         """Initialize registry.
@@ -81,6 +115,8 @@ class PluginsRegistry:
         self.plugins_full: dict[
             str, InvenTreePlugin
         ] = {}  # List of all plugin instances
+
+        self.ready = False  # Marks if the registry is ready to be used
 
         # Keep an internal hash of the plugin registry state
         self.registry_hash = None
@@ -100,11 +136,35 @@ class PluginsRegistry:
 
         self.installed_apps = []  # Holds all added plugin_paths
 
+    def set_ready(self):
+        """Set the registry as ready to be used.
+
+        This method should only be called once per application start,
+        after all apps have been loaded and the registry is fully initialized.
+        """
+        from common.models import InvenTreeSetting
+
+        self.ready = True
+
+        # Install plugins from file (if required)
+        if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False, cache=False):
+            # make sure all plugins are installed
+            registry.install_plugin_file()
+
+        # Perform initial plugin discovery
+        self.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+    @property
+    def is_ready(self) -> bool:
+        """Return True if the plugin registry is ready to be used."""
+        return self.ready
+
     @property
     def is_loading(self) -> bool:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
+    @registry_entrypoint()
     def get_plugin(
         self, slug: str, active: bool = True, with_mixin: Optional[str] = None
     ) -> InvenTreePlugin:
@@ -118,9 +178,6 @@ class PluginsRegistry:
         Returns:
             InvenTreePlugin or None: The plugin instance if found, otherwise None.
         """
-        # Check if the registry needs to be reloaded
-        self.check_reload()
-
         if slug not in self.plugins:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return None
@@ -169,6 +226,7 @@ class PluginsRegistry:
 
         return cfg
 
+    @registry_entrypoint()
     def set_plugin_state(self, slug: str, state: bool):
         """Set the state(active/inactive) of a plugin.
 
@@ -176,9 +234,6 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
-        # Check if the registry needs to be reloaded
-        self.check_reload()
-
         if slug not in self.plugins_full:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
@@ -190,6 +245,7 @@ class PluginsRegistry:
         # Update the registry hash value
         self.update_plugin_hash()
 
+    @registry_entrypoint()
     def call_plugin_function(self, slug: str, func: str, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
@@ -198,9 +254,6 @@ class PluginsRegistry:
 
         Instead, any error messages are returned to the worker.
         """
-        # Check if the registry needs to be reloaded
-        self.check_reload()
-
         raise_error = kwargs.pop('raise_error', True)
 
         plugin = self.get_plugin(slug)
@@ -220,6 +273,8 @@ class PluginsRegistry:
         return plugin_func(*args, **kwargs)
 
     # region registry functions
+
+    @registry_entrypoint(default_value=[])
     def with_mixin(
         self, mixin: str, active: bool = True, builtin: Optional[bool] = None
     ) -> list[InvenTreePlugin]:
@@ -230,9 +285,6 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
-        # Check if the registry needs to be loaded
-        self.check_reload()
-
         mixin = str(mixin).lower().strip()
 
         result = []
@@ -304,6 +356,7 @@ class PluginsRegistry:
 
         logger.info('Finished unloading plugins')
 
+    @registry_entrypoint(check_reload=False)
     def reload_plugins(
         self,
         full_reload: bool = False,
@@ -369,7 +422,7 @@ class PluginsRegistry:
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
 
         except Exception as e:
-            logger.exception('Expected error during plugin reload: %s', e)
+            logger.exception('Unexpected error during plugin reload: %s', e)
             log_error('reload_plugins', scope='plugins')
 
         finally:
@@ -900,6 +953,7 @@ class PluginsRegistry:
 
         return str(data.hexdigest())
 
+    @registry_entrypoint(default_value=False, check_reload=False)
     def check_reload(self):
         """Determine if the registry needs to be reloaded.
 

@@ -677,12 +677,15 @@ class AdminTestCase(InvenTreeAPITestCase):
         app_app, app_mdl = model._meta.app_label, model._meta.model_name
 
         # 'Test listing
-        response = self.get(reverse(f'admin:{app_app}_{app_mdl}_changelist'))
+        response = self.get(
+            reverse(f'admin:{app_app}_{app_mdl}_changelist'), max_query_count=300
+        )
         self.assertEqual(response.status_code, 200)
 
         # Test change view
         response = self.get(
-            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk})
+            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk}),
+            max_query_count=300,
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Django site admin')

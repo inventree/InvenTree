@@ -114,6 +114,42 @@ Select a part in the list and click on "Add Substitute" button to confirm.
 
 Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
 
+## BOM Validation
+
+InvenTree maintains a "validated" flag for each assembled part. When set, this flag indicates that the production requirements for this part have been validated, and that the BOM has not been changed since the last validation.
+
+A BOM "checksum" is stored against each part, which is a hash of the BOM line items associated with that part. This checksum is used to determine whether the BOM has changed since the last validation. Whenever a BOM line item is created, adjusted or deleted, any assemblies which are associated with that BOM must be validated to ensure that the BOM is still valid.
+
+### BOM Checksum
+
+The following BOM item fields are used when calculating the BOM checksum:
+
+- *Assembly ID* - The unique identifier of the assembly associated with the BOM line item.
+- *Component ID* - The unique identifier of the component part associated with the BOM line item.
+- *Reference* - The reference field of the BOM line item.
+- *Quantity* - The quantity of the component part required for the assembly.
+- *Attrition* - The attrition percentage of the BOM line item.
+- *Setup Quantity* - The setup quantity of the BOM line item.
+- *Rounding Multiple* - The rounding multiple of the BOM line item.
+- *Consumable* - Whether the BOM line item is consumable.
+- *Inherited* - Whether the BOM line item is inherited.
+- *Optional* - Whether the BOM line item is optional.
+- *Allow Variants* - Whether the BOM line item allows variants.
+
+If any of these fields are changed, the BOM checksum is recalculated, and any assemblies associated with the BOM are marked as "not validated".
+
+The user must then manually revalidate the BOM for the assembly/
+
+### BOM Validation Status
+
+To view the "validation" status of an assembled part, navigate to the "Bill of Materials" tab of the part detail page. The validation status is displayed at the top of the BOM table:
+
+{{ image("build/bom_validated.png", "BOM Validation Status") }}
+
+If the BOM requires revalidation, the status will be displayed as "Not Validated". Additionally the "Validate BOM' button will be displayed at the top of the BOM table, allowing the user to revalidate the BOM.
+
+{{ image("build/bom_invalid.png", "BOM Not Validated") }}
+
 ## Required Quantity Calculation
 
 When a new [Build Order](./build.md) is created, the required production quantity of each component part is calculated based on the BOM line items defined for the assembly being built. To calculate the required production quantity of a component part, the following considerations are made:

@@ -315,6 +315,64 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         self.assertEqual(response.data['value'], '456')
 
+    def test_plugin_user_settings(self):
+        """Test the PluginUserSetting API endpoints."""
+        # Fetch user settings for invalid plugin
+        response = self.get(
+            reverse(
+                'api-plugin-user-setting-list', kwargs={'plugin': 'invalid-plugin'}
+            ),
+            expected_code=404,
+        )
+
+        # Fetch all user settings for the 'email' plugin
+        url = reverse(
+            'api-plugin-user-setting-list',
+            kwargs={'plugin': 'inventree-email-notification'},
+        )
+
+        response = self.get(url, expected_code=200)
+
+        settings_keys = [item['key'] for item in response.data]
+        self.assertIn('NOTIFY_BY_EMAIL', settings_keys)
+
+        # Fetch user settings for an invalid key
+        self.get(
+            reverse(
+                'api-plugin-user-setting-detail',
+                kwargs={'plugin': 'inventree-email-notification', 'key': 'INVALID_KEY'},
+            ),
+            expected_code=404,
+        )
+
+        # Fetch user setting detail for a valid key
+        response = self.get(
+            reverse(
+                'api-plugin-user-setting-detail',
+                kwargs={
+                    'plugin': 'inventree-email-notification',
+                    'key': 'NOTIFY_BY_EMAIL',
+                },
+            ),
+            expected_code=200,
+        )
+
+        # User ID must match the current user
+        self.assertEqual(response.data['user'], self.user.pk)
+
+        # Check for expected values
+        for k in [
+            'pk',
+            'key',
+            'value',
+            'name',
+            'description',
+            'type',
+            'model_name',
+            'user',
+        ]:
+            self.assertIn(k, response.data)
+
     def test_plugin_metadata(self):
         """Test metadata endpoint for plugin."""
         self.user.is_superuser = True

@@ -3,6 +3,7 @@ import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowCancelAction,
@@ -17,7 +18,6 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import dayjs from 'dayjs';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields

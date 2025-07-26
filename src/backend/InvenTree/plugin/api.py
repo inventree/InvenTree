@@ -31,7 +31,7 @@ from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.base.ui.api import ui_plugins_api_urls
-from plugin.models import PluginConfig, PluginSetting
+from plugin.models import PluginConfig, PluginSetting, PluginUserSetting
 from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
 
@@ -332,19 +332,19 @@ def check_plugin(
 
     # Check that the 'plugin' specified is valid
     try:
-        plugin_cgf = PluginConfig.objects.filter(**filters).first()
+        plugin_cfg = PluginConfig.objects.filter(**filters).first()
     except PluginConfig.DoesNotExist:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
 
-    if plugin_cgf is None:
+    if plugin_cfg is None:
         # This only occurs if the plugin mechanism broke
         raise NotFound(detail=f"Plugin '{ref}' not installed")  # pragma: no cover
 
     # Check that the plugin is activated
-    if not plugin_cgf.active:
+    if not plugin_cfg.active:
         raise NotFound(detail=f"Plugin '{ref}' is not active")
 
-    plugin = plugin_cgf.plugin
+    plugin = plugin_cfg.plugin
 
     if not plugin:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
@@ -381,10 +381,7 @@ class PluginAllSettingList(APIView):
 
 
 class PluginSettingDetail(RetrieveUpdateAPI):
-    """Detail endpoint for a plugin-specific setting.
-
-    Note that these cannot be created or deleted via the API
-    """
+    """Detail endpoint for a plugin-specific setting."""
 
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
@@ -413,6 +410,65 @@ class PluginSettingDetail(RetrieveUpdateAPI):
 
     # Staff permission required
     permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
+
+
+class PluginUserSettingList(APIView):
+    """List endpoint for all user settings for a specific plugin.
+
+    - GET: return all user settings for a plugin config
+    """
+
+    queryset = PluginUserSetting.objects.all()
+    serializer_class = PluginSerializers.PluginUserSettingSerializer
+    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
+
+    @extend_schema(
+        responses={200: PluginSerializers.PluginUserSettingSerializer(many=True)}
+    )
+    def get(self, request, plugin):
+        """Get all user settings for a plugin config."""
+        # look up the plugin
+        plugin = check_plugin(plugin, None)
+
+        user_settings = getattr(plugin, 'user_settings', {})
+
+        settings_dict = PluginUserSetting.all_settings(
+            settings_definition=user_settings,
+            plugin=plugin.plugin_config(),
+            user=request.user,
+        )
+
+        results = PluginSerializers.PluginUserSettingSerializer(
+            list(settings_dict.values()), many=True
+        ).data
+        return Response(results)
+
+
+class PluginUserSettingDetail(RetrieveUpdateAPI):
+    """Detail endpoint for a plugin-specific user setting."""
+
+    lookup_field = 'key'
+    queryset = PluginUserSetting.objects.all()
+    serializer_class = PluginSerializers.PluginUserSettingSerializer
+    permission_classes = [InvenTree.permissions.UserSettingsPermissionsOrScope]
+
+    def get_object(self):
+        """Lookup the plugin user setting object, based on the URL."""
+        setting_key = self.kwargs['key']
+
+        # Look up plugin
+        plugin = check_plugin(self.kwargs.get('plugin', None), None)
+
+        settings = getattr(plugin, 'user_settings', {})
+
+        if setting_key not in settings:
+            raise NotFound(
+                detail=f"Plugin '{plugin.slug}' has no user setting matching '{setting_key}'"
+            )
+
+        return PluginUserSetting.get_setting_object(
+            setting_key, plugin=plugin.plugin_config(), user=self.request.user
+        )
 
 
 class RegistryStatusView(APIView):
@@ -484,6 +540,21 @@ plugin_api_urls = [
             path(
                 '<str:plugin>/',
                 include([
+                    path(
+                        'user-settings/',
+                        include([
+                            re_path(
+                                r'^(?P<key>\w+)/',
+                                PluginUserSettingDetail.as_view(),
+                                name='api-plugin-user-setting-detail',
+                            ),
+                            path(
+                                '',
+                                PluginUserSettingList.as_view(),
+                                name='api-plugin-user-setting-list',
+                            ),
+                        ]),
+                    ),
                     path(
                         'settings/',
                         include([

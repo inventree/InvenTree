@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowActions,
@@ -23,7 +24,6 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';

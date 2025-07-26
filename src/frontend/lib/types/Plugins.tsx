@@ -1,3 +1,4 @@
+import type { I18n } from '@lingui/core';
 import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
@@ -43,6 +44,7 @@ export type InvenTreeFormsContext = {
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
  * @param host - The current host URL
+ * @param i18n - The i18n instance for translations (from @lingui/core)
  * @param locale - The current locale string (e.g. 'en' / 'de')
  * @param model - The model type associated with the rendered component (if applicable)
  * @param modelInformation - A dictionary of available model information
@@ -63,6 +65,7 @@ export type InvenTreePluginContext = {
   modelInformation: ModelDict;
   renderInstance: (props: Readonly<RenderInstanceProps>) => React.ReactNode;
   host: string;
+  i18n: I18n;
   locale: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
