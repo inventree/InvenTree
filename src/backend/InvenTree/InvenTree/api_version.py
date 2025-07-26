@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 372
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v358 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
+    - Adds PluginUserSetting model (and associated endpoints)
+    - Remove NotificationSetting model (and associated endpoints)
 
 v372 -> 2025-07-19 : https://github.com/inventree/InvenTree/pull/10056
     - Adds BOM validation information to the Part API
@@ -83,7 +86,7 @@ v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
     - Add valid fields to ordering field descriptions
 
 v351 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9602
-    - Adds passwort reset API endpoint for admin users
+    - Adds password reset API endpoint for admin users
 
 v350 -> 2025-06-17 : https://github.com/inventree/InvenTree/pull/9798
     - Adds "can_build" field to the part requirements API endpoint

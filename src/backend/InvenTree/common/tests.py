@@ -32,7 +32,6 @@ from InvenTree.unit_test import (
 )
 from part.models import Part, PartParameterTemplate
 from plugin import registry
-from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
@@ -795,28 +794,6 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         # Note that this particular setting has a MinValueValidator(1) associated with it
         for v in [0, -1, -5]:
             response = self.patch(url, {'value': v}, expected_code=400)
-
-
-class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
-    """Tests for the notification user settings API."""
-
-    def test_api_list(self):
-        """Test list URL."""
-        url = reverse('api-notification-setting-list')
-
-        self.get(url, expected_code=200)
-
-    def test_setting(self):
-        """Test the string name for NotificationUserSetting."""
-        NotificationUserSetting.set_setting(
-            'NOTIFICATION_METHOD_MAIL', True, change_user=self.user, user=self.user
-        )
-        test_setting = NotificationUserSetting.get_setting_object(
-            'NOTIFICATION_METHOD_MAIL', user=self.user
-        )
-        self.assertEqual(
-            str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): True'
-        )
 
 
 class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
