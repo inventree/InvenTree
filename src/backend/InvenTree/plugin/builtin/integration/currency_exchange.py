@@ -16,10 +16,11 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
     Fetches exchange rate information from frankfurter.app
     """
 
+    NAME = 'InvenTreeCurrencyExchange'
     SLUG = 'inventreecurrencyexchange'
     AUTHOR = _('InvenTree contributors')
-    NAME = _('InvenTree Currency Exchange')
-    DESCRIPTION = _('Fetches currency exchange rates from the Frankfuter API.')
+    TITLE = _('InvenTree Currency Exchange')
+    DESCRIPTION = _('Default currency exchange integration')
     VERSION = '1.0.0'
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
