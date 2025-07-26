@@ -19,8 +19,8 @@ The following builtin plugins are available in InvenTree:
 | Barcodes | [LCSC](./barcode_lcsc.md) | LCSC barcode support | No |
 | Barcodes | [Mouser](./barcode_mouser.md) | Mouser barcode support | No |
 | Barcodes | [TME](./barcode_tme.md) | TME barcode support | No |
-| Currency | [Currency Exchange](./currency_exchange.md) | Default currency exchange rate plugin | Yes |
-| Currency | [ExchangeRate.host](./currency_exchange.md) | Alternative currency exchange rate plugin | No |
+| Currency | [Currency Exchange](./currency_exchange.md#inventree-currency-exchange) | Default currency exchange rate plugin | Yes |
+| Currency | [ExchangeRate.host](./currency_exchange.md#exchangeratehost-plugin) | Alternative currency exchange rate plugin | No |
 | Data Export | [BOM Exporter](./bom_exporter.md) | Custom [exporter](../mixins/export.md) for BOM data | Yes |
 | Data Export | [InvenTree Exporter](./inventree_exporter.md) | Custom [exporter](../mixins/export.md) for InvenTree data | Yes |
 | Data Export | [Parameter Exporter](./part_parameter_exporter.md) | Custom [exporter](../mixins/export.md) for part parameter data | Yes |
