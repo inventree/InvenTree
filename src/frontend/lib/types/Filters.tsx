@@ -48,6 +48,7 @@ export type TableFilter = {
   displayValue?: any;
   active?: boolean;
   apiUrl?: string;
+  apiFilter?: Record<string, any>;
   model?: ModelType;
   modelRenderer?: (instance: any) => string;
 };
