@@ -33,6 +33,7 @@ export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text' | 'api';
  * displayValue: The current display value of the filter
  * active: Whether the filter is active (false = hidden, not used)
  * apiUrl: The API URL to use for fetching dynamic filter options
+ * apiFilter: Optional filters to apply when fetching options from the API
  * model: The model type to use for fetching dynamic filter options
  * modelRenderer: A function to render a simple text version of the model type
  */
