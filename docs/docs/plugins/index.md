@@ -4,7 +4,7 @@ title: Plugins
 
 ## InvenTree Plugin Architecture
 
-The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the database server. This allows development of complex behaviors which are decoupled from core InvenTree code.
+The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the InvenTree installation. This allows development of complex behaviors which are decoupled from core InvenTree code.
 
 Plugins can be added from multiple sources:
 
@@ -39,9 +39,6 @@ Check out our [basic plugin walkthrough](../plugins/walkthrough.md) to learn how
 
 Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
 
-!!! warning "Name Change"
-    The name of the base class was changed with `0.7.0` from `IntegrationPluginBase` to `InvenTreePlugin`.
-
 ### Imports
 
 As the code base is evolving import paths might change. Therefore we provide stable import targets for important python APIs.
@@ -65,7 +62,9 @@ MixinNotImplementedError    # Is raised if a mixin was not implemented (core mec
 
 #### Mixins
 
-Mixins are split up internally to keep the source tree clean and enable better testing separation. All public APIs that should be used are exposed under `plugin.mixins`. These include all built-in mixins and notification methods. An up-to-date reference can be found in the source code [can be found here]({{ sourcefile("src/backend/InvenTree/plugin/mixins/__init__.py") }}).
+Plugin functionality is split between multiple "mixin" classes - each of which provides a specific set of features or behaviors that can be integrated into a plugin. These mixins are designed to be used in conjunction with the `InvenTreePlugin` base class, allowing developers to easily extend the functionality of their plugins. All public APIs that should be used are exposed under `plugin.mixins`. These include all built-in mixins and notification methods. An up-to-date reference can be found in the source code [can be found here]({{ sourcefile("src/backend/InvenTree/plugin/mixins/__init__.py") }}).
+
+Refer to the [mixin documentation](#plugin-mixins) for a list of available mixins, and their usage.
 
 #### Models and other internal InvenTree APIs
 
@@ -122,6 +121,7 @@ Supported mixin classes are:
 | [LabelPrintingMixin](./mixins/label.md) | Custom label printing support |
 | [LocateMixin](./mixins/locate.md) | Locate and identify stock items |
 | [NavigationMixin](./mixins/navigation.md) | Add custom pages to the web interface |
+| [NotificationMixin](./mixins/notification.md) | Send custom notifications in response to system events |
 | [ReportMixin](./mixins/report.md) | Add custom context data to reports |
 | [ScheduleMixin](./mixins/schedule.md) | Schedule periodic tasks |
 | [SettingsMixin](./mixins/settings.md) | Integrate user configurable settings |
