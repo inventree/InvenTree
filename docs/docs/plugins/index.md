@@ -24,14 +24,8 @@ InvenTree plugins can contain both backend and frontend code. The backend code i
 
 ### Creating a Plugin
 
-To assist in creating a new plugin, we provide a [plugin creator command line tool](https://github.com/inventree/plugin-creator). This allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
+To assist in creating a new plugin, we provide a [plugin creator command line tool](./creator.md). This allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
 
-To install and run the plugin creator:
-
-```bash
-pip install inventree-plugin-creator
-create-inventree-plugin
-```
 
 ### Basic Plugin Walkthrough
 
