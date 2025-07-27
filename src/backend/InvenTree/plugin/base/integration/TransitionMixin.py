@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     ...
 
 
-class StateTransitionMixin:
+class TransitionMixin:
     """Mixin class for handling state transitions.
 
     - This mixin allows plugins to define custom state transition methods.
