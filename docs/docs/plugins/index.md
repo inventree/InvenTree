@@ -125,6 +125,7 @@ Supported mixin classes are:
 | [ReportMixin](./mixins/report.md) | Add custom context data to reports |
 | [ScheduleMixin](./mixins/schedule.md) | Schedule periodic tasks |
 | [SettingsMixin](./mixins/settings.md) | Integrate user configurable settings |
+| [TransitionMixin](./mixins/transition.md) | Provide custom state transition logic |
 | [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
 | [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
 | [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
