@@ -1,16 +1,11 @@
 """Plugin mixin for handling state transitions."""
 
-from typing import TYPE_CHECKING
-
 import structlog
 
 from generic.states.transition import TransitionMethod
 from plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
-
-if TYPE_CHECKING:
-    ...
 
 
 class TransitionMixin:
@@ -21,7 +16,7 @@ class TransitionMixin:
     """
 
     # List of transition methods that can be used by plugins
-    TRANSITION_HANDLERS: list[TransitionMethod] = []
+    TRANSITION_HANDLERS: list[TransitionMethod] | None = None
 
     class MixinMeta:
         """Meta class for the StateTransitionMixin."""
