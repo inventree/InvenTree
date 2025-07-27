@@ -75,6 +75,8 @@ Copy the supervisor configuration file:
 sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisord.conf
 ```
 
+Depending on your setup the IP and port under the `[inet_http_server]` section might need to be changed.
+
 ### Start Supervisor Daemon
 
 ```

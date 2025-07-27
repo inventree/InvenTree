@@ -162,6 +162,14 @@ The PostgreSQL python binding must also be installed (into your virtual environm
 pip3 install psycopg pgcli
 ```
 
+#### Install Postgresql client
+
+If PostgreSQL and InvenTree are installed on separate servers / containers the PostgreSQL client has to be installed also where InvenTree is running.
+
+```
+sudo apt-get install postgresql-client
+```
+
 ### MySQL / MariaDB
 
 #### Install Backend
