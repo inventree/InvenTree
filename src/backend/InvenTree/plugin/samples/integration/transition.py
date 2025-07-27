@@ -14,13 +14,14 @@ class SampleTransitionPlugin(TransitionMixin, InvenTreePlugin):
     """A sample plugin which shows how state transitions might be implemented."""
 
     NAME = 'SampleTransitionPlugin'
+    SLUG = 'sample-transition'
 
     class ReturnChangeHandler(TransitionMethod):
         """Transition method for ReturnOrder objects."""
 
         def transition(
             self, current_state, target_state, instance, default_action, **kwargs
-        ):
+        ) -> bool:
             """Example override function for state transition."""
             # Only act on ReturnOrders that should be completed
             if (
