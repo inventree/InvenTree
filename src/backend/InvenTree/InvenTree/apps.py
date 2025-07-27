@@ -70,7 +70,6 @@ class InvenTreeConfig(AppConfig):
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.update_site_url()
-        self.collect_state_transition_methods()
 
         # Ensure the unit registry is loaded
         InvenTree.conversion.get_unit_registry()
@@ -311,12 +310,6 @@ class InvenTreeConfig(AppConfig):
 
         # do not try again
         settings.USER_ADDED_FILE = True
-
-    def collect_state_transition_methods(self):
-        """Collect all state transition methods."""
-        from generic.states import storage
-
-        storage.collect()
 
     def ensure_migrations_done(self=None):
         """Ensures there are no open migrations, stop if inconsistent state."""
