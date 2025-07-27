@@ -1,5 +1,7 @@
 """Classes and functions for plugin controlled object state transitions."""
 
+from django.db.models import Model
+
 import structlog
 
 logger = structlog.get_logger('inventree')
@@ -22,6 +24,46 @@ class TransitionMethod:
             raise NotImplementedError(
                 'A TransitionMethod must define a `transition` method'
             )
+
+    def transition(
+        self,
+        current_state: int,
+        target_state: int,
+        instance: Model,
+        default_action: callable,
+        **kwargs,
+    ) -> bool:
+        """Perform a state transition.
+
+        Success:
+            - The custom transition logic succeeded
+            - Return True result
+            - No further transitions are attempted
+        Ignore:
+            - The custom transition logic did not apply
+            - Return False result
+            - Further transitions are attempted (if available)
+            - Default action is called if no transition was successful
+        Failure:
+            - The custom transition logic failed
+            - Raise a ValidationError
+            - No further transitions are attempted
+            - Default action is not called
+
+        Arguments:
+            current_state: int - Current state of the instance.
+            target_state: int - Target state to transition to.
+            instance: Model - The object instance to transition.
+            default_action: callable - Default action to be taken if no transition is successful.
+            **kwargs: Additional keyword arguments for custom logic.
+
+        Returns:
+            result: bool - True if the transition method was successful, False otherwise.
+
+        Raises:
+            ValidationError: Alert the user that the transition failued
+        """
+        raise NotImplementedError('TransitionMethod.transition must be implemented')
 
 
 class StateTransitionMixin:
