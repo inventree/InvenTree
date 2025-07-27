@@ -16,7 +16,7 @@ class TransitionMixin:
     """
 
     # List of transition methods that can be used by plugins
-    TRANSITION_HANDLERS: list[TransitionMethod] | None = None
+    TRANSITION_HANDLERS: list[TransitionMethod]
 
     class MixinMeta:
         """Meta class for the StateTransitionMixin."""
