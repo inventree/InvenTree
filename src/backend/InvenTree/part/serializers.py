@@ -456,7 +456,9 @@ class PartParameterSerializer(
         source='template', many=False, read_only=True, allow_null=True
     )
 
-    updated_by_detail = UserSerializer(source='updated_by', many=False, read_only=True)
+    updated_by_detail = UserSerializer(
+        source='updated_by', many=False, read_only=True, allow_null=True
+    )
 
 
 class DuplicatePartSerializer(serializers.Serializer):
