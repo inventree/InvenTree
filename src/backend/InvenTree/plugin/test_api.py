@@ -28,7 +28,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         url = reverse('api-plugin-install')
 
         # invalid package name
-        self.post(
+        data = self.post(
             url,
             {
                 'confirm': True,
@@ -36,7 +36,12 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             },
             expected_code=400,
             max_query_time=60,
+        ).data
+
+        self.assertIn(
+            'ERROR: Could not find a version that satisfies the requirement', str(data)
         )
+        self.assertIn('ERROR: No matching distribution found for', str(data))
 
         # valid - Pypi
         data = self.post(
@@ -69,7 +74,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # invalid tries
         # no input
-        self.post(url, {}, expected_code=400)
+        data = self.post(url, {}, expected_code=400).data
+        self.assertIn('This field is required.', str(data['confirm']))
 
         # no package info
         data = self.post(url, {'confirm': True}, expected_code=400).data
@@ -80,7 +86,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         )
 
         # not confirmed
-        self.post(url, {'packagename': self.PKG_NAME}, expected_code=400)
+        data = self.post(url, {'packagename': self.PKG_NAME}, expected_code=400).data
+        self.assertIn('This field is required.', str(data['confirm']))
 
         data = self.post(
             url, {'packagename': self.PKG_NAME, 'confirm': False}, expected_code=400
@@ -90,9 +97,17 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             data['confirm'][0].title().upper(), 'Installation not confirmed'.upper()
         )
 
-        # install disabled
+        # Plugin installation disabled
         with self.settings(PLUGINS_INSTALL_DISABLED=True):
-            self.post(url, {}, expected_code=400)
+            response = self.post(
+                url,
+                {'packagename': 'inventree-order-history', 'confirm': True},
+                expected_code=400,
+            )
+            self.assertIn(
+                'Plugin installation is disabled',
+                str(response.data['non_field_errors']),
+            )
 
     def test_plugin_activate(self):
         """Test the plugin activate."""
