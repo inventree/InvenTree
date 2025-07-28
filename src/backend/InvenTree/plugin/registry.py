@@ -617,8 +617,8 @@ class PluginsRegistry:
         plugin.db = plg_db
 
         # Check if this is a 'builtin' plugin
-        builtin = plugin.check_is_builtin()
-        sample = plugin.check_is_sample()
+        builtin = plg_db.is_builtin() if plg_db else plugin.check_is_builtin()
+        sample = plg_db.is_sample() if plg_db else plugin.check_is_sample()
 
         package_name = None
 
