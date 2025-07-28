@@ -123,8 +123,9 @@ This is *somewhat tricky* to get right, which is why we recommend using the [Inv
 
 When creating a UI plugin, the developer needs access to the type definitions for the [context](#plugin-context) object, as well as information on which libraries are externalized.
 
-To support this, the InvenTree project provides a dedicated NPM package for developem
-plugins: [@inventreedb/ui](https://www.npmjs.com/package/@inventreedb/ui)
+To support this, the InvenTree project provides a dedicated NPM package for developing plugins: [@inventreedb/ui](https://www.npmjs.com/package/@inventreedb/ui)
+
+This package should be added to the `package.json` file of the plugin, and installed using NPM or Yarn. This package provides the necessary type definitions and utility functions for developing frontend plugins.
 
 ### Type Definitions
 
