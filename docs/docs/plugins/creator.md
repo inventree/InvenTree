@@ -12,8 +12,6 @@ This tool allows developers to quickly scaffold a new InvenTree plugin, and prov
 
 The plugin creator tool allows the developer to select which plugin features they wish to include, and generates a basic plugin structure with the selected features.
 
-This page provides an overview of how to install and use the plugin creator tool, as well as some tips for creating your own plugins. The documentation here uses the "default" options as provided by the plugin creator tool, but you can customize the options to suit your needs.
-
 ### Features
 
 The plugin creator tool provides a number of features to help you get started with plugin development:
@@ -24,6 +22,12 @@ The plugin creator tool provides a number of features to help you get started wi
 - **Devops Integration**: Optionally set up Git version control, automatic code formatting, and other development tools.
 - **Deploy Support**: Generate a basic structure for your plugin that can be easily deployed to an InvenTree instance, and published to PyPI.
 - **Frontend Development**: Set up a development server for frontend features, including hot reloading and build tools.
+
+### Requirements
+
+This page provides an overview of how to install and use the plugin creator tool, as well as some tips for creating your own plugins. The documentation here uses the "default" options as provided by the plugin creator tool, but you can customize the options to suit your needs.
+
+It is assumed that you have a working InvenTree instance, and you have a development environment setup using our [devcontainer guide](../develop/devcontainer.md).
 
 ## Installation
 
@@ -127,6 +131,69 @@ pip show inventree-my-custom-plugin
 
 {{ image("plugin/plugin-creator-verify.png", "Verify plugin installation") }}
 
-## Frontend Dev Server
+## Activate Plugin
+
+Now that the plugin has been installed, you can activate it in your InvenTree instance. If the InvenTree server is not already running, start it with:
+
+```bash
+invoke dev.server
+```
+
+Then, navigate to the [plugin management page](http://localhost:8000/web/settings/admin/plugin) in your InvenTree instance. You can activate the plugin by clicking the "Activate" button next to your plugin in the list.
+
+{{ image("plugin/plugin-creator-activate.png", "Activate Plugin") }}
+
+!!! success "Plugin Activated"
+    Your plugin should now be active, and you can start developing it further!
+
+## Frontend Development
+
+In this example we have configured the plugin to include frontend features. In production, the frontend code will be built and served as static files. However, during development, it is often useful to run a development server which provides hot reloading and other features.
+
+### Backend Configuration
+
+To facilitate frontend plugin development, the InvenTree backend server needs to be configured to redirect requests for the plugin frontend to the development server. To achieve this, you need to add the following lines to your server configuration file (e.g. `./dev/config.yaml`, if you are using the default devcontainer setup):
+
+```yaml
+plugin_dev:
+  slug: 'my-custom-plugin'  # Replace with your plugin slug
+  host: "http://localhost:5174"
+```
+
+!!! warning "Restart Required"
+    After making changes to the configuration file, you will need to restart the InvenTree server for the changes to take effect.
+
+This configuration tells the InvenTree server to redirect static file requests (for this particular plugin) to the development server running on port `5174`. This is only available in development mode, and will not be used in production.
+
+### Frontend Development Server
+
+The plugin creator tool provides a development setup to allow you to run a frontend development server. To install the required libraries and start the development server, run the following commands:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+You should see output indicating that the development server is running on port `5174`:
+
+{{ image("plugin/plugin-creator-dev.png", "Frontend dev server") }}
+
+Let's test this out! The default plugin code has provided a custom "panel" which is display on the "part detail" page. Navigate to a part detail page in your InvenTree instance, and you should see the following custom panel displayed:
+
+{{ image("plugin/plugin-creator-panel.png", "Custom Panel") }}
+
+!!! success "Frontend Running"
+    Your frontend development server is now running, and you can start developing your plugin's frontend features!
+
+## Plugin Editing
 
 ## Build Plugin
+
+### Compile Frontend Assets
+
+### Build Plugin
+
+### Publish Plugin
+
+## Further Reading
