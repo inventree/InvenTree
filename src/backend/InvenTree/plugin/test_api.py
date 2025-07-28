@@ -23,6 +23,42 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.PKG_URL = 'git+https://github.com/inventree/inventree-brother-plugin'
         super().setUp()
 
+    def test_plugin_uninstall(self):
+        """Test plugin uninstall command."""
+        # invalid package name
+        url = reverse('api-plugin-uninstall', kwargs={'plugin': 'samplexx'})
+
+        # Requires superuser permissions
+        self.patch(url, expected_code=403)
+
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Invalid slug (404 error)
+        self.patch(url, expected_code=404)
+
+        url = reverse('api-plugin-uninstall', kwargs={'plugin': 'sample'})
+
+        data = self.patch(url, expected_code=400).data
+
+        plugs = {
+            'sample': 'Plugin cannot be uninstalled as it is a sample plugin',
+            'bom-exporter': 'Plugin cannot be uninstalled as it is currently active',
+            'inventree-slack-notification': 'Plugin cannot be uninstalled as it is a built-in plugin',
+        }
+
+        for slug, msg in plugs.items():
+            url = reverse('api-plugin-uninstall', kwargs={'plugin': slug})
+            data = self.patch(url, expected_code=400).data
+            self.assertIn(msg, str(data))
+
+        with self.settings(PLUGINS_INSTALL_DISABLED=True):
+            url = reverse('api-plugin-uninstall', kwargs={'plugin': 'bom-exporter'})
+            data = self.patch(url, expected_code=400).data
+            self.assertIn(
+                'Plugin uninstalling is disabled', str(data['non_field_errors'])
+            )
+
     def test_plugin_install(self):
         """Test the plugin install command."""
         url = reverse('api-plugin-install')
@@ -108,6 +144,22 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 'Plugin installation is disabled',
                 str(response.data['non_field_errors']),
             )
+
+    def test_plugin_deactivate_mandatory(self):
+        """Test deactivating a mandatory plugin."""
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Get a mandatory plugin
+        plg = PluginConfig.objects.filter(key='bom-exporter').first()
+        assert plg is not None
+
+        url = reverse('api-plugin-detail-activate', kwargs={'plugin': plg.key})
+
+        # Try to deactivate the mandatory plugin
+        response = self.client.patch(url, {'active': False}, follow=True)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Mandatory plugin cannot be deactivated', str(response.data))
 
     def test_plugin_activate(self):
         """Test the plugin activate."""

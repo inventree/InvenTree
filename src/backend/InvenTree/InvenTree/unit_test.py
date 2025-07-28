@@ -472,15 +472,15 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             url, self.client.delete, expected_code=expected_code, **kwargs
         )
 
-    def patch(self, url, data, expected_code=200, **kwargs):
+    def patch(self, url, data=None, expected_code=200, **kwargs):
         """Issue a PATCH request."""
-        kwargs['data'] = data
+        kwargs['data'] = data or {}
 
         return self.query(url, self.client.patch, expected_code=expected_code, **kwargs)
 
-    def put(self, url, data, expected_code=200, **kwargs):
+    def put(self, url, data=None, expected_code=200, **kwargs):
         """Issue a PUT request."""
-        kwargs['data'] = data
+        kwargs['data'] = data or {}
 
         return self.query(url, self.client.put, expected_code=expected_code, **kwargs)
 
