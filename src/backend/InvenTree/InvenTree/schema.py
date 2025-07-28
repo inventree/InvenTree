@@ -105,7 +105,11 @@ class ExtendedAutoSchema(AutoSchema):
 
         # Add valid search fields to the search description.
         search_fields = getattr(self.view, 'search_fields', None)
+
         if search_fields is not None:
+            # Ensure consistent ordering of search fields
+            search_fields = sorted(search_fields)
+
             parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'search':
