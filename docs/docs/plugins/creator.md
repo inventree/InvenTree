@@ -101,15 +101,17 @@ ls -l
 
 You should see a directory structure similar to the following:
 
-- **LICENSE**: The license file for your plugin.
-- **MANIFEST.in**: A file that specifies which files should be included in the plugin package.
-- **README.md**: A README file for your plugin.
-- **biome.json**: Configuration file for the Biome code formatter.
-- **pyproject.toml**: The project configuration file for your plugin.
-- **setup.cfg**: Rules for Python code formatting and linting.
-- **setup.py**: The setup script for your plugin.
-- **frontend/**: A directory containing the frontend code for your plugin (if you selected frontend features).
-- **my_custom_plugin/**: The main plugin directory, containing the plugin code. *(Note: the name of this directory will match the name you provided during plugin creation)*
+| File | Description |
+| ---- | ----------- |
+| **LICENSE** | The license file for your plugin. |
+| **MANIFEST.in** | A file that specifies which files should be included in the plugin package. |
+| **README.md** | A README file for your plugin. |
+| **biome.json** | Configuration file for the Biome code formatter. |
+| **pyproject.toml** | The project configuration file for your plugin. |
+| **setup.cfg** | Rules for Python code formatting and linting. |
+| **setup.py** | The setup script for your plugin. |
+| **frontend/** | A directory containing the frontend code for your plugin (if you selected frontend features). |
+| **my_custom_plugin/** | The main plugin directory, containing the plugin code. *(Note: the name of this directory will match the name you provided during plugin creation)* |
 
 ### Editable Install
 
