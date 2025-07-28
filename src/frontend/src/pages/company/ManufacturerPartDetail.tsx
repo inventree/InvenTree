@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
@@ -8,6 +8,11 @@ import {
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -27,18 +32,13 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
@@ -51,8 +51,7 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -273,7 +272,10 @@ export default function ManufacturerPartDetail() {
       {deleteManufacturerPart.modal}
       {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.manufacturerpart}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={t`ManufacturerPart`}
@@ -297,6 +299,7 @@ export default function ManufacturerPartDetail() {
             pageKey='manufacturerpart'
             panels={panels}
             instance={manufacturerPart}
+            reloadInstance={refreshInstance}
             model={ModelType.manufacturerpart}
             id={manufacturerPart.pk}
           />

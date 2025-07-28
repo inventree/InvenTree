@@ -280,9 +280,14 @@ class DataExportViewMixin:
             # Get the base model associated with this view
             try:
                 serializer_class = self.get_serializer_class()
+                export_kwargs['serializer_class'] = serializer_class
                 export_kwargs['model_class'] = serializer_class.Meta.model
+                export_kwargs['view_class'] = self.__class__
             except AttributeError:
+                # If the serializer class is not available, set to None
+                export_kwargs['serializer_class'] = None
                 export_kwargs['model_class'] = None
+                export_kwargs['view_class'] = None
 
             return data_exporter.serializers.DataExportOptionsSerializer(
                 *args, **export_kwargs
@@ -327,9 +332,7 @@ class DataExportViewMixin:
         try:
             queryset = export_plugin.filter_queryset(queryset)
         except Exception:
-            InvenTree.exceptions.log_error(
-                f'plugins.{export_plugin.slug}.filter_queryset'
-            )
+            InvenTree.exceptions.log_error('filter_queryset', plugin=export_plugin.slug)
             raise ValidationError(export_error)
 
         # Update the output instance with the total number of items to export
@@ -350,7 +353,7 @@ class DataExportViewMixin:
             )
         except Exception:
             InvenTree.exceptions.log_error(
-                f'plugins.{export_plugin.slug}.generate_filename'
+                'generate_filename', plugin=export_plugin.slug
             )
             raise ValidationError(export_error)
 
@@ -362,7 +365,7 @@ class DataExportViewMixin:
             )
 
         except Exception:
-            InvenTree.exceptions.log_error(f'plugins.{export_plugin.slug}.export_data')
+            InvenTree.exceptions.log_error('export_data', plugin=export_plugin.slug)
             raise ValidationError(export_error)
 
         if not isinstance(data, list):
@@ -376,7 +379,7 @@ class DataExportViewMixin:
                 headers = export_plugin.update_headers(headers, export_context)
             except Exception:
                 InvenTree.exceptions.log_error(
-                    f'plugins.{export_plugin.slug}.update_headers'
+                    'update_headers', plugin=export_plugin.slug
                 )
                 raise ValidationError(export_error)
 
@@ -384,14 +387,11 @@ class DataExportViewMixin:
         try:
             datafile = serializer.export_to_file(data, headers, export_format)
         except Exception:
-            InvenTree.exceptions.log_error('export_to_file')
+            InvenTree.exceptions.log_error('export_to_file', plugin=export_plugin.slug)
             raise ValidationError(_('Error occurred during data export'))
 
         # Update the output object with the exported data
-        output.progress = 100
-        output.complete = True
-        output.output = ContentFile(datafile, filename)
-        output.save()
+        output.mark_complete(output=ContentFile(datafile, filename))
 
     def get(self, request, *args, **kwargs):
         """Override the GET method to determine export options."""
@@ -457,6 +457,7 @@ class DataExportViewMixin:
                 export_format,
                 export_context,
                 output.id,
+                group='exporter',
             )
 
             output.refresh_from_db()

@@ -1,6 +1,7 @@
 import '@mantine/core/styles.css';
 import { useViewportSize } from '@mantine/hooks';
 import { lazy, useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { setApiDefaults } from '../App';
 import { Loadable } from '../functions/loading';
@@ -12,12 +13,22 @@ function checkMobile() {
   return false;
 }
 
-const MobileAppView = Loadable(lazy(() => import('./MobileAppView')));
-const DesktopAppView = Loadable(lazy(() => import('./DesktopAppView')));
+const MobileAppView = Loadable(
+  lazy(() => import('./MobileAppView')),
+  true,
+  true
+);
+const DesktopAppView = Loadable(
+  lazy(() => import('./DesktopAppView')),
+  true,
+  true
+);
 
 // Main App
 export default function MainView() {
-  const [allowMobile] = useLocalState((state) => [state.allowMobile]);
+  const [allowMobile] = useLocalState(
+    useShallow((state) => [state.allowMobile])
+  );
   // Set initial login status
   useEffect(() => {
     try {

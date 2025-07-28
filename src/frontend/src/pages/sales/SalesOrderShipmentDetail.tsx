@@ -1,9 +1,13 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import dayjs from 'dayjs';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -27,14 +31,10 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
 } from '../../forms/SalesOrderForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -52,8 +52,7 @@ export default function SalesOrderShipmentDetail() {
   const {
     instance: shipment,
     instanceQuery: shipmentQuery,
-    refreshInstance: refreshShipment,
-    requestStatus: shipmentStatus
+    refreshInstance: refreshShipment
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_shipment_list,
     pk: id,
@@ -65,8 +64,7 @@ export default function SalesOrderShipmentDetail() {
   const {
     instance: customer,
     instanceQuery: customerQuery,
-    refreshInstance: refreshCustomer,
-    requestStatus: customerStatus
+    refreshInstance: refreshCustomer
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: shipment.order_detail?.customer,
@@ -317,6 +315,7 @@ export default function SalesOrderShipmentDetail() {
         key='barcode'
         model={ModelType.salesordershipment}
         pk={shipment.pk}
+        hash={shipment?.barcode_hash}
       />,
       <PrintingActions
         key='print'
@@ -350,8 +349,7 @@ export default function SalesOrderShipmentDetail() {
       {editShipment.modal}
       {deleteShipment.modal}
       <InstanceDetail
-        status={shipmentStatus}
-        loading={shipmentQuery.isFetching || customerQuery.isFetching}
+        query={shipmentQuery}
         requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>
@@ -375,6 +373,7 @@ export default function SalesOrderShipmentDetail() {
             pageKey='salesordershipment'
             panels={shipmentPanels}
             model={ModelType.salesordershipment}
+            reloadInstance={refreshShipment}
             instance={shipment}
             id={shipment.pk}
           />

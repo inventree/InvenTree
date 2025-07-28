@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
@@ -13,24 +13,25 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import { ActionButton } from '@lib/components/ActionButton';
+import type { RowAction } from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
+import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import type { RowAction } from '../RowActions';
 
 /**
  * Construct an indicator icon for a single plugin
@@ -89,12 +90,21 @@ export default function PluginListTable() {
           );
         }
       },
-      {
+      BooleanColumn({
         accessor: 'active',
         sortable: true,
-        title: t`Active`,
-        render: (record: any) => <YesNoButton value={record.active} />
-      },
+        title: t`Active`
+      }),
+      BooleanColumn({
+        accessor: 'is_builtin',
+        sortable: false,
+        title: t`Builtin`
+      }),
+      BooleanColumn({
+        accessor: 'is_mandatory',
+        sortable: false,
+        title: t`Mandatory`
+      }),
       {
         accessor: 'meta.description',
         title: t`Description`,
@@ -164,7 +174,7 @@ export default function PluginListTable() {
 
       return [
         {
-          hidden: record.is_builtin != false || record.active != true,
+          hidden: record.is_mandatory != false || record.active != true,
           title: t`Deactivate`,
           color: 'red',
           icon: <IconCircleX />,
@@ -176,7 +186,7 @@ export default function PluginListTable() {
         },
         {
           hidden:
-            record.is_builtin != false ||
+            record.is_mandatory != false ||
             !record.is_installed ||
             record.active != false,
           title: t`Activate`,
@@ -207,6 +217,7 @@ export default function PluginListTable() {
             !user.isSuperuser() ||
             record.active ||
             record.is_builtin ||
+            record.is_mandatory ||
             record.is_sample ||
             !record.is_installed ||
             !record.is_package,
@@ -225,6 +236,7 @@ export default function PluginListTable() {
           hidden:
             record.active ||
             record.is_builtin ||
+            record.is_mandatory ||
             record.is_sample ||
             record.is_installed ||
             !user.isSuperuser(),
@@ -250,7 +262,7 @@ export default function PluginListTable() {
     pathParams: { key: selectedPluginKey },
     preFormContent: activateModalContent,
     fetchInitialData: false,
-    method: 'POST',
+    method: 'PATCH',
     successMessage: activate
       ? t`The plugin was activated`
       : t`The plugin was deactivated`,
@@ -266,7 +278,7 @@ export default function PluginListTable() {
   });
 
   const installPluginModal = useCreateApiFormModal({
-    title: t`Install plugin`,
+    title: t`Install Plugin`,
     url: ApiEndpoints.plugin_install,
     timeout: 30000,
     fields: {
@@ -403,6 +415,11 @@ export default function PluginListTable() {
             {
               name: 'builtin',
               label: t`Builtin`,
+              type: 'boolean'
+            },
+            {
+              name: 'mandatory',
+              label: t`Mandatory`,
               type: 'boolean'
             },
             {

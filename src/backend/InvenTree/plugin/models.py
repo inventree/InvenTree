@@ -13,8 +13,9 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 import InvenTree.models
 import plugin.staticfiles
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePlugin
 from plugin.events import PluginEvents, trigger_event
+from plugin.registry import registry
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
@@ -146,8 +147,8 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         super().save(force_insert, force_update, *args, **kwargs)
 
-        if self.is_builtin():
-            # Force active if builtin
+        if self.is_mandatory():
+            # Force active if mandatory plugin
             self.active = True
 
         if not no_reload and self.active != self.__org_active:
@@ -179,6 +180,11 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             return False
 
         return self.plugin.check_is_builtin()
+
+    @admin.display(boolean=True, description=_('Mandatory Plugin'))
+    def is_mandatory(self) -> bool:
+        """Return True if this plugin is mandatory."""
+        return self.key in registry.MANDATORY_PLUGINS
 
     @admin.display(boolean=True, description=_('Package Plugin'))
     def is_package(self) -> bool:
@@ -286,37 +292,60 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         return super().get_setting_definition(key, **kwargs)
 
 
-class NotificationUserSetting(common.models.BaseInvenTreeSetting):
-    """This model represents notification settings for a user."""
+class PluginUserSetting(common.models.BaseInvenTreeSetting):
+    """This model represents user-specific settings for individual plugins.
 
-    typ = 'notification'
-    extra_unique_fields = ['method', 'user']
+    In contrast with the PluginSetting model, which holds global settings for plugins,
+    this model allows for user-specific settings that can be defined by each user.
+    """
+
+    typ = 'plugin_user'
+    extra_unique_fields = ['plugin', 'user']
 
     class Meta:
-        """Meta for NotificationUserSetting."""
+        """Meta for PluginUserSetting."""
 
-        unique_together = [('method', 'user', 'key')]
+        unique_together = [('plugin', 'user', 'key')]
 
-    @classmethod
-    def get_setting_definition(cls, key, **kwargs):
-        """Override setting_definition to use notification settings."""
-        from common.notifications import storage
-
-        kwargs['settings'] = storage.user_settings
-
-        return super().get_setting_definition(key, **kwargs)
-
-    method = models.CharField(max_length=255, verbose_name=_('Method'))
+    plugin = models.ForeignKey(
+        PluginConfig,
+        related_name='user_settings',
+        null=False,
+        verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
+        null=False,
         verbose_name=_('User'),
         help_text=_('User'),
+        related_name='plugin_settings',
     )
 
     def __str__(self) -> str:
         """Nice name of printing."""
         return f'{self.key} (for {self.user}): {self.value}'
+
+    @classmethod
+    def get_setting_definition(cls, key, **kwargs):
+        """In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS', which is a dict object that fully defines all the setting parameters.
+
+        Here, unlike the BaseInvenTreeSetting, we do not know the definitions of all settings
+        'ahead of time' (as they are defined externally in the plugins).
+
+        Settings can be provided by the caller, as kwargs['settings'].
+
+        If not provided, we'll look at the plugin registry to see what settings are available,
+        (if the plugin is specified!)
+        """
+        if 'settings' not in kwargs:
+            plugin = kwargs.pop('plugin', None)
+
+            if plugin:
+                mixin_user_settings = getattr(registry, 'mixins_user_settings', None)
+                if mixin_user_settings:
+                    kwargs['settings'] = mixin_user_settings.get(plugin.key, {})
+
+        return super().get_setting_definition(key, **kwargs)

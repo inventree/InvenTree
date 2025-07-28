@@ -1,18 +1,19 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompanyColumn,
   CompletionDateColumn,
   CreatedByColumn,
   CreationDateColumn,
@@ -42,7 +43,6 @@ import {
   ResponsibleFilter,
   StartDateAfterFilter,
   StartDateBeforeFilter,
-  type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
@@ -53,10 +53,12 @@ import { InvenTreeTable } from '../InvenTreeTable';
  */
 export function PurchaseOrderTable({
   supplierId,
-  supplierPartId
+  supplierPartId,
+  externalBuildId
 }: Readonly<{
   supplierId?: number;
   supplierPartId?: number;
+  externalBuildId?: number;
 }>) {
   const table = useTable('purchase-order');
   const user = useUserState();
@@ -98,33 +100,35 @@ export function PurchaseOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn({}),
+      ReferenceColumn({
+        switchable: false
+      }),
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
         sortable: true,
-        render: (record: any) => {
-          const supplier = record.supplier_detail ?? {};
-
-          return (
-            <Thumbnail
-              src={supplier?.image}
-              alt={supplier.name}
-              text={supplier.name}
-            />
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record.supplier_detail} />
+        )
       },
       {
         accessor: 'supplier_reference'
       },
       LineItemsProgressColumn(),
       StatusColumn({ model: ModelType.purchaseorder }),
-      ProjectCodeColumn({}),
-      CreationDateColumn({}),
-      CreatedByColumn({}),
-      StartDateColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      CreatedByColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
@@ -178,7 +182,8 @@ export function PurchaseOrderTable({
           params: {
             supplier_detail: true,
             supplier: supplierId,
-            supplier_part: supplierPartId
+            supplier_part: supplierPartId,
+            external_build: externalBuildId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

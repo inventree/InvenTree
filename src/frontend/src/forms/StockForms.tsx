@@ -1,5 +1,14 @@
-import { t } from '@lingui/macro';
-import { Flex, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import {
+  Alert,
+  Flex,
+  Group,
+  List,
+  Skeleton,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
@@ -11,18 +20,25 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+  ApiFormFieldSet,
+  ApiFormModalProps
+} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -30,11 +46,9 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import {
-  type ApiFormModalProps,
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
@@ -42,9 +56,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
 /**
@@ -53,10 +65,12 @@ import { StatusFilterOptions } from '../tables/Filter';
 export function useStockFields({
   partId,
   stockItem,
+  modalId,
   create = false
 }: {
   partId?: number;
   stockItem?: any;
+  modalId: string;
   create: boolean;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
@@ -66,39 +80,26 @@ export function useStockFields({
 
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
-  const [nextBatchCode, setNextBatchCode] = useState<string>('');
-  const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
-
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (value) {
-      setNextBatchCode(`${t`Next batch code`}: ${value}`);
-    } else {
-      setNextBatchCode('');
+  const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: partId
     }
   });
 
-  const serialGenerator = useSerialNumberGenerator((value: any) => {
-    if (value) {
-      setNextSerialNumber(`${t`Next serial number`}: ${value}`);
-    } else {
-      setNextSerialNumber('');
+  const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: partId
     }
   });
-
-  useEffect(() => {
-    if (partInstance?.pk) {
-      // Update the generators whenever the part ID changes
-      batchGenerator.update({ part: partInstance.pk });
-      serialGenerator.update({ part: partInstance.pk });
-    }
-  }, [partInstance.pk]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        value: partInstance.pk,
+        value: partId || partInstance?.pk,
         disabled: !create,
         filters: {
           active: create ? true : undefined
@@ -106,6 +107,14 @@ export function useStockFields({
         onValueChange: (value, record) => {
           // Update the tracked part instance
           setPartInstance(record);
+
+          serialGenerator.update({
+            part: value
+          });
+
+          batchGenerator.update({
+            part: value
+          });
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
@@ -168,16 +177,23 @@ export function useStockFields({
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder: nextSerialNumber
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
       serial: {
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder: nextBatchCode
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`
       },
       status_custom_key: {
         label: t`Stock Status`
@@ -221,8 +237,8 @@ export function useStockFields({
     partId,
     globalSettings,
     supplierPart,
-    nextSerialNumber,
-    nextBatchCode,
+    serialGenerator.result,
+    batchGenerator.result,
     create
   ]);
 }
@@ -231,11 +247,15 @@ export function useStockFields({
  * Launch a form to create a new StockItem instance
  */
 export function useCreateStockItem() {
-  const fields = useStockFields({ create: true });
+  const fields = useStockFields({
+    create: true,
+    modalId: 'create-stock-item'
+  });
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     fields: fields,
+    modalId: 'create-stock-item',
     title: t`Add Stock Item`
   });
 }
@@ -314,26 +334,32 @@ export function useStockItemInstallFields({
  */
 export function useStockItemSerializeFields({
   partId,
-  trackable
+  trackable,
+  modalId
 }: {
   partId: number;
   trackable: boolean;
-}) {
-  const snPlaceholder = useSerialNumberPlaceholder({
-    partId: partId,
-    key: 'stock-item-serialize',
-    enabled: trackable
+  modalId: string;
+}): ApiFormFieldSet {
+  const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
+    isEnabled: () => trackable,
+    initialQuery: {
+      part: partId
+    }
   });
 
   return useMemo(() => {
     return {
       quantity: {},
       serial_numbers: {
-        placeholder: snPlaceholder
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
       destination: {}
     };
-  }, [snPlaceholder]);
+  }, [serialGenerator.result]);
 }
 
 function StockItemDefaultMove({
@@ -487,15 +513,19 @@ function StockOperationsRow({
     props.removeFn(props.idx);
   };
 
+  const callChangeFn = (idx: number, key: string, value: any) => {
+    setTimeout(() => props.changeFn(idx, key, value), 0);
+  };
+
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
     onOpen: () => {
       if (transfer) {
-        props.changeFn(props.idx, 'packaging', record?.packaging || undefined);
+        callChangeFn(props.idx, 'packaging', record?.packaging || undefined);
       }
     },
     onClose: () => {
       if (transfer) {
-        props.changeFn(props.idx, 'packaging', undefined);
+        callChangeFn(props.idx, 'packaging', undefined);
       }
     }
   });
@@ -507,7 +537,7 @@ function StockOperationsRow({
     },
     onClose: () => {
       setStatus(undefined);
-      props.changeFn(props.idx, 'status', undefined);
+      callChangeFn(props.idx, 'status', undefined);
     }
   });
 
@@ -905,7 +935,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
-      default: items[0]?.part_detail.default_location,
+      default: items[0]?.part_detail?.default_location,
       filters: {
         structural: false
       }
@@ -1008,7 +1038,7 @@ type apiModalFunc = (props: ApiFormModalProps) => {
   modal: JSX.Element;
 };
 
-function stockOperationModal({
+function useStockOperationModal({
   items,
   pk,
   model,
@@ -1017,6 +1047,7 @@ function stockOperationModal({
   endpoint,
   filters,
   title,
+  preFormContent,
   successMessage,
   modalFunc = useCreateApiFormModal
 }: {
@@ -1028,6 +1059,7 @@ function stockOperationModal({
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
   endpoint: ApiEndpoints;
   title: string;
+  preFormContent?: JSX.Element;
   successMessage?: string;
   modalFunc?: apiModalFunc;
 }) {
@@ -1049,26 +1081,27 @@ function stockOperationModal({
     return query_params;
   }, [baseParams, filters, model, pk]);
 
+  const [opened, setOpened] = useState<boolean>(false);
+
   const { data } = useQuery({
-    queryKey: ['stockitems', model, pk, items, params],
+    queryKey: ['stockitems', opened, model, pk, items, params],
     queryFn: async () => {
       if (items) {
+        // If a list of items is provided, use that directly
         return Array.isArray(items) ? items : [items];
       }
+
+      if (!pk || !opened) {
+        return [];
+      }
+
       const url = apiUrl(ApiEndpoints.stock_item_list);
 
       return api
         .get(url, {
           params: params
         })
-        .then((response) => {
-          if (response.status === 200) {
-            return response.data;
-          }
-        })
-        .catch(() => {
-          return null;
-        });
+        .then((response) => response.data ?? []);
     }
   });
 
@@ -1079,10 +1112,13 @@ function stockOperationModal({
   return modalFunc({
     url: endpoint,
     fields: fields,
+    preFormContent: preFormContent,
     title: title,
     size: '80%',
     successMessage: successMessage,
-    onFormSuccess: () => refresh()
+    onFormSuccess: () => refresh(),
+    onClose: () => setOpened(false),
+    onOpen: () => setOpened(true)
   });
 }
 
@@ -1095,7 +1131,7 @@ export type StockOperationProps = {
 };
 
 export function useAddStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
@@ -1105,7 +1141,7 @@ export function useAddStockItem(props: StockOperationProps) {
 }
 
 export function useRemoveStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
@@ -1115,7 +1151,7 @@ export function useRemoveStockItem(props: StockOperationProps) {
 }
 
 export function useTransferStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
@@ -1125,7 +1161,7 @@ export function useTransferStockItem(props: StockOperationProps) {
 }
 
 export function useCountStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
@@ -1135,7 +1171,7 @@ export function useCountStockItem(props: StockOperationProps) {
 }
 
 export function useChangeStockStatus(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
@@ -1145,12 +1181,21 @@ export function useChangeStockStatus(props: StockOperationProps) {
 }
 
 export function useMergeStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
     title: t`Merge Stock`,
-    successMessage: t`Stock merged`
+    successMessage: t`Stock merged`,
+    preFormContent: (
+      <Alert title={t`Merge Stock Items`} color='yellow'>
+        <List>
+          <List.Item>{t`Merge operation cannot be reversed`}</List.Item>
+          <List.Item>{t`Tracking information may be lost when merging items`}</List.Item>
+          <List.Item>{t`Supplier information may be lost when merging items`}</List.Item>
+        </List>
+      </Alert>
+    )
   });
 }
 
@@ -1160,7 +1205,7 @@ export function useAssignStockItem(props: StockOperationProps) {
     return props.items?.filter((item) => item?.part_detail?.salable);
   }, [props.items]);
 
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     items: items,
     fieldGenerator: stockAssignFields,
@@ -1171,7 +1216,7 @@ export function useAssignStockItem(props: StockOperationProps) {
 }
 
 export function useDeleteStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockDeleteFields,
     endpoint: ApiEndpoints.stock_item_list,
@@ -1295,4 +1340,57 @@ export function useTestResultFields({
     templateId,
     includeTestStation
   ]);
+}
+
+/**
+ * Modal form for finding a particular stock item by serial number
+ */
+export function useFindSerialNumberForm({
+  partId
+}: {
+  partId: number;
+}) {
+  const navigate = useNavigate();
+
+  return useApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_item_list),
+    fetchInitialData: false,
+    method: 'GET',
+    title: t`Find Serial Number`,
+    fields: {
+      serial: {},
+      part_tree: {
+        value: partId,
+        hidden: true,
+        field_type: 'integer'
+      }
+    },
+    checkClose: (data, form) => {
+      if (!data || data?.length == 0) {
+        form.setError('serial', { message: t`No matching items` });
+        return false;
+      }
+
+      if (data.length > 1) {
+        form.setError('serial', {
+          message: t`Multiple matching items`
+        });
+        return false;
+      }
+
+      if (data[0].pk) {
+        return true;
+      } else {
+        form.setError('serial', {
+          message: t`Invalid response from server`
+        });
+        return false;
+      }
+    },
+    onFormSuccess: (data) => {
+      if (data.length == 1 && data[0].pk) {
+        navigate(getDetailUrl(ModelType.stockitem, data[0].pk));
+      }
+    }
+  });
 }

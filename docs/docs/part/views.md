@@ -4,30 +4,18 @@ title: Part Views
 
 ## Part Views
 
-The main part view is divided into 4 different panels:
+The Part detail view page provides a detailed view of a single part in the system. The page is divided into several sections, which are described in this document.
 
-1. Categories
-2. Details
-3. Tabs
-4. Content of each tab
-
-{% with id="part_view_intro", url="part/part_view_intro.png", description="Part View Introduction" %}
-{% include 'img.html' %}
-{% endwith %}
-<p></p>
-
-## Categories
+### Category Breadcrumb List
 
 The categories of each part is displayed on the top navigation bar as show in the above screenshot.
-[Click here](./part.md#part-category) for more information about categories.
+[Click here](./index.md#part-category) for more information about categories.
 
 ## Part Details
 
 Details provides information about the particular part. Parts details can be displayed in the header panel clicking on "Show Part Details" toggle button.
 
-{% with id="part_overview", url="part/part_overview.png", description="Part details" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_overview.png", "Part Overview") }}
 
 A Part is defined in the system by the following parameters:
 
@@ -67,9 +55,7 @@ If a part is a *Template Part* then the *Variants* tab will be visible.
 
 The *Stock* tab shows all the stock items for the selected *Part*. The user can quickly determine how many parts are in stock, where they are located, and the status of each *Stock Item*.
 
-{% with id="part_stock", url="part/part_stock.png", description="Part Stock" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_stock.png", "Part Stock") }}
 
 #### Functions
 
@@ -93,7 +79,7 @@ The *Allocated* tab displays how many units of this part have been allocated to 
 
 ### Bill of Materials
 
-The *BOM* tab displays the [Bill of Materials](../build/bom.md) - a list of sub-components used to build an assembly. Each row in the BOM specifies a quantity of another Part which is required to build the assembly. This tab is only visible if the Part is an *assembly* (meaning it can be build from other parts).
+The *BOM* tab displays the [Bill of Materials](../manufacturing/bom.md) - a list of sub-components used to build an assembly. Each row in the BOM specifies a quantity of another Part which is required to build the assembly. This tab is only visible if the Part is an *assembly* (meaning it can be build from other parts).
 
 ### Build Orders
 
@@ -109,9 +95,7 @@ The *Suppliers* tab displays all the *Part Suppliers* and *Part Manufacturers* f
 
 This tab is only visible if the *Part* is designated as *Purchaseable*.
 
-{% with id="part_manufacturers_suppliers", url="part/part_manufacturers_suppliers.png", description="Part Suppliers and Manufacturers" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_manufacturers_suppliers.png", "Part Suppliers and Manufacturers") }}
 
 ### Purchase Orders
 
@@ -122,10 +106,6 @@ This tab is only displayed if the part is marked as *Purchaseable*.
 ### Sales Orders
 
 The *Sales Orders* tab shows a list of the sales orders for this part. It provides a view for important sales order information like customer, status, creation and shipment dates.
-
-### Scheduling
-
-The *Scheduling* tab provides an overview of the *predicted* future availability of a particular part. Refer to the [scheduling documentation](./scheduling.md) for further information.
 
 ### Stocktake
 
@@ -141,15 +121,9 @@ Related Part denotes a relationship between two parts, when users want to show t
 
 Related parts can be added and are shown under a table of the same name in the "Part" view:
 
-{% with id="related_parts", url="part/part_related.png", description="Related Parts Example View" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("part/part_related.png", "Related Parts Example View") }}
 
-This feature can be enabled or disabled in the global part settings:
-
-{% with id="related_parts_setting", url="part/part_related_setting.png", description="Related Parts Example View" %}
-{% include 'img.html' %}
-{% endwith %}
+This feature can be enabled or disabled in the global part settings.
 
 ### Attachments
 

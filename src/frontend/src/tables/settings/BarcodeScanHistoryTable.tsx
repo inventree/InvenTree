@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   Badge,
@@ -14,22 +14,23 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { RowDeleteAction } from '@lib/components/RowActions';
+import { PassFailButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { CopyButton } from '../../components/buttons/CopyButton';
-import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { StylishText } from '../../components/items/StylishText';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import { shortenString } from '../../functions/tables';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { type TableFilter, UserFilter } from '../Filter';
+import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction } from '../RowActions';
 
 /*
  * Render detail information for a particular barcode scan result.

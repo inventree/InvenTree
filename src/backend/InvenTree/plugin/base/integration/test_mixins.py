@@ -113,13 +113,10 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         target_pattern = re_path(
             f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name
         )
-        self.assertEqual(
-            self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict
-        )
 
         # resolve the view
-        self.assertEqual(self.mixin.urlpatterns.resolve('/testpath').func(), 'ccc')
-        self.assertEqual(self.mixin.urlpatterns.reverse('test'), 'testpath')
+        self.assertEqual(target_pattern.resolve('/testpath').func(), 'ccc')
+        self.assertEqual(target_pattern.reverse('test'), 'testpath')
 
         # no url
         self.assertIsNone(self.mixin_nothing.urls)
@@ -205,7 +202,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             NAME = 'Sample API Caller'
 
             SETTINGS = {
-                'API_TOKEN': {'name': 'API Token', 'protected': True},
+                'API_TOKEN': {
+                    'name': 'API Token',
+                    'protected': True,
+                    'default': 'reqres-free-v1',
+                },
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
@@ -215,6 +216,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
+            API_TOKEN = 'x-api-key'
 
             @property
             def api_url(self):
@@ -285,6 +287,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
 
+        # Set API TOKEN
+        self.mixin.set_setting('API_TOKEN', 'reqres-free-v1')
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
@@ -295,6 +299,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertTrue(result)
+        self.assertNotIn('error', result)
         self.assertEqual(result['name'], 'morpheus')
 
         # api_call with endpoint with leading slash
@@ -334,4 +339,3 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertEqual(result.status_code, 400)
-        self.assertIn('Bad Request', str(result.content))

@@ -1,21 +1,21 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Skeleton } from '@mantine/core';
 import { IconUnlink } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   useStockItemInstallFields,
   useStockItemUninstallFields
 } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -130,6 +130,9 @@ export default function InstalledItemsTable({
           columns={tableColumns}
           props={{
             tableActions: tableActions,
+            enableSelection: true,
+            enableLabels: true,
+            enableReports: true,
             rowActions: rowActions,
             modelType: ModelType.stockitem,
             params: {

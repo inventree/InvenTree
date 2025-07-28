@@ -1,9 +1,9 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import { InvenTreeIcon, type InvenTreeIconType } from '../functions/icons';
+import type { InvenTreeIconType } from '@lib/types/Icons';
+import { InvenTreeIcon } from '../functions/icons';
 
 /*
  * A custom hovercard element for displaying extra information in a table cell.
@@ -20,7 +20,7 @@ export function TableHoverCard({
   value: any;
   extra?: ReactNode;
   title?: string;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   iconColor?: string;
 }>) {
   const extraItems: ReactNode = useMemo(() => {
@@ -60,7 +60,10 @@ export function TableHoverCard({
       <HoverCard.Dropdown>
         <Stack gap='xs'>
           <Group gap='xs' justify='left'>
-            <IconInfoCircle size='16' color='blue' />
+            <InvenTreeIcon
+              icon={icon ?? 'info'}
+              iconProps={{ size: 16, color: iconColor ?? 'blue' }}
+            />
             <Text fw='bold'>{title}</Text>
           </Group>
           <Divider />

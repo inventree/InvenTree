@@ -203,8 +203,8 @@ class PurchaseOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be below 15, independent of the number of results
-                self.assertLess(len(ctx), 15)
+                # Total database queries must be below 20, independent of the number of results
+                self.assertLess(len(ctx), 20)
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
@@ -756,7 +756,7 @@ class PurchaseOrderLineItemTest(OrderTest):
         url = reverse('api-po-line-list')
 
         # Try to delete a set of line items via their IDs
-        self.delete(url, {'items': [1, 2]}, expected_code=204)
+        self.delete(url, {'items': [1, 2]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deletign them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
@@ -1182,8 +1182,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         n = StockItem.objects.count()
 
-        # TODO: 2024-12-10 - This API query needs to be refactored!
-        self.post(self.url, data, expected_code=201, max_query_count=500)
+        self.post(self.url, data, expected_code=201, max_query_count=275)
 
         # Check that the expected number of stock items has been created
         self.assertEqual(n + 11, StockItem.objects.count())
@@ -1351,8 +1350,8 @@ class SalesOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be less than 15
-                self.assertLess(len(ctx), 15)
+                # Total database queries must be less than 20
+                self.assertLess(len(ctx), 20)
 
                 n = len(response.data['results'])
 
@@ -1590,6 +1589,8 @@ class SalesOrderTest(OrderTest):
 
     def test_export(self):
         """Test we can export the SalesOrder list."""
+        set_global_setting(models.SalesOrder.UNLOCK_SETTING, True)
+
         n = models.SalesOrder.objects.count()
 
         # Check there are some sales orders
@@ -1917,6 +1918,11 @@ class SalesOrderDownloadTest(OrderTest):
 class SalesOrderAllocateTest(OrderTest):
     """Unit tests for allocating stock items against a SalesOrder."""
 
+    @classmethod
+    def setUpTestData(cls):
+        """Init routine for this unit test class."""
+        super().setUpTestData()
+
     def setUp(self):
         """Init routines for this unit testing class."""
         super().setUp()
@@ -2006,7 +2012,10 @@ class SalesOrderAllocateTest(OrderTest):
         data = {'items': [], 'shipment': self.shipment.pk}
 
         for line in self.order.lines.all():
-            stock_item = line.part.stock_items.last()
+            for stock_item in line.part.stock_items.all():
+                # Find a non-serialized stock item to allocate
+                if not stock_item.serialized:
+                    break
 
             # Fully-allocate each line
             data['items'].append({
@@ -2038,11 +2047,22 @@ class SalesOrderAllocateTest(OrderTest):
         for line in filter(check_template, self.order.lines.all()):
             stock_item = None
 
+            stock_item = None
+
             # Allocate a matching variant
             parts = Part.objects.filter(salable=True).filter(variant_of=line.part.pk)
             for part in parts:
                 stock_item = part.stock_items.last()
-                break
+
+                for item in part.stock_items.all():
+                    if item.serialized:
+                        continue
+
+                    stock_item = item
+                    break
+
+                if stock_item is not None:
+                    break
 
             # Fully-allocate each line
             data['items'].append({

@@ -47,6 +47,26 @@ class SampleIntegrationPlugin(
             path('ho/', include(he_urls), name='ho'),
         ]
 
+    USER_SETTINGS = {
+        'USER_SETTING_1': {
+            'name': _('User Setting 1'),
+            'description': _('A user setting that can be changed by the user'),
+            'default': 'Default Value',
+        },
+        'USER_SETTING_2': {
+            'name': _('User Setting 2'),
+            'description': _('Another user setting'),
+            'default': True,
+            'validator': bool,
+        },
+        'USER_SETTING_3': {
+            'name': _('User Setting 3'),
+            'description': _('A user setting with choices'),
+            'choices': [('X', 'Choice X'), ('Y', 'Choice Y'), ('Z', 'Choice Z')],
+            'default': 'X',
+        },
+    }
+
     SETTINGS = {
         'PO_FUNCTION_ENABLE': {
             'name': _('Enable PO'),
@@ -64,6 +84,7 @@ class SampleIntegrationPlugin(
             'description': _('A numerical setting'),
             'validator': int,
             'default': 123,
+            'units': 'metres',
         },
         'CHOICE_SETTING': {
             'name': _('Choice Setting'),

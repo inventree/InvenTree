@@ -1,12 +1,15 @@
 """Background tasks for the report app."""
 
 import structlog
+from opentelemetry import trace
 
 from InvenTree.exceptions import log_error
 
+tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
 
 
+@tracer.start_as_current_span('print_reports')
 def print_reports(template_id: int, item_ids: list[int], output_id: int, **kwargs):
     """Print multiple reports against the provided template.
 
@@ -35,6 +38,7 @@ def print_reports(template_id: int, item_ids: list[int], output_id: int, **kwarg
     template.print(items, output=output)
 
 
+@tracer.start_as_current_span('print_labels')
 def print_labels(
     template_id: int, item_ids: list[int], output_id: int, plugin_slug: str, **kwargs
 ):
@@ -64,7 +68,7 @@ def print_labels(
     model = template.get_model()
     items = model.objects.filter(pk__in=item_ids)
 
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if not plugin:
         logger.warning("Label printing plugin '%s' not found", plugin_slug)

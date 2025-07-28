@@ -1,6 +1,5 @@
 """Base Class for InvenTree plugins."""
 
-import enum
 import inspect
 import warnings
 from datetime import datetime
@@ -16,17 +15,14 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import InvenTree.helpers
+from generic.enums import StringEnum
 from plugin.helpers import get_git_log
 
 logger = structlog.get_logger('inventree')
 
 
-class PluginMixinEnum(str, enum.Enum):
+class PluginMixinEnum(StringEnum):
     """Enumeration of the available plugin mixin types."""
-
-    def __str__(self):
-        """Return the string representation of the mixin."""
-        return self.value
 
     BASE = 'base'
 
@@ -40,7 +36,9 @@ class PluginMixinEnum(str, enum.Enum):
     ICON_PACK = 'icon_pack'
     LABELS = 'labels'
     LOCATE = 'locate'
+    MAIL = 'mail'
     NAVIGATION = 'navigation'
+    NOTIFICATION = 'notification'
     REPORT = 'report'
     SCHEDULE = 'schedule'
     SETTINGS = 'settings'
@@ -134,14 +132,15 @@ class MetaBase:
 
     def is_active(self):
         """Return True if this plugin is currently active."""
-        # Builtin plugins are always considered "active"
-        if self.is_builtin:
+        # Mandatory plugins are always considered "active"
+        if self.is_builtin and self.is_mandatory:
             return True
 
         config = self.plugin_config()
 
         if config:
             return config.active
+
         return False  # pragma: no cover
 
 
@@ -370,6 +369,13 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         """Is this plugin is builtin."""
         return self.check_is_builtin()
 
+    @property
+    def is_mandatory(self) -> bool:
+        """Is this plugin mandatory (always forced to be active)."""
+        from plugin.registry import registry
+
+        return self.slug in registry.MANDATORY_PLUGINS
+
     @classmethod
     def check_package_path(cls):
         """Path to the plugin."""
@@ -445,15 +451,15 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         try:
             website = meta['Project-URL'].split(', ')[1]
-        except (ValueError, IndexError, AttributeError):
-            website = meta['Project-URL']
+        except Exception:
+            website = meta.get('Project-URL')
 
         return {
-            'author': meta['Author-email'],
-            'description': meta['Summary'],
-            'version': meta['Version'],
+            'author': meta.get('Author-email'),
+            'description': meta.get('Summary'),
+            'version': meta.get('Version'),
             'website': website,
-            'license': meta['License'],
+            'license': meta.get('License'),
         }
 
     def define_package(self):
@@ -476,16 +482,34 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     # endregion
 
-    def plugin_static_file(self, *args):
-        """Construct a path to a static file within the plugin directory."""
+    def plugin_static_file(self, *args) -> str:
+        """Construct a path to a static file within the plugin directory.
+
+        - This will return a URL can be used to access the static file
+        - The path is constructed using the STATIC_URL setting and the plugin slug
+        - Note: If the plugin is selected for "development" mode, the path will point to a vite server URL
+
+        """
         import os
 
         from django.conf import settings
 
-        url = os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
+        if (
+            settings.DEBUG
+            and settings.PLUGIN_DEV_HOST
+            and settings.PLUGIN_DEV_SLUG
+            and self.SLUG == settings.PLUGIN_DEV_SLUG
+        ):
+            # If the plugin is selected for development mode, use the development host
+            pathname = '/'.join(list(args))
+            url = f'{settings.PLUGIN_DEV_HOST}/src/{pathname}'
+            url = url.replace('.js', '.tsx')
+        else:
+            # Otherwise, construct the URL using the STATIC_URL setting
+            url = os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
 
-        if not url.startswith('/'):
-            url = '/' + url
+            if not url.startswith('/'):
+                url = '/' + url
 
         return url
 

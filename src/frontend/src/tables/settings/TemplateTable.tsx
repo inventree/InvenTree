@@ -1,10 +1,23 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { identifierString } from '@lib/functions/Conversion';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   CodeEditor,
   PdfPreview,
@@ -14,7 +27,7 @@ import type {
   Editor,
   PreviewArea
 } from '../../components/editors/TemplateEditor/TemplateEditor';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
@@ -25,11 +38,6 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import type { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { identifierString } from '../../functions/conversion';
-import { GetIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -39,18 +47,9 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
 
 export type TemplateI = {
   pk: number;
@@ -85,8 +84,7 @@ export function TemplateDrawer({
   } = useInstance<TemplateI>({
     endpoint: templateEndpoint,
     hasPrimaryKey: true,
-    pk: id,
-    throwError: true
+    pk: id
   });
 
   // Editors
@@ -114,7 +112,7 @@ export function TemplateDrawer({
             `${editor.options.plugin_name}-${editor.options.key}`
           ),
           name: editor.options.title,
-          icon: GetIcon(editor.options.icon || 'plugin'),
+          icon: <ApiIcon name={editor.options.icon || 'plugin'} size={18} />,
           component: getPluginTemplateEditor(editor.func, template)
         } as Editor;
       }) || [])
@@ -142,7 +140,12 @@ export function TemplateDrawer({
           ({
             key: preview.options.key,
             name: preview.options.title,
-            icon: GetIcon(preview.options.icon || 'plugin'),
+            icon: (
+              <ApiIcon
+                name={preview.options?.icon?.toString() || 'plugin'}
+                size={18}
+              />
+            ),
             component: getPluginTemplatePreview(preview.func, template)
           }) as PreviewArea
       ) || [])
@@ -204,11 +207,11 @@ export function TemplateTable({
         sortable: true,
         switchable: false
       },
-      {
+      DescriptionColumn({
         accessor: 'description',
         sortable: false,
         switchable: true
-      },
+      }),
       {
         accessor: 'template',
         sortable: false,
@@ -267,11 +270,6 @@ export function TemplateTable({
             setSelectedTemplate(record.pk);
             editTemplate.open();
           }
-        }),
-        RowDuplicateAction({
-          hidden: true,
-          // TODO: Duplicate selected template
-          onClick: notYetImplemented
         }),
         RowDeleteAction({
           hidden: !user.hasDeletePermission(templateProps.modelType),

@@ -8,12 +8,16 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from drf_spectacular.utils import extend_schema, extend_schema_field
+from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
-import build.admin
 import build.serializers
 import common.models
 import part.models as part_models
+import stock.models as stock_models
+import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
@@ -32,7 +36,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = Build
-        fields = ['sales_order']
+        fields = ['sales_order', 'external']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
@@ -103,6 +107,7 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Category'),
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Category')))
     def filter_category(self, queryset, name, category):
         """Filter by part category (including sub-categories)."""
         categories = category.get_descendants(include_self=True)
@@ -114,6 +119,7 @@ class BuildFilter(rest_filters.FilterSet):
         method='filter_ancestor',
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Ancestor Build')))
     def filter_ancestor(self, queryset, name, parent):
         """Filter by 'parent' build order."""
         builds = parent.get_descendants(include_self=False)
@@ -293,6 +299,7 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Exclude Tree'),
     )
 
+    @extend_schema_field(serializers.IntegerField(help_text=_('Exclude Tree')))
     def filter_exclude_tree(self, queryset, name, value):
         """Filter by excluding a tree of Build objects."""
         queryset = queryset.exclude(
@@ -351,6 +358,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'project_code',
         'priority',
         'level',
+        'external',
     ]
 
     ordering_field_aliases = {
@@ -524,8 +532,11 @@ class BuildLineEndpoint:
         try:
             params = self.request.query_params
 
+            kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
+            kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
             kwargs['part_detail'] = str2bool(params.get('part_detail', True))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+            kwargs['allocations'] = str2bool(params.get('allocations', True))
         except AttributeError:
             pass
 
@@ -642,6 +653,21 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
 
+    @extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
+    def create(self, request, *args, **kwargs):
+        """Override the create method to handle the creation of build outputs."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Create the build output(s)
+        outputs = serializer.save()
+
+        queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
+        response = stock.serializers.StockItemSerializer(queryset, many=True)
+
+        # Return the created outputs
+        return Response(response.data, status=status.HTTP_201_CREATED)
+
 
 class BuildOutputScrap(BuildOrderContextMixin, CreateAPI):
     """API endpoint for scrapping build output(s)."""
@@ -700,7 +726,7 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     - Only looks at 'untracked' parts
     - If stock exists in a single location, easy!
     - If user decides that stock items are "fungible", allocate against multiple stock items
-    - If the user wants to, allocate substite parts if the primary parts are not available.
+    - If the user wants to, allocate substitute parts if the primary parts are not available.
     """
 
     queryset = Build.objects.none()
@@ -809,6 +835,18 @@ class BuildItemFilter(rest_filters.FilterSet):
             return queryset.exclude(install_into=None)
         return queryset.filter(install_into=None)
 
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(serializers.IntegerField(help_text=_('Location')))
+    def filter_location(self, queryset, name, location):
+        """Filter the queryset based on the specified location."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(stock_item__location__in=locations)
+
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
@@ -915,8 +953,7 @@ build_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': BuildItem},
+                        MetadataView.as_view(model=BuildItem),
                         name='api-build-item-metadata',
                     ),
                     path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
@@ -962,8 +999,7 @@ build_api_urls = [
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': Build},
+                MetadataView.as_view(model=Build),
                 name='api-build-metadata',
             ),
             path('', BuildDetail.as_view(), name='api-build-detail'),

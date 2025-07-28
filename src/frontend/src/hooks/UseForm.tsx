@@ -1,28 +1,15 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { type ApiFormProps, OptionsApiForm } from '../components/forms/ApiForm';
-import type { UiSizeType } from '../defaults/formatters';
+import type {
+  ApiFormModalProps,
+  BulkEditApiFormModalProps
+} from '@lib/types/Forms';
+import { OptionsApiForm } from '../components/forms/ApiForm';
+import { useModalState } from '../states/ModalState';
 import { useModal } from './UseModal';
-
-/**
- * @param title : The title to display in the modal header
- * @param cancelText : Optional custom text to display on the cancel button (default: Cancel)
- * @param cancelColor : Optional custom color for the cancel button (default: blue)
- * @param onClose : A callback function to call when the modal is closed.
- * @param onOpen : A callback function to call when the modal is opened.
- */
-export interface ApiFormModalProps extends ApiFormProps {
-  title: string;
-  cancelText?: string;
-  cancelColor?: string;
-  onClose?: () => void;
-  onOpen?: () => void;
-  closeOnClickOutside?: boolean;
-  size?: UiSizeType;
-}
 
 /**
  * Construct and open a modal form
@@ -30,6 +17,12 @@ export interface ApiFormModalProps extends ApiFormProps {
 export function useApiFormModal(props: ApiFormModalProps) {
   const id = useId();
   const modalClose = useRef(() => {});
+
+  const modalState = useModalState();
+
+  const modalId = useMemo(() => {
+    return props.modalId ?? id;
+  }, [props.modalId, id]);
 
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
@@ -44,27 +37,36 @@ export function useApiFormModal(props: ApiFormModalProps) {
           }
         }
       ],
-      onFormSuccess: (data) => {
-        modalClose.current();
-        props.onFormSuccess?.(data);
+      onFormSuccess: (data, form) => {
+        if (props.checkClose?.(data, form) ?? true) {
+          modalClose.current();
+        }
+        props.onFormSuccess?.(data, form);
       },
-      onFormError: (error: any) => {
-        props.onFormError?.(error);
+      onFormError: (error: any, form) => {
+        props.onFormError?.(error, form);
       }
     }),
     [props]
   );
 
   const modal = useModal({
+    id: modalId,
     title: formProps.title,
-    onOpen: formProps.onOpen,
-    onClose: formProps.onClose,
+    onOpen: () => {
+      modalState.setModalOpen(modalId, true);
+      formProps.onOpen?.();
+    },
+    onClose: () => {
+      modalState.setModalOpen(modalId, false);
+      formProps.onClose?.();
+    },
     closeOnClickOutside: formProps.closeOnClickOutside,
     size: props.size ?? 'xl',
     children: (
       <Stack gap={'xs'}>
         <Divider />
-        <OptionsApiForm props={formProps} id={id} />
+        <OptionsApiForm props={formProps} id={modalId} />
       </Stack>
     )
   });
@@ -114,10 +116,6 @@ export function useEditApiFormModal(props: ApiFormModalProps) {
   );
 
   return useApiFormModal(editProps);
-}
-
-interface BulkEditApiFormModalProps extends ApiFormModalProps {
-  items: number[];
 }
 
 export function useBulkEditApiFormModal({

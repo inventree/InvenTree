@@ -1,49 +1,45 @@
 import { expect, test } from './baseFixtures.js';
 import { apiUrl } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
-import { doQuickLogin } from './login.js';
-import { setSettingState } from './settings.js';
+import { doCachedLogin } from './login.js';
+import { setPluginState, setSettingState } from './settings.js';
 
 /**
  * Adjust language and color settings
+ *
+ * TODO: Reimplement this - without logging out a cached user
  */
-test('Settings - Language / Color', async ({ page }) => {
-  await doQuickLogin(page);
+// test('Settings - Language / Color', async ({ browser }) => {
+//   const page = await doCachedLogin(browser);
 
-  await page.getByRole('button', { name: 'Ally Access' }).click();
-  await page.getByRole('menuitem', { name: 'Logout' }).click();
-  await page.getByRole('button', { name: 'Send me an email' }).click();
-  await page.getByLabel('Language toggle').click();
-  await page.getByLabel('Select language').first().click();
-  await page.getByRole('option', { name: 'German' }).click();
-  await page.waitForTimeout(200);
+//   await page.getByRole('button', { name: 'Ally Access' }).click();
+//   await page.getByRole('menuitem', { name: 'Logout' }).click();
+//   await page.getByRole('button', { name: 'Send me an email' }).click();
+//   await page.getByLabel('Language toggle').click();
+//   await page.getByLabel('Select language').first().click();
+//   await page.getByRole('option', { name: 'German' }).click();
+//   await page.waitForTimeout(200);
 
-  await page.getByRole('button', { name: 'Benutzername und Passwort' }).click();
-  await page.getByPlaceholder('Ihr Benutzername').click();
-  await page.getByPlaceholder('Ihr Benutzername').fill('admin');
-  await page.getByPlaceholder('Ihr Benutzername').press('Tab');
-  await page.getByPlaceholder('Dein Passwort').fill('inventree');
-  await page.getByRole('button', { name: 'Anmelden' }).click();
-  await page.waitForTimeout(200);
+//   await page.getByRole('button', { name: 'Benutzername und Passwort' }).click();
+//   await page.getByPlaceholder('Ihr Benutzername').click();
+//   await page.getByPlaceholder('Ihr Benutzername').fill('admin');
+//   await page.getByPlaceholder('Ihr Benutzername').press('Tab');
+//   await page.getByPlaceholder('Dein Passwort').fill('inventree');
+//   await page.getByRole('button', { name: 'Anmelden' }).click();
+//   await page.waitForTimeout(200);
 
-  // Note: changes to the dashboard have invalidated these tests (for now)
-  // await page
-  //   .locator('span')
-  //   .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
-  //   .getByRole('button')
-  //   .click();
-  // await page
-  //   .locator('span')
-  //   .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
-  //   .getByRole('button')
-  //   .click();
+//   await page.getByRole('tab', { name: 'Dashboard' }).click();
+//   await page.waitForURL('**/web/home');
+// });
 
-  await page.getByRole('tab', { name: 'Dashboard' }).click();
-  await page.waitForURL('**/platform/home');
-});
+test('Settings - User theme', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits'
+  });
 
-test('Settings - User theme', async ({ page }) => {
-  await doQuickLogin(page);
+  await page.waitForLoadState('networkidle');
+
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Account settings' }).click();
 
@@ -82,14 +78,105 @@ test('Settings - User theme', async ({ page }) => {
   // primary
   await page.getByLabel('#fab005').click();
   await page.getByLabel('#228be6').click();
-
-  // language
-  await page.getByRole('button', { name: 'Use pseudo language' }).click();
 });
 
-test('Settings - Admin', async ({ page }) => {
+test('Settings - User', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/user/'
+  });
+
+  await loadTab(page, 'Account');
+  await page.getByText('Account Details').waitFor();
+  await page.getByText('Profile Details').waitFor();
+
+  await loadTab(page, 'Security');
+  await page.getByRole('button', { name: 'Single Sign On' }).waitFor();
+  await page.getByRole('button', { name: 'Access Tokens' }).waitFor();
+
+  await loadTab(page, 'Display Options');
+  await page
+    .getByText('The navbar position is fixed to the top of the screen')
+    .waitFor();
+  await page.getByText('Escape Key Closes Forms').waitFor();
+
+  await loadTab(page, 'Search');
+  await page.getByText('Whole Word Search').waitFor();
+  await page.getByText('Hide Unavailable Stock Items').waitFor();
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+
+  await loadTab(page, 'Reporting');
+  await page.getByText('Inline report display').waitFor();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+});
+
+test('Settings - Global', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'settings/system/'
+  });
+
+  // Ensure the "slack" notification plugin is enabled
+  // This is to ensure it is visible in the "notification" settings tab
+  await setPluginState({
+    request,
+    plugin: 'inventree-slack-notification',
+    state: true
+  });
+
+  await loadTab(page, 'Server');
+  await loadTab(page, 'Authentication');
+  await loadTab(page, 'Barcodes');
+  await loadTab(page, 'Pricing');
+  await loadTab(page, 'Parts');
+  await loadTab(page, 'Stock');
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByText(
+      'The settings below are specific to each available notification method'
+    )
+    .waitFor();
+
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
+    .click();
+  await page.getByText('Slack incoming webhook url').waitFor();
+  await page
+    .getByText('URL that is used to send messages to a slack channel')
+    .waitFor();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByText('The settings below are specific to each available plugin')
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Barcodes Provides' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree PDF label printer' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
+    .waitFor();
+});
+
+test('Settings - Admin', async ({ browser }) => {
   // Note here we login with admin access
-  await doQuickLogin(page, 'admin', 'inventree');
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
@@ -107,7 +194,7 @@ test('Settings - Admin', async ({ page }) => {
   // System Settings
   await page.locator('label').filter({ hasText: 'System Settings' }).click();
   await page.getByText('Base URL', { exact: true }).waitFor();
-  await loadTab(page, 'Login');
+  await loadTab(page, 'Authentication');
   await loadTab(page, 'Barcodes');
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Pricing');
@@ -184,9 +271,12 @@ test('Settings - Admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
-test('Settings - Admin - Barcode History', async ({ page, request }) => {
+test('Settings - Admin - Barcode History', async ({ browser, request }) => {
   // Login with admin credentials
-  await doQuickLogin(page, 'admin', 'inventree');
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
 
   // Ensure that the "save scans" setting is enabled
   await setSettingState({
@@ -198,16 +288,19 @@ test('Settings - Admin - Barcode History', async ({ page, request }) => {
   // Scan some barcodes (via API calls)
   const barcodes = ['ABC1234', 'XYZ5678', 'QRS9012'];
 
-  barcodes.forEach(async (barcode) => {
-    await request.post(`${apiUrl}/barcode/`, {
+  for (let i = 0; i < barcodes.length; i++) {
+    const barcode = barcodes[i];
+    const url = new URL('barcode/', apiUrl).toString();
+    await request.post(url, {
       data: {
         barcode: barcode
       },
+      timeout: 5000,
       headers: {
         Authorization: `Basic ${btoa('admin:inventree')}`
       }
     });
-  });
+  }
 
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
@@ -221,11 +314,14 @@ test('Settings - Admin - Barcode History', async ({ page, request }) => {
   });
 });
 
-test('Settings - Admin - Unauthorized', async ({ page }) => {
+test('Settings - Admin - Unauthorized', async ({ browser }) => {
   // Try to access "admin" page with a non-staff user
-  await doQuickLogin(page, 'allaccess', 'nolimits');
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/admin/'
+  });
 
-  await navigate(page, 'settings/admin/');
   await page.waitForURL('**/settings/admin/**');
 
   // Should get a permission denied message
@@ -252,9 +348,12 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
 });
 
 // Test for user auth configuration
-test('Settings - Auth - Email', async ({ page }) => {
-  await doQuickLogin(page, 'allaccess', 'nolimits');
-  await navigate(page, 'settings/user/');
+test('Settings - Auth - Email', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/user/'
+  });
 
   await loadTab(page, 'Security');
 
@@ -269,9 +368,8 @@ test('Settings - Auth - Email', async ({ page }) => {
   await page.getByRole('button', { name: 'Remove' }).click();
 
   await page.getByText('Currently no email addresses are registered').waitFor();
-
-  await page.waitForTimeout(2500);
 });
+
 async function testColorPicker(page, ref: string) {
   const element = page.getByLabel(ref);
   await element.click();

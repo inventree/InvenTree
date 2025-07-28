@@ -11,8 +11,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
-from rest_framework import permissions, status
+from drf_spectacular.utils import extend_schema, extend_schema_field
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -20,6 +20,7 @@ from rest_framework.serializers import ValidationError
 import common.models
 import common.settings
 import InvenTree.helpers
+import InvenTree.permissions
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
@@ -65,7 +66,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 class GenerateBatchCode(GenericAPIView):
     """API endpoint for generating batch codes."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = StockSerializers.GenerateBatchCodeSerializer
 
     def post(self, request, *args, **kwargs):
@@ -81,7 +82,7 @@ class GenerateBatchCode(GenericAPIView):
 class GenerateSerialNumber(GenericAPIView):
     """API endpoint for generating serial numbers."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = StockSerializers.GenerateSerialNumberSerializer
 
     def post(self, request, *args, **kwargs):
@@ -118,6 +119,23 @@ class StockItemSerialize(StockItemContextMixin, CreateAPI):
     """API endpoint for serializing a stock item."""
 
     serializer_class = StockSerializers.SerializeStockItemSerializer
+
+    @extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
+    def create(self, request, *args, **kwargs):
+        """Serialize the provided StockItem."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Perform the actual serialization step
+        items = serializer.save()
+
+        queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
+
+        response = StockSerializers.StockItemSerializer(
+            queryset, many=True, context=self.get_serializer_context()
+        )
+
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class StockItemInstall(StockItemContextMixin, CreateAPI):
@@ -1009,6 +1027,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         # Check if a set of serial numbers was provided
         serial_numbers = data.pop('serial_numbers', '')
 
+        # Exclude 'serial' from submitted data
+        # We use 'serial_numbers' for item creation
+        data.pop('serial', None)
+
         # Check if the supplier_part has a package size defined, which is not 1
         if supplier_part_id := data.get('supplier_part', None):
             try:
@@ -1046,6 +1068,11 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
         data.pop('use_pack_size', None)
+
+        # Extract 'status' flag from data
+        status_raw = data.pop('status', None)
+        status_custom = data.pop('status_custom_key', None)
+        status_value = status_custom or status_raw
 
         # Assign serial numbers for a trackable part
         if serial_numbers:
@@ -1110,10 +1137,14 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
                 tracking = []
 
                 for item in items:
+                    if status_value and not item.compare_status(status_value):
+                        item.set_status(status_value)
+                        item.save()
+
                     if entry := item.add_tracking_entry(
                         StockHistoryCode.CREATED,
                         user,
-                        deltas={'status': item.status},
+                        deltas={'status': status_value},
                         location=location,
                         quantity=float(item.quantity),
                         commit=False,
@@ -1122,12 +1153,23 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
                 StockItemTracking.objects.bulk_create(tracking)
 
-                response_data = {'quantity': quantity, 'serial_numbers': serials}
+                # Annotate the stock items with part information
+                queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
+
+                response = StockSerializers.StockItemSerializer(
+                    queryset, many=True, context=self.get_serializer_context()
+                )
+
+                response_data = response.data
 
             else:
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
                 item = serializer.save()
+
+                if status_value and not item.compare_status(status_value):
+                    item.set_status(status_value)
+
                 item.save(user=user)
 
                 response_data = serializer.data
@@ -1225,6 +1267,17 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
 class StockDetail(StockApiMixin, RetrieveUpdateDestroyAPI):
     """API detail endpoint for a single StockItem instance."""
+
+
+class StockItemSerialNumbers(RetrieveAPI):
+    """View extra serial number information for a given stock item.
+
+    Provides information on the "previous" and "next" stock items,
+    based on the serial number of the given stock item.
+    """
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockSerializers.StockItemSerialNumbersSerializer
 
 
 class StockItemTestResultMixin:
@@ -1511,8 +1564,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocation},
+                        MetadataView.as_view(model=StockLocation),
                         name='api-location-metadata',
                     ),
                     path('', StockLocationDetail.as_view(), name='api-location-detail'),
@@ -1530,8 +1582,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockLocationType},
+                        MetadataView.as_view(model=StockLocationType),
                         name='api-location-type-metadata',
                     ),
                     path(
@@ -1561,8 +1612,7 @@ stock_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': StockItemTestResult},
+                        MetadataView.as_view(model=StockItemTestResult),
                         name='api-stock-test-result-metadata',
                     ),
                     path(
@@ -1604,8 +1654,7 @@ stock_api_urls = [
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
             path(
                 'metadata/',
-                MetadataView.as_view(),
-                {'model': StockItem},
+                MetadataView.as_view(model=StockItem),
                 name='api-stock-item-metadata',
             ),
             path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),
@@ -1618,6 +1667,11 @@ stock_api_urls = [
                 'uninstall/',
                 StockItemUninstall.as_view(),
                 name='api-stock-item-uninstall',
+            ),
+            path(
+                'serial-numbers/',
+                StockItemSerialNumbers.as_view(),
+                name='api-stock-item-serial-numbers',
             ),
             path('', StockDetail.as_view(), name='api-stock-detail'),
         ]),

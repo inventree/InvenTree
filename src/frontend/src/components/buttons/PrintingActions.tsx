@@ -1,19 +1,19 @@
-import { t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
 import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+} from '../../states/SettingsStates';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -72,9 +72,6 @@ export function PrintingActions({
         .then((response: any) => {
           return extractAvailableFields(response, 'POST') || {};
         })
-        .catch(() => {
-          return {};
-        })
   });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {
@@ -83,6 +80,7 @@ export function PrintingActions({
     // Override field values
     fields.template = {
       ...fields.template,
+      autoFill: true,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -135,6 +133,7 @@ export function PrintingActions({
     timeout: 5000,
     fields: {
       template: {
+        autoFill: true,
         filters: {
           enabled: true,
           model_type: modelType,

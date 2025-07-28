@@ -1,5 +1,3 @@
-import { baseUrl } from './defaults';
-
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
@@ -55,6 +53,7 @@ export const setTableChoiceFilter = async (page, filter, value) => {
   await page.getByPlaceholder('Select filter value').click();
   await page.getByRole('option', { name: value }).click();
 
+  await page.waitForLoadState('networkidle');
   await closeFilterDrawer(page);
 };
 
@@ -72,22 +71,30 @@ export const clickOnRowMenu = async (cell) => {
   await row.getByLabel(/row-action-menu-/i).click();
 };
 
+interface NavigateOptions {
+  waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+  baseUrl?: string;
+}
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
  * @param url
  */
-export const navigate = async (page, url: string) => {
-  if (!url.startsWith(baseUrl)) {
-    if (url.startsWith('/')) {
-      url = url.slice(1);
-    }
-
-    url = `${baseUrl}/${url}`;
+export const navigate = async (
+  page,
+  url: string,
+  options?: NavigateOptions
+) => {
+  if (!url.startsWith('http') && !url.includes('web')) {
+    url = `/web/${url}`.replaceAll('//', '/');
   }
 
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
-  await page.waitForLoadState('networkidle');
+  const path: string = options?.baseUrl
+    ? new URL(url, options.baseUrl).toString()
+    : url;
+
+  await page.goto(path, { waitUntil: options?.waitUntil ?? 'load' });
 };
 
 /**
@@ -98,6 +105,7 @@ export const loadTab = async (page, tabName) => {
     .getByLabel(/panel-tabs-/)
     .getByRole('tab', { name: tabName })
     .click();
+
   await page.waitForLoadState('networkidle');
 };
 
@@ -121,5 +129,4 @@ export const globalSearch = async (page, query) => {
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
-  await page.waitForLoadState('networkidle');
 };

@@ -1,9 +1,9 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
@@ -57,8 +57,13 @@ export function RenderStockItem(
   const { instance } = props;
   let quantity_string = '';
 
+  const allocated: number = Math.max(0, instance?.allocated ?? 0);
+
   if (instance?.serial !== null && instance?.serial !== undefined) {
     quantity_string += `${t`Serial Number`}: ${instance.serial}`;
+  } else if (allocated > 0) {
+    const available: number = Math.max(0, instance.quantity - allocated);
+    quantity_string = `${t`Available`}: ${available} / ${instance.quantity}`;
   } else if (instance?.quantity) {
     quantity_string = `${t`Quantity`}: ${instance.quantity}`;
   }

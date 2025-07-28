@@ -1,12 +1,15 @@
 import {
   ActionIcon,
+  Box,
   Divider,
   Group,
   Loader,
   Paper,
   Stack,
   Tabs,
-  Tooltip
+  Text,
+  Tooltip,
+  UnstyledButton
 } from '@mantine/core';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -28,15 +31,21 @@ import {
   useParams
 } from 'react-router-dom';
 
-import type { ModelType } from '../../enums/ModelType';
-import { identifierString } from '../../functions/conversion';
-import { cancelEvent } from '../../functions/events';
-import { navigateToLink } from '../../functions/navigation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
+import { cancelEvent } from '@lib/functions/Events';
+import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
+import { useShallow } from 'zustand/react/shallow';
+import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
+import { vars } from '../../theme';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
-import type { PanelType } from '../panels/Panel';
+import type { PanelGroupType, PanelType } from '../panels/Panel';
+import * as classes from './PanelGroup.css';
 
 /**
  * Set of properties which define a panel group:
@@ -46,6 +55,7 @@ import type { PanelType } from '../panels/Panel';
  * @param model - The target model for this panel group (e.g. 'part' / 'salesorder')
  * @param id - The target ID for this panel group (set to *null* for groups which do not target a specific model instance)
  * @param instance - The target model instance for this panel group
+ * @param reloadInstance - Function to reload the model instance
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
@@ -53,7 +63,9 @@ import type { PanelType } from '../panels/Panel';
 export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
+  groups?: PanelGroupType[];
   instance?: any;
+  reloadInstance?: () => void;
   model?: ModelType | string;
   id?: number | null;
   selectedPanel?: string;
@@ -64,8 +76,10 @@ export type PanelProps = {
 function BasePanelGroup({
   pageKey,
   panels,
+  groups,
   onPanelChange,
   selectedPanel,
+  reloadInstance,
   instance,
   model,
   id,
@@ -81,35 +95,73 @@ function BasePanelGroup({
 
   // Hook to load plugins for this panel
   const pluginPanelSet = usePluginPanels({
+    id: id,
     model: model,
     instance: instance,
-    id: id
+    reloadFunc: reloadInstance
   });
 
   // Rebuild the list of panels
-  const allPanels = useMemo(() => {
+  const [allPanels, groupedPanels] = useMemo(() => {
+    const _grouped_panels: PanelGroupType[] = [];
     const _panels = [...panels];
+    const _allpanels: PanelType[] = [...panels];
+
+    groups?.forEach((group) => {
+      const newVal: any = { ...group, panels: [] };
+      // Add panel to group and remove from main list
+      group.panelIDs?.forEach((panelID) => {
+        const index = _panels.findIndex((p) => p.name === panelID);
+        if (index !== -1) {
+          newVal.panels.push(_panels[index]);
+          _panels.splice(index, 1);
+        }
+      });
+      _grouped_panels.push(newVal);
+    });
+
+    // Add remaining panels to group
+    if (_panels.length > 0) {
+      _grouped_panels.push({
+        id: 'ungrouped',
+        label: '',
+        panels: _panels
+      });
+    }
 
     // Add plugin panels
+    const pluginPanels: any = [];
     pluginPanelSet.panels?.forEach((panel) => {
       let panelKey = panel.name;
 
       // Check if panel with this name already exists
-      const existingPanel = _panels.find((p) => p.name === panelKey);
+      const existingPanel = panels.find((p) => p.name === panelKey);
 
       if (existingPanel) {
         // Create a unique key for the panel which includes the plugin slug
         panelKey = identifierString(`${panel.pluginName}-${panel.name}`);
       }
 
-      _panels.push({
+      pluginPanels.push({
+        ...panel,
+        name: panelKey
+      });
+      _allpanels.push({
         ...panel,
         name: panelKey
       });
     });
 
-    return _panels;
-  }, [panels, pluginPanelSet]);
+    if (pluginPanels.length > 0) {
+      _grouped_panels.push({
+        id: 'plugins',
+        label: t`Plugin Provided`,
+        panels: pluginPanels
+      });
+    }
+
+    return [_allpanels, _grouped_panels];
+  }, [groups, panels, pluginPanelSet]);
 
   const activePanels = useMemo(
     () => allPanels.filter((panel) => !panel.hidden && !panel.disabled),
@@ -119,9 +171,9 @@ function BasePanelGroup({
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
-      if (event && (event?.ctrlKey || event?.shiftKey)) {
+      cancelEvent(event);
+      if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
-        cancelEvent(event);
         navigateToLink(url, navigate, event);
       } else {
         navigate(`../${targetPanel}`);
@@ -161,50 +213,82 @@ function BasePanelGroup({
           orientation='vertical'
           keepMounted={false}
           aria-label={`panel-group-${pageKey}`}
+          classNames={{ tab: classes.selectedPanelTab }}
         >
           <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
-            {allPanels.map(
-              (panel) =>
-                !panel.hidden && (
-                  <Tooltip
-                    label={panel.label ?? panel.name}
-                    key={panel.name}
-                    disabled={expanded}
-                    position='right'
-                  >
-                    <Tabs.Tab
-                      p='xs'
-                      key={`panel-label-${panel.name}`}
-                      value={panel.name}
-                      leftSection={panel.icon}
-                      hidden={panel.hidden}
-                      disabled={panel.disabled}
-                      style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
-                      onClick={(event: any) =>
-                        handlePanelChange(panel.name, event)
-                      }
-                    >
-                      {expanded && panel.label}
-                    </Tabs.Tab>
-                  </Tooltip>
-                )
-            )}
-            {collapsible && (
-              <Group wrap='nowrap' gap='xs'>
-                <ActionIcon
+            {groupedPanels.map((group) => (
+              <Box key={`group-${group.id}`} w={'100%'}>
+                <Text
+                  hidden={!group.label || !expanded}
+                  c={vars.colors.primaryColors[7]}
+                  key={`group-label-${group.id}`}
                   style={{
                     paddingLeft: '10px'
                   }}
-                  onClick={() => setExpanded(!expanded)}
-                  variant='transparent'
-                  size='md'
                 >
-                  {expanded ? (
-                    <IconLayoutSidebarLeftCollapse opacity={0.5} />
-                  ) : (
-                    <IconLayoutSidebarRightCollapse opacity={0.5} />
-                  )}
-                </ActionIcon>
+                  {group.label}
+                </Text>
+                {group.label && <Divider c={vars.colors.primaryColors[7]} />}
+                {group.panels?.map(
+                  (panel) =>
+                    !panel.hidden && (
+                      <Tooltip
+                        label={panel.label ?? panel.name}
+                        key={panel.name}
+                        disabled={expanded}
+                        position='right'
+                      >
+                        <Tabs.Tab
+                          p='xs'
+                          key={`panel-label-${panel.name}`}
+                          w={'100%'}
+                          value={panel.name}
+                          leftSection={panel.icon}
+                          hidden={panel.hidden}
+                          disabled={panel.disabled}
+                          style={{
+                            cursor: panel.disabled ? 'unset' : 'pointer'
+                          }}
+                          onClick={(event: any) =>
+                            handlePanelChange(panel.name, event)
+                          }
+                        >
+                          <UnstyledButton
+                            component={'a'}
+                            href={generateUrl(
+                              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                            )}
+                          >
+                            {expanded && panel.label}
+                          </UnstyledButton>
+                        </Tabs.Tab>
+                      </Tooltip>
+                    )
+                )}
+              </Box>
+            ))}
+            {collapsible && <Divider />}
+            {collapsible && (
+              <Group wrap='nowrap' gap='xs'>
+                <Tooltip
+                  position='right'
+                  label={expanded ? t`Collapse panels` : t`Expand panels`}
+                >
+                  <ActionIcon
+                    style={{
+                      paddingLeft: '10px'
+                    }}
+                    onClick={() => setExpanded(!expanded)}
+                    variant='transparent'
+                    size='lg'
+                  >
+                    {expanded ? (
+                      <IconLayoutSidebarLeftCollapse opacity={0.75} />
+                    ) : (
+                      <IconLayoutSidebarRightCollapse opacity={0.75} />
+                    )}
+                  </ActionIcon>
+                </Tooltip>
                 {pluginPanelSet.isLoading && <Loader size='xs' />}
               </Group>
             )}
@@ -256,19 +340,21 @@ function IndexPanelComponent({
   selectedPanel,
   panels
 }: Readonly<PanelProps>) {
-  const lastUsedPanel = useLocalState((state) => {
-    const panelName =
-      selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+  const lastUsedPanel = useLocalState(
+    useShallow((state) => {
+      const panelName =
+        selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
 
-    const panel = panels.findIndex(
-      (p) => p.name === panelName && !p.disabled && !p.hidden
-    );
-    if (panel === -1) {
-      return panels.find((p) => !p.disabled && !p.hidden)?.name || '';
-    }
+      const panel = panels.findIndex(
+        (p) => p.name === panelName && !p.disabled && !p.hidden
+      );
+      if (panel === -1) {
+        return panels.find((p) => !p.disabled && !p.hidden)?.name || '';
+      }
 
-    return panelName;
-  });
+      return panelName;
+    })
+  );
 
   return <Navigate to={lastUsedPanel} replace />;
 }

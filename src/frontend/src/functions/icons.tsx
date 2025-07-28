@@ -1,6 +1,5 @@
+import type { InvenTreeIconType, TablerIconType } from '@lib/types/Icons';
 import {
-  type Icon,
-  Icon123,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
   IconBell,
@@ -61,6 +60,7 @@ import {
   IconMapPinHeart,
   IconMinusVertical,
   IconNotes,
+  IconNumber123,
   IconNumbers,
   IconPackage,
   IconPackageImport,
@@ -77,6 +77,7 @@ import {
   IconQuestionMark,
   IconRefresh,
   IconRulerMeasure,
+  IconSearch,
   IconSettings,
   IconShoppingCart,
   IconShoppingCartHeart,
@@ -86,6 +87,7 @@ import {
   IconStack2,
   IconStatusChange,
   IconTag,
+  IconTax,
   IconTestPipe,
   IconTool,
   IconTools,
@@ -107,7 +109,7 @@ import {
 } from '@tabler/icons-react';
 import type React from 'react';
 
-const icons = {
+const icons: InvenTreeIconType = {
   name: IconPoint,
   description: IconInfoCircle,
   variant_of: IconHierarchy,
@@ -121,7 +123,7 @@ const icons = {
   ordering: IconShoppingCart,
   building: IconTool,
   category: IconBinaryTree2,
-  IPN: Icon123,
+  IPN: IconNumber123,
   revision: IconGitBranch,
   units: IconRulerMeasure,
   keywords: IconTag,
@@ -180,6 +182,7 @@ const icons = {
   admin: IconUserBolt,
   system: IconSettings,
   license: IconLicense,
+  tax_id: IconTax,
 
   // Part Icons
   active: IconCheck,
@@ -254,27 +257,23 @@ const icons = {
   success: IconCircleCheck,
   plugin: IconPlug,
   history: IconHistory,
-  dashboard: IconLayoutDashboard
+  dashboard: IconLayoutDashboard,
+  search: IconSearch
 };
-
-export type InvenTreeIconType = keyof typeof icons;
-export type TablerIconType = React.ForwardRefExoticComponent<
-  Omit<IconProps, 'ref'> & React.RefAttributes<Icon>
->;
 
 /**
  * Returns a Tabler Icon for the model field name supplied
  * @param field string defining field name
  */
-export function GetIcon(field: string): TablerIconType {
-  return icons[field as InvenTreeIconType];
+export function GetIcon(field: string | number): TablerIconType {
+  return icons[field];
 }
 
 // Aliasing the new type name to make it distinct
 type TablerIconProps = IconProps;
 
 type InvenTreeIconProps = {
-  icon: InvenTreeIconType;
+  icon: string | keyof InvenTreeIconType;
   iconProps?: TablerIconProps;
 };
 

@@ -7,12 +7,13 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
 import common.models
+import InvenTree.permissions
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
@@ -22,9 +23,8 @@ from InvenTree.exceptions import log_error
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
 from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
-from InvenTree.permissions import IsStaffOrReadOnly
 from plugin import PluginMixinEnum, registry
-from users.models import RuleSet
+from users.permissions import check_user_permission
 
 from . import serializers as barcode_serializers
 
@@ -37,12 +37,13 @@ class BarcodeView(CreateAPIView):
     # Default serializer class (can be overridden)
     serializer_class = barcode_serializers.BarcodeSerializer
 
-    def log_scan(self, request, response=None, result=False):
+    def log_scan(self, request, response=None, result: bool = False):
         """Log a barcode scan to the database.
 
         Arguments:
             request: HTTP request object
             response: Optional response data
+            result: Boolean indicating success or failure of the scan
         """
         from common.models import BarcodeScanResult
 
@@ -99,14 +100,14 @@ class BarcodeView(CreateAPIView):
                 BarcodeScanResult.objects.filter(pk__in=old_scan_ids).delete()
         except Exception:
             # Gracefully log error to database
-            log_error(f'{self.__class__.__name__}.log_scan')
+            log_error(f'{self.__class__.__name__}.log_scan', scope='barcode')
 
     def queryset(self):
         """This API view does not have a queryset."""
         return None
 
     # Default permission classes (can be overridden)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def create(self, request, *args, **kwargs):
         """Handle create method - override default create."""
@@ -153,7 +154,7 @@ class BarcodeView(CreateAPIView):
             try:
                 result = current_plugin.scan(barcode)
             except Exception:
-                log_error('BarcodeView.scan_barcode')
+                log_error('BarcodeView.scan_barcode', plugin=current_plugin.slug)
                 continue
 
             if result is None:
@@ -235,7 +236,7 @@ class BarcodeGenerate(CreateAPIView):
         return None
 
     # Default permission classes (can be overridden)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def create(self, request, *args, **kwargs):
         """Perform the barcode generation action."""
@@ -301,14 +302,9 @@ class BarcodeAssign(BarcodeView):
 
             if instance := kwargs.get(label):
                 # Check that the user has the required permission
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-
-                table = f'{app_label}_{model_name}'
-
-                if not RuleSet.check_table_permission(request.user, table, 'change'):
+                if not check_user_permission(request.user, model, 'change'):
                     raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {table}'
+                        'error': f'You do not have the required permissions for {model}'
                     })
 
                 instance.assign_barcode(barcode_data=barcode, barcode_hash=barcode_hash)
@@ -364,14 +360,9 @@ class BarcodeUnassign(BarcodeView):
 
             if instance := data.get(label, None):
                 # Check that the user has the required permission
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-
-                table = f'{app_label}_{model_name}'
-
-                if not RuleSet.check_table_permission(request.user, table, 'change'):
+                if not check_user_permission(request.user, model, 'change'):
                     raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {table}'
+                        'error': f'You do not have the required permissions for {model}'
                     })
 
                 # Unassign the barcode data from the model instance
@@ -555,7 +546,7 @@ class BarcodePOReceive(BarcodeView):
                     auto_allocate=auto_allocate,
                 )
             except Exception:
-                log_error('BarcodePOReceive.handle_barcode')
+                log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
 
             if result is None:
@@ -767,7 +758,7 @@ class BarcodeScanResultMixin:
 
     queryset = common.models.BarcodeScanResult.objects.all()
     serializer_class = barcode_serializers.BarcodeScanResultSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
     def get_queryset(self):
         """Return the queryset for the BarcodeScan API."""

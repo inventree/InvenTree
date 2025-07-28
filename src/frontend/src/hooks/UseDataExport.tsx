@@ -1,7 +1,7 @@
-import { t } from '@lingui/macro';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields } from '../functions/forms';
 import useDataOutput from './UseDataOutput';
@@ -71,9 +71,6 @@ export default function useDataExport({
         })
         .then((response: any) => {
           return extractAvailableFields(response, 'GET') || {};
-        })
-        .catch(() => {
-          return {};
         })
   });
 

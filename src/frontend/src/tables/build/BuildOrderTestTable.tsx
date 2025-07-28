@@ -1,31 +1,25 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
-import { PassFailButton } from '../../components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { PassFailButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { LocationColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import type { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -39,7 +33,6 @@ export default function BuildOrderTestTable({
   partId: number;
 }>) {
   const table = useTable('build-tests');
-  const user = useUserState();
   const api = useApi();
 
   // Fetch the test templates required for this build order
@@ -59,8 +52,7 @@ export default function BuildOrderTestTable({
             required: true
           }
         })
-        .then((res) => res.data)
-        .catch((err) => []);
+        .then((res) => res.data);
     }
   });
 
@@ -118,10 +110,11 @@ export default function BuildOrderTestTable({
                 <Badge color='lightblue' variant='filled'>{t`No Result`}</Badge>
                 <Tooltip label={t`Add Test Result`}>
                   <ActionIcon
-                    size='xs'
+                    size='lg'
                     color='green'
                     variant='transparent'
-                    onClick={() => {
+                    onClick={(event: any) => {
+                      cancelEvent(event);
                       setSelectedOutput(record.pk);
                       setSelectedTemplate(template.pk);
                       createTestResult.open();
@@ -234,13 +227,6 @@ export default function BuildOrderTestTable({
     return [];
   }, []);
 
-  const rowActions = useCallback(
-    (record: any): RowAction[] => {
-      return [];
-    },
-    [user]
-  );
-
   return (
     <>
       {createTestResult.modal}
@@ -255,9 +241,9 @@ export default function BuildOrderTestTable({
             tests: true,
             build: buildId
           },
-          rowActions: rowActions,
           tableFilters: tableFilters,
-          tableActions: tableActions
+          tableActions: tableActions,
+          modelType: ModelType.stockitem
         }}
       />
     </>

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Stack, Text } from '@mantine/core';
 import {
   IconArrowRight,
@@ -11,12 +11,22 @@ import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   useAllocateStockToBuildForm,
   useBuildOrderFields
@@ -28,19 +38,14 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
+  BooleanColumn,
+  DescriptionColumn,
+  LocationColumn,
+  PartColumn
+} from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -323,11 +328,9 @@ export default function BuildLineTable({
         sortable: false,
         title: t`IPN`
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false,
-        title: t`Description`
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'bom_item_detail.reference',
         ordering: 'reference',
@@ -337,33 +340,39 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
         ordering: 'optional',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.allow_variants',
         ordering: 'allow_variants',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.inherited',
         ordering: 'inherited',
         title: t`Gets Inherited`,
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
         ordering: 'trackable',
-        hidden: hasOutput
+        hidden: hasOutput,
+        defaultVisible: false
       }),
       {
         accessor: 'bom_item_detail.quantity',
         sortable: true,
         title: t`Unit Quantity`,
+        defaultVisible: false,
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
@@ -380,16 +389,51 @@ export default function BuildLineTable({
         accessor: 'quantity',
         title: t`Required Quantity`,
         sortable: true,
+        defaultVisible: false,
         switchable: false,
         render: (record: any) => {
+          // Include information about the BOM item (if available)
+          const extra: any[] = [];
+
+          if (record?.bom_item_detail?.setup_quantity) {
+            extra.push(
+              <Text key='setup-quantity' size='sm'>
+                {t`Setup Quantity`}: {record.bom_item_detail.setup_quantity}
+              </Text>
+            );
+          }
+
+          if (record?.bom_item_detail?.attrition) {
+            extra.push(
+              <Text key='attrition' size='sm'>
+                {t`Attrition`}: {record.bom_item_detail.attrition}%
+              </Text>
+            );
+          }
+
+          if (record?.bom_item_detail?.rounding_multiple) {
+            extra.push(
+              <Text key='rounding-multiple' size='sm'>
+                {t`Rounding Multiple`}:{' '}
+                {record.bom_item_detail.rounding_multiple}
+              </Text>
+            );
+          }
+
           // If a build output is specified, use the provided quantity
           return (
-            <Group justify='space-between' wrap='nowrap'>
-              <Text>{record.requiredQuantity}</Text>
-              {record?.part_detail?.units && (
-                <Text size='xs'>[{record.part_detail.units}]</Text>
-              )}
-            </Group>
+            <TableHoverCard
+              title={t`BOM Information`}
+              extra={extra}
+              value={
+                <Group justify='space-between' wrap='nowrap'>
+                  <Text>{record.requiredQuantity}</Text>
+                  {record?.part_detail?.units && (
+                    <Text size='xs'>[{record.part_detail.units}]</Text>
+                  )}
+                </Group>
+              }
+            />
           );
         }
       },
@@ -419,7 +463,10 @@ export default function BuildLineTable({
     ];
   }, [hasOutput, isActive, table, output]);
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'new-build-order'
+  });
 
   const [initialData, setInitialData] = useState<any>({});
 
@@ -431,6 +478,7 @@ export default function BuildLineTable({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
     fields: buildOrderFields,
+    modalId: 'new-build-order',
     initialData: initialData,
     follow: true,
     modelType: ModelType.build
@@ -546,7 +594,6 @@ export default function BuildLineTable({
         in_production &&
         !consumable &&
         user.hasChangeRole(UserRoles.build) &&
-        record.allocated < record.quantity &&
         record.trackable == hasOutput;
 
       // Can de-allocate
@@ -563,10 +610,7 @@ export default function BuildLineTable({
         part.purchaseable;
 
       const canBuild =
-        in_production &&
-        !consumable &&
-        user.hasAddRole(UserRoles.build) &&
-        part.assembly;
+        !consumable && user.hasAddRole(UserRoles.build) && part.assembly;
 
       return [
         {

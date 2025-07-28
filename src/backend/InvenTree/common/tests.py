@@ -28,10 +28,10 @@ from InvenTree.unit_test import (
     InvenTreeAPITestCase,
     InvenTreeTestCase,
     PluginMixin,
+    addUserPermission,
 )
 from part.models import Part, PartParameterTemplate
 from plugin import registry
-from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
@@ -450,6 +450,15 @@ class SettingsTest(InvenTreeTestCase):
                         f'Non-boolean default value specified for {key}'
                     )  # pragma: no cover
 
+    @override_settings(
+        GLOBAL_SETTINGS_OVERRIDES={'INVENTREE_INSTANCE': 'Overridden Instance Name'}
+    )
+    def test_override(self):
+        """Test override of global settings."""
+        self.assertEqual(
+            get_global_setting('INVENTREE_INSTANCE'), 'Overridden Instance Name'
+        )
+
     def test_global_setting_caching(self):
         """Test caching operations for the global settings class."""
         key = 'PART_NAME_FORMAT'
@@ -498,6 +507,44 @@ class SettingsTest(InvenTreeTestCase):
         for user in get_user_model().objects.all():
             value = InvenTreeUserSetting.get_setting(key, user=user)
             self.assertEqual(value, user.pk)
+
+    def test_set_global_warning(self):
+        """Test set_global_warning function."""
+        from common.setting.system import SystemSetId
+        from common.settings import GlobalWarningCode, set_global_warning
+
+        # Set a warning
+        self.assertTrue(
+            set_global_warning(GlobalWarningCode.TEST_KEY, {'test': 'value'})
+        )
+
+        # Check that the warning has been set
+        self.assertIn(
+            GlobalWarningCode.TEST_KEY,
+            InvenTreeSetting.get_setting(SystemSetId.GLOBAL_WARNING),
+        )
+
+        # Check that the warning can be retrieved
+        warning = InvenTreeSetting.get_setting_object(SystemSetId.GLOBAL_WARNING)
+        warning_dict = json.loads(warning.value)
+        self.assertEqual(warning_dict[GlobalWarningCode.TEST_KEY], {'test': 'value'})
+
+        # Clear the warning
+        self.assertTrue(set_global_warning(GlobalWarningCode.TEST_KEY, False))
+
+        # Check that the warning has been cleared
+        self.assertFalse(
+            json.loads(InvenTreeSetting.get_setting(SystemSetId.GLOBAL_WARNING)).get(
+                GlobalWarningCode.TEST_KEY
+            )
+        )
+
+        # No key - warning
+        with self.assertRaises(ValueError):
+            set_global_warning(None)
+
+        # Wrong structure
+        self.assertTrue(set_global_warning(GlobalWarningCode.TEST_KEY, {'test': json}))
 
 
 class GlobalSettingsApiTest(InvenTreeAPITestCase):
@@ -747,28 +794,6 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         # Note that this particular setting has a MinValueValidator(1) associated with it
         for v in [0, -1, -5]:
             response = self.patch(url, {'value': v}, expected_code=400)
-
-
-class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
-    """Tests for the notification user settings API."""
-
-    def test_api_list(self):
-        """Test list URL."""
-        url = reverse('api-notification-setting-list')
-
-        self.get(url, expected_code=200)
-
-    def test_setting(self):
-        """Test the string name for NotificationUserSetting."""
-        NotificationUserSetting.set_setting(
-            'NOTIFICATION_METHOD_MAIL', True, change_user=self.user, user=self.user
-        )
-        test_setting = NotificationUserSetting.get_setting_object(
-            'NOTIFICATION_METHOD_MAIL', user=self.user
-        )
-        self.assertEqual(
-            str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): True'
-        )
 
 
 class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
@@ -1077,6 +1102,9 @@ class NotificationTest(InvenTreeAPITestCase):
         """Tests for bulk deletion of user notifications."""
         from error_report.models import Error
 
+        # Ensure *this* user has permission to view error reports
+        addUserPermission(self.user, 'error_report', 'error', 'view')
+
         # Create some notification messages by throwing errors
         for _ii in range(10):
             Error.objects.create()
@@ -1088,7 +1116,7 @@ class NotificationTest(InvenTreeAPITestCase):
         # However, one user is marked as inactive
         self.assertEqual(messages.count(), 20)
 
-        # Only 10 messages related to *this* user
+        # Only messages related to *this* user
         my_notifications = messages.filter(user=self.user)
         self.assertEqual(my_notifications.count(), 10)
 
@@ -1112,7 +1140,7 @@ class NotificationTest(InvenTreeAPITestCase):
 
         # Now, let's bulk delete all 'unread' notifications via the API,
         # but only associated with the logged in user
-        response = self.delete(url, {'filters': {'read': False}}, expected_code=204)
+        response = self.delete(url, {'filters': {'read': False}}, expected_code=200)
 
         # Only 7 notifications should have been deleted,
         # as the notifications associated with other users must remain untouched
@@ -1169,7 +1197,7 @@ class CommonTest(InvenTreeAPITestCase):
         """Test flag URLs."""
         # Not superuser
         response = self.get(reverse('api-flag-list'), expected_code=200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 3)
         self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
 
         # Turn into superuser
@@ -1178,7 +1206,7 @@ class CommonTest(InvenTreeAPITestCase):
 
         # Successful checks
         response = self.get(reverse('api-flag-list'), expected_code=200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 3)
         self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
         self.assertTrue(response.data[0]['conditions'])
 

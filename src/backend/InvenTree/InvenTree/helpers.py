@@ -32,17 +32,66 @@ from .settings import MEDIA_URL, STATIC_URL
 
 logger = structlog.get_logger('inventree')
 
+INT_CLIP_MAX = 0x7FFFFFFF
 
-def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
-    """Extract an integer out of reference."""
+
+def extract_int(
+    reference, clip=INT_CLIP_MAX, try_hex=False, allow_negative=False
+) -> int:
+    """Extract an integer out of provided string.
+
+    Arguments:
+        reference: Input string to extract integer from
+        clip: Maximum value to return (default = 0x7FFFFFFF)
+        try_hex: Attempt to parse as hex if integer conversion fails (default = False)
+        allow_negative: Allow negative values (default = False)
+    """
     # Default value if we cannot convert to an integer
     ref_int = 0
+
+    def do_clip(value: int, clip: int, allow_negative: bool) -> int:
+        """Perform clipping on the provided value.
+
+        Arguments:
+            value: Value to clip
+            clip: Maximum value to clip to
+            allow_negative: Allow negative values (default = False)
+        """
+        if clip is None:
+            return value
+
+        clip = min(clip, INT_CLIP_MAX)
+
+        if value > clip:
+            return clip
+        elif value < -clip:
+            return -clip
+
+        if not allow_negative:
+            value = abs(value)
+
+        return value
 
     reference = str(reference).strip()
 
     # Ignore empty string
     if len(reference) == 0:
         return 0
+
+    # Try naive integer conversion first
+    try:
+        ref_int = int(reference)
+        return do_clip(ref_int, clip, allow_negative)
+    except ValueError:
+        pass
+
+    # Hex?
+    if try_hex or reference.startswith('0x'):
+        try:
+            ref_int = int(reference, base=16)
+            return do_clip(ref_int, clip, allow_negative)
+        except ValueError:
+            pass
 
     # Look at the start of the string - can it be "integerized"?
     result = re.match(r'^(\d+)', reference)
@@ -66,11 +115,7 @@ def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
 
     # Ensure that the returned values are within the range that can be stored in an IntegerField
     # Note: This will result in large values being "clipped"
-    if clip is not None:
-        if ref_int > clip:
-            ref_int = clip
-        elif ref_int < -clip:
-            ref_int = -clip
+    ref_int = do_clip(ref_int, clip, allow_negative)
 
     if not allow_negative and ref_int < 0:
         ref_int = abs(ref_int)
@@ -109,7 +154,7 @@ def generateTestKey(test_name: str) -> str:
     return key
 
 
-def constructPathString(path, max_chars=250):
+def constructPathString(path: list[str], max_chars: int = 250) -> str:
     """Construct a 'path string' for the given path.
 
     Arguments:
@@ -437,6 +482,7 @@ def increment_serial_number(serial, part=None):
 
     Arguments:
         serial: The serial number which should be incremented
+        part: Optional part object to provide additional context for incrementing the serial number
 
     Returns:
         incremented value, or None if incrementing could not be performed.
@@ -464,7 +510,7 @@ def increment_serial_number(serial, part=None):
             if result is not None:
                 return str(result)
         except Exception:
-            log_error(f'{plugin.slug}.increment_serial_number')
+            log_error('increment_serial_number', plugin=plugin.slug)
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
@@ -491,6 +537,7 @@ def extract_serial_numbers(
         input_string: Input string with specified serial numbers (string, or integer)
         expected_quantity: The number of (unique) serial numbers we expect
         starting_value: Provide a starting value for the sequence (or None)
+        part: Part that should be used as context
     """
     if starting_value is None:
         starting_value = increment_serial_number(None, part=part)
@@ -669,10 +716,11 @@ def extract_serial_numbers(
         raise ValidationError([_('No serial numbers found')])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
+        n = len(serials)
+        q = expected_quantity
+
         raise ValidationError([
-            _(
-                f'Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})'
-            )
+            _(f'Number of unique serial numbers ({n}) must match quantity ({q})')
         ])
 
     return serials
@@ -1039,7 +1087,7 @@ def inheritors(
 
 
 def pui_url(subpath: str) -> str:
-    """Return the URL for a PUI subpath."""
+    """Return the URL for a web subpath."""
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'

@@ -1,13 +1,14 @@
-import { t } from '@lingui/macro';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { t } from '@lingui/core/macro';
+import { useDocumentVisibility } from '@mantine/hooks';
 import { notifications, showNotification } from '@mantine/notifications';
-import { IconCircleCheck } from '@tabler/icons-react';
+import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { useApi } from '../contexts/ApiContext';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { generateUrl } from '../functions/urls';
-import { apiUrl } from '../states/ApiState';
 
 /**
  * Hook for monitoring a data output process running on the server
@@ -20,6 +21,8 @@ export default function useDataOutput({
   id?: number;
 }) {
   const api = useApi();
+
+  const visibility = useDocumentVisibility();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -38,7 +41,7 @@ export default function useDataOutput({
   }, [id, title]);
 
   const progress = useQuery({
-    enabled: !!id && loading,
+    enabled: !!id && loading && visibility === 'visible',
     refetchInterval: 500,
     queryKey: ['data-output', id, title],
     queryFn: () =>
@@ -47,7 +50,22 @@ export default function useDataOutput({
         .then((response) => {
           const data = response?.data ?? {};
 
-          if (data.complete) {
+          if (!!data.errors || !!data.error) {
+            setLoading(false);
+
+            const error: string =
+              data?.error ?? data?.errors?.error ?? t`Process failed`;
+
+            notifications.update({
+              id: `data-output-${id}`,
+              loading: false,
+              icon: <IconExclamationCircle />,
+              autoClose: 2500,
+              title: title,
+              message: error,
+              color: 'red'
+            });
+          } else if (data.complete) {
             setLoading(false);
             notifications.update({
               id: `data-output-${id}`,
@@ -63,16 +81,6 @@ export default function useDataOutput({
               const url = generateUrl(data.output);
               window.open(url.toString(), '_blank');
             }
-          } else if (!!data.error) {
-            setLoading(false);
-            notifications.update({
-              id: `data-output-${id}`,
-              loading: false,
-              autoClose: 2500,
-              title: title,
-              message: t`Process failed`,
-              color: 'red'
-            });
           } else {
             notifications.update({
               id: `data-output-${id}`,

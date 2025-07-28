@@ -1,66 +1,18 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
-import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
-
-/**
- * Interface for the table filter choice
- */
-export type TableFilterChoice = {
-  value: string;
-  label: string;
-};
-
-/**
- * Available filter types
- *
- * boolean: A simple true/false filter
- * choice: A filter which allows selection from a list of (supplied)
- * date: A filter which allows selection from a date input
- * text: A filter which allows raw text input
- * api: A filter which fetches its options from an API endpoint
- */
-export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text' | 'api';
-
-/**
- * Interface for the table filter type. Provides a number of options for selecting filter value:
- *
- * name: The name of the filter (used for query string)
- * label: The label to display in the UI (human readable)
- * description: A description of the filter (human readable)
- * type: The type of filter (see TableFilterType)
- * choices: A list of TableFilterChoice objects
- * choiceFunction: A function which returns a list of TableFilterChoice objects
- * defaultValue: The default value for the filter
- * value: The current value of the filter
- * displayValue: The current display value of the filter
- * active: Whether the filter is active (false = hidden, not used)
- * apiUrl: The API URL to use for fetching dynamic filter options
- * model: The model type to use for fetching dynamic filter options
- * modelRenderer: A function to render a simple text version of the model type
- */
-export type TableFilter = {
-  name: string;
-  label: string;
-  description?: string;
-  type?: TableFilterType;
-  choices?: TableFilterChoice[];
-  choiceFunction?: () => TableFilterChoice[];
-  defaultValue?: any;
-  value?: any;
-  displayValue?: any;
-  active?: boolean;
-  apiUrl?: string;
-  model?: ModelType;
-  modelRenderer?: (instance: any) => string;
-};
+import {
+  type StatusLookup,
+  useGlobalStatusState
+} from '../states/GlobalStatusState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Return list of available filter options for a given filter
@@ -116,6 +68,58 @@ export function StatusFilterOptions(
 }
 
 // Define some commonly used filters
+
+export function HasBatchCodeFilter(): TableFilter {
+  return {
+    name: 'has_batch',
+    label: t`Has Batch Code`,
+    description: t`Show items which have a batch code`
+  };
+}
+
+export function BatchFilter(): TableFilter {
+  return {
+    name: 'batch',
+    label: t`Batch Code`,
+    description: t`Filter items by batch code`,
+    type: 'text'
+  };
+}
+
+export function IsSerializedFilter(): TableFilter {
+  return {
+    name: 'serialized',
+    label: t`Is Serialized`,
+    description: t`Show items which have a serial number`
+  };
+}
+
+export function SerialFilter(): TableFilter {
+  return {
+    name: 'serial',
+    label: t`Serial`,
+    description: t`Filter items by serial number`,
+    type: 'text'
+  };
+}
+
+export function SerialLTEFilter(): TableFilter {
+  return {
+    name: 'serial_lte',
+    label: t`Serial Below`,
+    description: t`Show items with serial numbers less than or equal to a given value`,
+    type: 'text'
+  };
+}
+
+export function SerialGTEFilter(): TableFilter {
+  return {
+    name: 'serial_gte',
+    label: t`Serial Above`,
+    description: t`Show items with serial numbers greater than or equal to a given value`,
+    type: 'text'
+  };
+}
 
 export function AssignedToMeFilter(): TableFilter {
   return {
@@ -245,6 +249,15 @@ export function HasProjectCodeFilter(): TableFilter {
   };
 }
 
+export function IncludeVariantsFilter(): TableFilter {
+  return {
+    name: 'include_variants',
+    type: 'boolean',
+    label: t`Include Variants`,
+    description: t`Include results for part variants`
+  };
+}
+
 export function OrderStatusFilter({
   model
 }: { model: ModelType }): TableFilter {
@@ -320,6 +333,32 @@ export function UserFilter({
   };
 }
 
+export function ManufacturerFilter(): TableFilter {
+  return {
+    name: 'manufacturer',
+    label: t`Manufacturer`,
+    description: t`Filter by manufacturer`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_manufacturer: true }
+  };
+}
+
+export function SupplierFilter(): TableFilter {
+  return {
+    name: 'supplier',
+    label: t`Supplier`,
+    description: t`Filter by supplier`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_supplier: true }
+  };
+}
+
 export function CreatedByFilter(): TableFilter {
   return UserFilter({
     name: 'created_by',
@@ -339,10 +378,21 @@ export function IssuedByFilter(): TableFilter {
 export function PartCategoryFilter(): TableFilter {
   return {
     name: 'category',
-    label: t`Category`,
+    label: t`Part Category`,
     description: t`Filter by part category`,
     apiUrl: apiUrl(ApiEndpoints.category_list),
     model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
+
+export function StockLocationFilter(): TableFilter {
+  return {
+    name: 'location',
+    label: t`Location`,
+    description: t`Filter by stock location`,
+    apiUrl: apiUrl(ApiEndpoints.stock_location_list),
+    model: ModelType.stocklocation,
     modelRenderer: (instance: any) => instance.name
   };
 }

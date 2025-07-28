@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
   Center,
@@ -10,11 +10,14 @@ import {
 } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import dayjs from 'dayjs';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import {
   generateStocktakeReportFields,
   partStocktakeFields
@@ -25,11 +28,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 
 /*
  * Render a tooltip for the chart, with correct date information

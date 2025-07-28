@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion } from '@mantine/core';
 
 import { StylishText } from '../../../../components/items/StylishText';
@@ -26,6 +26,14 @@ export default function UserManagementPanel() {
           <GroupTable />
         </Accordion.Panel>
       </Accordion.Item>
+      <Accordion.Item value='tokens' key='tokens'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Tokens`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <ApiTokenTable only_myself={false} />
+        </Accordion.Panel>
+      </Accordion.Item>
       <Accordion.Item value='settings' key='settings'>
         <Accordion.Control>
           <StylishText size='lg'>{t`Settings`}</StylishText>
@@ -34,14 +42,6 @@ export default function UserManagementPanel() {
           <GlobalSettingList
             keys={['LOGIN_ENABLE_REG', 'SIGNUP_GROUP', 'LOGIN_ENABLE_SSO_REG']}
           />
-        </Accordion.Panel>
-      </Accordion.Item>
-      <Accordion.Item value='tokens' key='tokens'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`Tokens`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <ApiTokenTable only_myself={false} />
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>

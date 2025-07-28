@@ -1,10 +1,11 @@
 """API for location plugins."""
 
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ParseError, ValidationError
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+import InvenTree.permissions
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
 from plugin import PluginMixinEnum, registry
@@ -27,7 +28,7 @@ class LocatePluginSerializer(serializers.Serializer):
 class LocatePluginView(GenericAPIView):
     """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = LocatePluginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -75,7 +76,7 @@ class LocatePluginView(GenericAPIView):
             except (ValueError, StockItem.DoesNotExist):
                 raise NotFound(f"StockItem matching PK '{item_pk}' not found")
             except Exception:
-                log_error('locate_stock_item')
+                log_error('locate_stock_item', plugin=plugin.slug)
                 return ValidationError('Error locating stock item')
 
         elif location_pk:
@@ -97,7 +98,7 @@ class LocatePluginView(GenericAPIView):
             except (ValueError, StockLocation.DoesNotExist):
                 raise NotFound(f"StockLocation matching PK '{location_pk}' not found")
             except Exception:
-                log_error('locate_stock_location')
+                log_error('locate_stock_location', plugin=plugin.slug)
                 return ValidationError('Error locating stock location')
         else:
             raise ParseError("Must supply either 'item' or 'location' parameter")

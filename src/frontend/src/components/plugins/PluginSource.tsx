@@ -1,4 +1,5 @@
 import { generateUrl } from '../../functions/urls';
+import { useLocalState } from '../../states/LocalState';
 
 /*
  * Load an external plugin source from a URL.
@@ -32,13 +33,22 @@ export async function findExternalPluginFunction(
   source: string,
   functionName: string
 ): Promise<Function | null> {
-  // The source URL may also include the function name divided by a colon
-  // otherwise the provided function name will be used
-  if (source.includes(':')) {
-    [source, functionName] = source.split(':');
+  const { getHost } = useLocalState.getState();
+
+  // Extract pathstring from the source URL
+  // Use the specified host unless the source is already a full URL
+  const url = new URL(source, getHost());
+
+  // If the pathname contains a ':' character, it indicates a function name
+  // but we need to remove it for the URL lookup to work correctly
+  if (url.pathname.includes(':')) {
+    const parts = url.pathname.split(':');
+    source = parts[0]; // Use the first part as the source URL
+    functionName = parts[1] || functionName; // Use the second part as the
+    url.pathname = source; // Update the pathname to the source URL
   }
 
-  const module = await loadExternalPluginSource(source);
+  const module = await loadExternalPluginSource(url.toString());
 
   if (module?.[functionName]) {
     return module[functionName];

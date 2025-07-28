@@ -15,15 +15,12 @@ from djmoney.money import Money
 import common.currency
 import common.models
 import InvenTree.helpers
-import part.models
 import stock.models
 
 logger = structlog.get_logger('inventree')
 
 
-def perform_stocktake(
-    target: part.models.Part, user: User, note: str = '', commit=True, **kwargs
-):
+def perform_stocktake(target, user: User, note: str = '', commit=True, **kwargs):
     """Perform stocktake action on a single part.
 
     Arguments:
@@ -44,6 +41,8 @@ def perform_stocktake(
 
     In this case, the stocktake *report* will be limited to the specified location.
     """
+    import part.models
+
     # Determine which locations are "valid" for the generated report
     location = kwargs.get('location')
     locations = location.get_descendants(include_self=True) if location else []
@@ -162,6 +161,8 @@ def generate_stocktake_report(**kwargs):
         generate_report: If True, generate a stocktake report from the calculated data (default=True)
         update_parts: If True, save stocktake information against each filtered Part (default = True)
     """
+    import part.models
+
     # Determine if external locations should be excluded
     exclude_external = kwargs.get(
         'exclude_exernal',

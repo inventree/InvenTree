@@ -1,20 +1,31 @@
-import { Trans, t } from '@lingui/macro';
-import { ActionIcon, Divider, Group, Select, Table, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import {
+  ActionIcon,
+  Divider,
+  Group,
+  Select,
+  Table,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import {
   IconApi,
-  IconCheck,
+  IconCircleCheck,
+  IconEdit,
   IconInfoCircle,
   IconPlugConnected,
   IconServer,
   IconServerSpark
 } from '@tabler/icons-react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import type { HostList } from '@lib/types/Server';
+import { useShallow } from 'zustand/react/shallow';
 import { Wrapper } from '../../pages/Auth/Layout';
-import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import type { HostList } from '../../states/states';
-import { EditButton } from '../buttons/EditButton';
+import { useServerApiState } from '../../states/ServerApiState';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({
@@ -26,12 +37,10 @@ export function InstanceOptions({
   ChangeHost: (newHost: string | null) => void;
   setHostEdit: () => void;
 }>) {
-  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
-  const [setHost, setHostList, hostList] = useLocalState((state) => [
-    state.setHost,
-    state.setHostList,
-    state.hostList
-  ]);
+  const [hostListEdit, setHostListEdit] = useToggle([false, true] as const);
+  const [setHost, setHostList, hostList] = useLocalState(
+    useShallow((state) => [state.setHost, state.setHostList, state.hostList])
+  );
   const hostListData = Object.keys(hostList).map((key) => ({
     value: key,
     label: hostList[key]?.name
@@ -47,27 +56,36 @@ export function InstanceOptions({
 
   return (
     <Wrapper titleText={t`Select Server`} smallPadding>
-      <Group gap='xs' wrap='nowrap'>
+      <Group gap='xs' justify='space-between' wrap='nowrap'>
         <Select
+          style={{ width: '100%' }}
           value={hostKey}
           onChange={ChangeHost}
           data={hostListData}
-          disabled={HostListEdit}
+          disabled={hostListEdit}
         />
-        <EditButton
-          setEditing={setHostListEdit}
-          editing={HostListEdit}
-          disabled={HostListEdit}
-        />
-        <EditButton
-          setEditing={setHostEdit}
-          editing={true}
-          disabled={HostListEdit}
-          saveIcon={<IconCheck />}
-        />
+        <Group gap='xs' wrap='nowrap'>
+          <Tooltip label={t`Edit host options`} position='top'>
+            <ActionButton
+              variant='transparent'
+              disabled={hostListEdit}
+              onClick={setHostListEdit}
+              icon={<IconEdit />}
+            />
+          </Tooltip>
+          <Tooltip label={t`Save host selection`} position='top'>
+            <ActionButton
+              variant='transparent'
+              onClick={setHostEdit}
+              disabled={hostListEdit}
+              icon={<IconCircleCheck />}
+              color='green'
+            />
+          </Tooltip>
+        </Group>
       </Group>
 
-      {HostListEdit ? (
+      {hostListEdit ? (
         <>
           <Divider my={'sm'} />
           <Text>
@@ -92,7 +110,7 @@ function ServerInfo({
   hostList: HostList;
   hostKey: string;
 }>) {
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   const items: any[] = [
     {

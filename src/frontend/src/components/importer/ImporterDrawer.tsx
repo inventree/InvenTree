@@ -1,28 +1,25 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   Button,
   Divider,
   Drawer,
   Group,
-  Loader,
-  LoadingOverlay,
   Paper,
   Space,
   Stack,
-  Stepper,
-  Text
+  Stepper
 } from '@mantine/core';
-import { IconCheck } from '@tabler/icons-react';
+import { IconCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { useImportSession } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { StylishText } from '../items/StylishText';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
-import ImporterImportProgress from './ImporterImportProgress';
+import ImporterStatus from './ImporterStatus';
 
 /*
  * Stepper component showing the current step of the data import process.
@@ -86,17 +83,17 @@ export default function ImporterDrawer({
   }, [session.status]);
 
   const widget = useMemo(() => {
-    if (session.sessionQuery.isLoading || session.sessionQuery.isFetching) {
-      return <Loader />;
+    if (session.sessionQuery.isError) {
+      return (
+        <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
+          {t`Failed to fetch import session data`}
+        </Alert>
+      );
     }
 
     switch (session.status) {
-      case importSessionStatus.INITIAL:
-        return <Text>Initial : TODO</Text>;
       case importSessionStatus.MAPPING:
         return <ImporterColumnSelector session={session} />;
-      case importSessionStatus.IMPORTING:
-        return <ImporterImportProgress session={session} />;
       case importSessionStatus.PROCESSING:
         return <ImporterDataSelector session={session} />;
       case importSessionStatus.COMPLETE:
@@ -113,14 +110,7 @@ export default function ImporterDrawer({
           </Stack>
         );
       default:
-        return (
-          <Stack gap='xs'>
-            <Alert color='red' title={t`Unknown Status`} icon={<IconCheck />}>
-              {t`Import session has unknown status`}: {session.status}
-            </Alert>
-            <Button color='red' onClick={onClose}>{t`Close`}</Button>
-          </Stack>
-        );
+        return <ImporterStatus session={session} />;
     }
   }, [session.status, session.sessionQuery]);
 
@@ -165,8 +155,7 @@ export default function ImporterDrawer({
       }}
     >
       <Stack gap='xs'>
-        <LoadingOverlay visible={session.sessionQuery.isFetching} />
-        <Paper p='md'>{session.sessionQuery.isFetching || widget}</Paper>
+        <Paper p='md'>{widget}</Paper>
       </Stack>
     </Drawer>
   );

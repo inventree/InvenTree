@@ -1,13 +1,13 @@
-import { t } from '@lingui/macro';
-import { Alert, Skeleton, Stack, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
-  IconInfoCircle,
   IconPackages,
+  IconPlugConnected,
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
@@ -16,16 +16,22 @@ import {
   IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { lazy, useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { useServerApiState } from '../../../states/ApiState';
+import { Loadable } from '../../../functions/loading';
+import { useServerApiState } from '../../../states/ServerApiState';
 import { useUserState } from '../../../states/UserState';
+
+const PluginSettingsGroup = Loadable(
+  lazy(() => import('./PluginSettingsGroup'))
+);
 
 /**
  * System settings page
@@ -64,8 +70,8 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'login',
-        label: t`Login`,
+        name: 'authentication',
+        label: t`Authentication`,
         icon: <IconFingerprint />,
         content: (
           <GlobalSettingList
@@ -112,15 +118,11 @@ export default function SystemSettings() {
         label: t`Notifications`,
         icon: <IconBellCog />,
         content: (
-          <Stack>
-            <Alert
-              color='teal'
-              title={t`This panel is a placeholder.`}
-              icon={<IconInfoCircle />}
-            >
-              <Text c='gray'>This panel has not yet been implemented</Text>
-            </Alert>
-          </Stack>
+          <PluginSettingsGroup
+            mixin='notification'
+            global={true}
+            message={t`The settings below are specific to each available notification method`}
+          />
         )
       },
       {
@@ -137,6 +139,7 @@ export default function SystemSettings() {
                 'PART_BOM_USE_INTERNAL_PRICE',
                 'PRICING_DECIMAL_PLACES_MIN',
                 'PRICING_DECIMAL_PLACES',
+                'PRICING_AUTO_UPDATE',
                 'PRICING_UPDATE_DAYS'
               ]}
             />
@@ -207,7 +210,8 @@ export default function SystemSettings() {
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON'
+              'PART_CATEGORY_DEFAULT_ICON',
+              'PART_PARAMETER_ENFORCE_UNITS'
             ]}
           />
         )
@@ -220,7 +224,6 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'SERIAL_NUMBER_GLOBALLY_UNIQUE',
-              'SERIAL_NUMBER_AUTOFILL',
               'STOCK_DELETE_DEPLETED_DEFAULT',
               'STOCK_BATCH_CODE_TEMPLATE',
               'STOCK_ENABLE_EXPIRY',
@@ -246,6 +249,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
+              'BUILDORDER_EXTERNAL_BUILDS',
               'BUILDORDER_REQUIRE_RESPONSIBLE',
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',
@@ -302,13 +306,19 @@ export default function SystemSettings() {
             ]}
           />
         )
+      },
+      {
+        name: 'plugins',
+        label: t`Plugin Settings`,
+        icon: <IconPlugConnected />,
+        content: <PluginSettingsGroup global={true} />
       }
     ];
   }, []);
 
   const user = useUserState();
 
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   if (!user.isLoggedIn()) {
     return <Skeleton />;

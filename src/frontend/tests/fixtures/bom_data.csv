@@ -1,0 +1,5 @@
+Assembly,Component,Reference,Quantity,Overage,Allow Variants,Gets inherited,Optional,Consumable,Note,ID,Pricing min,Pricing max,Pricing min total,Pricing max total,Pricing updated,Component.Ipn,Component.Name,Component.Description,Validated,Available Stock,Available substitute stock,Available variant stock,External stock,On Order,In Production,Can Build
+87,66,Screws,4.0,,False,False,False,False,,16,0.28,0.648622,1.12,2.594488,2024-08-08 06:55,,M3x8 Torx,"Torx head screw, M3 thread, 8.0mm",True,485.0,0.0,0.0,0.0,0.0,0.0,121.25
+87,67,Large screw,1.0,,False,False,False,False,,17,0.574802,0.574802,0.574802,0.574802,2024-07-27 05:13,,M3x10 Torx,"Torx head screw, M3 thread, 10.0mm",True,1450.0,0.0,0.0,0.0,0.0,0.0,1450.0
+87,82,Enclosure,1.0,,False,False,False,False,,15,,,,,2024-07-27 05:08,,1551ABK,"Small plastic enclosure, black",True,165.0,223.0,0.0,0.0,0.0,0.0,388.0
+87,88,PCBA,1.0,,True,False,False,False,Assembled board,23,80.431083,129.328176,80.431083,129.328176,2024-12-27 23:14,002.01-PCBA,Widget Board (assembled),Assembled PCB for converting electricity into magic smoke,True,55.0,0.0,0.0,0.0,0.0,0.0,55.0

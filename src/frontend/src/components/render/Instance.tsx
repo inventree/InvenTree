@@ -1,13 +1,19 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type {
+  ModelRendererDict,
+  RenderInstanceProps
+} from '@lib/types/Rendering';
+export type { InstanceRenderInterface } from '@lib/types/Rendering';
 import { useApi } from '../../contexts/ApiContext';
-import { ModelType } from '../../enums/ModelType';
-import { navigateToLink } from '../../functions/navigation';
 import { shortenString } from '../../functions/tables';
-import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -24,7 +30,6 @@ import {
   RenderProjectCode,
   RenderSelectionList
 } from './Generic';
-import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -47,24 +52,10 @@ import {
 } from './Stock';
 import { RenderGroup, RenderOwner, RenderUser } from './User';
 
-type EnumDictionary<T extends string | symbol | number, U> = {
-  [K in T]: U;
-};
-
-export interface InstanceRenderInterface {
-  instance: any;
-  link?: boolean;
-  navigate?: any;
-  showSecondary?: boolean;
-}
-
 /**
  * Lookup table for rendering a model instance
  */
-const RendererLookup: EnumDictionary<
-  ModelType,
-  (props: Readonly<InstanceRenderInterface>) => ReactNode
-> = {
+export const RendererLookup: ModelRendererDict = {
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
   [ModelType.buildline]: RenderBuildLine,
@@ -100,10 +91,6 @@ const RendererLookup: EnumDictionary<
   [ModelType.error]: RenderError
 };
 
-export type RenderInstanceProps = {
-  model: ModelType | undefined;
-} & InstanceRenderInterface;
-
 /**
  * Render an instance of a database model, depending on the provided data
  */
@@ -137,10 +124,7 @@ export function RenderRemoteInstance({
     queryFn: async () => {
       const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
 
-      return api
-        .get(url)
-        .then((response) => response.data)
-        .catch(() => null);
+      return api.get(url).then((response) => response.data);
     }
   });
 
@@ -235,5 +219,6 @@ export function UnknownRenderer({
 }: Readonly<{
   model: ModelType | undefined;
 }>): ReactNode {
-  return <Alert color='red' title={t`Unknown model: ${model}`} />;
+  const model_name = model ? model.toString() : 'undefined';
+  return <Alert color='red' title={t`Unknown model: ${model_name}`} />;
 }

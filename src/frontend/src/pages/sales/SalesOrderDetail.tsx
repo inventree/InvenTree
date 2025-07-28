@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
@@ -10,6 +10,10 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -36,9 +40,6 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import {
   useCreateApiFormModal,
@@ -46,8 +47,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
@@ -68,8 +68,7 @@ export default function SalesOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_list,
     pk: id,
@@ -183,14 +182,28 @@ export default function SalesOrderDetail() {
         hidden: !order.link
       },
       {
-        type: 'link',
-        model: ModelType.contact,
-        link: false,
-        name: 'contact',
+        type: 'text',
+        name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.email',
+        label: t`Contact Email`,
+        icon: 'email',
+        copy: true,
+        hidden: !order.contact_detail?.email
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.phone',
+        label: t`Contact Phone`,
+        icon: 'phone',
+        copy: true,
+        hidden: !order.contact_detail?.phone
       },
       {
         type: 'text',
@@ -329,6 +342,7 @@ export default function SalesOrderDetail() {
               <Accordion.Panel>
                 <SalesOrderLineItemTable
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   customerId={order.customer}
                   editable={
@@ -346,6 +360,7 @@ export default function SalesOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.sales_order_extra_line_list}
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.sales_order}
                 />
@@ -460,8 +475,14 @@ export default function SalesOrderDetail() {
       (order.status == soStatus.PENDING ||
         order.status == soStatus.IN_PROGRESS);
 
-    const canShip: boolean = canEdit && order.status == soStatus.IN_PROGRESS;
-    const canComplete: boolean = canEdit && order.status == soStatus.SHIPPED;
+    const autoComplete = globalSettings.isSet('SALESORDER_SHIP_COMPLETE');
+
+    const canShip: boolean =
+      !autoComplete && canEdit && order.status == soStatus.IN_PROGRESS;
+    const canComplete: boolean =
+      canEdit &&
+      (order.status == soStatus.SHIPPED ||
+        (autoComplete && order.status == soStatus.IN_PROGRESS));
 
     return [
       <PrimaryActionButton
@@ -522,7 +543,7 @@ export default function SalesOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, soStatus]);
+  }, [user, order, soStatus, globalSettings]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
@@ -537,6 +558,16 @@ export default function SalesOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
+  const subtitle: string = useMemo(() => {
+    let t = order.customer_detail?.name || '';
+
+    if (order.customer_reference) {
+      t += ` (${order.customer_reference})`;
+    }
+
+    return t;
+  }, [order]);
+
   return (
     <>
       {issueOrder.modal}
@@ -547,14 +578,13 @@ export default function SalesOrderDetail() {
       {editSalesOrder.modal}
       {duplicateSalesOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Sales Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={soActions}
@@ -569,8 +599,9 @@ export default function SalesOrderDetail() {
             pageKey='salesorder'
             panels={orderPanels}
             model={ModelType.salesorder}
-            id={order.pk}
+            reloadInstance={refreshInstance}
             instance={order}
+            id={order.pk}
           />
         </Stack>
       </InstanceDetail>

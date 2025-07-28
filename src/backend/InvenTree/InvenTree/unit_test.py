@@ -11,11 +11,11 @@ from pathlib import Path
 from unittest import mock
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
-from django.test.utils import CaptureQueriesContext
+from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
@@ -25,16 +25,23 @@ from plugin import registry
 from plugin.models import PluginConfig
 
 
-def addUserPermission(user, permission):
-    """Shortcut function for adding a certain permission to a user."""
-    perm = Permission.objects.get(codename=permission)
-    user.user_permissions.add(perm)
+def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:
+    """Add a specific permission for the provided user.
 
+    Arguments:
+        user: The user to add the permission to
+        app_name: The name of the app (e.g. 'part')
+        model_name: The name of the model (e.g. 'location')
+        perm: The permission to add (e.g. 'add', 'change', 'delete', 'view')
+    """
+    # Get the permission object
+    permission = Permission.objects.get(
+        content_type__model=model_name, codename=f'{perm}_{model_name}'
+    )
 
-def addUserPermissions(user, permissions):
-    """Shortcut function for adding multiple permissions to a user."""
-    for permission in permissions:
-        addUserPermission(user, permission)
+    # Add the permission to the user
+    user.user_permissions.add(permission)
+    user.save()
 
 
 def getMigrationFileNames(app):
@@ -652,6 +659,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         self.assertEqual(b, b | a)
 
 
+@override_settings(
+    SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+)
 class AdminTestCase(InvenTreeAPITestCase):
     """Tests for the admin interface integration."""
 
@@ -667,14 +677,18 @@ class AdminTestCase(InvenTreeAPITestCase):
         app_app, app_mdl = model._meta.app_label, model._meta.model_name
 
         # 'Test listing
-        response = self.get(reverse(f'admin:{app_app}_{app_mdl}_changelist'))
+        response = self.get(
+            reverse(f'admin:{app_app}_{app_mdl}_changelist'), max_query_count=300
+        )
         self.assertEqual(response.status_code, 200)
 
         # Test change view
         response = self.get(
-            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk})
+            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk}),
+            max_query_count=300,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Django site admin')
 
         return obj
 

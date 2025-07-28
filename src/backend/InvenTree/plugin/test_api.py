@@ -1,6 +1,6 @@
 """Tests for general API tests for the plugin app."""
 
-from django.conf import settings
+from django.test import override_settings
 from django.urls import reverse
 
 from rest_framework.exceptions import NotFound
@@ -91,9 +91,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         )
 
         # install disabled
-        settings.PLUGINS_INSTALL_DISABLED = True
-        self.post(url, {}, expected_code=400)
-        settings.PLUGINS_INSTALL_DISABLED = False
+        with self.settings(PLUGINS_INSTALL_DISABLED=True):
+            self.post(url, {}, expected_code=400)
 
     def test_plugin_activate(self):
         """Test the plugin activate."""
@@ -150,6 +149,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             str(response.data['detail']),
         )
 
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
     def test_admin_action(self):
         """Test the PluginConfig action commands."""
         url = reverse('admin:plugin_pluginconfig_changelist')
@@ -168,6 +170,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Select Plugin Configuration to change')
 
         # deactivate plugin - deactivate again -> nothing will happen but the nothing 'changed' function is triggered
         response = self.client.post(
@@ -180,6 +183,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Select Plugin Configuration to change')
 
         # activate plugin
         response = self.client.post(
@@ -192,6 +196,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Select Plugin Configuration to change')
 
         # save to deactivate a plugin
         response = self.client.post(
@@ -200,6 +205,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, '(not active) | Change Plugin Configuration | Django site admin'
+        )
 
     def test_model(self):
         """Test the PluginConfig model."""
@@ -306,6 +314,64 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.data['value'], '456')
+
+    def test_plugin_user_settings(self):
+        """Test the PluginUserSetting API endpoints."""
+        # Fetch user settings for invalid plugin
+        response = self.get(
+            reverse(
+                'api-plugin-user-setting-list', kwargs={'plugin': 'invalid-plugin'}
+            ),
+            expected_code=404,
+        )
+
+        # Fetch all user settings for the 'email' plugin
+        url = reverse(
+            'api-plugin-user-setting-list',
+            kwargs={'plugin': 'inventree-email-notification'},
+        )
+
+        response = self.get(url, expected_code=200)
+
+        settings_keys = [item['key'] for item in response.data]
+        self.assertIn('NOTIFY_BY_EMAIL', settings_keys)
+
+        # Fetch user settings for an invalid key
+        self.get(
+            reverse(
+                'api-plugin-user-setting-detail',
+                kwargs={'plugin': 'inventree-email-notification', 'key': 'INVALID_KEY'},
+            ),
+            expected_code=404,
+        )
+
+        # Fetch user setting detail for a valid key
+        response = self.get(
+            reverse(
+                'api-plugin-user-setting-detail',
+                kwargs={
+                    'plugin': 'inventree-email-notification',
+                    'key': 'NOTIFY_BY_EMAIL',
+                },
+            ),
+            expected_code=200,
+        )
+
+        # User ID must match the current user
+        self.assertEqual(response.data['user'], self.user.pk)
+
+        # Check for expected values
+        for k in [
+            'pk',
+            'key',
+            'value',
+            'name',
+            'description',
+            'type',
+            'model_name',
+            'user',
+        ]:
+            self.assertIn(k, response.data)
 
     def test_plugin_metadata(self):
         """Test metadata endpoint for plugin."""
