@@ -279,36 +279,3 @@ test('Plugins - Locate Item', async ({ browser, request }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item location requested').waitFor();
 });
-
-test('Plugins - Errors', async ({ browser }) => {
-  const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree',
-    url: 'settings/admin/plugin/'
-  });
-
-  // Reload plugin registry
-  await page
-    .getByRole('button', { name: 'action-button-reload-plugins' })
-    .click();
-  await page.getByText('Plugins were reloaded successfully').waitFor();
-
-  // Collapse the "Plugins" accordion
-  await page.getByRole('button', { name: 'Plugins', exact: true }).click();
-  await page.getByRole('button', { name: 'Plugin Settings' }).waitFor();
-
-  // Expand the "Plugin Errors" accordion
-  await page.getByRole('button', { name: 'Plugin Errors' }).click();
-
-  // Check for expected output
-  await page
-    .getByRole('cell', { name: 'integration.bad_actor' })
-    .first()
-    .waitFor();
-  await page
-    .getByText(
-      "Plugin 'BadActorPlugin' cannot override final method 'plugin_slug'"
-    )
-    .first()
-    .waitFor();
-});

@@ -173,7 +173,7 @@ class MetaBase:
     def is_active(self) -> bool:
         """Return True if this plugin is currently active."""
         # Mandatory plugins are always considered "active"
-        if self.is_builtin and self.is_mandatory:
+        if self.is_mandatory:
             return True
 
         config = self.plugin_config()
@@ -317,7 +317,11 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         self.define_package()
 
     def __init_subclass__(cls):
-        """Custom code to initialize a subclass of InvenTreePlugin."""
+        """Custom code to initialize a subclass of InvenTreePlugin.
+
+        This is a security measure to prevent plugins from overriding methods
+        which are decorated with @mark_final.
+        """
         final_methods = get_final_methods(InvenTreePlugin)
 
         child_methods = [

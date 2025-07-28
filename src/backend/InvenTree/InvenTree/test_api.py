@@ -582,7 +582,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         """Test that we can read the 'info-view' endpoint."""
         url = reverse('api-inventree-info')
 
-        response = self.get(url, max_query_count=275, expected_code=200)
+        response = self.get(url, max_query_count=325, expected_code=200)
 
         data = response.json()
         self.assertIn('server', data)

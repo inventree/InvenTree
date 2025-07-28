@@ -291,27 +291,15 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
-        from plugin.models import PluginConfig
-
         mixin = str(mixin).lower().strip()
 
         result = []
 
-        # Pre-fetch the configurations for all plugins
-        # This avoids multiple database queries for each plugin
-        configs = {plugin.key: plugin for plugin in PluginConfig.objects.all()}
-
         for plugin in self.plugins.values():
-            config = configs.get(plugin.slug) or self.get_plugin_config(plugin.slug)
-
-            if not config:
-                logger.warning("Plugin '%s' has no configuration", plugin.slug)
+            if active is not None and active != plugin.is_active():
                 continue
 
-            if active is not None and active != config.is_active():
-                continue
-
-            if builtin is not None and builtin != config.is_builtin():
+            if builtin is not None and builtin != plugin.is_builtin:
                 continue
 
             # Finally, check the plugin to see if the specified mixin is enabled

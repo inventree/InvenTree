@@ -24,54 +24,6 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 PLUGIN_TEST_DIR = '_testfolder/test_plugins'
 
 
-class BadActorTests(TestCase):
-    """Tests for plugins attempting to violate security."""
-
-    def test_sample_bad_actor(self):
-        """Test that the sample "BadActor" plugin is not loaded."""
-        from plugin.registry import registry
-
-        registry.reload_plugins(full_reload=True, collect=True)
-
-        self.assertNotIn('bad_actor', registry.plugins)
-        self.assertNotIn('bad_actor', registry.plugins_full)
-
-        # Errors
-        discovery = registry.errors.get('discovery')
-        self.assertIn('integration.bad_actor', str(discovery))
-        self.assertIn(
-            "Plugin 'BadActorPlugin' cannot override final method 'plugin_slug'",
-            str(discovery),
-        )
-
-    def test_plugin_override(self):
-        """Test that the plugin override works as expected."""
-        with self.assertRaises(TypeError) as e:
-            # Attempt to create a class which overrides the 'is_active' method
-            class MyDummyPlugin(InvenTreePlugin):
-                """A dummy plugin for testing."""
-
-                NAME = 'MyDummyPlugin'
-                SLUG = 'mydummyplugin'
-                TITLE = 'My Dummy Plugin'
-                VERSION = '1.0.0'
-
-                def is_active(self):
-                    """Override is_active to always return True."""
-                    return True
-
-                def __init_subclass__(cls):
-                    """Override __init_subclass__."""
-                    # Ensure that overriding the __init_subclass__ method
-                    # does not prevent the TypeError from being raised
-
-        # Check that the error message is as expected
-        self.assertIn(
-            "Plugin 'MyDummyPlugin' cannot override final method 'is_active' from InvenTreePlugin",
-            str(e.exception),
-        )
-
-
 class PluginTagTests(TestCase):
     """Tests for the plugin extras."""
 
@@ -330,18 +282,54 @@ class RegistryTests(TestCase):
 
         self.assertEqual(len(registry.errors), 3)
 
-        # There should be at least one discovery error in the module `broken_file`
-        self.assertGreater(len(registry.errors.get('discovery')), 0)
-        self.assertEqual(
-            registry.errors.get('discovery')[0]['broken_file'],
-            "name 'bb' is not defined",
+        errors = registry.errors
+
+        def find_error(group: str, key: str) -> str:
+            """Find a matching error in the registry errors."""
+            for error in errors.get(group, []):
+                if key in error:
+                    return error[key]
+            return None
+
+        # Check for expected errors in the registry
+        self.assertIn(
+            "Plugin 'BadActorPlugin' cannot override final method 'plugin_slug'",
+            find_error('discovery', 'bad_actor'),
         )
 
-        # There should be at least one load error with an intentional KeyError
-        self.assertGreater(len(registry.errors.get('Test:init_plugin')), 0)
-        self.assertEqual(
-            registry.errors.get('Test:init_plugin')[0]['broken_sample'],
-            "'This is a dummy error'",
+        self.assertIn(
+            "name 'bb' is not defined", find_error('discovery', 'broken_file')
+        )
+
+        self.assertIn(
+            'This is a dummy error', find_error('Test:init_plugin', 'broken_sample')
+        )
+
+    def test_plugin_override(self):
+        """Test that the plugin override works as expected."""
+        with self.assertRaises(TypeError) as e:
+            # Attempt to create a class which overrides the 'is_active' method
+            class MyDummyPlugin(InvenTreePlugin):
+                """A dummy plugin for testing."""
+
+                NAME = 'MyDummyPlugin'
+                SLUG = 'mydummyplugin'
+                TITLE = 'My Dummy Plugin'
+                VERSION = '1.0.0'
+
+                def is_active(self):
+                    """Override is_active to always return True."""
+                    return True
+
+                def __init_subclass__(cls):
+                    """Override __init_subclass__."""
+                    # Ensure that overriding the __init_subclass__ method
+                    # does not prevent the TypeError from being raised
+
+        # Check that the error message is as expected
+        self.assertIn(
+            "Plugin 'MyDummyPlugin' cannot override final method 'is_active' from InvenTreePlugin",
+            str(e.exception),
         )
 
     @override_settings(PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
