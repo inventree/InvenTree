@@ -471,3 +471,107 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         self.user.is_superuser = False
         self.user.save()
+
+    def test_plugin_filter_by_mixin(self):
+        """Test filtering plugins by mixin."""
+        from plugin import PluginMixinEnum
+        from plugin.registry import registry
+
+        # Ensure we have some plugins loaded
+        registry.reload_plugins(full_reload=True, collect=True)
+
+        url = reverse('api-plugin-list')
+
+        # Filter by 'mixin' parameter
+        mixin_results = {
+            PluginMixinEnum.BARCODE: 5,
+            PluginMixinEnum.EXPORTER: 3,
+            PluginMixinEnum.ICON_PACK: 1,
+            PluginMixinEnum.MAIL: 1,
+            PluginMixinEnum.NOTIFICATION: 3,
+            PluginMixinEnum.USER_INTERFACE: 1,
+        }
+
+        for mixin, expected_count in mixin_results.items():
+            data = self.get(url, {'mixin': mixin}).data
+
+            self.assertEqual(len(data), expected_count)
+
+            if expected_count > 0:
+                for item in data:
+                    self.assertIn(mixin, item['mixins'])
+
+    def test_plugin_filters(self):
+        """Unit testing for plugin API filters."""
+        from plugin.models import PluginConfig
+        from plugin.registry import registry
+
+        PluginConfig.objects.all().delete()
+        registry.reload_plugins(full_reload=True, collect=True)
+
+        N = PluginConfig.objects.count()
+        self.assertGreater(N, 0)
+
+        url = reverse('api-plugin-list')
+
+        data = self.get(url).data
+
+        self.assertGreater(len(data), 0)
+        self.assertEqual(len(data), N)
+
+        # Filter by 'builtin' plugins
+        data = self.get(url, {'builtin': 'true'}).data
+
+        Y_BUILTIN = len(data)
+
+        for item in data:
+            self.assertTrue(item['is_builtin'])
+
+        data = self.get(url, {'builtin': 'false'}).data
+
+        N_BUILTIN = len(data)
+
+        for item in data:
+            self.assertFalse(item['is_builtin'])
+
+        self.assertGreater(Y_BUILTIN, 0)
+        self.assertGreater(N_BUILTIN, 0)
+
+        self.assertEqual(N_BUILTIN + Y_BUILTIN, N)
+
+        # Filter by 'active' status
+        Y_ACTIVE = len(self.get(url, {'active': 'true'}).data)
+        N_ACTIVE = len(self.get(url, {'active': 'false'}).data)
+
+        self.assertGreater(Y_ACTIVE, 0)
+        self.assertGreater(N_ACTIVE, 0)
+
+        self.assertEqual(Y_ACTIVE + N_ACTIVE, N)
+
+        # Filter by 'sample' status
+        Y_SAMPLE = len(self.get(url, {'sample': 'true'}).data)
+        N_SAMPLE = len(self.get(url, {'sample': 'false'}).data)
+
+        self.assertGreater(Y_SAMPLE, 0)
+        self.assertGreater(N_SAMPLE, 0)
+
+        self.assertEqual(Y_SAMPLE + N_SAMPLE, N)
+
+        # Filter by 'mandatory' status`
+        Y_MANDATORY = len(self.get(url, {'mandatory': 'true'}).data)
+        N_MANDATORY = len(self.get(url, {'mandatory': 'false'}).data)
+
+        self.assertGreater(Y_MANDATORY, 0)
+        self.assertGreater(N_MANDATORY, 0)
+
+        self.assertEqual(Y_MANDATORY + N_MANDATORY, N)
+
+        # Add in a new mandatory plugin
+        with self.settings(PLUGINS_MANDATORY=['samplelocate']):
+            registry.reload_plugins(full_reload=True, collect=True)
+
+            Y_MANDATORY_2 = len(self.get(url, {'mandatory': 'true'}).data)
+            N_MANDATORY_2 = len(self.get(url, {'mandatory': 'false'}).data)
+
+            self.assertEqual(Y_MANDATORY_2, Y_MANDATORY + 1)
+            self.assertEqual(N_MANDATORY_2, N_MANDATORY - 1)
