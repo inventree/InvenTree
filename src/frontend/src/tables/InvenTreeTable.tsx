@@ -29,6 +29,7 @@ import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
+import { useUserSettingsState } from '../states/SettingsStates';
 import { useStoredTableState } from '../states/StoredTableState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
@@ -90,6 +91,25 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const api = useApi();
   const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
+
+  const userSettings = useUserSettingsState();
+
+  const stickyTableHeader = useMemo(() => {
+    return userSettings.isSet('STICKY_TABLE_HEADER');
+  }, [userSettings]);
+
+  // Key used for caching table data
+  const cacheKey = useMemo(() => {
+    const key: string = `table-${tableState.tableKey}`;
+
+    // Remove anything after (and including) "mantine"
+    const mantineIndex = key.indexOf('-mantine');
+    if (mantineIndex >= 0) {
+      return key.substring(0, mantineIndex);
+    } else {
+      return key;
+    }
+  }, [tableState.tableKey]);
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -729,8 +749,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
         <Boundary label={`InvenTreeTable-${cacheKey}`}>
           <Box pos='relative'>
             <DataTable
-              stickyHeader={stickyTableHeader}
-              height={stickyTableHeader ? 600 : undefined}
+              style={{
+                stickyHeader: stickyTableHeader ? 'top' : undefined
+              }}
+              height={stickyTableHeader ? '80vh' : undefined}
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
               striped
