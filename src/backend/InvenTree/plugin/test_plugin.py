@@ -24,8 +24,25 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 PLUGIN_TEST_DIR = '_testfolder/test_plugins'
 
 
-class PluginOverrideTests(TestCase):
-    """Tests for plugin overrides."""
+class BadActorTests(TestCase):
+    """Tests for plugins attempting to violate security."""
+
+    def test_sample_bad_actor(self):
+        """Test that the sample "BadActor" plugin is not loaded."""
+        from plugin.registry import registry
+
+        registry.reload_plugins(full_reload=True, collect=True)
+
+        self.assertNotIn('bad_actor', registry.plugins)
+        self.assertNotIn('bad_actor', registry.plugins_full)
+
+        # Errors
+        discovery = registry.errors.get('discovery')
+        self.assertIn('integration.bad_actor', str(discovery))
+        self.assertIn(
+            "Plugin 'BadActorPlugin' cannot override final method 'plugin_slug'",
+            str(discovery),
+        )
 
     def test_plugin_override(self):
         """Test that the plugin override works as expected."""
