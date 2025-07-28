@@ -20,7 +20,11 @@ Plugin behaviour can be controlled via the InvenTree configuration options. Refe
 
 ### Backend vs Frontend Code
 
-InvenTree plugins can contain both backend and frontend code. The backend code is written in Python, and is used to implement server-side functionality, such as database models, API endpoints, and background tasks. The frontend code is written in JavaScript (or TypeScript), and is used to implement user interface components, such as custom UI panels.
+InvenTree plugins can contain both backend and frontend code. The backend code is written in Python, and is used to implement server-side functionality, such as database models, API endpoints, and background tasks.
+
+The frontend code is written in JavaScript (or TypeScript), and is used to implement user interface components, such as custom UI panels.
+
+You can [read more about frontend integration](./frontend.md) to learn how to integrate custom UI components into the InvenTree web interface.
 
 ### Creating a Plugin
 

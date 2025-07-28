@@ -188,12 +188,68 @@ Let's test this out! The default plugin code has provided a custom "panel" which
 
 ## Plugin Editing
 
+### Backend Code
+
+The backend code for your plugin is located in the `my_custom_plugin` directory. You can edit the Python files in this directory to implement the backend functionality of your plugin.
+
+Refer to the `./my_custom_plugin/core.py` file as a starting point. This is where the main plugin logic is implemented. If you selected other mixin types during the plugin creation process, you may find additional files in the `my_custom_plugin` directory that correspond to those mixins.
+
+As you have installed the plugin in editable mode, any changes you make to the backend code will be immediately reflected in your InvenTree instance without needing to reinstall the plugin.
+
+!!! info "Debug Server"
+    Note that live reload of the backend code only works when the InvenTree server is running in debug mode. If you are running the server in production mode, you will need to restart the server to see changes.
+
+### Frontend Code
+
+The frontend code for your plugin is located in the `frontend/src` directory. You can edit the provided `.tsx` files to adjust the frontend functionality of your plugin.
+
+Refer to the `./frontend/src/Panel.tsx` file as a starting point. This is where the custom panel for the part detail page is implemented. You can modify this file to change the content and behavior of the panel.
+
+While the `npm dev` server is running, any changes you make to the frontend code will be automatically reloaded allowing for rapid development and testing of your plugin's frontend features. This avoids the need to rebuild the frontend code every time you make a change.
+
+!!! info "Page Reload"
+    Due to the way the InvenTree frontend is structured, you will need to manually refresh the page in your browser to see changes to the frontend code. The development server will automatically reload the frontend code, but the InvenTree server needs to be aware of the changes.
+
 ## Build Plugin
+
+The documentation provided above relates to the development of a plugin. Once you have completed your plugin development, you should build the plugin for distribution.
+
+!!! info "CI Build"
+    If you have configured CI integration during the plugin creation process, the CI server will automatically build your plugin when you push changes to your repository. This is the recommended way to build and distribute your plugin.
 
 ### Compile Frontend Assets
 
+The frontend assets for your plugin need to be compiled before the plugin can be distributed. The compiled assets (primarily `.js` files) need to be distributed with the plugin, so that they can be statically served by the InvenTree server. To achieve this, the compiled files need to be placed in the `./my_custom_plugin/static` directory. The frontend `build` step will automatically place the compiled files in this directory:
+
+```bash
+cd frontend
+npm run build
+```
+
+{{ image("plugin/plugin-creator-npm-build.png", "Build Frontend") }}
+
 ### Build Plugin
+
+Now that the frontend assets have been compiled, you can build the plugin for distribution. This will create a distributable Python package that can be installed in other InvenTree instances.
+
+!!! info "Top Level Directory"
+    Ensure you are in the top-level directory of your plugin (the directory containing `setup.py`) before running the build command.
+
+```bash
+python -m build
+```
+
+You should see output indicating that the Python package has been built successfully.
 
 ### Publish Plugin
 
+The plugin package can now be published (e.g. to PyPI), allowing it to be remotely installed into other InvenTree installations.
+
+Publishing to PyPI is outside the scope of this documentation, but you can refer to the [Python Packaging User Guide](https://packaging.python.org/tutorials/packaging-projects/) for more information on how to publish your plugin package.
+
+!!! info "Automated PyPI Publishing"
+    If you have configured CI integration during the plugin creation process, the CI server will automatically publish your plugin to PyPI when you create a new release. You just need to ensure that you have set up the necessary credentials in your CI environment.
+
 ## Further Reading
+
+For a more complex walkthrough of developing a plugin, check out our [basic plugin walkthrough](../plugins/walkthrough.md).
