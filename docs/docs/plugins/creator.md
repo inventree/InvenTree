@@ -96,13 +96,19 @@ In the example above, we created a plugin called "MyCustomPlugin". We can verify
 
 ```bash
 cd MyCustomPlugin
-ls -l
+ls -al
 ```
 
 You should see a directory structure similar to the following:
 
 | File | Description |
 | ---- | ----------- |
+| **.git** | The Git repository for your plugin (if you selected Git integration). |
+| **.github** | GitHub configuration files (if you selected GitHub integration). |
+| **.gitlab-ci.yml** | GitLab CI configuration file (if you selected GitLab integration). |
+| **.gitignore** | Git ignore file, specifying which files should be ignored by Git. |
+| **.pre-commit-config.yaml** | Configuration file for pre-commit hooks (if you selected pre-commit integration). |
+| **.editorconfig** | Editor configuration file
 | **LICENSE** | The license file for your plugin. |
 | **MANIFEST.in** | A file that specifies which files should be included in the plugin package. |
 | **README.md** | A README file for your plugin. |
