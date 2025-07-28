@@ -1102,7 +1102,10 @@ def plugins_info(*args, **kwargs):
         return False
 
     # Fetch plugins
-    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    plug_list = [
+        plg for plg in registry.plugins.values() if plg.plugin_config().is_active()
+    ]
+
     # Format list
     return [
         {'name': plg.name, 'slug': plg.slug, 'version': plg.version}

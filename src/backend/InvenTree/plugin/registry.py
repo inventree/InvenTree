@@ -299,7 +299,7 @@ class PluginsRegistry:
 
         # Pre-fetch the configurations for all plugins
         # This avoids multiple database queries for each plugin
-        configs = {plugin.slug: plugin for plugin in PluginConfig.objects.all()}
+        configs = {plugin.key: plugin for plugin in PluginConfig.objects.all()}
 
         for plugin in self.plugins.values():
             config = configs.get(plugin.slug) or self.get_plugin_config(plugin.slug)
