@@ -57,6 +57,9 @@ The expected function signature for the frontend function is:
 ```javascript
 function my_plugin_function(context: InvenTreePluginContext) {
     // Function implementation
+    return (
+        <div>Hello world</div>
+    )
 }
 ```
 
@@ -136,6 +139,9 @@ import { InvenTreePluginContext } from '@inventreedb/ui';
 
 function my_plugin_function(context: InvenTreePluginContext) {
     // Function implementation
+    return (
+        <MyCustomPanel context={context} />
+    );
 }
 ```
 
