@@ -1417,6 +1417,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         source='bom_item.part',
         many=False,
         read_only=True,
+        allow_null=True,
         pricing=False,
     )
 

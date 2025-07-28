@@ -328,12 +328,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ) {
       tableColumns.setColumnsOrder(dataColumnsOrder);
     }
-  }, [
-    cacheKey,
-    dataColumnsOrder,
-    tableColumns.columnsOrder,
-    tableColumns.setColumnsOrder
-  ]);
+  }, [cacheKey, dataColumnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {

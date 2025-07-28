@@ -4,7 +4,7 @@ title: Plugins
 
 ## InvenTree Plugin Architecture
 
-The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the database server. This allows development of complex behaviors which are decoupled from core InvenTree code.
+The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the InvenTree installation. This allows development of complex behaviors which are decoupled from core InvenTree code.
 
 Plugins can be added from multiple sources:
 
@@ -18,16 +18,18 @@ For further information, read more about [installing plugins](./install.md).
 
 Plugin behaviour can be controlled via the InvenTree configuration options. Refer to the [configuration guide](../start/config.md#plugin-options) for the available plugin configuration options.
 
+### Backend vs Frontend Code
+
+InvenTree plugins can contain both backend and frontend code. The backend code is written in Python, and is used to implement server-side functionality, such as database models, API endpoints, and background tasks.
+
+The frontend code is written in JavaScript (or TypeScript), and is used to implement user interface components, such as custom UI panels.
+
+You can [read more about frontend integration](./frontend.md) to learn how to integrate custom UI components into the InvenTree web interface.
+
 ### Creating a Plugin
 
-To assist in creating a new plugin, we provide a [plugin creator command line tool](https://github.com/inventree/plugin-creator). This allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
+To assist in creating a new plugin, we provide a [plugin creator command line tool](./creator.md). This allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
 
-To install and run the plugin creator:
-
-```bash
-pip install inventree-plugin-creator
-create-inventree-plugin
-```
 
 ### Basic Plugin Walkthrough
 
@@ -38,9 +40,6 @@ Check out our [basic plugin walkthrough](../plugins/walkthrough.md) to learn how
 ### Plugin Base Class
 
 Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
-
-!!! warning "Name Change"
-    The name of the base class was changed with `0.7.0` from `IntegrationPluginBase` to `InvenTreePlugin`.
 
 ### Imports
 
@@ -65,7 +64,9 @@ MixinNotImplementedError    # Is raised if a mixin was not implemented (core mec
 
 #### Mixins
 
-Mixins are split up internally to keep the source tree clean and enable better testing separation. All public APIs that should be used are exposed under `plugin.mixins`. These include all built-in mixins and notification methods. An up-to-date reference can be found in the source code [can be found here]({{ sourcefile("src/backend/InvenTree/plugin/mixins/__init__.py") }}).
+Plugin functionality is split between multiple "mixin" classes - each of which provides a specific set of features or behaviors that can be integrated into a plugin. These mixins are designed to be used in conjunction with the `InvenTreePlugin` base class, allowing developers to easily extend the functionality of their plugins. All public APIs that should be used are exposed under `plugin.mixins`. These include all built-in mixins and notification methods. An up-to-date reference can be found in the source code [can be found here]({{ sourcefile("src/backend/InvenTree/plugin/mixins/__init__.py") }}).
+
+Refer to the [mixin documentation](#plugin-mixins) for a list of available mixins, and their usage.
 
 #### Models and other internal InvenTree APIs
 
@@ -122,6 +123,7 @@ Supported mixin classes are:
 | [LabelPrintingMixin](./mixins/label.md) | Custom label printing support |
 | [LocateMixin](./mixins/locate.md) | Locate and identify stock items |
 | [NavigationMixin](./mixins/navigation.md) | Add custom pages to the web interface |
+| [NotificationMixin](./mixins/notification.md) | Send custom notifications in response to system events |
 | [ReportMixin](./mixins/report.md) | Add custom context data to reports |
 | [ScheduleMixin](./mixins/schedule.md) | Schedule periodic tasks |
 | [SettingsMixin](./mixins/settings.md) | Integrate user configurable settings |

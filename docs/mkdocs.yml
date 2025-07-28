@@ -211,7 +211,9 @@ nav:
     - Overview: plugins/index.md
     - Installation: plugins/install.md
     - Developing a Plugin: plugins/how_to.md
-    - Plugin Development Walkthrough: plugins/walkthrough.md
+    - Frontend Integration: plugins/frontend.md
+    - Plugin Creator: plugins/creator.md
+    - Plugin Walkthrough: plugins/walkthrough.md
     - Model Metadata: plugins/metadata.md
     - Tags: plugins/tags.md
     - Unit Test: plugins/test.md
