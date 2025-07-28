@@ -137,6 +137,18 @@ test('Plugins - Functionality', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Deactivate' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('The plugin was deactivated').waitFor();
+
+  // Check for custom "mandatory" plugin
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Mandatory', 'Yes');
+  await setTableChoiceFilter(page, 'Sample', 'Yes');
+  await setTableChoiceFilter(page, 'Builtin', 'No');
+
+  await page.getByText('1 - 1 / 1').waitFor();
+  await page
+    .getByRole('cell', { name: 'SampleLocatePlugin' })
+    .first()
+    .waitFor();
 });
 
 test('Plugins - Panels', async ({ browser, request }) => {
