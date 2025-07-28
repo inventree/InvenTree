@@ -14,6 +14,17 @@ The plugin creator tool allows the developer to select which plugin features the
 
 This page provides an overview of how to install and use the plugin creator tool, as well as some tips for creating your own plugins. The documentation here uses the "default" options as provided by the plugin creator tool, but you can customize the options to suit your needs.
 
+### Features
+
+The plugin creator tool provides a number of features to help you get started with plugin development:
+
+- **Metadata Input**: Easily input metadata for your plugin, including name, description, and author information.
+- **License Selection**: Choose from a variety of licenses for your plugin, with "MIT" as the default.
+- **Feature Selection**: Select which plugin features you want to include, such as mixins and frontend features.
+- **Devops Integration**: Optionally set up Git version control, automatic code formatting, and other development tools.
+- **Deploy Support**: Generate a basic structure for your plugin that can be easily deployed to an InvenTree instance, and published to PyPI.
+- **Frontend Development**: Set up a development server for frontend features, including hot reloading and build tools.
+
 ## Installation
 
 To get started using the creator tool, you will need to install it via PIP:
