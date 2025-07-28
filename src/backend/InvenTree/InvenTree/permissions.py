@@ -363,6 +363,9 @@ class UserSettingsPermissionsOrScope(OASTokenMixin, permissions.BasePermission):
         except AttributeError:  # pragma: no cover
             return False
 
+        if not user.is_authenticated:
+            return False
+
         return user == obj.user
 
     def has_permission(self, request, view):
