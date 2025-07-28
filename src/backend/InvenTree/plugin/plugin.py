@@ -21,6 +21,37 @@ from plugin.helpers import get_git_log
 logger = structlog.get_logger('inventree')
 
 
+def is_method_like(method) -> bool:
+    """Check if a method is callable and not a property."""
+    return any([
+        callable(method),
+        isinstance(method, classmethod),
+        isinstance(method, staticmethod),
+        isinstance(method, property),
+    ])
+
+
+def mark_final(method):
+    """Decorator to mark a method as 'final'.
+
+    This prevents subclasses from overriding this method.
+    """
+    if not is_method_like(method):
+        raise TypeError('mark_final can only be applied to functions')
+
+    method.__final__ = True
+    return method
+
+
+def get_final_methods(cls):
+    """Find all methods (including property methods) of a class."""
+    return [
+        name
+        for name, method in inspect.getmembers(cls)
+        if getattr(method, '__final__', False) and is_method_like(method)
+    ]
+
+
 class PluginMixinEnum(StringEnum):
     """Enumeration of the available plugin mixin types."""
 
@@ -57,6 +88,7 @@ class MetaBase:
     SLUG = None
     TITLE = None
 
+    @mark_final
     def get_meta_value(self, key: str, old_key: Optional[str] = None, __default=None):
         """Reference a meta item with a key.
 
@@ -87,15 +119,18 @@ class MetaBase:
             return __default
         return value
 
+    @mark_final
     def plugin_name(self):
         """Name of plugin."""
         return self.get_meta_value('NAME', 'PLUGIN_NAME')
 
     @property
+    @mark_final
     def name(self):
         """Name of plugin."""
         return self.plugin_name()
 
+    @mark_final
     def plugin_slug(self):
         """Slug of plugin.
 
@@ -108,10 +143,12 @@ class MetaBase:
         return slugify(slug.lower())
 
     @property
+    @mark_final
     def slug(self):
         """Slug of plugin."""
         return self.plugin_slug()
 
+    @mark_final
     def plugin_title(self):
         """Title of plugin."""
         title = self.get_meta_value('TITLE', 'PLUGIN_TITLE', None)
@@ -120,17 +157,20 @@ class MetaBase:
         return self.plugin_name()
 
     @property
+    @mark_final
     def human_name(self):
         """Human readable name of plugin."""
         return self.plugin_title()
 
+    @mark_final
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
         from plugin.registry import registry
 
         return registry.get_plugin_config(self.plugin_slug())
 
-    def is_active(self):
+    @mark_final
+    def is_active(self) -> bool:
         """Return True if this plugin is currently active."""
         # Mandatory plugins are always considered "active"
         if self.is_builtin and self.is_mandatory:
@@ -139,9 +179,9 @@ class MetaBase:
         config = self.plugin_config()
 
         if config:
-            return config.active
+            return config.is_active()
 
-        return False  # pragma: no cover
+        return False
 
 
 class MixinBase:
@@ -156,11 +196,13 @@ class MixinBase:
         self._mixins = {}
         super().__init__(*args, **kwargs)
 
+    @mark_final
     def mixin(self, key: str) -> bool:
         """Check if mixin is registered."""
         key = str(key).lower()
         return key in self._mixins
 
+    @mark_final
     def mixin_enabled(self, key: str) -> bool:
         """Check if mixin is registered, enabled and ready."""
         key = str(key).lower()
@@ -181,6 +223,7 @@ class MixinBase:
 
         return False
 
+    @mark_final
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
         """Add a mixin to the plugins registry."""
         key = str(key).lower()
@@ -188,6 +231,7 @@ class MixinBase:
         self._mixins[key] = fnc_enabled
         self.setup_mixin(key, cls=cls)
 
+    @mark_final
     def setup_mixin(self, key, cls=None):
         """Define mixin details for the current mixin -> provides meta details for all active mixins."""
         # get human name
@@ -200,6 +244,7 @@ class MixinBase:
         # register
         self._mixinreg[key] = {'key': key, 'human_name': human_name, 'cls': cls}
 
+    @mark_final
     def get_registered_mixins(self, with_base: bool = False, with_cls: bool = True):
         """Get all registered mixins for the plugin."""
         mixins = getattr(self, '_mixinreg', None)
@@ -220,6 +265,7 @@ class MixinBase:
         return mixins
 
     @property
+    @mark_final
     def registered_mixins(self, with_base: bool = False):
         """Get all registered mixins for the plugin."""
         return self.get_registered_mixins(with_base=with_base)
@@ -231,6 +277,7 @@ class VersionMixin:
     MIN_VERSION = None
     MAX_VERSION = None
 
+    @mark_final
     def check_version(self, latest=None) -> bool:
         """Check if plugin functions for the current InvenTree version."""
         from InvenTree import version
@@ -269,11 +316,29 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         self.define_package()
 
+    def __init_subclass__(cls):
+        """Custom code to initialize a subclass of InvenTreePlugin."""
+        final_methods = get_final_methods(InvenTreePlugin)
+
+        child_methods = [
+            name for name, method in cls.__dict__.items() if is_method_like(method)
+        ]
+
+        for name in child_methods:
+            if name in final_methods:
+                raise TypeError(
+                    f"Plugin '{cls.__name__}' cannot override final method '{name}' from InvenTreePlugin."
+                )
+
+        return super().__init_subclass__()
+
+    @mark_final
     @classmethod
     def file(cls) -> Path:
         """File that contains plugin definition."""
         return Path(inspect.getfile(cls))
 
+    @mark_final
     @classmethod
     def path(cls) -> Path:
         """Path to plugins base folder."""
@@ -296,6 +361,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     # region properties
     @property
+    @mark_final
     def description(self):
         """Description of plugin."""
         description = self._get_value('DESCRIPTION', 'description')
@@ -304,6 +370,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return description
 
     @property
+    @mark_final
     def author(self):
         """Author of plugin - either from plugin settings or git."""
         author = self._get_value('AUTHOR', 'author')
@@ -312,6 +379,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return author
 
     @property
+    @mark_final
     def pub_date(self):
         """Publishing date of plugin - either from plugin settings or git."""
         pub_date = getattr(self, 'PUBLISH_DATE', None)
@@ -323,16 +391,19 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return pub_date
 
     @property
+    @mark_final
     def version(self):
         """Version of plugin."""
         return self._get_value('VERSION', 'version')
 
     @property
+    @mark_final
     def website(self):
         """Website of plugin - if set else None."""
         return self._get_value('WEBSITE', 'website')
 
     @property
+    @mark_final
     def license(self):
         """License of plugin."""
         return self._get_value('LICENSE', 'license')
@@ -340,36 +411,43 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     # endregion
 
     @classmethod
+    @mark_final
     def check_is_package(cls):
         """Is the plugin delivered as a package."""
         return getattr(cls, 'is_package', False)
 
     @property
+    @mark_final
     def _is_package(self):
         """Is the plugin delivered as a package."""
         return getattr(self, 'is_package', False)
 
     @classmethod
+    @mark_final
     def check_is_sample(cls) -> bool:
         """Is this plugin part of the samples?"""
         return str(cls.check_package_path()).startswith('plugin/samples/')
 
     @property
+    @mark_final
     def is_sample(self) -> bool:
         """Is this plugin part of the samples?"""
         return self.check_is_sample()
 
     @classmethod
+    @mark_final
     def check_is_builtin(cls) -> bool:
         """Determine if a particular plugin class is a 'builtin' plugin."""
         return str(cls.check_package_path()).startswith('plugin/builtin')
 
     @property
+    @mark_final
     def is_builtin(self) -> bool:
         """Is this plugin is builtin."""
         return self.check_is_builtin()
 
     @property
+    @mark_final
     def is_mandatory(self) -> bool:
         """Is this plugin mandatory (always forced to be active)."""
         from plugin.registry import registry
@@ -377,6 +455,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return self.slug in registry.MANDATORY_PLUGINS
 
     @classmethod
+    @mark_final
     def check_package_path(cls):
         """Path to the plugin."""
         if cls.check_is_package():
@@ -388,11 +467,13 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             return cls.file()
 
     @property
+    @mark_final
     def package_path(self):
         """Path to the plugin."""
         return self.check_package_path()
 
     @classmethod
+    @mark_final
     def check_package_install_name(cls) -> Union[str, None]:
         """Installable package name of the plugin.
 
@@ -405,6 +486,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return getattr(cls, 'package_name', None)
 
     @property
+    @mark_final
     def package_install_name(self) -> Union[str, None]:
         """Installable package name of the plugin.
 
@@ -417,6 +499,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return self.check_package_install_name()
 
     @property
+    @mark_final
     def settings_url(self) -> str:
         """URL to the settings panel for this plugin."""
         if config := self.db:
@@ -424,11 +507,13 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return InvenTree.helpers.pui_url('/settings/admin/plugin/')
 
     # region package info
+    @mark_final
     def _get_package_commit(self):
         """Get last git commit for the plugin."""
         return get_git_log(str(self.file()))
 
     @classmethod
+    @mark_final
     def is_editable(cls):
         """Returns if the current part is editable."""
         pkg_name = cls.__name__.split('.')[0]
@@ -436,6 +521,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return bool(len(dist_info) == 1)
 
     @classmethod
+    @mark_final
     def _get_package_metadata(cls):
         """Get package metadata for plugin."""
         # Try simple metadata lookup
@@ -482,6 +568,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     # endregion
 
+    @mark_final
     def plugin_static_file(self, *args) -> str:
         """Construct a path to a static file within the plugin directory.
 

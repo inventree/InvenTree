@@ -24,6 +24,37 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 PLUGIN_TEST_DIR = '_testfolder/test_plugins'
 
 
+class PluginOverrideTests(TestCase):
+    """Tests for plugin overrides."""
+
+    def test_plugin_override(self):
+        """Test that the plugin override works as expected."""
+        with self.assertRaises(TypeError) as e:
+            # Attempt to create a class which overrides the 'is_active' method
+            class MyDummyPlugin(InvenTreePlugin):
+                """A dummy plugin for testing."""
+
+                NAME = 'MyDummyPlugin'
+                SLUG = 'mydummyplugin'
+                TITLE = 'My Dummy Plugin'
+                VERSION = '1.0.0'
+
+                def is_active(self):
+                    """Override is_active to always return True."""
+                    return True
+
+                def __init_subclass__(cls):
+                    """Override __init_subclass__."""
+                    # Ensure that overriding the __init_subclass__ method
+                    # does not prevent the TypeError from being raised
+
+        # Check that the error message is as expected
+        self.assertIn(
+            "Plugin 'MyDummyPlugin' cannot override final method 'is_active' from InvenTreePlugin",
+            str(e.exception),
+        )
+
+
 class PluginTagTests(TestCase):
     """Tests for the plugin extras."""
 
