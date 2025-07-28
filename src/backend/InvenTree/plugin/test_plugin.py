@@ -466,3 +466,36 @@ class RegistryTests(TestCase):
             # Check that changed hashes run through
             registry.registry_hash = 'abc'
             self.assertTrue(registry.check_reload())
+
+    def test_builtin_mandatory_plugins(self):
+        """Test that mandatory builtin plugins are always loaded."""
+        from plugin.registry import registry
+
+        registry.reload_plugins(full_reload=True, collect=True)
+        mandatory = registry.MANDATORY_PLUGINS
+        self.assertEqual(len(mandatory), 9)
+
+        for key in mandatory:
+            cfg = registry.get_plugin_config(key)
+            self.assertIsNotNone(cfg, f"Mandatory plugin '{key}' not found in config")
+            self.assertTrue(cfg.is_mandatory())
+            self.assertTrue(cfg.is_active())
+            self.assertTrue(cfg.is_builtin())
+            plg = registry.get_plugin(key)
+            self.assertIsNotNone(plg, f"Mandatory plugin '{key}' not found")
+            self.assertTrue(
+                plg.is_mandatory, f"Plugin '{key}' is not marked as mandatory"
+            )
+
+        slug = 'bom-exporter'
+        self.assertIn(slug, mandatory)
+        cfg = registry.get_plugin_config(slug)
+
+        # Try to disable the mandatory plugin
+        cfg.active = False
+        cfg.save()
+        cfg.refresh_from_db()
+
+        # Mandatory plugin cannot be disabled!
+        self.assertTrue(cfg.active)
+        self.assertTrue(cfg.is_active())
