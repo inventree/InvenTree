@@ -2,22 +2,17 @@
 title: Developing Plugins
 ---
 
-## How to Develop a Plugin
+## Plugin Development Guide
 
-A short introductory guide for plugin beginners.
+This page serves as a short introductory guide for plugin beginners. It should be noted that there is an assumed level of familiarity with Python, Django, and the InvenTree source code.
 
-### Should it be a plugin?
-First of all figure out what your plugin / code should do.
-If you want to change how InvenTree base mechanics and business logic work, a plugin will not be sufficient. Maybe fork the project or better [start a discussion](https://github.com/inventree/InvenTree/discussions) on GitHub. There might be an easier / established way to do what you want.
+### Plugin Creator
 
-If you want to remove parts of the user interface -> remove the permissions for those objects / actions and the users will not see them.
+We strongly recommend that you use the [Plugin Creator](./creator.md) tool when first scaffolding your new plugin. This tool will help you to create a basic plugin structure, and will also provide you with a set of example files which can be used as a starting point for your own plugin development.
 
-If you add a lot of code (over ~1000 LOC) maybe split it into multiple plugins to make upgrading and testing simpler.
+### Determine Requirements
 
-### It will be a plugin!
-Great. Now please read the [plugin documentation](./index.md) to get an overview of the architecture. It is rather short as a the (builtin) mixins come with extensive docstrings.
-
-### Pick your building blocks
+Before starting, you should have a clear understanding of what you want your plugin to do. In particular, consider the functionality provided by the available [plugin mixins](./index.md#plugin-mixins), and whether your plugin can be built using these mixins.
 
 Consider the use-case for your plugin and define the exact function of the plugin, maybe write it down in a short readme. Then pick the mixins you need (they help reduce custom code and keep the system reliable if internal calls change).
 
@@ -30,11 +25,12 @@ Consider the use-case for your plugin and define the exact function of the plugi
 - You want to receive webhooks? Do not code your own untested function, use the WebhookEndpoint model as a base and override the perform_action method.
 - Do you need the full power of Django with custom models and all the complexity that comes with that – welcome to the danger zone and [AppMixin](./mixins/app.md). The plugin will be treated as a app by django and can maybe rack the whole instance.
 
-### Define the metadata
+### Define Metadata
 
 Do not forget to [declare the metadata](./index.md#plugin-options) for your plugin, those will be used in the settings. At least provide a web link so users can file issues / reach you.
 
-### Development guidelines
+### Development Guidelines
+
 If you want to make your life easier, try to follow these guidelines; break where it makes sense for your use case.
 
 - Keep it simple - more that 1000 LOC are normally to much for a plugin
@@ -131,7 +127,8 @@ To setup an editable install:
 pip install --editable .
 ```
 
-### A simple example
+### Simple Example
+
 This example adds a new action under `/api/action/sample` using the ActionMixin.
 ``` py
 # -*- coding: utf-8 -*-
