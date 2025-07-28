@@ -8,9 +8,10 @@ The plugin framework provided for InvenTree is powerful and flexible - which als
 
 To assist in creating a new plugin, we provide a [plugin creator command line tool](https://github.com/inventree/plugin-creator).
 
-This tool allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
+This tool allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon. The plugin creator tool allows the developer to select which plugin features they wish to include, and generates a basic plugin structure with the selected features.
 
-The plugin creator tool allows the developer to select which plugin features they wish to include, and generates a basic plugin structure with the selected features.
+!!! warning "Minimum Version"
+    The plugin creator tool is designed to develop plugins targeting InvenTree version 1.0.0 or later. While the plugin creator tool can be used to develop plugins for earlier versions of InvenTree, the user interface features generated with the plugin creator tool will not work with earlier versions of InvenTree.
 
 ### Features
 
