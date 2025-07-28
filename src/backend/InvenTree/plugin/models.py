@@ -184,6 +184,12 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     @admin.display(boolean=True, description=_('Mandatory Plugin'))
     def is_mandatory(self) -> bool:
         """Return True if this plugin is mandatory."""
+        # List of run-time configured mandatory plugins
+        if settings.PLUGINS_MANDATORY:
+            if self.key in settings.PLUGINS_MANDATORY:
+                return True
+
+        # Hard-coded list of mandatory "builtin" plugins
         return self.key in registry.MANDATORY_PLUGINS
 
     @admin.display(boolean=True, description=_('Package Plugin'))
