@@ -20,6 +20,7 @@ The *Display Settings* screen shows general display configuration options:
 | ---- | ----------- | ------- | ----- |
 {{ usersetting("ICONS_IN_NAVBAR") }}
 {{ usersetting("STICKY_HEADER") }}
+{{ usersetting("STICKY_TABLE_HEADER") }}
 {{ usersetting("DATE_DISPLAY_FORMAT") }}
 {{ usersetting("FORMS_CLOSE_USING_ESCAPE") }}
 {{ usersetting("DISPLAY_STOCKTAKE_TAB") }}
