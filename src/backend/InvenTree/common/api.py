@@ -275,7 +275,7 @@ class UserSettingsList(SettingsList):
 
         queryset = super().filter_queryset(queryset)
 
-        if not user.is_authenticated:
+        if not user.is_authenticated:  # pragma: no cover
             raise PermissionDenied('User must be authenticated to access user settings')
 
         queryset = queryset.filter(user=user)
@@ -355,7 +355,7 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
         queryset = super().filter_queryset(queryset)
 
-        if not user.is_authenticated:
+        if not user.is_authenticated:  # pragma: no cover
             raise PermissionDenied('User must be authenticated to access notifications')
 
         queryset = queryset.filter(user=user)
