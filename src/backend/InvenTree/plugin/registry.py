@@ -184,7 +184,13 @@ class PluginsRegistry:
 
         plg = self.plugins[slug]
 
-        if active is not None and active != plg.is_active():
+        config = self.get_plugin_config(slug)
+
+        if not config:
+            logger.warning("Plugin '%s' has no configuration", slug)
+            return None
+
+        if active is not None and active != config.is_active():
             return None
 
         if with_mixin is not None and not plg.mixin_enabled(with_mixin):

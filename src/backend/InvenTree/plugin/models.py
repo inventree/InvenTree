@@ -192,6 +192,13 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         # Hard-coded list of mandatory "builtin" plugins
         return self.key in registry.MANDATORY_PLUGINS
 
+    def is_active(self) -> bool:
+        """Return True if this plugin is active.
+
+        Note that 'mandatory' plugins are always considered 'active',
+        """
+        return self.is_mandatory() or self.active
+
     @admin.display(boolean=True, description=_('Package Plugin'))
     def is_package(self) -> bool:
         """Return True if this is a 'package' plugin."""
