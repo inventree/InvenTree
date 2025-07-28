@@ -103,6 +103,16 @@ class ExtendedAutoSchema(AutoSchema):
                         f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
                     )
 
+        # Add valid search fields to the search description.
+        search_fields = getattr(self.view, 'search_fields', None)
+        if search_fields is not None:
+            parameters = operation.get('parameters', [])
+            for parameter in parameters:
+                if parameter['name'] == 'search':
+                    parameter['description'] = (
+                        f'{parameter["description"]} Searched fields: {", ".join(search_fields)}.'
+                    )
+
         # Change return to array type, simply annotating this return type attempts to paginate, which doesn't work for
         # a create method and removing the pagination also affects the list method
         if self.method == 'POST' and type(self.view).__name__ == 'StockList':

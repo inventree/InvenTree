@@ -34,10 +34,12 @@ import {
   HasBatchCodeFilter,
   IncludeVariantsFilter,
   IsSerializedFilter,
+  ManufacturerFilter,
   SerialFilter,
   SerialGTEFilter,
   SerialLTEFilter,
-  StatusFilterOptions
+  StatusFilterOptions,
+  SupplierFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -358,6 +360,8 @@ function stockItemTableFilters({
       description: t`Show items which are in production`
     },
     IncludeVariantsFilter(),
+    SupplierFilter(),
+    ManufacturerFilter(),
     {
       name: 'consumed',
       label: t`Consumed`,

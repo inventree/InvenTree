@@ -282,6 +282,7 @@ export function RelatedModelField({
     return {
       ...definition,
       autoFill: undefined,
+      modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       exclude: undefined,
