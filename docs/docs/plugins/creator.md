@@ -30,7 +30,7 @@ The plugin creator tool provides a number of features to help you get started wi
 To get started using the creator tool, you will need to install it via PIP:
 
 ```bash
-pip install inventree-plugin-creator
+pip install -U inventree-plugin-creator
 ```
 
 ## Create Plugin
@@ -63,29 +63,69 @@ Select the [plugin mixins](./index.md/#plugin-mixins) you wish to use in your pl
 
 {{ image("plugin/plugin-creator-mixins.png", "Plugin Mixins") }}
 
-#### Frontend Features
+#### Select Frontend Features
 
-If the UI mixin is selected, you will be prompted to select the frontend features you wish to include in your plugin:
+If you selected the  *UserInterfaceMixin* in the previous step (as we did in this example), you will be prompted to select the frontend features you wish to include in your plugin:
+
+The available frontend features include:
+
+- **Custom dashboard items**: Create custom dashboard widgets for the InvenTree user interface.
+- **Custom panel items**: Add custom panels to the InvenTree interface.
+- **Custom settings display**: Create custom settings pages for your plugin.
 
 {{ image("plugin/plugin-creator-frontend.png", "Plugin Frontend Features") }}
 
 ### Git Setup
 
-If you wish to include Git integration in your plugin, you can select the options here:
+If you wish to include Git integration in your plugin, you can select the options here. This will set up a Git repository for your plugin, and configure automatic code formatting using [pre-commit](https://pre-commit.com/).
+
+Additionally, you can choose to setup CI integration (for either GitHub or GitLab) to automatically run tests and checks on your plugin code.
 
 {{ image("plugin/plugin-creator-devops.png", "Plugin DevOps Features") }}
+
 
 ## Install Plugin
 
 The plugin has now been created - it will be located in the directory you specified during the creation process.
 
-In the example above, we created a plugin called "MyCustomPlugin".
+In the example above, we created a plugin called "MyCustomPlugin". We can verify that the plugin files have been created:
 
 ```bash
 cd MyCustomPlugin
+ls -l
 ```
 
+You should see a directory structure similar to the following:
 
+- **LICENSE**: The license file for your plugin.
+- **MANIFEST.in**: A file that specifies which files should be included in the plugin package.
+- **README.md**: A README file for your plugin.
+- **biome.json**: Configuration file for the Biome code formatter.
+- **pyproject.toml**: The project configuration file for your plugin.
+- **setup.cfg**: Rules for Python code formatting and linting.
+- **setup.py**: The setup script for your plugin.
+- **frontend/**: A directory containing the frontend code for your plugin (if you selected frontend features).
+- **my_custom_plugin/**: The main plugin directory, containing the plugin code. *(Note: the name of this directory will match the name you provided during plugin creation)*
+
+### Editable Install
+
+We now need to *install* the plugin (within the active Python environment) so that it can be used by InvenTree. For development purposes, we can install the plugin in [editable install](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) mode, which allows us to make changes to the plugin code without needing to reinstall it.
+
+```bash
+pip install -e .
+```
+
+You should see output indicating that the plugin has been installed successfully:
+
+{{ image("plugin/plugin-creator-install.png", "Install Editable Plugin") }}
+
+You can also verify that the plugin has been installed by running the following command:
+
+```bash
+pip show inventree-my-custom-plugin
+```
+
+{{ image("plugin/plugin-creator-verify.png", "Verify plugin installation") }}
 
 ## Frontend Dev Server
 
