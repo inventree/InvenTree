@@ -450,9 +450,12 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @mark_final
     def is_mandatory(self) -> bool:
         """Is this plugin mandatory (always forced to be active)."""
-        from plugin.registry import registry
+        config = self.plugin_config()
+        if config:
+            # If the plugin is configured, check if it is marked as mandatory
+            return config.is_mandatory()
 
-        return self.slug in registry.MANDATORY_PLUGINS
+        return False  # pragma: no cover
 
     @classmethod
     @mark_final

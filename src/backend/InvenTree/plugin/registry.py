@@ -646,11 +646,16 @@ class PluginsRegistry:
             plg_db.package_name = package_name
             plg_db.save()
 
+        # Check if this plugin is considered 'mandatory'
+        mandatory = (
+            plg_key in self.MANDATORY_PLUGINS or plg_key in settings.PLUGINS_MANDATORY
+        )
+
         # Determine if this plugin should be loaded:
         # - If PLUGIN_TESTING is enabled
-        # - If this is a 'builtin' plugin
+        # - If this is a 'mandatory' plugin
         # - If this plugin has been explicitly enabled by the user
-        if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
+        if settings.PLUGIN_TESTING or mandatory or (plg_db and plg_db.active):
             # Initialize package - we can be sure that an admin has activated the plugin
             logger.debug('Loading plugin `%s`', plg_name)
 
@@ -683,6 +688,15 @@ class PluginsRegistry:
                 plg_i: InvenTreePlugin = plugin()
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
+
+                if mandatory and not plg_db.active:
+                    # If this is a mandatory plugin, ensure it is marked as active
+                    logger.info(
+                        'Plugin `%s` is a mandatory plugin - activating', plg_name
+                    )
+                    plg_db.active = True
+                    plg_db.save()
+
             except ModuleNotFoundError as e:
                 raise e
             except Exception as error:

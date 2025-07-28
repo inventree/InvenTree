@@ -469,16 +469,26 @@ class RegistryTests(TestCase):
 
     def test_builtin_mandatory_plugins(self):
         """Test that mandatory builtin plugins are always loaded."""
+        from plugin.models import PluginConfig
         from plugin.registry import registry
+
+        # Start with a 'clean slate'
+        PluginConfig.objects.all().delete()
 
         registry.reload_plugins(full_reload=True, collect=True)
         mandatory = registry.MANDATORY_PLUGINS
         self.assertEqual(len(mandatory), 9)
 
+        # Check that the mandatory plugins are loaded
+        self.assertEqual(
+            PluginConfig.objects.filter(active=True).count(), len(mandatory)
+        )
+
         for key in mandatory:
             cfg = registry.get_plugin_config(key)
             self.assertIsNotNone(cfg, f"Mandatory plugin '{key}' not found in config")
             self.assertTrue(cfg.is_mandatory())
+            self.assertTrue(cfg.active, f"Mandatory plugin '{key}' is not active")
             self.assertTrue(cfg.is_active())
             self.assertTrue(cfg.is_builtin())
             plg = registry.get_plugin(key)
@@ -499,3 +509,59 @@ class RegistryTests(TestCase):
         # Mandatory plugin cannot be disabled!
         self.assertTrue(cfg.active)
         self.assertTrue(cfg.is_active())
+
+    def test_mandatory_plugins(self):
+        """Test that plugins marked as 'mandatory' are always active."""
+        from plugin.models import PluginConfig
+        from plugin.registry import registry
+
+        # Start with a 'clean slate'
+        PluginConfig.objects.all().delete()
+
+        self.assertEqual(PluginConfig.objects.count(), 0)
+
+        registry.reload_plugins(full_reload=True, collect=True)
+
+        N_CONFIG = PluginConfig.objects.count()
+        N_ACTIVE = PluginConfig.objects.filter(active=True).count()
+
+        # Run checks across the registered plugin configurations
+        self.assertGreater(N_CONFIG, 0, 'No plugin configs found after reload')
+        self.assertGreater(N_ACTIVE, 0, 'No active plugin configs found after reload')
+        self.assertLess(
+            N_ACTIVE, N_CONFIG, 'All plugins are installed, but only some are active'
+        )
+        self.assertEqual(
+            N_ACTIVE,
+            len(registry.MANDATORY_PLUGINS),
+            'Not all mandatory plugins are active',
+        )
+
+        # Next, mark some additional plugins as mandatory
+        # These are a mix of "builtin" and "sample" plugins
+        mandatory_slugs = ['sampleui', 'validator', 'digikeyplugin', 'autocreatebuilds']
+
+        with self.settings(PLUGINS_MANDATORY=mandatory_slugs):
+            # Reload the plugins to apply the mandatory settings
+            registry.reload_plugins(full_reload=True, collect=True)
+
+            self.assertEqual(N_CONFIG, PluginConfig.objects.count())
+            self.assertEqual(
+                N_ACTIVE + 4, PluginConfig.objects.filter(active=True).count()
+            )
+
+            # Check that the mandatory plugins are active
+            for slug in mandatory_slugs:
+                cfg = registry.get_plugin_config(slug)
+                self.assertIsNotNone(
+                    cfg, f"Mandatory plugin '{slug}' not found in config"
+                )
+                self.assertTrue(cfg.is_mandatory())
+                self.assertTrue(cfg.active, f"Mandatory plugin '{slug}' is not active")
+                self.assertTrue(cfg.is_active())
+                plg = registry.get_plugin(slug)
+                self.assertTrue(plg.is_active(), f"Plugin '{slug}' is not active")
+                self.assertIsNotNone(plg, f"Mandatory plugin '{slug}' not found")
+                self.assertTrue(
+                    plg.is_mandatory, f"Plugin '{slug}' is not marked as mandatory"
+                )
