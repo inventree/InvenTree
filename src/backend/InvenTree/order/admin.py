@@ -26,6 +26,8 @@ class GeneralExtraLineMeta:
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
     """Inline admin class for the PurchaseOrderLineItem model."""
 
+    autocomplete_fields = ['part', 'destination', 'build_order']
+
     model = models.PurchaseOrderLineItem
     extra = 0
 
