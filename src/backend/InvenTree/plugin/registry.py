@@ -296,15 +296,16 @@ class PluginsRegistry:
         result = []
 
         for plugin in self.plugins.values():
+            if not plugin.mixin_enabled(mixin):
+                continue
+
             if active is not None and active != plugin.is_active():
                 continue
 
             if builtin is not None and builtin != plugin.is_builtin:
                 continue
 
-            # Finally, check the plugin to see if the specified mixin is enabled
-            if plugin.mixin_enabled(mixin):
-                result.append(plugin)
+            result.append(plugin)
 
         return result
 
