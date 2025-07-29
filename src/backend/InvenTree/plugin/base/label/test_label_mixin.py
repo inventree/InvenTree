@@ -68,13 +68,17 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 
-        # No results matching this query!
-        self.assertEqual(len(response.data), 0)
+        # Two mandatory label printing plugins
+        self.assertEqual(len(response.data), 2)
 
         # What about inactive?
         response = self.client.get(url, {'mixin': 'labels', 'active': False})
 
-        self.assertEqual(len(response.data), 0)
+        # One builtin, non-mandatory label printing plugin "inventreelabelsheet"
+        # One sample plugin, "samplelabelprinter"
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['key'], 'inventreelabelsheet')
+        self.assertEqual(response.data[1]['key'], 'samplelabelprinter')
 
         self.do_activate_plugin()
         # Should be available via the API now
@@ -141,7 +145,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             {'template': template.pk, 'plugin': config.key, 'items': [1, 2, 3]},
             expected_code=400,
         )
-        self.assertIn('Plugin is not active', str(response.data['plugin']))
+        self.assertIn('Plugin not found', str(response.data['plugin']))
 
         # Active plugin
         self.do_activate_plugin()
