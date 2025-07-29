@@ -559,6 +559,9 @@ class RegistryTests(TestQueryMixin, TestCase):
     def test_with_mixin(self):
         """Tests for the 'with_mixin' registry method."""
         from plugin.models import PluginConfig
+        from plugin.registry import registry
+
+        registry.reload_plugins(full_reload=True, collect=True)
 
         N_CONFIG = PluginConfig.objects.count()
         self.assertGreater(N_CONFIG, 0, 'No plugin configs found')
