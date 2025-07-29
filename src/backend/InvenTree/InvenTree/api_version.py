@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 375
+INVENTREE_API_VERSION = 376
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v376 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9969
+    - Correctly apply changes listed in v358
+    - Breaking: StockCreate now always returns a list of StockItem
+
 v375 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10095
     - Sorts searched fields to keep API stable
 
@@ -19,10 +23,6 @@ v373 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
 
 v372 -> 2025-07-19 : https://github.com/inventree/InvenTree/pull/10056
     - Adds BOM validation information to the Part API
-
-v372 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9969
-    - Correctly apply changes listed in v358
-    - Breaking: StockCreate now always returns a list of StockItem
 
 v371 -> 2025-07-18 : https://github.com/inventree/InvenTree/pull/10042
     - Adds "setup_quantity" and "attrition" fields to BomItem API endpoints
