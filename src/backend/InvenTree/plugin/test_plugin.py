@@ -592,3 +592,15 @@ class RegistryTests(TestQueryMixin, TestCase):
         keys = [p.slug for p in plugins]
         self.assertIn('inventreelabel', keys)
         self.assertIn('inventreelabelmachine', keys)
+
+    def test_config_attributes(self):
+        """Test attributes for PluginConfig objects."""
+        # Get the plugin config for the 'sampleui' plugin
+        cfg = registry.get_plugin_config('sampleui')
+        self.assertIsNotNone(cfg, 'PluginConfig for sampleui not found')
+
+        self.assertFalse(cfg.is_mandatory())
+        self.assertFalse(cfg.is_active())
+        self.assertFalse(cfg.is_builtin())
+        self.assertFalse(cfg.is_package())
+        self.assertTrue(cfg.is_sample())

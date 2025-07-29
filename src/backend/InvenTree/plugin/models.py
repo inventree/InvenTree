@@ -202,10 +202,14 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     @admin.display(boolean=True, description=_('Package Plugin'))
     def is_package(self) -> bool:
         """Return True if this is a 'package' plugin."""
+        if self.package_name:
+            return True
+
         if not self.plugin:
             return False
 
-        return getattr(self.plugin, 'is_package', False)
+        pkg_name = getattr(self.plugin, 'package_name', None)
+        return pkg_name is not None
 
     @property
     def admin_source(self) -> str:
