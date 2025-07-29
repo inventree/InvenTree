@@ -56,6 +56,15 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
     ]
 
 
+class SalesOrderLineItemInlineAdmin(admin.StackedInline):
+    """Inline admin class for the SalesOrderLineItem model."""
+
+    model = models.SalesOrderLineItem
+    extra = 0
+
+    autocomplete_fields = ['part']
+
+
 @admin.register(models.SalesOrder)
 class SalesOrderAdmin(admin.ModelAdmin):
     """Admin class for the SalesOrder model."""
@@ -65,6 +74,8 @@ class SalesOrderAdmin(admin.ModelAdmin):
     list_display = ('reference', 'customer', 'status', 'description', 'creation_date')
 
     search_fields = ['reference', 'customer__name', 'description']
+
+    inlines = [SalesOrderLineItemInlineAdmin]
 
     autocomplete_fields = [
         'address',
