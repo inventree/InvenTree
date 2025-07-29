@@ -448,9 +448,13 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --check --translations
+        run: invoke dev.test -r InvenTree.test_api.GeneralApiTests.test_info_view
       - name: Data Export Test
         uses: ./.github/actions/migration
+      - name: Intentional failure
+        run: |
+          echo "This job is intentionally failing to test the CI pipeline."
+          exit 1
 
   migration-tests:
     name: Tests - Migrations [PostgreSQL]
