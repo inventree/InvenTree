@@ -34,6 +34,7 @@ from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (
     IntegrationPluginError,
+    MixinNotImplementedError,
     get_entrypoints,
     get_plugins,
     handle_error,
@@ -291,23 +292,43 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
+        from plugin.models import PluginConfig
+
         mixin = str(mixin).lower().strip()
 
-        result = []
+        plugins = []
+
+        plugin_configs = PluginConfig.objects.all()
+
+        if active is not None:
+            # Filter plugin configs by active status
+            plugin_configs = plugin_configs.filter(active=active)
+
+        # Pre-fetch the PluginConfig objects to avoid multiple database queries
+        configs = {config.key: config for config in plugin_configs}
 
         for plugin in self.plugins.values():
-            if not plugin.mixin_enabled(mixin):
+            try:
+                if not plugin.mixin_enabled(mixin):
+                    continue
+            except MixinNotImplementedError:
                 continue
 
-            if active is not None and active != plugin.is_active():
+            config = configs.get(plugin.slug)
+
+            # No config - cannot use this plugin
+            if not config:
                 continue
 
-            if builtin is not None and builtin != plugin.is_builtin:
+            if active is not None and active != config.is_active():
                 continue
 
-            result.append(plugin)
+            if builtin is not None and builtin != config.is_builtin():
+                continue
 
-        return result
+            plugins.append(plugin)
+
+        return plugins
 
     # endregion
 

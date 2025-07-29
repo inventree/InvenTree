@@ -13,7 +13,9 @@ from unittest.mock import patch
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import InvenTreePlugin, registry
+from InvenTree.unit_test import TestQueryMixin
+from plugin import InvenTreePlugin, PluginMixinEnum
+from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
     WrongIntegrationPlugin,
@@ -203,7 +205,7 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(plug.is_active(), False)
 
 
-class RegistryTests(TestCase):
+class RegistryTests(TestQueryMixin, TestCase):
     """Tests for registry loading methods."""
 
     def mockDir(self) -> str:
@@ -553,3 +555,40 @@ class RegistryTests(TestCase):
                 self.assertTrue(
                     plg.is_mandatory, f"Plugin '{slug}' is not marked as mandatory"
                 )
+
+    def test_with_mixin(self):
+        """Tests for the 'with_mixin' registry method."""
+        from plugin.models import PluginConfig
+
+        N_CONFIG = PluginConfig.objects.count()
+        self.assertGreater(N_CONFIG, 0, 'No plugin configs found')
+
+        # Test that the 'with_mixin' method is query efficient
+        for mixin in PluginMixinEnum:
+            with self.assertNumQueriesLessThan(3):
+                registry.with_mixin(mixin)
+
+        # Test for the 'base' mixin - we expect that this returns "all" plugins
+        base = registry.with_mixin(PluginMixinEnum.BASE, active=None, builtin=None)
+        self.assertEqual(len(base), N_CONFIG, 'Base mixin does not return all plugins')
+
+        # Next, fetch only "active" plugins
+        n_active = len(registry.with_mixin(PluginMixinEnum.BASE, active=True))
+        self.assertGreater(n_active, 0, 'No active plugins found with base mixin')
+        self.assertLess(n_active, N_CONFIG, 'All plugins are active with base mixin')
+
+        n_inactive = len(registry.with_mixin(PluginMixinEnum.BASE, active=False))
+
+        self.assertGreater(n_inactive, 0, 'No inactive plugins found with base mixin')
+        self.assertLess(n_inactive, N_CONFIG, 'All plugins are active with base mixin')
+        self.assertEqual(
+            n_active + n_inactive, N_CONFIG, 'Active and inactive plugins do not match'
+        )
+
+        # Filter by 'builtin' status
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS, builtin=True, active=True)
+        self.assertEqual(len(plugins), 2)
+
+        keys = [p.slug for p in plugins]
+        self.assertIn('inventreelabel', keys)
+        self.assertIn('inventreelabelmachine', keys)

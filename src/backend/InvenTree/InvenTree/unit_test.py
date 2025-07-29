@@ -320,12 +320,8 @@ class ExchangeRateMixin:
         Rate.objects.bulk_create(items)
 
 
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup build in."""
-
-
-class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
-    """Base class for running InvenTree API tests."""
+class TestQueryMixin:
+    """Mixin class for testing query counts."""
 
     # Default query count threshold value
     # TODO: This value should be reduced
@@ -374,6 +370,14 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             print(f'Warning: {n} queries executed at {url}')
 
         self.assertLess(n, value, msg=msg)
+
+
+class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
+    """Testcase with user setup build in."""
+
+
+class InvenTreeAPITestCase(ExchangeRateMixin, TestQueryMixin, UserMixin, APITestCase):
+    """Base class for running InvenTree API tests."""
 
     @classmethod
     def setUpTestData(cls):
