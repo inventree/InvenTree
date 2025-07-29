@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 374
+INVENTREE_API_VERSION = 375
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v375 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10095
+    - Sorts searched fields to keep API stable
+
 v374 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10092
     - Add nullable to a few details fields that lack it
     - Add the list of searched fields to the search parameter comments
