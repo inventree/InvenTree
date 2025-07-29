@@ -162,14 +162,12 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertIn('Mandatory plugin cannot be deactivated', str(response.data))
 
     def test_plugin_activate(self):
-        """Test the plugin activate."""
-        test_plg = self.plugin_confs.first()
-        assert test_plg is not None
-
-        def assert_plugin_active(self, active):
-            plgs = PluginConfig.objects.all().first()
-            assert plgs is not None
-            self.assertEqual(plgs.active, active)
+        """Test the plugin activation API endpoint."""
+        test_plg = PluginConfig.objects.get(key='samplelocate')
+        self.assertIsNotNone(test_plg, 'Test plugin not found')
+        self.assertFalse(test_plg.is_active())
+        self.assertFalse(test_plg.is_builtin())
+        self.assertFalse(test_plg.is_mandatory())
 
         url = reverse('api-plugin-detail-activate', kwargs={'plugin': test_plg.key})
 
@@ -186,20 +184,27 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         test_plg.save()
 
         # Activate plugin with detail url
-        assert_plugin_active(self, False)
+        test_plg.refresh_from_db()
+        self.assertFalse(test_plg.is_active())
+
         response = self.client.patch(url, {}, follow=True)
         self.assertEqual(response.status_code, 200)
-        assert_plugin_active(self, True)
+
+        test_plg.refresh_from_db()
+        self.assertTrue(test_plg.is_active())
 
         # Deactivate plugin
         test_plg.active = False
         test_plg.save()
 
         # Activate plugin
-        assert_plugin_active(self, False)
+        test_plg.refresh_from_db()
+        self.assertFalse(test_plg.active)
         response = self.client.patch(url, {}, follow=True)
         self.assertEqual(response.status_code, 200)
-        assert_plugin_active(self, True)
+
+        test_plg.refresh_from_db()
+        self.assertTrue(test_plg.is_active())
 
     def test_pluginCfg_delete(self):
         """Test deleting a config."""
