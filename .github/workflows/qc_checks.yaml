@@ -448,7 +448,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --check --migrations
+        run: invoke dev.test --check --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
