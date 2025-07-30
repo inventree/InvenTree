@@ -606,14 +606,14 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
         from plugin.models import PluginConfig
 
-        print("PluginConfig:", PluginConfig.objects.count())
+        print('PluginConfig:', PluginConfig.objects.count())
 
         for cfg in PluginConfig.objects.all():
-            print("-", cfg.key, cfg.is_active(), cfg.is_mandatory())
+            print('-', cfg.key, cfg.is_active(), cfg.is_mandatory())
 
         self.assertGreater(len(plugins), 0)
 
-        raise ValueError("Intentional CI Failure")
+        raise ValueError('Intentional CI Failure')
 
         keys = [plugin['slug'] for plugin in plugins]
 
