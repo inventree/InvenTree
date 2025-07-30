@@ -584,6 +584,8 @@ class GeneralApiTests(InvenTreeAPITestCase):
         from plugin.models import PluginConfig
         from plugin.registry import registry
 
+        registry.reload_plugins(full_reload=True, collect=True)
+
         url = reverse('api-inventree-info')
 
         response = self.get(url, max_query_count=20, expected_code=200)
