@@ -584,7 +584,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         from plugin.models import PluginConfig
         from plugin.registry import registry
 
-        registry.reload_plugins(full_reload=True, collect=True)
+        # registry.reload_plugins(full_reload=True, collect=True)
 
         url = reverse('api-inventree-info')
 

@@ -385,7 +385,19 @@ class InvenTreeAPITestCase(ExchangeRateMixin, TestQueryMixin, UserMixin, APITest
 
         - Ensure that all global settings are assigned default values.
         """
+        from time import sleep
+
         from common.models import InvenTreeSetting
+        from plugin.registry import registry
+
+        t = time.time()
+
+        while not registry.is_ready():
+            print('Waiting for plugin registry to be ready...')
+            sleep(0.1)
+
+            if time.time() - t > 10:  # pragma: no cover
+                raise TimeoutError('Plugin registry did not become ready in time')
 
         InvenTreeSetting.build_default_values()
 
