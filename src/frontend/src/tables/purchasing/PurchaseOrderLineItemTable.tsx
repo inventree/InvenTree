@@ -123,6 +123,7 @@ export function PurchaseOrderLineItemTable({
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
       onClose: () => {
+        table.clearSelectedRecords();
         table.refreshTable();
         setTimeout(() => setSingleRecord(null), 500);
       }
