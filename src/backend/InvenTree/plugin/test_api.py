@@ -306,6 +306,16 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             f'A plugin registry reload was triggered for plugin {plg_inactive.key}',
         )
 
+        # Set active state back to False
+        with self.assertWarns(Warning) as cm:
+            plg_inactive.active = False
+            plg_inactive.save()
+
+        self.assertEqual(
+            cm.warning.args[0],
+            f'A plugin registry reload was triggered for plugin {plg_inactive.key}',
+        )
+
     def test_check_plugin(self):
         """Test check_plugin function."""
         # No argument

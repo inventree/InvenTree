@@ -161,6 +161,8 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
                 )
             registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
+        self.__org_active = self.active
+
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
         """Simple check to determine if this plugin is installed.
