@@ -392,7 +392,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, TestQueryMixin, UserMixin, APITest
 
         t = time.time()
 
-        while not registry.is_ready():
+        while not registry.is_ready:
             print('Waiting for plugin registry to be ready...')
             sleep(0.1)
 
