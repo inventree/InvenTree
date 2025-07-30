@@ -22,19 +22,12 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         """The ready method is extended to initialize plugins."""
-        print('PluginAppConfig.READY')
-
         self.reload_plugin_registry()
 
     def reload_plugin_registry(self):
         """Reload the plugin registry."""
         if not isInMainThread() and not isInWorkerThread():
-            print('Returning early from plugin registry reload in non-main thread')
-            print(' - isInMainThread():', isInMainThread())
-            print(' - isInWorkerThread():', isInWorkerThread())
             return
-
-        print('GOT TO HERE!!!!!')
 
         if not canAppAccessDatabase(
             allow_test=True, allow_plugins=True, allow_shell=True

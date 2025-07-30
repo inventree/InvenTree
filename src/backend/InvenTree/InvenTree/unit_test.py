@@ -392,6 +392,10 @@ class PluginRegistryMixin:
             if time.time() - t > 10:  # pragma: no cover
                 raise TimeoutError('Plugin registry did not become ready in time')
 
+        # Reload the plugin registry at this point to ensure all PluginConfig objects are created
+        # This is because the django test system may have re-initialized the database (to an empty state)
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
         assert registry.is_ready, 'Plugin registry is not ready'
         assert PluginConfig.objects.count() > 0, 'No plugins are installed'
 

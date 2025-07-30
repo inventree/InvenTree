@@ -145,6 +145,8 @@ class PluginsRegistry:
         """
         from common.models import InvenTreeSetting
 
+        logger.info('Initializing plugin registry')
+
         self.ready = True
 
         # Install plugins from file (if required)
@@ -152,12 +154,8 @@ class PluginsRegistry:
             # make sure all plugins are installed
             registry.install_plugin_file()
 
-        print('=== RELOADING PLUGIN REGISTRY ===')
-
         # Perform initial plugin discovery
         self.reload_plugins(full_reload=True, force_reload=True, collect=True)
-
-        print('!!!!! RELOADED PLUGIN REGISTRY !!!!!')
 
     @property
     def is_ready(self) -> bool:
