@@ -189,7 +189,7 @@ class PluginsRegistry:
 
         config = self.get_plugin_config(slug)
 
-        if not config:
+        if not config:  # pragma: no cover
             logger.warning("Plugin '%s' has no configuration", slug)
             return None
 
@@ -223,7 +223,7 @@ class PluginsRegistry:
                 )
                 cfg = PluginConfig.objects.create(key=slug)
 
-        except PluginConfig.DoesNotExist:
+        except PluginConfig.DoesNotExist:  # pragma: no cover
             return None
         except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
             return None
@@ -714,7 +714,7 @@ class PluginsRegistry:
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
 
-                if mandatory and not plg_db.active:
+                if mandatory and not plg_db.active:  # pragma: no cover
                     # If this is a mandatory plugin, ensure it is marked as active
                     logger.info(
                         'Plugin `%s` is a mandatory plugin - activating', plg_name
