@@ -392,6 +392,9 @@ class PluginRegistryMixin:
             if time.time() - t > 10:  # pragma: no cover
                 raise TimeoutError('Plugin registry did not become ready in time')
 
+        assert registry.is_ready, 'Plugin registry is not ready'
+        assert PluginConfig.objects.count() > 0, 'No plugins are installed'
+
         InvenTreeSetting.build_default_values()
         super().setUpTestData()
 
