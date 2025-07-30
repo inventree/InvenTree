@@ -309,7 +309,29 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             'This is a dummy error', find_error('Test:init_plugin', 'broken_sample')
         )
 
-    def test_plugin_override(self):
+    def test_plugin_override_mandatory(self):
+        """Test that a plugin cannot override the is_mandatory method."""
+        with self.assertRaises(TypeError) as e:
+            # Attempt to create a class which overrides the 'is_mandatory' method
+            class MyDummyPlugin(InvenTreePlugin):
+                """A dummy plugin for testing."""
+
+                NAME = 'MyDummyPlugin'
+                SLUG = 'mydummyplugin'
+                TITLE = 'My Dummy Plugin'
+                VERSION = '1.0.0'
+
+                def is_mandatory(self):
+                    """Override is_mandatory to always return True."""
+                    return True
+
+        # Check that the error message is as expected
+        self.assertIn(
+            "Plugin 'MyDummyPlugin' cannot override final method 'is_mandatory' from InvenTreePlugin",
+            str(e.exception),
+        )
+
+    def test_plugin_override_active(self):
         """Test that the plugin override works as expected."""
         with self.assertRaises(TypeError) as e:
             # Attempt to create a class which overrides the 'is_active' method
