@@ -192,6 +192,10 @@ PLUGINS_ENABLED = get_boolean_setting(
     'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
 )
 
+PLUGINS_MANDATORY = get_setting(
+    'INVENTREE_PLUGINS_MANDATORY', 'plugins_mandatory', typecast=list, default_value=[]
+)
+
 PLUGINS_INSTALL_DISABLED = get_boolean_setting(
     'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
@@ -211,6 +215,7 @@ PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
 
+# Plugin development settings
 PLUGIN_DEV_SLUG = (
     get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug') if DEBUG else None
 )

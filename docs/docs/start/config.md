@@ -463,6 +463,9 @@ The following [plugin](../plugins/index.md) configuration options are available:
 | INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Disable Plugin installation via API - only use plugins.txt file | False |
 | INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
 | INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
+| INVENTREE_PLUGINS_MANDATORY | plugins_mandatory | List of [plugins which are considered mandatory](../plugins/index.md#mandatory-third-party-plugins) | *Not specified* |
+| INVENTREE_PLUGIN_DEV_SLUG | plugin_dev.slug | Specify plugin to run in [development mode](../plugins/creator.md#backend-configuration) | *Not specified* |
+| INVENTREE_PLUGIN_DEV_HOST | plugin_dev.host | Specify host for development mode plugin | http://localhost:5174 |
 
 ## Override Global Settings
 
