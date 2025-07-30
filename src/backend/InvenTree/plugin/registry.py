@@ -297,20 +297,21 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
-        from plugin.models import PluginConfig
+        try:
+            # Pre-fetch the PluginConfig objects to avoid multiple database queries
+            from plugin.models import PluginConfig
+
+            plugin_configs = PluginConfig.objects.all()
+
+            configs = {config.key: config for config in plugin_configs}
+        except (ProgrammingError, OperationalError):
+            # The database is not ready yet
+            logger.warning('plugin.registry.with_mixin: Database not ready')
+            return []
 
         mixin = str(mixin).lower().strip()
 
         plugins = []
-
-        plugin_configs = PluginConfig.objects.all()
-
-        if active is not None:
-            # Filter plugin configs by active status
-            plugin_configs = plugin_configs.filter(active=active)
-
-        # Pre-fetch the PluginConfig objects to avoid multiple database queries
-        configs = {config.key: config for config in plugin_configs}
 
         for plugin in self.plugins.values():
             try:
