@@ -60,7 +60,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
-        self.ensurePluginsLoaded()
+        self.ensurePluginsLoaded(force=True)
 
         url = reverse('api-plugin-list')
 
@@ -68,7 +68,9 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         response = self.client.post(url, {})
         self.assertEqual(response.status_code, 405)
 
-        response = self.client.get(url, {'mixin': 'labels', 'active': True})
+        response = self.client.get(
+            url, {'mixin': PluginMixinEnum.LABELS, 'active': True}
+        )
 
         # Two mandatory label printing plugins
         self.assertEqual(len(response.data), 2)
@@ -82,7 +84,13 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.assertEqual(response.data[0]['key'], 'inventreelabelsheet')
         self.assertEqual(response.data[1]['key'], 'samplelabelprinter')
 
-        self.do_activate_plugin()
+        with self.assertWarnsMessage(
+            UserWarning,
+            'A plugin registry reload was triggered for plugin samplelabelprinter',
+        ):
+            # Activate the sample label printing plugin
+            self.do_activate_plugin()
+
         # Should be available via the API now
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 

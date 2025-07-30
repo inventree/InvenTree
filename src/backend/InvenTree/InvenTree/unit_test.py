@@ -397,11 +397,11 @@ class PluginRegistryMixin:
         InvenTreeSetting.build_default_values()
         super().setUpTestData()
 
-    def ensurePluginsLoaded(self):
+    def ensurePluginsLoaded(self, force: bool = False):
         """Helper function to ensure that plugins are loaded."""
         from plugin.models import PluginConfig
 
-        if PluginConfig.objects.count() == 0:
+        if force or PluginConfig.objects.count() == 0:
             # Reload the plugin registry at this point to ensure all PluginConfig objects are created
             # This is because the django test system may have re-initialized the database (to an empty state)
             registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

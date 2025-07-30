@@ -454,7 +454,12 @@ class PluginsRegistry:
 
             # Ensure that each loaded plugin has a valid configuration object in the database
             for plugin in self.plugins.values():
-                self.get_plugin_config(plugin.slug)
+                config = self.get_plugin_config(plugin.slug)
+
+                # Ensure mandatory plugins are marked as active
+                if config.is_mandatory() and not config.active:
+                    config.active = True
+                    config.save()
 
         except Exception as e:
             logger.exception('Unexpected error during plugin reload: %s', e)

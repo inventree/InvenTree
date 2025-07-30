@@ -155,7 +155,10 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         if not no_reload and self.active != self.__org_active and not mandatory:
             if settings.PLUGIN_TESTING:
-                warnings.warn('A plugin registry reload was triggered', stacklevel=2)
+                warnings.warn(
+                    f'A plugin registry reload was triggered for plugin {self.key}',
+                    stacklevel=2,
+                )
             registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     @admin.display(boolean=True, description=_('Installed'))
@@ -192,7 +195,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
                 return True
 
         # Hard-coded list of mandatory "builtin" plugins
-        return self.is_builtin() and self.key in registry.MANDATORY_PLUGINS
+        return self.key in registry.MANDATORY_PLUGINS
 
     def is_active(self) -> bool:
         """Return True if this plugin is active.
