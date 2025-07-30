@@ -60,6 +60,8 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
+        self.ensurePluginsLoaded()
+
         url = reverse('api-plugin-list')
 
         # Try POST (disallowed)
