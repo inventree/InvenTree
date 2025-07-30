@@ -580,6 +580,10 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
     def test_info_view(self):
         """Test that we can read the 'info-view' endpoint."""
+        from plugin import PluginMixinEnum
+        from plugin.models import PluginConfig
+        from plugin.registry import registry
+
         url = reverse('api-inventree-info')
 
         response = self.get(url, max_query_count=20, expected_code=200)
@@ -604,14 +608,20 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('active_plugins', data)
         plugins = data['active_plugins']
 
-        from plugin.models import PluginConfig
-
         print('PluginConfig:', PluginConfig.objects.count())
 
         for cfg in PluginConfig.objects.all():
             print('-', cfg.key, cfg.is_active(), cfg.is_mandatory())
 
-        self.assertGreater(len(plugins), 0)
+        # Check that all active plugins are listed
+        N = len(plugins)
+        self.assertGreater(N, 0, 'No active plugins found')
+        self.assertLess(N, PluginConfig.objects.count(), 'Too many plugins found')
+        self.assertEqual(
+            N,
+            len(registry.with_mixin(PluginMixinEnum.BASE, active=True)),
+            'Incorrect number of active plugins found',
+        )
 
         raise ValueError('Intentional CI Failure')
 
