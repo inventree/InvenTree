@@ -15,6 +15,7 @@ from error_report.models import Error
 
 import InvenTree.tasks
 from common.models import InvenTreeSetting, InvenTreeUserSetting
+from InvenTree.unit_test import PluginRegistryMixin
 
 threshold = timezone.now() - timedelta(days=30)
 threshold_low = threshold - timedelta(days=1)
@@ -55,7 +56,7 @@ def get_result():
     return 'abc'
 
 
-class InvenTreeTaskTests(TestCase):
+class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
     """Unit tests for tasks."""
 
     def test_offloading(self):

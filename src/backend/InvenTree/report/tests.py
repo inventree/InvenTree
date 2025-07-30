@@ -393,7 +393,7 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=500 * len(qs),
+            max_query_count=150 * len(qs),
         )
 
         # Test with wrong dimensions

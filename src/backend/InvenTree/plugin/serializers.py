@@ -234,9 +234,14 @@ class PluginActivateSerializer(serializers.Serializer):
         help_text=_('Activate this plugin'),
     )
 
-    def update(self, instance, validated_data):
+    def update(self, instance: PluginConfig, validated_data):
         """Apply the new 'active' value to the plugin instance."""
-        instance.activate(validated_data.get('active', True))
+        active = validated_data.get('active', True)
+
+        if not active and instance.is_mandatory():
+            raise ValidationError(_('Mandatory plugin cannot be deactivated'))
+
+        instance.activate(active)
         return instance
 
 

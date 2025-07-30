@@ -471,7 +471,7 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIsNone(cache.get(cache_key))
 
         # First request should set cache
-        val = InvenTreeSetting.get_setting(key)
+        val = InvenTreeSetting.get_setting(key, cache=True)
         self.assertEqual(cache.get(cache_key).value, val)
 
         for val in ['A', '{{ part.IPN }}', 'C']:
