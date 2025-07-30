@@ -372,19 +372,12 @@ class TestQueryMixin:
         self.assertLess(n, value, msg=msg)
 
 
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup build in."""
-
-
-class InvenTreeAPITestCase(ExchangeRateMixin, TestQueryMixin, UserMixin, APITestCase):
-    """Base class for running InvenTree API tests."""
+class PluginRegistryMixin:
+    """Mixin to ensure that the plugin registry is ready for tests."""
 
     @classmethod
     def setUpTestData(cls):
-        """Setup for API tests.
-
-        - Ensure that all global settings are assigned default values.
-        """
+        """Ensure that the plugin registry is ready for tests."""
         from time import sleep
 
         from common.models import InvenTreeSetting
@@ -400,8 +393,17 @@ class InvenTreeAPITestCase(ExchangeRateMixin, TestQueryMixin, UserMixin, APITest
                 raise TimeoutError('Plugin registry did not become ready in time')
 
         InvenTreeSetting.build_default_values()
-
         super().setUpTestData()
+
+
+class InvenTreeTestCase(ExchangeRateMixin, PluginRegistryMixin, UserMixin, TestCase):
+    """Testcase with user setup build in."""
+
+
+class InvenTreeAPITestCase(
+    ExchangeRateMixin, PluginRegistryMixin, TestQueryMixin, UserMixin, APITestCase
+):
+    """Base class for running InvenTree API tests."""
 
     def check_response(self, url, response, expected_code=None):
         """Debug output for an unexpected response."""
