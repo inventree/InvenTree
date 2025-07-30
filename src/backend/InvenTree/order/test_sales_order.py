@@ -318,6 +318,8 @@ class SalesOrderTest(InvenTreeTestCase):
 
     def test_overdue_notification(self):
         """Test overdue sales order notification."""
+        self.ensurePluginsLoaded()
+
         user = get_user_model().objects.get(pk=3)
 
         addUserPermission(user, 'order', 'salesorder', 'view')

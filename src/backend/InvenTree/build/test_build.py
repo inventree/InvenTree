@@ -622,6 +622,8 @@ class BuildTest(BuildTestBase):
 
     def test_overdue_notification(self):
         """Test sending of notifications when a build order is overdue."""
+        self.ensurePluginsLoaded()
+
         self.build.target_date = datetime.now().date() - timedelta(days=1)
         self.build.save()
 

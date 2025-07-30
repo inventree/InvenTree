@@ -319,7 +319,7 @@ class PluginsRegistry:
             except MixinNotImplementedError:
                 continue
 
-            config = configs.get(plugin.slug)
+            config = configs.get(plugin.slug) or plugin.plugin_config()
 
             # No config - cannot use this plugin
             if not config:

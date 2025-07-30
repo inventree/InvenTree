@@ -563,7 +563,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         from plugin.models import PluginConfig
         from plugin.registry import registry
 
-        registry.reload_plugins(full_reload=True, collect=True)
+        self.ensurePluginsLoaded()
 
         N_CONFIG = PluginConfig.objects.count()
         self.assertGreater(N_CONFIG, 0, 'No plugin configs found')
