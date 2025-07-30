@@ -459,7 +459,7 @@ class PluginsRegistry:
                 # Ensure mandatory plugins are marked as active
                 if config.is_mandatory() and not config.active:
                     config.active = True
-                    config.save()
+                    config.save(no_reload=True)
 
         except Exception as e:
             logger.exception('Unexpected error during plugin reload: %s', e)
