@@ -220,6 +220,9 @@ class PluginsRegistry:
             cfg = PluginConfig.objects.filter(key=slug).first()
 
             if not cfg:
+                logger.debug(
+                    "get_plugin_config: Creating new PluginConfig for '%s'", slug
+                )
                 cfg = PluginConfig.objects.create(key=slug)
 
         except PluginConfig.DoesNotExist:
@@ -449,6 +452,10 @@ class PluginsRegistry:
 
             self.update_plugin_hash()
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
+
+            # Ensure that each loaded plugin has a valid configuration object in the database
+            for plugin in self.plugins.values():
+                self.get_plugin_config(plugin.slug)
 
         except Exception as e:
             logger.exception('Unexpected error during plugin reload: %s', e)
