@@ -13,7 +13,7 @@ from unittest.mock import patch
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from InvenTree.unit_test import TestQueryMixin
+from InvenTree.unit_test import PluginRegistryMixin, TestQueryMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
@@ -26,7 +26,7 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 PLUGIN_TEST_DIR = '_testfolder/test_plugins'
 
 
-class PluginTagTests(TestCase):
+class PluginTagTests(PluginRegistryMixin, TestCase):
     """Tests for the plugin extras."""
 
     def setUp(self):
@@ -62,7 +62,9 @@ class PluginTagTests(TestCase):
 
     def test_mixin_available(self):
         """Check that mixin_available works."""
-        self.assertEqual(plugin_tags.mixin_available('barcode'), True)
+        from plugin import PluginMixinEnum
+
+        self.assertEqual(plugin_tags.mixin_available(PluginMixinEnum.BARCODE), True)
         self.assertEqual(plugin_tags.mixin_available('wrong'), False)
 
     def test_tag_safe_url(self):
@@ -205,7 +207,7 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(plug.is_active(), False)
 
 
-class RegistryTests(TestQueryMixin, TestCase):
+class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     """Tests for registry loading methods."""
 
     def mockDir(self) -> str:
