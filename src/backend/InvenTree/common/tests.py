@@ -661,6 +661,21 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the user settings API."""
 
+    def test_unauthenticated_user(self):
+        """Test access with unauthenticated user."""
+        self.client.logout()
+
+        # Check list API endpoint
+        url = reverse('api-user-setting-list')
+        response = self.get(url, expected_code=401).data
+        self.assertIn(
+            'Authentication credentials were not provided', str(response['detail'])
+        )
+
+        # Check the detail API endpoint
+        url = reverse('api-user-setting-detail', kwargs={'key': 'LABEL_INLINE'})
+        self.get(url, expected_code=401)
+
     def test_user_settings_api_list(self):
         """Test list URL for user settings."""
         url = reverse('api-user-setting-list')
