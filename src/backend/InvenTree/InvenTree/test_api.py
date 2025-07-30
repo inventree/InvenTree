@@ -584,6 +584,8 @@ class GeneralApiTests(InvenTreeAPITestCase):
         from plugin.models import PluginConfig
         from plugin.registry import registry
 
+        self.ensurePluginsLoaded()
+
         url = reverse('api-inventree-info')
 
         response = self.get(url, max_query_count=20, expected_code=200)
@@ -604,6 +606,17 @@ class GeneralApiTests(InvenTreeAPITestCase):
         data = response.json()
         self.assertEqual(data['database'], None)
 
+        # No active plugin info for anon user
+        self.assertIsNone(data.get('active_plugins'))
+
+        # Staff
+        response = self.get(
+            url, headers={'Authorization': f'Token {token}'}, max_query_count=20
+        )
+        self.assertGreater(len(response.json()['database']), 4)
+
+        data = response.json()
+
         # Check for active plugin list
         self.assertIn('active_plugins', data)
         plugins = data['active_plugins']
@@ -623,9 +636,3 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('bom-exporter', keys)
         self.assertIn('inventree-ui-notification', keys)
         self.assertIn('inventreelabel', keys)
-
-        # Staff
-        response = self.get(
-            url, headers={'Authorization': f'Token {token}'}, max_query_count=275
-        )
-        self.assertGreater(len(response.json()['database']), 4)
