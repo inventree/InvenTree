@@ -44,7 +44,7 @@ def mark_final(method):
 
 
 def get_final_methods(cls):
-    """Find all methods (including property methods) of a class."""
+    """Find all methods of a class marked with the @mark_final decorator."""
     return [
         name
         for name, method in inspect.getmembers(cls)
