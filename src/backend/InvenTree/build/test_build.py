@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
@@ -20,7 +19,11 @@ from build.models import Build, BuildItem, BuildLine, generate_next_build_refere
 from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree import status_codes as status
-from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
+from InvenTree.unit_test import (
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    findOffloadedEvent,
+)
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult, StockLocation
@@ -29,7 +32,7 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class BuildTestBase(TestCase):
+class BuildTestBase(InvenTreeTestCase):
     """Run some tests to ensure that the Build model is working properly."""
 
     fixtures = ['users']

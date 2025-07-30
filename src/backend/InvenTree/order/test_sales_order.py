@@ -5,13 +5,12 @@ from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
-from InvenTree.unit_test import addUserPermission
+from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
 from order.models import (
     SalesOrder,
     SalesOrderAllocation,
@@ -24,7 +23,7 @@ from stock.models import StockItem
 from users.models import Owner
 
 
-class SalesOrderTest(TestCase):
+class SalesOrderTest(InvenTreeTestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
 
     fixtures = ['users']
