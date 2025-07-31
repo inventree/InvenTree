@@ -84,8 +84,11 @@ def get_cache_config(global_cache: bool) -> dict:
     if global_cache:
         # Build Redis URL with optional password
         password = cache_password()
-        redis_url = f'redis://:{password}@{cache_host()}:{cache_port()}/0' if password \
-                     else f'redis://{cache_host()}:{cache_port()}/0'
+
+        if password:
+            redis_url = f'redis://:{password}@{cache_host()}:{cache_port()}/0'
+        else:
+            redis_url = f'redis://{cache_host()}:{cache_port()}/0'
 
         return {
             'BACKEND': 'django_redis.cache.RedisCache',
