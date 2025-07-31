@@ -307,6 +307,7 @@ The following cache settings are available:
 | INVENTREE_CACHE_ENABLED | cache.enabled | Enable redis caching | False |
 | INVENTREE_CACHE_HOST | cache.host | Cache server host | *Not specified* |
 | INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
+| INVENTREE_CACHE_PASSWORD | cache.password | Cache server password | none |
 | INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
 | INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
 | INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
