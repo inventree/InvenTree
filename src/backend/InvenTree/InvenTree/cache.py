@@ -37,6 +37,11 @@ def cache_port() -> int:
     return cache_setting('port', '6379', typecast=int)
 
 
+def cache_password():
+    """Return the cache password."""
+    return cache_setting('password', None)
+
+
 def is_global_cache_enabled() -> bool:
     """Check if the global cache is enabled.
 
@@ -77,9 +82,14 @@ def get_cache_config(global_cache: bool) -> dict:
         A dictionary containing the cache configuration options.
     """
     if global_cache:
+        # Build Redis URL with optional password
+        password = cache_password()
+        redis_url = f'redis://:{password}@{cache_host()}:{cache_port()}/0' if password \
+                     else f'redis://{cache_host()}:{cache_port()}/0'
+
         return {
             'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': f'redis://{cache_host()}:{cache_port()}/0',
+            'LOCATION': redis_url,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'SOCKET_CONNECT_TIMEOUT': cache_setting(
