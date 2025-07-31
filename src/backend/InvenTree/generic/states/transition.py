@@ -20,7 +20,7 @@ class TransitionMethod:
         - The needed functions are implemented
         """
         # Check if a sending fnc is defined
-        if not hasattr(self, 'transition'):
+        if not hasattr(self, 'transition'):  # pragma: no cover
             raise NotImplementedError(
                 'A TransitionMethod must define a `transition` method'
             )
@@ -63,7 +63,9 @@ class TransitionMethod:
         Raises:
             ValidationError: Alert the user that the transition failued
         """
-        raise NotImplementedError('TransitionMethod.transition must be implemented')
+        raise NotImplementedError(
+            'TransitionMethod.transition must be implemented'
+        )  # pragma: no cover
 
 
 class StateTransitionMixin:
