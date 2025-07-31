@@ -24,8 +24,13 @@ class TransitionTests(InvenTreeTestCase):
 
         # Attempt to transition to COMPLETE state
         # This should fail - due to the StateTransitionMixin logic
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as e:
             ro.complete_order()
+
+        self.assertIn(
+            'Return order without responsible owner can not be completed',
+            str(e.exception),
+        )
 
         # Now disable the plugin
         registry.set_plugin_state('sample-transition', False)
