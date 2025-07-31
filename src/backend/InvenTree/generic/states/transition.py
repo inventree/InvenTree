@@ -105,7 +105,8 @@ class StateTransitionMixin:
 
             if type(handlers) is not list:
                 logger.error(
-                    'Plugin %s return invalid type for transition handlers', plugin.slug
+                    'Plugin %s returned invalid type for transition handlers',
+                    plugin.slug,
                 )
                 continue
 

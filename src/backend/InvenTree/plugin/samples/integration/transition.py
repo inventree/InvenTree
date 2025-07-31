@@ -1,5 +1,7 @@
 """Sample implementation of state transition implementation."""
 
+import warnings
+
 from django.core.exceptions import ValidationError
 
 from common.notifications import trigger_notification
@@ -7,7 +9,7 @@ from generic.states import TransitionMethod
 from order.models import ReturnOrder
 from order.status_codes import ReturnOrderStatus
 from plugin import InvenTreePlugin
-from plugin.mixins import TransitionMixin
+from plugin.mixins import SettingsMixin, TransitionMixin
 
 
 class SampleTransitionPlugin(TransitionMixin, InvenTreePlugin):
@@ -48,3 +50,55 @@ class SampleTransitionPlugin(TransitionMixin, InvenTreePlugin):
             return False  # Do not act
 
     TRANSITION_HANDLERS = [ReturnChangeHandler()]
+
+
+class BrokenTransitionPlugin(SettingsMixin, TransitionMixin, InvenTreePlugin):
+    """An intentionally broken plugin to test error handling."""
+
+    NAME = 'BrokenTransitionPlugin'
+    SLUG = 'sample-broken-transition'
+
+    SETTINGS = {
+        'BROKEN_GET_METHOD': {
+            'name': 'Broken Get Method',
+            'description': 'If set, the get_transition_handlers method will raise an error.',
+            'validator': bool,
+            'default': False,
+        },
+        'WRONG_RETURN_TYPE': {
+            'name': 'Wrong Return Type',
+            'description': 'If set, the get_transition_handlers method will return an incorrect type.',
+            'validator': bool,
+            'default': False,
+        },
+        'WRONG_RETURN_VALUE': {
+            'name': 'Wrong Return Value',
+            'description': 'If set, the get_transition_handlers method will return an incorrect value.',
+            'validator': bool,
+            'default': False,
+        },
+    }
+
+    @property
+    def has_transition_handlers(self) -> bool:
+        """Ensure that this plugin always has handlers."""
+        return True
+
+    def get_transition_handlers(self) -> list[TransitionMethod]:
+        """Return transition handlers for the given instance."""
+        warnings.warn(
+            'get_transition_handlers is intentionally broken in this plugin',
+            stacklevel=2,
+        )
+
+        if self.get_setting('BROKEN_GET_METHOD', backup_value=False, cache=False):
+            raise ValueError('This is a broken transition plugin!')
+
+        if self.get_setting('WRONG_RETURN_TYPE', backup_value=False, cache=False):
+            return 'This is not a list of handlers!'
+
+        if self.get_setting('WRONG_RETURN_VALUE', backup_value=False, cache=False):
+            return [1, 2, 3]
+
+        # Return a valid handler list (empty)
+        return []
