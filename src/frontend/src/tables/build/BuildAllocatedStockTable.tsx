@@ -10,6 +10,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import type { StockOperationProps } from '../../forms/StockForms';
@@ -133,13 +134,15 @@ export default function BuildAllocatedStockTable({
       {
         accessor: 'available',
         title: t`Available Quantity`,
-        render: (record: any) => record?.stock_item_detail?.quantity
+        render: (record: any) =>
+          formatDecimal(record?.stock_item_detail?.quantity)
       },
       {
         accessor: 'quantity',
         title: t`Allocated Quantity`,
         sortable: true,
-        switchable: false
+        switchable: false,
+        render: (record: any) => formatDecimal(record?.quantity)
       },
       LocationColumn({
         accessor: 'location_detail',

@@ -14,7 +14,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatPriceRange } from '../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -80,14 +80,14 @@ function partTableColumns(): TableColumn[] {
         const available = Math.max(0, stock - allocated);
         const min_stock = record?.minimum_stock ?? 0;
 
-        let text = String(stock);
+        let text = String(formatDecimal(stock));
 
         let color: string | undefined = undefined;
 
         if (min_stock > stock) {
           extra.push(
             <Text key='min-stock' c='orange'>
-              {`${t`Minimum stock`}: ${min_stock}`}
+              {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
             </Text>
           );
 
@@ -96,20 +96,20 @@ function partTableColumns(): TableColumn[] {
 
         if (record.ordering > 0) {
           extra.push(
-            <Text key='on-order'>{`${t`On Order`}: ${record.ordering}`}</Text>
+            <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
           );
         }
 
         if (record.building) {
           extra.push(
-            <Text key='building'>{`${t`Building`}: ${record.building}`}</Text>
+            <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
           );
         }
 
         if (record.allocated_to_build_orders > 0) {
           extra.push(
             <Text key='bo-allocations'>
-              {`${t`Build Order Allocations`}: ${record.allocated_to_build_orders}`}
+              {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
             </Text>
           );
         }
@@ -117,7 +117,7 @@ function partTableColumns(): TableColumn[] {
         if (record.allocated_to_sales_orders > 0) {
           extra.push(
             <Text key='so-allocations'>
-              {`${t`Sales Order Allocations`}: ${record.allocated_to_sales_orders}`}
+              {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
             </Text>
           );
         }
@@ -125,7 +125,7 @@ function partTableColumns(): TableColumn[] {
         if (available != stock) {
           extra.push(
             <Text key='available'>
-              {t`Available`}: {available}
+              {t`Available`}: {formatDecimal(available)}
             </Text>
           );
         }
@@ -133,7 +133,7 @@ function partTableColumns(): TableColumn[] {
         if (record.external_stock > 0) {
           extra.push(
             <Text key='external'>
-              {t`External stock`}: {record.external_stock}
+              {t`External stock`}: {formatDecimal(record.external_stock)}
             </Text>
           );
         }

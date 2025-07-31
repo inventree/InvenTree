@@ -456,5 +456,5 @@ test('Build Order - BOM Quantity', async ({ browser }) => {
     .getByRole('cell', { name: 'Thumbnail R_10K_0805_1%' })
     .locator('div');
   const row2 = await getRowFromCell(line);
-  await row2.getByText('1175').waitFor();
+  await row2.getByText('1,175').first().waitFor();
 });

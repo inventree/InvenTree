@@ -12,7 +12,7 @@ import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableColumn } from '@lib/types/Tables';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -49,7 +49,8 @@ export default function ExtraLineItemTable({
       DescriptionColumn({}),
       {
         accessor: 'quantity',
-        switchable: false
+        switchable: false,
+        render: (record: any) => formatDecimal(record.quantity)
       },
       {
         accessor: 'price',
