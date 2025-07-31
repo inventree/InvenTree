@@ -24,6 +24,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -248,7 +249,7 @@ export default function BuildLineTable({
     if (record.in_production > 0) {
       extra.push(
         <Text key='production' size='sm'>
-          {t`In production`}: {record.in_production}
+          {t`In production`}: {formatDecimal(record.in_production)}
         </Text>
       );
     }
@@ -257,7 +258,7 @@ export default function BuildLineTable({
     if (record.on_order > 0) {
       extra.push(
         <Text key='on-order' size='sm'>
-          {t`On order`}: {record.on_order}
+          {t`On order`}: {formatDecimal(record.on_order)}
         </Text>
       );
     }
@@ -266,7 +267,7 @@ export default function BuildLineTable({
     if (record.external_stock > 0) {
       extra.push(
         <Text key='external' size='sm'>
-          {t`External stock`}: {record.external_stock}
+          {t`External stock`}: {formatDecimal(record.external_stock)}
         </Text>
       );
     }
@@ -287,7 +288,7 @@ export default function BuildLineTable({
         iconColor={sufficient ? 'blue' : 'orange'}
         value={
           available > 0 ? (
-            available
+            `${formatDecimal(available)}`
           ) : (
             <Text
               c='red'
@@ -398,7 +399,8 @@ export default function BuildLineTable({
           if (record?.bom_item_detail?.setup_quantity) {
             extra.push(
               <Text key='setup-quantity' size='sm'>
-                {t`Setup Quantity`}: {record.bom_item_detail.setup_quantity}
+                {t`Setup Quantity`}:{' '}
+                {formatDecimal(record.bom_item_detail.setup_quantity)}
               </Text>
             );
           }
@@ -427,7 +429,7 @@ export default function BuildLineTable({
               extra={extra}
               value={
                 <Group justify='space-between' wrap='nowrap'>
-                  <Text>{record.requiredQuantity}</Text>
+                  <Text>{formatDecimal(record.requiredQuantity)}</Text>
                   {record?.part_detail?.units && (
                     <Text size='xs'>[{record.part_detail.units}]</Text>
                   )}
