@@ -288,13 +288,13 @@ export function BomTable({
             available_stock <= 0 ? (
               <Text c='red' style={{ fontStyle: 'italic' }}>{t`No stock`}</Text>
             ) : (
-              available_stock
+              `${formatDecimal(available_stock)}`
             );
 
           if (record.external_stock > 0) {
             extra.push(
               <Text key='external'>
-                {t`External stock`}: {record.external_stock}
+                {t`External stock`}: {formatDecimal(record.external_stock)}
               </Text>
             );
           }
@@ -303,7 +303,7 @@ export function BomTable({
             extra.push(
               <Text key='substitute'>
                 {t`Includes substitute stock`}:{' '}
-                {record.available_substitute_stock}
+                {formatDecimal(record.available_substitute_stock)}
               </Text>
             );
           }
@@ -311,7 +311,8 @@ export function BomTable({
           if (record.allow_variants && record.available_variant_stock > 0) {
             extra.push(
               <Text key='variant'>
-                {t`Includes variant stock`}: {record.available_variant_stock}
+                {t`Includes variant stock`}:{' '}
+                {formatDecimal(record.available_variant_stock)}
               </Text>
             );
           }
@@ -363,7 +364,7 @@ export function BomTable({
               fs={record.consumable && 'italic'}
               c={can_build <= 0 && !record.consumable ? 'red' : undefined}
             >
-              {can_build}
+              {formatDecimal(can_build)}
             </Text>
           );
 
