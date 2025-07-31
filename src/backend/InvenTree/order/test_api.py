@@ -2523,6 +2523,9 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             required_rows=models.ReturnOrder.objects.count(),
         )
 
+        N = models.ReturnOrderLineItem.objects.count()
+        self.assertGreater(N, 0, 'No ReturnOrderLineItems found!')
+
         # Export return order lines
         data = self.export_data(
             reverse('api-return-order-line-list'),
@@ -2531,7 +2534,22 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.process_csv(data, required_cols=['Order', 'Reference', 'Target Date'])
+        self.process_csv(
+            data, required_rows=N, required_cols=['Order', 'Reference', 'Target Date']
+        )
+
+        # Export again, with a search term
+        data = self.export_data(
+            reverse('api-return-order-line-list'),
+            params={'search': 'xyz'},
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data, required_rows=0, required_cols=['Order', 'Reference', 'Target Date']
+        )
 
 
 class OrderMetadataAPITest(InvenTreeAPITestCase):
