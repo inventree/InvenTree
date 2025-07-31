@@ -7,7 +7,7 @@ States can be extended with custom options for each InvenTree instance - those o
 """
 
 from .states import ColorEnum, StatusCode, StatusCodeMixin
-from .transition import StateTransitionMixin, TransitionMethod, storage
+from .transition import StateTransitionMixin, TransitionMethod
 
 __all__ = [
     'ColorEnum',
@@ -15,5 +15,4 @@ __all__ = [
     'StatusCode',
     'StatusCodeMixin',
     'TransitionMethod',
-    'storage',
 ]

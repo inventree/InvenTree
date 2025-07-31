@@ -13,6 +13,7 @@ from plugin.base.integration.NotificationMixin import NotificationMixin
 from plugin.base.integration.ReportMixin import ReportMixin
 from plugin.base.integration.ScheduleMixin import ScheduleMixin
 from plugin.base.integration.SettingsMixin import SettingsMixin
+from plugin.base.integration.TransitionMixin import TransitionMixin
 from plugin.base.integration.UrlsMixin import UrlsMixin
 from plugin.base.integration.ValidationMixin import ValidationMixin
 from plugin.base.label.mixins import LabelPrintingMixin
@@ -38,6 +39,7 @@ __all__ = [
     'ScheduleMixin',
     'SettingsMixin',
     'SupplierBarcodeMixin',
+    'TransitionMixin',
     'UrlsMixin',
     'UserInterfaceMixin',
     'ValidationMixin',
