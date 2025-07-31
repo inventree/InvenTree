@@ -29,7 +29,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useAllocateToSalesOrderForm,
@@ -104,7 +104,8 @@ export default function SalesOrderLineItemTable({
       },
       {
         accessor: 'quantity',
-        sortable: true
+        sortable: true,
+        render: (record: any) => formatDecimal(record.quantity)
       },
       {
         accessor: 'sale_price',
