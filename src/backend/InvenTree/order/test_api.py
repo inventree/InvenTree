@@ -2507,6 +2507,32 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         calendar = Calendar.from_ical(response.content)
         self.assertIsInstance(calendar, Calendar)
 
+    def test_export(self):
+        """Test data export for the ReturnOrder API endpoints."""
+        # Export return orders
+        data = self.export_data(
+            reverse('api-return-order-list'),
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data,
+            required_cols=['Reference', 'Customer'],
+            required_rows=models.ReturnOrder.objects.count(),
+        )
+
+        # Export return order lines
+        data = self.export_data(
+            reverse('api-return-order-line-list'),
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(data, required_cols=['Order', 'Reference', 'Target Date'])
+
 
 class OrderMetadataAPITest(InvenTreeAPITestCase):
     """Unit tests for the various metadata endpoints of API."""
