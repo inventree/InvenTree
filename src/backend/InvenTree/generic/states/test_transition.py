@@ -79,10 +79,7 @@ class TransitionTests(InvenTreeTestCase):
             ro.complete_order()
             self.assertEqual(ro.status, ReturnOrderStatus.ON_HOLD.value)
 
-        for err in Error.objects.all():
-            print('-', err.kind, err.info, err.data, err.path)
-
-        # No error be logged
+        # No error should be logged
         self.assertEqual(0, Error.objects.count())
 
         # Now, enable the "WRONG_RETURN_VALUE" setting
