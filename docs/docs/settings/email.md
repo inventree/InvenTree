@@ -38,4 +38,8 @@ Most popular providers are supported:
 
 Superusers can view the email log in the [Admin Center](./admin.md#admin-center). This is useful for debugging and tracking email delivery / receipt.
 
+!!! warning "Warning"
+    By default, email logs are cleaned after 30 days. This can be configured in the [InvenTree settings](../settings/global.md#server-settings).
+    If you depend on a log actually being useful, you should increase the retention time and set a global override for the setting.
+
 {{ image("admin/email_settings.png", "Email Control Pane") }}
