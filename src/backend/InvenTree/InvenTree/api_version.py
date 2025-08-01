@@ -1,11 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 375
+INVENTREE_API_VERSION = 377
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v377 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10109
+    - Allow email records to be deleted via the API
+
+v376 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10108
+    - Fix search fields for ReturnOrderLineItem API list endpoint
+
 v375 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10095
     - Sorts searched fields to keep API stable
 
