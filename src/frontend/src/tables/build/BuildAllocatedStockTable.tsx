@@ -10,7 +10,6 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import type { StockOperationProps } from '../../forms/StockForms';
@@ -22,6 +21,7 @@ import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  DecimalColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -131,19 +131,16 @@ export default function BuildAllocatedStockTable({
         switchable: true,
         render: (record: any) => record?.stock_item_detail?.batch
       },
-      {
+      DecimalColumn({
         accessor: 'available',
-        title: t`Available Quantity`,
-        render: (record: any) =>
-          formatDecimal(record?.stock_item_detail?.quantity)
-      },
-      {
+        title: t`Available Quantity`
+      }),
+      DecimalColumn({
         accessor: 'quantity',
         title: t`Allocated Quantity`,
         sortable: true,
-        switchable: false,
-        render: (record: any) => formatDecimal(record?.quantity)
-      },
+        switchable: false
+      }),
       LocationColumn({
         accessor: 'location_detail',
         switchable: true,

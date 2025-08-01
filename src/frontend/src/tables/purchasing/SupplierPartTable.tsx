@@ -12,7 +12,6 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { formatDecimal } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
@@ -26,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CompanyColumn,
+  DecimalColumn,
   DescriptionColumn,
   LinkColumn,
   NoteColumn,
@@ -90,11 +90,10 @@ export function SupplierPartTable({
         switchable: true,
         defaultVisible: false
       }),
-      {
+      DecimalColumn({
         accessor: 'in_stock',
-        sortable: true,
-        render: (record: any) => formatDecimal(record.in_stock)
-      },
+        sortable: true
+      }),
       {
         accessor: 'packaging',
         sortable: true,
