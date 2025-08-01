@@ -2519,6 +2519,28 @@ HEADER_PRIORITY = 'X-Priority'
 HEADER_MSG_ID = 'Message-ID'
 
 
+class NoDeleteQuerySet(models.query.QuerySet):
+    """Custom QuerySet to prevent deletion of EmailLog entries."""
+
+    def delete(self):
+        """Override delete method to prevent deletion of EmailLog entries."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(
+                _(
+                    'Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
+                )
+            )
+        super().delete()
+
+
+class NoDeleteManager(models.Manager):
+    """Custom Manager to use NoDeleteQuerySet."""
+
+    def get_queryset(self):
+        """Return a NoDeleteQuerySet."""
+        return NoDeleteQuerySet(self.model, using=self._db)
+
+
 class EmailMessage(models.Model):
     """Model for storing email messages sent or received by the system.
 
@@ -2658,6 +2680,8 @@ class EmailMessage(models.Model):
             self.save()
 
         return ret
+
+    objects = NoDeleteManager()
 
     def delete(self, *kwargs):
         """Delete entry - if not protected."""
