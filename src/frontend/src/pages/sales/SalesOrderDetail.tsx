@@ -583,7 +583,7 @@ export default function SalesOrderDetail() {
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Sales Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.customer_detail?.image?.image}
             badges={orderBadges}
             actions={soActions}

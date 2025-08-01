@@ -1888,65 +1888,103 @@ def rename_attachment(instance, filename: str):
 UPLOAD_IMAGE_DIR = 'upload_images'
 
 
+class CustomStdImage(StdImageField):
+    """Overrides the post_delete behavior to prevent deleting an image file that is still in use by other objects."""
+
+    def post_delete_callback(self, sender, instance, **kwargs):
+        """Delete associated image file if no other instances reference it.
+
+        This method checks if any other objects reference the image file before deleting.
+        """
+        n_refs = (
+            sender.objects.filter(image=instance.image).exclude(pk=instance.pk).count()
+        )
+
+        try:
+            if n_refs == 0:
+                getattr(instance, self.name).delete(False)
+        except:
+            pass
+
+
 @cleanup.ignore
-class UploadedImage(models.Model):
-    """Class which represents an uploaded image for Part and Company.
+class InvenTreeImage(models.Model):
+    """Class which represents an uploaded image linked to another model instance.
 
     Attributes:
-        primary: Is image primary
-        image: The uploaded file
+        content_type: The ContentType of the target model
+        object_id: The primary key of the target object
+        content_object: The GenericForeignKey to the target object
+        primary: Flag to mark this image as the “primary” image
+        image: The actual uploaded file
     """
 
-    model_type = models.CharField(
-        max_length=100,
-        validators=[common.validators.validate_upload_image_model_type],
-        verbose_name=_('Model type'),
-        help_text=_('Target model type for image'),
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='inventree_images',
+        limit_choices_to=common.validators.limit_image_content_types,
+        verbose_name=_('Content type'),
+        help_text=_('The type of object this image is attached to'),
     )
-
-    model_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField(
+        verbose_name=_('Object ID'),
+        help_text=_('The ID of the object this image is attached to'),
+    )
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     primary = models.BooleanField(default=False)
-    image = StdImageField(
+    image = CustomStdImage(
         upload_to=UPLOAD_IMAGE_DIR,
         null=True,
         blank=True,
         variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=False,
+        delete_orphans=True,
         verbose_name=_('Image'),
     )
 
-    def save(self, *args, **kwargs):
-        """Override save to ensure only one primary image per model_id and model_type."""
-        with transaction.atomic():
-            if self.primary:
-                # Set all other images with same model_id and model_type to non-primary
-                UploadedImage.objects.filter(
-                    model_id=self.model_id, model_type=self.model_type, primary=True
-                ).exclude(pk=self.pk).update(primary=False)
+    class Meta:
+        """Class meta options."""
 
+        verbose_name = _('InvenTree Image')
+        verbose_name_plural = _('InvenTree Images')
+        unique_together = (('content_type', 'object_id'),)
+
+    def save(self, *args, **kwargs):
+        """Override save so that if this image is marked primary, all other images for the same object are un-marked."""
+        with transaction.atomic():
             super().save(*args, **kwargs)
+            if self.primary:
+                # Turn off primary flag on any siblings
+                (
+                    InvenTreeImage.objects.filter(
+                        content_type=self.content_type,
+                        object_id=self.object_id,
+                        primary=True,
+                    )
+                    .exclude(pk=self.pk)
+                    .update(primary=False)
+                )
 
     def delete(self, *args, **kwargs):
         """Override delete so that if this image was primary, the remaining image with the highest id becomes primary."""
+        super().delete(*args, **kwargs)
+        was_primary = self.primary
+
         with transaction.atomic():
-            # Delete the instance
             super().delete(*args, **kwargs)
 
-            # If it was primary, promote the next candidate
-            if self.primary:
-                next_img = (
-                    UploadedImage.objects.filter(
-                        model_type=self.model_type, model_id=self.model_id
+            if was_primary:
+                successor = (
+                    InvenTreeImage.objects.filter(
+                        content_type=self.content_type, object_id=self.object_id
                     )
                     .order_by('-id')
                     .first()
                 )
-
-                if next_img:
-                    # Mark it as primary
-                    next_img.primary = True
-                    next_img.save()
+                if successor:
+                    successor.primary = True
+                    successor.save()
 
     def get_image_url(self):
         """Return the URL of the image for this part."""

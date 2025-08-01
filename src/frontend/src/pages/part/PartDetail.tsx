@@ -1,5 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Center, Grid, Loader, Skeleton, Stack } from '@mantine/core';
+import {
+  Alert,
+  Center,
+  Grid,
+  Loader,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -627,6 +635,12 @@ export default function PartDetail() {
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
+        {enableRevisionSelection && (
+          <Stack gap='xs'>
+            <Text>{t`Select Part Revision`}</Text>
+            <RevisionSelector part={part} options={partRevisionOptions} />
+          </Stack>
+        )}
         <DetailsTable fields={tr} item={data} />
         <DetailsTable fields={bl} item={data} />
         <DetailsTable fields={br} item={data} />

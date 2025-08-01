@@ -331,7 +331,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'revision',
             'full_name',
             'description',
-            'images',
+            # 'images',
             'active',
             'locked',
             'assembly',
@@ -363,9 +363,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    images = common_serializers.UploadedImageSerializer(
-        source='get_images', many=True, read_only=True, allow_null=True
-    )
+    # images = common_serializers.UploadedImageSerializer(
+    #     source='get_images', many=True, read_only=True, allow_null=True
+    # )
 
     IPN = serializers.CharField(
         required=False,
@@ -880,6 +880,7 @@ class PartSerializer(
     def get_images(self, obj):
         """Return the images associated with this Part instance."""
         images = obj.images
+
         return common_serializers.UploadedImageSerializer(
             images, many=True, context=self.context
         ).data

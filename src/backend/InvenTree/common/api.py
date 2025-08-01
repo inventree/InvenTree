@@ -787,17 +787,17 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
 
 
 class UploadImageList(ListCreateAPI):
-    """Detail API endpoint for UploadedImage objects."""
+    """Detail API endpoint for InvenTreeImage objects."""
 
-    queryset = common.models.UploadedImage.objects.all()
+    queryset = common.models.InvenTreeImage.objects.all()
     serializer_class = common.serializers.UploadedImageSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
 
 class UploadImageThumbs(ListAPI):
-    """List API endpoint for UploadedImage thumbnails."""
+    """List API endpoint for InvenTreeImage thumbnails."""
 
-    queryset = common.models.UploadedImage.objects.all()
+    queryset = common.models.InvenTreeImage.objects.all()
     serializer_class = common.serializers.UploadedImageThumbSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
@@ -808,9 +808,9 @@ class UploadImageThumbs(ListAPI):
     search_fields = ['model_type', 'image']
 
     def list(self, request, *args, **kwargs):
-        """Serialize the available UploadedImage entries for Parts.
+        """List image thumbnails aggregated by file with usage counts.
 
-        - Images may be used for multiple parts!
+        **Returns:** Paginated thumbnails sorted by usage frequency (descending).
         """
         qs = self.filter_queryset(self.get_queryset())
 
@@ -827,9 +827,9 @@ class UploadImageThumbs(ListAPI):
 
 
 class UploadImageDetail(RetrieveUpdateDestroyAPI):
-    """Detail API endpoint for UploadedImage objects."""
+    """Detail API endpoint for InvenTreeImage objects."""
 
-    queryset = common.models.UploadedImage.objects.all()
+    queryset = common.models.InvenTreeImage.objects.all()
     serializer_class = common.serializers.UploadedImageSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 

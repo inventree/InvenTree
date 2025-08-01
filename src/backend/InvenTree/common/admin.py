@@ -1,6 +1,7 @@
 """Admin for the common app."""
 
 from django.contrib import admin
+from django.utils.html import format_html
 
 import common.models
 import common.validators
@@ -36,23 +37,46 @@ class AttachmentAdmin(admin.ModelAdmin):
     search_fields = ('content_type', 'comment')
 
 
-@admin.register(common.models.UploadedImage)
-class UploadImageAdmin(admin.ModelAdmin):
-    """Admin interface for UploadedImage objects."""
+@admin.register(common.models.InvenTreeImage)
+class InvenTreeImageAdmin(admin.ModelAdmin):
+    """Admin interface for InvenTreeImage objects."""
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        """Provide custom choices for 'model_type' field."""
-        if db_field.name == 'model_type':
-            db_field.choices = common.validators.get_model_options(
-                InvenTree.models.InvenTreeImageUploadMixin
+    list_display = (
+        'id',
+        'content_type',
+        'object_id',
+        'primary',
+        'image',
+        'image_thumbnail',
+    )
+    list_filter = ('content_type', 'primary')
+    search_fields = ('object_id',)
+    readonly_fields = ('image_thumbnail',)
+    fieldsets = (
+        (
+            None,
+            {
+                'fields': (
+                    'content_type',
+                    'object_id',
+                    'primary',
+                    'image',
+                    'image_thumbnail',
+                )
+            },
+        ),
+    )
+
+    def image_thumbnail(self, obj):
+        """Returns a small preview of the uploaded image."""
+        if obj.image and hasattr(obj.image, 'url'):
+            return format_html(
+                '<img src="{}" style="max-height: 100px; max-width: 100px;" />',
+                obj.image.url,
             )
+        return '-'
 
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
-
-    list_display = ('model_type', 'model_id', 'image', 'primary')
-
-    search_fields = ('image',)
-    list_filter = ('model_type',)
+    image_thumbnail.short_description = 'Preview'
 
 
 @admin.register(common.models.DataOutput)

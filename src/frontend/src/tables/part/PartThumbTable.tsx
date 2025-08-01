@@ -124,7 +124,6 @@ async function setNewImage(
     })
     .catch((error) => {
       // Handle error
-      console.error('Error setting new image:', error);
       showApiErrorMessage({
         error: error,
         title: t`Set Image Error`,

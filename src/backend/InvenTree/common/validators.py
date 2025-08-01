@@ -4,6 +4,7 @@ import re
 from typing import Union
 
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 import common.icons
@@ -70,18 +71,21 @@ def validate_notes_model_type(value):
         raise ValidationError(f"Invalid model type '{value}'")
 
 
-def validate_upload_image_model_type(value):
-    """Ensure that the provided upload image model is valid.
-
-    The provided value must map to a model which implements the 'InvenTreeImageUploadMixin'.
-    """
+def limit_image_content_types():
+    """Return a Q object filtering for allowed image upload model types."""
     import InvenTree.models
 
-    model_names = [
-        el[0] for el in get_model_options(InvenTree.models.InvenTreeImageUploadMixin)
+    allowed_models = [
+        m[0]
+        for m in common.validators.get_model_options(
+            InvenTree.models.InvenTreeImageUploadMixin
+        )
     ]
-    if value not in model_names:
-        raise ValidationError('Model type does not support attachments')
+    return Q(model__in=allowed_models)
+
+
+def validate_upload_image_model_type():
+    """Return a Q object filtering for allowed image upload model types."""
 
 
 def validate_decimal_places_min(value):

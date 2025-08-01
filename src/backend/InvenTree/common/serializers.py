@@ -1,7 +1,7 @@
 """JSON serializers for common components."""
 
 import io
-import os
+from pathlib import Path
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
@@ -27,7 +27,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeAttachmentMixin, InvenTreeImageUploadMixin
+from InvenTree.models import InvenTreeAttachmentMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -593,21 +593,21 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
 class UploadedImageSerializer(
     InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
 ):
-    """Serializer class for the UploadedImage model."""
+    """Serializer class for the InvenTreeImage model."""
 
     class Meta:
         """Serializer metaclass."""
 
-        model = common_models.UploadedImage
+        model = common_models.InvenTreeImage
         fields = [
             'pk',
             'primary',
             'image',
             'thumbnail',
-            'model_type',
+            # 'content_type',
             'remote_image',
             'existing_image',
-            'model_id',
+            # 'object_id',
         ]
         read_only_fields = ['pk', 'thumbnail']
 
@@ -615,23 +615,23 @@ class UploadedImageSerializer(
         """Override the model_type field to provide dynamic choices."""
         super().__init__(*args, **kwargs)
 
-        if len(self.fields['model_type'].choices) == 0:
-            self.fields['model_type'].choices = common.validators.get_model_options(
-                InvenTreeImageUploadMixin
-            )
+        # if len(self.fields['model_type'].choices) == 0:
+        #     self.fields['model_type'].choices = common.validators.get_model_options(
+        #         InvenTreeImageUploadMixin
+        #     )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
     )
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
-    model_type = serializers.ChoiceField(
-        label=_('Model Type'),
-        choices=common.validators.get_model_options(InvenTreeImageUploadMixin),
-        required=True,
-        allow_blank=False,
-        allow_null=False,
-    )
+    # model_type = serializers.ChoiceField(
+    #     label=_('Model Type'),
+    #     choices=common.validators.get_model_options(InvenTreeImageUploadMixin),
+    #     required=True,
+    #     allow_blank=False,
+    #     allow_null=False,
+    # )
 
     # Allow selection of an existing image file
     existing_image = serializers.CharField(
@@ -652,64 +652,59 @@ class UploadedImageSerializer(
         data = self.validated_data
 
         existing_image = data.pop('existing_image', None)
-
         if existing_image:
-            img_path = os.path.join(common_helper.UPLOAD_IMAGE_DIR, existing_image)
-
-            instance.image = img_path
+            instance.image = existing_image
             instance.save()
 
-        # Check if an image was downloaded from a remote URL
         remote_img = getattr(self, 'remote_image_file', None)
 
-        if remote_img and instance:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
+        try:
+            if remote_img and instance:
+                fmt = remote_img.format or 'PNG'
+                buffer = io.BytesIO()
+                remote_img.save(buffer, format=fmt)
 
-            # Construct a simplified name for the image
-            filename = f'part_{instance.pk}_image.{fmt.lower()}'
+                # Construct a simplified name for the image
+                filename = f'part_{instance.pk}_image.{fmt.lower()}'
 
-            instance.image.save(filename, ContentFile(buffer.getvalue()))
+                instance.image.save(filename, ContentFile(buffer.getvalue()))
+            return instance
 
-        # automatically mark as primary if this is the *only* image
-        qs = common_models.UploadedImage.objects.filter(
-            model_type=instance.model_type, model_id=instance.model_id
-        )
-        if qs.count() == 1 and not instance.primary:
-            instance.primary = True
-            instance.save()
+        except OSError as e:
+            # Specific I/O errors
+            raise ValidationError({
+                'image': f'I/O error while processing the image: {e!s}'
+            }) from e
 
-        return instance
+    # def create(self, validated_data):
+    #     # """Creates an image, deleting any existing images if the target model is set to single image only."""
+    #     # model_type = validated_data.get('model_type', None)
+    #     # model_id = validated_data.get('model_id', None)
 
-    def create(self, validated_data):
-        """Creates an image, deleting any existing images if the target model is set to single image only."""
-        model_type = validated_data.get('model_type', None)
-        model_id = validated_data.get('model_id', None)
+    #     # target_model_class: InvenTreeImageUploadMixin = (
+    #     #     common.validators.get_model_class_from_label(
+    #     #         model_type, InvenTreeImageUploadMixin
+    #     #     )
+    #     # )
+    #     # if target_model_class.single_image:
+    #     #     common_models.InvenTreeImage.objects.filter(
+    #     #         model_type=model_type, model_id=model_id
+    #     #     ).delete()
 
-        target_model_class: InvenTreeImageUploadMixin = (
-            common.validators.get_model_class_from_label(
-                model_type, InvenTreeImageUploadMixin
-            )
-        )
-        if target_model_class.single_image:
-            common_models.UploadedImage.objects.filter(
-                model_type=model_type, model_id=model_id
-            ).delete()
-
-        return super().create(validated_data)
+    #     return super().create(validated_data)
 
     def validate_existing_image(self, img):
         """Validate the selected image file."""
         if not img:
             return img
 
-        img = img.split(os.path.sep)[-1]
+        img_name = Path(img).name
 
+        image_dir = Path(common_helper.get_part_image_directory())
         # Ensure that the file actually exists
-        img_path = os.path.join(common_helper.get_part_image_directory(), img)
+        img_path = image_dir / img_name
 
-        if not os.path.exists(img_path) or not os.path.isfile(img_path):
+        if not img_path.exists() or not img_path.is_file():
             raise ValidationError(_('Image file does not exist'))
 
         return img
@@ -727,7 +722,7 @@ class UploadedImageThumbSerializer(serializers.Serializer):
     """Serializer for a thumbnail of an uploaded image."""
 
     image = serializers.URLField(read_only=True)
-    count = serializers.IntegerField()
+    count = serializers.IntegerField(read_only=True)
 
 
 class AttachmentSerializer(InvenTreeModelSerializer):

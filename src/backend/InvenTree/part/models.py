@@ -529,6 +529,25 @@ class Part(
 
         super().delete()
 
+    def save(self, *args, **kwargs):
+        """Save the instance after validation, and ensure trackable for newly created parts."""
+        _new = False
+        if self.pk:
+            try:
+                Part.objects.get(pk=self.pk)
+            except Part.DoesNotExist:
+                pass
+        else:
+            _new = True
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
+        if _new:
+            # Only run if the check was not run previously (due to not existing in the database)
+            self.ensure_trackable()
+
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)."""
         return f'{self.full_name} - {self.description}'

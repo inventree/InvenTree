@@ -1061,11 +1061,24 @@ class InvenTreeNotesMixin(models.Model):
     )
 
 
-class InvenTreeImageUploadMixin(models.Model):
-    """A mixin class for adding images functionality to a model class."""
+from django.contrib.contenttypes.fields import GenericRelation
 
-    # Only a single image allowed
-    single_image: bool = False
+
+class InvenTreeImageUploadMixin(models.Model):
+    """A mixin to add image  capability to any model.
+
+    Provides a GenericRelation back to InvenTreeImage, plus helpers for primary image logic.
+    """
+
+    # if True, only one image may ever be attached
+    single_image = False
+
+    images = GenericRelation(
+        'common.InvenTreeImage',
+        content_type_field='content_type',
+        object_id_field='object_id',
+        related_query_name='%(app_label)s_%(class)ss',
+    )
 
     class Meta:
         """Metaclass options for this mixin.
@@ -1075,46 +1088,35 @@ class InvenTreeImageUploadMixin(models.Model):
 
         abstract = True
 
-    def delete(self):
-        """Custom delete method for InvenTreeImageUploadMixin.
-
-        - Before deleting the object, check if there are any uploaded images associated with it.
-        - If so, delete the images first
-        """
-        from common.models import UploadedImage
-
-        images = UploadedImage.objects.filter(
-            model_type=self.__class__.__name__.lower(), model_id=self.pk
-        )
-
-        if images.exists():
-            logger.info(
-                'Deleting %s uploaded images associated with %s <%s>',
-                images.count(),
-                self.__class__.__name__,
-                self.pk,
-            )
-
-            images.delete()
-
-        super().delete()
-
-    @property
-    def images(self):
-        """Return a queryset containing all images for this model."""
-        return self.images_for_model().filter(model_id=self.pk)
+    def delete(self, *args, **kwargs):
+        """Ensure related images are deleted first."""
+        # delete all related images
+        self.images.all().delete()
+        return super().delete(*args, **kwargs)
 
     def get_images(self):
-        """Return a queryset containing all images for this model."""
-        return self.images
+        """Return a queryset of all attached images."""
+        return self.images.all()
 
-    def images_for_model(self):
-        """Return all images for this model class."""
-        from common.models import UploadedImage
+    @property
+    def primary_image(self):
+        """Return the primary image, or None."""
+        return self.images.filter(primary=True).first()
 
-        model_type = self.__class__.__name__.lower()
+    def get_image_url(self) -> str:
+        """Return the URL of the primary image, or a blank fallback."""
+        img = self.primary_image
+        if img:
+            return img.get_image_url()
 
-        return UploadedImage.objects.filter(model_type=model_type)
+        return InvenTree.helpers.getBlankImage()
+
+    def get_thumbnail_url(self) -> str:
+        """Return the URL of the primary image thumbnail, or a blank fallback."""
+        img = self.primary_image
+        if img:
+            return img.get_thumbnail_url()
+        return InvenTree.helpers.getBlankThumbnail()
 
 
 class InvenTreeBarcodeMixin(models.Model):

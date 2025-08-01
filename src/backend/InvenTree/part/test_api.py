@@ -39,7 +39,7 @@ from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 
 
-# TODO: Update test after add UploadedImage model
+# TODO: Update test after add InvenTreeImage model
 class PartImageTestMixin:
     """Mixin for testing part images."""
 
