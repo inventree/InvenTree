@@ -2518,6 +2518,10 @@ class Priority(models.IntegerChoices):
 HEADER_PRIORITY = 'X-Priority'
 HEADER_MSG_ID = 'Message-ID'
 
+del_error_msg = _(
+    'Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
+)
+
 
 class NoDeleteQuerySet(models.query.QuerySet):
     """Custom QuerySet to prevent deletion of EmailLog entries."""
@@ -2525,11 +2529,7 @@ class NoDeleteQuerySet(models.query.QuerySet):
     def delete(self):
         """Override delete method to prevent deletion of EmailLog entries."""
         if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
-            raise ValidationError(
-                _(
-                    'Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
-                )
-            )
+            raise ValidationError(del_error_msg)
         super().delete()
 
 
@@ -2686,11 +2686,7 @@ class EmailMessage(models.Model):
     def delete(self, *kwargs):
         """Delete entry - if not protected."""
         if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
-            raise ValidationError(
-                _(
-                    'Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
-                )
-            )
+            raise ValidationError(del_error_msg)
         return super().delete(*kwargs)
 
 
