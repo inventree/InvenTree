@@ -1,5 +1,6 @@
 """Machine registry."""
 
+import functools
 from typing import Union, cast
 from uuid import UUID
 
@@ -13,6 +14,29 @@ from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
 logger = structlog.get_logger('inventree')
+
+
+def machine_registry_entrypoint(method):
+    """Decorator for any method which should be registered as a machine registry entrypoint.
+
+    This decorator ensures that the plugin registry is up-to-date,
+    and reloads the machine registry if necessary.
+    """
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """Wrapper function to ensure the machine registry is up-to-date."""
+        # Ensure the plugin registry is up-to-date
+        from plugin import registry as plg_registry
+
+        if plg_registry.check_reload():
+            # The plugin registry changed - update the machine registry too
+            self.reload_machines()
+
+        # Call the original method
+        return method(self, *args, **kwargs)
+
+    return wrapper
 
 
 class MachineRegistry(
