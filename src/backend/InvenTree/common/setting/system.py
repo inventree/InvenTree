@@ -331,6 +331,15 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
     },
+    'INVENTREE_DELETE_EMAIL_DAYS': {
+        'name': _('Email Deletion Interval'),
+        'description': _(
+            'Email messages will be deleted after specified number of days'
+        ),
+        'default': 30,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(7)],
+    },
     'BARCODE_ENABLE': {
         'name': _('Barcode Support'),
         'description': _('Enable barcode scanner support in the web interface'),

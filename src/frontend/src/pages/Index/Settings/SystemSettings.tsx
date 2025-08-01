@@ -64,7 +64,8 @@ export default function SystemSettings() {
               'INVENTREE_BACKUP_DAYS',
               'INVENTREE_DELETE_TASKS_DAYS',
               'INVENTREE_DELETE_ERRORS_DAYS',
-              'INVENTREE_DELETE_NOTIFICATIONS_DAYS'
+              'INVENTREE_DELETE_NOTIFICATIONS_DAYS',
+              'INVENTREE_DELETE_EMAIL_DAYS'
             ]}
           />
         )
