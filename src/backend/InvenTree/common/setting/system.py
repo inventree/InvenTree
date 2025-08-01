@@ -340,6 +340,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
     },
+    'INVENTREE_PROTECT_EMAIL_LOG': {
+        'name': _('Protect Email Log'),
+        'description': _('Prevent deletion of email log entries'),
+        'default': False,
+        'validator': bool,
+    },
     'BARCODE_ENABLE': {
         'name': _('Barcode Support'),
         'description': _('Enable barcode scanner support in the web interface'),

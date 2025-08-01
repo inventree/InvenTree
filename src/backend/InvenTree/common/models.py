@@ -54,7 +54,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
-from common.settings import global_setting_overrides
+from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
@@ -2658,6 +2658,16 @@ class EmailMessage(models.Model):
             self.save()
 
         return ret
+
+    def delete(self, *kwargs):
+        """Delete entry - if not protected."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(
+                _(
+                    'Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
+                )
+            )
+        return super().delete(*kwargs)
 
 
 class EmailThread(InvenTree.models.InvenTreeMetadataModel):
