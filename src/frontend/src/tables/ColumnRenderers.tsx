@@ -369,7 +369,9 @@ export function DateColumn(props: TableColumnProps): TableColumn {
     title: t`Date`,
     switchable: true,
     render: (record: any) =>
-      formatDate(resolveItem(record, props.accessor ?? 'date')),
+      formatDate(resolveItem(record, props.accessor ?? 'date'), {
+        showTime: props.extra?.showTime
+      }),
     ...props
   };
 }

@@ -104,7 +104,8 @@ export function EmailTable() {
         accessor: 'timestamp',
         title: t`Timestamp`,
         sortable: true,
-        switchable: true
+        switchable: true,
+        extra: { showTime: true }
       })
     ];
   }, []);
