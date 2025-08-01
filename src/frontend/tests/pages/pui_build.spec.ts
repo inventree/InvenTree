@@ -326,6 +326,61 @@ test('Build Order - Allocation', async ({ browser }) => {
     .waitFor();
 });
 
+test('Build Order - Tracked Outputs', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/build-order/10/incomplete-outputs'
+  });
+
+  // Create a new build output, serial number 15
+  await page
+    .getByRole('button', { name: 'action-button-add-build-output' })
+    .click();
+  await page.getByLabel('number-field-quantity').fill('1');
+  await page.getByLabel('text-field-serial_numbers').fill('15');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build output created').waitFor();
+
+  const cell = await page.getByRole('cell', { name: '# 15' });
+  const row = await getRowFromCell(cell);
+
+  // Open allocation menu for this output
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Allocate', exact: true }).click();
+
+  // Select a particular tracked item to allocate
+  const allocationCell = await page.getByRole('cell', { name: '002.01-PCBA' });
+  const allocationRow = await getRowFromCell(allocationCell);
+  await clickOnRowMenu(allocationCell);
+  await page
+    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
+    .click();
+
+  // Check for expected text
+  await page
+    .getByLabel('Build Output', { exact: true })
+    .getByText('Serial Number: 15')
+    .waitFor();
+
+  // The stock item should be pre-filled based on serial number
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await allocationRow.getByText('1 / 1').waitFor();
+
+  // Close the allocation wizard
+  await page.getByRole('banner').getByRole('button').click();
+
+  // Check that the output is now allocated as expected
+  await row.getByText('1 / 6').waitFor();
+  await row.getByText('0 / 2').waitFor();
+
+  // Cancel the build output to return to the original state
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build outputs have been cancelled').waitFor();
+});
+
 test('Build Order - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
