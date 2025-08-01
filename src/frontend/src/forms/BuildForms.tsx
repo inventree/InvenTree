@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Alert, List, Stack, Table } from '@mantine/core';
+import { Alert, Divider, List, Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
+  IconInfoCircle,
   IconLink,
   IconList,
   IconSitemap,
@@ -24,6 +25,7 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { StatusRenderer } from '../components/render/StatusRenderer';
+import { RenderStockItem } from '../components/render/Stock';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
@@ -564,12 +566,14 @@ function BuildAllocateLineRow({
  */
 export function useAllocateStockToBuildForm({
   buildId,
+  output,
   outputId,
   build,
   lineItems,
   onFormSuccess
 }: {
   buildId?: number;
+  output?: any;
   outputId?: number | null;
   build?: any;
   lineItems: any[];
@@ -633,10 +637,22 @@ export function useAllocateStockToBuildForm({
   const preFormContent = useMemo(() => {
     return (
       <Stack gap='xs'>
+        {output?.pk && (
+          <Stack gap='xs'>
+            <Alert
+              color='blue'
+              icon={<IconInfoCircle />}
+              title={t`Build Output`}
+            >
+              <RenderStockItem instance={output} />
+            </Alert>
+            <Divider />
+          </Stack>
+        )}
         <StandaloneField fieldDefinition={sourceLocationField} />
       </Stack>
     );
-  }, [sourceLocationField]);
+  }, [output, sourceLocationField]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.build_order_allocate,
