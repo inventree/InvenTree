@@ -518,6 +518,7 @@ export default function BuildLineTable({
 
   const allocateStock = useAllocateStockToBuildForm({
     build: build,
+    output: output,
     outputId: output?.pk ?? null,
     buildId: build.pk,
     lineItems: selectedRows,
