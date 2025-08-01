@@ -1308,6 +1308,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             # Annotated fields
             'allocated',
             'in_production',
+            'scheduled_to_build',
             'on_order',
             'available_stock',
             'available_substitute_stock',
@@ -1438,13 +1439,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     # Annotated (calculated) fields
-
-    # Total quantity of allocated stock
     allocated = serializers.FloatField(label=_('Allocated Stock'), read_only=True)
-
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
-
     in_production = serializers.FloatField(label=_('In Production'), read_only=True)
+    scheduled_to_build = serializers.FloatField(
+        label=_('Scheduled to Build'), read_only=True
+    )
 
     external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
     available_stock = serializers.FloatField(read_only=True, label=_('Available Stock'))
@@ -1464,6 +1464,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         - available: Total stock available for allocation against this build line
         - on_order: Total stock on order for this build line
         - in_production: Total stock currently in production for this build line
+        - scheduled_to_build: Total stock scheduled to be built for this build line
 
         Arguments:
             queryset: The queryset to annotate
@@ -1573,7 +1574,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Annotate the "in_production" quantity
         queryset = queryset.annotate(
-            in_production=part.filters.annotate_in_production_quantity(reference=ref)
+            in_production=part.filters.annotate_in_production_quantity(reference=ref),
+            scheduled_to_build=part.filters.annotate_scheduled_to_build_quantity(
+                reference=ref
+            ),
         )
 
         # Annotate the "on_order" quantity

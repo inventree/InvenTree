@@ -446,9 +446,16 @@ export default function BuildLineTable({
         switchable: false,
         render: renderAvailableColumn
       },
-      DecimalColumn({
-        accessor: 'in_production'
-      }),
+      {
+        accessor: 'in_production',
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel={true}
+            value={record.in_production}
+            maximum={record.scheduled_to_build}
+          />
+        )
+      },
       DecimalColumn({
         accessor: 'on_order',
         defaultVisible: false
