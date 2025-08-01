@@ -10,7 +10,7 @@ from typing import Callable, Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import AppRegistryNotReady
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.migrations.executor import MigrationExecutor
@@ -479,10 +479,16 @@ def delete_old_emails():
         emails = EmailMessage.objects.filter(timestamp__lte=threshold)
 
         if emails.count() > 0:
-            logger.info('Deleted %s old email messages', emails.count())
-            emails.delete()
+            try:
+                emails.delete()
+                logger.info('Deleted %s old email messages', emails.count())
+            except ValidationError:
+                logger.info(
+                    'Did not delete %s old email messages because of a validation error',
+                    emails.count(),
+                )
 
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_old_emails' - App registry not ready")
 
 

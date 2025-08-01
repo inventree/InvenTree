@@ -50,6 +50,12 @@ This might be caused by an addition or removal of models to the code base or cha
 The settings for SITE_URL and ALLOWED_HOSTS do not match the host used to access the server. This might lead to issues with CSRF protection, CORS and other security features.
 The settings must be adjusted.
 
+#### INVE-E8
+**Email log deletion is protected - Backend**
+
+The email log is protected from deletion by a setting. This was set by an administrator to prevent accidental deletion of emails.
+If you want to delete the email log, you need to get the [`INVENTREE_PROTECT_EMAIL_LOG`](../settings/global.md#server-settings) setting set to `False`.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 

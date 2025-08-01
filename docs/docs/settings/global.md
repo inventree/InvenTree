@@ -41,6 +41,7 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_DELETE_ERRORS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_EMAIL_DAYS") }}
+{{ globalsetting("INVENTREE_PROTECT_EMAIL_LOG") }}
 
 
 ### Login Settings

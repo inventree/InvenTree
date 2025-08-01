@@ -10,6 +10,7 @@ from anymail.inbound import AnymailInboundMessage
 from anymail.signals import AnymailInboundEvent, AnymailTrackingEvent, inbound, tracking
 
 from common.models import EmailMessage, Priority
+from common.settings import set_global_setting
 from InvenTree.helpers_email import send_email
 from InvenTree.unit_test import InvenTreeAPITestCase
 
@@ -128,6 +129,31 @@ class EmailTests(InvenTreeAPITestCase):
         msg = EmailMessage.objects.first()
         self.assertEqual(msg.status, EmailMessage.EmailStatus.FAILED)
         self.assertEqual(msg.error_message, 'Test error sending email')
+
+    def test_email_model_delete(self):
+        """Test that the email model does not allow deletion if disabled."""
+        set_global_setting('INVENTREE_PROTECT_EMAIL_LOG', True)
+        EmailMessage.objects.create(
+            subject='test sub', body='test msg', to='abc@example.org', priority=3
+        )
+
+        with self.assertRaises(ValidationError):
+            EmailMessage.objects.all().delete()
+
+        msg = EmailMessage.objects.create(
+            subject='test sub', body='test msg', to='abc@example.org', priority=3
+        )
+
+        with self.assertRaises(ValidationError):
+            msg.delete()
+
+        # Should still work without the protection
+        self.assertEqual(EmailMessage.objects.count(), 2)
+        set_global_setting('INVENTREE_PROTECT_EMAIL_LOG', False)
+        msg.delete()
+
+        # Check that the message was deleted
+        self.assertEqual(EmailMessage.objects.count(), 1)
 
 
 class EmailEventsTests(TestCase):

@@ -239,3 +239,61 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
             msg.message,
             "Background worker task 'InvenTree.tasks.failed_task' failed after 10 attempts",
         )
+
+    def test_delete_old_emails(self):
+        """Test the delete_old_emails task."""
+        from common.models import EmailMessage
+
+        # Create an email message
+        self.create_mails()
+
+        # Run the task
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 31)
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+
+        # Check that the email message has been deleted
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 1)
+        self.assertEqual(emails[0].subject, 'Test Email 2')
+
+        # Set the setting higher than the threshold
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+
+        # Run the task again
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 0)
+
+        # Re-Add messages and enable a proper log
+        self.create_mails()
+
+        # Set the setting lower than the threshold
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 7)
+        InvenTreeSetting.set_setting('INVENTREE_PROTECT_EMAIL_LOG', True)
+
+        # Run the task again
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+
+        # Check that the email message has not been deleted
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 2)
+
+    def create_mails(self):
+        """Create some email messages for testing."""
+        from common.models import EmailMessage
+
+        start_mails = [
+            ['Test Email 1', 'This is a test email.', 'abc@example.org', threshold_low],
+            [
+                'Test Email 2',
+                'This is another test email.',
+                'def@example.org',
+                threshold,
+            ],
+        ]
+        for subject, body, to, timestamp in start_mails:
+            msg = EmailMessage.objects.create(
+                subject=subject, body=body, to=to, priority=1
+            )
+            msg.timestamp = timestamp
+            msg.save()
