@@ -448,13 +448,19 @@ export default function BuildLineTable({
       },
       {
         accessor: 'in_production',
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.in_production}
-            maximum={record.scheduled_to_build}
-          />
-        )
+        render: (record: any) => {
+          if (record.scheduled_to_build > 0) {
+            return (
+              <ProgressBar
+                progressLabel={true}
+                value={record.in_production}
+                maximum={record.scheduled_to_build}
+              />
+            );
+          } else {
+            return record.part_detail?.is_assembly ? 0 : '-';
+          }
+        }
       },
       DecimalColumn({
         accessor: 'on_order',
