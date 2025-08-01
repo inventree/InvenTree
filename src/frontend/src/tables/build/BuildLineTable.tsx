@@ -42,6 +42,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  DecimalColumn,
   DescriptionColumn,
   LocationColumn,
   PartColumn
@@ -445,6 +446,13 @@ export default function BuildLineTable({
         switchable: false,
         render: renderAvailableColumn
       },
+      DecimalColumn({
+        accessor: 'in_production'
+      }),
+      DecimalColumn({
+        accessor: 'on_order',
+        defaultVisible: false
+      }),
       {
         accessor: 'allocated',
         switchable: false,
