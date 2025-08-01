@@ -40,6 +40,7 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_ERRORS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
+{{ globalsetting("INVENTREE_DELETE_EMAIL_DAYS") }}
 
 
 ### Login Settings
