@@ -107,14 +107,16 @@ class StateTransitionMixin:
 
             if type(handlers) is not list:
                 logger.error(
-                    'Plugin %s returned invalid type for transition handlers',
+                    'INVE-E9: Plugin %s returned invalid type for transition handlers',
                     plugin.slug,
                 )
                 continue
 
             for handler in handlers:
                 if not isinstance(handler, TransitionMethod):
-                    logger.error('Invalid transition handler type: %s', handler)
+                    logger.error(
+                        'INVE-E9: Invalid transition handler type: %s', handler
+                    )
                     continue
 
                 # Call the transition method

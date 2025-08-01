@@ -50,6 +50,25 @@ This might be caused by an addition or removal of models to the code base or cha
 The settings for SITE_URL and ALLOWED_HOSTS do not match the host used to access the server. This might lead to issues with CSRF protection, CORS and other security features.
 The settings must be adjusted.
 
+#### INVE-E9
+**Transition handler error - Backend**
+An error occurred while discovering or executing a transition handler. This likely indicates a faulty or incompatible plugin.
+This error is raised by a plugin with the `TransitionMixin` and can be debugged by looking into the logs for more information.
+
+#### INVE-E10
+**Plugin cannot be uninstalled or deactivated - Backend**
+A plugin cannot be uninstalled if it is mandatory, a sample or a built-in plugin. Mandatory plugins can not be deactivated.
+
+This is to prevent accidental removal of essential system or compliance functionality. If you want to remove/deactivate a mandatory plugin, you need to remove it from the `INVENTREE_PLUGINS_MANDATORY` [setting](../start/config.md#plugin-options). Sample and built-in plugins can not be uninstalled at all but might be deactivated.
+
+See [Mandatory Plugins](../plugins/index.md#mandatory-plugins) for more information.
+
+#### INVE-E11
+**Plugin cannot override final method - Backend**
+A plugin is not allowed to override a *final method* from the `InvenTreePlugin` class.
+
+This is a security measure to prevent plugins from changing the core functionality of InvenTree. The code of the plugin must be changed to not override functions that are marked as *final*.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
@@ -143,6 +162,12 @@ To enable registration, the email settings must be configured correctly. See  [e
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
+
+#### INVE-I1
+**Setting overridden - Backend**
+Overriding a global setting with a different value than the current one.
+
+See [Override global settings](../settings/global.md#override-global-settings) for more information.
 
 ### INVE-M (InvenTree Miscellaneous)
 Miscellaneous — These are information messages that might be used to mark debug information or other messages helpful for the InvenTree team to understand behaviour.

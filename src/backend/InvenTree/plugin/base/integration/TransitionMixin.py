@@ -48,14 +48,14 @@ class TransitionMixin:
 
         if not isinstance(handlers, list):
             raise TypeError(
-                'TRANSITION_HANDLERS must be a list of TransitionMethod instances'
+                'INVE-E9: TRANSITION_HANDLERS must be a list of TransitionMethod instances'
             )
 
         handler_methods = []
 
         for handler in handlers:
             if not isinstance(handler, TransitionMethod):
-                logger.error('Invalid transition handler type: %s', handler)
+                logger.error('INVE-E9: Invalid transition handler type: %s', handler)
                 continue
 
             handler_methods.append(handler)
