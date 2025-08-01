@@ -50,6 +50,11 @@ This might be caused by an addition or removal of models to the code base or cha
 The settings for SITE_URL and ALLOWED_HOSTS do not match the host used to access the server. This might lead to issues with CSRF protection, CORS and other security features.
 The settings must be adjusted.
 
+#### INVE-E9
+**Transition handler error - Backend**
+An error occurred while discovering or executing a transition handler. This likely indicates a faulty or incompatible plugin.
+This error is raised by a plugin with the `TransitionMixin` and can be debugged by looking into the logs for more information.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
