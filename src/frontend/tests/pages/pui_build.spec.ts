@@ -379,6 +379,32 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Cancel' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build outputs have been cancelled').waitFor();
+
+  // Next, complete a new output and auto-allocate items based on serial number
+  await page
+    .getByRole('button', { name: 'action-button-add-build-output' })
+    .click();
+  await page.getByLabel('number-field-quantity').fill('1');
+  await page.getByLabel('text-field-serial_numbers').fill('16');
+  await page
+    .locator('label')
+    .filter({ hasText: 'Auto Allocate Serial' })
+    .locator('div')
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  const newCell = await page.getByRole('cell', { name: '# 16' });
+  const newRow = await getRowFromCell(newCell);
+
+  await newRow.getByText('1 / 6').waitFor();
+  await newRow.getByText('0 / 2').waitFor();
+
+  // Cancel this output too
+  await clickOnRowMenu(newCell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build outputs have been cancelled').waitFor();
 });
 
 test('Build Order - Filters', async ({ browser }) => {
