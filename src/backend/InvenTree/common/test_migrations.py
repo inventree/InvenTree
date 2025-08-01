@@ -1,10 +1,14 @@
 """Data migration unit tests for the 'common' app."""
 
 import io
+import shutil
+import tempfile
 
 from django.core.files.base import ContentFile
+from django.test import override_settings
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
+from PIL import Image
 
 from InvenTree import unit_test
 
@@ -38,7 +42,7 @@ def generate_attachment():
     return ContentFile(file_object.getvalue(), 'test.txt')
 
 
-class TestForwardMigrations(MigratorTestCase):
+class TestLegacyAttachmentMigration(MigratorTestCase):
     """Test entire schema migration sequence for the common app."""
 
     migrate_from = ('common', '0024_notesimage_model_id_notesimage_model_type')
@@ -208,3 +212,90 @@ class TestForwardMigrations(MigratorTestCase):
             'stockitem',
         ]:
             self.assertEqual(Attachment.objects.filter(model_type=model).count(), 2)
+
+
+def generate_image(filename: str = 'test.png', fmt: str = 'PNG') -> ContentFile:
+    """Generate a Django dummy image for test inventreeimage."""
+    color = (255, 0, 0)
+
+    img = Image.new(mode='RGB', size=(100, 100), color=color)
+
+    buffer = io.BytesIO()
+    img.save(buffer, format=fmt)
+    buffer.seek(0)
+
+    return ContentFile(buffer.read(), name=filename)
+
+
+class TestLegacyImageMigration(MigratorTestCase):
+    """Test that any Company.image and Part.image values are correctly migrated."""
+
+    migrate_from = [('common', '0039_emailthread_emailmessage')]
+    migrate_to = [('common', unit_test.getNewestMigrationFile('common'))]
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up the test class."""
+        super().setUpClass()
+        cls._temp_media = tempfile.mkdtemp(prefix='test_media_')
+        cls._override = override_settings(MEDIA_ROOT=cls._temp_media)
+        cls._override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up after the test class."""
+        super().tearDownClass()
+        cls._override.disable()
+        shutil.rmtree(cls._temp_media, ignore_errors=True)
+
+    def prepare(self):
+        """Populate the 'old' database state (before the migration)."""
+        Company = self.old_state.apps.get_model('company', 'company')
+
+        self.initial_data = [
+            {'name': 'CoOne', 'file_name': 'test01.png'},
+            {'name': 'CoTwo', 'file_name': 'test02.png'},
+        ]
+
+        self.co_pks = []
+        for entry in self.initial_data:
+            co = Company.objects.create(
+                name=entry['name'], image=generate_image(filename=entry['file_name'])
+            )
+            self.co_pks.append(co.pk)
+
+        no_image_co = Company.objects.create(
+            name='NoImageCo', description='No image here'
+        )
+        self.no_image_pk = no_image_co.pk
+
+    def test_company_image_migrated(self):
+        """After applying the migration.
+
+        - Exactly two InvenTreeImage rows exist
+        - Each old image path is transferred
+        - Each InvenTreeImage is marked primary
+        """
+        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
+
+        ct = ContentType.objects.get(app_label='company', model='company')
+
+        #  Exactly two images should have been created
+        all_imgs = InvenTreeImage.objects.all()
+        self.assertEqual(all_imgs.count(), len(self.initial_data))
+
+        #  Check each migrated image
+        for idx, _ in enumerate(self.initial_data):
+            pk = self.co_pks[idx]
+            # Should be exactly one matching InvenTreeImage
+            inv_img = InvenTreeImage.objects.get(content_type_id=ct.pk, object_id=pk)
+
+            #  primary flag
+            self.assertTrue(
+                inv_img.primary, f'Image for company {pk} not marked primary'
+            )
+
+        #  Ensure no image was created for the company that had none
+        with self.assertRaises(InvenTreeImage.DoesNotExist):
+            InvenTreeImage.objects.get(object_id=self.no_image_pk)

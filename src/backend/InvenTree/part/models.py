@@ -406,6 +406,9 @@ class PartReportContext(report.mixins.BaseReportContext):
     test_templates: dict[str, PartTestTemplate]
 
 
+from stdimage.models import StdImageField
+
+
 @cleanup.ignore
 class Part(
     InvenTree.models.PluginValidationMixin,
@@ -1275,6 +1278,15 @@ class Part(
 
     last_stocktake = models.DateField(
         blank=True, null=True, verbose_name=_('Last Stocktake')
+    )
+
+    image = StdImageField(
+        upload_to=rename_part_image,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+        delete_orphans=False,
+        verbose_name=_('Image'),
     )
 
     @property

@@ -84,10 +84,6 @@ def limit_image_content_types():
     return Q(model__in=allowed_models)
 
 
-def validate_upload_image_model_type():
-    """Return a Q object filtering for allowed image upload model types."""
-
-
 def validate_decimal_places_min(value):
     """Validator for PRICING_DECIMAL_PLACES_MIN setting."""
     try:
