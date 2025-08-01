@@ -73,6 +73,7 @@ export function ApiFormField({
     return {
       ...fieldDefinition,
       autoFill: undefined,
+      autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,

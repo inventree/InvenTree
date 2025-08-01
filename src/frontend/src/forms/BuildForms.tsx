@@ -475,10 +475,12 @@ export function useCancelBuildOutputsForm({
 // Construct a single row in the 'allocate stock to build' table
 function BuildAllocateLineRow({
   props,
+  output,
   record,
   sourceLocation
 }: Readonly<{
   props: TableFieldRowProps;
+  output: any;
   record: any;
   sourceLocation: number | undefined;
 }>) {
@@ -487,6 +489,10 @@ function BuildAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      autoFill: true,
+      autoFillFilters: {
+        serial: output?.serial
+      },
       filters: {
         available: true,
         part_detail: true,
@@ -602,6 +608,7 @@ export function useAllocateStockToBuildForm({
           return (
             <BuildAllocateLineRow
               key={row.idx}
+              output={output}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -612,7 +619,7 @@ export function useAllocateStockToBuildForm({
     };
 
     return fields;
-  }, [lineItems, sourceLocation]);
+  }, [output, lineItems, sourceLocation]);
 
   useEffect(() => {
     setSourceLocation(build?.take_from);

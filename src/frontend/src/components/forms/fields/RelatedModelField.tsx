@@ -65,7 +65,11 @@ export function RelatedModelField({
       return;
     }
 
-    const params = definition?.filters ?? {};
+    // Construct parameters for auto-filling the field
+    const params = {
+      ...(definition?.filters ?? {}),
+      ...(definition?.autoFillFilters ?? {})
+    };
 
     api
       .get(definition.api_url, {
