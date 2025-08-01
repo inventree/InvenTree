@@ -1,11 +1,17 @@
 import { ActionButton } from '@lib/components/ActionButton';
+import { RowDeleteAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
+import { Badge } from '@mantine/core';
 import { IconTestPipe } from '@tabler/icons-react';
-import { useMemo } from 'react';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { useUserState } from '../../states/UserState';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -20,6 +26,8 @@ export function EmailTable() {
     }
   });
 
+  const user = useUserState();
+
   const tableActions = useMemo(() => {
     return [
       <ActionButton
@@ -31,7 +39,17 @@ export function EmailTable() {
     ];
   }, []);
 
-  const table = useTable('emails', 'id');
+  const table = useTable('emails', 'pk');
+
+  const [selectedEmailId, setSelectedEmailId] = useState<string>('');
+
+  const deleteEmail = useDeleteApiFormModal({
+    url: ApiEndpoints.email_list,
+    pk: selectedEmailId,
+    title: t`Delete Email`,
+    successMessage: t`Email deleted successfully`,
+    table: table
+  });
 
   const tableColumns = useMemo(() => {
     return [
@@ -57,17 +75,17 @@ export function EmailTable() {
         render: (record: any) => {
           switch (record.status) {
             case 'A':
-              return t`Announced`;
+              return <Badge color='blue'>{t`Announced`}</Badge>;
             case 'S':
-              return t`Sent`;
+              return <Badge color='blue'>{t`Sent`}</Badge>;
             case 'F':
-              return t`Failed`;
+              return <Badge color='red'>{t`Failed`}</Badge>;
             case 'D':
-              return t`Delivered`;
+              return <Badge color='green'>{t`Delivered`}</Badge>;
             case 'R':
-              return t`Read`;
+              return <Badge color='green'>{t`Read`}</Badge>;
             case 'C':
-              return t`Confirmed`;
+              return <Badge color='green'>{t`Confirmed`}</Badge>;
           }
           return '-';
         },
@@ -91,16 +109,35 @@ export function EmailTable() {
     ];
   }, []);
 
+  const rowactions = useCallback(
+    (record: any) => {
+      return [
+        RowDeleteAction({
+          onClick: () => {
+            setSelectedEmailId(record.pk);
+            deleteEmail.open();
+          },
+          hidden: !user.isStaff()
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
     <>
       {sendTestMail.modal}
+      {deleteEmail.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.email_list)}
         columns={tableColumns}
         props={{
+          rowActions: rowactions,
           enableSearch: true,
           enableColumnSwitching: true,
+          enableSelection: true,
+          enableBulkDelete: true,
           tableActions: tableActions
         }}
       />
