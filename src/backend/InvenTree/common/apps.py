@@ -56,7 +56,9 @@ class CommonConfig(AppConfig):
 
                 if current_value != value:
                     logger.info(
-                        'Overriding global setting: %s = %s', value, current_value
+                        'INVE-I1: Overriding global setting: %s = %s',
+                        value,
+                        current_value,
                     )
                     set_global_setting(key, value, None, create=True)
 

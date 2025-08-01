@@ -163,5 +163,11 @@ To enable registration, the email settings must be configured correctly. See  [e
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 
+#### INVE-I1
+**Setting overridden - Backend**
+Overriding a global setting with a different value than the current one.
+
+See [Override global settings](../settings/global.md#override-global-settings) for more information.
+
 ### INVE-M (InvenTree Miscellaneous)
 Miscellaneous — These are information messages that might be used to mark debug information or other messages helpful for the InvenTree team to understand behaviour.
