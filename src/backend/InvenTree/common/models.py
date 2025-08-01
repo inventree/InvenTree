@@ -2519,7 +2519,7 @@ HEADER_PRIORITY = 'X-Priority'
 HEADER_MSG_ID = 'Message-ID'
 
 del_error_msg = _(
-    'Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
+    'INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
 )
 
 
