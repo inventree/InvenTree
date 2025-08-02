@@ -80,7 +80,6 @@ class Migration(migrations.Migration):
 
    
     operations = [
-        # First, run the data migration
         migrations.RunPython(
             forwards_migrate_company_images,
             reverse_migrate_inventree_images_to_company,

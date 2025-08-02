@@ -49,7 +49,7 @@ class InvenTreeImageAdmin(admin.ModelAdmin):
         'image',
         'image_thumbnail',
     )
-    list_filter = ('content_type', 'primary')
+    list_filter = ('content_type', 'primary', 'image')
     search_fields = ('object_id',)
     readonly_fields = ('image_thumbnail',)
     fieldsets = (
