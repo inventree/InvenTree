@@ -199,7 +199,10 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('Can Build').waitFor();
 
   await page.getByText('0 / 10').waitFor();
-  await page.getByText('4 / 49').waitFor();
+
+  // Depending on the state of other tests, the "In Production" value may vary
+  // This could be either 4 / 49, or 5 / 49
+  await page.getByText(/[4|5] \/ 49/).waitFor();
 
   // Badges
   await page.getByText('Required: 10').waitFor();
