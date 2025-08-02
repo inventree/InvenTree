@@ -117,6 +117,16 @@ class ExtendedAutoSchema(AutoSchema):
                         f'{parameter["description"]} Searched fields: {", ".join(search_fields)}.'
                     )
 
+        # Change return to array type, simply annotating this return type attempts to paginate, which doesn't work for
+        # a create method and removing the pagination also affects the list method
+        if self.method == 'POST' and type(self.view).__name__ == 'StockList':
+            schema = operation['responses']['201']['content']['application/json'][
+                'schema'
+            ]
+            schema['type'] = 'array'
+            schema['items'] = {'$ref': schema['$ref']}
+            del schema['$ref']
+
         return operation
 
 

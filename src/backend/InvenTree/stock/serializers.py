@@ -376,6 +376,7 @@ class StockItemSerializer(
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
+            'serial_numbers',
             'tests',
             # Annotated fields
             'allocated',
@@ -407,7 +408,10 @@ class StockItemSerializer(
         """
         Fields used when creating a stock item
         """
-        extra_kwargs = {'use_pack_size': {'write_only': True}}
+        extra_kwargs = {
+            'use_pack_size': {'write_only': True},
+            'serial_numbers': {'write_only': True},
+        }
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
@@ -472,7 +476,14 @@ class StockItemSerializer(
         help_text=_(
             'Use pack size when adding: the quantity defined is the number of packs'
         ),
-        label=('Use pack size'),
+        label=_('Use pack size'),
+    )
+
+    serial_numbers = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_null=True,
+        help_text=_('Enter serial numbers for new items'),
     )
 
     def validate_part(self, part):

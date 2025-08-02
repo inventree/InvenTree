@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 378
+INVENTREE_API_VERSION = 379
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v379 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9969
+    - Correctly apply changes listed in v358
+    - Breaking: StockCreate now always returns a list of StockItem
 
 v378 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10111
     - Adds "scheduled_to_build" annotated field to BuildLine serializer
