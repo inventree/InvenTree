@@ -320,12 +320,8 @@ class ExchangeRateMixin:
         Rate.objects.bulk_create(items)
 
 
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup build in."""
-
-
-class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
-    """Base class for running InvenTree API tests."""
+class TestQueryMixin:
+    """Mixin class for testing query counts."""
 
     # Default query count threshold value
     # TODO: This value should be reduced
@@ -375,17 +371,47 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         self.assertLess(n, value, msg=msg)
 
+
+class PluginRegistryMixin:
+    """Mixin to ensure that the plugin registry is ready for tests."""
+
     @classmethod
     def setUpTestData(cls):
-        """Setup for API tests.
+        """Ensure that the plugin registry is ready for tests."""
+        from time import sleep
 
-        - Ensure that all global settings are assigned default values.
-        """
         from common.models import InvenTreeSetting
+        from plugin.registry import registry
+
+        while not registry.is_ready:
+            print('Waiting for plugin registry to be ready...')
+            sleep(0.1)
+
+        assert registry.is_ready, 'Plugin registry is not ready'
 
         InvenTreeSetting.build_default_values()
-
         super().setUpTestData()
+
+    def ensurePluginsLoaded(self, force: bool = False):
+        """Helper function to ensure that plugins are loaded."""
+        from plugin.models import PluginConfig
+
+        if force or PluginConfig.objects.count() == 0:
+            # Reload the plugin registry at this point to ensure all PluginConfig objects are created
+            # This is because the django test system may have re-initialized the database (to an empty state)
+            registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+        assert PluginConfig.objects.count() > 0, 'No plugins are installed'
+
+
+class InvenTreeTestCase(ExchangeRateMixin, PluginRegistryMixin, UserMixin, TestCase):
+    """Testcase with user setup build in."""
+
+
+class InvenTreeAPITestCase(
+    ExchangeRateMixin, PluginRegistryMixin, TestQueryMixin, UserMixin, APITestCase
+):
+    """Base class for running InvenTree API tests."""
 
     def check_response(self, url, response, expected_code=None):
         """Debug output for an unexpected response."""
@@ -472,15 +498,15 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             url, self.client.delete, expected_code=expected_code, **kwargs
         )
 
-    def patch(self, url, data, expected_code=200, **kwargs):
+    def patch(self, url, data=None, expected_code=200, **kwargs):
         """Issue a PATCH request."""
-        kwargs['data'] = data
+        kwargs['data'] = data or {}
 
         return self.query(url, self.client.patch, expected_code=expected_code, **kwargs)
 
-    def put(self, url, data, expected_code=200, **kwargs):
+    def put(self, url, data=None, expected_code=200, **kwargs):
         """Issue a PUT request."""
-        kwargs['data'] = data
+        kwargs['data'] = data or {}
 
         return self.query(url, self.client.put, expected_code=expected_code, **kwargs)
 

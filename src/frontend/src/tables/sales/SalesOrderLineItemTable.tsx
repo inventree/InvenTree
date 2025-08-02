@@ -45,6 +45,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
+  DecimalColumn,
   DescriptionColumn,
   LinkColumn,
   PartColumn
@@ -102,10 +103,10 @@ export default function SalesOrderLineItemTable({
         sortable: false,
         switchable: true
       },
-      {
+      DecimalColumn({
         accessor: 'quantity',
         sortable: true
-      },
+      }),
       {
         accessor: 'sale_price',
         render: (record: any) =>

@@ -60,23 +60,37 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
+        self.ensurePluginsLoaded(force=True)
+
         url = reverse('api-plugin-list')
 
         # Try POST (disallowed)
         response = self.client.post(url, {})
         self.assertEqual(response.status_code, 405)
 
-        response = self.client.get(url, {'mixin': 'labels', 'active': True})
+        response = self.client.get(
+            url, {'mixin': PluginMixinEnum.LABELS, 'active': True}
+        )
 
-        # No results matching this query!
-        self.assertEqual(len(response.data), 0)
+        # Two mandatory label printing plugins
+        self.assertEqual(len(response.data), 2)
 
         # What about inactive?
         response = self.client.get(url, {'mixin': 'labels', 'active': False})
 
-        self.assertEqual(len(response.data), 0)
+        # One builtin, non-mandatory label printing plugin "inventreelabelsheet"
+        # One sample plugin, "samplelabelprinter"
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['key'], 'inventreelabelsheet')
+        self.assertEqual(response.data[1]['key'], 'samplelabelprinter')
 
-        self.do_activate_plugin()
+        with self.assertWarnsMessage(
+            UserWarning,
+            'A plugin registry reload was triggered for plugin samplelabelprinter',
+        ):
+            # Activate the sample label printing plugin
+            self.do_activate_plugin()
+
         # Should be available via the API now
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 
@@ -141,7 +155,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             {'template': template.pk, 'plugin': config.key, 'items': [1, 2, 3]},
             expected_code=400,
         )
-        self.assertIn('Plugin is not active', str(response.data['plugin']))
+        self.assertIn('Plugin not found', str(response.data['plugin']))
 
         # Active plugin
         self.do_activate_plugin()

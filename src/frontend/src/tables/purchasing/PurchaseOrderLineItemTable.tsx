@@ -17,6 +17,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
@@ -198,7 +199,7 @@ export function PurchaseOrderLineItemTable({
 
           return (
             <TableHoverCard
-              value={record.quantity}
+              value={formatDecimal(record.quantity)}
               extra={extra}
               title={t`Quantity`}
             />

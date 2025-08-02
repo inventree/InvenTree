@@ -1593,13 +1593,10 @@ class StockItemTest(StockAPITestCase):
 
         self.assertIn('This field is required', str(response.data['location']))
 
-        # TODO: Return to this and work out why it is taking so long
-        # Ref: https://github.com/inventree/InvenTree/pull/7157
         response = self.post(
             url,
             {'location': '1', 'notes': 'Returned from this customer for testing'},
             expected_code=201,
-            max_query_time=5.0,
         )
 
         item.refresh_from_db()

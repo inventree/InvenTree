@@ -145,16 +145,23 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Extend save method to reload plugins if the 'active' status changes."""
         no_reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
-        super().save(force_insert, force_update, *args, **kwargs)
+        mandatory = self.is_mandatory()
 
-        if self.is_mandatory():
+        if mandatory:
             # Force active if mandatory plugin
             self.active = True
 
-        if not no_reload and self.active != self.__org_active:
+        super().save(force_insert, force_update, *args, **kwargs)
+
+        if not no_reload and self.active != self.__org_active and not mandatory:
             if settings.PLUGIN_TESTING:
-                warnings.warn('A plugin registry reload was triggered', stacklevel=2)
+                warnings.warn(
+                    f'A plugin registry reload was triggered for plugin {self.key}',
+                    stacklevel=2,
+                )
             registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+        self.__org_active = self.active
 
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
@@ -184,15 +191,32 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     @admin.display(boolean=True, description=_('Mandatory Plugin'))
     def is_mandatory(self) -> bool:
         """Return True if this plugin is mandatory."""
+        # List of run-time configured mandatory plugins
+        if settings.PLUGINS_MANDATORY:
+            if self.key in settings.PLUGINS_MANDATORY:
+                return True
+
+        # Hard-coded list of mandatory "builtin" plugins
         return self.key in registry.MANDATORY_PLUGINS
+
+    def is_active(self) -> bool:
+        """Return True if this plugin is active.
+
+        Note that 'mandatory' plugins are always considered 'active',
+        """
+        return self.is_mandatory() or self.active
 
     @admin.display(boolean=True, description=_('Package Plugin'))
     def is_package(self) -> bool:
         """Return True if this is a 'package' plugin."""
+        if self.package_name:
+            return True
+
         if not self.plugin:
             return False
 
-        return getattr(self.plugin, 'is_package', False)
+        pkg_name = getattr(self.plugin, 'package_name', None)
+        return pkg_name is not None
 
     @property
     def admin_source(self) -> str:
