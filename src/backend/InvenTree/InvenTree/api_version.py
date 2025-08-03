@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 378
+INVENTREE_API_VERSION = 379
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v379 -> 2025-08-301 : https://github.com/inventree/InvenTree/pull/9852
+    - Remove all API endpoints related to "PartStocktake" functionality
+    - This functionality has been removed from the core InvenTree application
 
 v378 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10111
     - Adds "scheduled_to_build" annotated field to BuildLine serializer
