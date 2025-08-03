@@ -641,7 +641,7 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
             reverse('api-plugin-uninstall', kwargs={'plugin': slug}),
             max_query_count=305,
         )
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 200)
 
         # Successful uninstallation
         with self.assertRaises(PluginConfig.DoesNotExist):
