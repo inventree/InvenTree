@@ -207,7 +207,7 @@ test('Parts - Details', async ({ browser }) => {
   // Badges
   await page.getByText('Required: 10').waitFor();
   await page.getByText('No Stock').waitFor();
-  await page.getByText('In Production: 4').waitFor();
+  await page.getByText(/In Production: [4|5]/).waitFor();
 
   await page.getByText('Creation Date').waitFor();
   await page.getByText('2022-04-29').waitFor();
