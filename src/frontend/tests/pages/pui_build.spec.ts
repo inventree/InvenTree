@@ -378,8 +378,11 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
     .waitFor();
 
   // The stock item should be pre-filled based on serial number
+  await page.getByRole('cell', { name: 'Thumbnail 002.01-PCBA |' }).waitFor();
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Stock items allocated').waitFor();
 
   await allocationRow.getByText('1 / 1').waitFor();
 
