@@ -341,7 +341,8 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
             _('Plugin cannot be uninstalled as it is currently active')
         )
 
-    if cfg.is_mandatory():
+    if cfg.is_mandatory():  # pragma: no cover
+        # This is only an additional check, as mandatory plugins cannot be deactivated
         raise ValidationError(
             'INVE-E10' + _('Plugin cannot be uninstalled as it is mandatory')
         )
