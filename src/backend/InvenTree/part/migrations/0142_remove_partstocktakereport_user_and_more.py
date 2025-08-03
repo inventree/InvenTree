@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
     """"""
 
     dependencies = [
-        ("part", "0135_alter_part_link"),
+        ("part", "0141_auto_20250722_0303"),
     ]
 
     operations = [

@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("part", "0137_alter_partstocktake_options_and_more"),
+        ("part", "0143_alter_partstocktake_options_and_more"),
     ]
 
     operations = [

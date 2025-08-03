@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
     """
 
     dependencies = [
-        ("part", "0136_remove_partstocktakereport_user_and_more"),
+        ("part", "0142_remove_partstocktakereport_user_and_more"),
     ]
 
     operations = [
