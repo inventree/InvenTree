@@ -4,15 +4,22 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
-export function TableSearchInput({
+/**
+ * A search input component that debounces user input
+ */
+export function SearchInput({
   disabled,
+  debounce,
+  placeholder,
   searchCallback
 }: Readonly<{
   disabled?: boolean;
+  debounce?: number;
+  placeholder?: string;
   searchCallback: (searchTerm: string) => void;
 }>) {
   const [value, setValue] = useState<string>('');
-  const [searchText] = useDebouncedValue(value, 500);
+  const [searchText] = useDebouncedValue(value, debounce ?? 500);
 
   useEffect(() => {
     searchCallback(searchText);
@@ -24,7 +31,7 @@ export function TableSearchInput({
       disabled={disabled}
       aria-label='table-search-input'
       leftSection={<IconSearch />}
-      placeholder={t`Search`}
+      placeholder={placeholder ?? t`Search`}
       onChange={(event) => setValue(event.target.value)}
       rightSection={
         value.length > 0 ? (

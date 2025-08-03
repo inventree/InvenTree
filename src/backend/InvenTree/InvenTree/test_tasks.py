@@ -14,7 +14,8 @@ from django_q.models import Schedule, Task
 from error_report.models import Error
 
 import InvenTree.tasks
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, InvenTreeUserSetting
+from InvenTree.unit_test import PluginRegistryMixin
 
 threshold = timezone.now() - timedelta(days=30)
 threshold_low = threshold - timedelta(days=1)
@@ -55,7 +56,7 @@ def get_result():
     return 'abc'
 
 
-class InvenTreeTaskTests(TestCase):
+class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
     """Unit tests for tasks."""
 
     def test_offloading(self):
@@ -191,7 +192,7 @@ class InvenTreeTaskTests(TestCase):
 
         # Create a staff user (to ensure notifications are sent)
         user = User.objects.create_user(
-            username='staff', password='staffpass', is_staff=False
+            username='i_am_staff', password='staffpass', is_staff=False, is_active=True
         )
 
         n_tasks = Task.objects.count()
@@ -219,6 +220,9 @@ class InvenTreeTaskTests(TestCase):
         # Give them all the required staff level permissions
         user.is_staff = True
         user.save()
+
+        # Ensure error notifications are enabled for this user
+        InvenTreeUserSetting.set_setting('NOTIFICATION_ERROR_REPORT', True, user=user)
 
         # Create a 'failed' task in the database
         # Note: The 'attempt count' is set to 10 to ensure that the task is properly marked as 'failed'

@@ -8,8 +8,11 @@ import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import { useGlobalSettingsState } from '../states/SettingsState';
-import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
+import {
+  type StatusLookup,
+  useGlobalStatusState
+} from '../states/GlobalStatusState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Return list of available filter options for a given filter
@@ -65,6 +68,58 @@ export function StatusFilterOptions(
 }
 
 // Define some commonly used filters
+
+export function HasBatchCodeFilter(): TableFilter {
+  return {
+    name: 'has_batch',
+    label: t`Has Batch Code`,
+    description: t`Show items which have a batch code`
+  };
+}
+
+export function BatchFilter(): TableFilter {
+  return {
+    name: 'batch',
+    label: t`Batch Code`,
+    description: t`Filter items by batch code`,
+    type: 'text'
+  };
+}
+
+export function IsSerializedFilter(): TableFilter {
+  return {
+    name: 'serialized',
+    label: t`Is Serialized`,
+    description: t`Show items which have a serial number`
+  };
+}
+
+export function SerialFilter(): TableFilter {
+  return {
+    name: 'serial',
+    label: t`Serial`,
+    description: t`Filter items by serial number`,
+    type: 'text'
+  };
+}
+
+export function SerialLTEFilter(): TableFilter {
+  return {
+    name: 'serial_lte',
+    label: t`Serial Below`,
+    description: t`Show items with serial numbers less than or equal to a given value`,
+    type: 'text'
+  };
+}
+
+export function SerialGTEFilter(): TableFilter {
+  return {
+    name: 'serial_gte',
+    label: t`Serial Above`,
+    description: t`Show items with serial numbers greater than or equal to a given value`,
+    type: 'text'
+  };
+}
 
 export function AssignedToMeFilter(): TableFilter {
   return {
@@ -194,6 +249,15 @@ export function HasProjectCodeFilter(): TableFilter {
   };
 }
 
+export function IncludeVariantsFilter(): TableFilter {
+  return {
+    name: 'include_variants',
+    type: 'boolean',
+    label: t`Include Variants`,
+    description: t`Include results for part variants`
+  };
+}
+
 export function OrderStatusFilter({
   model
 }: { model: ModelType }): TableFilter {
@@ -269,6 +333,32 @@ export function UserFilter({
   };
 }
 
+export function ManufacturerFilter(): TableFilter {
+  return {
+    name: 'manufacturer',
+    label: t`Manufacturer`,
+    description: t`Filter by manufacturer`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_manufacturer: true }
+  };
+}
+
+export function SupplierFilter(): TableFilter {
+  return {
+    name: 'supplier',
+    label: t`Supplier`,
+    description: t`Filter by supplier`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_supplier: true }
+  };
+}
+
 export function CreatedByFilter(): TableFilter {
   return UserFilter({
     name: 'created_by',
@@ -288,10 +378,21 @@ export function IssuedByFilter(): TableFilter {
 export function PartCategoryFilter(): TableFilter {
   return {
     name: 'category',
-    label: t`Category`,
+    label: t`Part Category`,
     description: t`Filter by part category`,
     apiUrl: apiUrl(ApiEndpoints.category_list),
     model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
+
+export function StockLocationFilter(): TableFilter {
+  return {
+    name: 'location',
+    label: t`Location`,
+    description: t`Filter by stock location`,
+    apiUrl: apiUrl(ApiEndpoints.stock_location_list),
+    model: ModelType.stocklocation,
     modelRenderer: (instance: any) => instance.name
   };
 }

@@ -45,13 +45,13 @@ test('Login - Failures', async ({ page }) => {
 });
 
 test('Login - Change Password', async ({ page }) => {
-  await doLogin(page, 'noaccess', 'youshallnotpass');
-  await page.waitForLoadState('networkidle');
+  await doLogin(page, {
+    username: 'noaccess',
+    password: 'youshallnotpass'
+  });
 
   // Navigate to the 'change password' page
-  await navigate(page, 'settings/user/account');
-  await page.waitForLoadState('networkidle');
-
+  await navigate(page, 'settings/user/account', { waitUntil: 'networkidle' });
   await page.getByLabel('action-menu-account-actions').click();
   await page.getByLabel('action-menu-account-actions-change-password').click();
 
@@ -69,9 +69,16 @@ test('Login - Change Password', async ({ page }) => {
   await page.getByText('This password is too short').waitFor();
   await page.getByText('This password is entirely numeric').waitFor();
 
-  await page.getByLabel('input-password-1').fill('youshallnotpass');
+  await page.waitForTimeout(250);
+
+  await page.getByLabel('password', { exact: true }).clear();
+  await page.getByLabel('input-password-1').clear();
   await page.getByLabel('input-password-2').clear();
+
+  await page.getByLabel('password', { exact: true }).fill('youshallnotpass');
+  await page.getByLabel('input-password-1').fill('youshallnotpass');
   await page.getByLabel('input-password-2').fill('youshallnotpass');
+
   await page.getByRole('button', { name: 'Confirm' }).click();
 
   await page.getByText('Password Changed').waitFor();

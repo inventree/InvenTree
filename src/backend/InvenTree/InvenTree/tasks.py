@@ -16,6 +16,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
@@ -465,12 +466,35 @@ def delete_old_notifications():
         )
 
 
+@tracer.start_as_current_span('delete_old_emails')
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_emails():
+    """Delete old email messages."""
+    try:
+        from common.models import EmailMessage
+
+        days = get_global_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        emails = EmailMessage.objects.filter(timestamp__lte=threshold)
+
+        if emails.count() > 0:
+            logger.info('Deleted %s old email messages', emails.count())
+            emails.delete()
+
+    except AppRegistryNotReady:
+        logger.info("Could not perform 'delete_old_emails' - App registry not ready")
+
+
 @tracer.start_as_current_span('check_for_updates')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
-        from common.notifications import trigger_superuser_notification
+        from common.notifications import trigger_notification
+        from plugin.builtin.integration.core_notifications import (
+            InvenTreeUINotifications,
+        )
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
@@ -533,19 +557,16 @@ def check_for_updates():
 
     # Send notification if there is a new version
     if not isInvenTreeUpToDate():
-        logger.warning('InvenTree is not up-to-date, sending notification')
-
-        plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
-        if not plg:
-            logger.warning('Cannot send notification - plugin not found')
-            return
-        plg = plg.plugin_config()
-        if not plg:
-            logger.warning('Cannot send notification - plugin config not found')
-            return
-        # Send notification
-        trigger_superuser_notification(
-            plg, f'An update for InvenTree to version {tag} is available'
+        # Send notification to superusers
+        trigger_notification(
+            None,
+            'update_available',
+            targets=get_user_model().objects.filter(is_superuser=True),
+            delivery_methods={InvenTreeUINotifications},
+            context={
+                'name': _('Update Available'),
+                'message': _('An update for InvenTree is available'),
+            },
         )
 
 
@@ -641,7 +662,6 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     Returns bool indicating if migrations are up to date
     """
-    from plugin import registry
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""

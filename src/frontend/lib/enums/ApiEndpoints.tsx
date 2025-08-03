@@ -205,6 +205,7 @@ export enum ApiEndpoints {
   // Plugin API endpoints
   plugin_list = 'plugins/',
   plugin_setting_list = 'plugins/:plugin/settings/',
+  plugin_user_setting_list = 'plugins/:plugin/user-settings/',
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',

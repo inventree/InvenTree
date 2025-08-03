@@ -13,7 +13,7 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -72,9 +72,6 @@ export function PrintingActions({
         .then((response: any) => {
           return extractAvailableFields(response, 'POST') || {};
         })
-        .catch(() => {
-          return {};
-        })
   });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {
@@ -83,6 +80,7 @@ export function PrintingActions({
     // Override field values
     fields.template = {
       ...fields.template,
+      autoFill: true,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -135,6 +133,7 @@ export function PrintingActions({
     timeout: 5000,
     fields: {
       template: {
+        autoFill: true,
         filters: {
           enabled: true,
           model_type: modelType,

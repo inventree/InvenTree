@@ -7,11 +7,8 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from allauth.account.models import EmailAddress
-
 import part.settings
 from common.models import NotificationEntry, NotificationMessage
-from common.notifications import UIMessageNotification, storage
 from common.settings import get_global_setting, set_global_setting
 from InvenTree import version
 from InvenTree.templatetags import inventree_extras
@@ -159,10 +156,7 @@ class PartTest(TestCase):
 
         cls.r1 = Part.objects.get(name='R_2K2_0805')
         cls.r2 = Part.objects.get(name='R_4K7_0603')
-
         cls.c1 = Part.objects.get(name='C_22N_0805')
-
-        Part.objects.rebuild()
 
     def test_barcode_mixin(self):
         """Test the barcode mixin functionality."""
@@ -171,18 +165,6 @@ class PartTest(TestCase):
         p = Part.objects.get(pk=1)
         barcode = p.format_barcode()
         self.assertEqual(barcode, '{"part": 1}')
-
-    def test_tree(self):
-        """Test that the part variant tree is working properly."""
-        chair = Part.objects.get(pk=10000)
-        self.assertEqual(chair.get_children().count(), 3)
-        self.assertEqual(chair.get_descendant_count(), 4)
-
-        green = Part.objects.get(pk=10004)
-        self.assertEqual(green.get_ancestors().count(), 2)
-        self.assertEqual(green.get_root(), chair)
-        self.assertEqual(green.get_family().count(), 3)
-        self.assertEqual(Part.objects.filter(tree_id=chair.tree_id).count(), 5)
 
     def test_str(self):
         """Test string representation of a Part."""
@@ -404,7 +386,6 @@ class PartTest(TestCase):
         )
 
         with self.assertRaises(ValidationError) as exc:
-            print('rev a:', rev_a.revision_of, part.revision_of)
             rev_a.revision_of = part
             rev_a.save()
 
@@ -451,6 +432,180 @@ class PartTest(TestCase):
         rev_b.save()
 
         self.assertEqual(part.revisions.count(), 2)
+
+
+class VariantTreeTest(TestCase):
+    """Unit test for the Part variant tree structure."""
+
+    fixtures = ['category', 'part', 'location']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Rebuild Part tree before running tests."""
+        super().setUpTestData()
+
+    def test_tree(self):
+        """Test tree structure for fixtured data."""
+        chair = Part.objects.get(pk=10000)
+        self.assertEqual(chair.get_children().count(), 3)
+        self.assertEqual(chair.get_descendant_count(), 4)
+
+        green = Part.objects.get(pk=10004)
+        self.assertEqual(green.get_ancestors().count(), 2)
+        self.assertEqual(green.get_root(), chair)
+        self.assertEqual(green.get_family().count(), 3)
+        self.assertEqual(Part.objects.filter(tree_id=chair.tree_id).count(), 5)
+
+    def test_part_creation(self):
+        """Test that parts are created with the correct tree structure."""
+        part_1 = Part.objects.create(name='Part 1', description='Part 1 description')
+
+        part_2 = Part.objects.create(name='Part 2', description='Part 2 description')
+
+        # Check that both parts have been created with unique tree IDs
+        self.assertNotEqual(part_1.tree_id, part_2.tree_id)
+
+        for p in [part_1, part_2]:
+            self.assertEqual(p.level, 0)
+            self.assertEqual(p.lft, 1)
+            self.assertEqual(p.rght, 2)
+            self.assertIsNone(p.variant_of)
+
+            self.assertEqual(Part.objects.filter(tree_id=p.tree_id).count(), 1)
+
+    def test_complex_tree(self):
+        """Test a complex part template/variant tree."""
+        template = Part.objects.create(
+            name='Top Level Template',
+            description='A top-level template part',
+            is_template=True,
+        )
+
+        # Create some variant parts
+        for x in ['A', 'B', 'C']:
+            variant = Part.objects.create(
+                name=f'Variant {x}',
+                description=f'Variant part {x}',
+                variant_of=template,
+                is_template=True,
+            )
+
+            for ii in range(1, 4):
+                Part.objects.create(
+                    name=f'Sub-Variant {x}-{ii}',
+                    description=f'Sub-variant part {x}-{ii}',
+                    variant_of=variant,
+                )
+
+        template.refresh_from_db()
+
+        self.assertEqual(template.get_children().count(), 3)
+        self.assertEqual(template.get_descendants(include_self=False).count(), 12)
+
+        for variant in template.get_children():
+            self.assertEqual(variant.variant_of, template)
+            self.assertEqual(variant.get_ancestors().count(), 1)
+            self.assertEqual(variant.get_descendants(include_self=False).count(), 3)
+
+            for child in variant.get_children():
+                self.assertEqual(child.variant_of, variant)
+                self.assertEqual(child.get_ancestors().count(), 2)
+                self.assertEqual(child.get_descendants(include_self=False).count(), 0)
+
+        # Let's graft one variant onto another
+        variant_a = Part.objects.get(name='Variant A')
+        variant_b = Part.objects.get(name='Variant B')
+        variant_c = Part.objects.get(name='Variant C')
+
+        variant_a.variant_of = variant_b
+        variant_a.save()
+
+        template.refresh_from_db()
+        self.assertEqual(template.get_children().count(), 2)
+
+        variant_a.refresh_from_db()
+        variant_b.refresh_from_db()
+
+        self.assertEqual(variant_a.get_ancestors().count(), 2)
+        self.assertEqual(variant_a.variant_of, variant_b)
+        self.assertEqual(variant_b.get_children().count(), 4)
+
+        for child in variant_a.get_children():
+            self.assertEqual(child.variant_of, variant_a)
+            self.assertEqual(child.tree_id, template.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 3)
+            self.assertEqual(child.level, 3)
+            self.assertGreater(child.lft, variant_a.lft)
+            self.assertGreater(child.lft, template.lft)
+            self.assertLess(child.rght, variant_a.rght)
+            self.assertLess(child.rght, template.rght)
+            self.assertLess(child.lft, child.rght)
+
+        # Let's graft one variant to its own tree
+        variant_c.variant_of = None
+        variant_c.save()
+
+        template.refresh_from_db()
+        variant_a.refresh_from_db()
+        variant_b.refresh_from_db()
+        variant_c.refresh_from_db()
+
+        # Check total descendent count
+        self.assertEqual(template.get_descendant_count(), 8)
+        self.assertEqual(variant_a.get_descendant_count(), 3)
+        self.assertEqual(variant_b.get_descendant_count(), 7)
+        self.assertEqual(variant_c.get_descendant_count(), 3)
+
+        # Check tree ID values
+        self.assertEqual(template.tree_id, variant_a.tree_id)
+        self.assertEqual(template.tree_id, variant_b.tree_id)
+        self.assertNotEqual(template.tree_id, variant_c.tree_id)
+
+        for child in variant_a.get_children():
+            # template -> variant_b -> variant_b -> child
+            self.assertEqual(child.tree_id, template.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 3)
+            self.assertLess(child.lft, child.rght)
+
+        for child in variant_b.get_children():
+            # template -> variant_b -> child
+            self.assertEqual(child.tree_id, template.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 2)
+            self.assertLess(child.lft, child.rght)
+
+        for child in variant_c.get_children():
+            # variant_c -> child
+            self.assertEqual(child.tree_id, variant_c.tree_id)
+            self.assertEqual(child.get_ancestors().count(), 1)
+            self.assertLess(child.lft, child.rght)
+
+        # Next, let's delete an entire variant - ensure that sub-variants are moved up
+        b_childs = variant_b.get_children()
+
+        with self.assertRaises(ValidationError):
+            variant_b.delete()
+
+        # Mark as inactive to allow deletion
+        variant_b.active = False
+        variant_b.save()
+        variant_b.delete()
+
+        template.refresh_from_db()
+        variant_a.refresh_from_db()
+
+        # Top-level template should have now 4 direct children:
+        # - 3x children grafted from variant_a
+        # - variant_a - previously child of variant a
+        self.assertEqual(template.get_children().count(), 4)
+
+        self.assertEqual(variant_a.get_children().count(), 3)
+        self.assertEqual(variant_a.variant_of, template)
+
+        for child in b_childs:
+            child.refresh_from_db()
+            self.assertEqual(child.variant_of, template)
+            self.assertEqual(child.get_ancestors().count(), 1)
+            self.assertEqual(child.level, 2)
 
 
 class TestTemplateTest(TestCase):
@@ -753,67 +908,39 @@ class PartSubscriptionTests(InvenTreeTestCase):
         self.assertTrue(self.part.is_starred_by(self.user))
 
 
-class BaseNotificationIntegrationTest(InvenTreeTestCase):
-    """Integration test for notifications."""
+class PartNotificationTest(InvenTreeTestCase):
+    """Integration test for part notifications."""
 
     fixtures = ['location', 'category', 'part', 'stock']
 
-    @classmethod
-    def setUpTestData(cls):
-        """Add an email address as part of initialization."""
-        super().setUpTestData()
-
-        # Add email address
-        EmailAddress.objects.create(user=cls.user, email='test@testing.com')
-
-        # Define part that will be tested
-        cls.part = Part.objects.get(name='R_2K2_0805')
-
-    def _notification_run(self, run_class=None):
-        """Run a notification test suit through.
-
-        If you only want to test one class pass it to run_class
-        """
-        # reload notification methods
-        storage.collect(run_class)
-
+    def test_low_stock_notification(self):
+        """Test that a low stocknotification is generated."""
         NotificationEntry.objects.all().delete()
+        NotificationMessage.objects.all().delete()
 
-        # There should be no notification runs
+        part = Part.objects.get(name='R_2K2_0805')
+
+        part.minimum_stock = part.get_stock_count() + 1
+
+        part.save()
+
+        # There should be no notifications created yet,
+        # as there are no "subscribed" users for this part
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
+        self.assertEqual(NotificationMessage.objects.all().count(), 0)
 
-        # Test that notifications run through without errors
-        self.part.minimum_stock = (
-            self.part.get_stock_count() + 1
-        )  # make sure minimum is one higher than current count
-        self.part.save()
-
-        # There should be no notification as no-one is subscribed
-        self.assertEqual(NotificationEntry.objects.all().count(), 0)
-
-        # Subscribe and run again
+        # Subscribe the user to the part
         addUserPermission(self.user, 'part', 'part', 'view')
         self.user.is_active = True
         self.user.save()
-        self.part.set_starred(self.user, True)
-        self.part.save()
+        part.set_starred(self.user, True)
+        part.save()
 
-        # There should be 1 (or 2) notifications - in some cases an error is generated, which creates a subsequent notification
-        self.assertIn(NotificationEntry.objects.all().count(), [1, 2])
+        # Check that a UI notification entry has been created
+        self.assertGreaterEqual(NotificationEntry.objects.all().count(), 1)
+        self.assertGreaterEqual(NotificationMessage.objects.all().count(), 1)
 
+        # No errors were generated during notification process
+        from error_report.models import Error
 
-class PartNotificationTest(BaseNotificationIntegrationTest):
-    """Integration test for part notifications."""
-
-    def test_notification(self):
-        """Test that a notification is generated."""
-        self._notification_run(UIMessageNotification)
-
-        # There should be 1 notification message right now
-        self.assertEqual(NotificationMessage.objects.all().count(), 1)
-
-        # Try again -> cover the already send line
-        self.part.save()
-
-        # There should not be more messages
-        self.assertEqual(NotificationMessage.objects.all().count(), 1)
+        self.assertEqual(Error.objects.count(), 0)

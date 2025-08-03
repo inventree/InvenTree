@@ -153,11 +153,11 @@ class MachineRegistry(
                 if machine.active:
                     machine.initialize()
 
-            self._update_registry_hash()
             logger.info('Initialized %s machines', len(self.machines.keys()))
         else:
-            self._hash = None  # reset hash to force reload hash
             logger.info('Loaded %s machines', len(self.machines.keys()))
+
+        self._update_registry_hash()
 
     def reload_machines(self):
         """Reload all machines from the database."""

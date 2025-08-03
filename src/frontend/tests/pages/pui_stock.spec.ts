@@ -1,4 +1,4 @@
-import { test } from '../baseFixtures.js';
+import { expect, test } from '../baseFixtures.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -199,12 +199,27 @@ test('Stock - Serialize', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-operations').click();
   await page.getByLabel('action-menu-stock-operations-serialize').click();
 
+  // Check for expected placeholder value
+  await expect(
+    page.getByRole('textbox', { name: 'text-field-serial_numbers' })
+  ).toHaveAttribute('placeholder', 'Next serial number: 365');
+
   await page.getByLabel('text-field-serial_numbers').fill('200-250');
 
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page
-    .getByText('Group range 200-250 exceeds allowed quantity')
+    .getByText('Number of unique serial numbers (51) must match quantity (100)')
     .waitFor();
+
+  await page.getByLabel('text-field-serial_numbers').fill('1, 2, 3');
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page
+    .getByText('Number of unique serial numbers (3) must match quantity (100)')
+    .waitFor();
+
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 

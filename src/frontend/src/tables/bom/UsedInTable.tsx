@@ -6,9 +6,9 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { formatDecimal } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
 import {
   DescriptionColumn,
   PartColumn,

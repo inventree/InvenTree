@@ -14,7 +14,11 @@ import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
 from company.models import Company, SupplierPart
-from InvenTree.unit_test import ExchangeRateMixin, addUserPermission
+from InvenTree.unit_test import (
+    ExchangeRateMixin,
+    PluginRegistryMixin,
+    addUserPermission,
+)
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockItem, StockLocation
@@ -23,7 +27,7 @@ from users.models import Owner
 from .models import PurchaseOrder, PurchaseOrderExtraLine, PurchaseOrderLineItem
 
 
-class OrderTest(TestCase, ExchangeRateMixin):
+class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
     """Tests to ensure that the order models are functioning correctly."""
 
     fixtures = [
@@ -65,6 +69,8 @@ class OrderTest(TestCase, ExchangeRateMixin):
         """Test the (auto)locking functionality of the (Purchase)Order model."""
         order = PurchaseOrder.objects.get(pk=1)
 
+        set_global_setting(PurchaseOrder.UNLOCK_SETTING, True)
+
         order.status = PurchaseOrderStatus.PENDING
         order.save()
         self.assertFalse(order.check_locked())
@@ -82,16 +88,18 @@ class OrderTest(TestCase, ExchangeRateMixin):
         order.save()
 
         # Turn on auto-locking
-        set_global_setting(PurchaseOrder.LOCK_SETTING, True)
+        set_global_setting(PurchaseOrder.UNLOCK_SETTING, False)
         # still not locked
         self.assertFalse(order.check_locked())
 
         order.status = PurchaseOrderStatus.COMPLETE
-        # the instance is locked, the db instance is not
+
+        # The instance is locked, the db instance is not
         self.assertFalse(order.check_locked(True))
         self.assertTrue(order.check_locked())
         order.save()
-        # now everything is locked
+
+        # Now everything is locked
         self.assertTrue(order.check_locked(True))
         self.assertTrue(order.check_locked())
 
@@ -99,6 +107,7 @@ class OrderTest(TestCase, ExchangeRateMixin):
         with self.assertRaises(django_exceptions.ValidationError):
             order.description = 'test1'
             order.save()
+
         order.refresh_from_db()
         self.assertEqual(order.description, 'Ordering some screws')
 
@@ -416,6 +425,8 @@ class OrderTest(TestCase, ExchangeRateMixin):
 
         Ensure that a notification is sent when a PurchaseOrder becomes overdue
         """
+        self.ensurePluginsLoaded()
+
         po = PurchaseOrder.objects.get(pk=1)
 
         # Ensure that the right users have the right permissions

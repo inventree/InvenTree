@@ -239,7 +239,8 @@ export default function AdminCenter() {
           'barcode-history',
           'background',
           'errors',
-          'currencies'
+          'currencies',
+          'email'
         ]
       },
       {
@@ -286,7 +287,6 @@ export default function AdminCenter() {
             panels={adminCenterPanels}
             groups={grouping}
             collapsible={true}
-            markCustomPanels={true}
             model='admincenter'
             id={null}
           />

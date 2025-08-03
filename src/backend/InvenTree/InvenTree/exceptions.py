@@ -38,7 +38,15 @@ def log_error(
         scope: The scope of the error (optional)
         plugin: The plugin name associated with this error (optional)
     """
-    from error_report.models import Error
+    import InvenTree.ready
+
+    if any([
+        InvenTree.ready.isImportingData(),
+        InvenTree.ready.isRunningMigrations(),
+        InvenTree.ready.isRunningBackup(),
+    ]):
+        logger.exception('Exception occurred during import, migration, or backup')
+        return
 
     if not path:
         path = ''
@@ -78,6 +86,8 @@ def log_error(
     kind = kind[:128]
 
     try:
+        from error_report.models import Error
+
         Error.objects.create(kind=kind, info=info or '', data=data or '', path=path)
     except Exception:
         # Not much we can do if logging the error throws a db exception

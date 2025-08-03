@@ -1,11 +1,82 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 358
+INVENTREE_API_VERSION = 378
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v378 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10111
+    - Adds "scheduled_to_build" annotated field to BuildLine serializer
+
+v377 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10109
+    - Allow email records to be deleted via the API
+
+v376 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10108
+    - Fix search fields for ReturnOrderLineItem API list endpoint
+
+v375 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10095
+    - Sorts searched fields to keep API stable
+
+v374 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10092
+    - Add nullable to a few details fields that lack it
+    - Add the list of searched fields to the search parameter comments
+
+v373 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
+    - Adds PluginUserSetting model (and associated endpoints)
+    - Remove NotificationSetting model (and associated endpoints)
+
+v372 -> 2025-07-19 : https://github.com/inventree/InvenTree/pull/10056
+    - Adds BOM validation information to the Part API
+
+v371 -> 2025-07-18 : https://github.com/inventree/InvenTree/pull/10042
+    - Adds "setup_quantity" and "attrition" fields to BomItem API endpoints
+    - Remove "overage" field from BomItem API endpoints
+    - Adds "rounding_multiple" field to BomItem API endpoints
+
+v370 -> 2025-07-17 : https://github.com/inventree/InvenTree/pull/10036
+    - Adds optional "assembly_detail" information to BuildLine API endpoint
+    - Adds "include_variants" filter to SalesOrderLineItem API endpoint
+    - Improves the "PartRequirements" API endpoint to include variant aggregations
+
+v369 -> 2025-07-15 : https://github.com/inventree/InvenTree/pull/10023
+    - Adds "note", "updated", "updated_by" fields to the PartParameter API endpoints
+
+v368 -> 2025-07-11 : https://github.com/inventree/InvenTree/pull/9673
+    - Adds 'tax_id' to company model
+    - Adds 'tax_id' to search fields in the 'CompanyList' API endpoint
+
+v367 -> 2025-07-10 : https://github.com/inventree/InvenTree/pull/10001
+    - Adds OAuth2 scopes for importer sessions
+
+v366 -> 2025-07-09 : https://github.com/inventree/InvenTree/pull/9987
+    - Adds "category" filter to BomItem API endpoint
+
+v365 -> 2025-07-09 : https://github.com/inventree/InvenTree/pull/9984
+    - Allow filtering of DataOutput API by "user" field
+    - Allow individual deletion of DataOutput objects via the API
+
+v364 -> 2025-07-06 : https://github.com/inventree/InvenTree/pull/9962
+    - Fix permissions for the DataImportSession API endpoints
+
+v363 -> 2025-07-04 : https://github.com/inventree/InvenTree/pull/9954
+    - Adds "user_detail" field to the ApiToken serializer
+
+v362 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9939
+    - Allow filtering of BuildItem API by "location" of StockItem
+    - Allow filtering of SalesOrderAllocation API by "location" of StockItem
+
+v361 -> 2025-07-03 : https://github.com/inventree/InvenTree/pull/9944
+    - Enable SalesOrderAllocation list to be filtered by part IPN value
+    - Enable SalesOrderAllocation list to be ordered by part MPN value
+
+v360 -> 2025-07-02 : https://github.com/inventree/InvenTree/pull/9937
+    - Provide more detailed StockItem information in the BuildItem serializer
+    - Provide more detailed StockItem information in the SalesOrderAllocation serializer
+
+v359 -> 2025-07-01 : https://github.com/inventree/InvenTree/pull/9909
+    - Fixes annotated types for various part fields
 
 v358 -> 2025-06-25 : https://github.com/inventree/InvenTree/pull/9857
     - Provide list of generated stock items against "StockItemSerialize" API endpoint
@@ -32,7 +103,7 @@ v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
     - Add valid fields to ordering field descriptions
 
 v351 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9602
-    - Adds passwort reset API endpoint for admin users
+    - Adds password reset API endpoint for admin users
 
 v350 -> 2025-06-17 : https://github.com/inventree/InvenTree/pull/9798
     - Adds "can_build" field to the part requirements API endpoint

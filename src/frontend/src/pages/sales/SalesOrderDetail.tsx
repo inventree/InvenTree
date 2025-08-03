@@ -47,7 +47,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
@@ -68,8 +68,7 @@ export default function SalesOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_list,
     pk: id,
@@ -476,8 +475,14 @@ export default function SalesOrderDetail() {
       (order.status == soStatus.PENDING ||
         order.status == soStatus.IN_PROGRESS);
 
-    const canShip: boolean = canEdit && order.status == soStatus.IN_PROGRESS;
-    const canComplete: boolean = canEdit && order.status == soStatus.SHIPPED;
+    const autoComplete = globalSettings.isSet('SALESORDER_SHIP_COMPLETE');
+
+    const canShip: boolean =
+      !autoComplete && canEdit && order.status == soStatus.IN_PROGRESS;
+    const canComplete: boolean =
+      canEdit &&
+      (order.status == soStatus.SHIPPED ||
+        (autoComplete && order.status == soStatus.IN_PROGRESS));
 
     return [
       <PrimaryActionButton
@@ -538,7 +543,7 @@ export default function SalesOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, soStatus]);
+  }, [user, order, soStatus, globalSettings]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
@@ -553,6 +558,16 @@ export default function SalesOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
+  const subtitle: string = useMemo(() => {
+    let t = order.customer_detail?.name || '';
+
+    if (order.customer_reference) {
+      t += ` (${order.customer_reference})`;
+    }
+
+    return t;
+  }, [order]);
+
   return (
     <>
       {issueOrder.modal}
@@ -563,14 +578,13 @@ export default function SalesOrderDetail() {
       {editSalesOrder.modal}
       {duplicateSalesOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Sales Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={soActions}

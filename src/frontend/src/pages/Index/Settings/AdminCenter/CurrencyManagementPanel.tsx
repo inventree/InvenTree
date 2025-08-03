@@ -4,10 +4,10 @@ import { showNotification } from '@mantine/notifications';
 import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../../App';
-import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { showApiErrorMessage } from '../../../../functions/notifications';
@@ -104,7 +104,11 @@ export default function CurrencyManagementPanel() {
       <CurrencyTable setInfo={setInfo} />
       <Divider />
       <GlobalSettingList
-        keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
+        keys={[
+          'INVENTREE_DEFAULT_CURRENCY',
+          'CURRENCY_UPDATE_PLUGIN',
+          'CURRENCY_UPDATE_INTERVAL'
+        ]}
       />
     </Stack>
   );

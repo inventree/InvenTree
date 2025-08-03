@@ -1,19 +1,19 @@
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  CompanyColumn,
   CompletionDateColumn,
   CreatedByColumn,
   CreationDateColumn,
@@ -100,23 +100,17 @@ export function PurchaseOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn({}),
+      ReferenceColumn({
+        switchable: false
+      }),
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
         sortable: true,
-        render: (record: any) => {
-          const supplier = record.supplier_detail ?? {};
-
-          return (
-            <Thumbnail
-              src={supplier?.image}
-              alt={supplier.name}
-              text={supplier.name}
-            />
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record.supplier_detail} />
+        )
       },
       {
         accessor: 'supplier_reference'

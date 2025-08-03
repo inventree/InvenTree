@@ -40,6 +40,7 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_ERRORS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
+{{ globalsetting("INVENTREE_DELETE_EMAIL_DAYS") }}
 
 
 ### Login Settings
@@ -108,6 +109,7 @@ Configuration of pricing data and currency support:
 {{ globalsetting("CURRENCY_UPDATE_INTERVAL") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
+{{ globalsetting("PRICING_AUTO_UPDATE") }}
 {{ globalsetting("PRICING_UPDATE_DAYS") }}
 
 #### Part Pricing

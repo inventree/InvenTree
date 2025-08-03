@@ -107,6 +107,8 @@ class ParameterAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'template', 'data')
 
+    readonly_fields = ('updated', 'updated_by')
+
     autocomplete_fields = ('part', 'template')
 
 

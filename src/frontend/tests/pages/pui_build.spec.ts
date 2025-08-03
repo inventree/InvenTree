@@ -66,7 +66,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
   await loadTab(page, 'Incomplete Outputs');
-  await loadTab(page, 'Required Stock');
+  await loadTab(page, 'Required Parts');
   await loadTab(page, 'Allocated Stock');
 
   // Check for expected text in the table
@@ -80,7 +80,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await page.getByText('Quantity: 25').waitFor();
   await page.getByText('Continuity Checks').waitFor();
   await page
-    .getByRole('row', { name: 'Quantity: 16 No location set' })
+    .getByRole('row', { name: 'Quantity: 16' })
     .getByRole('button')
     .hover();
   await page.getByText('Add Test Result').waitFor();
@@ -109,7 +109,9 @@ test('Build Order - Calendar', async ({ browser }) => {
   await page.getByLabel('calendar-select-filters').click();
   await page.getByRole('button', { name: 'Add Filter' }).click();
   await page.getByPlaceholder('Select filter').fill('category');
-  await page.getByRole('option', { name: 'Category', exact: true }).click();
+  await page
+    .getByRole('option', { name: 'Part Category', exact: true })
+    .click();
   await page.getByLabel('related-field-filter-category').click();
   await page.getByText('Part category, level 1').waitFor();
 
@@ -232,6 +234,8 @@ test('Build Order - Allocation', async ({ browser }) => {
   await page.getByText('Reel Storage').waitFor();
   await page.getByText('R_10K_0805_1%').first().click();
 
+  await page.reload();
+
   // The capacitor stock should be fully allocated
   const cell = await page.getByRole('cell', { name: /C_1uF_0805/ });
   const row = await getRowFromCell(cell);
@@ -241,9 +245,7 @@ test('Build Order - Allocation', async ({ browser }) => {
   // Expand this row
   await cell.click();
   await page.getByRole('cell', { name: '2022-4-27', exact: true }).waitFor();
-  await page
-    .getByRole('cell', { name: 'Electronics Lab/Reel Storage', exact: true })
-    .waitFor();
+  await page.getByRole('cell', { name: 'Reel Storage', exact: true }).waitFor();
 
   // Navigate to the "Incomplete Outputs" tab
   await loadTab(page, 'Incomplete Outputs');
@@ -278,7 +280,7 @@ test('Build Order - Allocation', async ({ browser }) => {
     {
       name: 'Blue Widget',
       ipn: 'widget.blue',
-      available: '39',
+      available: '129',
       required: '5',
       allocated: '5'
     },
@@ -313,7 +315,7 @@ test('Build Order - Allocation', async ({ browser }) => {
 
   // Check for expected buttons on Red Widget
   const redWidget = await page.getByRole('cell', { name: 'Red Widget' });
-  const redRow = await redWidget.locator('xpath=ancestor::tr').first();
+  const redRow = await getRowFromCell(redWidget);
 
   await redRow.getByLabel(/row-action-menu-/i).click();
   await page
@@ -322,6 +324,87 @@ test('Build Order - Allocation', async ({ browser }) => {
   await page
     .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
     .waitFor();
+});
+
+test('Build Order - Tracked Outputs', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/build-order/10/incomplete-outputs'
+  });
+
+  // Create a new build output, serial number 15
+  await page
+    .getByRole('button', { name: 'action-button-add-build-output' })
+    .click();
+  await page.getByLabel('number-field-quantity').fill('1');
+  await page.getByLabel('text-field-serial_numbers').fill('15');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build output created').waitFor();
+
+  const cell = await page.getByRole('cell', { name: '# 15' });
+  const row = await getRowFromCell(cell);
+
+  // Open allocation menu for this output
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Allocate', exact: true }).click();
+
+  // Select a particular tracked item to allocate
+  const allocationCell = await page.getByRole('cell', { name: '002.01-PCBA' });
+  const allocationRow = await getRowFromCell(allocationCell);
+  await clickOnRowMenu(allocationCell);
+  await page
+    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
+    .click();
+
+  // Check for expected text
+  await page
+    .getByLabel('Build Output', { exact: true })
+    .getByText('Serial Number: 15')
+    .waitFor();
+
+  // The stock item should be pre-filled based on serial number
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await allocationRow.getByText('1 / 1').waitFor();
+
+  // Close the allocation wizard
+  await page.getByRole('banner').getByRole('button').click();
+
+  // Check that the output is now allocated as expected
+  await row.getByText('1 / 6').waitFor();
+  await row.getByText('0 / 2').waitFor();
+
+  // Cancel the build output to return to the original state
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build outputs have been cancelled').waitFor();
+
+  // Next, complete a new output and auto-allocate items based on serial number
+  await page
+    .getByRole('button', { name: 'action-button-add-build-output' })
+    .click();
+  await page.getByLabel('number-field-quantity').fill('1');
+  await page.getByLabel('text-field-serial_numbers').fill('16');
+  await page
+    .locator('label')
+    .filter({ hasText: 'Auto Allocate Serial' })
+    .locator('div')
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  const newCell = await page.getByRole('cell', { name: '# 16' });
+  const newRow = await getRowFromCell(newCell);
+
+  await newRow.getByText('1 / 6').waitFor();
+  await newRow.getByText('0 / 2').waitFor();
+
+  // Cancel this output too
+  await clickOnRowMenu(newCell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build outputs have been cancelled').waitFor();
 });
 
 test('Build Order - Filters', async ({ browser }) => {
@@ -425,4 +508,34 @@ test('Build Order - External', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'PO0017' }).waitFor();
   await page.getByRole('cell', { name: 'PO0018' }).waitFor();
+});
+
+test('Build Order - BOM Quantity', async ({ browser }) => {
+  // Validate required build order quantities (based on BOM values)
+
+  const page = await doCachedLogin(browser, { url: 'part/81/bom' });
+
+  // Expected quantity values for the BOM items
+  await page.getByText('15(+50)').waitFor();
+  await page.getByText('10(+100)').waitFor();
+
+  await loadTab(page, 'Part Details');
+
+  // Expected "can build" value: 13
+  const canBuild = await page
+    .getByRole('cell', { name: 'Can Build' })
+    .locator('div');
+  const row = await getRowFromCell(canBuild);
+  await row.getByText('13').waitFor();
+
+  await loadTab(page, 'Build Orders');
+  await page.getByRole('cell', { name: 'BO0016' }).click();
+
+  await loadTab(page, 'Required Parts');
+
+  const line = await page
+    .getByRole('cell', { name: 'Thumbnail R_10K_0805_1%' })
+    .locator('div');
+  const row2 = await getRowFromCell(line);
+  await row2.getByText('1,175').first().waitFor();
 });

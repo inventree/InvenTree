@@ -24,14 +24,15 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
@@ -42,7 +43,6 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
@@ -51,7 +51,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -436,7 +436,10 @@ function LineItemFormRow({
     }
 
     // Selected location is base part's default location
-    if (location === record.part_detail.default_location) {
+    if (
+      record.part_detail?.default_location &&
+      location === record.part_detail.default_location
+    ) {
       return t`Default location selected`;
     }
 

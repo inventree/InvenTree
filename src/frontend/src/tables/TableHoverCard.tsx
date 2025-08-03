@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
 import type { InvenTreeIconType } from '@lib/types/Icons';
@@ -61,7 +60,10 @@ export function TableHoverCard({
       <HoverCard.Dropdown>
         <Stack gap='xs'>
           <Group gap='xs' justify='left'>
-            <IconInfoCircle size='16' color='blue' />
+            <InvenTreeIcon
+              icon={icon ?? 'info'}
+              iconProps={{ size: 16, color: iconColor ?? 'blue' }}
+            />
             <Text fw='bold'>{title}</Text>
           </Group>
           <Divider />

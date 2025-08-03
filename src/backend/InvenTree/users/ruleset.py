@@ -77,7 +77,7 @@ def get_ruleset_models() -> dict:
             # Plugins
             'plugin_pluginconfig',
             'plugin_pluginsetting',
-            'plugin_notificationusersetting',
+            'plugin_pluginusersetting',
             # Misc
             'common_barcodescanresult',
             'common_newsfeedentry',

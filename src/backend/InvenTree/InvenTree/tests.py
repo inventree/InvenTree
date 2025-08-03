@@ -40,7 +40,73 @@ from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, schema, status, version
 from .tasks import offload_task
-from .validators import validate_overage
+
+
+class TreeFixtureTest(TestCase):
+    """Unit testing for our MPTT fixture data."""
+
+    fixtures = ['location', 'category', 'part', 'stock', 'build']
+
+    def node_string(self, node):
+        """Construct a string representation of a tree node."""
+        return ':'.join([
+            str(getattr(node, attr, None))
+            for attr in ['parent', 'level', 'lft', 'rght']
+        ])
+
+    def run_tree_test(self, model):
+        """Run MPTT test for a given model type.
+
+        The intent here is to check that the MPTT tree structure
+        does not change after rebuilding the tree.
+
+        This ensures that the fixutre data is consistent.
+        """
+        nodes = {}
+
+        for instance in model.objects.all():
+            nodes[instance.pk] = self.node_string(instance)
+
+        # Rebuild the tree structure
+        model.objects.rebuild()
+
+        faults = []
+
+        # Check that no nodes have changed
+        for instance in model.objects.all().order_by('pk'):
+            ns = self.node_string(instance)
+            if ns != nodes[instance.pk]:
+                faults.append(
+                    f'Node {instance.pk} changed: {nodes[instance.pk]} -> {ns}'
+                )
+
+        if len(faults) > 0:
+            print(f'!!! Fixture data changed for: {model.__name__} !!!')
+
+            for f in faults:
+                print('-', f)
+
+        assert len(faults) == 0
+
+    def test_part(self):
+        """Test MPTT tree structure for Part model."""
+        from part.models import Part, PartCategory
+
+        self.run_tree_test(Part)
+        self.run_tree_test(PartCategory)
+
+    def test_build(self):
+        """Test MPTT tree structure for Build model."""
+        from build.models import Build
+
+        self.run_tree_test(Build)
+
+    def test_stock(self):
+        """Test MPTT tree structure for Stock model."""
+        from stock.models import StockItem, StockLocation
+
+        self.run_tree_test(StockItem)
+        self.run_tree_test(StockLocation)
 
 
 class HostTest(InvenTreeTestCase):
@@ -395,27 +461,6 @@ class ConversionTest(TestCase):
 
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
-
-    def test_overage(self):
-        """Test overage validator."""
-        validate_overage('100%')
-        validate_overage('10')
-        validate_overage('45.2 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-1')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-2.04 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('105%')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('xxx %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('aaaa')
 
     def test_url_validation(self):
         """Test for AllowedURLValidator."""
@@ -811,12 +856,6 @@ class TestMPTT(TestCase):
 
     fixtures = ['location']
 
-    @classmethod
-    def setUpTestData(cls):
-        """Setup for all tests."""
-        super().setUpTestData()
-        StockLocation.objects.rebuild()
-
     def test_self_as_parent(self):
         """Test that we cannot set self as parent."""
         loc = StockLocation.objects.get(pk=4)
@@ -1153,41 +1192,37 @@ class TestSettings(InvenTreeTestCase):
         # add shortcut
         user_count = user_model.objects.count
         # enable testing mode
-        settings.TESTING_ENV = True
+        with self.settings(TESTING_ENV=True):
+            # nothing set
+            self.run_reload()
+            self.assertEqual(user_count(), 1)
 
-        # nothing set
-        self.run_reload()
-        self.assertEqual(user_count(), 1)
+            # not enough set
+            self.run_reload({'INVENTREE_ADMIN_USER': 'admin'})
+            self.assertEqual(user_count(), 1)
 
-        # not enough set
-        self.run_reload({'INVENTREE_ADMIN_USER': 'admin'})
-        self.assertEqual(user_count(), 1)
+            # enough set
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': 'admin',  # set username
+                'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
+                'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
+            })
+            self.assertEqual(user_count(), 2)
 
-        # enough set
-        self.run_reload({
-            'INVENTREE_ADMIN_USER': 'admin',  # set username
-            'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
-            'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
-        })
-        self.assertEqual(user_count(), 2)
+            username2 = 'testuser1'
+            email2 = 'test1@testing.com'
+            password2 = 'password1'
 
-        username2 = 'testuser1'
-        email2 = 'test1@testing.com'
-        password2 = 'password1'
-
-        # create user manually
-        user_model.objects.create_user(username2, email2, password2)
-        self.assertEqual(user_count(), 3)
-        # check it will not be created again
-        self.run_reload({
-            'INVENTREE_ADMIN_USER': username2,
-            'INVENTREE_ADMIN_EMAIL': email2,
-            'INVENTREE_ADMIN_PASSWORD': password2,
-        })
-        self.assertEqual(user_count(), 3)
-
-        # make sure to clean up
-        settings.TESTING_ENV = False
+            # create user manually
+            user_model.objects.create_user(username2, email2, password2)
+            self.assertEqual(user_count(), 3)
+            # check it will not be created again
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': username2,
+                'INVENTREE_ADMIN_EMAIL': email2,
+                'INVENTREE_ADMIN_PASSWORD': password2,
+            })
+            self.assertEqual(user_count(), 3)
 
     def test_initial_install(self):
         """Test if install of plugins on startup works."""
@@ -1809,6 +1844,9 @@ class URLCompatibilityTest(InvenTreeTestCase):
         ('/stock/item/1/', '/web/stock/item/1/'),
     ]
 
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
     def test_legacy_urls(self):
         """Test legacy URLs."""
         for old_url, new_url in self.URL_MAPPINGS:

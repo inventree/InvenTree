@@ -16,6 +16,7 @@ from rest_framework.response import Response
 import build.serializers
 import common.models
 import part.models as part_models
+import stock.models as stock_models
 import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
@@ -531,8 +532,11 @@ class BuildLineEndpoint:
         try:
             params = self.request.query_params
 
+            kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
+            kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
             kwargs['part_detail'] = str2bool(params.get('part_detail', True))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+            kwargs['allocations'] = str2bool(params.get('allocations', True))
         except AttributeError:
             pass
 
@@ -658,7 +662,8 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
         # Create the build output(s)
         outputs = serializer.save()
 
-        response = stock.serializers.StockItemSerializer(outputs, many=True)
+        queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
+        response = stock.serializers.StockItemSerializer(queryset, many=True)
 
         # Return the created outputs
         return Response(response.data, status=status.HTTP_201_CREATED)
@@ -829,6 +834,18 @@ class BuildItemFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(install_into=None)
         return queryset.filter(install_into=None)
+
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(serializers.IntegerField(help_text=_('Location')))
+    def filter_location(self, queryset, name, location):
+        """Filter the queryset based on the specified location."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(stock_item__location__in=locations)
 
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):

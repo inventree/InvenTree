@@ -20,14 +20,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { TableColumn } from '@lib/types/Tables';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
 import {
@@ -36,19 +42,32 @@ import {
   useCompleteBuildOutputsForm,
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
-import { useStockFields } from '../../forms/StockForms';
+import {
+  type StockOperationProps,
+  useStockFields,
+  useStockItemSerializeFields
+} from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import {
+  BatchFilter,
+  HasBatchCodeFilter,
+  IsSerializedFilter,
+  SerialFilter,
+  SerialGTEFilter,
+  SerialLTEFilter,
+  StatusFilterOptions,
+  StockLocationFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 import BuildLineTable from './BuildLineTable';
 
@@ -138,8 +157,10 @@ export default function BuildOutputTable({
     return build.part ?? -1;
   }, [build.part]);
 
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
   // Fetch the test templates associated with the partId
-  const { data: testTemplates } = useQuery({
+  const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
     queryKey: ['buildoutputtests', partId, build],
     queryFn: async () => {
       if (!partId || partId < 0) {
@@ -160,8 +181,7 @@ export default function BuildOutputTable({
             required: true
           }
         })
-        .then((response) => response.data)
-        .catch(() => []);
+        .then((response) => response.data);
     }
   });
 
@@ -184,8 +204,7 @@ export default function BuildOutputTable({
             tracked: true
           }
         })
-        .then((response) => response.data)
-        .catch(() => []);
+        .then((response) => response.data);
     }
   });
 
@@ -266,12 +285,18 @@ export default function BuildOutputTable({
     title: t`Add Build Output`,
     modalId: 'add-build-output',
     fields: buildOutputFields,
+    successMessage: t`Build output created`,
     timeout: 10000,
     initialData: {
       batch_code: build.batch,
       location: build.destination ?? build.part_detail?.default_location
     },
-    table: table
+    onFormSuccess: () => {
+      // Refresh all associated table data
+      refetchTrackedItems();
+      refetchTestTemplates();
+      table.refreshTable(true);
+    }
   });
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
@@ -280,7 +305,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -289,7 +314,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -298,7 +323,7 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: () => {
-      table.refreshTable();
+      table.refreshTable(true);
       refreshBuild();
     }
   });
@@ -345,6 +370,28 @@ export default function BuildOutputTable({
     }
   });
 
+  const serializeStockFields = useStockItemSerializeFields({
+    partId: selectedOutputs[0]?.part,
+    trackable: selectedOutputs[0]?.part_detail?.trackable,
+    modalId: 'build-output-serialize'
+  });
+
+  const serializeOutput = useCreateApiFormModal({
+    url: ApiEndpoints.stock_serialize,
+    pk: selectedOutputs[0]?.pk,
+    title: t`Serialize Build Output`,
+    modalId: 'build-output-serialize',
+    fields: serializeStockFields,
+    initialData: {
+      quantity: selectedOutputs[0]?.quantity ?? 1,
+      destination: selectedOutputs[0]?.location ?? build.destination
+    },
+    onFormSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -352,12 +399,39 @@ export default function BuildOutputTable({
         label: t`Status`,
         description: t`Filter by stock status`,
         choiceFunction: StatusFilterOptions(ModelType.stockitem)
-      }
+      },
+      StockLocationFilter(),
+      HasBatchCodeFilter(),
+      BatchFilter(),
+      IsSerializedFilter(),
+      SerialFilter(),
+      SerialLTEFilter(),
+      SerialGTEFilter()
     ];
   }, []);
 
+  const stockOperationProps: StockOperationProps = useMemo(() => {
+    return {
+      items: table.selectedRecords,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable,
+      filters: {}
+    };
+  }, [table.selectedRecords, table.refreshTable]);
+
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    assign: false,
+    delete: false,
+    add: false,
+    count: false,
+    remove: false
+  });
+
   const tableActions = useMemo(() => {
     return [
+      stockAdjustActions.dropdown,
       <ActionButton
         key='complete-selected-outputs'
         tooltip={t`Complete selected outputs`}
@@ -398,10 +472,18 @@ export default function BuildOutputTable({
         onClick={addBuildOutput.open}
       />
     ];
-  }, [build, user, table.selectedRecords, table.hasSelectedRecords]);
+  }, [
+    build,
+    user,
+    table.selectedRecords,
+    table.hasSelectedRecords,
+    stockAdjustActions.dropdown
+  ]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const production = build?.status == buildStatus.PRODUCTION;
+
       return [
         RowViewAction({
           title: t`View Build Output`,
@@ -413,22 +495,39 @@ export default function BuildOutputTable({
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
           color: 'blue',
-          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
+          hidden:
+            !production ||
+            !hasTrackedItems ||
+            !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon='plus' />,
           onClick: () => {
             setSelectedOutputs([record]);
-            openDrawer();
+            openAllocationDrawer();
           }
         },
         {
           title: t`Deallocate`,
           tooltip: t`Deallocate stock from build output`,
           color: 'red',
-          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
+          hidden:
+            !production ||
+            !hasTrackedItems ||
+            !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon='minus' />,
           onClick: () => {
             setSelectedOutputs([record]);
             deallocateBuildOutput.open();
+          }
+        },
+        {
+          title: t`Serialize`,
+          tooltip: t`Serialize build output`,
+          color: 'blue',
+          hidden: !record.part_detail?.trackable || !!record.serial,
+          icon: <InvenTreeIcon icon='serial' />,
+          onClick: () => {
+            setSelectedOutputs([record]);
+            serializeOutput.open();
           }
         },
         {
@@ -470,7 +569,7 @@ export default function BuildOutputTable({
         }
       ];
     },
-    [user, partId, hasTrackedItems]
+    [buildStatus, user, partId, hasTrackedItems]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -572,8 +671,15 @@ export default function BuildOutputTable({
     trackedItems
   ]);
 
-  const [drawerOpen, { open: openDrawer, close: closeDrawer }] =
-    useDisclosure(false);
+  const [
+    allocationDrawerOpen,
+    { open: openAllocationDrawer, close: closeAllocationDrawer }
+  ] = useDisclosure(false);
+
+  const closeDrawer = useCallback(() => {
+    closeAllocationDrawer();
+    refetchTrackedItems();
+  }, [closeAllocationDrawer, refetchTrackedItems]);
 
   return (
     <>
@@ -583,10 +689,12 @@ export default function BuildOutputTable({
       {editBuildOutput.modal}
       {deallocateBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
+      {serializeOutput.modal}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
       <OutputAllocationDrawer
         build={build}
         output={selectedOutputs[0]}
-        opened={drawerOpen}
+        opened={allocationDrawerOpen}
         close={closeDrawer}
       />
       <Stack gap='xs'>
@@ -621,7 +729,7 @@ export default function BuildOutputTable({
             onRowClick: (record: any) => {
               if (hasTrackedItems && !!record.serial) {
                 setSelectedOutputs([record]);
-                openDrawer();
+                openAllocationDrawer();
               }
             }
           }}

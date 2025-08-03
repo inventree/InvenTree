@@ -154,7 +154,7 @@ def generateTestKey(test_name: str) -> str:
     return key
 
 
-def constructPathString(path, max_chars=250):
+def constructPathString(path: list[str], max_chars: int = 250) -> str:
     """Construct a 'path string' for the given path.
 
     Arguments:
@@ -1095,16 +1095,17 @@ def pui_url(subpath: str) -> str:
 
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
+    from plugin import PluginMixinEnum
     from plugin.registry import registry
 
     # Check if plugins are even enabled
     if not settings.PLUGINS_ENABLED:
         return False
 
-    # Fetch plugins
-    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Fetch active plugins
+    plugins = registry.with_mixin(PluginMixinEnum.BASE)
+
     # Format list
     return [
-        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
-        for plg in plug_list
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]

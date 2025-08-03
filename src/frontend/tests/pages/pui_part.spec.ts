@@ -1,9 +1,11 @@
 import { test } from '../baseFixtures';
 import {
   clearTableFilters,
+  clickOnRowMenu,
   getRowFromCell,
   loadTab,
-  navigate
+  navigate,
+  setTableChoiceFilter
 } from '../helpers';
 import { doCachedLogin } from '../login';
 
@@ -80,26 +82,46 @@ test('Parts - Supplier Parts', async ({ browser }) => {
 });
 
 test('Parts - BOM', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/87/bom' });
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
 
+  // Display all active assemblies with validated BOMs
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'assembly', 'Yes');
+  await setTableChoiceFilter(page, 'active', 'Yes');
+  await setTableChoiceFilter(page, 'BOM Valid', 'Yes');
+
+  await page.getByText('1 - 12 / 12').waitFor();
+
+  // Navigate to BOM for a particular assembly
+  await navigate(page, 'part/87/bom');
   await loadTab(page, 'Bill of Materials');
-  await page.waitForLoadState('networkidle');
+
+  // Mouse-hover to display BOM validation info for this assembly
+  await page.getByRole('button', { name: 'bom-validation-info' }).hover();
+  await page
+    .getByText('The Bill of Materials for this part has been validated')
+    .waitFor();
+  await page.getByText('Validated On: 2025-07-23').waitFor();
+  await page.getByText('Robert Shuruncle').waitFor();
+
+  // Move the mouse away
+  await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
   const cell = await page.getByRole('cell', {
     name: 'Small plastic enclosure, black',
     exact: true
   });
-  await cell.click({ button: 'right' });
+
+  await clickOnRowMenu(cell);
 
   // Check for expected context menu actions
-  await page.getByRole('button', { name: 'Edit', exact: true }).waitFor();
-  await page.getByRole('button', { name: 'Delete', exact: true }).waitFor();
-  await page
-    .getByRole('button', { name: 'View details', exact: true })
-    .waitFor();
+  await page.getByRole('menuitem', { name: 'Edit', exact: true }).waitFor();
+  await page.getByRole('menuitem', { name: 'Delete', exact: true }).waitFor();
 
   await page
-    .getByRole('button', { name: 'Edit Substitutes', exact: true })
+    .getByRole('menuitem', { name: 'Edit Substitutes', exact: true })
     .click();
   await page.getByText('Edit BOM Substitutes').waitFor();
   await page.getByText('1551ACLR').first().waitFor();
@@ -126,13 +148,20 @@ test('Part - Editing', async ({ browser }) => {
     .fill(keywords ? '' : 'table furniture');
 
   // Test URL validation
-  await page.getByLabel('text-field-link').fill('htxp-??QQQ++');
+  await page
+    .getByRole('textbox', { name: 'text-field-link' })
+    .fill('htxp-??QQQ++');
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill with an empty URL
-  await page.getByLabel('text-field-link').fill('');
+  const description = await page
+    .getByLabel('text-field-description')
+    .inputValue();
+
+  await page.getByRole('textbox', { name: 'text-field-link' }).fill('');
+  await page.getByLabel('text-field-description').fill(`${description}+`);
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
@@ -181,6 +210,45 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('2022-04-29').waitFor();
 });
 
+test('Parts - Requirements', async ({ browser }) => {
+  // Navigate to the "Widget Assembly" part detail page
+  // This part has multiple "variants"
+  // We expect that the template page includes variant requirements
+  const page = await doCachedLogin(browser, { url: 'part/77/details' });
+
+  // Check top-level badges
+  await page.getByText('In Stock: 209').waitFor();
+  await page.getByText('Available: 204').waitFor();
+  await page.getByText('Required: 275').waitFor();
+  await page.getByText('In Production: 24').waitFor();
+
+  // Check requirements details
+  await page.getByText('204 / 209').waitFor(); // Available stock
+  await page.getByText('0 / 100').waitFor(); // Allocated to build orders
+  await page.getByText('5 / 175').waitFor(); // Allocated to sales orders
+  await page.getByText('24 / 214').waitFor(); // In production
+
+  // Let's check out the "variants" for this part, too
+  await navigate(page, 'part/81/details'); // WID-REV-A
+  await page.getByText('WID-REV-A', { exact: true }).first().waitFor();
+  await page.getByText('In Stock: 165').waitFor();
+  await page.getByText('Required: 75').waitFor();
+
+  await navigate(page, 'part/903/details'); // WID-REV-B
+  await page.getByText('WID-REV-B', { exact: true }).first().waitFor();
+
+  await page.getByText('In Stock: 44').waitFor();
+  await page.getByText('Available: 39').waitFor();
+  await page.getByText('Required: 100').waitFor();
+  await page.getByText('In Production: 10').waitFor();
+
+  await page.getByText('39 / 44').waitFor(); // Available stock
+  await page.getByText('5 / 100').waitFor(); // Allocated to sales orders
+  await page.getByText('10 / 125').waitFor(); // In production
+
+  await page.waitForTimeout(2500);
+});
+
 test('Parts - Allocations', async ({ browser }) => {
   // Let's look at the allocations for a single stock item
   const page = await doCachedLogin(browser, { url: 'stock/item/324/' });
@@ -218,9 +286,7 @@ test('Parts - Allocations', async ({ browser }) => {
   // Expand allocations against BO0001
   await build_order_cell.click();
   await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
-  await page
-    .getByRole('cell', { name: 'Factory/Office Block/Room 101', exact: true })
-    .waitFor();
+  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
   await build_order_cell.click();
 
   // Check row options for BO0001
@@ -260,7 +326,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
 
   // Part with history
-  await navigate(page, 'part/108/pricing');
+  await navigate(page, 'part/108/pricing', { waitUntil: 'networkidle' });
   await page.getByText('A chair - with blue paint').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -415,17 +481,46 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByLabel('choice-field-data').click();
   await page.getByRole('option', { name: 'Green' }).click();
 
+  await page.getByLabel('text-field-note').fill('A custom note field');
+
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
   await page.getByText('Is this part polarized?').click();
+
+  // Submit with "false" value
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check for the expected values in the table
+  let row = await getRowFromCell(
+    await page.getByRole('cell', { name: 'Polarized', exact: true })
+  );
+  await row.getByRole('cell', { name: 'No', exact: true }).waitFor();
+  await row.getByRole('cell', { name: 'allaccess' }).waitFor();
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Toggle false to true
   await page
     .locator('label')
     .filter({ hasText: 'DataParameter Value' })
     .locator('div')
     .first()
     .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  row = await getRowFromCell(
+    await page.getByRole('cell', { name: 'Polarized', exact: true })
+  );
+  await row.getByRole('cell', { name: 'Yes', exact: true }).waitFor();
+
+  await page.getByText('1 - 1 / 1').waitFor();
+
+  // Finally, delete the parameter
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  await page.getByText('No records found').first().waitFor();
 });
 
 test('Parts - Parameter Filtering', async ({ browser }) => {

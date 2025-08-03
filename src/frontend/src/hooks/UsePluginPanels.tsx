@@ -14,7 +14,7 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Type definition for a plugin panel which extends the standard PanelType
@@ -53,6 +53,10 @@ export function usePluginPanels({
   const pluginQuery = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
     queryKey: ['custom-plugin-panels', model, id],
+    throwOnError: (error: any) => {
+      console.error('ERR: Failed to fetch plugin panels');
+      return false;
+    },
     queryFn: async () => {
       if (!pluginPanelsEnabled || !model) {
         return Promise.resolve([]);
@@ -69,11 +73,7 @@ export function usePluginPanels({
             target_id: id
           }
         })
-        .then((response: any) => response.data)
-        .catch((_error: any) => {
-          console.error('ERR: Failed to fetch plugin panels');
-          return [];
-        });
+        .then((response: any) => response.data);
     }
   });
 

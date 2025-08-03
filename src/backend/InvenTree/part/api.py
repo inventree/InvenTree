@@ -11,7 +11,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import part.filters
@@ -613,32 +612,8 @@ class PartCopyBOM(CreateAPI):
 class PartValidateBOM(RetrieveUpdateAPI):
     """API endpoint for 'validating' the BOM for a given Part."""
 
-    class BOMValidateSerializer(serializers.ModelSerializer):
-        """Simple serializer class for validating a single BomItem instance."""
-
-        class Meta:
-            """Metaclass defines serializer fields."""
-
-            model = Part
-            fields = ['checksum', 'valid']
-
-        checksum = serializers.CharField(read_only=True, source='bom_checksum')
-
-        valid = serializers.BooleanField(
-            write_only=True,
-            default=False,
-            label=_('Valid'),
-            help_text=_('Validate entire Bill of Materials'),
-        )
-
-        def validate_valid(self, valid):
-            """Check that the 'valid' input was flagged."""
-            if not valid:
-                raise ValidationError(_('This option must be selected'))
-
     queryset = Part.objects.all()
-
-    serializer_class = BOMValidateSerializer
+    serializer_class = part_serializers.PartBomValidateSerializer
 
     def update(self, request, *args, **kwargs):
         """Validate the referenced BomItem instance."""
@@ -652,9 +627,14 @@ class PartValidateBOM(RetrieveUpdateAPI):
         serializer = self.get_serializer(part, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        part.validate_bom(request.user)
+        valid = str2bool(serializer.validated_data.get('valid', False))
 
-        return Response({'checksum': part.bom_checksum})
+        part.validate_bom(request.user, valid=valid)
+
+        # Re-serialize the response
+        serializer = self.get_serializer(part, many=False)
+
+        return Response(serializer.data)
 
 
 class PartFilter(rest_filters.FilterSet):
@@ -712,8 +692,8 @@ class PartFilter(rest_filters.FilterSet):
     def filter_has_ipn(self, queryset, name, value):
         """Filter by whether the Part has an IPN (internal part number) or not."""
         if str2bool(value):
-            return queryset.exclude(IPN='')
-        return queryset.filter(IPN='')
+            return queryset.exclude(IPN='').exclude(IPN=None)
+        return queryset.filter(Q(IPN='') | Q(IPN=None)).distinct()
 
     # Regex filter for name
     name_regex = rest_filters.CharFilter(
@@ -869,23 +849,8 @@ class PartFilter(rest_filters.FilterSet):
     )
 
     bom_valid = rest_filters.BooleanFilter(
-        label=_('BOM Valid'), method='filter_bom_valid'
+        label=_('BOM Valid'), field_name='bom_validated'
     )
-
-    def filter_bom_valid(self, queryset, name, value):
-        """Filter by whether the BOM for the part is valid or not."""
-        # Limit queryset to active assemblies
-        queryset = queryset.filter(active=True, assembly=True).distinct()
-
-        # Iterate through the queryset
-        # TODO: We should cache BOM checksums to make this process more efficient
-        pks = []
-
-        for item in queryset:
-            if item.is_bom_valid() == value:
-                pks.append(item.pk)
-
-        return queryset.filter(pk__in=pks)
 
     starred = rest_filters.BooleanFilter(label='Starred', method='filter_starred')
 
@@ -1377,8 +1342,15 @@ class PartParameterAPIMixin:
     def get_queryset(self, *args, **kwargs):
         """Override get_queryset method to prefetch related fields."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related('part', 'template')
+        queryset = queryset.prefetch_related('part', 'template', 'updated_by')
         return queryset
+
+    def get_serializer_context(self):
+        """Pass the 'request' object through to the serializer context."""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this API endpoint.
@@ -1405,7 +1377,7 @@ class PartParameterFilter(rest_filters.FilterSet):
         """Metaclass options for the filterset."""
 
         model = PartParameter
-        fields = ['template']
+        fields = ['template', 'updated_by']
 
     part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(), method='filter_part'
@@ -1438,7 +1410,7 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['name', 'data', 'part', 'template']
+    ordering_fields = ['name', 'data', 'part', 'template', 'updated', 'updated_by']
 
     ordering_field_aliases = {
         'name': 'template__name',
@@ -1533,9 +1505,23 @@ class BomFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter the queryset based on the specified part."""
         return queryset.filter(part.get_bom_item_filter())
+
+    category = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        method='filter_category',
+        label=_('Category'),
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_category(self, queryset, name, category):
+        """Filter the queryset based on the specified PartCategory."""
+        cats = category.get_descendants(include_self=True)
+
+        return queryset.filter(sub_part__category__in=cats)
 
     uses = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(), method='filter_uses', label=_('Uses')
@@ -1562,14 +1548,12 @@ class BomMixin:
         """
         # Do we wish to include extra detail?
         try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', None))
-        except AttributeError:
-            pass
+            params = self.request.query_params
 
-        try:
-            kwargs['sub_part_detail'] = str2bool(
-                self.request.GET.get('sub_part_detail', None)
-            )
+            kwargs['can_build'] = str2bool(params.get('can_build', True))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
+
         except AttributeError:
             pass
 
@@ -1610,6 +1594,9 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     ordering_fields = [
         'can_build',
         'quantity',
+        'setup_quantity',
+        'attrition',
+        'rounding_multiple',
         'sub_part',
         'available_stock',
         'allow_variants',

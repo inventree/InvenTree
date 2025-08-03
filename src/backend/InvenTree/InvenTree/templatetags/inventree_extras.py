@@ -38,7 +38,7 @@ def decimal(x, *args, **kwargs):
     return InvenTree.helpers.decimal2string(x)
 
 
-@register.simple_tag(takes_context=True)
+@register.simple_tag()
 def render_date(date_object):
     """Renders a date object as a string."""
     if date_object is None:
@@ -150,11 +150,6 @@ def setting_object(key, *args, **kwargs):
 
         return plugin.models.PluginSetting.get_setting_object(
             key, plugin=plg, cache=cache
-        )
-
-    elif 'method' in kwargs:
-        return plugin.models.NotificationUserSetting.get_setting_object(
-            key, user=kwargs['user'], method=kwargs['method'], cache=cache
         )
 
     elif 'user' in kwargs:

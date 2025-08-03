@@ -32,7 +32,6 @@ from InvenTree.unit_test import (
 )
 from part.models import Part, PartParameterTemplate
 from plugin import registry
-from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
@@ -472,7 +471,7 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIsNone(cache.get(cache_key))
 
         # First request should set cache
-        val = InvenTreeSetting.get_setting(key)
+        val = InvenTreeSetting.get_setting(key, cache=True)
         self.assertEqual(cache.get(cache_key).value, val)
 
         for val in ['A', '{{ part.IPN }}', 'C']:
@@ -662,6 +661,21 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the user settings API."""
 
+    def test_unauthenticated_user(self):
+        """Test access with unauthenticated user."""
+        self.client.logout()
+
+        # Check list API endpoint
+        url = reverse('api-user-setting-list')
+        response = self.get(url, expected_code=401).data
+        self.assertIn(
+            'Authentication credentials were not provided', str(response['detail'])
+        )
+
+        # Check the detail API endpoint
+        url = reverse('api-user-setting-detail', kwargs={'key': 'LABEL_INLINE'})
+        self.get(url, expected_code=401)
+
     def test_user_settings_api_list(self):
         """Test list URL for user settings."""
         url = reverse('api-user-setting-list')
@@ -795,28 +809,6 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         # Note that this particular setting has a MinValueValidator(1) associated with it
         for v in [0, -1, -5]:
             response = self.patch(url, {'value': v}, expected_code=400)
-
-
-class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
-    """Tests for the notification user settings API."""
-
-    def test_api_list(self):
-        """Test list URL."""
-        url = reverse('api-notification-setting-list')
-
-        self.get(url, expected_code=200)
-
-    def test_setting(self):
-        """Test the string name for NotificationUserSetting."""
-        NotificationUserSetting.set_setting(
-            'NOTIFICATION_METHOD_MAIL', True, change_user=self.user, user=self.user
-        )
-        test_setting = NotificationUserSetting.get_setting_object(
-            'NOTIFICATION_METHOD_MAIL', user=self.user
-        )
-        self.assertEqual(
-            str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): True'
-        )
 
 
 class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):

@@ -22,12 +22,12 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
@@ -56,7 +56,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
 /**
@@ -85,21 +85,21 @@ export function useStockFields({
   const batchGenerator = useBatchCodeGenerator({
     modalId: modalId,
     initialQuery: {
-      part: partInstance?.pk || partId
+      part: partId
     }
   });
 
   const serialGenerator = useSerialNumberGenerator({
     modalId: modalId,
     initialQuery: {
-      part: partInstance?.pk || partId
+      part: partId
     }
   });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        value: partInstance.pk,
+        value: partId || partInstance?.pk,
         disabled: !create,
         filters: {
           active: create ? true : undefined
@@ -107,6 +107,14 @@ export function useStockFields({
         onValueChange: (value, record) => {
           // Update the tracked part instance
           setPartInstance(record);
+
+          serialGenerator.update({
+            part: value
+          });
+
+          batchGenerator.update({
+            part: value
+          });
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
@@ -332,9 +340,10 @@ export function useStockItemSerializeFields({
   partId: number;
   trackable: boolean;
   modalId: string;
-}) {
+}): ApiFormFieldSet {
   const serialGenerator = useSerialNumberGenerator({
     modalId: modalId,
+    isEnabled: () => trackable,
     initialQuery: {
       part: partId
     }
@@ -926,7 +935,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
-      default: items[0]?.part_detail.default_location,
+      default: items[0]?.part_detail?.default_location,
       filters: {
         structural: false
       }
@@ -1092,10 +1101,7 @@ function useStockOperationModal({
         .get(url, {
           params: params
         })
-        .then((response) => response.data ?? [])
-        .catch(() => {
-          return [];
-        });
+        .then((response) => response.data ?? []);
     }
   });
 
@@ -1360,7 +1366,7 @@ export function useFindSerialNumberForm({
       }
     },
     checkClose: (data, form) => {
-      if (data.length == 0) {
+      if (!data || data?.length == 0) {
         form.setError('serial', { message: t`No matching items` });
         return false;
       }
