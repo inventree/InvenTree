@@ -64,8 +64,7 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
 
     def prefetch_queryset(self, queryset):
         """Prefetch related data for the queryset."""
-        # TODO
-        return queryset
+        return queryset.prefetch_related('stock_items')
 
     def export_data(
         self, queryset, serializer_class, headers, context, output, **kwargs
