@@ -45,6 +45,13 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
         """Supported if the base model is Part."""
         return model_class == Part and serializer_class == PartSerializer
 
+    def generate_filename(self, model_class, export_format: str) -> str:
+        """Generate a filename for the exported part stocktake data."""
+        from InvenTree.helpers import current_date
+
+        date = current_date().isoformat()
+        return f'InvenTree_Stocktake_{date}.{export_format}'
+
     def update_headers(self, headers, context, **kwargs):
         """Update headers for the export."""
         # Add in the 'stocktake' headers
