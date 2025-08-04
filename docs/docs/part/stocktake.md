@@ -138,5 +138,4 @@ The following settings are available for stocktake:
 {{ globalsetting("STOCKTAKE_ENABLE") }}
 {{ globalsetting("STOCKTAKE_EXCLUDE_EXTERNAL") }}
 {{ globalsetting("STOCKTAKE_AUTO_DAYS") }}
-{{ globalsetting("STOCKTAKE_DELETE_REPORT_DAYS") }}
-{{ globalsetting("DISPLAY_PROFILE_INFO") }}
+{{ globalsetting("STOCKTAKE_DELETE_DAYS") }}

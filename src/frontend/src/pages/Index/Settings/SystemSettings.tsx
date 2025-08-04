@@ -253,7 +253,7 @@ export default function SystemSettings() {
               'STOCKTAKE_ENABLE',
               'STOCKTAKE_EXCLUDE_EXTERNAL',
               'STOCKTAKE_AUTO_DAYS',
-              'STOCKTAKE_DELETE_REPORT_DAYS'
+              'STOCKTAKE_DELETE_DAYS'
             ]}
           />
         )

@@ -1084,19 +1084,17 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
-        'description': _(
-            'Number of days between automatic stock history recording (set to zero to disable)'
-        ),
-        'validator': [int, MinValueValidator(0)],
+        'description': _('Number of days between automatic stock history recording'),
+        'validator': [int, MinValueValidator(1)],
         'default': 7,
         'units': _('days'),
     },
-    'STOCKTAKE_DELETE_REPORT_DAYS': {
+    'STOCKTAKE_DELETE_DAYS': {
         'name': _('Stock History Deletion Interval'),
         'description': _(
             'Stock history entries will be deleted after specified number of days'
         ),
-        'default': 30,
+        'default': 365,
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
     },
