@@ -596,10 +596,29 @@ ALLOWED_IMAGE_CTS = common.validators.get_model_options(InvenTreeImageUploadMixi
 class UploadedImageSerializer(
     InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
 ):
-    """Serializer class for the InvenTreeImage model."""
+    """Serializer for InvenTreeImage without using SlugRelatedField."""
+
+    image = serializers.ImageField(required=False, allow_null=True)
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    # we accept the model name here
+    content_type = serializers.ChoiceField(
+        choices=[],  # populated in __init__
+        write_only=True,
+        help_text=_('Type of object this image is attached to'),
+        label=_('Content Type'),
+    )
+
+    existing_image = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=False,
+        help_text=_('Filename of an existing image'),
+        label=_('Existing Image'),
+    )
 
     class Meta:
-        """Serializer metaclass."""
+        """Meta options for the UploadedImageSerializer."""
 
         model = common_models.InvenTreeImage
         fields = [
@@ -608,105 +627,65 @@ class UploadedImageSerializer(
             'image',
             'thumbnail',
             'content_type',
-            'remote_image',
             'existing_image',
+            'remote_image',
             'object_id',
         ]
         read_only_fields = ['pk', 'thumbnail']
 
     def __init__(self, *args, **kwargs):
-        """Override the content_type field to provide dynamic choices."""
+        """Initialize the serializer and set allowed content types."""
         super().__init__(*args, **kwargs)
-
+        # inject your allowed list
         self.fields['content_type'].choices = ALLOWED_IMAGE_CTS
 
-    image = InvenTree.serializers.InvenTreeImageSerializerField(
-        required=False, allow_null=True
-    )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-
-    content_type = serializers.ChoiceField(
-        choices=[],  # Will be populated dynamically
-        help_text=_('The type of object this image is attached to'),
-        label=_('Content Type'),
-        write_only=True,
-    )
-
-    # Allow selection of an existing image file
-    existing_image = serializers.CharField(
-        label=_('Existing Image'),
-        help_text=_('Filename of an existing image'),
-        write_only=True,
-        required=False,
-        allow_blank=False,
-    )
-
-    def save(self):
-        """Override the save method.
-
-        Handles the existing_image field.
-        If this is the first image for (model_type, model_id), marks it as primary.
-        """
-        instance = super().save()
-        data = self.validated_data
-
-        existing_image = data.pop('existing_image', None)
-        if existing_image:
-            instance.image = existing_image
-            instance.save()
-
-        remote_img = getattr(self, 'remote_image_file', None)
-
+    def validate_content_type(self, ct_value):
+        """Turn the incoming model-name string into a real ContentType instance."""
         try:
-            if remote_img and instance:
-                fmt = remote_img.format or 'PNG'
-                buffer = io.BytesIO()
-                remote_img.save(buffer, format=fmt)
-
-                # Construct a simplified name for the image
-                filename = f'part_{instance.pk}_image.{fmt.lower()}'
-
-                instance.image.save(filename, ContentFile(buffer.getvalue()))
-            return instance
-
-        except OSError as e:
-            # Specific I/O errors
-            raise ValidationError({
-                'image': f'I/O error while processing the image: {e!s}'
-            }) from e
-
-    # def create(self, validated_data):
-    #     # """Creates an image, deleting any existing images if the target model is set to single image only."""
-    #     # model_type = validated_data.get('model_type', None)
-    #     # model_id = validated_data.get('model_id', None)
-
-    #     # target_model_class: InvenTreeImageUploadMixin = (
-    #     #     common.validators.get_model_class_from_label(
-    #     #         model_type, InvenTreeImageUploadMixin
-    #     #     )
-    #     # )
-    #     # if target_model_class.single_image:
-    #     #     common_models.InvenTreeImage.objects.filter(
-    #     #         model_type=model_type, model_id=model_id
-    #     #     ).delete()
-
-    #     return super().create(validated_data)
+            return ContentType.objects.get(model=ct_value)
+        except ContentType.DoesNotExist:
+            raise ValidationError(f"Invalid content type '{ct_value}'")
 
     def validate_existing_image(self, img):
-        """Validate the selected image file."""
+        """Check the file really exists in your parts-image directory."""
         if not img:
             return img
 
         img_name = Path(img).name
-
         image_dir = Path(common_helper.get_part_image_directory())
-        # Ensure that the file actually exists
         img_path = image_dir / img_name
 
         if not img_path.exists() or not img_path.is_file():
             raise ValidationError(_('Image file does not exist'))
 
         return img
+
+    def _process_images(self, instance, data):
+        """Move any existing_image or remote_image_file into instance.image, then save."""
+        existing = data.get('existing_image', None)
+        if existing:
+            instance.image = existing
+            instance.save()
+
+        remote_img = getattr(self, 'remote_image_file', None)
+        if remote_img:
+            fmt = remote_img.format or 'PNG'
+            buffer = io.BytesIO()
+            remote_img.save(buffer, format=fmt)
+            filename = f'part_{instance.pk}_image.{fmt.lower()}'
+            instance.image.save(filename, ContentFile(buffer.getvalue()))
+
+        return instance
+
+    def create(self, validated_data):
+        """Create a new InvenTreeImage instance with the provided data."""
+        instance = super().create(validated_data)
+        return self._process_images(instance, validated_data)
+
+    def update(self, instance, validated_data):
+        """Update the InvenTreeImage instance with new data."""
+        instance = super().update(instance, validated_data)
+        return self._process_images(instance, validated_data)
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new Part instance."""

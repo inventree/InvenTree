@@ -379,7 +379,7 @@ export default function BuildDetail() {
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
             images={build?.part_detail?.images}
-            model_id={build.part}
+            object_id={build.part}
           />
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <DetailsTable fields={tl} item={data} />

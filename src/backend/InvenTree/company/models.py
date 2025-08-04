@@ -274,18 +274,6 @@ class Company(
         """Get the web URL for the detail view for this Company."""
         return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
 
-    # def get_image_url(self):
-    #     """Return the URL of the image for this company."""
-    #     if self.image:
-    #         return InvenTree.helpers.getMediaUrl(self.image.url)
-    #     return InvenTree.helpers.getBlankImage()
-
-    def get_thumbnail_url(self):
-        """Return the URL for the thumbnail image for this Company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
-        return InvenTree.helpers.getBlankThumbnail()
-
     @property
     def parts(self):
         """Return SupplierPart objects which are supplied or manufactured by this company."""

@@ -157,7 +157,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             src={company?.image?.image}
             pk={company.pk}
             image_id={company?.image?.pk}
-            model_type={ModelType.company}
+            content_type={ModelType.company}
             refresh={refreshInstance}
             EditImageActions={{
               uploadFile: true,

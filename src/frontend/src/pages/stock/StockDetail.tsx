@@ -426,7 +426,7 @@ export default function StockDetail() {
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
             images={stockitem?.part_detail?.images}
-            model_id={stockitem.part}
+            object_id={stockitem.part}
           />
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <DetailsTable fields={tl} item={data} />

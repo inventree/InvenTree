@@ -872,8 +872,8 @@ class PartSerializer(
             )
         )
 
-        # Prefetch ALL images, sorted so that primary come first
-        image_qs = common_models.InvenTreeImage.objects.all().order_by('-primary', 'pk')
+        # Prefetch ALL images
+        image_qs = common_models.InvenTreeImage.objects.all()
         queryset = queryset.prefetch_related(
             Prefetch('images', queryset=image_qs, to_attr='all_images')
         )

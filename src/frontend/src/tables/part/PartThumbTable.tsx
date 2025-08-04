@@ -103,7 +103,7 @@ function PartThumbComponent({
 async function setNewImage(
   onSuccess: (image: string) => void,
   image_url: string | null,
-  model_id: string
+  object_id: string
 ) {
   // No need to do anything if no image is selected
   if (image_url === null) {
@@ -113,8 +113,8 @@ async function setNewImage(
   await api
     .post(apiUrl(ApiEndpoints.upload_image_list), {
       existing_image: image_url,
-      model_type: ModelType.part,
-      model_id: model_id
+      content_type: ModelType.part,
+      object_id: object_id
     })
     .then((response) => {
       // Update the image in the parent component
@@ -166,7 +166,7 @@ export function PartThumbTable({ pk, onSuccess }: Readonly<ThumbTableProps>) {
             offset: offset,
             limit: limit,
             search: searchText,
-            model_type: ModelType.part
+            content_model: ModelType.part
           }
         })
         .then((response) => {

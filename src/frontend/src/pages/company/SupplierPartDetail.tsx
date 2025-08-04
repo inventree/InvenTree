@@ -220,7 +220,7 @@ export default function SupplierPartDetail() {
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
             images={supplierPart?.part_detail?.images}
-            model_id={supplierPart?.part_detail?.pk}
+            object_id={supplierPart?.part_detail?.pk}
           />
           <Grid.Col span={8}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />

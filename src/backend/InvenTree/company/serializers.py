@@ -175,7 +175,7 @@ class CompanySerializer(
         )
 
         queryset = queryset.prefetch_related(
-            Prefetch('images', queryset=primary_qs, to_attr='primary_image')
+            Prefetch('images', queryset=primary_qs, to_attr='primary_img')
         )
         return queryset
 
@@ -192,7 +192,7 @@ class CompanySerializer(
 
     def get_image(self, obj):
         """Return the primary image associated with this Company instance."""
-        images = getattr(obj, 'primary_image', None)
+        images = getattr(obj, 'primary_img', None)
         if images and len(images) > 0:
             img_obj = images[0]
             return common_serializers.UploadedImageSerializer(

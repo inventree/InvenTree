@@ -1948,7 +1948,6 @@ class InvenTreeImage(models.Model):
 
         verbose_name = _('InvenTree Image')
         verbose_name_plural = _('InvenTree Images')
-        unique_together = (('content_type', 'object_id'),)
 
     def save(self, *args, **kwargs):
         """Override save.
@@ -1970,6 +1969,8 @@ class InvenTreeImage(models.Model):
                     .exclude(pk=self.pk)
                     .delete()
                 )
+                # Ensure this new/updated image is primary
+                self.primary = True
 
             super().save(*args, **kwargs)
 
@@ -1991,8 +1992,6 @@ class InvenTreeImage(models.Model):
         was_primary = self.primary
 
         with transaction.atomic():
-            super().delete(*args, **kwargs)
-
             if was_primary:
                 successor = (
                     InvenTreeImage.objects.filter(

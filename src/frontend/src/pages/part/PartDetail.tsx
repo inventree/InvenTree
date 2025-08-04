@@ -626,7 +626,7 @@ export default function PartDetail() {
                 setAsPrimary: hasImage
               }}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-              model_id={part.pk}
+              object_id={part.pk}
               refresh={refreshInstance}
             />
           </Grid.Col>

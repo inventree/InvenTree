@@ -794,6 +794,34 @@ class UploadImageList(ListCreateAPI):
     permission_classes = [IsAuthenticatedOrReadScope]
 
 
+class UploadImageThumbFilter(rest_filters.FilterSet):
+    """Allows filtering.
+
+    - content_type__model   (the name of the model, e.g. 'part', 'build', etc.)
+    - object_id             (the PK of the related object)
+    """
+
+    content_model = rest_filters.CharFilter(
+        field_name='content_type__model',
+        lookup_expr='iexact',
+        label=_('Content model name'),
+        help_text=_('Exact match on the content type model name, e.g. "part"'),
+    )
+
+    object_id = rest_filters.NumberFilter(
+        field_name='object_id',
+        lookup_expr='exact',
+        label=_('Object ID'),
+        help_text=_('Primary key of the related object'),
+    )
+
+    class Meta:
+        """Meta options for the UploadImageThumbFilter."""
+
+        model = common.models.InvenTreeImage
+        fields = ['content_model', 'object_id']
+
+
 class UploadImageThumbs(ListAPI):
     """List API endpoint for InvenTreeImage thumbnails."""
 
@@ -803,7 +831,7 @@ class UploadImageThumbs(ListAPI):
 
     filter_backends = [rest_filters.DjangoFilterBackend, InvenTreeSearchFilter]
 
-    filterset_fields = ['content_type', 'object_id']
+    filterset_class = UploadImageThumbFilter
 
     search_fields = ['image']
 
