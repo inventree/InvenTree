@@ -39,7 +39,7 @@ def perform_stocktake() -> None:
     for part in active_parts:
         # Is there a recent stock history record for this part?
         if part_models.PartStocktake.objects.filter(
-            part=part, data__gte=today
+            part=part, date__gte=today
         ).exists():
             continue
 

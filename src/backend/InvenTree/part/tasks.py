@@ -320,7 +320,7 @@ def scheduled_stocktake_reports():
     from part.models import PartStocktake
 
     # First let's delete any old stock history entries
-    delete_n_days = int(get_global_setting('STOCKTAKE_DELETE_DAYS', 30, cache=False))
+    delete_n_days = int(get_global_setting('STOCKTAKE_DELETE_DAYS', 365, cache=False))
 
     threshold = datetime.now() - timedelta(days=delete_n_days)
     old_entries = PartStocktake.objects.filter(date__lt=threshold)
@@ -341,7 +341,7 @@ def scheduled_stocktake_reports():
         return
 
     if not check_daily_holdoff('STOCKTAKE_RECENT_REPORT', report_n_days):
-        logger.info('Stocktake report was recently generated - exiting')
+        logger.info('Stock history was recently generated - exiting')
         return
 
     # Generate new stock history entries

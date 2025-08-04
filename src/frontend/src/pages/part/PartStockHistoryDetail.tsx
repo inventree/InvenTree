@@ -23,6 +23,7 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
+import { DecimalColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 
 /*
@@ -90,17 +91,17 @@ export default function PartStockHistoryDetail({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
+      DecimalColumn({
         accessor: 'quantity',
         sortable: false,
         switchable: false
-      },
-      {
+      }),
+      DecimalColumn({
         accessor: 'item_count',
         title: t`Stock Items`,
         switchable: true,
         sortable: false
-      },
+      }),
       {
         accessor: 'cost',
         title: t`Stock Value`,
@@ -113,11 +114,7 @@ export default function PartStockHistoryDetail({
       },
       {
         accessor: 'date',
-        sortable: false
-      },
-      {
-        accessor: 'note',
-        sortable: false
+        sortable: true
       }
     ];
   }, []);
