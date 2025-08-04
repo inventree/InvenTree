@@ -1,4 +1,4 @@
-"""Stocktake report functionality."""
+"""Stock history functionality."""
 
 import structlog
 from djmoney.contrib.exchange.models import convert_money
@@ -31,6 +31,10 @@ def perform_stocktake() -> None:
 
     base_currency = currency_code_default()
     today = InvenTree.helpers.current_date()
+
+    logger.info(
+        'Creating new stock history entries for %s active parts', active_parts.count()
+    )
 
     for part in active_parts:
         # Is there a recent stock history record for this part?
@@ -90,8 +94,8 @@ def perform_stocktake() -> None:
             )
         )
 
+        # Batch create stock history entries
         if len(history_entries) >= N_BULK_CREATE:
-            # Save the current batch of stocktake entries
             part_models.PartStocktake.objects.bulk_create(history_entries)
             history_entries = []
 

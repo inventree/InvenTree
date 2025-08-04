@@ -2568,11 +2568,6 @@ class Part(
         return params
 
     @property
-    def latest_stocktake(self):
-        """Return the latest PartStocktake object associated with this part (if one exists)."""
-        return self.stocktakes.order_by('-pk').first()
-
-    @property
     def has_variants(self):
         """Check if this Part object has variants underneath it."""
         return self.get_all_variants().exists()
