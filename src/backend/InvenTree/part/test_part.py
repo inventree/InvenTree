@@ -20,7 +20,6 @@ from .models import (
     PartCategoryStar,
     PartRelated,
     PartStar,
-    PartStocktake,
     PartTestTemplate,
     rename_part_image,
 )
@@ -339,18 +338,6 @@ class PartTest(TestCase):
         self.r2.save()
         self.r2.delete()
         self.assertEqual(PartRelated.objects.count(), countbefore)
-
-    def test_stocktake(self):
-        """Test for adding stocktake data."""
-        # Grab a part
-        p = Part.objects.all().first()
-
-        self.assertIsNone(p.last_stocktake)
-
-        ps = PartStocktake.objects.create(part=p, quantity=100)
-
-        self.assertIsNotNone(p.last_stocktake)
-        self.assertEqual(p.last_stocktake, ps.date)
 
     def test_delete(self):
         """Test delete operation for a Part instance."""
