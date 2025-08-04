@@ -1067,9 +1067,9 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'STOCKTAKE_ENABLE': {
-        'name': _('Stocktake Functionality'),
+        'name': _('Enable Stock History'),
         'description': _(
-            'Enable stocktake functionality for recording stock levels and calculating stock value'
+            'Enable functionality for recording historical stock levels and value'
         ),
         'validator': bool,
         'default': False,
