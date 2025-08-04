@@ -246,7 +246,7 @@ def getCustomOption(reference: str):
     return settings.CUSTOMIZE.get(reference, None)
 
 
-def TestIfImageURL(url):
+def TestIfImageURL(url) -> bool:
     """Test if an image URL (or filename) looks like a valid image format.
 
     Simply tests the extension against a set of allowed values
@@ -279,12 +279,12 @@ def str2bool(text, test=True):
     return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
 
 
-def is_bool(text):
+def is_bool(text: str) -> bool:
     """Determine if a string value 'looks' like a boolean."""
     return str2bool(text, True) or str2bool(text, False)
 
 
-def isNull(text):
+def isNull(text: str) -> bool:
     """Test if a string 'looks' like a null value. This is useful for querying the API against a null key.
 
     Args:
@@ -304,10 +304,13 @@ def isNull(text):
     ]
 
 
-def normalize(d):
+def normalize(d, rounding: Optional[int] = None) -> Decimal:
     """Normalize a decimal number, and remove exponential formatting."""
     if type(d) is not Decimal:
         d = Decimal(d)
+
+    if rounding is not None:
+        d = round(d, rounding)
 
     d = d.normalize()
 
@@ -367,7 +370,7 @@ def increment(value):
     return prefix + number
 
 
-def decimal2string(d):
+def decimal2string(d: Decimal) -> str:
     """Format a Decimal number as a string, stripping out any trailing zeroes or decimal points. Essentially make it look like a whole number if it is one.
 
     Args:
@@ -395,7 +398,7 @@ def decimal2string(d):
     return s.rstrip('0').rstrip('.')
 
 
-def decimal2money(d, currency=None):
+def decimal2money(d: Decimal, currency=None) -> Money:
     """Format a Decimal number as Money.
 
     Args:
@@ -410,7 +413,7 @@ def decimal2money(d, currency=None):
     return Money(d, currency)
 
 
-def WrapWithQuotes(text, quote='"'):
+def WrapWithQuotes(text: str, quote='"'):
     """Wrap the supplied text with quotes.
 
     Args:
@@ -420,6 +423,8 @@ def WrapWithQuotes(text, quote='"'):
     Returns:
         Supplied text wrapped in quote char
     """
+    text = str(text)
+
     if not text.startswith(quote):
         text = quote + text
 
