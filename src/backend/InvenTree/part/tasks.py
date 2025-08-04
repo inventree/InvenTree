@@ -33,6 +33,10 @@ def notify_low_stock(part: Model):
     - Triggered when the available stock for a given part falls be low the configured threhsold
     - A notification is delivered to any users who are 'subscribed' to this part
     """
+    # Do not trigger low-stock notifications for inactive parts
+    if not part.active:
+        return
+
     name = _('Low stock notification')
     message = _(
         f'The available stock for {part.name} has fallen below the configured minimum level'
@@ -146,7 +150,7 @@ def notify_low_stock_if_required(part_id: int):
     parts = part.get_ancestors(include_self=True, ascending=True)
 
     for p in parts:
-        if p.is_part_low_on_stock():
+        if part.active and p.is_part_low_on_stock():
             offload_task(notify_low_stock, p, group='notification')
 
 

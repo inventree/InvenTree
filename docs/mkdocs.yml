@@ -233,6 +233,7 @@ nav:
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
+      - Transition Mixin: plugins/mixins/transition.md
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
       - Validation Mixin: plugins/mixins/validation.md

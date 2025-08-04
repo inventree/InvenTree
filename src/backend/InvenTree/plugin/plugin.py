@@ -74,6 +74,7 @@ class PluginMixinEnum(StringEnum):
     SCHEDULE = 'schedule'
     SETTINGS = 'settings'
     SETTINGS_CONTENT = 'settingscontent'
+    STATE_TRANSITION = 'statetransition'
     SUPPLIER_BARCODE = 'supplier-barcode'
     URLS = 'urls'
     USER_INTERFACE = 'ui'
@@ -331,7 +332,8 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         for name in child_methods:
             if name in final_methods:
                 raise TypeError(
-                    f"Plugin '{cls.__name__}' cannot override final method '{name}' from InvenTreePlugin."
+                    'INVE-E11: '
+                    + f"Plugin '{cls.__name__}' cannot override final method '{name}' from InvenTreePlugin."
                 )
 
         return super().__init_subclass__()

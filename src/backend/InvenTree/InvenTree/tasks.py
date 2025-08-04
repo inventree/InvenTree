@@ -466,6 +466,26 @@ def delete_old_notifications():
         )
 
 
+@tracer.start_as_current_span('delete_old_emails')
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_emails():
+    """Delete old email messages."""
+    try:
+        from common.models import EmailMessage
+
+        days = get_global_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        emails = EmailMessage.objects.filter(timestamp__lte=threshold)
+
+        if emails.count() > 0:
+            logger.info('Deleted %s old email messages', emails.count())
+            emails.delete()
+
+    except AppRegistryNotReady:
+        logger.info("Could not perform 'delete_old_emails' - App registry not ready")
+
+
 @tracer.start_as_current_span('check_for_updates')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():

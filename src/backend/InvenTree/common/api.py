@@ -43,6 +43,7 @@ from InvenTree.mixins import (
     ListAPI,
     ListCreateAPI,
     RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
@@ -842,7 +843,7 @@ class EmailMessageMixin:
     permission_classes = [IsSuperuserOrSuperScope]
 
 
-class EmailMessageList(EmailMessageMixin, ListAPI):
+class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for email objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -865,7 +866,7 @@ class EmailMessageList(EmailMessageMixin, ListAPI):
     ]
 
 
-class EmailMessageDetail(EmailMessageMixin, RetrieveAPI):
+class EmailMessageDetail(EmailMessageMixin, RetrieveDestroyAPI):
     """Detail view for an email object."""
 
 

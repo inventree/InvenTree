@@ -239,7 +239,9 @@ class PluginActivateSerializer(serializers.Serializer):
         active = validated_data.get('active', True)
 
         if not active and instance.is_mandatory():
-            raise ValidationError(_('Mandatory plugin cannot be deactivated'))
+            raise ValidationError(
+                'INVE-E10: ' + _('Mandatory plugin cannot be deactivated')
+            )
 
         instance.activate(active)
         return instance
