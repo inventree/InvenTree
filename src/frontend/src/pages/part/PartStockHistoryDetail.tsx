@@ -114,7 +114,8 @@ export default function PartStockHistoryDetail({
       },
       {
         accessor: 'date',
-        sortable: true
+        sortable: true,
+        switchable: false
       }
     ];
   }, []);
