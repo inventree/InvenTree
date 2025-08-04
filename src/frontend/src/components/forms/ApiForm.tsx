@@ -569,6 +569,7 @@ export function ApiForm({
           style={{
             overflowY: 'auto',
             paddingRight: '15px',
+            paddingBottom: '10px',
             paddingLeft: '5px'
           }}
         >
