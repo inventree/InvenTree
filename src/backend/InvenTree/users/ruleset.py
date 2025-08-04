@@ -110,6 +110,7 @@ def get_ruleset_models() -> dict:
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_partstocktake',
             'part_partcategorystar',
             'company_supplierpart',
             'company_manufacturerpart',
