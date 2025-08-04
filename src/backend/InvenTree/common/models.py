@@ -1951,9 +1951,28 @@ class InvenTreeImage(models.Model):
         unique_together = (('content_type', 'object_id'),)
 
     def save(self, *args, **kwargs):
-        """Override save so that if this image is marked primary, all other images for the same object are un-marked."""
+        """Override save.
+
+        - Enforce single_image on the parent if requested
+        - if this image is marked primary, all other images for the same object are un-marked.
+        """
+        # Determine if the parent wants only one image
+        single = getattr(self.content_object, 'single_image', False)
+
         with transaction.atomic():
+            # If single_image is True, delete any siblings first
+            if single:
+                (
+                    InvenTreeImage.objects.filter(
+                        content_type=self.content_type, object_id=self.object_id
+                    )
+                    # Exclude ourselves if we are updating an existing record
+                    .exclude(pk=self.pk)
+                    .delete()
+                )
+
             super().save(*args, **kwargs)
+
             if self.primary:
                 # Turn off primary flag on any siblings
                 (

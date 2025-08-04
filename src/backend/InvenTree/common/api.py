@@ -803,9 +803,9 @@ class UploadImageThumbs(ListAPI):
 
     filter_backends = [rest_filters.DjangoFilterBackend, InvenTreeSearchFilter]
 
-    filterset_fields = ['model_type', 'model_id']
+    filterset_fields = ['content_type', 'object_id']
 
-    search_fields = ['model_type', 'image']
+    search_fields = ['image']
 
     def list(self, request, *args, **kwargs):
         """List image thumbnails aggregated by file with usage counts.

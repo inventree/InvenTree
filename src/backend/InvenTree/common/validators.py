@@ -4,7 +4,6 @@ import re
 from typing import Union
 
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 import common.icons
@@ -72,16 +71,14 @@ def validate_notes_model_type(value):
 
 
 def limit_image_content_types():
-    """Return a Q object filtering for allowed image upload model types."""
+    """Limit the content types for image uploads to those supported by InvenTreeImageUploadMixin."""
     import InvenTree.models
 
     allowed_models = [
-        m[0]
-        for m in common.validators.get_model_options(
-            InvenTree.models.InvenTreeImageUploadMixin
-        )
+        m[0] for m in get_model_options(InvenTree.models.InvenTreeImageUploadMixin)
     ]
-    return Q(model__in=allowed_models)
+
+    return {'model__in': allowed_models}
 
 
 def validate_decimal_places_min(value):

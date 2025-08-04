@@ -27,7 +27,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeAttachmentMixin
+from InvenTree.models import InvenTreeAttachmentMixin, InvenTreeImageUploadMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -590,6 +590,9 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
+ALLOWED_IMAGE_CTS = common.validators.get_model_options(InvenTreeImageUploadMixin)
+
+
 class UploadedImageSerializer(
     InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
 ):
@@ -604,39 +607,35 @@ class UploadedImageSerializer(
             'primary',
             'image',
             'thumbnail',
-            # 'content_type',
+            'content_type',
             'remote_image',
             'existing_image',
-            # 'object_id',
+            'object_id',
         ]
         read_only_fields = ['pk', 'thumbnail']
 
     def __init__(self, *args, **kwargs):
-        """Override the model_type field to provide dynamic choices."""
+        """Override the content_type field to provide dynamic choices."""
         super().__init__(*args, **kwargs)
 
-        # if len(self.fields['model_type'].choices) == 0:
-        #     self.fields['model_type'].choices = common.validators.get_model_options(
-        #         InvenTreeImageUploadMixin
-        #     )
+        self.fields['content_type'].choices = ALLOWED_IMAGE_CTS
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
     )
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
-    # model_type = serializers.ChoiceField(
-    #     label=_('Model Type'),
-    #     choices=common.validators.get_model_options(InvenTreeImageUploadMixin),
-    #     required=True,
-    #     allow_blank=False,
-    #     allow_null=False,
-    # )
+    content_type = serializers.ChoiceField(
+        choices=[],  # Will be populated dynamically
+        help_text=_('The type of object this image is attached to'),
+        label=_('Content Type'),
+        write_only=True,
+    )
 
     # Allow selection of an existing image file
     existing_image = serializers.CharField(
         label=_('Existing Image'),
-        help_text=_('Filename of an existing part image'),
+        help_text=_('Filename of an existing image'),
         write_only=True,
         required=False,
         allow_blank=False,

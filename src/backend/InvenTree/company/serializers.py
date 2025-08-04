@@ -1,11 +1,13 @@
 """JSON serializers for Company app."""
 
+from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
+import common.models as common_models
 import common.serializers as common_serializers
 import company.filters
 import part.filters
@@ -20,7 +22,6 @@ from InvenTree.serializers import (
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
-    RemoteImageMixin,
 )
 
 from .models import (
@@ -114,18 +115,18 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
+from django.contrib.contenttypes.models import ContentType
+
+
 @register_importer()
 class CompanySerializer(
-    DataImportExportSerializerMixin,
-    NotesFieldMixin,
-    RemoteImageMixin,
-    InvenTreeModelSerializer,
+    DataImportExportSerializerMixin, NotesFieldMixin, InvenTreeModelSerializer
 ):
     """Serializer for Company object (full detail)."""
 
     export_exclude_fields = ['primary_address']
 
-    import_exclude_fields = ['image']
+    import_exclude_fields = ['primary_image']
 
     class Meta:
         """Metaclass options."""
@@ -151,7 +152,6 @@ class CompanySerializer(
             'notes',
             'parts_supplied',
             'parts_manufactured',
-            'remote_image',
             'address_count',
             'primary_address',
             'tax_id',
@@ -169,6 +169,14 @@ class CompanySerializer(
 
         queryset = queryset.annotate(address_count=SubqueryCount('addresses'))
 
+        ct = ContentType.objects.get_for_model(Company)
+        primary_qs = common_models.InvenTreeImage.objects.filter(
+            content_type=ct, primary=True
+        )
+
+        queryset = queryset.prefetch_related(
+            Prefetch('images', queryset=primary_qs, to_attr='primary_image')
+        )
         return queryset
 
     address = serializers.CharField(
@@ -180,19 +188,17 @@ class CompanySerializer(
     )
 
     primary_address = AddressSerializer(allow_null=True, read_only=True)
-
-    # image = InvenTreeImageSerializerField(read_only=True)
-    image = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField(read_only=True)
 
     def get_image(self, obj):
-        """Return the image associated with this Company instance."""
-        if obj.images:
-            image = obj.images.first()
-        else:
-            return None
-        return common_serializers.UploadedImageSerializer(
-            image, context=self.context
-        ).data
+        """Return the primary image associated with this Company instance."""
+        images = getattr(obj, 'primary_image', None)
+        if images and len(images) > 0:
+            img_obj = images[0]
+            return common_serializers.UploadedImageSerializer(
+                img_obj, context=self.context
+            ).data
+        return None
 
     email = serializers.EmailField(
         required=False, default='', allow_blank=True, allow_null=True

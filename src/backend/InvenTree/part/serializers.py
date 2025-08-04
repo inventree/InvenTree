@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
-from django.db.models import ExpressionWrapper, F, Q
+from django.db.models import ExpressionWrapper, F, Prefetch, Q
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -19,6 +19,7 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
+import common.models as common_models
 import common.serializers as common_serializers
 import common.settings
 import company.models
@@ -871,19 +872,17 @@ class PartSerializer(
             )
         )
 
+        # Prefetch ALL images, sorted so that primary come first
+        image_qs = common_models.InvenTreeImage.objects.all().order_by('-primary', 'pk')
+        queryset = queryset.prefetch_related(
+            Prefetch('images', queryset=image_qs, to_attr='all_images')
+        )
+
         return queryset
 
     def get_starred(self, part) -> bool:
         """Return "true" if the part is starred by the current user."""
         return part in self.starred_parts
-
-    def get_images(self, obj):
-        """Return the images associated with this Part instance."""
-        images = obj.images
-
-        return common_serializers.UploadedImageSerializer(
-            images, many=True, context=self.context
-        ).data
 
     # Extra detail for the category
     category_detail = CategorySerializer(
@@ -994,7 +993,12 @@ class PartSerializer(
         required=False, label=_('Minimum Stock'), default=0
     )
 
-    images = serializers.SerializerMethodField()
+    images = common_serializers.UploadedImageSerializer(
+        many=True,
+        read_only=True,
+        source='all_images',
+        help_text=_('All images for this Part'),
+    )
 
     starred = serializers.SerializerMethodField()
 

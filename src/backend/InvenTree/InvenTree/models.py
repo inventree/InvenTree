@@ -1118,23 +1118,6 @@ class InvenTreeImageUploadMixin(models.Model):
             return img.get_thumbnail_url()
         return InvenTree.helpers.getBlankThumbnail()
 
-    def add_image(self, image_file, make_primary=False, **extra_fields):
-        """Convenience method to create a new InvenTreeImage for this object.
-
-        If `single_image=True`, will first delete all existing.
-        """
-        from common.models import InvenTreeImage
-
-        if self.single_image:
-            self.images.all().delete()
-
-        img = InvenTreeImage(
-            content_object=self, image=image_file, primary=make_primary, **extra_fields
-        )
-        img.full_clean()
-        img.save()
-        return img
-
 
 class InvenTreeBarcodeMixin(models.Model):
     """A mixin class for adding barcode functionality to a model class.
