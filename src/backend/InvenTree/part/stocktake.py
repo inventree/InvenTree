@@ -1,136 +1,100 @@
 """Stocktake report functionality."""
 
-from django.contrib.auth.models import User
-
 import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
-import common.currency
-import common.models
-
 logger = structlog.get_logger('inventree')
 
 
-def perform_stocktake(target, user: User, note: str = '', commit=True, **kwargs):
-    """Perform stocktake action on a single part.
+def perform_stocktake() -> None:
+    """Generate stock history entries for all active parts."""
+    import InvenTree.helpers
+    import part.models as part_models
+    from common.currency import currency_code_default
+    from common.settings import get_global_setting
 
-    Arguments:
-        target: A single Part model instance
-        user: User who requested this stocktake
-        note: Optional note to attach to the stocktake
-        commit: If True (default) save the result to the database
+    if not get_global_setting('STOCKTAKE_ENABLE', False, cache=False):
+        logger.info('Stocktake functionality is disabled - skipping')
+        return
 
-    kwargs:
-        exclude_external: If True, exclude stock items in external locations (default = False)
-        location: Optional StockLocation to filter results for generated report
+    exclude_external = get_global_setting(
+        'STOCKTAKE_EXCLUDE_EXTERNAL', False, cache=False
+    )
 
-    Returns:
-        PartStocktake: A new PartStocktake model instance (for the specified Part)
+    active_parts = part_models.Part.objects.filter(active=True)
 
-    Note that while we record a *total stocktake* for the Part instance which gets saved to the database,
-    the user may have requested a stocktake limited to a particular location.
+    # New history entries to be created
+    history_entries = []
 
-    In this case, the stocktake *report* will be limited to the specified location.
-    """
-    import part.models
+    N_BULK_CREATE = 250
 
-    # Determine which locations are "valid" for the generated report
-    location = kwargs.get('location')
-    locations = location.get_descendants(include_self=True) if location else []
+    base_currency = currency_code_default()
+    today = InvenTree.helpers.current_date()
 
-    # Grab all "available" stock items for the Part
-    # We do not include variant stock when performing a stocktake,
-    # otherwise the stocktake entries will be duplicated
-    stock_entries = target.stock_entries(in_stock=True, include_variants=False)
+    for part in active_parts:
+        # Is there a recent stock history record for this part?
+        if part_models.PartStocktake.objects.filter(
+            part=part, data__gte=today
+        ).exists():
+            continue
 
-    exclude_external = kwargs.get('exclude_external', False)
+        pricing = part.pricing
 
-    if exclude_external:
-        stock_entries = stock_entries.exclude(location__external=True)
+        # Fetch all 'in stock' items for this part
+        stock_items = part.stock_entries(
+            in_stock=True, include_external=not exclude_external, include_variants=True
+        )
 
-    # Cache min/max pricing information for this Part
-    pricing = target.pricing
+        total_cost_min = Money(0, base_currency)
+        total_cost_max = Money(0, base_currency)
 
-    if not pricing.is_valid:
-        # If pricing is not valid, let's update
-        logger.info('Pricing not valid for %s - updating', target)
-        pricing.update_pricing(cascade=False)
-        pricing.refresh_from_db()
+        total_quantity = 0
+        items_count = 0
 
-    base_currency = common.currency.currency_code_default()
+        for item in stock_items:
+            # Extract cost information
 
-    # Keep track of total quantity and cost for this part
-    total_quantity = 0
-    total_cost_min = Money(0, base_currency)
-    total_cost_max = Money(0, base_currency)
-
-    # Separately, keep track of stock quantity and value within the specified location
-    location_item_count = 0
-    location_quantity = 0
-    location_cost_min = Money(0, base_currency)
-    location_cost_max = Money(0, base_currency)
-
-    for entry in stock_entries:
-        entry_cost_min = None
-        entry_cost_max = None
-
-        # Update price range values
-        if entry.purchase_price:
-            entry_cost_min = entry.purchase_price
-            entry_cost_max = entry.purchase_price
-
-        else:
-            # If no purchase price is available, fall back to the part pricing data
             entry_cost_min = pricing.overall_min or pricing.overall_max
             entry_cost_max = pricing.overall_max or pricing.overall_min
 
-        # Convert to base currency
-        try:
-            entry_cost_min = (
-                convert_money(entry_cost_min, base_currency) * entry.quantity
+            if item.purchase_price is not None:
+                entry_cost_min = item.purchase_price
+                entry_cost_max = item.purchase_price
+
+            try:
+                entry_cost_min = (
+                    convert_money(entry_cost_min, base_currency) * item.quantity
+                )
+                entry_cost_max = (
+                    convert_money(entry_cost_max, base_currency) * item.quantity
+                )
+            except Exception:
+                entry_cost_min = Money(0, base_currency)
+                entry_cost_max = Money(0, base_currency)
+
+            # Update total quantities
+            items_count += 1
+            total_quantity += item.quantity
+            total_cost_min += entry_cost_min
+            total_cost_max += entry_cost_max
+
+        # Add a new stocktake entry for this part
+        history_entries.append(
+            part_models.PartStocktake(
+                part=part,
+                item_count=items_count,
+                quantity=total_quantity,
+                cost_min=total_cost_min,
+                cost_max=total_cost_max,
             )
-            entry_cost_max = (
-                convert_money(entry_cost_max, base_currency) * entry.quantity
-            )
-        except Exception:
-            entry_cost_min = Money(0, base_currency)
-            entry_cost_max = Money(0, base_currency)
+        )
 
-        # Update total cost values
-        total_quantity += entry.quantity
-        total_cost_min += entry_cost_min
-        total_cost_max += entry_cost_max
+        if len(history_entries) >= N_BULK_CREATE:
+            # Save the current batch of stocktake entries
+            part_models.PartStocktake.objects.bulk_create(history_entries)
+            history_entries = []
 
-        # Test if this stock item is within the specified location
-        if location and entry.location not in locations:
-            continue
-
-        # Update location cost values
-        location_item_count += 1
-        location_quantity += entry.quantity
-        location_cost_min += entry_cost_min
-        location_cost_max += entry_cost_max
-
-    # Construct PartStocktake instance
-    # Note that we use the *total* values for the PartStocktake instance
-    instance = part.models.PartStocktake(
-        part=target,
-        item_count=stock_entries.count(),
-        quantity=total_quantity,
-        cost_min=total_cost_min,
-        cost_max=total_cost_max,
-        note=note,
-        user=user,
-    )
-
-    if commit:
-        instance.save()
-
-    # Add location-specific data to the instance
-    instance.location_item_count = location_item_count
-    instance.location_quantity = location_quantity
-    instance.location_cost_min = location_cost_min
-    instance.location_cost_max = location_cost_max
-
-    return instance
+    if len(history_entries) > 0:
+        # Save any remaining stocktake entries
+        part_models.PartStocktake.objects.bulk_create(history_entries)

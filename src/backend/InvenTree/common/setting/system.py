@@ -1096,7 +1096,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': 365,
         'units': _('days'),
-        'validator': [int, MinValueValidator(7)],
+        'validator': [int, MinValueValidator(30)],
     },
     'DISPLAY_FULL_NAMES': {
         'name': _('Display Users full names'),

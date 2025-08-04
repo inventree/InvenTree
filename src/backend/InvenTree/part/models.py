@@ -1738,11 +1738,14 @@ class Part(
             self.sales_order_allocation_count(**kwargs),
         ])
 
-    def stock_entries(self, include_variants=True, in_stock=None, location=None):
+    def stock_entries(
+        self, include_variants=True, include_external=True, in_stock=None, location=None
+    ):
         """Return all stock entries for this Part.
 
         Arguments:
             include_variants: If True, include stock entries for all part variants
+            include_external: If True, include stock entries which are in 'external' locations
             in_stock: If True, filter by stock entries which are 'in stock'
             location: If set, filter by stock entries in the specified location
         """
@@ -1757,6 +1760,10 @@ class Part(
             query = query.filter(StockModels.StockItem.IN_STOCK_FILTER)
         elif in_stock is False:
             query = query.exclude(StockModels.StockItem.IN_STOCK_FILTER)
+
+        if include_external is False:
+            # Exclude stock entries which are not 'internal'
+            query = query.filter(external=False)
 
         if location:
             locations = location.get_descendants(include_self=True)
@@ -3420,7 +3427,6 @@ class PartStocktake(models.Model):
     - Performed on a given date
     - Records quantity of part in stock (across multiple stock items)
     - Records estimated value of "stock on hand"
-    - Records user information
     """
 
     part = models.ForeignKey(
