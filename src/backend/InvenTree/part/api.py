@@ -16,7 +16,12 @@ from rest_framework.response import Response
 import InvenTree.permissions
 import part.filters
 from data_exporter.mixins import DataExportViewMixin
-from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import (
+    BulkDeleteMixin,
+    BulkUpdateMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+)
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -1456,7 +1461,7 @@ class PartStocktakeFilter(rest_filters.FilterSet):
         fields = ['part', 'user']
 
 
-class PartStocktakeList(ListCreateAPI):
+class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
     """API endpoint for listing part stocktake information."""
 
     queryset = PartStocktake.objects.all()
