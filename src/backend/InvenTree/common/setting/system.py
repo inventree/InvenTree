@@ -1077,7 +1077,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCKTAKE_EXCLUDE_EXTERNAL': {
         'name': _('Exclude External Locations'),
         'description': _(
-            'Exclude stock items in external locations from stocktake calculations'
+            'Exclude stock items in external locations from stock history calculations'
         ),
         'validator': bool,
         'default': False,
@@ -1085,15 +1085,16 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
         'description': _(
-            'Number of days between automatic stocktake recording (set to zero to disable)'
+            'Number of days between automatic stock history recording (set to zero to disable)'
         ),
         'validator': [int, MinValueValidator(0)],
-        'default': 0,
+        'default': 7,
+        'units': _('days'),
     },
     'STOCKTAKE_DELETE_REPORT_DAYS': {
-        'name': _('Report Deletion Interval'),
+        'name': _('Stock History Deletion Interval'),
         'description': _(
-            'Stocktake reports will be deleted after specified number of days'
+            'Stock history entries will be deleted after specified number of days'
         ),
         'default': 30,
         'units': _('days'),
