@@ -1,3 +1,8 @@
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
@@ -8,22 +13,11 @@ import {
   SimpleGrid,
   Text
 } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
-
-import { AddItemButton } from '@lib/components/AddItemButton';
-import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import type { TableColumn } from '@lib/types/Tables';
 import dayjs from 'dayjs';
+import { useCallback, useMemo, useState } from 'react';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
+import { partStocktakeFields } from '../../forms/PartForms';
 import {
-  generateStocktakeReportFields,
-  partStocktakeFields
-} from '../../forms/PartForms';
-import {
-  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -67,7 +61,7 @@ function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   );
 }
 
-export default function PartStocktakeDetail({
+export default function PartStockHistoryDetail({
   partId
 }: Readonly<{ partId: number }>) {
   const user = useUserState();
@@ -92,16 +86,6 @@ export default function PartStocktakeDetail({
     url: ApiEndpoints.part_stocktake_list,
     title: t`Delete Stocktake Entry`,
     table: table
-  });
-
-  const generateReport = useCreateApiFormModal({
-    url: ApiEndpoints.part_stocktake_report_generate,
-    title: t`Generate Stocktake Report`,
-    fields: generateStocktakeReportFields(),
-    initialData: {
-      part: partId
-    },
-    successMessage: t`Stocktake report scheduled`
   });
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -138,29 +122,18 @@ export default function PartStocktakeDetail({
     ];
   }, []);
 
-  const tableActions = useMemo(() => {
-    return [
-      <AddItemButton
-        key='add'
-        tooltip={t`New Stocktake Report`}
-        onClick={() => generateReport.open()}
-        hidden={!user.hasAddRole(UserRoles.stocktake)}
-      />
-    ];
-  }, [user]);
-
   const rowActions = useCallback(
     (record: any) => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.stocktake),
+          hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             setSelectedStocktake(record.pk);
             editStocktakeEntry.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.stocktake),
+          hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             setSelectedStocktake(record.pk);
             deleteStocktakeEntry.open();
@@ -207,7 +180,6 @@ export default function PartStocktakeDetail({
 
   return (
     <>
-      {generateReport.modal}
       {editStocktakeEntry.modal}
       {deleteStocktakeEntry.modal}
       <SimpleGrid cols={{ base: 1, md: 2 }}>
@@ -216,12 +188,13 @@ export default function PartStocktakeDetail({
           tableState={table}
           columns={tableColumns}
           props={{
+            enableSelection: true,
+            enableBulkDelete: true,
             params: {
               part: partId,
               ordering: 'date'
             },
-            rowActions: rowActions,
-            tableActions: tableActions
+            rowActions: rowActions
           }}
         />
         {table.isLoading ? (
