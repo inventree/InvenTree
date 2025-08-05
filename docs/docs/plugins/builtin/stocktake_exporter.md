@@ -4,7 +4,7 @@ title: Stocktake Exporter
 
 ## Stocktake Exporter Plugin
 
-The **Stocktake Exporter Plugin** provides custom "stocktake" export functionality for [Part](../../part/part.md) data.
+The **Stocktake Exporter Plugin** provides custom "stocktake" export functionality for [Part](../../part/index.md) data.
 
 It utilizes the [ExporterMixin](../mixins/export.md) mixin to provide a custom export format for stocktake data.
 
