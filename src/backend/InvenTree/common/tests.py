@@ -837,6 +837,37 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         for v in [0, -1, -5]:
             response = self.patch(url, {'value': v}, expected_code=400)
 
+    def test_cast(self):
+        """Test numerical typecast for user settings."""
+        key = 'SEARCH_PREVIEW_RESULTS'
+
+        # Delete the associated setting object
+        InvenTreeUserSetting.objects.filter(key=key, user=self.user).delete()
+
+        # Fetch all settings
+        response = self.get(reverse('api-user-setting-list'))
+
+        # Find the associated setting
+        setting = next((s for s in response.data if s['key'] == key), None)
+
+        # Check default value (should be 10, not '10')
+        self.assertIsNotNone(setting)
+        self.assertEqual(setting['value'], 10)
+
+        # Check that writing an invalid value returns an error
+        url = reverse('api-user-setting-detail', kwargs={'key': key})
+
+        self.patch(url, {'value': 'not a number'}, expected_code=400)
+        self.patch(url, {'value': 0}, expected_code=400)
+
+        # Check that we can manually set the value
+        for v in [1, 2, 3]:
+            InvenTreeUserSetting.set_setting(key, v, None, user=self.user)
+
+            # Check the 'detail' API endpoint
+            response = self.get(reverse('api-user-setting-detail', kwargs={'key': key}))
+            self.assertEqual(response.data['value'], v)
+
 
 class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
     """Tests for the plugin settings API."""
