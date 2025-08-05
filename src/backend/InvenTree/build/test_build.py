@@ -498,9 +498,17 @@ class BuildTest(BuildTestBase):
         self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
 
         # Check that the "consumed_by" item count has increased
-        self.assertEqual(
-            StockItem.objects.filter(consumed_by=self.build).count(), n + 8
-        )
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertEqual(consumed_items.count(), n + 8)
+
+        # Finally, return the items into stock
+        location = StockLocation.objects.filter(structural=False).first()
+
+        for item in consumed_items:
+            item.return_to_stock(location)
+
+        # No consumed items should remain
+        self.assertEqual(StockItem.objects.filter(consumed_by=self.build).count(), 0)
 
     def test_change_part(self):
         """Try to change target part after creating a build."""

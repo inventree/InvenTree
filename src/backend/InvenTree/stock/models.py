@@ -1432,7 +1432,10 @@ class StockItem(
             # Any further operations will be performed on this stock item
             item = self
 
-        tracking_info = {'location': location.pk}
+        tracking_info = {}
+
+        if location:
+            tracking_info['location'] = location.pk
 
         if item.customer:
             tracking_info['customer'] = item.customer.id
