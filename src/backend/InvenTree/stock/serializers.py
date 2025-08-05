@@ -1570,6 +1570,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         # Store the 'require_in_stock' status
         # Either True / False / None
         self.require_in_stock = kwargs.pop('require_in_stock', True)
+        self.require_non_zero = kwargs.pop('require_non_zero', False)
 
         super().__init__(*args, **kwargs)
 
@@ -1602,6 +1603,16 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     quantity = serializers.DecimalField(
         max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
     )
+
+    def validate_quantity(self, quantity):
+        """Validate the quantity value."""
+        if self.require_non_zero and quantity <= 0:
+            raise ValidationError(_('Quantity must be greater than zero'))
+
+        if quantity < 0:
+            raise ValidationError(_('Quantity must not be negative'))
+
+        return quantity
 
     batch = serializers.CharField(
         max_length=100,
@@ -1740,6 +1751,8 @@ class StockTransferSerializer(StockAdjustmentSerializer):
 
         fields = ['items', 'notes', 'location']
 
+    items = StockAdjustmentItemSerializer(many=True, require_non_zero=True)
+
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.filter(structural=False),
         many=False,
@@ -1785,7 +1798,9 @@ class StockReturnSerializer(StockAdjustmentSerializer):
 
         fields = ['items', 'notes', 'location']
 
-    items = StockAdjustmentItemSerializer(many=True, require_in_stock=False)
+    items = StockAdjustmentItemSerializer(
+        many=True, require_in_stock=False, require_non_zero=True
+    )
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.filter(structural=False),

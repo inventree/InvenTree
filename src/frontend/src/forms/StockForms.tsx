@@ -777,7 +777,7 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
         { title: t`Part` },
         { title: t`Location` },
         { title: t`Batch` },
-        { title: t`In Stock` },
+        { title: t`Quantity` },
         { title: t`Return`, style: { width: '200px' } },
         { title: t`Actions` }
       ]
