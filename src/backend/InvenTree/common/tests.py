@@ -657,6 +657,33 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['value'], 'My new title')
 
+    def test_cast(self):
+        """Test that values are cast to the correct type."""
+        key = 'INVENTREE_RESTRICT_ABOUT'
+
+        # Delete the associated setting object
+        InvenTreeSetting.objects.filter(key=key).delete()
+
+        # Fetch all settings
+        response = self.get(reverse('api-global-setting-list'))
+
+        # Find the associated setting
+        setting = next((s for s in response.data if s['key'] == key), None)
+
+        # Check default value (should be False, not 'False')
+        self.assertIsNotNone(setting)
+        self.assertFalse(setting['value'])
+
+        # Check that we can manually set the value
+        for v in [True, False]:
+            set_global_setting(key, v)
+
+            # Check the 'detail' API endpoint
+            response = self.get(
+                reverse('api-global-setting-detail', kwargs={'key': key})
+            )
+            self.assertEqual(response.data['value'], v)
+
 
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the user settings API."""

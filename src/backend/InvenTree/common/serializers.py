@@ -48,7 +48,7 @@ class SettingsValueField(serializers.Field):
         elif instance.value is None:
             return ''
         else:
-            return str(instance.value)
+            return instance.to_native_value()
 
     def to_internal_value(self, data) -> str:
         """Return the internal value of the setting."""
