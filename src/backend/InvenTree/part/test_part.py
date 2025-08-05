@@ -972,7 +972,7 @@ class PartStockHistoryTest(InvenTreeTestCase):
         self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)
 
         for p in Part.objects.all():
-            self.assertEqual(p.stocktakes.count(), stock_history_entries[part.pk])
+            self.assertEqual(p.stocktakes.count(), stock_history_entries[p.pk])
 
         # Now enable stocktake functionality
         set_global_setting('STOCKTAKE_ENABLE', True)
