@@ -1399,48 +1399,69 @@ class StockItem(
         )
 
     @transaction.atomic
-    def return_to_stock(self, location, user=None, merge: bool = False, **kwargs):
+    def return_to_stock(
+        self, location, user=None, quantity=None, merge: bool = False, **kwargs
+    ):
         """Return stock item into stock, removing any consumption status.
 
         Arguments:
             location: The location to return the stock item to
             user: The user performing the action
+            quantity: If specified, the quantity to return to stock (default is the full quantity)
             merge: If True, attempt to merge this stock item back into the parent stock item
         """
         notes = kwargs.get('notes', '')
 
         tracking_code = kwargs.get('tracking_code', StockHistoryCode.RETURNED_TO_STOCK)
 
+        if quantity is not None and not self.serialized:
+            # If quantity is specified, we are splitting the stock item
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > self.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity exceeds available stock')
+                })
+
+            # Split the stock item
+            item = self.splitStock(quantity, None, user)
+        else:
+            # Any further operations will be performed on this stock item
+            item = self
+
         tracking_info = {'location': location.pk}
 
-        if self.customer:
-            tracking_info['customer'] = self.customer.id
-            tracking_info['customer_name'] = self.customer.name
+        if item.customer:
+            tracking_info['customer'] = item.customer.id
+            tracking_info['customer_name'] = item.customer.name
 
-        if self.consumed_by:
-            tracking_info['build_order'] = self.consumed_by.id
+        if item.consumed_by:
+            tracking_info['build_order'] = item.consumed_by.id
 
         # Clear out allocation information for the stock item
-        self.consumed_by = None
-        self.customer = None
-        self.belongs_to = None
-        self.sales_order = None
-        self.location = location
+        item.consumed_by = None
+        item.customer = None
+        item.belongs_to = None
+        item.sales_order = None
+        item.location = location
 
         if status := kwargs.pop('status', None):
-            if not self.compare_status(status):
-                self.set_status(status)
+            if not item.compare_status(status):
+                item.set_status(status)
                 tracking_info['status'] = status
 
-        self.save()
+        item.save()
 
-        self.clearAllocations()
+        item.clearAllocations()
 
-        self.add_tracking_entry(
+        item.add_tracking_entry(
             tracking_code, user, notes=notes, deltas=tracking_info, location=location
         )
 
-        trigger_event(StockEvents.ITEM_RETURNED_TO_STOCK, id=self.id)
+        trigger_event(StockEvents.ITEM_RETURNED_TO_STOCK, id=item.id)
 
         # Attempt to merge returned item into parent item:
         # - 'merge' parameter is True
@@ -1449,15 +1470,15 @@ class StockItem(
 
         if (
             merge
-            and not self.serialized
+            and not item.serialized
             and self.parent
-            and self.location == self.parent.location
+            and item.location == self.parent.location
         ):
             self.parent.merge_stock_items(
-                {self}, user=user, location=location, notes=notes
+                {item}, user=user, location=location, notes=notes
             )
         else:
-            self.save(add_note=False)
+            item.save(add_note=False)
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
