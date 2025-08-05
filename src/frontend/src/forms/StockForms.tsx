@@ -1180,7 +1180,12 @@ export function useAddStockItem(props: StockOperationProps) {
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
     title: t`Add Stock`,
-    successMessage: t`Stock added`
+    successMessage: t`Stock added`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Increase the quantity of the selected stock items by a given amount.`}
+      </Alert>
+    )
   });
 }
 
@@ -1190,7 +1195,12 @@ export function useRemoveStockItem(props: StockOperationProps) {
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
     title: t`Remove Stock`,
-    successMessage: t`Stock removed`
+    successMessage: t`Stock removed`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Decrease the quantity of the selected stock items by a given amount.`}
+      </Alert>
+    )
   });
 }
 
@@ -1200,7 +1210,12 @@ export function useTransferStockItem(props: StockOperationProps) {
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
     title: t`Transfer Stock`,
-    successMessage: t`Stock transferred`
+    successMessage: t`Stock transferred`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Transfer selected items to the specified location.`}
+      </Alert>
+    )
   });
 }
 
@@ -1210,7 +1225,12 @@ export function useReturnStockItem(props: StockOperationProps) {
     fieldGenerator: stockReturnFields,
     endpoint: ApiEndpoints.stock_return,
     title: t`Return Stock`,
-    successMessage: t`Stock returned`
+    successMessage: t`Stock returned`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Return selected items into stock, in the specified location.`}
+      </Alert>
+    )
   });
 }
 
@@ -1220,7 +1240,12 @@ export function useCountStockItem(props: StockOperationProps) {
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
     title: t`Count Stock`,
-    successMessage: t`Stock counted`
+    successMessage: t`Stock counted`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Count the selected stock items, and adjust the quantity accordingly.`}
+      </Alert>
+    )
   });
 }
 
@@ -1230,7 +1255,12 @@ export function useChangeStockStatus(props: StockOperationProps) {
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
     title: t`Change Stock Status`,
-    successMessage: t`Stock status changed`
+    successMessage: t`Stock status changed`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Change the status of the selected stock items.`}
+      </Alert>
+    )
   });
 }
 
@@ -1276,7 +1306,12 @@ export function useDeleteStockItem(props: StockOperationProps) {
     endpoint: ApiEndpoints.stock_item_list,
     modalFunc: useDeleteApiFormModal,
     title: t`Delete Stock Items`,
-    successMessage: t`Stock deleted`
+    successMessage: t`Stock deleted`,
+    preFormContent: (
+      <Alert color='red'>
+        {t`This operation will permanently delete the selected stock items.`}
+      </Alert>
+    )
   });
 }
 
