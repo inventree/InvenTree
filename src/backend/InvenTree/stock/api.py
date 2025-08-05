@@ -161,12 +161,6 @@ class StockItemConvert(StockItemContextMixin, CreateAPI):
     serializer_class = StockSerializers.ConvertStockItemSerializer
 
 
-class StockItemReturn(StockItemContextMixin, CreateAPI):
-    """API endpoint for returning a stock item from a customer."""
-
-    serializer_class = StockSerializers.ReturnStockItemSerializer
-
-
 class StockAdjustView(CreateAPI):
     """A generic class for handling stocktake actions.
 
@@ -1669,7 +1663,6 @@ stock_api_urls = [
                 MetadataView.as_view(model=StockItem),
                 name='api-stock-item-metadata',
             ),
-            path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),
             path(
                 'serialize/',
                 StockItemSerialize.as_view(),

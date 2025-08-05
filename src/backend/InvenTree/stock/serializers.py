@@ -1020,53 +1020,6 @@ class StockStatusCustomSerializer(serializers.ChoiceField):
         super().__init__(*args, **kwargs)
 
 
-class ReturnStockItemSerializer(serializers.Serializer):
-    """DRF serializer for returning a stock item from a customer."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['location', 'status', 'notes']
-
-    location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.all(),
-        many=False,
-        required=True,
-        allow_null=False,
-        label=_('Location'),
-        help_text=_('Destination location for returned item'),
-    )
-
-    status = StockStatusCustomSerializer(default=None, required=False, allow_blank=True)
-
-    notes = serializers.CharField(
-        label=_('Notes'),
-        help_text=_('Add transaction note (optional)'),
-        required=False,
-        allow_blank=True,
-    )
-
-    def save(self):
-        """Save the serializer to return the item into stock."""
-        item = self.context.get('item')
-
-        if not item:
-            raise ValidationError(_('No stock item provided'))
-
-        request = self.context['request']
-
-        data = self.validated_data
-
-        location = data['location']
-
-        item.return_from_customer(
-            location,
-            user=request.user,
-            notes=data.get('notes', ''),
-            status=data.get('status', None),
-        )
-
-
 class StockChangeStatusSerializer(serializers.Serializer):
     """Serializer for changing status of multiple StockItem objects."""
 
