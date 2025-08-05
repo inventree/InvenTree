@@ -139,7 +139,8 @@ test('Settings - Global', async ({ browser, request }) => {
   await loadTab(page, 'Barcodes');
   await loadTab(page, 'Pricing');
   await loadTab(page, 'Parts');
-  await loadTab(page, 'Stock');
+  await loadTab(page, 'Stock', true);
+  await loadTab(page, 'Stock History');
 
   await loadTab(page, 'Notifications');
   await page

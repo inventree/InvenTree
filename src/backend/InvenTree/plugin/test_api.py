@@ -504,7 +504,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         # Filter by 'mixin' parameter
         mixin_results = {
             PluginMixinEnum.BARCODE: 5,
-            PluginMixinEnum.EXPORTER: 3,
+            PluginMixinEnum.EXPORTER: 4,
             PluginMixinEnum.ICON_PACK: 1,
             PluginMixinEnum.MAIL: 1,
             PluginMixinEnum.NOTIFICATION: 3,
