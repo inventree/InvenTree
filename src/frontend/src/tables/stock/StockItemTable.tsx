@@ -463,12 +463,14 @@ export function StockItemTable({
   allowAdd = false,
   showLocation = true,
   showPricing = true,
+  allowReturn = false,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
   allowAdd?: boolean;
   showLocation?: boolean;
   showPricing?: boolean;
+  allowReturn?: boolean;
   tableName: string;
 }>) {
   const table = useTable(tableName);
@@ -536,7 +538,8 @@ export function StockItemTable({
   });
 
   const stockAdjustActions = useStockAdjustActions({
-    formProps: stockOperationProps
+    formProps: stockOperationProps,
+    return: allowReturn
   });
 
   const tableActions = useMemo(() => {

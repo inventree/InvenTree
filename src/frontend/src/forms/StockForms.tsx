@@ -746,6 +746,50 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
   return fields;
 }
 
+function stockReturnFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: mapAdjustmentItems(items),
+      modelRenderer: (row: TableFieldRowProps) => {
+        const record = records[row.item.pk];
+
+        return (
+          <StockOperationsRow
+            props={row}
+            key={record.pk}
+            record={record}
+            transfer
+            changeStatus
+          />
+        );
+      },
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Return`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
+    },
+    location: {
+      filters: {
+        structural: false
+      }
+    },
+    notes: {}
+  };
+
+  return fields;
+}
+
 function stockRemoveFields(items: any[]): ApiFormFieldSet {
   if (!items) {
     return {};
@@ -1157,6 +1201,16 @@ export function useTransferStockItem(props: StockOperationProps) {
     endpoint: ApiEndpoints.stock_transfer,
     title: t`Transfer Stock`,
     successMessage: t`Stock transferred`
+  });
+}
+
+export function useReturnStockItem(props: StockOperationProps) {
+  return useStockOperationModal({
+    ...props,
+    fieldGenerator: stockReturnFields,
+    endpoint: ApiEndpoints.stock_return,
+    title: t`Return Stock`,
+    successMessage: t`Stock returned`
   });
 }
 

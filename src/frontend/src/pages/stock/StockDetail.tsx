@@ -757,7 +757,7 @@ export default function StockDetail() {
   });
 
   const returnStockItem = useCreateApiFormModal({
-    url: ApiEndpoints.stock_return,
+    url: ApiEndpoints.stock_return_from_customer,
     pk: stockitem.pk,
     title: t`Return Stock Item`,
     preFormContent: (
