@@ -295,7 +295,6 @@ class InfoView(APIView):
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
-            'active_plugins': plugins_info(),
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
@@ -307,6 +306,7 @@ class InfoView(APIView):
                 'navbar_message': helpers.getCustomOption('navbar_message'),
             },
             # Following fields are only available to staff users
+            'active_plugins': plugins_info() if is_staff else None,
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,

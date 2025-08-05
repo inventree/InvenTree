@@ -34,6 +34,7 @@ from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (
     IntegrationPluginError,
+    MixinNotImplementedError,
     get_entrypoints,
     get_plugins,
     handle_error,
@@ -92,9 +93,9 @@ class PluginsRegistry:
         'inventreebarcode',
         'bom-exporter',
         'inventree-exporter',
-        'inventreecorenotificationsplugin',
+        'inventree-ui-notification',
+        'inventree-email-notification',
         'inventreecurrencyexchange',
-        'inventreecorenotificationsplugin',
         'inventreelabel',
         'inventreelabelmachine',
         'parameter-exporter',
@@ -144,6 +145,8 @@ class PluginsRegistry:
         """
         from common.models import InvenTreeSetting
 
+        logger.info('Initializing plugin registry')
+
         self.ready = True
 
         # Install plugins from file (if required)
@@ -184,7 +187,13 @@ class PluginsRegistry:
 
         plg = self.plugins[slug]
 
-        if active is not None and active != plg.is_active():
+        config = self.get_plugin_config(slug)
+
+        if not config:  # pragma: no cover
+            logger.warning("Plugin '%s' has no configuration", slug)
+            return None
+
+        if active is not None and active != config.is_active():
             return None
 
         if with_mixin is not None and not plg.mixin_enabled(with_mixin):
@@ -209,9 +218,12 @@ class PluginsRegistry:
             cfg = PluginConfig.objects.filter(key=slug).first()
 
             if not cfg:
+                logger.debug(
+                    "get_plugin_config: Creating new PluginConfig for '%s'", slug
+                )
                 cfg = PluginConfig.objects.create(key=slug)
 
-        except PluginConfig.DoesNotExist:
+        except PluginConfig.DoesNotExist:  # pragma: no cover
             return None
         except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
             return None
@@ -285,25 +297,44 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
+        try:
+            # Pre-fetch the PluginConfig objects to avoid multiple database queries
+            from plugin.models import PluginConfig
+
+            plugin_configs = PluginConfig.objects.all()
+
+            configs = {config.key: config for config in plugin_configs}
+        except (ProgrammingError, OperationalError):
+            # The database is not ready yet
+            logger.warning('plugin.registry.with_mixin: Database not ready')
+            return []
+
         mixin = str(mixin).lower().strip()
 
-        result = []
+        plugins = []
 
         for plugin in self.plugins.values():
-            if plugin.mixin_enabled(mixin):
-                if active is not None:
-                    # Filter by 'active' status of plugin
-                    if active != plugin.is_active():
-                        continue
+            try:
+                if not plugin.mixin_enabled(mixin):
+                    continue
+            except MixinNotImplementedError:
+                continue
 
-                if builtin is not None:
-                    # Filter by 'builtin' status of plugin
-                    if builtin != plugin.is_builtin:
-                        continue
+            config = configs.get(plugin.slug) or plugin.plugin_config()
 
-                result.append(plugin)
+            # No config - cannot use this plugin
+            if not config:
+                continue
 
-        return result
+            if active is not None and active != config.is_active():
+                continue
+
+            if builtin is not None and builtin != config.is_builtin():
+                continue
+
+            plugins.append(plugin)
+
+        return plugins
 
     # endregion
 
@@ -420,6 +451,15 @@ class PluginsRegistry:
 
             self.update_plugin_hash()
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
+
+            # Ensure that each loaded plugin has a valid configuration object in the database
+            for plugin in self.plugins.values():
+                config = self.get_plugin_config(plugin.slug)
+
+                # Ensure mandatory plugins are marked as active
+                if config.is_mandatory() and not config.active:
+                    config.active = True
+                    config.save(no_reload=True)
 
         except Exception as e:
             logger.exception('Unexpected error during plugin reload: %s', e)
@@ -611,8 +651,8 @@ class PluginsRegistry:
         plugin.db = plg_db
 
         # Check if this is a 'builtin' plugin
-        builtin = plugin.check_is_builtin()
-        sample = plugin.check_is_sample()
+        builtin = plg_db.is_builtin() if plg_db else plugin.check_is_builtin()
+        sample = plg_db.is_sample() if plg_db else plugin.check_is_sample()
 
         package_name = None
 
@@ -621,7 +661,7 @@ class PluginsRegistry:
             package_name = getattr(plugin, 'package_name', None)
 
         # Auto-enable default builtin plugins
-        if builtin and plg_db and plg_db.is_mandatory():
+        if plg_db and plg_db.is_mandatory():
             if not plg_db.active:
                 plg_db.active = True
                 plg_db.save()
@@ -631,11 +671,16 @@ class PluginsRegistry:
             plg_db.package_name = package_name
             plg_db.save()
 
+        # Check if this plugin is considered 'mandatory'
+        mandatory = (
+            plg_key in self.MANDATORY_PLUGINS or plg_key in settings.PLUGINS_MANDATORY
+        )
+
         # Determine if this plugin should be loaded:
         # - If PLUGIN_TESTING is enabled
-        # - If this is a 'builtin' plugin
+        # - If this is a 'mandatory' plugin
         # - If this plugin has been explicitly enabled by the user
-        if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
+        if settings.PLUGIN_TESTING or mandatory or (plg_db and plg_db.active):
             # Initialize package - we can be sure that an admin has activated the plugin
             logger.debug('Loading plugin `%s`', plg_name)
 
@@ -668,6 +713,15 @@ class PluginsRegistry:
                 plg_i: InvenTreePlugin = plugin()
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
+
+                if mandatory and not plg_db.active:  # pragma: no cover
+                    # If this is a mandatory plugin, ensure it is marked as active
+                    logger.info(
+                        'Plugin `%s` is a mandatory plugin - activating', plg_name
+                    )
+                    plg_db.active = True
+                    plg_db.save()
+
             except ModuleNotFoundError as e:
                 raise e
             except Exception as error:

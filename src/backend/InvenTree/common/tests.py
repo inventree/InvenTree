@@ -8,6 +8,7 @@ from http import HTTPStatus
 from unittest import mock
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -21,6 +22,7 @@ from django.urls import reverse
 import PIL
 
 import common.validators
+from common.notifications import trigger_notification
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import (
@@ -32,7 +34,6 @@ from InvenTree.unit_test import (
 )
 from part.models import Part, PartParameterTemplate
 from plugin import registry
-from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
@@ -472,7 +473,7 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIsNone(cache.get(cache_key))
 
         # First request should set cache
-        val = InvenTreeSetting.get_setting(key)
+        val = InvenTreeSetting.get_setting(key, cache=True)
         self.assertEqual(cache.get(cache_key).value, val)
 
         for val in ['A', '{{ part.IPN }}', 'C']:
@@ -662,6 +663,21 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the user settings API."""
 
+    def test_unauthenticated_user(self):
+        """Test access with unauthenticated user."""
+        self.client.logout()
+
+        # Check list API endpoint
+        url = reverse('api-user-setting-list')
+        response = self.get(url, expected_code=401).data
+        self.assertIn(
+            'Authentication credentials were not provided', str(response['detail'])
+        )
+
+        # Check the detail API endpoint
+        url = reverse('api-user-setting-detail', kwargs={'key': 'LABEL_INLINE'})
+        self.get(url, expected_code=401)
+
     def test_user_settings_api_list(self):
         """Test list URL for user settings."""
         url = reverse('api-user-setting-list')
@@ -795,28 +811,6 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         # Note that this particular setting has a MinValueValidator(1) associated with it
         for v in [0, -1, -5]:
             response = self.patch(url, {'value': v}, expected_code=400)
-
-
-class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
-    """Tests for the notification user settings API."""
-
-    def test_api_list(self):
-        """Test list URL."""
-        url = reverse('api-notification-setting-list')
-
-        self.get(url, expected_code=200)
-
-    def test_setting(self):
-        """Test the string name for NotificationUserSetting."""
-        NotificationUserSetting.set_setting(
-            'NOTIFICATION_METHOD_MAIL', True, change_user=self.user, user=self.user
-        )
-        test_setting = NotificationUserSetting.get_setting_object(
-            'NOTIFICATION_METHOD_MAIL', user=self.user
-        )
-        self.assertEqual(
-            str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): True'
-        )
 
 
 class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
@@ -1081,6 +1075,7 @@ class NotificationTest(InvenTreeAPITestCase):
     """Tests for NotificationEntry."""
 
     fixtures = ['users']
+    roles = ['admin.view']
 
     def test_check_notification_entries(self):
         """Test that notification entries can be created."""
@@ -1169,6 +1164,72 @@ class NotificationTest(InvenTreeAPITestCase):
         # as the notifications associated with other users must remain untouched
         self.assertEqual(NotificationMessage.objects.count(), 13)
         self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
+
+    def test_simple(self):
+        """Test that a simple notification can be created."""
+        trigger_notification(
+            Group.objects.get(name='Sales'),
+            user=self.user,
+            data={'message': 'This is a test notification'},
+        )
+
+    def test_with_group(self):
+        """Test that a notification can be created with a group."""
+        grp = Group.objects.get(name='Sales')
+        trigger_notification(
+            grp,
+            user=self.user,
+            data={'message': 'This is a test notification with group'},
+            targets=[grp],
+        )
+
+    def test_wrong_target(self):
+        """Test that a notification with an invalid target raises an error."""
+        with self.assertLogs() as cm:
+            trigger_notification(
+                Group.objects.get(name='Sales'),
+                user=self.user,
+                data={'message': 'This is a test notification'},
+                targets=['invalid_target'],
+            )
+        self.assertIn('Unknown target passed to t', str(cm[1]))
+
+    def test_wrong_obj(self):
+        """Test that a object without a reference is raising an issue."""
+
+        class SampleObj:
+            pass
+
+        with self.assertRaises(KeyError) as cm:
+            trigger_notification(
+                SampleObj(),
+                user=self.user,
+                data={'message': 'This is a test notification'},
+            )
+        self.assertIn('Could not resolve an object reference for', str(cm.exception))
+
+        # Without reference, it should not raise an error
+        trigger_notification(
+            Group.objects.get(name='Sales'),
+            user=self.user,
+            data={'message': 'This is a test notification'},
+        )
+
+    def test_recent(self):
+        """Test that a notification is not created if it was already sent recently."""
+        grp = Group.objects.get(name='Sales')
+        trigger_notification(  #
+            grp, category='core', context={'name': 'test'}, targets=[self.user]
+        )
+        self.assertEqual(NotificationMessage.objects.count(), 1)
+
+        # Should not create a new notification
+        with self.assertLogs(logger='inventree') as cm:
+            trigger_notification(
+                grp, category='core', context={'name': 'test'}, targets=[self.user]
+            )
+        self.assertEqual(NotificationMessage.objects.count(), 1)
+        self.assertIn('as recently been sent for', str(cm[1]))
 
 
 class CommonTest(InvenTreeAPITestCase):

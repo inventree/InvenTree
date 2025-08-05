@@ -11,7 +11,11 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import {
+  formatCurrency,
+  formatDecimal,
+  formatPriceRange
+} from '../../defaults/formatters';
 import {
   type StockOperationProps,
   useStockFields
@@ -34,10 +38,12 @@ import {
   HasBatchCodeFilter,
   IncludeVariantsFilter,
   IsSerializedFilter,
+  ManufacturerFilter,
   SerialFilter,
   SerialGTEFilter,
   SerialLTEFilter,
-  StatusFilterOptions
+  StatusFilterOptions,
+  SupplierFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -82,7 +88,7 @@ function stockItemTableColumns({
         const quantity = record?.quantity ?? 0;
         const allocated = record?.allocated ?? 0;
         const available = quantity - allocated;
-        let text = quantity;
+        let text = formatDecimal(quantity);
         const part = record?.part_detail ?? {};
         const extra: ReactNode[] = [];
         let color = undefined;
@@ -173,7 +179,7 @@ function stockItemTableColumns({
             if (available > 0) {
               extra.push(
                 <Text key='available' size='sm' c='orange'>
-                  {`${t`Available`}: ${available}`}
+                  {`${t`Available`}: ${formatDecimal(available)}`}
                 </Text>
               );
             } else {
@@ -358,6 +364,8 @@ function stockItemTableFilters({
       description: t`Show items which are in production`
     },
     IncludeVariantsFilter(),
+    SupplierFilter(),
+    ManufacturerFilter(),
     {
       name: 'consumed',
       label: t`Consumed`,

@@ -103,6 +103,20 @@ class ExtendedAutoSchema(AutoSchema):
                         f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
                     )
 
+        # Add valid search fields to the search description.
+        search_fields = getattr(self.view, 'search_fields', None)
+
+        if search_fields is not None:
+            # Ensure consistent ordering of search fields
+            search_fields = sorted(search_fields)
+
+            parameters = operation.get('parameters', [])
+            for parameter in parameters:
+                if parameter['name'] == 'search':
+                    parameter['description'] = (
+                        f'{parameter["description"]} Searched fields: {", ".join(search_fields)}.'
+                    )
+
         return operation
 
 

@@ -1,11 +1,37 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 372
+INVENTREE_API_VERSION = 379
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v379 -> 2025-08-04 : https://github.com/inventree/InvenTree/pull/10124
+    - Removes "PartStocktakeReport" model and associated API endpoints
+    - Remove "last_stocktake" field from the Part model
+    - Remove "user" field from PartStocktake model
+    - Remove "note" field from PartStocktake model
+
+v378 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10111
+    - Adds "scheduled_to_build" annotated field to BuildLine serializer
+
+v377 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10109
+    - Allow email records to be deleted via the API
+
+v376 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10108
+    - Fix search fields for ReturnOrderLineItem API list endpoint
+
+v375 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10095
+    - Sorts searched fields to keep API stable
+
+v374 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10092
+    - Add nullable to a few details fields that lack it
+    - Add the list of searched fields to the search parameter comments
+
+v373 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
+    - Adds PluginUserSetting model (and associated endpoints)
+    - Remove NotificationSetting model (and associated endpoints)
 
 v372 -> 2025-07-19 : https://github.com/inventree/InvenTree/pull/10056
     - Adds BOM validation information to the Part API
@@ -83,7 +109,7 @@ v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
     - Add valid fields to ordering field descriptions
 
 v351 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9602
-    - Adds passwort reset API endpoint for admin users
+    - Adds password reset API endpoint for admin users
 
 v350 -> 2025-06-17 : https://github.com/inventree/InvenTree/pull/9798
     - Adds "can_build" field to the part requirements API endpoint

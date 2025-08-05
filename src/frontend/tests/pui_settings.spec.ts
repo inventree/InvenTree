@@ -2,7 +2,7 @@ import { expect, test } from './baseFixtures.js';
 import { apiUrl } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
-import { setSettingState } from './settings.js';
+import { setPluginState, setSettingState } from './settings.js';
 
 /**
  * Adjust language and color settings
@@ -78,6 +78,98 @@ test('Settings - User theme', async ({ browser }) => {
   // primary
   await page.getByLabel('#fab005').click();
   await page.getByLabel('#228be6').click();
+});
+
+test('Settings - User', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/user/'
+  });
+
+  await loadTab(page, 'Account');
+  await page.getByText('Account Details').waitFor();
+  await page.getByText('Profile Details').waitFor();
+
+  await loadTab(page, 'Security');
+  await page.getByRole('button', { name: 'Single Sign On' }).waitFor();
+  await page.getByRole('button', { name: 'Access Tokens' }).waitFor();
+
+  await loadTab(page, 'Display Options');
+  await page
+    .getByText('The navbar position is fixed to the top of the screen')
+    .waitFor();
+  await page.getByText('Escape Key Closes Forms').waitFor();
+
+  await loadTab(page, 'Search');
+  await page.getByText('Whole Word Search').waitFor();
+  await page.getByText('Hide Unavailable Stock Items').waitFor();
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+
+  await loadTab(page, 'Reporting');
+  await page.getByText('Inline report display').waitFor();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+});
+
+test('Settings - Global', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'settings/system/'
+  });
+
+  // Ensure the "slack" notification plugin is enabled
+  // This is to ensure it is visible in the "notification" settings tab
+  await setPluginState({
+    request,
+    plugin: 'inventree-slack-notification',
+    state: true
+  });
+
+  await loadTab(page, 'Server');
+  await loadTab(page, 'Authentication');
+  await loadTab(page, 'Barcodes');
+  await loadTab(page, 'Pricing');
+  await loadTab(page, 'Parts');
+  await loadTab(page, 'Stock', true);
+  await loadTab(page, 'Stock History');
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByText(
+      'The settings below are specific to each available notification method'
+    )
+    .waitFor();
+
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
+    .click();
+  await page.getByText('Slack incoming webhook url').waitFor();
+  await page
+    .getByText('URL that is used to send messages to a slack channel')
+    .waitFor();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByText('The settings below are specific to each available plugin')
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Barcodes Provides' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree PDF label printer' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
+    .waitFor();
 });
 
 test('Settings - Admin', async ({ browser }) => {

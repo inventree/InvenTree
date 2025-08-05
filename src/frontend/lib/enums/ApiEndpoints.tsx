@@ -118,8 +118,6 @@ export enum ApiEndpoints {
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
-  part_stocktake_report_list = 'part/stocktake/report/',
-  part_stocktake_report_generate = 'part/stocktake/report/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
@@ -208,6 +206,7 @@ export enum ApiEndpoints {
   // Plugin API endpoints
   plugin_list = 'plugins/',
   plugin_setting_list = 'plugins/:plugin/settings/',
+  plugin_user_setting_list = 'plugins/:plugin/user-settings/',
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',

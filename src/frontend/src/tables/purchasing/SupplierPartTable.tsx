@@ -25,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CompanyColumn,
+  DecimalColumn,
   DescriptionColumn,
   LinkColumn,
   NoteColumn,
@@ -89,10 +90,10 @@ export function SupplierPartTable({
         switchable: true,
         defaultVisible: false
       }),
-      {
+      DecimalColumn({
         accessor: 'in_stock',
         sortable: true
-      },
+      }),
       {
         accessor: 'packaging',
         sortable: true,

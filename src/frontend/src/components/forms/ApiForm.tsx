@@ -564,7 +564,15 @@ export function ApiForm({
         <LoadingOverlay visible={isLoading} zIndex={1010} />
 
         {/* Attempt at making fixed footer with scroll area */}
-        <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
+        <Paper
+          mah={'65vh'}
+          style={{
+            overflowY: 'auto',
+            paddingRight: '15px',
+            paddingBottom: '10px',
+            paddingLeft: '5px'
+          }}
+        >
           <div>
             {/* Form Fields */}
             <Stack gap='sm'>

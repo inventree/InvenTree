@@ -288,7 +288,7 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             cache.set(key, self, timeout=3600)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
     @classmethod
@@ -558,7 +558,7 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             create = False
             access_global_cache = False
 
@@ -603,7 +603,15 @@ class BaseInvenTreeSetting(models.Model):
         if not setting and create:
             # Attempt to create a new settings object
             default_value = cls.get_setting_default(key, **kwargs)
-            setting = cls(key=key, value=default_value, **kwargs)
+
+            extra_fields = {}
+
+            # Provide extra default fields
+            for field in cls.extra_unique_fields:
+                if field in kwargs:
+                    extra_fields[field] = kwargs[field]
+
+            setting = cls(key=key, value=default_value, **extra_fields)
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -698,7 +706,7 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             return
 
         attempts = int(kwargs.get('attempts', 3))
@@ -723,7 +731,7 @@ class BaseInvenTreeSetting(models.Model):
                 logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
             return
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.exception(
                 "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
             )
@@ -758,7 +766,7 @@ class BaseInvenTreeSetting(models.Model):
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             # Some other error
             logger.exception(
                 "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))

@@ -21,7 +21,12 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
+import {
+  DecimalColumn,
+  DescriptionColumn,
+  LinkColumn,
+  NoteColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
@@ -47,10 +52,10 @@ export default function ExtraLineItemTable({
         switchable: false
       },
       DescriptionColumn({}),
-      {
+      DecimalColumn({
         accessor: 'quantity',
         switchable: false
-      },
+      }),
       {
         accessor: 'price',
         title: t`Unit Price`,

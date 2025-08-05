@@ -30,9 +30,13 @@ def notify_low_stock(part: Model):
     """Notify interested users that a part is 'low stock'.
 
     Rules:
-    - Triggered when the available stock for a given part falls be low the configured threhsold
+    - Triggered when the available stock for a given part falls be low the configured threshold
     - A notification is delivered to any users who are 'subscribed' to this part
     """
+    # Do not trigger low-stock notifications for inactive parts
+    if not part.active:
+        return
+
     name = _('Low stock notification')
     message = _(
         f'The available stock for {part.name} has fallen below the configured minimum level'
@@ -146,7 +150,7 @@ def notify_low_stock_if_required(part_id: int):
     parts = part.get_ancestors(include_self=True, ascending=True)
 
     for p in parts:
-        if p.is_part_low_on_stock():
+        if part.active and p.is_part_low_on_stock():
             offload_task(notify_low_stock, p, group='notification')
 
 
@@ -303,7 +307,9 @@ def check_missing_pricing(limit=250):
 @tracer.start_as_current_span('scheduled_stocktake_reports')
 @scheduled_task(ScheduledTask.DAILY)
 def scheduled_stocktake_reports():
-    """Scheduled tasks for creating automated stocktake reports.
+    """Scheduled tasks for creating automated 'stocktake' entries.
+
+    A "stocktake" entry is a snapshot of the current stock levels for a given Part.
 
     This task runs daily, and performs the following functions:
 
@@ -311,38 +317,40 @@ def scheduled_stocktake_reports():
     - Generate new reports at the specified period
     """
     import part.stocktake
-    from part.models import PartStocktakeReport
+    from part.models import PartStocktake
 
-    # First let's delete any old stocktake reports
-    delete_n_days = int(
-        get_global_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False)
-    )
-    threshold = datetime.now() - timedelta(days=delete_n_days)
-    old_reports = PartStocktakeReport.objects.filter(date__lt=threshold)
+    if get_global_setting('STOCKTAKE_DELETE_OLD_ENTRIES', False, cache=False):
+        # First let's delete any old stock history entries
+        delete_n_days = int(
+            get_global_setting('STOCKTAKE_DELETE_DAYS', 365, cache=False)
+        )
 
-    if old_reports.count() > 0:
-        logger.info('Deleting %s stale stocktake reports', old_reports.count())
-        old_reports.delete()
+        threshold = datetime.now() - timedelta(days=delete_n_days)
+        old_entries = PartStocktake.objects.filter(date__lt=threshold)
+
+        if old_entries.count() > 0:
+            logger.info('Deleting %s old stock entries', old_entries.count())
+            old_entries.delete()
 
     # Next, check if stocktake functionality is enabled
     if not get_global_setting('STOCKTAKE_ENABLE', False, cache=False):
         logger.info('Stocktake functionality is not enabled - exiting')
         return
 
-    report_n_days = int(get_global_setting('STOCKTAKE_AUTO_DAYS', 0, cache=False))
+    report_n_days = int(get_global_setting('STOCKTAKE_AUTO_DAYS', 7, cache=False))
 
     if report_n_days < 1:
         logger.info('Stocktake auto reports are disabled, exiting')
         return
 
     if not check_daily_holdoff('STOCKTAKE_RECENT_REPORT', report_n_days):
-        logger.info('Stocktake report was recently generated - exiting')
+        logger.info('Stock history was recently generated - exiting')
         return
 
-    # Let's start a new stocktake report for all parts
-    part.stocktake.generate_stocktake_report(update_parts=True)
+    # Generate new stock history entries
+    part.stocktake.perform_stocktake()
 
-    # Record the date of this report
+    # Record the date of this task run
     record_task_success('STOCKTAKE_RECENT_REPORT')
 
 

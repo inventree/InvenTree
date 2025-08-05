@@ -3,6 +3,7 @@ import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
@@ -63,9 +64,9 @@ export function RenderStockItem(
     quantity_string += `${t`Serial Number`}: ${instance.serial}`;
   } else if (allocated > 0) {
     const available: number = Math.max(0, instance.quantity - allocated);
-    quantity_string = `${t`Available`}: ${available} / ${instance.quantity}`;
+    quantity_string = `${t`Available`}: ${formatDecimal(available)} / ${formatDecimal(instance.quantity)}`;
   } else if (instance?.quantity) {
-    quantity_string = `${t`Quantity`}: ${instance.quantity}`;
+    quantity_string = `${t`Quantity`}: ${formatDecimal(instance.quantity)}`;
   }
 
   let batch_string = '';

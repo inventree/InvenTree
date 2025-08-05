@@ -100,10 +100,10 @@ export const navigate = async (
 /**
  * CLick on the 'tab' element with the provided name
  */
-export const loadTab = async (page, tabName) => {
+export const loadTab = async (page, tabName, exact?) => {
   await page
     .getByLabel(/panel-tabs-/)
-    .getByRole('tab', { name: tabName })
+    .getByRole('tab', { name: tabName, exact: exact ?? false })
     .click();
 
   await page.waitForLoadState('networkidle');

@@ -65,7 +65,11 @@ export function RelatedModelField({
       return;
     }
 
-    const params = definition?.filters ?? {};
+    // Construct parameters for auto-filling the field
+    const params = {
+      ...(definition?.filters ?? {}),
+      ...(definition?.autoFillFilters ?? {})
+    };
 
     api
       .get(definition.api_url, {
@@ -282,6 +286,7 @@ export function RelatedModelField({
     return {
       ...definition,
       autoFill: undefined,
+      modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       exclude: undefined,
@@ -360,7 +365,6 @@ export function RelatedModelField({
         filterOption={null}
         onInputChange={(value: any) => {
           setValue(value);
-          resetSearch();
         }}
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}

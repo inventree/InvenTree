@@ -197,9 +197,14 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_maths_tags(self):
         """Simple tests for mathematical operator tags."""
         self.assertEqual(report_tags.add(1, 2), 3)
+        self.assertEqual(report_tags.add('-33', '33'), 0)
         self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
+        self.assertEqual(report_tags.multiply('-2', 4), -8.0)
         self.assertEqual(report_tags.divide(100, 5), 20)
+
+        with self.assertRaises(ZeroDivisionError):
+            report_tags.divide(100, 0)
 
     def test_number_tags(self):
         """Simple tests for number formatting tags."""
