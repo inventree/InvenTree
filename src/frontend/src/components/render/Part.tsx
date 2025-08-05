@@ -3,6 +3,7 @@ import { Badge } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
@@ -27,7 +28,7 @@ export function RenderPart(
     badgeColor = 'orange';
     badgeText = t`No stock`;
   } else if (stock != null) {
-    badgeText = `${t`Stock`}: ${stock}`;
+    badgeText = `${t`Stock`}: ${formatDecimal(stock)}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 
