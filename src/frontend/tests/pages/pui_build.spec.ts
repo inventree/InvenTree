@@ -161,6 +161,27 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
 
+  // Check the "printing" actions for the selected outputs
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('tabpanel', { name: 'Incomplete Outputs' })
+    .getByLabel('action-menu-printing-actions')
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-labels'
+    })
+    .waitFor();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-reports'
+    })
+    .click();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
+  await page.getByText('Errors exist for one or more form fields').waitFor();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+
   // Create a new build output
   await page.getByLabel('action-button-add-build-output').click();
   await page.getByLabel('number-field-quantity').fill('5');
